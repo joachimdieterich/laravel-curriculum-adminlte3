@@ -2,6 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -22,53 +23,52 @@
                     </div>
                 </div>
 
-                <div class="modal-body" style="overflow: visible;">
-                    <div class="form-group">
-                        <Select2
-                            id="curriculum_id"
-                            name="curriculum_id"
-                            url="/curricula"
-                            model="curriculum"
-                            option_id="id"
-                            option_label="title"
-                            @selectedValue="(id) => {
-                                this.form.curriculum_id = id[0];
-                            }"
-                        />
-                    </div>
-                    <div v-if="form.curriculum_id"
-                        class="form-group"
-                    >
-                        <Select2
-                            id="terminalObjectives_id"
-                            name="terminalObjectives_id"
-                            :url="'/curricula/' + form.curriculum_id + '/terminalObjectives'"
-                            model="terminalObjective"
-                            :multiple="true"
-                            option_id="id"
-                            option_label="title"
-                            @selectedValue="(id) => {
-                                this.form.terminal_objective_id = id;
-                                this.form.enabling_objective_id = [];
-                            }"
-                        />
-                    </div>
-                    <div v-if="form.terminal_objective_id.length === 1"
-                        class="form-group"
-                    >
-                        <Select2
-                            id="enablingObjectives_id"
-                            name="enablingObjectives_id"
-                            :url="'/terminalObjectives/' + form.terminal_objective_id[0] + '/enablingObjectives'"
-                            model="enablingObjective"
-                            :multiple="true"
-                            option_id="id"
-                            option_label="title"
-                            selected="null"
-                            @selectedValue="(id) => {
-                                this.form.enabling_objective_id = id;
-                            }"
-                        />
+                <div
+                    class="modal-body"
+                    style="overflow: visible;"
+                >
+                    <div class="card">
+                        <div class="card-body">
+                            <Select2
+                                id="curriculum_id"
+                                name="curriculum_id"
+                                url="/curricula"
+                                model="curriculum"
+                                option_id="id"
+                                option_label="title"
+                                @selectedValue="(id) => {
+                                    this.form.curriculum_id = id[0];
+                                }"
+                            />
+
+                            <Select2 v-if="form.curriculum_id"
+                                id="terminalObjectives_id"
+                                name="terminalObjectives_id"
+                                :url="'/curricula/' + form.curriculum_id + '/terminalObjectives'"
+                                model="terminalObjective"
+                                :multiple="true"
+                                option_id="id"
+                                option_label="title"
+                                @selectedValue="(id) => {
+                                    this.form.terminal_objective_id = id;
+                                    this.form.enabling_objective_id = [];
+                                }"
+                            />
+
+                            <Select2 v-if="form.terminal_objective_id.length === 1"
+                                id="enablingObjectives_id"
+                                name="enablingObjectives_id"
+                                :url="'/terminalObjectives/' + form.terminal_objective_id[0] + '/enablingObjectives'"
+                                model="enablingObjective"
+                                :multiple="true"
+                                option_id="id"
+                                option_label="title"
+                                selected="null"
+                                @selectedValue="(id) => {
+                                    this.form.enabling_objective_id = id;
+                                }"
+                            />
+                        </div>
                     </div>
                 </div>
 

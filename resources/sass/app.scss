@@ -36,42 +36,34 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 $OpenSansFontPath: 'open-sans-all/fonts';
 @import "open-sans-all/scss/open-sans.scss";
 
-
 body {
     font-family: 'Open Sans', Arial, sans-serif !important;
     color: #333;
 }
-
 .nav-sidebar .nav-link > .right:nth-child(2),
 .nav-sidebar .nav-link > p > .right:nth-child(2),
 .nav-link > i {
     right:0;
     padding-right: 10px;
 }
-
 .col-centered {
     float: none;
     margin: 0 auto;
 }
-
 .text-cut{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 .pointer {
     cursor: pointer;
 }
-
 .pull-right {
     float: right !important;
 }
-
 .pull-left{
     float: left !important;
 }
-
 // FontAwesome Badges without layers
 .fabadge[data-count]{
     position:relative;
@@ -89,30 +81,27 @@ body {
     min-width: 2em;
     font: bold .4em sans-serif;
 }
-
 .hide-scrollbars::-webkit-scrollbar {
     width: 0 !important
 }
-
 .hide-scrollbars {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none; /* IE */
     scrollbar-width: none; /* Firefox */
 }
-
 .hide {
     display: none;
 }
-
 textarea {
     min-height: 150px;
 }
-
 .modal-body {
     max-height: 80svh;
     overflow-y: auto;
-}
+    padding: 0;
 
+    .card { margin-bottom: 0; }
+}
 .select2 {
     max-width: 100%;
     width: 100%;
@@ -120,27 +109,21 @@ textarea {
 .dt-length {
     float: right !important;
 }
-
-
 .vuehover {
     display: none;
 }
-
 li:hover .vuehover,
 tr:hover .vuehover {
     display: block;
 }
-
-
+.custom-control-input:hover, .custom-control-label:hover { cursor: pointer; }
 /* Vuedatepicker uses another font-family as default */
 .dp__input { font-family: "Open Sans", Arial, sans-serif !important; }
-
 .kanban-header{
     background-color: white;
     padding: 0.8rem !important;
     border-radius: 6px !important;
 }
-
 .comment-count{
     position: absolute;
     font-size: 8px !important;
@@ -159,21 +142,17 @@ tr:hover .vuehover {
     padding-top: 5px;
     padding-right: 10px;
 }
-
 .dropdown-item {
     padding: 0.25rem 1rem !important;
 }
-
 .overlay{
     background-color: rgba(255, 255, 255, 0.9) !important;
 }
-
 .error-block {
     color: #dc3545;
     font-size: 0.8rem;
     width: min-content;
 }
-
 @media only screen and (max-width: 400px) {
     div#searchbar > input {
         transition: .5s width, .5s padding !important;
@@ -185,7 +164,6 @@ tr:hover .vuehover {
         }
     }
 }
-
 @media only screen and (max-width: 576px) {
     #searchbar {
         > input {
@@ -208,7 +186,6 @@ tr:hover .vuehover {
 /*
  * Modal
  */
-
 .modal-mask {
     position: fixed;
     z-index: 9998;
@@ -220,7 +197,6 @@ tr:hover .vuehover {
     display: flex;
     transition: opacity 0.3s ease;
 }
-
 .modal-container {
     min-width: 50vh;
     max-width: 90vw;
@@ -231,12 +207,9 @@ tr:hover .vuehover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     transition: all 0.3s ease;
 }
-
-
 .modal-default-button {
     float: right;
 }
-
 /*
  * The following styles are auto-applied to elements with
  * transition="modal" when their visibility is toggled
@@ -245,26 +218,21 @@ tr:hover .vuehover {
  * You can easily play with the modal transition by editing
  * these styles.
  */
-
 .modal-enter-from {
     opacity: 0;
 }
-
 .modal-leave-to {
     opacity: 0;
 }
-
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
 }
-
 .dataTablesWrapper {
     width: 100%;
     padding: 0px 15px;
 }
-
 /*
 TinyMCE
  */

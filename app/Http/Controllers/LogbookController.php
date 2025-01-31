@@ -70,7 +70,6 @@ class LogbookController extends Controller
 
 
         return empty($logbooks) ? '' : DataTables::of($logbooks)
-            ->addColumn('check', '')
             //->addColumn('subscribable_id', $logbooks->subscriptions[0]->subscribable_id)
             ->setRowId('id')
             ->make(true);

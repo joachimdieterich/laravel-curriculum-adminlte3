@@ -9,11 +9,11 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
      * helper function to paginate on select2 fields
      * @param $model
      * @param string|array $field one or multiple fields to search term
-     * @param string $oderby
+     * @param string $orderby
      * @param string $text
      * @return \Illuminate\Http\JsonResponse
      */
-    function getEntriesForSelect2ByModel($model, $field = 'title', $oderby = 'title', $text = 'title', $id = 'id')
+    function getEntriesForSelect2ByModel($model, $field = 'title', $orderby = 'title', $text = 'title', $id = 'id')
     {
         $input = request()->validate([
             'page' => 'sometimes|integer',
@@ -50,7 +50,7 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
-                ->orderBy($oderby)
+                ->orderBy($orderby)
                 ->skip($offset)
                 ->take($resultCount)
                 ->get([DB::raw( $id . ' as id,' . $text . ' as text')]); //match given $text and $id to get proper values
@@ -73,9 +73,8 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 }
 if (! function_exists('getEntriesForSelect2ByCollection'))
 {
-    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $oderby = 'title', $text = 'title', $id = 'id' )
+    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
     {
-
         $input = request()->validate([
             'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
@@ -85,7 +84,7 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
         if (request()->has('selected'))
         {
             //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
-            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->get());
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected']));
         }
         else
         {
@@ -96,25 +95,28 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 
             $term = $input['term'];
 
-            $count = Count($collection->where(  // count all enties FIRST with filter to get pagination working
-                function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
-                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                    }
-                })
-                ->get());
+            $allEntries = $collection->filter(function($obj) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    // if any match is true, return the entry
+                    if (str_contains($obj[$f], $term)) return true;
+                }
+                return false;
+            });
 
-            $entries = $collection->where(
-                function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
-                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                    }
-                })
-                ->orderBy($oderby)
+            $count = Count($allEntries);
+
+            $entries = $allEntries
+                ->sortBy($orderby, SORT_NATURAL)
                 ->skip($offset)
                 ->take($resultCount)
-                ->select([$table . $id, DB::raw($text . ' as text')])
-                ->get();
+                ->select([$table . $id, $text])
+                ->map(function($entry) use ($table, $id, $text) {
+                    return [
+                        'id' => $entry[$table.$id],
+                        'text' => $entry[$text],
+                    ];
+                })
+                ->values();
 
             $endCount = $offset + $resultCount;
             $morePages = $count > $endCount;

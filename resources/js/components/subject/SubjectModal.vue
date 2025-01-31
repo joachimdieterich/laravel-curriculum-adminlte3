@@ -1,98 +1,110 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.subject.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.subject.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button
-                        type="button"
-                        class="btn btn-tool"
-                        @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.subject.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.subject.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="modal-body">
                 <div
-                    class="form-group"
-                    :class="form.errors.title ? 'has-error' : ''"
+                    class="modal-body"
+                    style="overflow-y: visible;"
                 >
-                    <label for="title">{{ trans('global.subject.fields.title') }} *</label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        class="form-control"
-                        v-model="form.title"
-                        placeholder="Title"
-                        required
-                        />
-                     <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                </div>
-                <div class="form-group "
-                     :class="form.errors.title_short ? 'has-error' : ''"
-                >
-                    <label for="title">{{ trans('global.subject.fields.title_short') }} *</label>
-                    <input
-                        type="text"
-                        id="title_short"
-                        name="title_short"
-                        class="form-control"
-                        v-model="form.title_short"
-                        placeholder="title_short"
-                        required
-                    />
-                    <p class="help-block"
-                       v-if="form.errors.title_short"
-                       v-text="form.errors.title_short[0]"></p>
-                </div>
-                <div class="form-group ">
-                    <Select2
-                        id="organization_type_id"
-                        name="organization_type_id"
-                        url="/organizationTypes"
-                        model="organizationType"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.organization_type_id"
-                        @selectedValue="(id) => {
-                        this.form.organization_type_id = id;
-                    }"
-                    >
-                    </Select2>
-                </div>
-            </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.subject.fields.title') + ' *'"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            </div>
 
-            <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="subject-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="subject-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                            <div
+                                class="form-group"
+                                :class="form.errors.title_short ? 'has-error' : ''"
+                            >
+                                <input
+                                    type="text"
+                                    id="title_short"
+                                    name="title_short"
+                                    class="form-control"
+                                    v-model="form.title_short"
+                                    :placeholder="trans('global.subject.fields.title_short')"
+                                    required
+                                />
+                                <p class="help-block"
+                                v-if="form.errors.title_short"
+                                v-text="form.errors.title_short[0]"
+                                ></p>
+                            </div>
+
+                            <Select2
+                                id="organization_type_id"
+                                name="organization_type_id"
+                                url="/organizationTypes"
+                                model="organizationType"
+                                css="mb-0"
+                                :label="trans('global.organizationType.title_singular') + ' *'"
+                                option_id="id"
+                                option_label="title"
+                                :selected="this.form.organization_type_id"
+                                @selectedValue="(id) => {
+                                    this.form.organization_type_id = id;
+                                }"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="subject-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="subject-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -102,11 +114,12 @@ import Select2 from "../forms/Select2.vue";
 
 export default {
     name: 'subject-modal',
-    components: {Select2},
+    components: {
+        Select2,
+    },
     props: {},
-    setup() { //use database store
+    setup() {
         const globalStore = useGlobalStore();
-
         return {
             globalStore,
         }
@@ -115,26 +128,26 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/subjects',
             form: new Form({
-                'id':'',
-                'title': '',
-                'title_short': '',
-                'organization_type_id': 1,
+                id: '',
+                title: '',
+                title_short: '',
+                organization_type_id: 1,
             }),
-            search: '',
         }
     },
     methods: {
-        submit(method) {
-            if (method == 'patch') {
+        submit() {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/subjects', this.form)
                 .then(r => {
                     this.$eventHub.emit('subject-added', r.data);
                 })
@@ -143,8 +156,7 @@ export default {
                 });
         },
         update() {
-            console.log('update');
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/subjects/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('subject-updated', r.data);
                 })

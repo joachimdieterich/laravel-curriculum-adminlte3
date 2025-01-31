@@ -89,10 +89,36 @@ class PlanController extends Controller
         return $userCanSee->unique();
     }
 
-    public function list()
+    public function list(Request $request)
     {
         abort_unless(\Gate::allows('plan_access'), 403);
-        $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
+        $plans = '';
+        if (request()->has(['group_id'])) {
+            $group_id = $request['group_id'];
+            $plans = Plan::with('subscriptions')
+                ->whereHas('subscriptions', function ($query) use ($group_id) {
+                    $query->where(
+                        function ($query) use ($group_id) {
+                            $query->where('subscribable_type', 'App\\Group')
+                                ->where('subscribable_id', $group_id);
+                        }
+                    );
+                });
+        } else {
+            switch ($request->filter)
+            {
+                case 'owner':           $plans = Plan::where('owner_id', auth()->user()->id)->get();
+                    break;
+                case 'shared_with_me':  $plans = $this->userPlans(false);
+                    break;
+                case 'shared_by_me':    $plans = Plan::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                    break;
+                case 'all':
+                default:                $plans = $this->userPlans();
+                    break;
+            }
+        }
+        
 
         return DataTables::of($plans)
             ->setRowId('id')
@@ -150,30 +176,7 @@ class PlanController extends Controller
         $users = [];
 
         if ($editable) {
-            $subscriptions = $plan->subscriptions()->get()->toArray();
-            // get every user-id through all subscriptions
-            foreach ($subscriptions as $subscription) {
-                switch ($subscription['subscribable_type']) {
-                    case 'App\User':
-                        array_push($users, $subscription['subscribable_id']);
-                        break;
-                    case 'App\Group':
-                        $ids = Group::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
-                        $users = array_merge($users, $ids);
-                        break;
-                    case 'App\Organization':
-                        $ids = Organization::find($subscription['subscribable_id'])->users()->get()->pluck('id')->toArray();
-                        $users = array_merge($users, $ids);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            $users = array_unique($users, SORT_NUMERIC); // duplicates have to be removed, because SQL will return the same entry multiple times
-
-            // get needed user-data through their ID
-            $users = User::select('id', 'firstname', 'lastname')->whereIn('id', $users)->get()->toArray();
+            $users = $this->getUsers($plan);
         }
 
         if (request()->wantsJson()) {
@@ -384,8 +387,11 @@ class PlanController extends Controller
         $users = array_unique($users, SORT_NUMERIC); // remove duplicates
 
         // query for the student role-id => 6
-        $users = User::select('users.id', 'users.firstname', 'users.lastname')->whereIn('users.id', $users)
-            ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')->where('organization_role_users.role_id', 6)
+        $users = User::select('users.id', 'users.firstname', 'users.lastname')
+            ->whereIn('users.id', $users)
+            ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')
+            ->where('organization_role_users.role_id', 6)
+            ->orderBy('users.firstname')
             ->distinct()->get()->toArray();
 
         return $users;

@@ -1,14 +1,17 @@
 <template >
     <div>
         <div class="row">
-            <div id="group-content"
-                 class="col-md-12 m-0">
+            <div
+                id="group-content"
+                class="col-md-12 m-0"
+            >
                 <div class="row">
                     <div class="col-md-12 m-0 pb-2">
                         <button
                             class="pull-right btn"
                             :class="classObject"
-                            @click="setMode()">
+                            @click="setMode()"
+                        >
                             {{ trans('global.select') }}
                         </button>
                     </div>
@@ -19,30 +22,33 @@
                     modelName="Group"
                     url="/groups"
                     :create=true
-                    :createLabel="trans('global.group.create')">
-                </IndexWidget>
-                <IndexWidget
-                    v-for="group in groups"
+                    :label="trans('global.group.create')"
+                />
+                <IndexWidget v-for="group in groups"
                     :key="'groupIndex'+group.id"
                     :model="group"
-                    modelName= "group"
-                    storeTitle= "groups"
-                    url="/groups">
+                    modelName="Group"
+                    storeTitle="groups"
+                    url="/groups"
+                >
                     <template v-slot:icon>
                         <i class="fa fa-layer-group pt-2"></i>
                     </template>
 
-                    <template
+                    <template v-slot:dropdown
                         v-permission="'group_edit, group_delete'"
-                        v-slot:dropdown>
-                        <div class="dropdown-menu dropdown-menu-right"
-                             style="z-index: 1050;"
-                             x-placement="left-start">
+                    >
+                        <div
+                            class="dropdown-menu dropdown-menu-right"
+                            style="z-index: 1050;"
+                            x-placement="left-start"
+                        >
                             <button
                                 v-permission="'group_edit'"
                                 :name="'edit-group-' + group.id"
                                 class="dropdown-item text-secondary"
-                                @click.prevent="editGroup(group)">
+                                @click.prevent="editGroup(group)"
+                            >
                                 <i class="fa fa-pencil-alt mr-2"></i>
                                 {{ trans('global.group.edit') }}
                             </button>
@@ -52,63 +58,65 @@
                                 :id="'delete-group-' + group.id"
                                 type="submit"
                                 class="dropdown-item py-1 text-red"
-                                @click.prevent="confirmItemDelete(group)">
+                                @click.prevent="confirmItemDelete(group)"
+                            >
                                 <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.group.delete') }}
                             </button>
                         </div>
                     </template>
 
-                    <template
-                        v-slot:badges>
+                    <template v-slot:badges>
                         <p class="text-muted small">
-                               <span class="btn btn-info btn-xs select-all pull-right mr-1"
-                                     style="position: absolute;bottom: 0;margin: 5px 40px 8px 0;width: max-content;right: 5px;">
-                               <i class="fa fa-university"></i> {{ group.organization }}
-                           </span>
+                            <span
+                                class="btn btn-info btn-xs position-absolute select-all pull-right mr-1"
+                                style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
+                            >
+                                <i class="fa fa-university"></i>
+                                {{ group.organization }}
+                            </span>
                         </p>
                     </template>
-
                 </IndexWidget>
             </div>
-            <div id="group-datatable-wrapper"
-                 class="w-100 dataTablesWrapper">
+            <div
+                id="group-datatable-wrapper"
+                class="w-100 dataTablesWrapper"
+            >
                 <DataTable
                     id="group-datatable"
                     :columns="columns"
                     :options="options"
-                    :ajax="url"
+                    ajax="/groups/list"
                     :search="search"
                     width="100%"
-                    style="display:none; "
-                ></DataTable>
+                    style="display: none;"
+                />
             </div>
 
             <Teleport to="body">
-                <GroupModal></GroupModal>
+                <GroupModal/>
                 <ConfirmModal
                     :showConfirm="this.showConfirm"
                     :title="trans('global.group.delete')"
                     :description="trans('global.group.delete_helper')"
                     @close="() => {
-                    this.showConfirm = false;
-                }"
+                        this.showConfirm = false;
+                    }"
                     @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
-                ></ConfirmModal>
+                        this.showConfirm = false;
+                        this.destroy();
+                    }"
+                />
             </Teleport>
         </div>
         <div class="row mt-4">
-            <group-options></group-options>
+            <GroupOptions/>
         </div>
     </div>
 
 
 </template>
-
-
 <script>
 import GroupModal from "../group/GroupModal.vue";
 import GroupOptions from "../group/GroupOptions.vue";
@@ -121,36 +129,32 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {
-
-    },
+    props: {},
     data() {
         return {
             component_id: this.$.uid,
             groups: null,
             search: '',
             showConfirm: false,
-            url: '/groups/list',
             errors: {},
             currentGroup: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
-                { title: 'grade', data: 'grade'},
-                { title: 'period', data: 'period', searchable: true},
-                { title: 'organization', data: 'organization', searchable: true},
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'grade', data: 'grade' },
+                { title: 'period', data: 'period', searchable: true },
+                { title: 'organization', data: 'organization', searchable: true },
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
+            dt: null,
         }
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         const store = useDatatableStore();
         return {
             store,
-            globalStore
+            globalStore,
         }
     },
     mounted() {
@@ -159,43 +163,39 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('group-added', (group) => {
-            this.globalStore?.closeModal('group-modal');
             this.groups.push(group);
         });
 
-        this.$eventHub.on('group-updated', (group) => {
-            this.globalStore?.closeModal('group-modal');
-            this.update(group);
+        this.$eventHub.on('group-updated', (updatedGroup) => {
+            let group = this.groups.find(g => g.id === updatedGroup.id);
+
+            Object.assign(group, updatedGroup);
         });
-        this.$eventHub.on('createGroup', () => {
-            this.globalStore?.showModal('group-modal', {});
+
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
         });
     },
     methods: {
-        setMode(){
-            this.store.addToDatatables(
-                {
-                    'datatable': 'groups',
-                    'select': (this.store.getDatatable('groups')?.select) ? false : true,
-                    'selectedItems': []
-                }
-            )
+        setMode() {
+            this.store.addToDatatables({
+                datatable: 'groups',
+                select: (this.store.getDatatable('groups')?.select) ? false : true,
+                selectedItems: [],
+            });
         },
-        editGroup(group){
+        editGroup(group) {
             this.globalStore?.showModal('group-modal', group);
         },
-        loaderEvent(){
-            const dt = $('#group-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.groups = dt.rows({page: 'current'}).data().toArray();
+        loaderEvent() {
+            this.dt = $('#group-datatable').DataTable();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.groups = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#group-content').insertBefore('#group-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
-            });
         },
-        confirmItemDelete(group){
+        confirmItemDelete(group) {
             this.currentGroup = group;
             this.showConfirm = true;
         },
@@ -209,15 +209,6 @@ export default {
                     console.log(err.response);
                 });
         },
-        update(group) {
-            const index = this.groups.findIndex(
-                vc => vc.id === group.id
-            );
-
-            for (const [key, value] of Object.entries(group)) {
-                this.groups[index][key] = value;
-            }
-        }
     },
     computed: {
         classObject() {
@@ -226,14 +217,14 @@ export default {
             } else {
                 return 'btn-light'
             }
-        }
+        },
     },
     components: {
         ConfirmModal,
         DataTable,
         GroupModal,
         GroupOptions,
-        IndexWidget
+        IndexWidget,
     },
 }
 </script>

@@ -40,7 +40,7 @@
                     :value="item[this.option_id]"
                     :data-icon="this.option_icon"
                 >
-                    <span>{{ item[this.option_label] }}</span>
+                    {{ item[this.option_label] }}
                 </option>
             </select>
         </div>
@@ -180,9 +180,9 @@ export default {
                 e.params.originalEvent.stopPropagation();
             }.bind(this))
             .on("select2:open", function(e) {
-                if (!this.multiple) {
-                    this.componentInstance.val(null).trigger('change'); //reset selection, only if not multiple = true
-                }
+                // if (!this.multiple) {
+                //     this.componentInstance.val(null).trigger('change'); //reset selection, only if not multiple = true
+                // }
             }.bind(this));
                 // .val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
 

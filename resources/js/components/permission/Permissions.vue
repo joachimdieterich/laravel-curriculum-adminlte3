@@ -1,36 +1,42 @@
+
 <template >
     <div class="row">
-        <div id="permission-content"
-             class="col-md-12 m-0">
+        <div
+            id="permission-content"
+            class="col-md-12 m-0"
+        >
             <IndexWidget
                 v-permission="'permission_create'"
                 key="'permissionCreate'"
                 modelName="Permission"
                 url="/permissions"
                 :create=true
-                :createLabel="trans('global.permission.create')">
-            </IndexWidget>
-            <IndexWidget
-                v-for="permission in permissions"
+                :label="trans('global.permission.create')"
+            />
+            <IndexWidget v-for="permission in permissions"
                 :key="'permissionIndex'+permission.id"
                 :model="permission"
-                modelName= "permission"
-                url="/permissions">
+                modelName="Permission"
+                url="/permissions"
+            >
                 <template v-slot:icon>
                     <i class="fas fa-unlock-alt pt-2"></i>
                 </template>
 
-                <template
+                <template v-slot:dropdown
                     v-permission="'permission_edit, permission_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
                         <button
                             v-permission="'permission_edit'"
                             :name="'edit-permission-' + permission.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editPermission(permission)">
+                            @click.prevent="editPermission(permission)"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.permission.edit') }}
                         </button>
@@ -40,7 +46,8 @@
                             :id="'delete-permission-' + permission.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(permission)">
+                            @click.prevent="confirmItemDelete(permission)"
+                        >
                             <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.permission.delete') }}
                         </button>
@@ -48,21 +55,23 @@
                 </template>
             </IndexWidget>
         </div>
-        <div id="permission-datatable-wrapper"
-             class="w-100 dataTablesWrapper">
+        <div
+            id="permission-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
             <DataTable
                 id="permission-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
+                ajax="permissions/list"
                 :search="search"
                 width="100%"
-                style="display:none; "
-            ></DataTable>
+                style="display: none;"
+            />
         </div>
 
         <Teleport to="body">
-            <PermissionModal></PermissionModal>
+            <PermissionModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.permission.delete')"
@@ -78,7 +87,6 @@
         </Teleport>
     </div>
 </template>
-
 <script>
 import PermissionModal from "../permission/PermissionModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -90,7 +98,7 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {},
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -102,16 +110,14 @@ export default {
             permissions: null,
             search: '',
             showConfirm: false,
-            url: '/permissions/list',
             errors: {},
             currentPermission: {},
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
+                { title: 'title', data: 'title', searchable: true },
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
         }
     },
     mounted() {
@@ -128,15 +134,12 @@ export default {
             this.globalStore?.closeModal('permission-modal');
             this.update(permission);
         });
-        this.$eventHub.on('createPermission', () => {
-            this.globalStore?.showModal('permission-modal', {});
-        });
     },
     methods: {
-        editPermission(permission){
+        editPermission(permission) {
             this.globalStore?.showModal('permission-modal', permission);
         },
-        loaderEvent(){
+        loaderEvent() {
             const dt = $('#permission-datatable').DataTable();
             dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
                 this.permissions = dt.rows({page: 'current'}).data().toArray();
@@ -147,7 +150,7 @@ export default {
                 dt.search(filter).draw();
             });
         },
-        confirmItemDelete(permission){
+        confirmItemDelete(permission) {
             this.currentPermission = permission;
             this.showConfirm = true;
         },
@@ -161,21 +164,17 @@ export default {
                     console.log(err.response);
                 });
         },
-        update(permission) {
-            const index = this.permissions.findIndex(
-                vc => vc.id === permission.id
-            );
+        update(updatedPermission) {
+            let permission = this.permissions.find(p => p.id === updatedPermission.id);
 
-            for (const [key, value] of Object.entries(permission)) {
-                this.permissions[index][key] = value;
-            }
+            Object.assign(permission, updatedPermission);
         }
     },
     components: {
         ConfirmModal,
         DataTable,
         PermissionModal,
-        IndexWidget
+        IndexWidget,
     },
 }
 </script>

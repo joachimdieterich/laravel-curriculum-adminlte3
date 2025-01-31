@@ -1,6 +1,6 @@
 <template>
     <div class="card mb-0">
-        <div v-for="terminal in subscriptions"
+        <div v-for="terminal in terminal_objectives"
             class="card-body border-bottom"
         >
             <div class="row">
@@ -25,6 +25,8 @@
                         <EnablingObjectives
                             :terminalobjective="terminal"
                             :objectives="terminal.enabling_objectives"
+                            :referenceable_id="referenceable_id"
+                            :referenceable_type="referenceable_type"
                             :settings="settings"
                             :editable="editable"
                         />
@@ -72,7 +74,7 @@ export default {
                 edit : false,
                 achievements : true,
             },
-            subscriptions: [],
+            terminal_objectives: [],
             enablingCall: null,
             terminalCall: null,
             errors: {},
@@ -110,8 +112,8 @@ export default {
          * combine enablingObjectives into their terminalObjective
          */
         checkSubscriptions() {
-            let subscriptions = [...this.terminalCall];
-            const map = subscriptions.map(sub => sub.id)
+            let terminal_objectives = [...this.terminalCall];
+            const map = terminal_objectives.map(sub => sub.id)
 
             this.enablingCall.forEach(terminal => {
                 // delete the enablingSubscription, if the terminalObjective is already subscribed
@@ -122,12 +124,12 @@ export default {
                         subscribable_type: this.referenceable_type,
                     });
                 } else {
-                    terminal.enabling_subscriptions = true; // to identify enabling-subscriptions for deletion
-                    subscriptions.push(terminal);
+                    terminal.enabling_subscriptions = true; // to identify enabling-terminal_objectives for deletion
+                    terminal_objectives.push(terminal);
                 }
             });
 
-            Object.assign(this.subscriptions, subscriptions);
+            Object.assign(this.terminal_objectives, terminal_objectives);
         },
         openModal() {
             this.globalStore.showModal('subscribe-objective-modal', {
@@ -145,19 +147,47 @@ export default {
                 enabling_objective_id: subscription.enabling_objectives.map(e => e.id),
             })
             .then((res) => {
-                this.subscriptions.splice(this.subscriptions.findIndex(sub => sub.id === subscription.id), 1);
+                this.terminal_objectives.splice(this.terminal_objectives.findIndex(sub => sub.id === subscription.id), 1);
             })
             .catch((error) => {
                 console.log(error);
             });
         },
+        handleAchievementsEvent(data) {
+            let achievements;
 
+            for (let i = 0; i < this.terminal_objectives.length; i++) {
+                const enabling = this.terminal_objectives[i].enabling_objectives.find(e => e.id === data.objective_id);
+
+                if (enabling !== undefined) {
+                    achievements = enabling.achievements;
+                    break;
+                }
+            }
+
+            data.achievements.forEach(newAchievement => {
+                const old = achievements.find(a => a.id === newAchievement.id);
+
+                if (old === undefined) {
+                    achievements.push(newAchievement);
+                } else {
+                    Object.assign(old, newAchievement);
+                }
+            });
+        },
     },
     mounted() {
         this.loaderEvent();
+
         this.$eventHub.on('subscriptions-added', data => {
             if (data.id === this.referenceable_id) {
-                this.subscriptions.push(data.terminal_objectives);
+                this.terminal_objectives.push(data.terminal_objectives);
+            }
+        });
+
+        this.$eventHub.on('achievements-set', data => {
+            if (this.referenceable_id === data.referenceable_id && this.referenceable_type == data.referenceable_type) {
+                this.handleAchievementsEvent(data);
             }
         });
     },

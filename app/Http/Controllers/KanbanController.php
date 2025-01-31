@@ -235,7 +235,7 @@ class KanbanController extends Controller
         $input = $this->validateRequest();
         $kanban->update([
             'title' => $input['title'] ?? $kanban->title ,
-            'description' => $input['description'] ?? $kanban->title,
+            'description' => $input['description'] ?? $kanban->description,
             'color' => $input['color'] ?? $kanban->color,
             'medium_id' => $input['medium_id'],// ?? $kanban->medium_id, -> to get medium unsubscribe working
             'commentable' => $input['commentable'],
@@ -247,7 +247,7 @@ class KanbanController extends Controller
 
         if (request()->wantsJson())
         {
-            return ['kanban' => $kanban]; // not used yed
+            return $kanban;
         }
         else
         {

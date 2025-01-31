@@ -91,7 +91,9 @@ class VideoconferenceSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => $videoconference->subscriptions()->with('subscribable')->get()];
+            return $videoconference->subscriptions()
+                ->with(['subscribable', 'videoconference'])
+                ->first();
         }
     }
 
@@ -129,6 +131,22 @@ class VideoconferenceSubscriptionController extends Controller
 
         if (request()->wantsJson()) {
             return ['message' => $videoconferenceSubscription->delete()];
+        }
+    }
+
+    public function expel(Request $request) {
+        $input = $this->validateRequest();
+        $vc = Videoconference::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('videoconference_delete') and $vc->isAccessible()), 403);
+
+        $subscription = VideoconferenceSubscription::where([
+            'videoconference_id' => $vc->id,
+            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_type' => $input['subscribable_type'],
+        ]);
+
+        if ($subscription->delete()) {
+            return trans('global.expel_success');
         }
     }
 

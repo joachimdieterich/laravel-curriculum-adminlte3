@@ -11,16 +11,15 @@
                     </div>
                     <div
                         v-permission="'organization_edit'"
-                        class="card-tools pr-2">
-                        <a  @click="editRole(this.currentRole)">
+                        class="card-tools pr-2"
+                    >
+                        <a @click="editRole(this.currentRole)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
                 </div>
 
-                <div class="card-body">
-
-                </div>
+                <div class="card-body"></div>
 
                 <div class="card-footer">
                     <small class="float-right">
@@ -37,14 +36,14 @@
                         {{ trans('global.permission.title') }}
                     </div>
                 </div>
-                <div class="card-body"
-                     style="position:relative;">
+                <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane active show">
                             <div class="row">
                                 <div v-for="permission in role.permissions "
-                                     class="col-3">
-                                    <ul class=" btn btn-block btn-secondary btn-xs">
+                                    class="col-3"
+                                >
+                                    <ul class="btn btn-block btn-secondary btn-xs">
                                         {{ permission.title }}
                                     </ul>
                                 </div>
@@ -56,28 +55,26 @@
         </div>
 
         <Teleport to="body">
-            <RoleModal></RoleModal>
+            <RoleModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import RoleModal from "../role/RoleModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "role",
-    components:{
-        RoleModal
+    components: {
+        RoleModal,
     },
     props: {
         role: {
-            default: null
+            default: null,
         },
     },
-    setup () { //use database store
+    setup() { //use database store
         const globalStore = useGlobalStore();
-
         return {
             globalStore,
         }
@@ -93,7 +90,6 @@ export default {
 
         this.$eventHub.on('role-updated', (role) => {
             this.currentRole = role;
-            this.globalStore?.closeModal('role-modal');
             window.location.reload(); //reloaad to get permissions
         });
     },

@@ -2,6 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -24,15 +25,13 @@
                     </div>
                 </div>
 
-                <div class="modal-body p-0">
-                    <div class="card mb-0">
+                <div class="modal-body">
+                    <div class="card">
                         <div
                             class="card-header border-bottom"
                             data-card-widget="collapse"
                         >
-                            <h5 class="card-title">
-                                {{ trans('global.general') }}
-                            </h5>
+                            <h5 class="card-title">{{ trans('global.general') }}</h5>
                         </div>
                         <div class="card-body pb-0">
                             <div class="form-group">
@@ -44,9 +43,9 @@
                                     url="/planTypes"
                                     style="width: 100%;"
                                     :placeholder="trans('global.pleaseSelect')"
-                                    :readOnly="(method == 'patch')"
+                                    :readOnly="true || (method == 'patch')"
                                     @selectedValue="(id) => this.form.type_id = id"
-                                ></Select2>
+                                />
                                 <p v-if="errors.type_id == true"
                                     class="error-block"
                                     style="margin-top: -0.75rem;"
@@ -55,27 +54,12 @@
                                 </p>
                             </div>
 
-                            <div class="form-group input-group align-items-center">
-                                <v-swatches
-                                    :swatch-size="49"
-                                    :trigger-style="{}"
-                                    popover-to="right"
-                                    style="height:42px"
-                                    v-model="form.color"
-                                    show-fallback
-                                    fallback-input-type="color"
-                                    @input="(id) => {
-                                        if (id.isInteger) {
-                                            this.form.color = id;
-                                        }
-                                    }"
-                                    :max-height="300"
-                                ></v-swatches>
+                            <div class="form-group">
                                 <input
                                     type="text"
                                     id="title"
                                     name="title"
-                                    class="form-control ml-3"
+                                    class="form-control"
                                     v-model.trim="form.title"
                                     :placeholder="trans('global.title') + ' *'"
                                     required
@@ -89,12 +73,12 @@
                             </div>
 
                             <div class="form-group">
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    class="form-control"
+                                <Editor
+                                    :id="'description' + component_id"
+                                    :name="'description' + component_id"
+                                    :init="tinyMCE"
                                     v-model="form.description"
-                                ></textarea>
+                                />
                             </div>
                             <!-- currently not in use -->
                             <!-- <div class="form-group">
@@ -112,7 +96,8 @@
                                 ></VueDatePicker>
                             </div> -->
 
-                            <div class="form-group">
+                            <!-- currently not in use -->
+                            <!-- <div class="form-group">
                                 <input
                                     type="text"
                                     id="duration"
@@ -124,18 +109,54 @@
                                 <p class="help-block" style="width: 0; min-width: 100%;">
                                     {{ trans('global.plan.fields.duration_helper') }}
                                 </p>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
-                    <div class="card mb-0">
+                    <div class="card">
                         <div
                             class="card-header border-bottom"
                             data-card-widget="collapse"
                         >
-                            <h5 class="card-title">
-                                {{ trans('global.permissions') }}
-                            </h5>
+                            <h5 class="card-title">{{ trans('global.display') }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <v-swatches
+                                    :swatch-size="49"
+                                    :trigger-style="{}"
+                                    style="height: 42px"
+                                    popover-to="right"
+                                    v-model="form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                    @input="(id) => {
+                                        if (id.isInteger) {
+                                            this.form.color = id;
+                                        }
+                                    }"
+                                    :max-height="300"
+                                />
+                                <MediumForm v-if="form.id"
+                                    class="ml-auto"
+                                    :id="'medium_id_' + component_id"
+                                    :medium_id="form.medium_id"
+                                    accept="image/*"
+                                    :selected="this.form.medium_id"
+                                    @selectedValue="(id) => {
+                                        this.form.medium_id = id;
+                                    }"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <h5 class="card-title">{{ trans('global.permissions') }}</h5>
                         </div>
                         <div class="card-body">
                             <span class="custom-control custom-switch custom-switch-on-green">
@@ -169,7 +190,7 @@
                         <button
                             id="plan-save"
                             class="btn btn-primary ml-3"
-                            @click="submit(method)"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -182,6 +203,8 @@
 <script>
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
+import Editor from '@tinymce/tinymce-vue';
+import MediumForm from "../media/MediumForm.vue";
 import {useGlobalStore} from "../../store/global";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
@@ -209,7 +232,8 @@ export default {
                 begin: '',
                 end: '',
                 duration: '',
-                color:'#27AF60',
+                color: '#27AF60',
+                medium_id: null,
                 allow_copy: true,
             }),
             errors: { // required fields need to be initialised
@@ -219,10 +243,21 @@ export default {
                 end: false,
             },
             search: '',
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink link lists table code autoresize"
+                ],
+                {
+                    'callback': 'insertContent',
+                    'callbackId': this.component_id
+                },
+                "bold underline italic | alignleft aligncenter alignright | table",
+                "bullist numlist outdent indent | mathjax link code curriculummedia",
+            ),
         }
     },
     methods: {
-        submit(method) {
+        submit() {
             if (!this.checkRequired()) {
                 return;
             }
@@ -233,7 +268,7 @@ export default {
             //     this.form.end = this.form.date[1].toISOString().slice(0, 10);
             // }
 
-            if (method == 'patch') {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();
@@ -306,6 +341,8 @@ export default {
     components: {
         VueDatePicker,
         Select2,
+        Editor,
+        MediumForm,
     },
 }
 </script>

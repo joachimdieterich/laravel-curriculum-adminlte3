@@ -12,7 +12,7 @@
                     <div
                         v-permission="'organization_type_edit'"
                         class="card-tools pr-2">
-                        <a  @click="editOrganizationType(organizationType)">
+                        <a @click="editOrganizationType()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
@@ -47,24 +47,23 @@
         </div>
 
         <Teleport to="body">
-            <OrganizationTypeModal></OrganizationTypeModal>
+            <OrganizationTypeModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import OrganizationTypeModal from "../organizationType/OrganizationTypeModal.vue";
 import {useGlobalStore} from "../../store/global";
 
-
 export default {
     name: "OrganizationType",
     components:{
-        OrganizationTypeModal
+        OrganizationTypeModal,
     },
     props: {
         organizationType: {
-            default: null
+            type: Object,
+            default: null,
         },
     },
     setup () {
@@ -76,16 +75,13 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            currentOrganizationType: {},
         }
     },
     mounted() {},
     methods: {
-        editOrganizationType(organizationType){
-            this.currentOrganizationType = organizationType;
-            this.globalStore?.showModal('organization-type-modal', this.currentOrganizationType);
+        editOrganizationType() {
+            this.globalStore?.showModal('organizationtype-modal', this.organizationType);
         },
-    }
-
+    },
 }
 </script>

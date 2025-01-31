@@ -27,7 +27,7 @@
                         {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
+                <li v-permission="'curriculum_create'"
                     class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'owner' ? 'active' : ''"
@@ -52,7 +52,7 @@
                         {{ trans('global.shared_with_me') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
+                <li v-permission="'curriculum_create'"
                     class="nav-item">
                     <a class="nav-link"
                        :class="filter === 'shared_by_me' ? 'active' : ''"
@@ -76,7 +76,7 @@
                 modelName="Meeting"
                 url="/meetings"
                 :create=true
-                :createLabel="trans('global.meeting.' + create_label_field)">
+                :label="trans('global.meeting.' + create_label_field)">
                 <template v-slot:itemIcon>
                     <i v-if="create_label_field == 'enrol'"
                        class="fa fa-2x fa-link text-muted"
@@ -87,7 +87,7 @@
                 v-for="meeting in meetings"
                 :key="'meetingIndex'+meeting.id"
                 :model="meeting"
-                modelName= "meeting"
+                modelName="Meeting"
                 url="/meetings">
                 <template v-slot:icon>
                     <i class="fa fa-meeting-location-dot pt-2"></i>

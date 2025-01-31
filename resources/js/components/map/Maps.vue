@@ -1,99 +1,120 @@
 <template >
     <div class="row">
         <div class="col-md-12 ">
-            <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
-                class="nav nav-pills py-2" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link "
-                       :class="filter === 'all' ? 'active' : ''"
-                       id="curriculum-filter-all"
-                       @click="setFilter('all')"
-                       data-toggle="pill"
-                       role="tab"
+            <ul
+                class="nav nav-pills py-2"
+                role="tablist"
+            >
+                <li class="nav-item pointer">
+                    <a
+                        id="curriculum-filter-all"
+                        class="nav-link"
+                        :class="filter === 'all' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('all')"
                     >
-                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
+                        <i class="fas fa-map-location-dot pr-2"></i>
+                        {{ trans('global.all') }} {{ trans('global.map.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link"
-                       :class="filter === 'by_organization' ? 'active' : ''"
-                       id="custom-filter-by-organization"
-                       @click="setFilter('by_organization')"
-                       data-toggle="pill"
-                       role="tab"
+                <li class="nav-item pointer">
+                    <a
+                        id="custom-filter-by-organization"
+                        class="nav-link"
+                        :class="filter === 'by_organization' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('by_organization')"
                     >
-                        <i class="fas fa-university pr-2"></i>{{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
+                        <i class="fas fa-university pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
-                    class="nav-item">
-                    <a class="nav-link"
-                       :class="filter === 'owner' ? 'active' : ''"
-                       id="custom-filter-owner"
-                       @click="setFilter('owner')"
-                       data-toggle="pill"
-                       role="tab"
+                <li
+                    v-permission="'map_create'"
+                    class="nav-item pointer"
+                >
+                    <a
+                        id="custom-filter-owner"
+                        class="nav-link"
+                        :class="filter === 'owner' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('owner')"
                     >
-                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.curriculum.title') }}
+                        <i class="fa fa-user pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.map.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link"
-                       :class="filter === 'shared_with_me' ? 'active' : ''"
-                       id="custom-filter-shared-with-me"
-                       @click="setFilter('shared_with_me')"
-                       data-toggle="pill"
-                       role="tab"
+                <li class="nav-item pointer">
+                    <a
+                        id="custom-filter-shared-with-me"
+                        class="nav-link"
+                        :class="filter === 'shared_with_me' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('shared_with_me')"
                     >
-                        <i class="fa fa-paper-plane pr-2"></i>{{ trans('global.shared_with_me') }}
+                        <i class="fa fa-paper-plane pr-2"></i>
+                        {{ trans('global.shared_with_me') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
-                    class="nav-item">
-                    <a class="nav-link"
-                       :class="filter === 'shared_by_me' ? 'active' : ''"
-                       id="custom-tabs-shared-by-me"
-                       @click="setFilter('shared_by_me')"
-                       data-toggle="pill"
-                       role="tab"
+                <li
+                    v-permission="'map_create'"
+                    class="nav-item pointer"
+                >
+                    <a
+                        id="custom-tabs-shared-by-me"
+                        class="nav-link"
+                        :class="filter === 'shared_by_me' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('shared_by_me')"
                     >
-                        <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
+                        <i class="fa fa-share-nodes  pr-2"></i>
+                        {{ trans('global.shared_by_me') }}
                     </a>
                 </li>
             </ul>
         </div>
 
-        <div id="map-content"
-             class="col-md-12 m-0">
+        <div
+            id="map-content"
+            class="col-md-12 m-0"
+        >
             <IndexWidget
                 v-permission="'map_create'"
                 key="mapCreate"
                 modelName="Map"
                 url="/maps"
                 :create=true
-                :createLabel="trans('global.map.create')">
-            </IndexWidget>
-            <IndexWidget
-                v-for="map in maps"
-                :key="'mapIndex'+map.id"
+                :label="trans('global.map.create')"
+            />
+            <IndexWidget v-for="map in maps"
+                :key="'mapIndex' + map.id"
                 :model="map"
-                modelName= "map"
-                url="/maps">
+                modelName="Map"
+                url="/maps"
+            >
                 <template v-slot:icon>
                     <i class="fa fa-map-location-dot pt-2"></i>
                 </template>
 
-                <template
+                <template v-slot:dropdown
                     v-permission="'map_edit, map_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
                         <button
                             v-permission="'map_edit'"
                             :name="'edit-map-' + map.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editMap(map)">
+                            @click.prevent="editMap(map)"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.map.edit') }}
                         </button>
@@ -103,7 +124,8 @@
                             :id="'delete-map-' + map.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(map)">
+                            @click.prevent="confirmItemDelete(map)"
+                        >
                             <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.map.delete') }}
                         </button>
@@ -111,8 +133,10 @@
                 </template>
             </IndexWidget>
         </div>
-        <div id="map-datatable-wrapper"
-             class="w-100 dataTablesWrapper">
+        <div
+            id="map-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
             <DataTable
                 id="map-datatable"
                 :columns="columns"
@@ -120,12 +144,12 @@
                 :ajax="url"
                 :search="search"
                 width="100%"
-                style="display:none; "
-            ></DataTable>
+                style="display: none;"
+            />
         </div>
 
         <Teleport to="body">
-            <MapModal></MapModal>
+            <MapModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.map.delete')"
@@ -137,12 +161,10 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
-
 <script>
 import MapModal from "../map/MapModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -153,10 +175,7 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {
-        subscribable_type: '',
-        subscribable_id: '',
-    },
+    props: {},
     setup () {
         const globalStore = useGlobalStore();
         return {
@@ -174,12 +193,12 @@ export default {
             currentMap: {},
             columns: [
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'description', data: 'description', searchable: true },
             ],
             options : this.$dtOptions,
-            modalMode: 'edit',
             filter: 'all',
-            dt: null
+            dt: null,
         }
     },
     mounted() {
@@ -188,45 +207,38 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('map-added', (map) => {
-            this.globalStore?.closeModal('map-modal');
             this.maps.push(map);
         });
 
-        this.$eventHub.on('map-updated', (map) => {
-            this.globalStore?.closeModal('map-modal');
-            this.update(map);
+        this.$eventHub.on('map-updated', (updatedMap) => {
+            let map = this.maps.find(m => m.id === updatedMap.id);
+
+            Object.assign(map, updatedMap);
         });
-        this.$eventHub.on('createMap', () => {
-            this.globalStore?.showModal('map-modal', {});
+
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
         });
     },
     methods: {
-        setFilter(filter){
+        setFilter(filter) {
             this.filter = filter;
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                this.url = '/mapSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
-            } else {
-                this.url = '/maps/list?filter=' + this.filter
-            }
-
+            this.url = '/maps/list?filter=' + this.filter
             this.dt.ajax.url(this.url).load();
         },
-        editMap(map){
+        editMap(map) {
             this.globalStore?.showModal('map-modal', map);
         },
-        loaderEvent(){
+        loaderEvent() {
             this.dt = $('#map-datatable').DataTable();
 
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+            this.dt.on('draw.dt', () => {
                 this.maps = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#map-content').insertBefore('#map-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                this.dt.search(filter).draw();
-            });
         },
-        confirmItemDelete(map){
+        confirmItemDelete(map) {
             this.currentMap = map;
             this.showConfirm = true;
         },
@@ -240,21 +252,12 @@ export default {
                     console.log(err.response);
                 });
         },
-        update(map) {
-            const index = this.maps.findIndex(
-                vc => vc.id === map.id
-            );
-
-            for (const [key, value] of Object.entries(map)) {
-                this.maps[index][key] = value;
-            }
-        }
     },
     components: {
         ConfirmModal,
         DataTable,
         MapModal,
-        IndexWidget
+        IndexWidget,
     },
 }
 </script>

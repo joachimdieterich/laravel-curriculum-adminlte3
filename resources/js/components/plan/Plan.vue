@@ -4,7 +4,7 @@
             <div class="card-header">
                 <div class="card-title">{{ currentPlan.title }}</div>
                 <div v-if="$userId == plan.owner_id"
-                    v-can="'plan_edit'"
+                    v-permission="'plan_edit'"
                     class="card-tools pr-2 no-print"
                 >
                     <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
@@ -44,7 +44,6 @@
             </div>
 
             <div class="col-12">
-                <!--<Calendar></Calendar>-->
                 <PlanEntry v-if="$userId == plan.owner_id"
                     :plan="plan"
                     create="true"
@@ -65,9 +64,8 @@
             <PlanEntryModal :plan="plan"/>
             <SubscribeObjectiveModal/>
             <TrainingModal :plan="plan"/>
-            <SetAchievementsModal
-                :users="users"
-            ></SetAchievementsModal>
+            <SetAchievementsModal :users="users"/>
+            <MediumModal/>
             <SubscribeModal/>
         </Teleport>
         <Teleport v-if="$userId == plan.owner_id"
@@ -98,6 +96,7 @@ import PlanEntryModal from "./PlanEntryModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import TrainingModal from "../training/TrainingModal.vue";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
 
@@ -133,7 +132,7 @@ export default {
         }
     },
     methods: {
-        loaderEvent(){
+        loaderEvent() {
             axios.get('/planEntries?plan_id=' + this.plan.id)
                 .then(response => {
                     if (this.plan.entry_order != null) {
@@ -234,6 +233,7 @@ export default {
         SubscribeObjectiveModal,
         TrainingModal,
         SetAchievementsModal,
+        MediumModal,
         SubscribeModal,
         draggable,
     },

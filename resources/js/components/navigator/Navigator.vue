@@ -34,14 +34,14 @@
                 modelName="NavigatorItem"
                 :url="'/navigators/' + navigator.id "
                 :create=true
-                :createLabel="trans('global.NavigatorItem.create')">
+                :label="trans('global.NavigatorItem.create')">
             </IndexWidget>
             <span v-for="navigatorItem in navigatorItems">
                 <IndexWidget
                     v-if="navigatorItem.position == 'content'"
                     :key="'navigatorItemIndex' + navigatorItem.id"
                     :model="navigatorItem"
-                    modelName= "navigatorItem"
+                    modelName="NavigatorItem"
                     :url="navigatorItem.url"
                 >
                 <template v-slot:icon>

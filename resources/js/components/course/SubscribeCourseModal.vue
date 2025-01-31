@@ -1,27 +1,28 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.course.create') }}
-                    </span>
-                        <span v-if="method === 'patch'">
-                        {{ trans('global.course.edit') }}
-                    </span>
+                        <span>{{ trans('global.course.enrol') }}</span>
                     </h3>
                     <div class="card-tools">
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
                     <Select2
                         id="curricula"
                         name="curricula"
@@ -33,25 +34,26 @@
                         @selectedValue="(id) => {
                             this.form.curriculum_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
                 </div>
                 <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="course-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="course-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                    <span class="pull-right">
+                        <button
+                            id="course-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="course-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -63,9 +65,9 @@ import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
-    name: 'course-modal',
-    components:{
-        Select2
+    name: 'subscribe-course-modal',
+    components: {
+        Select2,
     },
     props: {},
     setup() {
@@ -77,38 +79,29 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            url: '/curricula/enrol',
             form: new Form({
-                'id': '',
-                'group_id': '',
-                'curriculum_id': '',
-                'enrollment_list': {},
+                id: '',
+                curriculum_id: '',
+                enrollment_list: {},
             }),
-            search: '',
+            subscribable_id: null,
         }
     },
     methods: {
-        submit(method) {
-            if (method === 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post(this.url, {
-                'enrollment_list' : {
+        submit() {
+            axios.post('/curricula/enrol', {
+                enrollment_list: {
                     0: {
-                        'group_id' : this.form.group_id,
-                        'curriculum_id': {
-                            0 : this.form.curriculum_id
-                        }
-                    }
-                }
+                        group_id: this.subscribable_id,
+                        curriculum_id: {
+                            0: this.form.curriculum_id,
+                        },
+                    },
+                },
             })
             .then(r => {
                 this.$eventHub.emit('course-added', r.data);
+                this.globalStore.closeModal(this.$options.name);
             })
             .catch(e => {
                 console.log(e.response);
@@ -120,10 +113,10 @@ export default {
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
+                this.subscribable_id = params.subscribable_id;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    this.method = 'post';
                 }
             }
         });

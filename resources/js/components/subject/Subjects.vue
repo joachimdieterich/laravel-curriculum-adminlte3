@@ -1,36 +1,41 @@
 <template >
     <div class="row">
-        <div id="subject-content"
-             class="col-md-12 m-0">
+        <div
+            id="subject-content"
+            class="col-md-12 m-0"
+        >
             <IndexWidget
                 v-permission="'subject_create'"
                 key="'subjectCreate'"
-                modelName="Role"
+                modelName="Subject"
                 url="/subjects"
                 :create=true
-                :createLabel="trans('global.subject.create')">
-            </IndexWidget>
-            <IndexWidget
-                v-for="subject in subjects"
-                :key="'subjectIndex'+subject.id"
+                :label="trans('global.subject.create')"
+            />
+            <IndexWidget v-for="subject in subjects"
+                :key="'subjectIndex' + subject.id"
                 :model="subject"
-                modelName= "subject"
-                url="/subjects">
+                modelName="Subject"
+                url="/subjects"
+            >
                 <template v-slot:icon>
                     <i class="fa fa-swatchbook pt-2"></i>
                 </template>
 
-                <template
+                <template v-slot:dropdown
                     v-permission="'subject_edit, subject_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
                         <button
                             v-permission="'subject_edit'"
                             :name="'edit-subject-' + subject.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editSubject(subject)">
+                            @click.prevent="editSubject(subject)"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.subject.edit') }}
                         </button>
@@ -40,7 +45,8 @@
                             :id="'delete-subject-' + subject.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(subject)">
+                            @click.prevent="confirmItemDelete(subject)"
+                        >
                             <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.subject.delete') }}
                         </button>
@@ -48,8 +54,10 @@
                 </template>
             </IndexWidget>
         </div>
-        <div id="subject-datatable-wrapper"
-             class="w-100 dataTablesWrapper">
+        <div
+            id="subject-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
             <DataTable
                 id="subject-datatable"
                 :columns="columns"
@@ -57,12 +65,12 @@
                 :ajax="url"
                 :search="search"
                 width="100%"
-                style="display:none; "
-            ></DataTable>
+                style="display: none;"
+            />
         </div>
 
         <Teleport to="body">
-            <SubjectModal></SubjectModal>
+            <SubjectModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.subject.delete')"
@@ -74,11 +82,10 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
 <script>
 import SubjectModal from "../subject/SubjectModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -89,7 +96,7 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -110,7 +117,7 @@ export default {
                 { title: 'title_short', data: 'title_short', searchable: true },
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
+            dt: null,
         }
     },
     mounted() {
@@ -119,34 +126,32 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('subject-added', (subject) => {
-            this.globalStore?.closeModal('subject-modal');
             this.subjects.push(subject);
         });
 
-        this.$eventHub.on('subject-updated', (subject) => {
-            this.globalStore?.closeModal('subject-modal');
-            this.update(subject);
+        this.$eventHub.on('subject-updated', (updatedSubject) => {
+            let subject = this.subjects.find(s => s.id === updatedSubject.id);
+
+            Object.assign(subject, updatedSubject);
         });
-        this.$eventHub.on('createSubject', () => {
-            this.globalStore?.showModal('subject-modal', {});
+        
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
         });
     },
     methods: {
-        editSubject(subject){
+        editSubject(subject) {
             this.globalStore?.showModal('subject-modal', subject);
         },
-        loaderEvent(){
-            const dt = $('#subject-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.subjects = dt.rows({page: 'current'}).data().toArray();
+        loaderEvent() {
+            this.dt = $('#subject-datatable').DataTable();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.subjects = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#subject-content').insertBefore('#subject-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
-            });
         },
-        confirmItemDelete(subject){
+        confirmItemDelete(subject) {
             this.currentRole = subject;
             this.showConfirm = true;
         },
@@ -160,21 +165,12 @@ export default {
                     console.log(err.response);
                 });
         },
-        update(subject) {
-            const index = this.subjects.findIndex(
-                vc => vc.id === subject.id
-            );
-
-            for (const [key, value] of Object.entries(subject)) {
-                this.subjects[index][key] = value;
-            }
-        }
     },
     components: {
         ConfirmModal,
         DataTable,
-        SubjectModal    ,
-        IndexWidget
+        SubjectModal,
+        IndexWidget,
     },
 }
 </script>

@@ -7,7 +7,7 @@ require('./bootstrap');
 require('@activix/bootstrap-datetimepicker');
 
 //vue
-import { createApp, reactive } from 'vue';
+import { createApp } from 'vue';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -21,13 +21,13 @@ const app = createApp({});
  *
  * How to add a receiver:
  * created() {
- *     this.$eventHub.$on('reload_agenda', (params) => {
+ *     this.$eventHub.on('reload_agenda', (params) => {
  *         // do something
  *     });
  * },
  *
  * how to add a sender
- * this.$eventHub.$emit('reload_agenda', params);
+ * this.$eventHub.emit('reload_agenda', params);
  * @type {Vue}
  */
 import mitt from 'mitt';
@@ -345,12 +345,12 @@ app.config.globalProperties.$initTinyMCE = function(
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding: false,
-        placeholder: this.trans('global.description'),
+        placeholder: attr?.placeholder ?? this.trans('global.description'),
         plugins: tinyMcePlugins ?? defaultPlugins,
         external_plugins: { mathjax: '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js' },
         menubar: "edit format",
-        toolbar1: customToolbar1 ?? "styleselect | bold underline italic | alignleft aligncenter alignright alignjustify",
-        toolbar2: customToolbar2 ?? "bullist numlist outdent indent | curriculummedia mathjax link image media",
+        toolbar1: customToolbar1 ?? "bold underline italic | alignleft aligncenter alignright alignjustify",
+        toolbar2: customToolbar2 ?? "bullist numlist outdent indent | curriculummedia link",
         extended_valid_elements: extended_valid_elements ?? '',
         default_link_target:"_blank",
         relative_urls: false,
@@ -493,14 +493,14 @@ app.config.globalProperties.$dtOptions = {
  */
 
 app.directive('can', function (el, binding) {
-    if(window.Laravel.permissions.indexOf(binding.value) == -1){
+    if (window.Laravel.permissions.indexOf(binding.value) == -1) {
         el.style.display = 'none';
     }
     return window.Laravel.permissions.indexOf(binding.value) !== -1;
 });
 
 app.directive('hide-if-permission', function (el, binding) {
-    if(window.Laravel.permissions.indexOf(binding.value) !== -1){
+    if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
         el.style.display = 'none';
     }
 });

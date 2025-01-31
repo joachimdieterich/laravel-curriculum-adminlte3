@@ -2,6 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -74,7 +75,7 @@
                         <button
                             id="exercise-save"
                             class="btn btn-primary ml-3"
-                            @click="submit(method)"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -130,8 +131,8 @@ export default {
         }
     },
     methods: {
-        submit(method) {
-            if (method == 'post') {
+        submit() {
+            if (this.method == 'post') {
                 this.add();
             } else {
                 this.update();

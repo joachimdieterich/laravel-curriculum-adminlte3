@@ -1,36 +1,41 @@
 <template >
     <div class="row">
-        <div id="role-content"
-             class="col-md-12 m-0">
+        <div
+            id="role-content"
+            class="col-md-12 m-0"
+        >
             <IndexWidget
                 v-permission="'role_create'"
                 key="'roleCreate'"
                 modelName="Role"
                 url="/roles"
                 :create=true
-                :createLabel="trans('global.role.create')">
-            </IndexWidget>
-            <IndexWidget
-                v-for="role in roles"
-                :key="'roleIndex'+role.id"
+                :label="trans('global.role.create')"
+            />
+            <IndexWidget v-for="role in roles"
+                :key="'roleIndex' + role.id"
                 :model="role"
-                modelName= "role"
-                url="/roles">
+                modelName="Role"
+                url="/roles"
+            >
                 <template v-slot:icon>
                     <i class="fas fa-user-tag pt-2"></i>
                 </template>
 
-                <template
+                <template v-slot:dropdown
                     v-permission="'role_edit, role_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
                         <button
                             v-permission="'role_edit'"
                             :name="'edit-role-' + role.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editRole(role)">
+                            @click.prevent="editRole(role)"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.role.edit') }}
                         </button>
@@ -40,7 +45,8 @@
                             :id="'delete-role-' + role.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(role)">
+                            @click.prevent="confirmItemDelete(role)"
+                        >
                             <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.role.delete') }}
                         </button>
@@ -48,8 +54,10 @@
                 </template>
             </IndexWidget>
         </div>
-        <div id="role-datatable-wrapper"
-             class="w-100 dataTablesWrapper">
+        <div
+            id="role-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
             <DataTable
                 id="role-datatable"
                 :columns="columns"
@@ -57,12 +65,12 @@
                 :ajax="url"
                 :search="search"
                 width="100%"
-                style="display:none; "
-            ></DataTable>
+                style="display: none;"
+            />
         </div>
 
         <Teleport to="body">
-            <RoleModal></RoleModal>
+            <RoleModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.role.delete')"
@@ -74,11 +82,10 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
 <script>
 import RoleModal from "../role/RoleModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -90,7 +97,7 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {},
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -108,11 +115,10 @@ export default {
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
-                { title: 'permissions', data: 'permissions'},
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'permissions', data: 'permissions' },
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
         }
     },
     mounted() {
@@ -121,34 +127,30 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('role-added', (role) => {
-            this.globalStore?.closeModal('role-modal');
             this.roles.push(role);
         });
 
         this.$eventHub.on('role-updated', (role) => {
-            this.globalStore?.closeModal('role-modal');
             this.update(role);
         });
-        this.$eventHub.on('createRole', () => {
-            this.globalStore?.showModal('role-modal', {});
+        
+        this.$eventHub.on('filter', (filter) => {
+            dt.search(filter).draw();
         });
     },
     methods: {
-        editRole(role){
+        editRole(role) {
             this.globalStore?.showModal('role-modal', role);
         },
-        loaderEvent(){
+        loaderEvent() {
             const dt = $('#role-datatable').DataTable();
             dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
                 this.roles = dt.rows({page: 'current'}).data().toArray();
 
                 $('#role-content').insertBefore('#role-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
-            });
         },
-        confirmItemDelete(role){
+        confirmItemDelete(role) {
             this.currentRole = role;
             this.showConfirm = true;
         },
@@ -162,21 +164,17 @@ export default {
                     console.log(err.response);
                 });
         },
-        update(role) {
-            const index = this.roles.findIndex(
-                vc => vc.id === role.id
-            );
+        update(updatedRole) {
+            const role = this.roles.find(r => r.id === updatedRole.id);
 
-            for (const [key, value] of Object.entries(role)) {
-                this.roles[index][key] = value;
-            }
+            Object.assign(role, updatedRole);
         }
     },
     components: {
         ConfirmModal,
         DataTable,
         RoleModal,
-        IndexWidget
+        IndexWidget,
     },
 }
 </script>

@@ -44,26 +44,35 @@
       </li>-->
     @can('message_access')
         <li class="nav-item pr-4">
-            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"
-               onclick="triggerVueMessageLoaderEvent()"
-               aria-label="{{ trans('global.messages') }}">
+            <a
+				href="#"
+				class="nav-link"
+				data-widget="control-sidebar"
+				data-slide="true"
+				aria-label="{{ trans('global.messages') }}"  
+				onclick="triggerVueMessageLoaderEvent()"
+			>
                 <i class="far fa-comments"></i>
-                <span class="badge badge-danger navbar-badge"
-                      style="right:0px">{{--{{ auth()->user()->newThreadsCount() }}--}}</span>
+                <span
+					class="badge badge-danger navbar-badge"
+					style="right: 0px"
+				>{{--{{ auth()->user()->newThreadsCount() }}--}}</span>
             </a>
         </li>
-@endcan
-<!--Notifications Dropdown Menu-->
+	@endcan
+	<!--Notifications Dropdown Menu-->
     <li class="dropdown">
         <span class="user-menu dropdown-toggle" data-toggle="dropdown" role="button">
-          <img class="img-circle color-white"
-               src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
-               alt="User profile picture"
-               style="height: 40px;width: 40px;">
-          <b>{{ auth()->user()->fullName() }}</b>
+          	<img
+				src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
+				alt="User profile picture"
+				class="img-circle color-white"
+				style="height: 40px; width: 40px;"
+			/>
+          	<b class="ml-1">{{ auth()->user()->fullName() }}</b>
         </span>
         <div class="user-menu dropdown-menu bg-lime dropdown-menu-lg dropdown-menu-right">
-            <span class="dropdown-header text-black">{{ optional(Auth::user()->role())->title}}</span>
+            <span class="dropdown-header text-black">{{ optional(Auth::user()->role())->title }}</span>
             <div class="dropdown-divider"></div>
             @can('user_show')
                 <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
@@ -80,13 +89,12 @@
                     <i class="fa fa-cogs fa-fw mr-2 text-white"></i>{{ trans('global.config.title') }}
                 </a>
             @endif
-          <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
-            <i class="fas fa-power-off fa-fw mr-2 text-white"></i>{{ trans('global.logout') }}
-          </a>
+			<a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
+				<i class="fas fa-power-off fa-fw mr-2 text-white"></i>{{ trans('global.logout') }}
+			</a>
         </div>
-      </li>
-
-    </ul>
+	</li>
+</ul>
 @section('scripts')
 @parent
 <script>

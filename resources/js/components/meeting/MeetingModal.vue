@@ -2,6 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -167,9 +168,7 @@
                                 class="card-header border-bottom"
                                 data-card-widget="collapse"
                             >
-                                <h5 class="card-title">
-                                    Darstellung
-                                </h5>
+                                <h5 class="card-title">{{ trans('global.display') }}</h5>
                             </div>
 
                             <div class="card-body pb-0">
@@ -260,8 +259,8 @@
                         <button
                             v-if="this.activetab == 'create_meeting'"
                             id="meeting-save"
-                            class="btn btn-primary"
-                            @click="submit(method)"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
                         >
                             {{ trans('global.save') }}
                         </button>
@@ -329,12 +328,14 @@ export default {
         }
     },
     methods: {
-        submit(method) {
-            if (method == 'patch') {
+        submit() {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post(this.url, this.form)
@@ -346,7 +347,6 @@ export default {
                 });
         },
         update() {
-            console.log('update');
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('meeting-updated', r.data);

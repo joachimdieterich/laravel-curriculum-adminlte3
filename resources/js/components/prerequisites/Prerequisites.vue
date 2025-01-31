@@ -24,7 +24,7 @@
                 <hr class="clearfix">
                 <ul>
                     <li v-for="item in this.prerequisites.children"
-                        v-can="'prerequisite_delete'">
+                        v-permission="'prerequisite_delete'">
                         {{ item.name }}
                         <br>
                         <small>{{ item.description }}</small>

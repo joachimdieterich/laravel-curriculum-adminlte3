@@ -8,7 +8,7 @@
                 modelName="Config"
                 url="/configs"
                 :create=true
-                :createLabel="trans('global.config.create')">
+                :label="trans('global.config.create')">
             </IndexWidget>
 
             <IndexWidget
@@ -17,7 +17,7 @@
                 :key="'configIndex'+config.id"
                 :model="config"
                 titleField="key"
-                modelName= "config"
+                modelName="Config"
                 url="/configs">
                 <template v-slot:icon>
                     <i v-if="config.type_id === 1"

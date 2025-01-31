@@ -168,7 +168,7 @@
                                    class="text-danger pull-right p-1 fa fa-trash pointer"
                                    @click="destroyMessage(message)"></i>
                                 <i v-else-if="hover == message.id"
-                                   v-can="'message_delete'"
+                                   v-permission="'message_delete'"
                                    class="text-danger pull-right p-1 fa fa-trash pointer"
                                    @click="destroyMessage(message)"></i>
                             {{ message.body }}

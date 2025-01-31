@@ -35,7 +35,7 @@ class CurriculumController extends Controller
 
     public function getTerminalObjectives(Curriculum $curriculum){
         if (request()->wantsJson()) {
-            return getEntriesForSelect2ByCollection($curriculum->terminalObjectives());
+            return getEntriesForSelect2ByCollection($curriculum->terminalObjectives);
         }
     }
 
@@ -196,7 +196,7 @@ class CurriculumController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $curriculum;
         }
     }
 
@@ -212,7 +212,12 @@ class CurriculumController extends Controller
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
-        $objectiveTypes = \App\ObjectiveType::all();
+        $objectiveTypes = \App\ObjectiveType::select('objective_types.id', 'objective_types.title', 'objective_types.uuid')
+            ->join('terminal_objectives', 'objective_types.id', '=', 'terminal_objectives.objective_type_id')
+            ->join('curricula', 'curricula.id', '=', 'terminal_objectives.curriculum_id')
+            ->where('curricula.id', $curriculum->id)
+            ->distinct()
+            ->get();
         $levels = \App\Level::all();
 
         $curriculum = Curriculum::with([
@@ -259,20 +264,23 @@ class CurriculumController extends Controller
 
     public function getObjectives(Curriculum $curriculum)
     {
-        $curriculum = Curriculum::with(
-            [
-                'terminalObjectives',
-                'terminalObjectives.achievements',
-                'terminalObjectives.enablingObjectives',
-                'terminalObjectives.enablingObjectives.achievements' => function ($query) {
-                    $query->where('user_id', auth()->user()->id);
+        $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
+            ->where('curriculum_id', $curriculum->id)
+            ->with([
+                'enablingObjectives' => function($query) {
+                    $query->select('id', 'terminal_objective_id', 'title', 'description', 'level_id', 'curriculum_id', 'order_id', 'time_approach', 'uuid', 'visibility')
+                        ->without('terminalObjective')
+                        ->with(['achievements' => function($query) {
+                            $query->select('id', 'status', 'updated_at')
+                                ->where('user_id', auth()->user()->id);
+                        }]);
                 },
             ])
-            ->find($curriculum->id);
-        //todo: only get achievments of defined users
+            ->orderBy('order_id')
+            ->get();
 
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $terminal;
         }
     }
 
@@ -388,7 +396,7 @@ class CurriculumController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $curriculum;
         }
         //return redirect($curriculum->path());
     }
@@ -416,8 +424,11 @@ class CurriculumController extends Controller
             }
         }
 
-        return CurriculumSubscription::where('subscribable_type', "App\Group")
-            ->where('subscribable_id', $enrolment['group_id'])->get();
+        return Curriculum::select('curricula.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
+            ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
+            ->where('subscribable_id', request()->enrollment_list[0]['group_id'])
+            ->where('subscribable_type', "App\Group")
+            ->get();
     }
 
     private function subscribe($curriculum_id, $group_id, $model = "App\Group", $editable = false)
@@ -436,7 +447,7 @@ class CurriculumController extends Controller
     public function references()
     {
         if (request()->wantsJson()) {
-            return ['message' => auth()->user()->currentCurriculaEnrolments()];
+            return getEntriesForSelect2ByCollection(auth()->user()->currentCurriculaEnrolments());
         }
     }
 
@@ -481,49 +492,13 @@ class CurriculumController extends Controller
         //todo: delete media attached to content, descriptions...
         abort_unless(Gate::allows('curriculum_delete'), 403);
 
-        // detach groups
-        CurriculumSubscription::where([
-            'curriculum_id' => $curriculum,
-            'subscribable_type' => "App\Group",
-        ])->delete();
-        //$curriculum->groups()->detach();
-
-        // delete certificates
-        foreach ($curriculum->certificates as $certificate) {
-            (new CertificateController)->destroy($certificate);
-        }
-
-        foreach ($curriculum->enablingObjectives as $ena) {
-            (new EnablingObjectiveController)->destroy($ena);
-        }
-
-        foreach ($curriculum->terminalObjectives as $ter) {
-            (new TerminalObjectiveController)->destroy($ter);
-        }
-
-        //  delete glossar
-        $curriculum->glossar()->delete();
-
         // delete mediaSubscriptions -> media will not be deleted
         $media = $curriculum->media;
-
-        $curriculum->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\Curriculum')
-                ->where('subscribable_id', '=', $curriculum->id)
-                ->delete();
-
-        // delete navigator_items
-        $curriculum->navigator_item()
-                ->where('referenceable_type', '=', 'App\Curriculum')
-                ->where('referenceable_id', '=', $curriculum->id)
-                ->delete();
 
         // delete contents
         foreach ($curriculum->contents as $content) {
             (new ContentController)->destroy($content, 'App\Curriculum', $curriculum->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-
-        $curriculum->subscriptions()->delete();
 
         $return = $curriculum->delete();
 
@@ -534,9 +509,8 @@ class CurriculumController extends Controller
 
         //todo check/delete unrelated references(in references table)
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $return;
         }
-        //   return back();
     }
 
     public function resetOrderIds(Curriculum $curriculum)

@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\DB;
 class TerminalObjectiveController extends Controller
 {
 
-    public function getEnablingObjectives(TerminalObjective $terminalObjective){
+    public function getEnablingObjectives(TerminalObjective $terminalObjective) {
         if (request()->wantsJson()) {
-            return getEntriesForSelect2ByCollection($terminalObjective->enablingObjectives());
+            return getEntriesForSelect2ByCollection($terminalObjective->enablingObjectives, '', 'title', 'order_id');
         }
     }
     /**
@@ -36,8 +36,7 @@ class TerminalObjectiveController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['message' => $terminalObjective];
-            //return ['message' => $terminalObjective->path()];
+            return TerminalObjective::with(['enablingObjectives', 'type'])->find($terminalObjective->id);
         }
     }
 
@@ -138,63 +137,10 @@ class TerminalObjectiveController extends Controller
         $objective_type_id = $terminalObjective->objective_type_id;
         $order_id = $terminalObjective->order_id;
 
-        $terminalObjective->enablingObjectives()->delete();
-
         // delete contents
         foreach ($terminalObjective->contents as $content) {
             (new ContentController)->destroy($content, 'App\TerminalObjective', $terminalObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-
-        //delete all achievements
-        $terminalObjective->achievements()
-                ->where('referenceable_type', '=', 'App\TerminalObjective')
-                ->where('referenceable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete subscriptions
-        $terminalObjective->subscriptions()
-                ->where('terminal_objective_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete mediaSubscriptions -> media will not be deleted
-        $terminalObjective->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\TerminalObjective')
-                ->where('subscribable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete progresses
-        $terminalObjective->progresses()
-                ->where('referenceable_type', '=', 'App\TerminalObjective')
-                ->where('referenceable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete quoteSubscriptions
-        $terminalObjective->quoteSubscriptions()
-                ->where('quotable_type', '=', 'App\TerminalObjective')
-                ->where('quotable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete referenceSubscriptions
-        $terminalObjective->referenceSubscriptions()
-                ->where('referenceable_type', '=', 'App\TerminalObjective')
-                ->where('referenceable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete repositorySubscriptions
-        $terminalObjective->repositorySubscriptions()
-                ->where('subscribable_type', '=', 'App\TerminalObjective')
-                ->where('subscribable_id', '=', $terminalObjective->id)
-                ->delete();
-        // delete prerequisites entries (predecessors)
-        $terminalObjective->predecessors()
-            ->where('successor_type', '=', 'App\TerminalObjective')
-            ->where('successor_id', '=', $terminalObjective->id)
-            ->delete();
-        // delete prerequisites entries (successors)
-        $terminalObjective->successors()
-            ->where('predecessor_type', '=', 'App\TerminalObjective')
-            ->where('predecessor_id', '=', $terminalObjective->id)
-            ->delete();
 
         //delete objective
         $return = $terminalObjective->delete();

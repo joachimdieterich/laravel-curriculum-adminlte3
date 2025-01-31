@@ -1,126 +1,165 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.terminalObjective.create') }}
-                    </span>
-                    <span v-if="method === 'patch'">
-                        {{ trans('global.terminalObjective.edit') }}
-                    </span>
-                </h3>
-                <div class="card-tools">
-                    <button type="button"
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.terminalObjective.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.terminalObjective.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div class="form-group">
-                    <label for="description">
-                        {{ trans('global.terminalObjective.fields.title') }}
-                    </label>
-                    <Editor
-                        id="title"
-                        name="title"
-                        :placeholder="trans('global.terminalObjective.fields.title')"
-                        class="form-control"
-                        :init="tinyMCE"
-                        :initial-value="form.title"
-                    ></Editor>
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="description">
-                        {{ trans('global.map.fields.description') }}
-                    </label>
-                    <Editor
-                        id="description"
-                        name="description"
-                        :placeholder="trans('global.terminalObjective.fields.description')"
-                        class="form-control"
-                        :init="tinyMCE"
-                        :initial-value="form.description"
-                    ></Editor>
-                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.general') }}</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="title">
+                                    {{ trans('global.terminalObjective.fields.title') }} *
+                                </label>
+                                <Editor
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model="form.title"
+                                />
+                            </div>
+            
+                            <div class="form-group">
+                                <label for="description">
+                                    {{ trans('global.map.fields.description') }}
+                                </label>
+                                <Editor
+                                    id="description"
+                                    name="description"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model="form.description"
+                                />
+                            </div>
+            
+                            <Select2
+                                id="objective_type_id"
+                                name="objective_type_id"
+                                url="/objectiveTypes"
+                                model="objectiveType"
+                                :label="trans('global.objectiveType.title_singular') + ' *'"
+                                :selected="form.objective_type_id"
+                                @selectedValue="(id) => {
+                                    this.form.objective_type_id = id[0];
+                                }"
+                            />
 
-                <Select2
-                    id="objective_type_id"
-                    name="objective_type_id"
-                    url="/objectiveTypes"
-                    model="objectiveType"
-                    :selected="this.form.objective_type_id"
-                    @selectedValue="(id) => {
-                        this.form.objective_type_id = id;
-                    }"
-                >
-                </Select2>
+                            <div>
+                                <label for="time_approach">{{ trans('global.terminalObjective.fields.time_approach') }}</label>
+                                <input
+                                    id="time_approach"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.time_approach"
+                                />
+                                <p class="help-block" v-if="form.errors.time_approach" v-text="form.errors.time_approach[0]"></p>
+                            </div>
+                        </div>
+                    </div>
 
-                <v-swatches
-                    :swatch-size="49"
-                    :trigger-style="{}"
-                    popover-to="right"
-                    v-model="this.form.color"
-                    show-fallback
-                    fallback-input-type="color"
-
-                    @input="(id) => {
-                                    if(id.isInteger){
-                                      this.form.color = id;
+                    <div class="card">
+                        <div
+                            class="card-header"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.display') }}</div>
+                        </div>
+                        <div class="card-body">
+                            <v-swatches
+                                :swatch-size="49"
+                                :trigger-style="{}"
+                                popover-to="right"
+                                v-model="form.color"
+                                show-fallback
+                                fallback-input-type="color"
+                                @input="(id) => {
+                                    if (id.isInteger) {
+                                        this.form.color = id;
                                     }
                                 }"
-                    :max-height="300"
-                ></v-swatches>
-                <div class="form-group ">
-                    <label for="time_approach">{{ trans('global.terminalObjective.fields.time_approach') }}</label>
-                    <input
-                        type="text" id="time_approach"
-                        name="title"
-                        class="form-control"
-                        v-model="form.time_approach"
-                    />
-                    <p class="help-block" v-if="form.errors.time_approach" v-text="form.errors.time_approach[0]"></p>
+                                :max-height="300"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            class="card-header"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.permissions') }}</div>
+                        </div>
+                        <div class="card-body">
+                            <div>
+                                <span class="custom-control custom-switch custom-switch-on-green">
+                                    <input
+                                        :id="'visibility_' + form.id"
+                                        type="checkbox"
+                                        class="custom-control-input pt-1"
+                                        v-model="form.visibility"
+                                    >
+                                    <label
+                                        class="custom-control-label text-muted"
+                                        :for="'visibility_' + form.id"
+                                    >
+                                        {{ trans('global.visibility') }}
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group ">
-                    <span class="custom-control custom-switch custom-switch-on-green">
-                        <input  v-model="form.visibility"
-                                type="checkbox"
-                                class="custom-control-input pt-1 "
-                                :id="'visibility_' + form.id">
-                        <label class="custom-control-label text-muted"
-                               :for="'visibility_' + form.id" >
-                            {{ trans('global.visibility') }}
-                        </label>
+
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="terminalObjective-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="terminalObjective-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
                     </span>
                 </div>
             </div>
-
-            <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="terminalObjective-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="terminalObjective-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
-            </div>
         </div>
-    </div>
     </Transition>
 </template>
 <script>
@@ -151,25 +190,25 @@ export default {
             method: 'post',
             url: '/terminalObjectives',
             form: new Form({
-                'id': '',
-                'title': '',
-                'description': '',
-                'color': '#008000',
-                'time_approach': '',
-                'curriculum_id': '',
-                'objective_type_id': 1,
-                'visibility': true,
+                id: '',
+                title: '',
+                description: '',
+                color: '#008000',
+                time_approach: '',
+                curriculum_id: '',
+                objective_type_id: 1,
+                visibility: true,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia table lists"
+                    "autolink link curriculummedia table lists autoresize"
                 ],
                 {
-                    'public': 1,
-                    'subscribeSelected': true,
-                    'subscribable_type': 'App\\\Curriculum',
-                    'subscribable_id': this.form?.curriculum_id,
-                    'callbackId': this.component_id
+                    public: 1,
+                    subscribeSelected: true,
+                    subscribable_type: 'App\\Curriculum',
+                    subscribable_id: this.form?.curriculum_id,
+                    callbackId: this.component_id,
                 }),
         }
     },
@@ -179,29 +218,28 @@ export default {
         }
     },
     methods: {
-        submit(method) {
-            this.form.title = tinyMCE.get('title').getContent();
-            this.form.description = tinyMCE.get('description').getContent();
-            if (method == 'patch') {
+        submit() {
+            if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post(this.url, this.form)
                 .then(r => {
-                    this.$eventHub.emit('terminalObjective-added', r.data);
+                    this.$eventHub.emit('terminal-objective-added', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
         update() {
-            console.log('update');
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
-                    this.$eventHub.emit('terminalObjective-updated', r.data);
+                    this.$eventHub.emit('terminal-objective-updated', r.data);
                 })
                 .catch(e => {
                     console.log(e.response);
@@ -219,19 +257,6 @@ export default {
                     this.form.title = this.$decodeHTMLEntities(this.form.title);
                     this.form.description = this.$decodeHtml(this.form.description);
 
-                    this.tinyMCE = this.$initTinyMCE(
-                    [
-                        "autolink link curriculummedia table lists autoresize"
-                    ],
-                    {
-                        'public': 1,
-                        'subscribeSelected': true,
-                        'subscribable_type': 'App\\\Curriculum',
-                        'subscribable_id': this.form?.curriculum_id,
-                        'callback': 'insertContent',
-                        'callbackId': this.component_id
-                    });
-
                     if (this.form.id !== '') {
                         this.method = 'patch';
                     } else {
@@ -243,4 +268,3 @@ export default {
     },
 }
 </script>
-

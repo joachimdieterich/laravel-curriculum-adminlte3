@@ -1,55 +1,62 @@
 <template >
     <div class="row">
-        <div id="organization-content"
-             class="col-md-12 m-0">
-                <IndexWidget
-                    v-permission="'organization_create'"
-                    key="'organizationCreate'"
-                    modelName="Organization"
-                    url="/organizations"
-                    :create=true
-                    :createLabel="trans('global.organization.create')">
-                </IndexWidget>
-                <IndexWidget
-                    v-for="organization in organizations"
-                    :key="'organizationIndex'+organization.id"
-                    :model="organization"
-                    modelName= "Organization"
-                    url="/organizations">
-                    <template v-slot:icon>
-                        <i class="fa fa-university pt-2"></i>
-                    </template>
-                    <template
-                        v-permission="'organization_edit, organization_delete'"
-                        v-slot:dropdown>
-                        <div class="dropdown-menu dropdown-menu-right"
-                             style="z-index: 1050;"
-                             x-placement="left-start">
-                            <button
-                                v-permission="'organization_edit'"
-                                :name="'edit-organization-' + organization.id"
-                                class="dropdown-item text-secondary"
-                                @click.prevent="editOrganization(organization)">
-                                <i class="fa fa-pencil-alt mr-2"></i>
-                                {{ trans('global.organization.edit') }}
-                            </button>
-                            <hr class="my-1">
-                            <button
-                                v-permission="'organization_delete'"
-                                :id="'delete-organization-' + organization.id"
-                                type="submit"
-                                class="dropdown-item py-1 text-red"
-                                @click.prevent="confirmItemDelete(organization)">
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.organization.delete') }}
-                            </button>
-                        </div>
-                    </template>
-
+        <div
+            id="organization-content"
+            class="col-md-12 m-0"
+        >
+            <IndexWidget
+                v-permission="'organization_create'"
+                key="'organizationCreate'"
+                modelName="Organization"
+                url="/organizations"
+                :create=true
+                :label="trans('global.organization.create')"
+            />
+            <IndexWidget v-for="organization in organizations"
+                :key="'organizationIndex'+organization.id"
+                :model="organization"
+                modelName="Organization"
+                url="/organizations"
+            >
+                <template v-slot:icon>
+                    <i class="fa fa-university pt-2"></i>
+                </template>
+                <template v-slot:dropdown
+                    v-permission="'organization_edit, organization_delete'"
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
+                        <button
+                            v-permission="'organization_edit'"
+                            :name="'edit-organization-' + organization.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="editOrganization(organization)"
+                        >
+                            <i class="fa fa-pencil-alt mr-2"></i>
+                            {{ trans('global.organization.edit') }}
+                        </button>
+                        <hr class="my-1">
+                        <button
+                            v-permission="'organization_delete'"
+                            :id="'delete-organization-' + organization.id"
+                            type="submit"
+                            class="dropdown-item py-1 text-red"
+                            @click.prevent="confirmItemDelete(organization)"
+                        >
+                            <i class="fa fa-trash mr-2"></i>
+                            {{ trans('global.organization.delete') }}
+                        </button>
+                    </div>
+                </template>
             </IndexWidget>
         </div>
-        <div id="organization-datatable-wrapper"
-        class="w-100 dataTablesWrapper">
+        <div
+            id="organization-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
             <DataTable
                 id="organization-datatable"
                 :columns="columns"
@@ -57,12 +64,12 @@
                 :ajax="url"
                 :search="search"
                 width="100%"
-                style="display:none; "
-            ></DataTable>
+                style="display: none;"
+            />
         </div>
 
         <Teleport to="body">
-            <OrganizationModal></OrganizationModal>
+            <OrganizationModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.organization.delete')"
@@ -74,12 +81,10 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
-
 <script>
 import OrganizationModal from "../organization/OrganizationModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -91,7 +96,7 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {},
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -109,13 +114,13 @@ export default {
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
-                { title: 'postcode', data: 'postcode', searchable: true},
-                { title: 'city', data: 'city', searchable: true},
-                { title: 'status', data: 'status', searchable: true},
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'postcode', data: 'postcode', searchable: true },
+                { title: 'city', data: 'city', searchable: true },
+                { title: 'status', data: 'status', searchable: true },
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
+            dt: null,
         }
     },
     mounted() {
@@ -124,35 +129,32 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('organization-added', (organization) => {
-            this.globalStore?.closeModal('organization-modal');
             this.organizations.push(organization);
         });
 
-        this.$eventHub.on('organization-updated', (organization) => {
-            this.globalStore?.closeModal('organization-modal');
-            this.update(organization);
-        });
-        this.$eventHub.on('createOrganization', () => {
-            this.globalStore?.showModal('organization-modal', {});
+        this.$eventHub.on('organization-updated', (updatedOrganization) => {
+            let organization = this.organizations.find(o => o.id === updatedOrganization.id);
+
+            Object.assign(organization, updatedOrganization);
         });
 
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
+        });
     },
     methods: {
-        editOrganization(organization){
+        editOrganization(organization) {
             this.globalStore?.showModal('organization-modal', organization);
         },
-        loaderEvent(){
-            const dt = $('#organization-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.organizations = dt.rows({page: 'current'}).data().toArray();
+        loaderEvent() {
+            this.dt = $('#organization-datatable').DataTable();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.organizations = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#organization-content').insertBefore('#organization-datatable-wrapper');
             });
-            this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
-            });
         },
-        confirmItemDelete(organization){
+        confirmItemDelete(organization) {
             this.showConfirm = true;
             this.currentOrganization = organization;
         },
@@ -166,21 +168,12 @@ export default {
                     console.log(err.response);
                 });
         },
-        update(organization) {
-            const index = this.organizations.findIndex(
-                vc => vc.id === organization.id
-            );
-
-            for (const [key, value] of Object.entries(organization)) {
-                this.organizations[index][key] = value;
-            }
-        }
     },
     components: {
         DataTable,
         OrganizationModal,
         IndexWidget,
-        ConfirmModal
+        ConfirmModal,
     },
 }
 </script>

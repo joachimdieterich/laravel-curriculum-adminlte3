@@ -16,21 +16,21 @@
                 </h3>
 
                 <div class="card-tools">
-                    <button v-can="'medium_edit'"
+                    <button v-permission="'medium_edit'"
                             v-if="edit == true"
                             type="button"
                             class="btn btn-tool text-success"
                             @click="saveMedium()">
                         <i class="fa fa-save"></i>
                     </button>
-                    <button v-can="'medium_edit'"
+                    <button v-permission="'medium_edit'"
                             v-if="edit != true"
                             type="button"
                             class="btn btn-tool"
                             @click="edit_title()">
                         <i class="fa fa-pencil-alt"></i>
                     </button>
-                    <button v-can="'medium_delete'"
+                    <button v-permission="'medium_delete'"
                             type="button"
                             class="btn btn-tool"
                             @click="del()">

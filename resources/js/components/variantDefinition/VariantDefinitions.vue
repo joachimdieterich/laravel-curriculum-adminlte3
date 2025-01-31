@@ -8,13 +8,13 @@
                 modelName="VariantDefinition"
                 url="/variantDefinitions"
                 :create=true
-                :createLabel="trans('global.variantDefinition.create')">
+                :label="trans('global.variantDefinition.create')">
             </IndexWidget>
             <IndexWidget
                 v-for="variantDefinition in variantDefinitions"
                 :key="'variantDefinitionIndex'+variantDefinition.id"
                 :model="variantDefinition"
-                modelName= "VariantDefinition"
+                modelName="VariantDefinition"
                 url="/variantDefinitions">
                 <template v-slot:icon>
                     <i class="fa fa-university pt-2"></i>

@@ -96,9 +96,8 @@ class MapController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return ['map' => $map];
+            return $map;
         }
-
     }
 
     /**
@@ -131,24 +130,24 @@ class MapController extends Controller
         $input = $this->validateRequest();
 
         $map->update([
-            'title' => $input['title'] ?? $map->title,
-            'subtitle'=> $input['subtitle'] ?? $map->subtitle,
-            'description'=> $input['description'] ?? $map->description,
-            'tags'=> $input['tags'] ?? $map->tags,
-            'type_id'=> $input['type_id'] ?? $map->type_id,
-            'category_id'=> $input['category_id'] ?? $map->category_id,
-            'border_url'=> $input['border_url'] ?? $map->border_url,
-            'latitude'=> $input['latitude'] ?? $map->latitude,
-            'longitude'=> $input['longitude'] ?? $map->longitude,
-            'zoom'=> $input['zoom'] ?? $map->zoom,
-            'color'=> $input['color'] ?? $map->color,
-            'owner_id' => auth()->user()->id,
+            'title'         => $input['title'] ?? $map->title,
+            'subtitle'      => $input['subtitle'] ?? $map->subtitle,
+            'description'   => $input['description'],
+            'tags'          => $input['tags'] ?? $map->tags,
+            'type_id'       => $input['type_id'] ?? $map->type_id,
+            'category_id'   => $input['category_id'] ?? $map->category_id,
+            'border_url'    => $input['border_url'] ?? $map->border_url,
+            'latitude'      => $input['latitude'] ?? $map->latitude,
+            'longitude'     => $input['longitude'] ?? $map->longitude,
+            'zoom'          => $input['zoom'] ?? $map->zoom,
+            'color'         => $input['color'] ?? $map->color,
+            'owner_id'      => auth()->user()->id,
         ]);
 
         $map->save();
         if (request()->wantsJson())
         {
-            return ['map' => $map];
+            return $map;
         }
         else {
             return redirect(route('maps.show', ['map' => $map]));
@@ -175,7 +174,7 @@ class MapController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'id' => 'sometimes|integer',
+            'id' => 'sometimes',
             'title' => 'sometimes',
             'subtitle'=> 'sometimes',
             'description'=> 'sometimes',

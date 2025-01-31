@@ -1,10 +1,14 @@
 <template>
     <div class="row">
-        <div v-permission="'logbook_entry_create'"
-             class="col-md-12 pl-3 pt-0 pb-2">
-            <button id="add-logbook-entry"
-                    class="btn btn-success"
-                    @click.prevent="add()">
+        <div
+            v-permission="'logbook_entry_create'"
+            class="col-md-12 pl-3 pt-0 pb-2"
+        >
+            <button
+                id="add-logbook-entry"
+                class="btn btn-success"
+                @click.prevent="openEntryModal()"
+            >
                 {{ trans('global.logbookEntry.create') }}
             </button>
             <button
@@ -24,23 +28,23 @@
             </button>-->
         </div>
 
-        <div class="col-md-12"
-             v-if="showPrintOptions">
+        <div v-if="showPrintOptions"
+            class="col-md-12"
+        >
             <LogbookPrintOptions
                 :logbook="logbook"
-                :period="period">
-            </LogbookPrintOptions>
+                :period="period"
+            />
         </div>
 
         <div class="col-md-12">
-            <LogbookEntry
-                v-for="(entry, index) in entries"
+            <LogbookEntry v-for="(entry, index) in entries"
                 v-bind:key="entry.id"
                 :first="index === 0"
                 :entry="entry"
                 :search="search"
                 :logbook="logbook"
-            ></LogbookEntry>
+            />
         </div>
         <!-- /.col -->
 <!--
@@ -48,28 +52,28 @@
         <lms-modal></lms-modal>
 -->
         <Teleport to="body">
-            <AbsenceModal></AbsenceModal>
-            <ContentModal></ContentModal>
-            <TaskModal></TaskModal>
-            <MediumPreviewModal></MediumPreviewModal>
-            <subscribe-objective-modal></subscribe-objective-modal>
-            <lms-modal></lms-modal>
+            <AbsenceModal/>
+            <ContentModal/>
+            <TaskModal/>
+            <MediumPreviewModal/>
+            <subscribe-objective-modal/>
+            <lms-modal/>
             <MediumModal
                 subscribable_type="App\\Logboook"
                 :subscribable_id="logbook.id"
-            ></MediumModal>
-            <LogbookModal></LogbookModal>
-            <LogbookEntryModal></LogbookEntryModal>
-            <LogbookEntrySubjectModal></LogbookEntrySubjectModal>
-            <SubscribeModal></SubscribeModal>
+            />
+            <LogbookModal/>
+            <LogbookEntryModal/>
+            <LogbookEntrySubjectModal/>
+            <SubscribeModal/>
         </Teleport>
-        <teleport
-            v-if="$userId == logbook.owner_id"
+        <teleport v-if="$userId == logbook.owner_id"
             to="#customTitle"
         >
             <small>{{ logbook.title }}</small>
-            <a class="btn btn-flat"
-               @click="editLogbook(logbook)"
+            <a
+                class="btn btn-flat"
+                @click="editLogbook(logbook)"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
@@ -82,7 +86,6 @@
         </teleport>
     </div>
 </template>
-
 <script>
 import MediumModal from "../media/MediumModal.vue"
 import LogbookModal from "../logbook/LogbookModal.vue";
@@ -101,7 +104,7 @@ import LogbookEntrySubjectModal from "../logbookEntry/LogbookEntrySubjectModal.v
 
 export default {
     name: "Logbook",
-    components:{
+    components: {
         LogbookEntrySubjectModal,
         LogbookEntryModal,
         AbsenceModal,
@@ -114,19 +117,18 @@ export default {
         LogbookEntry,
         MediumModal,
         SubscribeModal,
-        TaskModal
+        TaskModal,
     },
     props: {
         logbook: {
-            default: null
+            default: null,
         },
         period: {
-            default: null
+            default: null,
         },
     },
-    setup () { //use database store
+    setup() {
         const globalStore = useGlobalStore();
-
         return {
             globalStore,
         }
@@ -146,17 +148,13 @@ export default {
 
         this.currentLogbook = this.logbook;
 
+        // entry events
         this.$eventHub.on('logbook-entry-added', (entry) => {
-            this.globalStore?.closeModal('logbook-entry-modal');
             this.entries.push(entry);
         });
 
         this.$eventHub.on('logbook-entry-updated', (updated) => {
-            this.globalStore?.closeModal('logbook-entry-modal');
-
-            const index = this.entries.findIndex(
-                entry => entry.id === updated.id
-            );
+            const index = this.entries.findIndex(entry => entry.id === updated.id);
 
             Object.assign(this.entries[index], updated);
         });
@@ -166,30 +164,22 @@ export default {
             this.entries.splice(index, 1);
         });
 
-        this.$eventHub.on('logbook-updated', (logbook) => {
-            this.globalStore?.closeModal('logbook-modal');
-            this.currentLogbook = logbook;
+        this.$eventHub.on('update-subject-badge', (data) => {
+            let entry = this.entries.find(e => e.id === data.entry_id);
+
+            entry.subject = data.subject;
         });
 
-        this.$eventHub.on('update-subject-badge', (updatedEntry) => {
-            this.globalStore?.closeModal('logbook-entry-subject-modal');
-            const index = this.entries.findIndex(
-                entry => entry.id === updatedEntry.entry_id
-            );
-
-            this.entries[index].subject = {
-                id: updatedEntry.subject_id,
-                title: updatedEntry.title
-            };
-            this.entries[index].subject_id = updatedEntry.subject_id;
+        // logbook events
+        this.$eventHub.on('logbook-updated', (logbook) => {
+            Object.assign(this.currentLogbook, logbook);
         });
     },
     methods: {
-        add() {
-            this.globalStore?.showModal('logbook-entry-modal',
-                {
-                    'logbook_id': this.logbook.id
-                });
+        openEntryModal() {
+            this.globalStore?.showModal('logbook-entry-modal',{
+                logbook_id: this.logbook.id,
+            });
         },
         editLogbook(logbook) {
             this.globalStore?.showModal('logbook-modal', logbook);
@@ -198,17 +188,16 @@ export default {
             this.showPrintOptions = !this.showPrintOptions;
         },
         share() {
-            this.globalStore?.showModal('subscribe-modal',
-                {
-                    'modelId': this.logbook.id,
-                    'modelUrl': 'logbook',
-                    'shareWithUsers': true,
-                    'shareWithGroups': true,
-                    'shareWithOrganizations': true,
-                    'shareWithToken': true,
-                    'canEditCheckbox': true,
-                });
+            this.globalStore?.showModal('subscribe-modal',{
+                modelId: this.logbook.id,
+                modelUrl: 'logbook',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
+            });
         },
-    }
+    },
 }
 </script>

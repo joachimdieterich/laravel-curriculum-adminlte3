@@ -43,7 +43,7 @@ class EnablingObjectiveController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return $enablingObjective;
+            return EnablingObjective::with('achievements')->without('terminalObjective')->find($enablingObjective->id);
         }
     }
 
@@ -85,17 +85,16 @@ class EnablingObjectiveController extends Controller
         abort_unless($enablingObjective->isAccessible(), 403);
 
         $input = $this->validateRequest();
-
-        //first get existing data to later adjust order_id
-        $old_objective = EnablingObjective::find($input['id']);
-
+        
         if ($request->has('order_id')) {
             if (request()->wantsJson()) {
-                return ['message' => $this->toggleOrderId($old_objective,$input['order_id'])];
+                //first get existing data to adjust order_id
+                $old_objective = EnablingObjective::find($input['id']);
+                return $this->toggleOrderId($old_objective, $input['order_id']);
             }
         }
         if (request()->wantsJson()) {
-            return ['message' => $enablingObjective->update([
+            $enablingObjective->update([
                 'title'                 => $input['title'],
                 'description'           => $input['description'],
                 'time_approach'         => $input['time_approach'],
@@ -103,7 +102,8 @@ class EnablingObjectiveController extends Controller
                 'terminal_objective_id' => $input['terminal_objective_id'],
                 'level_id'              => format_select_input($input['level_id']),
                 'visibility'            => $input['visibility']
-            ])];
+            ]);
+            return $enablingObjective->without(['terminalObjective', 'curriculum', 'owner'])->find($enablingObjective->id);
         }
     }
 
@@ -126,51 +126,9 @@ class EnablingObjectiveController extends Controller
         foreach ($enablingObjective->contents as $content) {
             (new ContentController)->destroy($content, 'App\EnablingObjective', $enablingObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-        // delete achievements
-        $enablingObjective->achievements()
-                ->where('referenceable_type', '=', 'App\EnablingObjective')
-                ->where('referenceable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete subscriptions
-        $enablingObjective->subscriptions()
-                ->where('enabling_objective_id', '=', $enablingObjective->id)
-                ->delete();
 
         // delete mediaSubscriptions
         $media = $enablingObjective->media;
-        $enablingObjective->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\EnablingObjective')
-                ->where('subscribable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete quoteSubscriptions/Quotes
-        $enablingObjective->quoteSubscriptions()
-                ->where('quotable_type', '=', 'App\EnablingObjective')
-                ->where('quotable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete referenceSubscriptions
-        $enablingObjective->referenceSubscriptions()
-                ->where('referenceable_type', '=', 'App\EnablingObjective')
-                ->where('referenceable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete repositorySubscriptions
-        $enablingObjective->repositorySubscriptions()
-                ->where('subscribable_type', '=', 'App\EnablingObjective')
-                ->where('subscribable_id', '=', $enablingObjective->id)
-                ->delete();
-        // delete prerequisites entries (predecessors)
-        $enablingObjective->predecessors()
-            ->where('successor_type', '=', 'App\EnablingObjective')
-            ->where('successor_id', '=', $enablingObjective->id)
-            ->delete();
-        // delete prerequisites entries (successors)
-        $enablingObjective->successors()
-            ->where('predecessor_type', '=', 'App\EnablingObjective')
-            ->where('predecessor_id', '=', $enablingObjective->id)
-            ->delete();
 
         //delete objective
         $return = $enablingObjective->delete();
@@ -184,7 +142,7 @@ class EnablingObjectiveController extends Controller
         }
 
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $return;
         }
         //return $return;
     }

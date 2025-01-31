@@ -3,8 +3,13 @@
  * --------------
  */
 
-.card{
+.card {
     border-width: 0;
+
+    > .card-header[data-card-widget="collapse"]:hover {
+        cursor: pointer;
+        background-color: #e9ecef;
+    }
 }
 .box-group {
     .box {

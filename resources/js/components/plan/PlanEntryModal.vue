@@ -1,7 +1,8 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -25,27 +26,12 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="form-group input-group align-items-center">
-                        <v-swatches
-                            :swatch-size="49"
-                            :trigger-style="{}"
-                            popover-to="right"
-                            style="height: 42px;"
-                            v-model="this.form.color"
-                            show-fallback
-                            fallback-input-type="color"
-                            @input="(id) => {
-                                if (id.isInteger) {
-                                    this.form.color = id;
-                                }
-                            }"
-                            :max-height="300"
-                        ></v-swatches>
+                    <div class="form-group">
                         <input
                             id="title"
                             name="title"
                             type="text"
-                            class="form-control ml-3"
+                            class="form-control"
                             v-model.trim="form.title"
                             :placeholder="trans('global.planEntry.fields.title') + ' *'"
                             required
@@ -53,18 +39,54 @@
                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                     </div>
 
-                    <Editor
-                        :id="'description_' + component_id"
-                        :name="'description_' + component_id"
-                        :init="tinyMCE"
-                        v-model="form.description"
-                    />
+                    <div class="form-group">
+                        <Editor
+                            :id="'description_' + component_id"
+                            :name="'description_' + component_id"
+                            :init="tinyMCE"
+                            v-model="form.description"
+                        />
+                    </div>
 
-                    <div class="form-group mt-3 mb-0" style="max-width: 490px;">
-                        <font-awesome-picker
-                            :searchbox="trans('global.select_icon')"
-                            @select-icon="(icon) => this.form.css_icon = 'fa fa-' + icon.className"
-                        ></font-awesome-picker>
+                    <div class="card-header border-bottom">
+                        <h5 class="card-title">{{ trans('global.display') }}</h5>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <v-swatches
+                                :swatch-size="49"
+                                :trigger-style="{}"
+                                popover-to="right"
+                                style="height: 42px;"
+                                v-model="this.form.color"
+                                show-fallback
+                                fallback-input-type="color"
+                                @input="(id) => {
+                                    if (id.isInteger) {
+                                        this.form.color = id;
+                                    }
+                                }"
+                                :max-height="300"
+                            />
+                            <div class="dropdown">
+                                <button
+                                    class="btn btn-default"
+                                    style="width: 42px; padding: 6px 0px;"
+                                    type="button"
+                                    data-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <i :class="form.css_icon + ' pt-2'"></i>
+                                </button>
+                                <font-awesome-picker
+                                    class="dropdown-menu dropdown-menu-right"
+                                    style="min-width: min(385px, 90vw);"
+                                    :searchbox="trans('global.select_icon')"
+                                    @select-icon="(icon) => this.form.css_icon = 'fa fa-' + icon.className"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <!-- <div class="form-group">
@@ -127,7 +149,7 @@ export default {
                 title: '',
                 description: '',
                 plan_id: this.plan.id,
-                color:'#27AF60',
+                color: '#27AF60',
                 css_icon: 'fa fa-calendar-day',
                 order_id: 0,
                 medium_id: null,
@@ -141,7 +163,7 @@ export default {
                     'callbackId': this.component_id
                 },
                 "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code",
+                "bullist numlist outdent indent | mathjax link code curriculummedia",
             ),
         }
     },

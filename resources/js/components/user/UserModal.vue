@@ -1,17 +1,18 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                    <span v-if="method === 'post'">
-                        {{ trans('global.user.create') }}
-                    </span>
-                        <span v-if="method === 'patch'">
-                        {{ trans('global.user.edit') }}
-                    </span>
+                        <span v-if="method === 'post'">
+                            {{ trans('global.user.create') }}
+                        </span>
+                            <span v-if="method === 'patch'">
+                            {{ trans('global.user.edit') }}
+                        </span>
                     </h3>
                     <div class="card-tools">
                         <button type="button"
@@ -21,97 +22,116 @@
                         </button>
                     </div>
                 </div>
-                <div class="modal-body">
-                    <div
-                        class="form-user "
-                        :class="form.errors.username ? 'has-error' : ''"
-                    >
-                        <label for="username">{{ trans('global.user.fields.username') }} *</label>
-                        <input
-                            type="text" id="username"
-                            name="username"
-                            class="form-control"
-                            v-model="form.username"
-                            :placeholder="trans('global.user.fields.username')"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.username" v-text="form.errors.username[0]"></p>
-                    </div>
-                    <div class="form-user "
-                         :class="form.errors.firstname ? 'has-error' : ''"
-                    >
-                        <label for="firstname">{{ trans('global.user.fields.firstname') }} *</label>
-                        <input
-                            type="text" id="firstname"
-                            name="firstname"
-                            class="form-control"
-                            v-model="form.firstname"
-                            :placeholder="trans('global.user.fields.firstname')"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.firstname" v-text="form.errors.firstname[0]"></p>
-                    </div>
-                    <div class="form-user "
-                         :class="form.errors.lastname ? 'has-error' : ''"
-                    >
-                        <label for="lastname">{{ trans('global.user.fields.lastname') }} *</label>
-                        <input
-                            type="text" id="lastname"
-                            name="lastname"
-                            class="form-control"
-                            v-model="form.lastname"
-                            :placeholder="trans('global.user.fields.lastname')"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.lastname" v-text="form.errors.lastname[0]"></p>
-                    </div>
-                    <div class="form-user "
-                         :class="form.errors.email ? 'has-error' : ''"
-                    >
-                        <label for="email">{{ trans('global.user.fields.email') }} *</label>
-                        <input
-                            type="text" id="email"
-                            name="email"
-                            class="form-control"
-                            v-model="form.email"
-                            :placeholder="trans('global.user.fields.email')"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.email" v-text="form.errors.email[0]"></p>
-                    </div>
-                    <div v-if="method == 'post'"
-                        class="form-user "
-                         :class="form.errors.password ? 'has-error' : ''"
-                    >
-                        <label for="email">{{ trans('global.user.fields.password') }} *</label>
-                        <input
-                            type="text" id="password"
-                            name="password"
-                            class="form-control"
-                            v-model="form.password"
-                            :placeholder="trans('global.user.fields.password')"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.password" v-text="form.errors.password[0]"></p>
-                    </div>
 
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.username ? 'has-error' : ''"
+                            >
+                                <label for="username">{{ trans('global.user.fields.username') }} *</label>
+                                <input
+                                    id="username"
+                                    type="text"
+                                    name="username"
+                                    class="form-control"
+                                    v-model="form.username"
+                                    :placeholder="trans('global.user.fields.username')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.username" v-text="form.errors.username[0]"></p>
+                            </div>
+
+                            <div
+                                class="form-group"
+                                :class="form.errors.firstname ? 'has-error' : ''"
+                            >
+                                <label for="firstname">{{ trans('global.user.fields.firstname') }} *</label>
+                                <input
+                                    id="firstname"
+                                    type="text"
+                                    name="firstname"
+                                    class="form-control"
+                                    v-model="form.firstname"
+                                    :placeholder="trans('global.user.fields.firstname')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.firstname" v-text="form.errors.firstname[0]"></p>
+                            </div>
+
+                            <div
+                                class="form-group"
+                                :class="form.errors.lastname ? 'has-error' : ''"
+                            >
+                                <label for="lastname">{{ trans('global.user.fields.lastname') }} *</label>
+                                <input
+                                    id="lastname"
+                                    type="text"
+                                    name="lastname"
+                                    class="form-control"
+                                    v-model="form.lastname"
+                                    :placeholder="trans('global.user.fields.lastname')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.lastname" v-text="form.errors.lastname[0]"></p>
+                            </div>
+
+                            <div
+                                class="form-group"
+                                :class="form.errors.email ? 'has-error' : ''"
+                            >
+                                <label for="email">{{ trans('global.user.fields.email') }} *</label>
+                                <input
+                                    id="email"
+                                    type="text"
+                                    name="email"
+                                    class="form-control"
+                                    v-model="form.email"
+                                    :placeholder="trans('global.user.fields.email')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.email" v-text="form.errors.email[0]"></p>
+                            </div>
+
+                            <div v-if="method == 'post'"
+                                class="form-group"
+                                :class="form.errors.password ? 'has-error' : ''"
+                            >
+                                <label for="email">{{ trans('global.user.fields.password') }} *</label>
+                                <input
+                                    id="password"
+                                    type="text"
+                                    name="password"
+                                    class="form-control"
+                                    v-model="form.password"
+                                    :placeholder="trans('global.user.fields.password')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.password" v-text="form.errors.password[0]"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="user-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="user-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                    <span class="pull-right">
+                        <button
+                            id="user-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="user-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -126,12 +146,11 @@ export default {
     components: {},
     props: {
         params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+            type: Object,
+        },
     },
-    setup() { //use database store
+    setup() {
         const globalStore = useGlobalStore();
-
         return {
             globalStore,
         }
@@ -140,28 +159,28 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/users',
             form: new Form({
-                'id':'',
-                'username': '',
-                'firstname': '',
-                'lastname': '',
-                'email': '',
-                'password': '',
+                id:'',
+                username: '',
+                firstname: '',
+                lastname: '',
+                email: '',
+                password: '',
             }),
-            search: '',
         }
     },
     methods: {
-        submit(method) {
-            if (method === 'patch') {
+        submit() {
+            if (this.method === 'patch') {
                 this.update();
             } else {
                 this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/users', this.form)
                 .then(r => {
                     this.$eventHub.emit('user-added', r.data);
                 })
@@ -170,7 +189,7 @@ export default {
                 });
         },
         update(){
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/users/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('user-updated', r.data);
                 })

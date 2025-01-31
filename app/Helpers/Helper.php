@@ -131,72 +131,67 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
     }
 }
 
+if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
+{
+    function getEntriesForSelect2ByCollectionAlternative($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
+    {
+        $input = request()->validate([
+            'page' => 'sometimes|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+            'selected' => 'sometimes|nullable',
+        ]);
 
-// if (! function_exists('getEntriesForSelect2ByCollection'))
-// {
-//     function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
-//     {
-//         $input = request()->validate([
-//             'page' => 'sometimes|integer',
-//             'term' => 'sometimes|string|max:255|nullable',
-//             'selected' => 'sometimes|nullable',
-//         ]);
+        if (request()->has('selected'))
+        {
+            //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected']));
+        }
+        else
+        {
+            $page = $input['page'];
+            $resultCount = 25;
 
-//         if (request()->has('selected'))
-//         {
-//             //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
-//             return response()->json($collection->whereIn($table . $id, (array)$input['selected']));
-//         }
-//         else
-//         {
-//             $page = $input['page'];
-//             $resultCount = 25;
+            $offset = ($page - 1) * $resultCount;
 
-//             $offset = ($page - 1) * $resultCount;
+            $term = $input['term'];
 
-//             $term = $input['term'];
+            $allEntries = $collection->filter(function($obj) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    // if any match is true, return the entry
+                    if (str_contains($obj[$f], $term)) return true;
+                }
+                return false;
+            });
 
-//             $allEntries = $collection->filter(function($obj) use ($field, $term) {
-//                 foreach ((array)$field as $f) {
-//                     // if any match is true, return the entry
-//                     if (str_contains($obj[$f], $term)) return true;
-//                 }
-//                 return false;
-//             });
+            $count = Count($allEntries);
 
-//             $count = Count($allEntries);
+            $entries = $allEntries
+                ->sortBy($orderby, SORT_NATURAL)
+                ->skip($offset)
+                ->take($resultCount)
+                ->select([$table.$id, $text])
+                ->map(function($entry) use ($table, $id, $text) {
+                    return [
+                        'id' => $entry[$table.$id],
+                        'text' => $entry[$text],
+                    ];
+                })
+                ->values();
 
-//             if (gettype($text) == 'string') $text = (array)$text;
-//             array_unshift($text, $table.$id);
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
 
-//             $entries = $allEntries
-//                 ->sortBy($orderby, SORT_NATURAL)
-//                 ->skip($offset)
-//                 ->take($resultCount)
-//                 ->select($text)
-//                 ->map(function($entry) use ($table, $id, $text) {
-//                     return [
-//                         'id' => $entry[$table.$id],
-//                         'text' => $entry[$text],
-//                     ];
-//                 })
-//                 ->values();
+            $results = array(
+                "results" => $entries,
+                "pagination" => array(
+                    "more" => $morePages
+                )
+            );
 
-//             $endCount = $offset + $resultCount;
-//             $morePages = $count > $endCount;
-
-//             $results = array(
-//                 "results" => $entries,
-//                 "pagination" => array(
-//                     "more" => $morePages
-//                 )
-//             );
-
-//             return response()->json($results);
-//         }
-//     }
-// }
-
+            return response()->json($results);
+        }
+    }
+}
 
 if (! function_exists('format_select_input')) {
 

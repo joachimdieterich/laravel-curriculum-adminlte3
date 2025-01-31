@@ -242,6 +242,7 @@ app.component('logbook-entry-subject-modal', defineAsyncComponent(() => import('
 app.component('reference-objective-modal', defineAsyncComponent(() => import('./components/reference/ReferenceObjectiveModal.vue')));
 
 app.component('maps', defineAsyncComponent(() => import('./components/map/Maps.vue')));
+app.component('media-index', defineAsyncComponent(() => import('./components/media/MediaIndex.vue')));
 app.component('media-renderer', defineAsyncComponent(() => import('./components/media/MediaRenderer.vue')));
 app.component('medium-modal', defineAsyncComponent(() => import('./components/media/MediumModal.vue')));
 app.component('medium-export-modal', defineAsyncComponent(() => import('./components/media/MediumExportModal.vue')));

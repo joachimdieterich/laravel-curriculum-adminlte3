@@ -48,6 +48,11 @@
                     <li class="small">id: {{ $groups->id }}; title: {{ $groups->title }};  period_id: {{ $groups->period_id }};  organization_id: {{ $groups->organization_id }}; </li>
                 @endforeach
                 <br/>
+                currentCurriculaPeriods:
+                @foreach(App\User::find($user->id)->currentPeriods() as $cur_period)
+                    <li class="small">id: {{ $cur_period->id }}; title: {{ $cur_period->title }}; organization_id: {{ $cur_period->organization_id }}; </li>
+                @endforeach
+                <br/>
 
                 organizations:
                 @foreach(App\User::find($user->id)->organizations as $org)

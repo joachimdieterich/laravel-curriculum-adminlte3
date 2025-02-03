@@ -18,51 +18,37 @@ class KanbanSubscriptionController extends Controller
      */
     public function index()
     {
-        $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
-            //used by grous.view
-            $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('kanban_access') and $model->isAccessible()), 403);
-            $kanbans = $model->kanbans;
-
-            return empty($kanbans) ? '' : DataTables::of($kanbans)
-                ->setRowId('id')
-                ->make(true);
-        }
-        else
+        $tokens = null;
+        if (request()->wantsJson())
         {
-            $tokens = null;
-            if (request()->wantsJson())
+            $tokenscodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
+                ->where('sharing_token', "!=", null)
+                ->get();
+
+            foreach ($tokenscodes as $token)
             {
-                $tokenscodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
-                    ->where('sharing_token', "!=", null)
-                    ->get();
-
-                foreach ($tokenscodes as $token)
-                {
-                    $tokens[] = [
-                        "token" => $token,
-                        "qr"    => (new QRCodeHelper())
-                            ->generateQRCodeByString(
-                                env("APP_URL"). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
-                            )
-                    ];
-                }
-
-                return [
-                    'tokens' => $tokens ?? [],
-                    'subscriptions' => optional(
-                            optional(
-                                Kanban::find(request('kanban_id'))
-                            )->subscriptions()
-                        )->with('subscribable')
-                        ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                            if ($type == 'App\\User') {
-                                $q->whereNot('id', env('GUEST_USER'));
-                            }
-                        })->get(),
+                $tokens[] = [
+                    "token" => $token,
+                    "qr"    => (new QRCodeHelper())
+                        ->generateQRCodeByString(
+                            env("APP_URL"). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
+                        )
                 ];
             }
+
+            return [
+                'tokens' => $tokens ?? [],
+                'subscriptions' => optional(
+                        optional(
+                            Kanban::find(request('kanban_id'))
+                        )->subscriptions()
+                    )->with('subscribable')
+                    ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                        if ($type == 'App\\User') {
+                            $q->whereNot('id', env('GUEST_USER'));
+                        }
+                    })->get(),
+            ];
         }
     }
 
@@ -89,13 +75,7 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return KanbanSubscription::with(['subscribable'])
-                ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                    if ($type == 'App\\User') {
-                        $q->whereNot('id', env('GUEST_USER'));
-                    }
-                })
-                ->find($subscribe->id);
+            return $subscribe->with(['subscribable', 'kanban'])->find($subscribe->id);
         }
     }
 

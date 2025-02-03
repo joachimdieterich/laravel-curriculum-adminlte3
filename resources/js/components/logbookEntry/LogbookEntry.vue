@@ -122,7 +122,7 @@
                     </a>
                 </li>
                 <li
-                    v-permission="'reference_access'"
+                    v-permission="'achievement_create_self_assessment'"
                     class="nav-item small"
                 >
                     <a
@@ -230,7 +230,7 @@
                     </div>
 
                     <div
-                        v-permission="'reference_access'"
+                        v-permission="'achievement_create_self_assessment'"
                         :id="'logbook_objectives_' + entry.id"
                         class="tab-pane pb-2"
                     >

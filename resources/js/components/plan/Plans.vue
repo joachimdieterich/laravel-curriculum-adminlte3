@@ -292,12 +292,7 @@ export default {
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            if (this.subscribable) {
-                this.url = '/planSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
-            } else {
-                this.url = '/plans/list?filter=' + this.filter;
-            }
-
+            this.url = '/plans/list?filter=' + this.filter;
             this.dt.ajax.url(this.url).load();
         },
         editPlan(plan) {

@@ -92,7 +92,13 @@
                 :subscribable_id="subscribable_id"
                 :subscribable_type="subscribable_type"
                 :label="trans('global.videoconference.' + create_label_field)"
-            />
+            >
+                <template v-slot:itemIcon>
+                    <i v-if="create_label_field == 'enrol'"
+                        class="fa fa-2x fa-link text-muted"
+                    ></i>
+                </template>
+            </IndexWidget>
             <IndexWidget v-for="videoconference in videoconferences"
                 :key="'videoconferenceIndex' + videoconference.id"
                 :model="videoconference"
@@ -274,12 +280,7 @@ export default {
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined') {
-                this.url = '/videoconferenceSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
-            } else {
-                this.url = '/videoconferences/list?filter=' + this.filter;
-            }
-
+            this.url = '/videoconferences/list?filter=' + this.filter;
             this.dt.ajax.url(this.url).load();
         },
         editVideoconference(videoconference) {

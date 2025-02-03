@@ -769,7 +769,7 @@ class CurriculumController extends Controller
                     }
                 )->orWhere(
                     function ($query) {
-                        $query->where( 'owner_id', auth()->user()->id);
+                        $query->where('owner_id', auth()->user()->id);
                     }
                 )->orWhere(
                     function($query) use ($input)
@@ -792,16 +792,15 @@ class CurriculumController extends Controller
         }
         else
         {
-            return getEntriesForSelect2ByCollection(
-                DB::table('curricula')
+            return getEntriesForSelect2ByCollectionAlternative(
+                Curriculum::select('curricula.id', 'curricula.title')
                     ->distinct()
-                    ->select('curricula.id, curricula.title')
                     ->leftjoin('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
                     ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_subscriptions.subscribable_id')
                     ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
                     ->where('group_user.user_id', auth()->user()->id)
-                    ->orWhere('curricula.owner_id', auth()->user()->id), //user should also see curricula which he/she owns
-                "curricula."
+                    ->orWhere('curricula.owner_id', auth()->user()->id) //user should also see curricula which he/she owns
+                    ->get()
             );
         }
     }

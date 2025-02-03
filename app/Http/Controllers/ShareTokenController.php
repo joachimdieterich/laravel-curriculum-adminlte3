@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\KanbanSubscription;
 use App\VideoconferenceSubscription;
 use App\CurriculumSubscription;
-use App\OrganizationRoleUser;
 use App\User;
 use Carbon\Carbon;
+use App\Helpers\QRCodeHelper;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 
@@ -19,33 +18,35 @@ class ShareTokenController extends Controller
     {
         $input = $this->validateRequest();
         $date = $input['date'];
-        if (! empty($date)) {
+        if (!empty($date)) {
             $date = Carbon::parse($date);
-            //$date = $date->addDays(1); //fix date bug
         }
 
-        // Create random hash token
-        $token = Str::uuid();
-
         $user = User::find(env('GUEST_USER'));
+
+        $subscriptionClass = null;
+        $field_model_id = null;
+        $model_url = null;
 
         switch ($input['model_url'])
         {
             case 'videoconference':
                 $subscriptionClass = new VideoconferenceSubscription();
                 $field_model_id = 'videoconference_id';
+                $model_url = 'videoconferences';
                 break;
             case 'kanban':
                 $subscriptionClass = new KanbanSubscription();
                 $field_model_id = 'kanban_id';
+                $model_url = 'kanbans';
                 break;
             case 'curriculum':
                 $subscriptionClass = new CurriculumSubscription();
                 $field_model_id = 'curriculum_id';
+                $model_url = 'curricula';
                 break;
-
             default:
-            break;
+                abort(422, "Model doesn't accept sharing-tokens");
         }
 
         $subscribe = $subscriptionClass->where(
@@ -58,8 +59,6 @@ class ShareTokenController extends Controller
 
         if (isset($subscribe->sharing_token))
         {
-            $token = $subscribe->sharing_token;
-
             $subscribe = $subscriptionClass->updateOrCreate([
                 $field_model_id => $input['model_id'],
                 'subscribable_type' => "App\User",
@@ -70,12 +69,15 @@ class ShareTokenController extends Controller
                 'title' => $input['title'] ?? false,
                 'editable' => $input['editable'] ?? false,
                 'owner_id' => auth()->user()->id,
-                'sharing_token' => $token,
+                'sharing_token' => $subscribe->sharing_token,
             ]);
             $subscribe->save();
         }
         else
         {
+            // Create random hash token
+            $token = Str::uuid();
+
             $subscribe =  $subscriptionClass->updateOrCreate([
                 $field_model_id => $input['model_id'],
                 'subscribable_type' => "App\User",
@@ -89,7 +91,14 @@ class ShareTokenController extends Controller
             ]);
             $subscribe->save();
         }
-        return response()->json(['url' => '/'.$input['model_url'].'/'.$input['model_id'].'/token?sharing_token='.$token]);
+
+        return [
+            "token" => $subscribe,
+            "qr"    => (new QRCodeHelper())
+                ->generateQRCodeByString(
+                    env("APP_URL") . "/".$model_url."/" . $input['model_id'] . "/token?sharing_token=".$subscribe->sharing_token
+                ),
+        ];
     }
 
     public function auth($token)

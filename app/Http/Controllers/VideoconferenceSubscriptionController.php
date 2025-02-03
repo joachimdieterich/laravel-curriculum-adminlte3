@@ -49,20 +49,17 @@ class VideoconferenceSubscriptionController extends Controller
                     ];
                 }
                 return [
-                    'subscribers' => [
-                        'tokens' => $tokens ?? [],
-                        'subscriptions' => optional(
+                    'tokens' => $tokens ?? [],
+                    'subscriptions' => optional(
                             optional(
                                 Videoconference::find(request('videoconference_id'))
                             )->subscriptions()
                         )->with('subscribable')
-                            ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                                if ($type == 'App\\User') {
-                                    $q->whereNot('id', env('GUEST_USER'));
-                                }
-                            })->get(),
-                        //'subscriptions' => $videoconference->subscriptions()->with('subscribable')->get(),
-                    ],
+                        ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                            if ($type == 'App\\User') {
+                                $q->whereNot('id', env('GUEST_USER'));
+                            }
+                        })->get(),
                 ];
             }
         }
@@ -91,9 +88,13 @@ class VideoconferenceSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return $videoconference->subscriptions()
-                ->with(['subscribable', 'videoconference'])
-                ->first();
+            return VideoconferenceSubscription::with('subscribable')
+                ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                    if ($type == 'App\\User') {
+                        $q->whereNot('id', env('GUEST_USER'));
+                    }
+                })
+                ->find($subscribe->id);
         }
     }
 

@@ -50,19 +50,17 @@ class KanbanSubscriptionController extends Controller
                 }
 
                 return [
-                    'subscribers' => [
-                        'tokens' => $tokens ?? [],
-                        'subscriptions' => optional(
-                                optional(
-                                    Kanban::find(request('kanban_id'))
-                                )->subscriptions()
-                            )->with('subscribable')
-                            ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                                if ($type == 'App\\User') {
-                                    $q->whereNot('id', env('GUEST_USER'));
-                                }
-                            })->get(),
-                    ],
+                    'tokens' => $tokens ?? [],
+                    'subscriptions' => optional(
+                            optional(
+                                Kanban::find(request('kanban_id'))
+                            )->subscriptions()
+                        )->with('subscribable')
+                        ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                            if ($type == 'App\\User') {
+                                $q->whereNot('id', env('GUEST_USER'));
+                            }
+                        })->get(),
                 ];
             }
         }
@@ -91,15 +89,13 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return $kanban->subscriptions()
-                ->with(['subscribable', 'kanban'])
+            return KanbanSubscription::with(['subscribable'])
                 ->whereHasMorph('subscribable', '*', function ($q, $type) {
                     if ($type == 'App\\User') {
                         $q->whereNot('id', env('GUEST_USER'));
                     }
                 })
-                ->first();
-
+                ->find($subscribe->id);
         }
     }
 

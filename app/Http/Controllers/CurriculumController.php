@@ -10,6 +10,7 @@ use App\Medium;
 use App\Organization;
 use App\User;
 use App\VariantDefinition;
+use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -643,12 +644,12 @@ class CurriculumController extends Controller
         $input = $this->validateRequest();
 
         $subscription = CurriculumSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
-        if ($subscription->due_date) {
-            $now = Carbon::now();
-            $due_date = Carbon::parse($subscription->due_date);
-            if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
-            }
+        if (!$subscription?->due_date) abort(403, "Token doesn't exist or isn't valid anymore");
+
+        $now = Carbon::now();
+        $due_date = Carbon::parse($subscription->due_date);
+        if ($due_date < $now) {
+            abort(410, 'Dieser Link ist nicht mehr gültig');
         }
 
         return $this->show($curriculum, false, $input['sharing_token']);

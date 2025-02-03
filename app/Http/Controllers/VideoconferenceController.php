@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Organization;
 use App\User;
-use \App\Http\Controllers\ShareTokenController;
 use App\Videoconference;
 use App\VideoconferenceSubscription;
 use Carbon\Carbon;
@@ -577,12 +576,12 @@ class VideoconferenceController extends Controller
         $input = $this->validateRequest();
 
         $subscription = VideoconferenceSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
-        if ($subscription->due_date) {
-            $now = Carbon::now();
-            $due_date = Carbon::parse($subscription->due_date);
-            if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
-            }
+        if (!$subscription?->due_date) abort(403, "Token doesn't exist or isn't valid anymore");
+
+        $now = Carbon::now();
+        $due_date = Carbon::parse($subscription->due_date);
+        if ($due_date < $now) {
+            abort(410, 'Dieser Link ist nicht mehr gültig');
         }
 
         return $this->show($videoconference, $subscription->editable);

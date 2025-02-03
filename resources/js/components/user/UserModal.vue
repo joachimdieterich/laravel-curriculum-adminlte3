@@ -27,6 +27,21 @@
                     <div class="card">
                         <div class="card-body">
                             <div
+                                v-permission="'is_admin'"
+                                class="form-group"
+                            >
+                                <label for="common_name">{{ trans('global.common_name') }}</label>
+                                <input
+                                    id="common_name"
+                                    type="text"
+                                    name="common_name"
+                                    class="form-control"
+                                    v-model="form.common_name"
+                                    readonly
+                                />
+                            </div>
+
+                            <div
                                 class="form-group"
                                 :class="form.errors.username ? 'has-error' : ''"
                             >
@@ -164,6 +179,7 @@ export default {
                 username: '',
                 firstname: '',
                 lastname: '',
+                common_name: '',
                 email: '',
                 password: '',
             }),

@@ -33,18 +33,17 @@
                         <div class="card-body">
                             <div
                                 v-permission="'is_admin'"
-                                class="form-group "
-                                :class="form.errors.common_name ? 'has-error' : ''"
+                                class="form-group"
                             >
-                                <label for="title">{{ trans('global.group.fields.common_name') }}</label>
+                                <label for="common_name">{{ trans('global.common_name') }}</label>
                                 <input
-                                    type="text" id="common_name"
+                                    id="common_name"
+                                    type="text"
                                     name="common_name"
                                     class="form-control"
                                     v-model="form.common_name"
                                     readonly
                                 />
-                                <p class="help-block" v-if="form.errors.common_name" v-text="form.errors.common_name[0]"></p>
                             </div>
         
                             <div

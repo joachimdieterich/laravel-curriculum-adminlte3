@@ -114,7 +114,7 @@ class LocalMediaAdapter implements MediaInterface
 
         /* check if User has access to model->medium_id*/
         $params = $this->validateRequest();
-        if ($params['model']) {
+        if (isset($params['model'])) {
             $class = 'App\\'.$params['model'];
             $model = (new $class)::where('id',$params['model_id'] )->get()->first();
 

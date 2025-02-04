@@ -156,13 +156,13 @@ export default {
         share() {
             this.globalStore.showModal('subscribe-modal',
                 {
-                    'modelId': this.plan.id,
-                    'modelUrl': 'plan',
-                    'shareWithUsers': true,
-                    'shareWithGroups': true,
-                    'shareWithOrganizations': true,
-                    'shareWithToken': false,
-                    'canEditCheckbox': true,
+                    modelId: this.plan.id,
+                    modelUrl: 'plan',
+                    shareWithUsers: true,
+                    shareWithGroups: true,
+                    shareWithOrganizations: true,
+                    shareWithToken: false,
+                    canEditCheckbox: true,
                 });
         },
         handleEntryAdded(entry) {

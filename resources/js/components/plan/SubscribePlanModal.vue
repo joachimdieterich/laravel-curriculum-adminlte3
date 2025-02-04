@@ -19,21 +19,27 @@
                         </button>
                     </div>
                 </div>
+
                 <div
                     class="modal-body"
                     style="overflow-y: visible;"
                 >
-                    <Select2
-                        id="plans_subscription"
-                        name="plans_subscription"
-                        url="/plans"
-                        model="plan"
-                        :selected="this.form.plan_id"
-                        @selectedValue="(id) => {
-                            this.form.plan_id = id;
-                        }"
-                    />
+                    <div class="card">
+                        <div class="card-body">
+                            <Select2
+                                id="plans_subscription"
+                                name="plans_subscription"
+                                url="/plans"
+                                model="plan"
+                                :selected="this.form.plan_id"
+                                @selectedValue="(id) => {
+                                    this.form.plan_id = id;
+                                }"
+                            />
+                        </div>
+                    </div>
                 </div>
+
                 <div class="card-footer">
                     <span class="pull-right">
                         <button

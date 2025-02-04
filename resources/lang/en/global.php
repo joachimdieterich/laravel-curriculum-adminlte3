@@ -278,6 +278,7 @@ return [
     'permissions' => 'Permissions',
     'user_actions' => 'User actions',
     'time' => 'Time',
+    'valid_from_to' => 'Valid from/to',
     'valid_from' => 'Valid from',
     'valid_to' => 'Valid to',
     'valid' => 'valid',
@@ -1075,6 +1076,7 @@ return [
         'title_singular' => 'Typ',
     ],
     'token' => 'Token',
+    'token_title' => 'Token title',
     'token_copied' => 'Token copied to clipboard!',
     'variantDefinitions' => [
         'title' => 'Variant Definitions',

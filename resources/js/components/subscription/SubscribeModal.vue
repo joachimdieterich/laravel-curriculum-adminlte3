@@ -99,7 +99,7 @@
                                             this.subscribe('App\\User', id[0])
                                         }"
                                     />
-                                    <subscribers v-if="subscribers.subscriptions != undefined"
+                                    <Subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
                                         :subscriptions="subscribers.subscriptions"
                                         :subscribing_model="'App\\User'"
@@ -122,7 +122,7 @@
                                             this.subscribe('App\\Group', id[0])
                                         }"
                                     />
-                                    <subscribers v-if="subscribers.subscriptions != undefined"
+                                    <Subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
                                         :subscriptions="subscribers.subscriptions"
                                         :subscribing_model="'App\\Group'"
@@ -145,7 +145,7 @@
                                             this.subscribe('App\\Organization', id[0])
                                         }"
                                     />
-                                    <subscribers v-if="subscribers.subscriptions != undefined"
+                                    <Subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
                                         :subscriptions="subscribers.subscriptions"
                                         :subscribing_model="'App\\Organization'"
@@ -163,7 +163,8 @@
                                         <input
                                             v-model="nameToken"
                                             class="form-control w-100 mb-2"
-                                            placeholder="Freigabetitel"
+                                            :placeholder="trans('global.token_title') + ' *'"
+                                            required
                                         />
                                     </div>
                                     <VueDatePicker
@@ -173,6 +174,7 @@
                                         locale="de"
                                         :select-text="trans('global.ok')"
                                         :cancel-text="trans('global.close')"
+                                        :placeholder="trans('global.valid_from_to')"
                                     />
                                     <small>{{ canEditLabel }}</small>
     
@@ -192,14 +194,14 @@
                                             :disabled="nameToken.trim() == ''"
                                             @click="createUserToken()"
                                         >
-                                            {{ trans('global.save') }}
+                                            {{ trans('global.create') }}
                                         </button>
                                     </div>
     
                                     <hr class="pt-1 clearfix">
     
                                     <div>
-                                        <tokens v-if="subscribers.tokens != undefined"
+                                        <Tokens v-if="subscribers.tokens != undefined"
                                             :modelUrl="modelUrl"
                                             :canEditLabel="canEditLabel"
                                             :canEditCheckbox="canEditCheckbox"
@@ -229,8 +231,8 @@
     </Transition>
 </template>
 <script>
-import subscribers from "./Subscribers.vue";
-import tokens from "./Tokens.vue";
+import Subscribers from "./Subscribers.vue";
+import Tokens from "./Tokens.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Select2 from "../forms/Select2.vue";
@@ -283,7 +285,7 @@ export default {
         loadSubscribers() {
             axios.get('/' + this.modelUrl + 'Subscriptions?' + this.modelUrl + '_id=' + this.modelId)
                 .then(res => {
-                    this.subscribers = res.data.subscribers;
+                    this.subscribers = res.data;
                 })
                 .catch(err => {
                     console.log(err.response);
@@ -296,7 +298,7 @@ export default {
                 subscribable_id: subscribable_id
             })
             .then(res => {
-                this.subscribers.subscriptions = res.data.subscription;
+                this.subscribers.subscriptions.push(res.data);
             })
             .catch(err => {
                 console.log(err.response);
@@ -312,7 +314,7 @@ export default {
                 date: this.endDateToken,
                 editable: this.canEditToken,
                 model_url: this.modelUrl
-            }).then( () => this.loadSubscribers())
+            }).then((response) => this.subscribers.tokens.push(response.data));
         },
     },
     mounted() {
@@ -342,8 +344,8 @@ export default {
         });
     },
     components: {
-        subscribers,
-        tokens,
+        Subscribers,
+        Tokens,
         VueDatePicker,
         Select2,
     }

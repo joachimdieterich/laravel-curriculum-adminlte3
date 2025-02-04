@@ -71,9 +71,69 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 
     }
 }
+
 if (! function_exists('getEntriesForSelect2ByCollection'))
 {
     function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
+    {
+        $input = request()->validate([
+            'page' => 'sometimes|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+            'selected' => 'sometimes|nullable',
+        ]);
+
+        if (request()->has('selected'))
+        {
+            //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->get());
+        }
+        else
+        {
+            $page = $input['page'];
+            $resultCount = 25;
+
+            $offset = ($page - 1) * $resultCount;
+
+            $term = $input['term'];
+
+            $count = Count($collection->where(  // count all entries FIRST with filter to get pagination working
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->get());
+
+            $entries = $collection->where(
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->orderBy($orderby)
+                ->skip($offset)
+                ->take($resultCount)
+                ->select([$table . $id, DB::raw($text . ' as text')])
+                ->get();
+
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
+
+            $results = array(
+                "results" => $entries,
+                "pagination" => array(
+                    "more" => $morePages
+                )
+            );
+
+            return response()->json($results);
+        }
+    }
+}
+
+if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
+{
+    function getEntriesForSelect2ByCollectionAlternative($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
     {
         $input = request()->validate([
             'page' => 'sometimes|integer',
@@ -109,7 +169,7 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
                 ->sortBy($orderby, SORT_NATURAL)
                 ->skip($offset)
                 ->take($resultCount)
-                ->select([$table . $id, $text])
+                ->select([$table.$id, $text])
                 ->map(function($entry) use ($table, $id, $text) {
                     return [
                         'id' => $entry[$table.$id],
@@ -132,7 +192,6 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
         }
     }
 }
-
 
 if (! function_exists('format_select_input')) {
 

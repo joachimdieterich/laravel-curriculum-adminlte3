@@ -16,27 +16,10 @@ class PlanSubscriptionController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('plan_create'), 403);
-        $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
-            $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless($model->isAccessible(), 403);
-
-            $subscriptions = PlanSubscription::where([
-                'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id'],
-            ]);
-
-            if (request()->wantsJson()) {
-                return ['subscriptions' => $subscriptions->with(['plan'])->get()];
-            }
-        } else {
-            if (request()->wantsJson()) {
-                return [
-                    'subscribers' => [
-                        'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get(),
-                    ],
-                ];
-            }
+        if (request()->wantsJson()) {
+            return [
+                'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get(),
+            ];
         }
     }
 
@@ -63,9 +46,7 @@ class PlanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return $plan->subscriptions()
-                ->with(['subscribable', 'plan'])
-                ->first();
+            return $subscribe->with(['subscribable', 'plan'])->find($subscribe->id);
         }
     }
 

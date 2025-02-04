@@ -142,10 +142,10 @@ class LogbookController extends Controller
             'subscriptions.subscribable',
             'entries.owner' => function ($query) {
                 $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
-            }, //todo: lazyload
+            },
             'entries.absences.owner' => function ($query) {
                 $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
-            }, //todo: lazyload
+            },
             'entries.subject' => function ($query) {
                 $query->select('id', 'title');
             },
@@ -156,10 +156,10 @@ class LogbookController extends Controller
                 $query->where('subscribable_id', auth()->user()->id)
                     ->where('subscribable_type', 'App\User');
             },
-        ])->where('id', $logbook->id)->get()->first();
+        ])->find($logbook->id);
 
         return view('logbooks.show')
-                ->with(compact('logbook'));
+            ->with(compact('logbook'));
     }
 
     /**

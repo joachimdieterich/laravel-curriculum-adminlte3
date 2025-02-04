@@ -285,12 +285,7 @@ export default {
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            if (this.subscribable) {
-                this.url = '/kanbanSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
-            } else {
-                this.url = '/kanbans/list?filter=' + this.filter
-            }
-
+            this.url = '/kanbans/list?filter=' + this.filter;
             this.dt.ajax.url(this.url).load();
         },
         editKanban(kanban) {

@@ -72,7 +72,7 @@
             <div class="col-12">
                 <PlanEntry v-if="editable && showTools"
                     :plan="plan"
-                    create="true"
+                    :create="true"
                 ></PlanEntry>
             </div>
         </div>

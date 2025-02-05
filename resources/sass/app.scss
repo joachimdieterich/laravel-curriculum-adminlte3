@@ -50,13 +50,16 @@ body {
     float: none;
     margin: 0 auto;
 }
-.text-cut{
+.text-cut {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 .pointer {
     cursor: pointer;
+}
+.btn.no-focus:focus {
+    box-shadow: none !important;
 }
 .pull-right {
     float: right !important;

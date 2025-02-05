@@ -49,7 +49,7 @@ return [
     'perPage' => 'Einträge pro Seite',
     'search' => 'Suchbegriff',
     'view' => 'Ansicht',
-    'edit' => 'editieren',
+    'edit' => 'Bearbeiten',
     'locked' => 'verschieben verhindern',
     'replace_links' => 'Links durch QR-Codes ersetzen',
     'editable' => 'editierbar',

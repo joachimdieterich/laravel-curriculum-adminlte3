@@ -24,7 +24,7 @@
                                 {{ trans('global.end') + ' ' + diffForHumans(training.end) }}
                             </small>
                         </span>
-                        <span v-if="$userId == plan.owner_id">
+                        <span v-if="editable && showTools">
                             <a @click="lower(training)">
                                 <i class="px-1 fa fa-caret-up text-muted pointer mx-1"></i>
                             </a>
@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <div v-if="$userId == plan.owner_id"
+                <div v-if="editable && showTools"
                     class="card-footer pointer"
                     @click="openModal()"
                 >
@@ -63,15 +63,26 @@ export default {
         VueDatePicker,
     },
     props: {
-        subscribable_type: {
-            default: null,
-        },
-        subscribable_id: {
-            default: null,
-        },
         plan: {
             type: Object,
-        }
+            default: null,
+        },
+        editable: {
+            type: Boolean,
+            default: false,
+        },
+        showTools: {
+            type: Boolean,
+            default: false,
+        },
+        subscribable_id: {
+            type: Number,
+            default: null,
+        },
+        subscribable_type: {
+            type: String,
+            default: null,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();

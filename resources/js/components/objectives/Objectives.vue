@@ -9,7 +9,7 @@
                         class="card-tools position-absolute"
                         style="right: -10px;"    
                     >
-                        <span v-if="$userId == owner_id">
+                        <span v-if="editable && showTools">
                             <a @click="destroy(terminal)">
                                 <i class="fas fa-trash text-danger pointer"></i>
                             </a>
@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="$userId == owner_id"
+        <div v-if="editable && showTools"
             class="card-footer pointer"
             @click="openModal()"
         >
@@ -52,13 +52,25 @@ import {useGlobalStore} from "../../store/global";
 export default {
     props: {
         owner_id: {
-            default: false,
+            type: Number,
+            default: null,
         },
         editable: {
+            type: Boolean,
             default: false,
         },
-        referenceable_type: {},
-        referenceable_id: {},
+        showTools: {
+            type: Boolean,
+            default: false,
+        },
+        referenceable_id: {
+            type: Number,
+            default: null,
+        },
+        referenceable_type: {
+            type: String,
+            default: null,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();

@@ -1,17 +1,42 @@
 <template>
     <div>
-        <div class="card pb-3">
-            <div class="card-header">
+        <div
+            class="card position-sticky mb-0"
+            style="top: 3.5rem; z-index: 10; border-radius: 0px;"
+        >
+            <div class="card-header d-flex align-items-center">
                 <div class="card-title">{{ currentPlan.title }}</div>
                 <div v-if="$userId == plan.owner_id"
                     v-permission="'plan_edit'"
-                    class="card-tools pr-2 no-print"
+                    class="card-tools d-flex pr-2 ml-auto no-print"
+                    style="gap: 5px;"
                 >
-                    <a onclick="window.print()" class="link-muted mr-3 px-1 pointer">
+                    <a onclick="window.print()" class="link-muted px-1 pointer">
                         <i class="fa fa-print"></i>
                     </a>
+                    <span class="pr-2 mr-2" style="border-right: 1px solid black;"></span>
+                    <span
+                        class="link-muted pointer"
+                        @click.prevent="showTools = !showTools"
+                    >
+                        <span class="pr-2">{{ trans('global.edit') }}</span>
+                        <span class="custom-switch custom-switch-on-green">
+                            <input
+                                id="edit_toggle"
+                                type="checkbox"
+                                class="custom-control-input"
+                                v-model="showTools"
+                            />
+                            <label
+                                for="edit_toggle"
+                                class="custom-control-label"
+                            ></label>
+                        </span>
+                    </span>
                 </div>
             </div>
+        </div>
+        <div class="card" style="border-radius: 0px;">
             <!-- /.card-header -->
             <div class="card-body">
                 <div class="row">
@@ -27,24 +52,25 @@
                 <draggable
                     v-model="entries"
                     v-bind="columnDragOptions"
-                    :disabled="this.disabled"
+                    :disabled="disabled"
+                    itemKey="id"
                     @start="drag=true"
                     @end="handleEntryOrder"
-                    itemKey="id"
                 >
-                    <template #item="{ element: entry , index }">
+                    <template #item="{ element: entry }">
                         <PlanEntry
                             :key="entry.id"
-                            :editable="editable"
                             :entry="entry"
                             :plan="plan"
-                        ></PlanEntry>
+                            :editable="editable"
+                            :showTools="showTools"
+                        />
                     </template>
                 </draggable>
             </div>
 
             <div class="col-12">
-                <PlanEntry v-if="$userId == plan.owner_id"
+                <PlanEntry v-if="editable && showTools"
                     :plan="plan"
                     create="true"
                 ></PlanEntry>
@@ -87,7 +113,6 @@
         </Teleport>
     </div>
 </template>
-
 <script>
 import draggable from "vuedraggable";
 import PlanModal from "./PlanModal.vue";
@@ -103,7 +128,8 @@ import {useGlobalStore} from "../../store/global";
 export default {
     props: {
         plan: {
-            type: Object
+            type: Object,
+            default: null,
         },
         editable: {
             type: Boolean,
@@ -112,7 +138,7 @@ export default {
         users: {
             type: Object,
             default: null
-        }
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -128,6 +154,7 @@ export default {
             subscriptions: {},
             search: '',
             disabled: false,
+            showTools: false,
             errors: {},
         }
     },

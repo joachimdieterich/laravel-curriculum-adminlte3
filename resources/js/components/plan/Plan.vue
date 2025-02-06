@@ -73,7 +73,7 @@
                 <PlanEntry v-if="editable && showTools"
                     :plan="plan"
                     :create="true"
-                ></PlanEntry>
+                />
             </div>
         </div>
         <!-- overlay button in bottom right corner -->

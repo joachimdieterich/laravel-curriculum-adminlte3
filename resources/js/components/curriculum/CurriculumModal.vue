@@ -402,9 +402,11 @@ export default {
                     "autolink link table lists autoresize"
                 ],
                 {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                }
+                    callback: 'insertContent',
+                    callbackId: this.component_id
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                ""
             ),
         }
     },

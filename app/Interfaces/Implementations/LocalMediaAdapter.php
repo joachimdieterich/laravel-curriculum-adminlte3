@@ -59,6 +59,8 @@ class LocalMediaAdapter implements MediaInterface
             $input = $this->validateRequest();
 
             $files = $request->file('file');
+            if (gettype($files) == 'object') $files = [$files];
+
             $uploaded = new Collection();
             $pathPrefix = '/users/'.auth()->user()->id;//.'/';
             foreach ($files as $file) {

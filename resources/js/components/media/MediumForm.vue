@@ -60,7 +60,7 @@ export default {
         },
         subscribable_type: {
             type: String,
-            default: null, // null will throw 500, value needs to be set
+            default: null,
         },
         subscribable_id: {
             type: Number,
@@ -91,12 +91,10 @@ export default {
             this.thumbnail_medium_id = this.medium_id;
         }
         //set event_listener for thumbnail
-        this.$eventHub.on('medium-added', (e) => {
-            console.log(e);
-            if (this.component_id == e.id) {
-                this.thumbnail_medium_id = e.selectedMedia[0].id;
+        this.$eventHub.on('medium-added', (data) => {
+            if (this.component_id == data.id) {
                 this.showMediumModal = false;
-                this.$emit("selectedValue", e.selectedMedia[0].id);
+                this.$emit("selectedValue", data.selectedMedia[0].id); // TODO: select all files
             }
         });
     },

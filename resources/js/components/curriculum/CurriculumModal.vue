@@ -257,11 +257,12 @@
                                         />
         
                                         <MediumForm v-if="form.id"
+                                            :id="'medium_form' + component_id"
                                             class="pull-right"
-                                            id="medium_id"
                                             :medium_id="form.medium_id"
                                             accept="image/*"
-                                            :selected="this.form.medium_id"
+                                            :subscribable_id="form.id"
+                                            :subscribable_type="'App\\Curriculum'"
                                             @selectedValue="(id) => {
                                                 this.form.medium_id = id;
                                             }"
@@ -458,12 +459,14 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
+
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    if (this.form.id !== ''){
+                    if (this.form.id !== '') {
                         this.form.description = this.$decodeHTMLEntities(this.$decodeHtml(this.form.description));
                         this.method = 'patch';
                     } else {

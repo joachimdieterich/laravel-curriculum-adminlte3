@@ -31,7 +31,7 @@
                         <div class="card-pane-left p-0">
                             <ul class="nav flex-column">
                                 <li
-                                    v-permission="'medium_access'"
+                                    v-permission="'is_admin'"
                                     class="nav-link text-sm"
                                 >
                                     <a
@@ -44,7 +44,7 @@
                                     </a>
                                 </li>
                                 <li
-                                    v-permission="'medium_access'"
+                                    v-permission="'is_admin'"
                                     class="nav-link text-sm"
                                 >
                                     <a

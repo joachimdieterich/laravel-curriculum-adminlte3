@@ -33,13 +33,12 @@ class LocalMediaAdapter implements MediaInterface
     public function list()
     {
         abort_unless(\Gate::allows('medium_access'), 403);
-        $media = (auth()->user()->role()->id == 1) ? Medium::all() : auth()->user()->media()->get();
+        $media = (auth()->user()->role()->id == 1)
+            ? Medium::where('adapter', '=', 'local')->get()
+            : auth()->user()->media()->get();
 
         return DataTables::of($media)
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 

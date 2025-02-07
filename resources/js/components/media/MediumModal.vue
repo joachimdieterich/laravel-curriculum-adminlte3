@@ -84,7 +84,7 @@
                         <div class="p-1 flex-fill border-left">
                             <div class="tab-content">
                                 <div
-                                    v-permission="'medium_create'"
+                                    v-permission="'is_admin'"
                                     id="upload"
                                     class="tab-pane"
                                 >
@@ -99,7 +99,7 @@
                                         >
                                             {{ message }}
                                         </div>
-                                        <div class="dropbox text-secondary">
+                                        <div class="dropbox text-secondary p-0 m-1">
                                             <input
                                                 id="file"
                                                 name="file"
@@ -136,9 +136,9 @@
                                 </div><!-- /.tab-pane -->
 
                                 <div
-                                    v-permission="'medium_create'"
+                                    v-permission="'is_admin'"
                                     id="media"
-                                    class="tab-pane"
+                                    class="tab-pane m-2"
                                 >
                                     <div
                                         id="media_create_datatable_filter"
@@ -154,10 +154,7 @@
                                             aria-controls="media_create_datatable"
                                         />
                                     </div>
-                                    <div
-                                        class="form-group table-responsive"
-                                        style="min-height: 400px;"
-                                    >
+                                    <div style="width: 600px;">
                                         <div
                                             id="media-datatable-wrapper"
                                             class="w-100 dataTablesWrapper"
@@ -168,7 +165,6 @@
                                                 :options="options"
                                                 ajax="/media/list"
                                                 :search="search"
-                                                width="100%"
                                             />
                                         </div>
                                     </div>

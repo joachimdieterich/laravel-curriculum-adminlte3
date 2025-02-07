@@ -1,5 +1,5 @@
 <template>
-    <ol class="breadcrumb float-sm-right">
+    <ol class="breadcrumb ml-sm-auto">
         <li v-if="showHome"
             class="breadcrumb-item ">
             <a :href="homeURL">

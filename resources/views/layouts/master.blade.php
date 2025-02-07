@@ -46,7 +46,7 @@
                             <div class="col-sm-6 pl-0">
                                 <h1> @yield('title')</h1>
                             </div>
-                            <div class="col-sm-6 pr-0">
+                            <div class="d-flex align-items-center col-sm-6 px-0">
                                 @yield('breadcrumb')
                             </div>
                         </div>

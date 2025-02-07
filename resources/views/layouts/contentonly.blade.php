@@ -26,17 +26,17 @@
         <!-- /.navbar -->
 
         <!-- Content Header (Page header) -->
-        <section class="content-header p-2"
-            style="padding-top:60px !important">
+        <section
+            class="content-header px-3 py-2"
+            style="margin-top: 3.5rem !important"
+        >
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6 pl-0">
                         <h1> @yield('title')</h1>
                     </div>
-                    <div class="col-sm-6 pr-0">
-                        <ol class="breadcrumb float-sm-right">
-                            @yield('breadcrumb')
-                        </ol>
+                    <div class="d-flex align-items-center col-sm-6 px-0">
+                        @yield('breadcrumb')
                     </div>
                 </div>
             </div>

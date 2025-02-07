@@ -143,7 +143,7 @@ app.config.globalProperties.getGlobalStorage = (key, value, class_string = "acti
 };
 
 
-//-> use permission in vue3 templates, use checkPermission in scripts
+//-> use v-permission in vue3 templates, use checkPermission in scripts
 app.config.globalProperties.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
 };

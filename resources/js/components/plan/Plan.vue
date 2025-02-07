@@ -91,7 +91,6 @@
             <SubscribeObjectiveModal/>
             <TrainingModal :plan="plan"/>
             <SetAchievementsModal :users="users"/>
-            <MediumModal/>
             <SubscribeModal/>
         </Teleport>
         <Teleport v-if="$userId == plan.owner_id"
@@ -121,7 +120,6 @@ import PlanEntryModal from "./PlanEntryModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import TrainingModal from "../training/TrainingModal.vue";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
-import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
 
@@ -260,7 +258,6 @@ export default {
         SubscribeObjectiveModal,
         TrainingModal,
         SetAchievementsModal,
-        MediumModal,
         SubscribeModal,
         draggable,
     },

@@ -202,9 +202,10 @@
         <Teleport to="body">
             <LogbookModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
+            <MediumModal v-if="!subscribable"/>
             <SubscribeLogbookModal v-if="subscribable"/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.logbook.' + delete_label_field)"
                 :description="trans('global.logbook.' + delete_label_field + '_helper')"
                 @close="() => {
@@ -227,6 +228,7 @@ import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeLogbookModal from "./SubscribeLogbookModal.vue";
 import {useGlobalStore} from "../../store/global";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
@@ -370,6 +372,7 @@ export default {
     },
     components: {
         SubscribeModal,
+        MediumModal,
         ConfirmModal,
         SubscribeLogbookModal,
         DataTable,

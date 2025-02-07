@@ -4,7 +4,7 @@
             class="btn-group"
             @click="loadModal()"
         >
-            <span v-if="medium_id !== null && (subscribable_type == 'App\\Logbook' || subscribable_type == 'App\\Kanban')"
+            <span v-if="medium_id !== null"
                 class="d-flex align-items-center"
             >
                 <a
@@ -35,20 +35,13 @@
                 {{ trans('global.medium.title_singular') }}
             </a>
         </div>
-        <Teleport to="body">
-            <MediumModal/>
-        </Teleport>
     </div>
 </template>
 <script>
-import MediumModal from "../media/MediumModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'MediumForm',
-    components: {
-        MediumModal,
-    },
     props: {
         medium_id: {
             type: Number,
@@ -110,8 +103,6 @@ export default {
             });
         },
         removeSubscription() {
-            //! temporary solution to remove media for Logbooks/Kanbans
-            this.$emit("selectedValue", null);
             axios.post('/mediumSubscriptions/destroy', {
                 medium_id: this.medium_id,
                 subscribable_id: this.subscribable_id,
@@ -119,7 +110,9 @@ export default {
                 // since we don't have those values, only allow default values
                 sharing_level_id: 1,
                 visibility: 1,
-            });
+            })
+            .then(response => this.$emit("selectedValue", null))
+            .catch(error => console.error(error));
         },
     },
 }

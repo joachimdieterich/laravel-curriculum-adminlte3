@@ -258,11 +258,10 @@
         
                                         <MediumForm v-if="form.id"
                                             :id="'medium_form' + component_id"
-                                            class="pull-right"
                                             :medium_id="form.medium_id"
                                             accept="image/*"
                                             :subscribable_id="form.id"
-                                            :subscribable_type="'App\\Curriculum'"
+                                            subscribable_type="'App\Curriculum'"
                                             @selectedValue="(id) => {
                                                 this.form.medium_id = id;
                                             }"
@@ -351,7 +350,6 @@
 <script>
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
-import MediumModal from "../media/MediumModal.vue";
 import MediumForm from "../media/MediumForm.vue";
 import Select2 from "../forms/Select2.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -362,7 +360,6 @@ export default {
     name: 'curriculum-modal',
     components: {
         Editor,
-        MediumModal,
         MediumForm,
         Select2,
         VueDatePicker,

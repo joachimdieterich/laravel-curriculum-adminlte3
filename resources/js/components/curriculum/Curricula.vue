@@ -203,6 +203,7 @@
         <Teleport to="body">
             <CurriculumModal/>
             <SubscribeModal/>
+            <MediumModal/>
             <OwnerModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"

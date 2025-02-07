@@ -173,16 +173,10 @@
         <div id="map" class="sidebar-map"></div>
 
         <Teleport to="body">
-            <MapModal></MapModal>
-            <MediumPreviewModal></MediumPreviewModal>
-            <MarkerModal
-                :map="this.map"
-            >
-            </MarkerModal>
-            <MediumModal
-                subscribable_type="App\\Map"
-                :subscribable_id="map.id"
-                ></MediumModal>
+            <MapModal/>
+            <MediumModal/>
+            <MediumPreviewModal/>
+            <MarkerModal :map="this.map"/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.marker.delete')"
@@ -194,12 +188,11 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
 <script>
-
 import axios from 'axios';
 import "leaflet/dist/leaflet.js";
 import {Icon} from 'leaflet';

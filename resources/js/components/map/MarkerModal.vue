@@ -252,7 +252,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumModal from "../media/MediumModal.vue";
 import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
@@ -262,7 +261,6 @@ export default {
     name: 'map-marker-modal',
     components: {
         Editor,
-        MediumModal,
         Select2
     },
     props: {

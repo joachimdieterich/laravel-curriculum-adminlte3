@@ -129,7 +129,7 @@
                             {{ trans('global.kanban.edit') }}
                         </button>
                         <button v-if="kanban.allow_copy && !subscribable"
-                            :name="'copy-kanban-'+kanban.id"
+                            :name="'copy-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmKanbanCopy(kanban)"
                         >
@@ -159,6 +159,7 @@
                 </template>
             </IndexWidget>
         </div>
+
         <div
             id="kanban-datatable-wrapper"
             class="w-100 dataTablesWrapper"
@@ -175,9 +176,10 @@
 
         <Teleport to="body">
             <KanbanModal v-if="!subscribable"/>
+            <MediumModal v-if="!subscribable"/>
             <SubscribeKanbanModal v-if="subscribable"/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.kanban.' + delete_label_field)"
                 :description="trans('global.kanban.' + delete_label_field +'_helper')"
                 @close="() => {
@@ -188,8 +190,8 @@
                     this.destroy();
                 }"
             />
-            <ConfirmModal
-                :showConfirm="this.showCopy"
+            <ConfirmModal v-if="!subscribable"
+                :showConfirm="showCopy"
                 :title="trans('global.kanban.copy')"
                 :description="trans('global.kanban.copy_helper')"
                 css='primary'
@@ -208,6 +210,7 @@
 import SubscribeKanbanModal from "../kanban/SubscribeKanbanModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -339,6 +342,7 @@ export default {
     },
     components: {
         SubscribeKanbanModal,
+        MediumModal,
         ConfirmModal,
         DataTable,
         KanbanModal,

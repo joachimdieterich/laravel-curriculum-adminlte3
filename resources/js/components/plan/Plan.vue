@@ -88,6 +88,7 @@
         <Teleport to="body">
             <PlanModal/>
             <PlanEntryModal :plan="plan"/>
+            <MediumModal/>
             <SubscribeObjectiveModal/>
             <TrainingModal :plan="plan"/>
             <SetAchievementsModal :users="users"/>
@@ -117,6 +118,7 @@ import draggable from "vuedraggable";
 import PlanModal from "./PlanModal.vue";
 import PlanEntry from './PlanEntry.vue';
 import PlanEntryModal from "./PlanEntryModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import TrainingModal from "../training/TrainingModal.vue";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
@@ -255,6 +257,7 @@ export default {
         PlanModal,
         PlanEntry,
         PlanEntryModal,
+        MediumModal,
         SubscribeObjectiveModal,
         TrainingModal,
         SetAchievementsModal,

@@ -59,10 +59,7 @@
             <SubscribeObjectiveModal/>
             <!-- <SetAchievementsModal/> -->
             <lms-modal/>
-            <MediumModal
-                subscribable_type="App\\Logboook"
-                :subscribable_id="logbook.id"
-            />
+            <MediumModal/>
             <LogbookModal/>
             <LogbookEntryModal/>
             <LogbookEntrySubjectModal/>

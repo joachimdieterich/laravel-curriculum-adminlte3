@@ -27,33 +27,26 @@
 
                 <div class="modal-body">
                     <div class="card">
+                        <div
+                            class="card-header"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.general') }}</div>
+                        </div>
                         <div class="card-body">
-                            <div class="form-group d-flex align-items-center">
-                                <v-swatches
-                                    :swatch-size="49"
-                                    style="height: 42px;"
-                                    popover-to="right"
-                                    v-model="this.form.color"
-                                    show-fallback
-                                    fallback-input-type="color"
-                                    @input="(id) => {
-                                        if(id.isInteger) {
-                                            this.form.color = id;
-                                        }
-                                    }"
-                                    :max-height="300"
-                                />
+                            <div class="form-group">
                                 <input
                                     id="title"
                                     type="text"
                                     name="title"
-                                    class="form-control ml-3"
+                                    class="form-control"
                                     v-model="form.title"
                                     :placeholder="trans('global.title') + ' *'"
                                     required
                                 />
                                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                             </div>
+
                             <div class="form-group">
                                 <input
                                     type="text"
@@ -66,6 +59,7 @@
                                 />
                                 <p class="help-block" v-if="form.errors?.subtitle" v-text="form.errors?.subtitle[0]"></p>
                             </div>
+
                             <div class="form-group">
                                 <Editor
                                     id="description"
@@ -76,6 +70,7 @@
                                     v-model="form.description"
                                 />
                             </div>
+
                             <div class="form-group">
                                 <label for="tags">
                                     {{ trans('global.map.fields.tags') }}
@@ -102,6 +97,7 @@
                                     this.form.type_id = id;
                                 }"
                             />
+
                             <Select2
                                 id="map_marker_category"
                                 name="map_marker_category"
@@ -175,14 +171,44 @@
                                 <p class="help-block" v-if="form.errors.zoom" v-text="form.errors.zoom[0]"></p>
                             </div>
         
-                            <div v-if="form.id"
-                                class="form-group"
-                            >
-                                <MediumModal
-                                    :form="form"
-                                    :id="component_id"
+                            
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            class="card-header"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.display') }}</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <v-swatches
+                                    :swatch-size="49"
+                                    :trigger-style="{}"
+                                    style="height: 42px;"
+                                    popover-to="right"
+                                    v-model="this.form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                    @input="(id) => {
+                                        if(id.isInteger) {
+                                            this.form.color = id;
+                                        }
+                                    }"
+                                    :max-height="300"
+                                />
+        
+                                <MediumForm v-if="form.id"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\Map"
                                     accept="image/*"
+                                    @selectedValue="(id) => {
+                                        this.form.medium_id = id;
+                                    }"
                                 />
                             </div>
                         </div>
@@ -214,7 +240,7 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumModal from "../media/MediumModal.vue";
+import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
@@ -224,7 +250,7 @@ export default {
     name: 'map-modal',
     components:{
         Editor,
-        MediumModal,
+        MediumForm,
         Select2,
     },
     props: {},
@@ -304,7 +330,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

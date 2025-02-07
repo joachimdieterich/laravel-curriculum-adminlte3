@@ -181,10 +181,11 @@
         </div>
 
         <Teleport to="body">
-            <PlanModal/>
-            <SubscribePlanModal/>
+            <PlanModal v-if="!subscribable"/>
+            <MediumModal v-if="!subscribable"/>
+            <SubscribePlanModal v-if="subscribable"/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.plan.' + delete_label_field)"
                 :description="trans('global.plan.' + delete_label_field +'_helper')"
                 @close="() => {
@@ -195,8 +196,8 @@
                     this.destroy();
                 }"
             />
-            <ConfirmModal
-                :showConfirm="this.showCopy"
+            <ConfirmModal v-if="!subscribable"
+                :showConfirm="showCopy"
                 :title="trans('global.plan.copy')"
                 :description="trans('global.plan.copy_helper')"
                 css='primary'
@@ -214,6 +215,7 @@
 <script>
 import PlanModal from "../plan/PlanModal.vue";
 import SubscribePlanModal from "../plan/SubscribePlanModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -350,6 +352,7 @@ export default {
     components: {
         PlanModal,
         SubscribePlanModal,
+        MediumModal,
         ConfirmModal,
         DataTable,
         IndexWidget,

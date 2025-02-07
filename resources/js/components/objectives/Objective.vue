@@ -236,7 +236,8 @@
                                             :model="model"
                                             :objective="objective"
                                             :repository="repository"
-                                            :type="type"/>
+                                            :type="type"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -320,35 +321,30 @@
                    </div>
             </div>
 
-        <Teleport to="body">
-            <ReferenceObjectiveModal ></ReferenceObjectiveModal>
-            <PrerequisiteObjectiveModal
-                :params="{
-                    'successor_type': this.model,
-                    'successor_id': this.objective.id,
-                    'url': '/prerequisites'
-                }"
-            ></PrerequisiteObjectiveModal>
-            <LmsModal
-                :params="{
-                    'referenceable_type': this.model,
-                    'referenceable_id': this.objective.id,
-                    'url': '/lmsReferences'
-                }"
-            ></LmsModal>
-            <SubscribeModal></SubscribeModal>
-            <MediumModal></MediumModal>
-<!--            <MediumModal
-                :show="this.mediumStore.getShowMediumModal"
-                @close="this.mediumStore.setShowMediumModal(false)"
-            ></MediumModal>-->
-            <TerminalObjectiveModal></TerminalObjectiveModal>
-            <EnablingObjectiveModal></EnablingObjectiveModal>
-        </Teleport>
-    </div>
+            <Teleport to="body">
+                <ReferenceObjectiveModal/>
+                <PrerequisiteObjectiveModal
+                    :params="{
+                        successor_type: this.model,
+                        successor_id: this.objective.id,
+                        url: '/prerequisites',
+                    }"
+                />
+                <LmsModal
+                    :params="{
+                        referenceable_type: this.model,
+                        referenceable_id: this.objective.id,
+                        url: '/lmsReferences'
+                    }"
+                />
+                <SubscribeModal/>
+                <MediumModal/>
+                <TerminalObjectiveModal/>
+                <EnablingObjectiveModal/>
+            </Teleport>
+        </div>
     </div>
 </template>
-
 <script>
 import Media from "../media/Media.vue";
 import Contents from '../content/Contents.vue';

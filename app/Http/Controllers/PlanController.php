@@ -408,6 +408,7 @@ class PlanController extends Controller
             'type_id'       => 'sometimes',
             'entry_order'   => 'sometimes',
             'color'         => 'sometimes',
+            'medium_id'     => 'sometimes',
             'allow_copy'    => 'sometimes',
         ]);
     }

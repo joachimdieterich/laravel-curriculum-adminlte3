@@ -122,47 +122,44 @@
                 </template>
             </draggable>
         </div>
+        <Teleport to="body">
+            <KanbanModal/>
+            <KanbanItemModal/>
+            <KanbanStatusModal :kanban="kanban"/>
+            <MediumModal/>
+            <SubscribeModal/>
+        </Teleport>
+        <Teleport to="#customTitle">
+            <small>{{ kanban.title }}</small>
+            <a v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                class="btn btn-flat px-2 py-1 mx-1"
+                @click="editKanban(kanban)"
+            >
+                <i class="fa fa-pencil-alt text-secondary"></i>
+            </a>
+    
+            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                class="btn btn-flat px-2 py-1 mx-1"
+                @click="share()"
+            >
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+    
+            <a
+                :href="'/export_csv/' + kanban.id"
+                class="btn p-1 ml-2"
+            >
+                <i class="fa fa-file-csv text-secondary"></i>
+            </a>
+    
+            <a
+                :href="'/export_pdf/' + kanban.id"
+                class="btn p-1 ml-1"
+            >
+                <i class="fa fa-file-pdf text-secondary"></i>
+            </a>
+        </Teleport>
     </div>
-    <Teleport to="body">
-        <MediumModal/>
-        <KanbanModal/>
-        <KanbanItemModal/>
-        <KanbanStatusModal :kanban="kanban"/>
-        <SubscribeModal/>
-    </Teleport>
-    <teleport v-if="$userId == kanban.owner_id"
-        to="#customTitle"
-    >
-        <small>{{ kanban.title }}</small>
-        <a
-            class="btn btn-flat"
-            @click="editKanban(kanban)"
-        >
-            <i class="fa fa-pencil-alt text-secondary"></i>
-        </a>
-
-        <button v-if="$userId == kanban.owner_id"
-            v-permission="'kanban_create'"
-            class="btn btn-flat"
-            @click="share()"
-        >
-            <i class="fa fa-share-alt text-secondary"></i>
-        </button>
-
-        <a
-            :href="'/export_csv/' + kanban.id"
-            class="btn p-0"
-        >
-            <i class="fa fa-file-csv text-secondary"></i>
-        </a>
-
-        <a
-            :href="'/export_pdf/' + kanban.id"
-            class="btn p-0"
-        >
-            <i class="fa fa-file-pdf text-secondary"></i>
-        </a>
-    </teleport>
 </template>
 <script>
 import draggable from "vuedraggable";
@@ -170,14 +167,17 @@ import KanbanItem from "../kanbanItem/KanbanItem.vue";
 import KanbanItemModal from "../kanbanItem/KanbanItemModal.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import KanbanStatusModal from "./KanbanStatusModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import {useGlobalStore} from "../../store/global";
-import MediumModal from "../media/MediumModal.vue";
 
 export default {
     props: {
-        kanban: Object,
+        kanban: {
+            type: Object,
+            default: null,
+        },
         editable: {
             type: Boolean,
             default: true,
@@ -597,11 +597,11 @@ export default {
         },
     },
     components: {
-        MediumModal,
         KanbanStatus,
         draggable,
         KanbanItem,
         KanbanItemModal,
+        MediumModal,
         SubscribeModal,
         KanbanModal,
         KanbanStatusModal

@@ -168,6 +168,7 @@
                 </template>
             </IndexWidget>
         </div>
+
         <div
             id="videoconference-datatable-wrapper"
             class="w-100 dataTablesWrapper"
@@ -184,6 +185,7 @@
         </div>
 
         <Teleport to="body">
+            <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
             <VideoconferenceModal v-if="!subscribable"/>
             <SubscribeVideoconferenceModal v-if="subscribable"/>
@@ -203,6 +205,7 @@
 <script>
 import VideoconferenceModal from "../videoconference/VideoconferenceModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -339,6 +342,7 @@ export default {
     components: {
         SubscribeVideoconferenceModal,
         ConfirmModal,
+        MediumModal,
         DataTable,
         VideoconferenceModal,
         IndexWidget,

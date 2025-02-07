@@ -187,7 +187,7 @@ class LogbookController extends Controller
         $logbook->update([
             'title' => $input['title'],
             'description' => $input['description'],
-            'medium_id' => $input['medium_id'] ?? $logbook->medium_id,
+            'medium_id' => $input['medium_id'],
             'color' => $input['color'],
             'css_icon' => $input['css_icon'],
         ]);

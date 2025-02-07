@@ -10,15 +10,13 @@
         <a v-if="this.create || this.subscribe"
             @click="openModal()"
         >
-            <div class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50">
+            <div class="d-flex align-items-center justify-content-center">
                 <slot name="itemIcon">
                     <i class="fa fa-2x fa-plus text-muted"></i>
                 </slot>
             </div>
-            <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
-                <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                    {{ label }}
-                </h1>
+            <span class="d-flex align-items-center align-items-lg-start justify-content-center bg-gray-light p-2">
+                {{ label }}
             </span>
         </a>
         <a v-else
@@ -26,19 +24,18 @@
             :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected(item) ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
         >
             <div v-if="item.medium_id"
-                class="nav-item-box-image-size h-50"
+                class="nav-item-box-image-size"
                 :style="{backgroundColor: item.color + ' !important'}"
                 @click="clickEvent(item)"
             >
                 <div
                     class="nav-item-box-image-size h-100 w-100"
-                    style="opacity: 0.7;"
                     :style="{'background': 'url(/media/' + item.medium_id + '?model=' + modelName + '&model_id=' + item.DT_RowId + ') center no-repeat'}"
                 >
                 </div>
             </div>
             <div v-else
-                class="d-flex align-items-center justify-content-center nav-item-box-image-size h-50"
+                class="d-flex align-items-center justify-content-center"
                 :style="{backgroundColor: item.color + ' !important'}"
                 @click="clickEvent(item)"
             >
@@ -63,7 +60,6 @@
 
             <div
                 class="symbol"
-                style="position: absolute; width: 30px; height: 40px;"
                 @click="clickEvent(item)"
             >
                 <slot name="icon">
@@ -73,10 +69,11 @@
                     ></i>
                 </slot>
             </div>
+
             <div v-if="item.owner_id == $userId || this.checkPermission('is_admin')"
                 :id="model+'Dropdown_' + item.DT_RowId"
-                class="btn btn-flat pull-right"
-                style="position:absolute; top:0; right: 0; background-color: transparent;"
+                class="btn btn-flat position-absolute pull-right"
+                style="top:0; right: 0; background-color: transparent;"
                 data-toggle="dropdown"
                 aria-expanded="false"
             >

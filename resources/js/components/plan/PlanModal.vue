@@ -244,14 +244,14 @@ export default {
             search: '',
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table code autoresize"
+                    "autolink link lists code autoresize"
                 ],
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
                 },
-                "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code curriculummedia",
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                ""
             ),
         }
     },

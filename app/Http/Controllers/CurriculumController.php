@@ -70,6 +70,7 @@ class CurriculumController extends Controller
             $user = auth()->user();
         }
         $userCanSee = $user->curricula;
+        dump($userCanSee);
 
         foreach ($user->groups as $group) {
             $userCanSee = $userCanSee->merge($group->curricula);
@@ -81,6 +82,9 @@ class CurriculumController extends Controller
         {
             $owned = Curriculum::where('owner_id', $user->id)->get();
             $userCanSee = $userCanSee->merge($owned);
+            // temporary fix to show global curricula
+            $global = Curriculum::where('type_id', 1)->get();
+            $userCanSee = $userCanSee->merge($global);
         }
 
         if ((env('GUEST_USER') != null))

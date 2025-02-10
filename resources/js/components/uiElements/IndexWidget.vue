@@ -15,7 +15,7 @@
                     <i class="fa fa-2x fa-plus text-muted"></i>
                 </slot>
             </div>
-            <span class="d-flex align-items-center align-items-lg-start justify-content-center text-center bg-gray-light p-2">
+            <span class="d-flex align-items-center align-items-lg-start justify-content-center text-center bg-gray-light p-1">
                 {{ label }}
             </span>
         </a>

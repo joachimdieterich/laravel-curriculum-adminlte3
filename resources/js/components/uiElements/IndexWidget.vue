@@ -50,13 +50,12 @@
                         <p class="text-muted small">
                             {{ htmlToText(item[this.descriptionField])}}
                         </p>
+                        <slot name="badges"></slot>
                     </span>
                 </slot>
             </span>
 
             <slot name="owner"></slot>
-
-            <slot name="badges"></slot>
 
             <div
                 class="symbol"
@@ -71,9 +70,9 @@
             </div>
 
             <div v-if="item.owner_id == $userId || this.checkPermission('is_admin')"
-                :id="model+'Dropdown_' + item.DT_RowId"
+                :id="model + 'Dropdown_' + item.DT_RowId"
                 class="btn btn-flat position-absolute pull-right"
-                style="top:0; right: 0; background-color: transparent;"
+                style="top: 0; right: 0; background-color: transparent;"
                 data-toggle="dropdown"
                 aria-expanded="false"
             >

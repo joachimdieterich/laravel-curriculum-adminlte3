@@ -149,6 +149,7 @@ class PlanController extends Controller
         $plan = Plan::firstOrCreate([
             'title'             => $input['title'],
             'description'       => $input['description'],
+            'color'             => $input['color'],
             'begin'             => $input['begin'],
             'end'               => $input['end'],
             'duration'          => $input['duration'],

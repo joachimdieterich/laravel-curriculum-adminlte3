@@ -181,17 +181,6 @@ class CurriculumController extends Controller
             case 3: // group
                 //Todo: if type_id == 3 there should be an option to add group_id
                 break;
-            case 4: // user
-            default:
-                CurriculumSubscription::updateOrCreate([
-                    'curriculum_id' => $curriculum->id,
-                    'subscribable_type' => 'App\User',
-                    'subscribable_id' => auth()->user()->id,
-                ], [
-                    'editable' => true,
-                    'owner_id' => auth()->user()->id,
-                ]);
-                break;
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);

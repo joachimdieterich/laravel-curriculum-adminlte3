@@ -397,11 +397,10 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link table lists autoresize"
+                    "autolink link lists autoresize"
                 ],
                 {
-                    callback: 'insertContent',
-                    callbackId: this.component_id
+                    callbackId: this.component_id,
                 },
                 "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
                 ""

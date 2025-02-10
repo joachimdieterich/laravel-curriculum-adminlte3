@@ -244,7 +244,7 @@ export default {
             default: null,
         },
     },
-    setup () {
+    setup() {
         const toast = useToast();
         const globalStore = useGlobalStore();
         return {
@@ -353,8 +353,7 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('curriculum-added', (curriculum) => {
-            //this.curricula.push(curriculum); //todo -> use global widget to get add working
-            this.loaderEvent();
+            this.curricula.push(curriculum);
         });
         this.$eventHub.on('curriculum-imported', (curricula) => {
             this.globalStore?.closeModal('curriculum-modal');

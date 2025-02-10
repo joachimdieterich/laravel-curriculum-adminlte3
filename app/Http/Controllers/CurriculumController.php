@@ -159,9 +159,9 @@ class CurriculumController extends Controller
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
             'variants'              => $this->formatVariantsField(
-                        $input['variants'] ?? NULL,
-                        $input['variant_default_title'] ?? NULL,
-                        $input['variant_default_description'] ?? NULL
+                                            $input['variants'] ?? NULL,
+                                            $input['variant_default_title'] ?? NULL,
+                                            $input['variant_default_description'] ?? NULL
                                         ),
             'archived'              =>  $input['archived'] ?? false,
             'owner_id'              => auth()->user()->id,
@@ -177,27 +177,27 @@ class CurriculumController extends Controller
                     'editable' => true,
                     'owner_id' => auth()->user()->id,
                 ]);
-            break;
+                break;
             case 3: // group
                 //Todo: if type_id == 3 there should be an option to add group_id
-            break;
+                break;
             case 4: // user
             default:
-            CurriculumSubscription::updateOrCreate([
-                'curriculum_id' => $curriculum->id,
-                'subscribable_type' => 'App\User',
-                'subscribable_id' => auth()->user()->id,
-            ], [
-                'editable' => true,
-                'owner_id' => auth()->user()->id,
-            ]);
-            break;
+                CurriculumSubscription::updateOrCreate([
+                    'curriculum_id' => $curriculum->id,
+                    'subscribable_type' => 'App\User',
+                    'subscribable_id' => auth()->user()->id,
+                ], [
+                    'editable' => true,
+                    'owner_id' => auth()->user()->id,
+                ]);
+                break;
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return $curriculum;
+            return $curriculum->with('owner')->find($curriculum->id);
         }
     }
 

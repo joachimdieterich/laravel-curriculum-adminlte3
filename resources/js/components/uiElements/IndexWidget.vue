@@ -7,7 +7,7 @@
         style="min-width: 200px !important;"
         :style="'border-bottom: 5px solid ' + item.color"
     >
-        <a v-if="this.create || this.subscribe"
+        <a v-if="create || subscribe"
             @click="openModal()"
         >
             <div class="d-flex align-items-center justify-content-center">
@@ -69,7 +69,10 @@
                 </slot>
             </div>
 
-            <div v-if="item.owner_id == $userId || this.checkPermission('is_admin')"
+            <div v-if="(item.owner_id == $userId && !showSubscribable)
+                    || (checkPermission('is_teacher') && showSubscribable)
+                    || checkPermission('is_admin')
+                "
                 :id="model + 'Dropdown_' + item.DT_RowId"
                 class="btn btn-flat position-absolute pull-right"
                 style="top: 0; right: 0; background-color: transparent;"
@@ -111,8 +114,18 @@ export default {
             type: String,
             default: '_self',
         },
-        create: false,
-        subscribe: false,
+        create: {
+            type: Boolean,
+            default: false,
+        },
+        subscribe: {
+            type: Boolean,
+            default: false,
+        },
+        showSubscribable: {
+            type: Boolean,
+            default: false,
+        },
         subscribable_id: Number,
         subscribable_type: String,
         label: String,

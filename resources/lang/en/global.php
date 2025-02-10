@@ -200,6 +200,7 @@ return [
     'expel_error' => 'An error occurred while deleting the connection!',
     'enrol_info' => 'Enrol/expel group to curricula',
     'objective_tab' => 'Objectives',
+    'objective_content' => 'Tile-content',
     'superordinate_element_singular' => 'Superordinate Element',
     'superordinate_element' => 'Superordinate Elements',
     'subordinate_element_singular' => 'Subordinate Element',

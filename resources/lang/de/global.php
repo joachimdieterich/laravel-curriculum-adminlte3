@@ -215,6 +215,7 @@ return [
     'expel_error' => 'Beim Löschen der Verknüpfung ist ein Fehler aufgetreten!',
     'enrol_info' => 'Markierte Gruppen in Lehrpläne / Kompetenzraster ein bzw. ausschreiben.',
     'objective_tab' => 'Kompetenzerwerb',
+    'objective_content' => 'Kachelinhalt',
     'superordinate_element_singular' => 'Übergeordnetes Element',
     'superordinate_element' => 'Übergeordnete Elemente',
     'subordinate_element_singular' => 'Untergeordnetes Element',

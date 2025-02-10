@@ -209,7 +209,8 @@ class User extends Authenticatable
             'id',
             'id',
             'curriculum_id'
-        )->where('subscribable_type', get_class($this));
+        )->where('subscribable_type', get_class($this))
+        ->orWhere('type_id', 1);
     }
 
     public function currentCurriculaEnrolments()

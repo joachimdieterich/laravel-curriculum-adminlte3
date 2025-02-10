@@ -106,6 +106,7 @@
                 :model="kanban"
                 modelName="Kanban"
                 url="/kanbans"
+                :showSubscribable="subscribable"
             >
                 <template v-slot:itemIcon>
                     <i class="fa fa-2x fa-columns"></i>

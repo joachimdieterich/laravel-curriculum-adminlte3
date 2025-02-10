@@ -107,6 +107,7 @@
                 :model="logbook"
                 modelName="Logbook"
                 url="/logbooks"
+                :showSubscribable="subscribable"
             >
                 <template v-slot:icon>
                     <i v-if="logbook.type_id === 1"

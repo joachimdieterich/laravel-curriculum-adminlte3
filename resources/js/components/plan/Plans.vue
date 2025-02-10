@@ -100,10 +100,11 @@
                 </template>
             </IndexWidget>
             <IndexWidget v-for="plan in plans"
-                :key="'planIndex'+plan.id"
+                :key="'planIndex' + plan.id"
                 :model="plan"
                 modelName="Plan"
                 url="/plans"
+                :showSubscribable="subscribable"
             >
                 <template v-slot:itemIcon>
                     <i class="fa fa-2x fa-clipboard-list"></i>

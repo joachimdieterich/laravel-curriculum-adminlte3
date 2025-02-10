@@ -106,9 +106,10 @@
                 titleField="meetingName"
                 modelName="Videoconference"
                 url="/videoconferences"
+                :showSubscribable="subscribable"
             >
-                <template v-slot:icon>
-                    <i class="fa fa-videoconference-location-dot pt-2"></i>
+                <template v-slot:itemIcon>
+                    <i class="fa fa-2x fa-video"></i>
                 </template>
 
                 <template v-slot:dropdown
@@ -126,7 +127,7 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(videoconference)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-link mr-2"></i>
                             {{ trans('global.videoconference.expel') }}
                         </button>
                     </div>

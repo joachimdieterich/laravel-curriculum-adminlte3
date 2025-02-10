@@ -108,7 +108,7 @@ class CurriculumController extends Controller
                 break;
             case 'shared_by_me':     $curricula = Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
                 break;
-            case 'by_organization':  $curricula = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->curricula;
+            case 'by_organization':  $curricula = Organization::find(auth()->user()->current_organization_id)->curricula;
                 break;
             case 'all':
             default:                 $curricula = $this->userCurricula();

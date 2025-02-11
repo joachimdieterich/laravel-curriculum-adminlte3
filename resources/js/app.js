@@ -354,7 +354,9 @@ app.config.globalProperties.$initTinyMCE = function(
         entity_encoding: "raw",
         language: 'de',
         height: height,
-
+        table_default_attributes: {
+            border: '1',
+        },
         mathjax: {
             lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax
         },

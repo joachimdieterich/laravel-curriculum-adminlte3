@@ -61,7 +61,7 @@ class OpenController extends Controller
         //if it does not exist create it and go on or show an error message
 
         if ($laravelUser) {
-            dump($laravelUser);
+            //dump($laravelUser);
             Auth::login($laravelUser);
         } else //-- if user does not exist. Get
         {

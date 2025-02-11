@@ -70,7 +70,6 @@ class CurriculumController extends Controller
             $user = auth()->user();
         }
         $userCanSee = $user->curricula;
-        dump($userCanSee);
 
         foreach ($user->groups as $group) {
             $userCanSee = $userCanSee->merge($group->curricula);

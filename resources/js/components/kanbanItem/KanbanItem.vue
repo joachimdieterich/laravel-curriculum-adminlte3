@@ -11,9 +11,9 @@
             aria-expanded="true"
         >
             <div
-                class="card-header-title pl-3 py-2 w-100"
+                class="card-header-title px-3 py-2 w-100"
                 :style="{ backgroundColor: item.color }"
-                style="max-width: 100%; padding-right: 50px; border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem;"
+                style="border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem;"
             >
                 {{ item.title }}
                 <i class="fa fa-angle-up"></i>
@@ -27,9 +27,10 @@
             >
                 <div v-if="$userId == kanban_owner_id
                         || (editable && $userId == item.owner_id)
-                        || (editable && item.editable && onlyEditOwnedItems == false)"
+                        || (editable && item.editable && onlyEditOwnedItems == false)
+                        || checkPermission('is_admin')"
                     class="float-right py-0 px-2 pointer"
-                    :id="'kanbanItemDropdown_'+index"
+                    :id="'kanbanItemDropdown_' + index"
                     style="background-color: transparent;"
                     data-toggle="dropdown"
                     aria-expanded="false"
@@ -42,7 +43,7 @@
                         x-placement="top-start"
                     >
                         <button
-                            :name="'kanbanItemEdit_'+index"
+                            :name="'kanbanItemEdit_' + index"
                             class="dropdown-item text-secondary py-1"
                             @click="edit()"
                         >
@@ -52,7 +53,7 @@
                         <button
                             v-permission="'external_medium_create'"
                             class="dropdown-item text-secondary py-1"
-                            :name="'kanbanItemAddMedia_'+index"
+                            :name="'kanbanItemAddMedia_' + index"
                             @click="addMedia()"
                         >
                             <i class="fa fa-folder-open mr-2"></i>
@@ -63,7 +64,7 @@
                             <button
                                 v-permission="'kanban_delete'"
                                 class="dropdown-item py-1 text-red"
-                                :name="'kanbanItemDelete_'+index"
+                                :name="'kanbanItemDelete_' + index"
                                 @click="confirmItemDelete()"
                             >
                                 <i class="fa fa-trash mr-2"></i>
@@ -94,22 +95,20 @@
             <div>
                 <div class="text-muted small px-3 py-2">
                     <span v-if="item.replace_links">
-                        <HtmlRenderer
-                            :html-content="item.description ?? '</br>'"
-                        ></HtmlRenderer>
+                        <HtmlRenderer :html-content="item.description ?? '</br>'"/>
                     </span>
                     <span v-else v-html="item.description ?? '</br>'"></span>
                 </div>
             </div>
-            <mediaCarousel
-                v-if="item.media_subscriptions.length > 0"
+            <mediaCarousel v-if="item.media_subscriptions.length > 0"
                 class="clearfix"
                 :subscriptions="item.media_subscriptions"
-                :width="width -16"
-            ></mediaCarousel>
+                :width="width - 16"
+            />
         </div>
         <div v-if="item.due_date != null
-                && (item.visible_from != null || item.visible_until != null)"
+                && (item.visible_from != null || item.visible_until != null)
+            "
             class="card-footer px-3 py-2"
             :class="{ 'border-top-0': item.description === null }"
         >
@@ -140,9 +139,8 @@
                     :size="25"
                     class="contacts-list-img"
                     data-toggle="tooltip"
-                ></avatar>
-                <avatar
-                    v-if="editors != null && $userId != 8"
+                />
+                <avatar v-if="editors != null && $userId != 8"
                     v-for="(editor_user, index) in editors"
                     :key="item.id + '_editor_' + index"
                     :title="editor_user.firstname + ' ' + editor_user.lastname"
@@ -152,7 +150,7 @@
                     :size="25"
                     class="contacts-list-img"
                     data-toggle="tooltip"
-                ></avatar>
+                />
 
                 <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
@@ -174,8 +172,7 @@
             </div>
         </div>
 
-        <Comments
-            v-if="show_comments"
+        <Comments v-if="show_comments"
             :comments="item.comments"
             :model="item"
             :kanban_owner_id="kanban_owner_id"
@@ -184,7 +181,7 @@
 
         <Teleport to="body">
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.kanbanItem.delete')"
                 :description="trans('global.kanbanItem.delete_helper')"
                 @close="() => {
@@ -194,11 +191,10 @@
                     this.showConfirm = false;
                     this.delete();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
 <script>
 import DatePicker from 'vue3-datepicker';
 import mediaCarousel from '../media/MediaCarousel.vue';
@@ -212,20 +208,44 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
-        item: Object,
-        index: String,
-        width: Number,
-        commentable: false,
-        onlyEditOwnedItems: false,
-        likable: true,
-        editable: false,
-        replace_links: true,
+        item: {
+            type: Object,
+            default: null,
+        },
+        index: {
+            type: String,
+            default: null,
+        },
+        width: {
+            type: Number,
+            default: null,
+        },
+        commentable: {
+            type: Boolean,
+            default: false,
+        },
+        onlyEditOwnedItems: {
+            type: Boolean,
+            default: false,
+        },
+        likable: {
+            type: Boolean,
+            default: true,
+        },
+        editable: {
+            type: Boolean,
+            default: false,
+        },
+        replace_links: {
+            type: Boolean,
+            default: true,
+        },
         kanban_owner_id: {
             type: Number,
-            default: null
-        }
+            default: null,
+        },
     },
-    setup() { //use database store
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -280,12 +300,12 @@ export default {
         },
         addMedia() {
             this.globalStore?.showModal('medium-modal', {
-                'show': true,
-                'subscribeSelected': true,
-                'subscribable_type': 'App\\\KanbanItem',
-                'subscribable_id': this.item.id,
-                'public': 0,
-                'callbackId': this.component_id
+                show: true,
+                subscribeSelected: true,
+                subscribable_type: 'App\\KanbanItem',
+                subscribable_id: this.item.id,
+                public: 0,
+                callbackId: this.component_id,
             });
         },
         reload() { //after media upload
@@ -317,7 +337,7 @@ export default {
                 month: '2-digit',
                 year: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
             };
 
             this.expired = new Date() > date;

@@ -20,7 +20,8 @@
         >
             <div v-if="($userId == kanban.owner_id)
                     || (editable && $userId == status.owner_id)
-                    || (editable && status.editable && !kanban.only_edit_owned_items)"
+                    || (editable && status.editable && !kanban.only_edit_owned_items)
+                    || checkPermission('is_admin')"
                 :id="'kanbanStatusDropdown_' + status.id"
                 class="btn btn-flat py-0 pl-0 pull-left"
                 data-toggle="dropdown"
@@ -43,7 +44,9 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.kanbanStatus.edit') }}
                         </button>
-                        <div v-if="($userId == status.owner_id) || (editable && $userId == kanban.owner_id)">
+                        <div v-if="$userId == status.owner_id
+                                || (editable && $userId == kanban.owner_id)"
+                        >
                             <hr class="my-1">
                             <button
                                 v-permission="'kanban_delete'"

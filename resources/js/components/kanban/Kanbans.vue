@@ -102,7 +102,7 @@
             </IndexWidget>
 
             <IndexWidget v-for="kanban in kanbans"
-                :key="'kanbanIndex'+kanban.id"
+                :key="'kanbanIndex' + kanban.id"
                 :model="kanban"
                 modelName="Kanban"
                 url="/kanbans"
@@ -115,12 +115,30 @@
                 <template v-slot:dropdown
                     v-permission="'kanban_edit, kanban_delete'"
                 >
-                    <div
+                    <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <button v-if="!subscribable"
+                        <button
+                            v-permission="'kanban_delete'"
+                            :id="'delete-kanban-' + kanban.id"
+                            type="submit"
+                            class="dropdown-item py-1 text-red"
+                            @click.prevent="confirmItemDelete(kanban)"
+                        >
+                            <span>
+                                <i class="fa fa-unlink mr-2"></i>
+                                {{ trans('global.kanban.expel') }}
+                            </span>
+                        </button>
+                    </div>
+                    <div v-else
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
+                        <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'kanban_edit'"
                             :name="'edit-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
@@ -129,7 +147,8 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.kanban.edit') }}
                         </button>
-                        <button v-if="kanban.allow_copy && !subscribable"
+
+                        <button v-if="kanban.allow_copy"
                             :name="'copy-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmKanbanCopy(kanban)"
@@ -137,21 +156,19 @@
                             <i class="fa fa-copy mr-2"></i>
                             {{ trans('global.kanban.copy') }}
                         </button>
-                        <hr v-if="!subscribable"
+
+                        <hr v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                             class="my-1"
                         />
-                        <button
+
+                        <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'kanban_delete'"
                             :id="'delete-kanban-' + kanban.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(kanban)"
                         >
-                            <span v-if="subscribable">
-                                <i class="fa fa-unlink mr-2"></i>
-                                {{ trans('global.kanban.expel') }}
-                            </span>
-                            <span v-else>
+                            <span>
                                 <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.kanban.delete') }}
                             </span>

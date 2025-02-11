@@ -6,14 +6,12 @@ use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
 use App\KanbanSubscription;
-use App\Medium;
 use App\MediumSubscription;
 use App\Organization;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Maize\Markable\Models\Like;
 use Yajra\DataTables\DataTables;
 
 class KanbanController extends Controller

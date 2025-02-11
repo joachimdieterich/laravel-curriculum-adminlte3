@@ -109,21 +109,6 @@
                 url="/logbooks"
                 :showSubscribable="subscribable"
             >
-                <template v-slot:icon>
-                    <i v-if="logbook.type_id === 1"
-                        class="fas fa-globe pt-2"
-                    ></i>
-                    <i v-else-if="logbook.type_id === 2"
-                        class="fas fa-university pt-2"
-                    ></i>
-                    <i v-else-if="logbook.type_id === 3"
-                        class="fa fa-users pt-2"
-                    ></i>
-                    <i v-else
-                        class="fa fa-user pt-2"
-                    ></i>
-                </template>
-
                 <template v-slot:itemIcon>
                     <i v-if="logbook.css_icon"
                         class="fa-2x"
@@ -154,7 +139,7 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <button
+                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                             :name="'logbook-edit_' + logbook.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="editLogbook(logbook)"
@@ -162,7 +147,7 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.logbook.edit') }}
                         </button>
-                        <button
+                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                             :name="'logbook-share_' + logbook.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="shareLogbook(logbook)"
@@ -171,7 +156,7 @@
                             {{ trans('global.logbook.share') }}
                         </button>
                         <hr class="my-1">
-                        <button
+                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                             :id="'delete-logbook-' + logbook.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"

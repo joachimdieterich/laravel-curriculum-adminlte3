@@ -134,7 +134,7 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <button
+                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'plan_edit'"
                             :name="'edit-plan-' + plan.id"
                             class="dropdown-item text-secondary"
@@ -143,16 +143,21 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.plan.edit') }}
                         </button>
+
                         <button v-if="plan.allow_copy"
-                            :name="'copy-plan-'+plan.id"
+                            :name="'copy-plan-' + plan.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmCopy(plan)"
                         >
                             <i class="fa fa-copy mr-2"></i>
                             {{ trans('global.plan.copy') }}
                         </button>
-                        <hr class="my-1">
-                        <button
+
+                        <hr v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                            class="my-1"
+                        />
+
+                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'plan_delete'"
                             :id="'delete-plan-' + plan.id"
                             type="submit"

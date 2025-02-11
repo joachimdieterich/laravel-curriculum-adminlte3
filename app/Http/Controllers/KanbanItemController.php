@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Kanban;
 use App\KanbanItem;
+use App\MediumSubscription;
 use Maize\Markable\Models\Like;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -210,6 +211,46 @@ class KanbanItemController extends Controller
                 ];
             }
         }
+    }
+
+    public function copyItem(KanbanItem $item, Request $request)
+    {
+        $order_id = DB::table('kanban_items')
+            ->where('kanban_id', $item->kanban_id)
+            ->where('kanban_status_id', $item->kanban_status_id)
+            ->max('order_id');
+
+        $itemCopy = KanbanItem::Create([
+            'title'             => '[Kopie] ' . $item->title,
+            'description'       => $item->description,
+            'order_id'          => $order_id + 1,
+            'kanban_id'         => $item->kanban_id,
+            'kanban_status_id'  => $item->kanban_status_id,
+            'color'             => $item->color,
+            'owner_id'          => auth()->user()->id,
+        ]);
+
+        foreach ($item->mediaSubscriptions as $mediaSubscription) {
+            MediumSubscription::Create([
+                'medium_id'         => $mediaSubscription->medium_id,
+                'subscribable_id'   => $itemCopy->id,
+                'subscribable_type' => $mediaSubscription->subscribable_type,
+                'sharing_level_id'  => $mediaSubscription->sharing_level_id,
+                'visibility'        => $mediaSubscription->visibility,
+                'additional_data'   => $mediaSubscription->additional_data,
+                'owner_id'          => auth()->user()->id,
+            ]);
+        }
+
+        return KanbanItem::with([
+                'comments',
+                'comments.user',
+                'comments.likes',
+                'likes',
+                'mediaSubscriptions.medium',
+                'owner',
+            ])
+            ->find($itemCopy->id);
     }
 
     /**

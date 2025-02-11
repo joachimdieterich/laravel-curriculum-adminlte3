@@ -25,12 +25,9 @@
                 class="card-tools position-absolute"
                 style="top: 8px; right: 16px;"
             >
-                <div v-if="$userId == kanban_owner_id
-                        || (editable && $userId == item.owner_id)
-                        || (editable && item.editable && onlyEditOwnedItems == false)
-                        || checkPermission('is_admin')"
-                    class="float-right py-0 px-2 pointer"
+                <div v-if="edit_rights || copy_rights || delete_rights"
                     :id="'kanbanItemDropdown_' + index"
+                    class="float-right py-0 px-2 pointer"
                     style="background-color: transparent;"
                     data-toggle="dropdown"
                     aria-expanded="false"
@@ -42,24 +39,38 @@
                         class="dropdown-menu"
                         x-placement="top-start"
                     >
-                        <button
-                            :name="'kanbanItemEdit_' + index"
-                            class="dropdown-item text-secondary py-1"
-                            @click="edit()"
-                        >
-                            <i class="fa fa-pencil-alt mr-2"></i>
-                            {{ trans('global.kanbanItem.edit') }}
-                        </button>
-                        <button
-                            v-permission="'external_medium_create'"
-                            class="dropdown-item text-secondary py-1"
-                            :name="'kanbanItemAddMedia_' + index"
-                            @click="addMedia()"
-                        >
-                            <i class="fa fa-folder-open mr-2"></i>
-                            {{ trans('global.medium.title_singular') }}
-                        </button>
-                        <div v-if="$userId == item.owner_id || $userId == kanban_owner_id">
+                        <div v-if="edit_rights">
+                            <button
+                                :name="'kanbanItemEdit_' + index"
+                                class="dropdown-item text-secondary py-1"
+                                @click="edit()"
+                            >
+                                <i class="fa fa-pencil-alt mr-2"></i>
+                                {{ trans('global.kanbanItem.edit') }}
+                            </button>
+                            <button
+                                v-permission="'external_medium_create'"
+                                class="dropdown-item text-secondary py-1"
+                                :name="'kanbanItemAddMedia_' + index"
+                                @click="addMedia()"
+                            >
+                                <i class="fa fa-folder-open mr-2"></i>
+                                {{ trans('global.medium.title_singular') }}
+                            </button>
+                        </div>
+
+                        <div v-if="copy_rights">
+                            <button
+                                name="kanbanItemCopy"
+                                class="dropdown-item text-secondary py-1"
+                                @click="confirmCopy()"
+                            >
+                                <i class="fa fa-copy mr-2"></i>
+                                {{ trans('global.kanbanItem.copy') }}
+                            </button>
+                        </div>
+
+                        <div v-if="delete_rights">
                             <hr class="my-1">
                             <button
                                 v-permission="'kanban_delete'"
@@ -107,8 +118,7 @@
             />
         </div>
         <div v-if="item.due_date != null
-                && (item.visible_from != null || item.visible_until != null)
-            "
+                && (item.visible_from != null || item.visible_until != null)"
             class="card-footer px-3 py-2"
             :class="{ 'border-top-0': item.description === null }"
         >
@@ -131,7 +141,7 @@
         >
             <div class="d-flex align-items-center">
                <avatar
-                    :key="item.id + '_editor_' +item.owner.id"
+                    :key="item.id + '_editor_' + item.owner.id"
                     :title="item.owner.firstname + ' ' + item.owner.lastname"
                     :username="item.owner.username"
                     :firstname="item.owner.firstname"
@@ -224,15 +234,15 @@ export default {
             type: Boolean,
             default: false,
         },
-        onlyEditOwnedItems: {
+        only_edit_owned_items: {
             type: Boolean,
             default: false,
         },
-        likable: {
-            type: Boolean,
-            default: true,
-        },
         editable: {
+            type: Boolean,
+            default: false,
+        },
+        allow_copy: {
             type: Boolean,
             default: false,
         },
@@ -256,6 +266,9 @@ export default {
             component_id: this.$.uid,
             showConfirm: false,
             currentItem : {},
+            edit_rights: false,
+            copy_rights: false,
+            delete_rights: false,
             new_media: null,
             show_comments: false,
             expired: false,
@@ -276,6 +289,12 @@ export default {
         },
     },
     methods: {
+        confirmCopy() {
+            this.$eventHub.emit('kanban-show-copy', {
+                id: this.item.id,
+                type: 'item',
+            });
+        },
         confirmItemDelete(item) {
             this.currentItem = item;
             this.showConfirm = true;
@@ -346,6 +365,19 @@ export default {
         },
     },
     mounted() {
+        this.edit_rights =
+            this.$userId == this.kanban_owner_id
+                || this.checkPermission('is_admin')
+                // (edit = true and item-owner) or (edit = true and item-edit = true and everyone can edit)
+                || (this.editable && (this.$userId == this.item.owner_id || (this.item.editable && !this.only_edit_owned_items)));
+
+        this.copy_rights = this.allow_copy && this.editable;
+
+        this.delete_rights =
+            this.$userId == this.kanban_owner_id
+                || this.checkPermission('is_admin')
+                || this.$userId == this.item.owner_id;
+
         this.getEditors();
         //this.due_date = this.item.due_date;
         this.$eventHub.on('reload_kanban_item', (e) => {
@@ -377,7 +409,7 @@ export default {
         avatar,
         DatePicker,
         ConfirmModal,
-    }
+    },
 }
 </script>
 <style scoped>

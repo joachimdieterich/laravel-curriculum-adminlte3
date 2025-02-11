@@ -1,8 +1,9 @@
 <template>
-    <Transition v-if="showConfirm"
-        name="confirm"
-    >
-        <div class="modal-mask">
+    <Transition name="modal">
+        <div v-if="showConfirm"
+            class="modal-mask"
+            @click.self="$emit('close')"
+        >
             <div class="modal-container">
                 <div
                     class="card-header"
@@ -54,12 +55,15 @@ export default {
     props: {
         showConfirm: {
             type: Boolean,
+            default: false,
         },
         title: {
             type: String,
+            default: null,
         },
         description: {
             type: String,
+            default: null,
         },
         css: {
             type: String,

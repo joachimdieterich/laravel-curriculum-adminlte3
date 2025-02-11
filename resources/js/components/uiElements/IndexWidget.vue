@@ -70,7 +70,7 @@
             </div>
 
             <div v-if="(item.owner_id == $userId && !showSubscribable)
-                    || item.allow_copy
+                    || (item.allow_copy && (!item.type_id || checkPermission('is_teacher')))
                     || (checkPermission('is_teacher') && showSubscribable)
                     || checkPermission('is_admin')
                 "

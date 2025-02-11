@@ -110,9 +110,7 @@
                     <i class="fa fa-2x fa-clipboard-list"></i>
                 </template>
 
-                <template v-slot:dropdown
-                    v-permission="'plan_edit, plan_delete'"
-                >
+                <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"

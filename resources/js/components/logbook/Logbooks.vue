@@ -103,7 +103,7 @@
 
             <IndexWidget v-for="logbook in logbooks"
                 :id="logbook.id"
-                :key="'logbookIndex'+logbook.id"
+                :key="'logbookIndex' + logbook.id"
                 :model="logbook"
                 modelName="Logbook"
                 url="/logbooks"
@@ -116,9 +116,7 @@
                     ></i>
                 </template>
 
-                <template v-slot:dropdown
-                    v-permission="'logbook_edit, logbook_delete'"
-                >
+                <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"

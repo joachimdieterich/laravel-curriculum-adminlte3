@@ -186,7 +186,8 @@
             :comments="item.comments"
             :model="item"
             :kanban_owner_id="kanban_owner_id"
-            url="/kanbanItemComment"
+            @addComment="addComment"
+            @removeComment="removeComment"
         />
 
         <Teleport to="body">
@@ -316,6 +317,13 @@ export default {
         },
         openComments() {
             this.show_comments = !this.show_comments;
+        },
+        addComment(newComment) {
+            this.item.comments.push(newComment);
+        },
+        removeComment(comment) {
+            let index = this.item.comments.indexOf(comment);
+            this.item.comments.splice(index, 1);
         },
         addMedia() {
             this.globalStore?.showModal('medium-modal', {

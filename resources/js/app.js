@@ -34,11 +34,6 @@ app.config.globalProperties.$eventHub = mitt();
 
 import VueDOMPurifyHTML from 'vue-dompurify-html';
 app.use(VueDOMPurifyHTML, {
-    namedConfigurations: {
-        plaintext: {
-            USE_PROFILES: { html: false },
-        },
-    },
     hooks: {
         afterSanitizeAttributes: (currentNode) => {
             if ('rel' in currentNode && currentNode.rel == 'noopener') {

@@ -52,7 +52,7 @@ class VideoconferenceController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('videoconference_access'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
 
         if (request()->wantsJson())
         {
@@ -127,7 +127,7 @@ class VideoconferenceController extends Controller
 
     public function list(Request $request)
     {
-        abort_unless(\Gate::allows('videoconference_access'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
 
         if (request()->has(['group_id']))
         {

@@ -257,11 +257,11 @@
                                         />
         
                                         <MediumForm v-if="form.id"
-                                            class="pull-right"
-                                            id="medium_id"
+                                            :id="'medium_form' + component_id"
                                             :medium_id="form.medium_id"
                                             accept="image/*"
-                                            :selected="this.form.medium_id"
+                                            :subscribable_id="form.id"
+                                            subscribable_type="'App\Curriculum'"
                                             @selectedValue="(id) => {
                                                 this.form.medium_id = id;
                                             }"
@@ -350,7 +350,6 @@
 <script>
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
-import MediumModal from "../media/MediumModal.vue";
 import MediumForm from "../media/MediumForm.vue";
 import Select2 from "../forms/Select2.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -361,7 +360,6 @@ export default {
     name: 'curriculum-modal',
     components: {
         Editor,
-        MediumModal,
         MediumForm,
         Select2,
         VueDatePicker,
@@ -399,12 +397,13 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link table lists autoresize"
+                    "autolink link lists autoresize"
                 ],
                 {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                }
+                    callbackId: this.component_id,
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                ""
             ),
         }
     },
@@ -456,12 +455,14 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
+
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    if (this.form.id !== ''){
+                    if (this.form.id !== '') {
                         this.form.description = this.$decodeHTMLEntities(this.$decodeHtml(this.form.description));
                         this.method = 'patch';
                     } else {

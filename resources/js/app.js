@@ -28,27 +28,21 @@ const app = createApp({});
  *
  * how to add a sender
  * this.$eventHub.emit('reload_agenda', params);
- * @type {Vue}
  */
 import mitt from 'mitt';
 app.config.globalProperties.$eventHub = mitt();
 
 import VueDOMPurifyHTML from 'vue-dompurify-html';
 app.use(VueDOMPurifyHTML, {
-    namedConfigurations: {
-        plaintext: {
-            USE_PROFILES: { html: false },
-        },
-    },
     hooks: {
         afterSanitizeAttributes: (currentNode) => {
             if ('rel' in currentNode && currentNode.rel == 'noopener') {
                 currentNode.setAttribute('target', '_blank');
             }
-        }
-    }
+        },
+    },
 });
-import { useGlobalStore} from "./store/global";
+import { useGlobalStore } from "./store/global";
 import { createPinia } from "pinia";
 const pinia = createPinia();
 app.use(pinia);
@@ -77,9 +71,13 @@ if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
 // use trans function like in blade
 import _ from 'lodash'; //needed to get
 
-//todo: explain function
+/**
+ * search for key in language file
+ * @param {String} key 
+ * @returns translated String or key if not found
+ */
 app.config.globalProperties.trans = (key) => {
-    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key) );
+    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
 };
 
 import VSwatches from 'vue3-swatches';
@@ -87,7 +85,7 @@ import 'vue3-swatches/dist/style.css';
 app.use(VSwatches);
 
 app.config.globalProperties.$textcolor = (color, dark = '#000', light = '#fff') => {
-    if (typeof(color) != 'string'){
+    if (typeof(color) != 'string') {
         color = 'ffffff';
     }
 
@@ -110,7 +108,6 @@ app.config.globalProperties.$decodeHTMLEntities = (text) => {
         .html(text)
         .text();
 };
-
 
 /**
  * Store current ab in global storage
@@ -141,7 +138,7 @@ app.config.globalProperties.getGlobalStorage = (key, value, class_string = "acti
 };
 
 
-//-> use permission in vue3 templates, use checkPermission in scripts
+//-> use v-permission in vue3 templates, use checkPermission in scripts
 app.config.globalProperties.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
 };
@@ -357,7 +354,9 @@ app.config.globalProperties.$initTinyMCE = function(
         entity_encoding: "raw",
         language: 'de',
         height: height,
-
+        table_default_attributes: {
+            border: '1',
+        },
         mathjax: {
             lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax
         },

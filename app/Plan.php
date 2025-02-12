@@ -10,6 +10,7 @@ class Plan extends Model
 
     protected $casts = [
         'entry_order' => 'array',
+        'allow_copy' => 'boolean',
     ];
 
     protected $attributes = [

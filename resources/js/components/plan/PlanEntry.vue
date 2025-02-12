@@ -28,7 +28,7 @@
                             ></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
-                            <div v-if="$userId == plan.owner_id"
+                            <div v-if="editable && showTools"
                                 class="card-tools"
                             >
                                 <i
@@ -53,12 +53,15 @@
                                 :referenceable_id="entry.id"
                                 :owner_id="entry.owner_id"
                                 :editable="editable"
+                                :showTools="showTools"
                             />
 
                             <Trainings
                                 :plan="plan"
-                                subscribable_type="App\PlanEntry"
                                 :subscribable_id="entry.id"
+                                subscribable_type="App\PlanEntry"
+                                :editable="editable"
+                                :showTools="showTools"
                             />
                         </div>
                     </div>
@@ -90,17 +93,25 @@ import {useGlobalStore} from "../../store/global";
 export default {
     props: {
         entry: {
+            type: Object,
             default: null,
         },
         create: {
+            type: Boolean,
             default: false,
         },
         plan: {
             type: Object,
+            default: null,
         },
         editable: {
+            type: Boolean,
             default: false,
         },
+        showTools: {
+            type: Boolean,
+            default: false,
+        }
     },
     setup() {
         const globalStore = useGlobalStore();

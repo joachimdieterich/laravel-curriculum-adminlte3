@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
+use App\MediumSubscription;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -81,7 +82,8 @@ class KanbanStatusController extends Controller
         }
     }
 
-    public function checkSync(Kanban $kanban){
+    public function checkSync(Kanban $kanban)
+    {
         $date = new DateTime;
         $date->modify('-10 seconds');
         $formatted_date = $date->format('Y-m-d H:i:s');
@@ -167,6 +169,56 @@ class KanbanStatusController extends Controller
         }
     }
 
+    public function copyStatus(KanbanStatus $status, Request $request)
+    {
+        $order_id = DB::table('kanban_statuses')
+            ->where('kanban_id', $status->kanban_id)
+            ->max('order_id');
+
+        $statusCopy = KanbanStatus::Create([
+            'title'     => '[Kopie] ' . $status->title,
+            'order_id'  => $order_id + 1,
+            'kanban_id' => $status['kanban_id'],
+            'color'     => $status->color,
+            'owner_id'  => auth()->user()->id,
+        ]);
+
+        foreach ($status->items as $item) {
+            $itemCopy = KanbanItem::Create([
+                'title'             => $item->title,
+                'description'       => $item->description,
+                'order_id'          => $item->order_id,
+                'kanban_id'         => $statusCopy->kanban_id,
+                'kanban_status_id'  => $statusCopy->id,
+                'color'             => $item->color,
+                'owner_id'          => auth()->user()->id,
+            ]);
+
+            foreach ($item->mediaSubscriptions as $mediaSubscription) {
+                MediumSubscription::Create([
+                    'medium_id'         => $mediaSubscription->medium_id,
+                    'subscribable_type' => $mediaSubscription->subscribable_type,
+                    'subscribable_id'   => $itemCopy->id,
+                    'sharing_level_id'  => $mediaSubscription->sharing_level_id,
+                    'visibility'        => $mediaSubscription->visibility,
+                    'additional_data'   => $mediaSubscription->additional_data,
+                    'owner_id'          => auth()->user()->id,
+                ]);
+            }
+        }
+
+        return KanbanStatus::with([
+                'items',
+                'items.comments',
+                'items.comments.user',
+                'items.comments.likes',
+                'items.likes',
+                'items.mediaSubscriptions.medium',
+                'items.owner',
+            ])
+            ->find($statusCopy->id);
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -182,7 +234,6 @@ class KanbanStatusController extends Controller
             'color' => 'sometimes',
         ]);
     }
-
 
     private function getStatusWithRelations(KanbanStatus $kanbanStatus): array
     {

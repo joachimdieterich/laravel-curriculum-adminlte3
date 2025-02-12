@@ -19,12 +19,12 @@ class GroupsController extends Controller
 {
     public function index()
     {
-        abort_unless(\Gate::allows('group_access'), 403);
         // select2 request
         if (request()->wantsJson() ) {
             return $this->getEntriesForSelect2();
         }
-
+        // select2 should return entries for students
+        abort_unless(\Gate::allows('group_access'), 403);
         return view('groups.index');
     }
 

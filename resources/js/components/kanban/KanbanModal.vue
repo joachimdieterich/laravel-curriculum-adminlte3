@@ -90,14 +90,11 @@
                                 />
         
                                 <MediumForm v-if="form.id"
-                                    id="medium_id"
-                                    class="pull-right"
-                                    :form="form"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
-                                    :subscribable_type="'App\\Kanban'"
                                     :subscribable_id="form.id"
+                                    subscribable_type="App\Kanban"
                                     accept="image/*"
-                                    :selected="this.form.medium_id"
                                     @selectedValue="(id) => {
                                         this.form.medium_id = id;
                                     }"
@@ -200,7 +197,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumModal from "../media/MediumModal.vue";
 import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
 import Select2 from "../forms/Select2.vue";
@@ -209,7 +205,6 @@ import {useGlobalStore} from "../../store/global";
 export default {
     name: 'kanban-modal',
     components: {
-        MediumModal,
         Select2,
         MediumForm,
     },
@@ -279,8 +274,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

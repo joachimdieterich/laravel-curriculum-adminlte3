@@ -6,14 +6,12 @@ use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
 use App\KanbanSubscription;
-use App\Medium;
 use App\MediumSubscription;
 use App\Organization;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Maize\Markable\Models\Like;
 use Yajra\DataTables\DataTables;
 
 class KanbanController extends Controller
@@ -68,8 +66,6 @@ class KanbanController extends Controller
 
         return $kanbans;
     }
-
-
 
     public function userKanbans($withOwned = true)
     {
@@ -188,8 +184,8 @@ class KanbanController extends Controller
      */
     public function show(Kanban $kanban, $token = null)
     {
-
-        abort_unless(/*\Gate::allows('kanban_show') and*/ $kanban->isAccessible(), 403); // don't use kanban_show -> bugfix for 403 problem on tokens.
+        // don't use kanban_show -> bugfix for 403 problem on tokens.
+        abort_unless($kanban->isAccessible(), 403);
 
         $kanban = $this->getKanbanWithRelations($kanban);
 
@@ -373,21 +369,24 @@ class KanbanController extends Controller
     public function getKanbanWithRelations(Kanban $kanban)
     {
         return $kanban->with([
-            'statuses',
-            'statuses.items' => function ($query) use ($kanban) {
-                $query->where('kanban_id', $kanban->id)
-                    ->with([
-                        'comments',
-                        'comments.user',
-                        'comments.likes',
-                        'likes',
-                        'mediaSubscriptions.medium',
-                        'owner',
-                    ])
-                    ->orderBy('order_id');
+            'owner' => function($query) {
+                $query->select('id', 'firstname', 'lastname');
+            },
+            'statuses.items' => function($query) use ($kanban) {
+                $query->with([
+                    'comments',
+                    'comments.user',
+                    'comments.likes',
+                    'likes',
+                    'mediaSubscriptions.medium',
+                    'owner' => function($query) {
+                        $query->select('id', 'username', 'firstname', 'lastname');
+                    },
+                ])
+                ->orderBy('order_id');
             },
             'medium',
-        ])->where('id', $kanban->id)->get()->first();
+        ])->find($kanban->id);
     }
 
     public function getKanbanByToken(Kanban $kanban, Request $request)

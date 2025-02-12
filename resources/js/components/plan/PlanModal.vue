@@ -138,11 +138,11 @@
                                     :max-height="300"
                                 />
                                 <MediumForm v-if="form.id"
-                                    class="ml-auto"
-                                    :id="'medium_id_' + component_id"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\Plan"
                                     accept="image/*"
-                                    :selected="this.form.medium_id"
                                     @selectedValue="(id) => {
                                         this.form.medium_id = id;
                                     }"
@@ -207,7 +207,6 @@ import Editor from '@tinymce/tinymce-vue';
 import MediumForm from "../media/MediumForm.vue";
 import {useGlobalStore} from "../../store/global";
 import VueDatePicker from "@vuepic/vue-datepicker";
-import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
     name: 'plan-modal',
@@ -245,14 +244,14 @@ export default {
             search: '',
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table code autoresize"
+                    "autolink link lists code autoresize"
                 ],
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
                 },
-                "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code curriculummedia",
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                ""
             ),
         }
     },
@@ -321,7 +320,8 @@ export default {
         Object.values(this.errors).forEach(value => value = false);
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

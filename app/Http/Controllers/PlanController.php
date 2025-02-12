@@ -83,7 +83,6 @@ class PlanController extends Controller
         {
             $owned = Plan::where('owner_id', auth()->user()->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-
         }
 
         return $userCanSee->unique();
@@ -149,6 +148,7 @@ class PlanController extends Controller
         $plan = Plan::firstOrCreate([
             'title'             => $input['title'],
             'description'       => $input['description'],
+            'color'             => $input['color'],
             'begin'             => $input['begin'],
             'end'               => $input['end'],
             'duration'          => $input['duration'],
@@ -408,6 +408,7 @@ class PlanController extends Controller
             'type_id'       => 'sometimes',
             'entry_order'   => 'sometimes',
             'color'         => 'sometimes',
+            'medium_id'     => 'sometimes',
             'allow_copy'    => 'sometimes',
         ]);
     }

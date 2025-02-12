@@ -103,26 +103,12 @@
 
             <IndexWidget v-for="logbook in logbooks"
                 :id="logbook.id"
-                :key="'logbookIndex'+logbook.id"
+                :key="'logbookIndex' + logbook.id"
                 :model="logbook"
                 modelName="Logbook"
                 url="/logbooks"
+                :showSubscribable="subscribable"
             >
-                <template v-slot:icon>
-                    <i v-if="logbook.type_id === 1"
-                        class="fas fa-globe pt-2"
-                    ></i>
-                    <i v-else-if="logbook.type_id === 2"
-                        class="fas fa-university pt-2"
-                    ></i>
-                    <i v-else-if="logbook.type_id === 3"
-                        class="fa fa-users pt-2"
-                    ></i>
-                    <i v-else
-                        class="fa fa-user pt-2"
-                    ></i>
-                </template>
-
                 <template v-slot:itemIcon>
                     <i v-if="logbook.css_icon"
                         class="fa-2x"
@@ -130,9 +116,7 @@
                     ></i>
                 </template>
 
-                <template v-slot:dropdown
-                    v-permission="'logbook_edit, logbook_delete'"
-                >
+                <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"
@@ -153,7 +137,7 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <button
+                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                             :name="'logbook-edit_' + logbook.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="editLogbook(logbook)"
@@ -161,7 +145,7 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.logbook.edit') }}
                         </button>
-                        <button
+                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                             :name="'logbook-share_' + logbook.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="shareLogbook(logbook)"
@@ -170,7 +154,7 @@
                             {{ trans('global.logbook.share') }}
                         </button>
                         <hr class="my-1">
-                        <button
+                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                             :id="'delete-logbook-' + logbook.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
@@ -202,9 +186,10 @@
         <Teleport to="body">
             <LogbookModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
+            <MediumModal v-if="!subscribable"/>
             <SubscribeLogbookModal v-if="subscribable"/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.logbook.' + delete_label_field)"
                 :description="trans('global.logbook.' + delete_label_field + '_helper')"
                 @close="() => {
@@ -227,6 +212,7 @@ import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeLogbookModal from "./SubscribeLogbookModal.vue";
 import {useGlobalStore} from "../../store/global";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
@@ -370,6 +356,7 @@ export default {
     },
     components: {
         SubscribeModal,
+        MediumModal,
         ConfirmModal,
         SubscribeLogbookModal,
         DataTable,

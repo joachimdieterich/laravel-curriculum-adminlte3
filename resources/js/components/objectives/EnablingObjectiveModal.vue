@@ -42,7 +42,7 @@
                                     id="title"
                                     name="title"
                                     class="form-control"
-                                    :init="tinyMCE"
+                                    :init="tinyMCE_title"
                                     v-model="form.title"
                                 />
                             </div>
@@ -55,7 +55,7 @@
                                     id="description"
                                     name="description"
                                     class="form-control"
-                                    :init="tinyMCE"
+                                    :init="tinyMCE_description"
                                     v-model="form.description"
                                 />
                             </div>
@@ -138,7 +138,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumModal from "../media/MediumModal.vue";
 import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
@@ -148,7 +147,6 @@ export default {
     name: 'enabling-objective-modal',
     components: {
         Editor,
-        MediumModal,
         Select2,
     },
     props: {},
@@ -172,17 +170,34 @@ export default {
                 level_id: null,
                 visibility: true,
             }),
-            tinyMCE: this.$initTinyMCE(
+            tinyMCE_title: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia table lists autoresize"
+                    "autolink link table lists autoresize"
                 ],
                 {
                     public: 1,
-                    referenceable_type: 'App\\Curriculum',
-                    referenceable_id: this.form?.curriculum_id,
-                    eventHubCallbackFunction: 'insertContent',
-                    eventHubCallbackFunctionParams: this.component_id,
-                }
+                    subscribeSelected: true,
+                    subscribable_id: this.form?.curriculum_id,
+                    subscribable_type: 'App\\Curriculum',
+                    callbackId: this.component_id,
+                    placeholder: this.trans('global.objective_content'),
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                ""
+            ),
+            tinyMCE_description: this.$initTinyMCE(
+                [
+                    "autolink link table lists autoresize"
+                ],
+                {
+                    public: 1,
+                    subscribeSelected: true,
+                    subscribable_id: this.form?.curriculum_id,
+                    subscribable_type: 'App\\Curriculum',
+                    callbackId: this.component_id,
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                ""
             ),
         }
     },

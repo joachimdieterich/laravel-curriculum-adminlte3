@@ -141,6 +141,7 @@ class MapController extends Controller
             'longitude'     => $input['longitude'] ?? $map->longitude,
             'zoom'          => $input['zoom'] ?? $map->zoom,
             'color'         => $input['color'] ?? $map->color,
+            'medium_id'     => $input['medium_id'],
             'owner_id'      => auth()->user()->id,
         ]);
 

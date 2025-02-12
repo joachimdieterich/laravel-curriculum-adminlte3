@@ -102,24 +102,41 @@
             </IndexWidget>
 
             <IndexWidget v-for="kanban in kanbans"
-                :key="'kanbanIndex'+kanban.id"
+                :key="'kanbanIndex' + kanban.id"
                 :model="kanban"
                 modelName="Kanban"
                 url="/kanbans"
+                :showSubscribable="subscribable"
             >
                 <template v-slot:itemIcon>
                     <i class="fa fa-2x fa-columns"></i>
                 </template>
 
-                <template v-slot:dropdown
-                    v-permission="'kanban_edit, kanban_delete'"
-                >
-                    <div
+                <template v-slot:dropdown>
+                    <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <button v-if="!subscribable"
+                        <button
+                            v-permission="'kanban_delete'"
+                            :id="'delete-kanban-' + kanban.id"
+                            type="submit"
+                            class="dropdown-item py-1 text-red"
+                            @click.prevent="confirmItemDelete(kanban)"
+                        >
+                            <span>
+                                <i class="fa fa-unlink mr-2"></i>
+                                {{ trans('global.kanban.expel') }}
+                            </span>
+                        </button>
+                    </div>
+                    <div v-else
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
+                        <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'kanban_edit'"
                             :name="'edit-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
@@ -128,29 +145,28 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.kanban.edit') }}
                         </button>
-                        <button v-if="kanban.allow_copy && !subscribable"
-                            :name="'copy-kanban-'+kanban.id"
+
+                        <button v-if="kanban.allow_copy"
+                            :name="'copy-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmKanbanCopy(kanban)"
                         >
                             <i class="fa fa-copy mr-2"></i>
                             {{ trans('global.kanban.copy') }}
                         </button>
-                        <hr v-if="!subscribable"
+
+                        <hr v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                             class="my-1"
                         />
-                        <button
+
+                        <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'kanban_delete'"
                             :id="'delete-kanban-' + kanban.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(kanban)"
                         >
-                            <span v-if="subscribable">
-                                <i class="fa fa-unlink mr-2"></i>
-                                {{ trans('global.kanban.expel') }}
-                            </span>
-                            <span v-else>
+                            <span>
                                 <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.kanban.delete') }}
                             </span>
@@ -159,6 +175,7 @@
                 </template>
             </IndexWidget>
         </div>
+
         <div
             id="kanban-datatable-wrapper"
             class="w-100 dataTablesWrapper"
@@ -175,9 +192,10 @@
 
         <Teleport to="body">
             <KanbanModal v-if="!subscribable"/>
+            <MediumModal v-if="!subscribable"/>
             <SubscribeKanbanModal v-if="subscribable"/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.kanban.' + delete_label_field)"
                 :description="trans('global.kanban.' + delete_label_field +'_helper')"
                 @close="() => {
@@ -188,8 +206,8 @@
                     this.destroy();
                 }"
             />
-            <ConfirmModal
-                :showConfirm="this.showCopy"
+            <ConfirmModal v-if="!subscribable"
+                :showConfirm="showCopy"
                 :title="trans('global.kanban.copy')"
                 :description="trans('global.kanban.copy_helper')"
                 css='primary'
@@ -208,6 +226,7 @@
 import SubscribeKanbanModal from "../kanban/SubscribeKanbanModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -339,6 +358,7 @@ export default {
     },
     components: {
         SubscribeKanbanModal,
+        MediumModal,
         ConfirmModal,
         DataTable,
         KanbanModal,

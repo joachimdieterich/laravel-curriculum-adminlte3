@@ -93,12 +93,11 @@
                                     :max-height="300"
                                 />
                                 <MediumForm v-if="form.id"
-                                    class="pull-right"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
-                                    accept="image/*"
                                     :subscribable_id="form.id"
-                                    subscribable_type="App\\Logbook"
-                                    :selected="this.form.medium_id"
+                                    subscribable_type="App\Logbook"
+                                    accept="image/*"
                                     @selectedValue="(id) => {
                                         this.form.medium_id = id;
                                     }"
@@ -218,7 +217,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

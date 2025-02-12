@@ -31,7 +31,7 @@
                         <div class="card-pane-left p-0">
                             <ul class="nav flex-column">
                                 <li
-                                    v-permission="'medium_access'"
+                                    v-permission="'is_admin'"
                                     class="nav-link text-sm"
                                 >
                                     <a
@@ -44,7 +44,7 @@
                                     </a>
                                 </li>
                                 <li
-                                    v-permission="'medium_access'"
+                                    v-permission="'is_admin'"
                                     class="nav-link text-sm"
                                 >
                                     <a
@@ -84,7 +84,7 @@
                         <div class="p-1 flex-fill border-left">
                             <div class="tab-content">
                                 <div
-                                    v-permission="'medium_create'"
+                                    v-permission="'is_admin'"
                                     id="upload"
                                     class="tab-pane"
                                 >
@@ -99,7 +99,7 @@
                                         >
                                             {{ message }}
                                         </div>
-                                        <div class="dropbox text-secondary">
+                                        <div class="dropbox text-secondary p-0 m-1">
                                             <input
                                                 id="file"
                                                 name="file"
@@ -111,7 +111,7 @@
                                                 ref="file"
                                                 @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
                                                 required
-                                            >
+                                            />
                                             <p v-if="isInitial">
                                                 <i class="fa fa-upload"></i><br>
                                                 <span v-dompurify-html="trans('global.medium.upload_helper')"></span>
@@ -136,9 +136,9 @@
                                 </div><!-- /.tab-pane -->
 
                                 <div
-                                    v-permission="'medium_create'"
+                                    v-permission="'is_admin'"
                                     id="media"
-                                    class="tab-pane"
+                                    class="tab-pane m-2"
                                 >
                                     <div
                                         id="media_create_datatable_filter"
@@ -154,10 +154,7 @@
                                             aria-controls="media_create_datatable"
                                         />
                                     </div>
-                                    <div
-                                        class="form-group table-responsive"
-                                        style="min-height: 400px;"
-                                    >
+                                    <div style="width: 600px;">
                                         <div
                                             id="media-datatable-wrapper"
                                             class="w-100 dataTablesWrapper"
@@ -168,7 +165,6 @@
                                                 :options="options"
                                                 ajax="/media/list"
                                                 :search="search"
-                                                width="100%"
                                             />
                                         </div>
                                     </div>
@@ -254,7 +250,7 @@ export default {
         DataTable,
     },
     props: {},
-    setup() { //use database store
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -323,11 +319,9 @@ export default {
             const formData = new FormData();
 
             if (!fileList.length) return;
-
-            Array.from(Array(fileList.length).keys())
-                .map(x => {
-                    formData.append(fieldName+'[]', fileList[x], fileList[x].name);// append the files to FormData
-                });
+            Array.from(fileList).map(file => {
+                formData.append(fieldName, file, file.name); // append the files to FormData
+            });
             this.uploadSubmit(formData);
         },
         uploadSubmit(formData) {
@@ -337,7 +331,7 @@ export default {
             formData.append('subscribable_type', this.form.subscribable_type);
             formData.append('subscribable_id', this.form.subscribable_id);
             formData.append('repository', this.form.repository);
-            formData.append('public', this.form.public);
+            formData.append('public', this.form.public ?? 1);
             axios.post('/media', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -347,13 +341,10 @@ export default {
                 }.bind(this)
             })
                 .then((response) => {
-                    setTimeout(() => {
-                        this.globalStore.media = response.data;
-                        this.selectedFiles = this.globalStore.media[0].id; //todo: select all files
-                        this.message = 'OK';
-                        this.form.reset();
-                        this.progressBar = false;
-                    })
+                    this.globalStore.setSelectedMedia(response.data);
+                    this.message = 'OK';
+                    this.form.reset();
+                    this.progressBar = false;
                 });
         },
         subscribe() {
@@ -368,10 +359,10 @@ export default {
             });
         },
         add() {
-            if (this.subscribeSelected) { //subscribe selected
+            if (this.subscribeSelected) {
                 this.subscribe();
             }
-            console.log(this.callback);
+
             this.$eventHub.emit(
                 this.callback, //default callback == 'medium-added'
                 {
@@ -392,9 +383,9 @@ export default {
             this.accept = '';
             this.callback = 'medium-added'; //previous eventHubCallbackFunction
             this.callbackId =  null; //previous eventHubCallbackParams
-            this.public =  0;
+            this.public = 0;
             this.repository = 'local';
-            this.subscribeSelected =  false;
+            this.subscribeSelected = false;
             this.message = '';
             this.progressBar = false;
         },
@@ -408,10 +399,10 @@ export default {
                     dt.search(this.search).draw();
                 }.bind(this));
 
-                dt.on('select', function(e, dt, type, indexes) {
-                    let selection = dt.rows('.selected').data().toArray()
+                dt.on('select', () => {
+                    let selection = dt.rows('.selected').data().toArray();
                     this.globalStore.setSelectedMedia(selection);
-                }.bind(this));
+                });
             }
         },
         externalAdd(form) {

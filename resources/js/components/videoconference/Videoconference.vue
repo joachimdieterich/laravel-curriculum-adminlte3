@@ -58,55 +58,55 @@
                         </div> <!-- guestName -->
 
                         <div v-if="videoconference.owner_id == this.$userId || videoconference.moderatorPW == this.urlParamModeratorPW"
-                             class="pt-4 col-12"
+                            class="d-flex pt-4 w-100"
                         >
-                            <a @click="copyToClipboard('attendee')"
-                               class="btn btn-light pt-2 pull-right">
+                            <a
+                                class="btn btn-light pt-2 ml-auto mr-3"
+                                @click="copyToClipboard('attendee')"
+                            >
                                 <i class="fa fa-copy"></i>
-                                Link für Teilnehmer:innen
+                                {{ trans('global.videoconference.participant_link') }}
                             </a>
-                            <a @click="copyToClipboard('moderator')"
-                                    class="btn btn-light pt-2 mr-2 pull-right">
+                            <a
+                                class="btn btn-light pt-2"
+                                @click="copyToClipboard('moderator')"
+                            >
                                 <i class="fa fa-copy"></i>
-                                Link für Moderator:innen
+                                {{ trans('global.videoconference.moderator_link') }}
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-permission="'is_admin'"
-             class="col-12">
-            <div v-if="videoconference.owner_id == this.$userId"
-                 class="col-12">
-                <h5 class="pt-4">Präsentationen</h5>
+
+        <div
+            v-permission="'is_admin'"
+            class="col-12"
+        >
+            <div v-if="videoconference.owner_id == $userId"
+                class="col-12"
+            >
+                <h5 class="pt-4">{{ trans('global.videoconference.presentations') }}</h5>
                 <hr class="bg-gray mt-0">
                 <media
                     ref="videoconferenceMedia"
-                    :subscribable_type="'App\\\Videoconference'"
                     :subscribable_id="videoconference.id"
-                    format="list">
-                </media>
+                    subscribable_type="App\Videoconference"
+                    format="list"
+                />
             </div>
         </div>
-        <Teleport to="body">
-            <VideoconferenceModal></VideoconferenceModal>
-            <MediumModal></MediumModal>
-<!--            <MediumModal
-                :show="this.mediumStore.getShowMediumModal"
-                @close="() =>{
-                     this.mediumStore.setShowMediumModal(false);
-                }"
-            ></MediumModal>-->
-            <SubscribeModal></SubscribeModal>
-        </Teleport>
 
+        <Teleport to="body">
+            <MediumModal/>
+            <SubscribeModal/>
+            <VideoconferenceModal/>
+        </Teleport>
     </div>
 </template>
-
 <script>
 import Form from "form-backend-validation";
-import MediumForm from "../media/MediumForm.vue";
 import VideoconferenceModal from "../videoconference/VideoconferenceModal.vue";
 import {useToast} from "vue-toastification";
 import Media from "../media/Media.vue";
@@ -117,22 +117,24 @@ import {useGlobalStore} from "../../store/global";
 export default {
     props: {
         videoconference: {
-            default: null
+            type: Object,
+            default: null,
         },
         user: {
-            default: null
+            type: Object,
+            default: null,
         },
         editor: {
-            default: false
+            type: Boolean,
+            default: false,
         },
-
     },
-    setup () { //https://pinia.vuejs.org/core-concepts/getters.html#passing-arguments-to-getters
+    setup() {
         const toast = useToast();
         const globalStore = useGlobalStore();
         return {
             toast,
-            globalStore
+            globalStore,
         }
     },
     data() {
@@ -206,10 +208,10 @@ export default {
                 rtl: false
             });
         },
-        editVideoconference(videoconference){
+        editVideoconference(videoconference) {
             this.globalStore?.showModal('videoconference-modal', videoconference);
         },
-        share(){
+        share() {
             this.globalStore?.showModal('subscribe-modal', {
                 'modelId': this.videoconference.id,
                 'modelUrl': 'videoconference',
@@ -220,12 +222,12 @@ export default {
                 'canEditCheckbox': true
             });
         },
-        toggleTimer(){
+        toggleTimer() {
             this.loading = false;
             this.timerEnabled = false;
             this.loadingMessage = 'Laden abgebrochen. Fenster neu laden um Verbindungsaufbau neu zu starten.'
         },
-        startVideoconference(){
+        startVideoconference() {
             this.loading = !this.loading;
             this.timerCount= 10;
             this.timerEnabled = true;
@@ -250,7 +252,6 @@ export default {
                     });
             }
         },
-
     },
     watch: {
         timerEnabled(value) {
@@ -271,12 +272,10 @@ export default {
                     this.startVideoconference();
                 }
             },
-        }
+        },
     },
-
     components: {
         Media,
-        MediumForm,
         MediumModal,
         SubscribeModal,
         VideoconferenceModal,

@@ -5,22 +5,22 @@
     <button
         type="button"
         data-toggle="dropdown"
-        class="btn dropdown-menu-lime p-0 m-0"
+        class="btn dropdown-menu-lime no-focus p-0 m-0 h-100"
     >
         <div
             id="mainpage-0"
-            class="logo d-flex"
+            class="logo d-flex align-items-center h-100"
         >
             @if (Request::is('videoconferences') || Request::is('videoconferences/*'))
                 <i class="fa fa-chalkboard-teacher text-white p-2"
                 style="font-size: 24px !important"></i>
                 {{ trans('global.videoconference.title') }}
-                <i class="fa fa-chevron-down"></i>
+                <i class="fa fa-chevron-down pl-2"></i>
             @elseif (Request::is('maps') || Request::is('maps/*'))
                 <i class="fa fa-map-location-dot text-white p-2"
                    style="font-size: 24px !important"></i>
                 {{ trans('global.map.header_title') }}
-                <i class="fa fa-chevron-down"></i>
+                <i class="fa fa-chevron-down pl-2"></i>
             @else
                 <svg
                     class="p-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
@@ -58,15 +58,14 @@
         </div>
     </button>
     <div class="dropdown-menu bg-lime dropdown-menu-lime elevation-2">
-    @php ($brand_iterator = 1)
-    @while ( env('BRAND_MENU_TITLE_'.$brand_iterator) )
-        <a href="{{ env('BRAND_MENU_HREF_'.$brand_iterator) }}" class="dropdown-item">
-            <i class="brand-dropdown_icon {{ env('BRAND_MENU_ICON_'.$brand_iterator) }} fa-fw text-white"></i>
-            <span  class="font-weight-light pl-1">{{ env('BRAND_MENU_TITLE_'.$brand_iterator) }}</span>
-        </a>
-    @php ($brand_iterator++)
-    @endwhile
-
+        @php ($brand_iterator = 1)
+        @while (env('BRAND_MENU_TITLE_'.$brand_iterator))
+            <a href="{{ env('BRAND_MENU_HREF_'.$brand_iterator) }}" class="dropdown-item">
+                <i class="brand-dropdown_icon {{ env('BRAND_MENU_ICON_'.$brand_iterator) }} fa-fw text-white"></i>
+                <span class="font-weight-light pl-1">{{ env('BRAND_MENU_TITLE_'.$brand_iterator) }}</span>
+            </a>
+        @php ($brand_iterator++)
+        @endwhile
     </div>
 </div>
 @else
@@ -99,11 +98,11 @@
         </svg>
 
         <span class="pl-1 brand-text d-inline-block">
-            @if(  Request::is('videoconferences') )
+            @if(Request::is('videoconferences'))
                 {{ trans('global.videoconference.title') }}
             @else
                 {{ env('APP_NAME') }}
             @endif
         </span>
-   </a>
+    </a>
 @endif

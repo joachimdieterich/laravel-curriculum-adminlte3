@@ -605,7 +605,7 @@ return [
         'edit' => 'Edit glossary',
         'print' => 'Print glossary',
     ],
-    'media' => [
+    'medium' => [
         'title' => 'Media',
         'title_singular' => 'Media',
         'add' => 'Add media',

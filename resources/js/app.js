@@ -415,7 +415,7 @@ app.config.globalProperties.$initTinyMCE = function(
             });
 
             editor.ui.registry.addButton('curriculummedia',  {
-                text: 'Medien',
+                text: window.trans.global.medium.title,
                 icon: 'image',
                 tooltip: 'Medien',
                 onAction: function () {

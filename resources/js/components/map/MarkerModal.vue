@@ -31,10 +31,10 @@
                             <div class="form-group">
                                 <input
                                     id="title"
-                                    type="text"
                                     name="title"
+                                    type="text"
                                     class="form-control"
-                                    v-model="form.title"
+                                    v-model.trim="form.title"
                                     :placeholder="trans('global.title') + ' *'"
                                     required
                                 />
@@ -47,8 +47,8 @@
                             <div class="form-group">
                                 <input
                                     id="teaser_text"
-                                    type="text"
                                     name="teaser_text"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.teaser_text"
                                     :placeholder="trans('global.mapMarker.fields.teaser_text')"
@@ -77,8 +77,8 @@
                                 </label>
                                 <input
                                     id="author"
-                                    type="text"
                                     name="author"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.author"
                                     :placeholder="trans('global.mapMarker.fields.author')"
@@ -96,8 +96,8 @@
                                 </label>
                                 <input
                                     id="tags"
-                                    type="text"
                                     name="tags"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.tags"
                                     :placeholder="trans('global.mapMarker.fields.tags')"
@@ -137,8 +137,8 @@
                                 </label>
                                 <input
                                     id="latitude"
-                                    type="text"
                                     name="latitude"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.latitude"
                                     :placeholder="trans('global.mapMarker.fields.latitude')"
@@ -156,8 +156,8 @@
                                 </label>
                                 <input
                                     id="longitude"
-                                    type="text"
                                     name="longitude"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.longitude"
                                     :placeholder="trans('global.mapMarker.fields.longitude')"
@@ -175,8 +175,8 @@
                                 </label>
                                 <input
                                     id="address"
-                                    type="text"
                                     name="address"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.address"
                                     :placeholder="trans('global.mapMarker.fields.address')"
@@ -194,8 +194,8 @@
                                 </label>
                                 <input
                                     id="url"
-                                    type="text"
                                     name="url"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.url"
                                     :placeholder="trans('global.mapMarker.fields.url')"
@@ -212,8 +212,8 @@
                                 </label>
                                 <input
                                     id="url_title"
-                                    type="text"
                                     name="url_title"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.url_title"
                                     :placeholder="trans('global.mapMarker.fields.url_title')"
@@ -239,7 +239,8 @@
                         </button>
                         <button
                             id="marker-save"
-                            class="btn btn-primary"
+                            class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

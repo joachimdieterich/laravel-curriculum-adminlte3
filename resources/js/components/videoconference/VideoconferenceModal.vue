@@ -578,6 +578,7 @@
                         <button
                             id="videoconference-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.meetingName"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

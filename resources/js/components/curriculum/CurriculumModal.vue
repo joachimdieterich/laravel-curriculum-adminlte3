@@ -77,7 +77,7 @@
                                             id="title"
                                             name="title"
                                             class="form-control float"
-                                            v-model="form.title"
+                                            v-model.trim="form.title"
                                             :placeholder="trans('global.title') + ' *'"
                                             required
                                         />
@@ -314,7 +314,7 @@
                                                 style="height: 44px;"
                                                 class="form-control"
                                                 multiple
-                                                @chansge="onChange($event)"
+                                                @change="onChange($event)"
                                             />
                                         </div>
                                     </div>
@@ -337,6 +337,7 @@
                         <button
                             id="curriculum-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title || !files"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

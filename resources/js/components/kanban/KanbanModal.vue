@@ -5,7 +5,7 @@
             @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card-header ">
+                <div class="card-header">
                     <h3 class="card-title">
                         <span v-if="method === 'post'">
                             {{ trans('global.kanban.create') }}
@@ -185,6 +185,7 @@
                         <button
                             id="kanban-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -210,8 +211,9 @@ export default {
     },
     props: {
         params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+            type: Object,
+            default: null,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -223,7 +225,6 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/kanbans',
             form: new Form({
                 id: '',
                 title:  '',
@@ -253,7 +254,7 @@ export default {
             this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/kanbans', this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-added', r.data);
                 })
@@ -262,7 +263,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/kanbans/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-updated', r.data);
                 })

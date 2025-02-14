@@ -40,7 +40,7 @@
                                     id="title"
                                     name="title"
                                     class="form-control"
-                                    v-model="form.title"
+                                    v-model.trim="form.title"
                                     :placeholder="trans('global.title') + ' *'"
                                     required
                                 />
@@ -137,6 +137,7 @@
                         <button
                             id="logbook-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

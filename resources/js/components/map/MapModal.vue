@@ -37,10 +37,10 @@
                             <div class="form-group">
                                 <input
                                     id="title"
-                                    type="text"
                                     name="title"
+                                    type="text"
                                     class="form-control"
-                                    v-model="form.title"
+                                    v-model.trim="form.title"
                                     :placeholder="trans('global.title') + ' *'"
                                     required
                                 />
@@ -49,9 +49,9 @@
 
                             <div class="form-group">
                                 <input
-                                    type="text"
                                     id="subtitle"
                                     name="subtitle"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.subtitle"
                                     :placeholder="trans('global.map.fields.subtitle')"
@@ -76,9 +76,9 @@
                                     {{ trans('global.map.fields.tags') }}
                                 </label>
                                 <input
-                                    type="text"
                                     id="tags"
                                     name="tags"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.tags"
                                     :placeholder="trans('global.map.fields.tags')"
@@ -86,7 +86,7 @@
                                 />
                                 <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
                             </div>
-        
+
                             <Select2
                                 id="map_marker_type"
                                 name="map_marker_type"
@@ -108,15 +108,15 @@
                                     this.form.category_id = id;
                                 }"
                             />
-        
+
                             <div class="form-group">
-                                <label for="map_marker_category">
+                                <label for="border_url">
                                     {{ trans('global.map.fields.border_url') }}
                                 </label>
                                 <input
-                                    type="text"
                                     id="border_url"
                                     name="border_url"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.border_url"
                                     :placeholder="trans('global.map.fields.border_url_helper')"
@@ -124,54 +124,52 @@
                                 />
                                 <p class="help-block" v-if="form.errors?.border_url" v-text="form.errors?.border_url[0]"></p>
                             </div>
-        
+
                             <div class="form-group">
                                 <label for="latitude">
                                     {{ trans('global.map.fields.latitude') }}
                                 </label>
                                 <input
-                                    type="text"
                                     id="latitude"
                                     name="latitude"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.latitude"
                                     :placeholder="trans('global.map.fields.latitude')"
                                 />
                                 <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
                             </div>
-        
+
                             <div class="form-group">
                                 <label for="longitude">
                                     {{ trans('global.map.fields.longitude') }}
                                 </label>
                                 <input
-                                    type="text"
                                     id="longitude"
                                     name="longitude"
+                                    type="text"
                                     class="form-control"
                                     v-model.trim="form.longitude"
                                     :placeholder="trans('global.map.fields.longitude')"
                                 />
                                 <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
                             </div>
-        
-                            <div class="form-group">
-                                <label for="longitude">
+
+                            <div>
+                                <label for="zone">
                                     {{ trans('global.map.fields.zoom') }}
                                 </label>
                                 <input
-                                    type="number"
                                     id="zoom"
                                     name="zoom"
+                                    type="number"
                                     class="form-control"
-                                    v-model.trim="form.zoom"
+                                    v-model="form.zoom"
                                     :placeholder="trans('global.map.fields.zoom')"
                                     required
                                 />
                                 <p class="help-block" v-if="form.errors.zoom" v-text="form.errors.zoom[0]"></p>
                             </div>
-        
-                            
                         </div>
                     </div>
 
@@ -228,6 +226,7 @@
                         <button
                             id="map-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

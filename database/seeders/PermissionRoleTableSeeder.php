@@ -165,6 +165,8 @@ class PermissionRoleTableSeeder extends Seeder
         //set schooladmin permissions
         $schooladmin_permissions = $admin_permissions->filter(function ($permission) {
             $schooladmin_permission_list = [
+                'is_teacher',
+                'is_schooladmin',
                 'achievement_access',
                 'achievement_create',
                 'achievement_create_self_assessment',
@@ -257,6 +259,7 @@ class PermissionRoleTableSeeder extends Seeder
         //set teacher permissions
         $teacher_permissions = $admin_permissions->filter(function ($permission) {
             $teacher_permission_list = [
+                'is_teacher',
                 'achievement_access',
                 'achievement_create',
                 'achievement_create_self_assessment',

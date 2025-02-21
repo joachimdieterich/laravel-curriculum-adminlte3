@@ -109,16 +109,26 @@ class MediumSubscriptionController extends Controller
     public function destroySubscription(Request $request)
     {
         abort_unless(\Gate::allows('medium_delete'), 403);
-        $subscription = $this->validateRequest();
+        $input = $this->validateRequest();
 
-        return MediumSubscription::where([
-            'medium_id' => $subscription['medium_id'],
-            'subscribable_type' => $subscription['subscribable_type'],
-            'subscribable_id' => $subscription['subscribable_id'],
-            'sharing_level_id' => $subscription['sharing_level_id'],
-            'visibility' => $subscription['visibility'],
+        MediumSubscription::where([
+            'medium_id' => $input['medium_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+            'sharing_level_id' => $input['sharing_level_id'],
+            'visibility' => $input['visibility'],
             //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
         ])->delete();
+
+        $medium = Medium::select('id', 'adapter')->find($input['medium_id']);
+
+        if ($medium->adapter == 'edusharing') {
+            if (MediumSubscription::where('medium_id', $input['medium_id'])->count() == 0) {
+                $medium->delete();
+            }
+        }
+
+        return true;
     }
 
     protected function validateRequest()

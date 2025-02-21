@@ -120,8 +120,11 @@ class MediumSubscriptionController extends Controller
             //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
         ])->delete();
 
-        $medium = Medium::select('id', 'adapter')->find($input['medium_id']);
+        // since the subscription gets deleted instantly, we should remove the connection from the resource
+        $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
 
+        $medium = Medium::select('id', 'adapter')->find($input['medium_id']);
+        // if edusharing-medium, delete the Medium if no subscription is left
         if ($medium->adapter == 'edusharing') {
             if (MediumSubscription::where('medium_id', $input['medium_id'])->count() == 0) {
                 $medium->delete();

@@ -65,7 +65,7 @@
             <LogbookEntrySubjectModal/>
             <SubscribeModal/>
         </Teleport>
-        <teleport v-if="$userId == logbook.owner_id"
+        <teleport
             to="#customTitle"
         >
             <small>{{ logbook.title }}</small>

@@ -13,8 +13,10 @@
                     <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li>
                     <hr>
                     <li>
-                        <a role="tab"
-                        @click="createMarker()">
+                        <a
+                            role="tab"
+                            @click="createMarker()"
+                        >
                             <i class="fa fa-plus"></i>
                         </a>
                     </li>
@@ -23,36 +25,40 @@
 
             <!-- tab panes -->
             <div class="sidebar-content">
-                <div class="sidebar-pane active"
-                     id="ll-home"
+                <div
+                    id="ll-home"
+                    class="sidebar-pane active"
                 >
                     <h1 class="sidebar-header mb-3">
-                        {{ this.map.title }}
-                        <a v-if="map.owner_id == this.$userId"
+                        {{ map.title }}
+                        <a v-if="map.owner_id == $userId"
                             v-permission="'map_edit'"
-                           class="pull-right link-muted"
-                           @click="editMap(this.map)" >
+                            class="pull-right link-muted"
+                            @click="editMap(map)"
+                        >
                             <i class="fas fa-pencil-alt text-white"></i>
                         </a>
                     </h1>
                     <span class="pb-2">
-                        <h5 >{{ this.map.subtitle }}</h5>
+                        <h5>{{ map.subtitle }}</h5>
                         <span class="right badge badge-primary">
-                            {{ this.map.type.title }}
+                            {{ map.type.title }}
                         </span>
                     </span>
 
-                    <p  v-if="this.map.description != ''"
+                    <p v-if="map.description != ''"
                         class="pt-2"
-                        v-dompurify-html="this.map.description">
-                    </p>
+                        v-dompurify-html="map.description"
+                    ></p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
                         <li v-for="marker in this.markers">
                             <i class="fa fa-location-dot pr-2"></i>
-                            <a @click="setCurrentMarker(marker)"
-                               class="text-decoration-none">
+                            <a
+                                class="text-decoration-none"
+                                @click="setCurrentMarker(marker)"
+                            >
                                 {{ marker.title }}
                             </a>
                             <div class="tools">
@@ -73,55 +79,67 @@
                         :name="'mapMarkerType' + component_id"
                         url="/mapMarkerTypes"
                         model="mapMarkerType"
-                        :selected="this.form.type_id"
+                        :selected="form.type_id"
                         @selectedValue="(id) => {
                             this.form.type_id = id;
                         }"
-                    >
-                    </Select2>
+                    />
                     <Select2
                         :id="'mapMarkerCategory' + component_id"
                         :name="'mapMarkerCategory' + component_id"
                         url="/mapMarkerCategories"
                         model="mapMarkerCategory"
-                        :selected="this.form.category_id"
+                        :selected="form.category_id"
                         @selectedValue="(id) => {
                             this.form.category_id = id;
                         }"
+                    />
+                    <button
+                        class="btn btn-primary pull-right"
+                        @click="loader()"
                     >
-                    </Select2>
-                    <button class="btn btn-primary pull-right"
-                            @click="loader()">
                         <i class="fa fa-check"></i>
                     </button>
                 </div>
 
                 <div v-if="typeof this.currentMarker.ARTIKEL == 'undefined'"
-                     class="sidebar-pane" id="ll-marker">
-                    <MarkerView :marker="this.currentMarker"/>
+                    id="ll-marker"
+                    class="sidebar-pane"
+                >
+                    <MarkerView :marker="currentMarker"/>
                 </div>
                 <div v-else
-                     class="sidebar-pane" id="ll-marker">
+                    id="ll-marker"
+                    class="sidebar-pane"
+                >
                     <h1 class="sidebar-header  mb-3">
-                        {{ this.currentMarker.ARTIKEL }}
+                        {{ currentMarker.ARTIKEL }}
                     </h1>
 
-                    <div class="py-0 pt-2"
-                         v-if="this.currentMarker.BEZ_1_2.length > 2">
-                        <strong>Untertitel</strong></div>
-                    <div class="py-0 pre-formatted"
-                         v-if="this.currentMarker.BEZ_1_2.length > 2"
-                         v-dompurify-html="this.currentMarker.BEZ_1_2"></div>
+                    <div v-if="this.currentMarker.BEZ_1_2.length > 2"
+                        class="py-0 pt-2"
+                    >
+                        <strong>Untertitel</strong>
+                    </div>
+
+                    <div v-if="this.currentMarker.BEZ_1_2.length > 2"
+                        class="py-0 pre-formatted"
+                        v-dompurify-html="currentMarker.BEZ_1_2"
+                    ></div>
 
                     <div class="py-0 pt-2">
-                        <strong>Beschreibung</strong></div>
-                    <div class="py-0 pre-formatted"
-                         style="text-align:justify;"
-                         v-dompurify-html="this.currentMarker.BEMERKUNG"></div>
+                        <strong>Beschreibung</strong>
+                    </div>
+
+                    <div
+                        class="py-0 pre-formatted text-justify"
+                        v-dompurify-html="currentMarker.BEMERKUNG"
+                    ></div>
 
                     <div class="py-0 pt-2"><strong>Termine</strong></div>
+
                     <div class="py-0 pre-formatted">
-                        <div v-for="termin in this.currentMarker.termine" >
+                        <div v-for="termin in currentMarker.termine">
                             {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
                             <br/>
                             {{ termin.VO_ORT }}
@@ -129,40 +147,47 @@
                     </div>
 
                     <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-                    <div class="py-0 pre-formatted" v-dompurify-html="this.currentMarker.ARTIKEL_NR"></div>
+
+                    <div class="py-0 pre-formatted" v-dompurify-html="currentMarker.ARTIKEL_NR"></div>
 
                     <div class="py-0 pt-2">
-                        <a :href="this.currentMarker.LINK_DETAIL"
-                           class="btn btn-default"
-                           target="_blank">
+                        <a
+                            :href="currentMarker.LINK_DETAIL"
+                            class="btn btn-default"
+                            target="_blank"
+                        >
                             <i class="fa fa-info"></i> Details/Anmeldung
                         </a>
 
-                        <a :href="this.currentMarker.LINK_DETAIL+'&print=1'"
-                           onclick="return !window.open(this.href, 'Drucken', 'width=800,scrollbars=1')"
-                           class="btn btn-default"
-                           target="_blank">
+                        <a
+                            :href="currentMarker.LINK_DETAIL + '&print=1'"
+                            class="btn btn-default"
+                            target="_blank"
+                            @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
+                        >
                             <i class="fa fa-print"></i> Drucken
                         </a>
                     </div>
                 </div>
 
                 <div class="sidebar-pane" id="ll-search">
-                    <h1 class="sidebar-header  mb-3">
-                        {{ this.currentMarker.title }}
+                    <h1 class="sidebar-header mb-3">
+                        {{ currentMarker.title }}
                     </h1>
 
-                    <div class="form-group "
-                         :class="form.errors.search ? 'has-error' : ''"
+                    <div
+                        class="form-group"
+                        :class="form.errors.search ? 'has-error' : ''"
                     >
                         <label for="ll-search">{{ trans('global.search') }}</label>
                         <input
-                            type="text" id="ll-search"
+                            id="ll-search"
+                            type="text"
                             name="ll-search"
                             class="form-control"
                             v-model="search"
-                            @keyup.enter="markerSearch"
                             placeholder="Suchbegriff..."
+                            @keyup.enter="markerSearch"
                         />
                         <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
                     </div>
@@ -176,9 +201,9 @@
             <MapModal/>
             <MediumModal/>
             <MediumPreviewModal/>
-            <MarkerModal :map="this.map"/>
+            <MarkerModal :map="map"/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.marker.delete')"
                 :description="trans('global.role.marker')"
                 @close="() => {
@@ -221,17 +246,18 @@ export default {
         MarkerModal,
         MarkerView,
         ConfirmModal,
-        MediumModal
+        MediumModal,
     },
     props: {
         map: {
-            default: null
+            type: Object,
+            default: null,
         },
     },
-    setup () { //use database store
+    setup() {
         const globalStore = useGlobalStore();
         return {
-            globalStore
+            globalStore,
         }
     },
     data() {
@@ -248,8 +274,8 @@ export default {
             currentMarker:{},
             clusterGroup: {},
             form: new Form({
-                'type_id': '',
-                'category_id': '',
+                type_id: '',
+                category_id: '',
             }),
             initialLatitude: '49.314908280766346',
             initialLongitude: '8.413913138283617',
@@ -263,10 +289,10 @@ export default {
         }
     },
     methods: {
-        createMarker(method = 'post'){
+        createMarker(method = 'post') {
             this.globalStore?.showModal('map-marker-modal', {});
         },
-        loader(){
+        loader() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
                     this.markers = res.data.markers;
@@ -299,7 +325,7 @@ export default {
             console.log(this.clusterGroup);
             console.log('Clustergroup');
         },
-        async markerSearch(){
+        async markerSearch() {
             $("#loading-events").show();
             try {
                 this.events = (await axios.post('/eventSubscriptions/getEvents', {
@@ -312,7 +338,6 @@ export default {
             }
             this.refreshMap();
         },
-
         getBorder() {
             axios.get(this.map.border_url)
                  .then(res => {
@@ -332,11 +357,9 @@ export default {
             var bottomRight = L.latLng(bbox[3], bbox[2]);
             var countryBounds = L.latLngBounds(topLeft, bottomRight);
 
-
             this.mapCanvas.flyToBounds(countryBounds);
         },
-
-        refreshMap(){
+        refreshMap() {
             // parse property from Observer to JSON
             const eventsData = JSON.parse(JSON.stringify(this.events));
             //console.log(eventsData);
@@ -347,7 +370,7 @@ export default {
                 const data = event[1];
                 let address = data.termine.key_0.VO_ADRESSE;
                 //console.log(address);
-                if(address.includes("online")||address.includes("Online")){
+                if(address.includes("online")||address.includes("Online")) {
                     address = 'Rheinland-Pfalz';
                 }
                 const url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURI(address) + '&format=jsonv2';
@@ -372,7 +395,7 @@ export default {
             });
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
-        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix){
+        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix) {
             var svgMarker = L.ExtraMarkers.icon({
                 icon: icon,
                 markerColor: markerColor,
@@ -403,11 +426,11 @@ export default {
                 return moment(begin).locale('de').format('LL') + " - " + moment(end).locale('de').format('LL');
             }
         },
-        setCurrentMarker(marker){
+        setCurrentMarker(marker) {
             this.currentMarker = marker;
             this.sidebar.open('ll-marker');
         },
-        syncSelect2(){
+        syncSelect2() {
             $("#type_id").select2({
                 dropdownParent: $("#type_id").parent(),
                 allowClear: false
@@ -425,7 +448,7 @@ export default {
                 .val(this.form.category_id)
                 .trigger('change');
         },
-        confirmItemDelete(marker){
+        confirmItemDelete(marker) {
             this.currentMarker = marker;
             this.showConfirm = true;
         },
@@ -444,7 +467,7 @@ export default {
                     console.log(err.response);
                 });
         },
-        editMap(currentMap){
+        editMap(currentMap) {
             this.globalStore?.showModal('map-modal', currentMap);
         },
         edit(marker) {
@@ -469,19 +492,19 @@ export default {
             window.location.reload();
         });
 
-        if (this.map.initialLatitude){
+        if (this.map.initialLatitude) {
             this.initialLatitude = this.map.initialLatitude;
         }
-        if (this.map.initialLongitude){
+        if (this.map.initialLongitude) {
             this.initialLongitude = this.map.initialLongitude;
         }
-        if (this.map.zoom){
+        if (this.map.zoom) {
             this.zoom = this.map.zoom;
         }
-        if (this.map.type_id){
+        if (this.map.type_id) {
             this.form.type_id = this.map.type_id;
         }
-        if (this.map.category_id){
+        if (this.map.category_id) {
             this.form.category_id = this.map.category_id;
         }
 
@@ -522,9 +545,8 @@ export default {
         this.getBorder();
 
         this.loader();
-    }
+    },
 }
-
 </script>
 <style >
 @import "leaflet/dist/leaflet.css";

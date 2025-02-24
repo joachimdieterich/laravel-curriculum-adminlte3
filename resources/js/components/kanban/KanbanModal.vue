@@ -62,12 +62,11 @@
                             <Select2
                                 v-permission="'is_admin'"
                                 id="user_id"
-                                css="mb-0"
+                                css="mb-0 mt-3"
                                 :label="trans('global.change_owner')"
                                 model="User"
-                                :selected="form.owner_id"
                                 url="/users"
-                                style="width: 100%;"
+                                :selected="form.owner_id"
                                 :placeholder="trans('global.pleaseSelect')"
                                 @selectedValue="(id) => this.form.owner_id = id[0]"
                             />

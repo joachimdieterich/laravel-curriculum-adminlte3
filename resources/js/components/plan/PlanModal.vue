@@ -33,7 +33,7 @@
                         >
                             <h5 class="card-title">{{ trans('global.general') }}</h5>
                         </div>
-                        <div class="card-body pb-0">
+                        <div class="card-body">
                             <div class="form-group">
                                 <Select2
                                     id="type_id"
@@ -72,14 +72,12 @@
                                 </span>
                             </div>
 
-                            <div class="form-group">
-                                <Editor
-                                    :id="'description' + component_id"
-                                    :name="'description' + component_id"
-                                    :init="tinyMCE"
-                                    v-model="form.description"
-                                />
-                            </div>
+                            <Editor
+                                :id="'description' + component_id"
+                                :name="'description' + component_id"
+                                :init="tinyMCE"
+                                v-model="form.description"
+                            />
                             <!-- currently not in use -->
                             <!-- <div class="form-group">
                                 <VueDatePicker
@@ -115,10 +113,10 @@
                                 v-permission="'is_admin'"
                                 id="user_id"
                                 :label="trans('global.change_owner')"
+                                css="mb-0 mt-3"
                                 model="User"
-                                :selected="form.owner_id"
                                 url="/users"
-                                style="width: 100%;"
+                                :selected="form.owner_id"
                                 :placeholder="trans('global.pleaseSelect')"
                                 @selectedValue="(id) => this.form.owner_id = id[0]"
                             />

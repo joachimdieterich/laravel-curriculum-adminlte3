@@ -80,6 +80,7 @@ return [
     'login_password_confirmation' => 'Password confirmation',
     'login_SSO' => 'Login with SSO',
     'owner' => 'Owner',
+    'change_owner' => 'Change owner',
     'yes' => 'Yes',
     'no' => 'No',
     'view_file' => 'View file',

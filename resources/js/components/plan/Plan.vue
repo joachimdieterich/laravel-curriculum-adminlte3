@@ -94,17 +94,15 @@
             <SetAchievementsModal :users="users"/>
             <SubscribeModal/>
         </Teleport>
-        <Teleport v-if="$userId == plan.owner_id"
-            to="#customTitle"
-        >
+        <Teleport to="#customTitle">
             <small>{{ currentPlan.title }}</small>
-            <a
+            <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-flat"
                 @click="editPlan()"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
-            <button
+            <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-fla"
                 @click="share()"
             >

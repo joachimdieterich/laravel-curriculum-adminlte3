@@ -65,17 +65,15 @@
             <LogbookEntrySubjectModal/>
             <SubscribeModal/>
         </Teleport>
-        <teleport
-            to="#customTitle"
-        >
+        <teleport to="#customTitle">
             <small>{{ logbook.title }}</small>
-            <a
+            <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-flat"
                 @click="editLogbook(logbook)"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
-            <button
+            <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-flat"
                 @click="share()"
             >

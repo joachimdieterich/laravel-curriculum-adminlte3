@@ -238,7 +238,7 @@ class KanbanController extends Controller
             'auto_refresh' => $input['auto_refresh'],
             'only_edit_owned_items' => $input['only_edit_owned_items'],
             'allow_copy' => $input['allow_copy'],
-            'owner_id' => auth()->user()->id,
+            'owner_id' => is_admin() ? $input['owner_id'] : $kanban->owner_id,
         ]);
 
         if (request()->wantsJson())
@@ -482,7 +482,8 @@ class KanbanController extends Controller
             'filter' => 'sometimes',
             'only_edit_owned_items' => 'sometimes',
             'allow_copy' => 'sometimes',
-            'sharing_token' => 'sometimes'
+            'sharing_token' => 'sometimes',
+            'owner_id' => 'sometimes',
         ]);
     }
 }

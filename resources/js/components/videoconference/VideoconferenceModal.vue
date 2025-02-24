@@ -32,6 +32,7 @@
                         >
                             <h5 class="card-title">{{ trans('global.general') }}</h5>
                         </div>
+
                         <div class="card-body pb-0">
                             <div class="form-group">
                                 <input
@@ -45,6 +46,18 @@
                                 />
                                 <p class="help-block" v-if="form.errors.meetingName" v-text="form.errors.meetingName[0]"></p>
                             </div>
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                :selected="form.owner_id"
+                                url="/users"
+                                style="width: 100%;"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
 
                             <div v-if="showExtendedSettings">
                                 <Select2 v-if="servers.length"
@@ -216,7 +229,7 @@
                                     :max-height="300"
                                 />
         
-                                <MediumForm
+                                <MediumForm v-if="form.id"
                                     :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
                                     :subscribable_id="form.id"
@@ -627,9 +640,10 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             form: new Form({
-                id: '',
+                id: null,
                 meetingID: '',
                 meetingName: '',
+                owner_id: null,
                 attendeePW: '',
                 moderatorPW: '',
                 endCallbackUrl: '',

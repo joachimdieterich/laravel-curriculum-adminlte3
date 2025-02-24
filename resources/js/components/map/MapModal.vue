@@ -33,6 +33,7 @@
                         >
                             <div class="card-title">{{ trans('global.general') }}</div>
                         </div>
+
                         <div class="card-body">
                             <div class="form-group">
                                 <input
@@ -70,6 +71,18 @@
                                     v-model="form.description"
                                 />
                             </div>
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                :selected="form.owner_id"
+                                url="/users"
+                                style="width: 100%;"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
 
                             <div class="form-group">
                                 <label for="tags">
@@ -275,6 +288,7 @@ export default {
                 title: '',
                 subtitle: '',
                 description: '',
+                owner_id: null,
                 tags: '',
                 type_id: 2,
                 category_id: 2,

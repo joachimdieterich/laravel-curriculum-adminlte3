@@ -142,7 +142,7 @@ class MapController extends Controller
             'zoom'          => $input['zoom'] ?? $map->zoom,
             'color'         => $input['color'] ?? $map->color,
             'medium_id'     => $input['medium_id'],
-            'owner_id'      => auth()->user()->id,
+            'owner_id'      => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
 
         $map->save();
@@ -188,6 +188,7 @@ class MapController extends Controller
             'zoom'=> 'sometimes',
             'color'=> 'sometimes',
             'medium_id'=> 'sometimes',
+            'owner_id' => 'sometimes',
         ]);
     }
 }

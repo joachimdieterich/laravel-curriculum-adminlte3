@@ -31,7 +31,7 @@
                 >
                     <h1 class="sidebar-header mb-3">
                         {{ map.title }}
-                        <a v-if="map.owner_id == $userId"
+                        <a v-if="map.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'map_edit'"
                             class="pull-right link-muted"
                             @click="editMap(map)"

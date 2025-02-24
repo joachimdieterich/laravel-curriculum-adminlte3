@@ -30,7 +30,7 @@
                     style="overflow-y: visible;"
                 >
                     <div class="card">
-                        <div class="card-body pb-0">
+                        <div class="card-body">
                             <div
                                 class="form-group"
                                 :class="form.errors.title ? 'has-error' : ''"
@@ -64,6 +64,19 @@
                                     v-text="form.errors.description[0]"
                                 ></p>
                             </div>
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                css="mb-0"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                :selected="form.owner_id"
+                                url="/users"
+                                style="width: 100%;"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
                         </div>
                     </div>
 
@@ -184,6 +197,7 @@ export default {
                 id: '',
                 title:  '',
                 description:  '',
+                owner_id: null,
                 medium_id: null,
                 color:'#27AF60',
                 css_icon: 'fa fa-book',

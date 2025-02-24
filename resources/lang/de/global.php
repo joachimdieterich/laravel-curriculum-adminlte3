@@ -90,6 +90,7 @@ return [
     'login_password_confirmation' => 'Passwort bestätigen',
     'login_SSO' => 'SSO Anmeldung',
     'owner' => 'Eigentümer/in',
+    'change_owner' => 'Besitzer/in ändern',
     'yes' => 'Ja',
     'no' => 'Nein',
     'view_file' => 'Datei anzeigen',

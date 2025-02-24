@@ -110,6 +110,18 @@
                                     {{ trans('global.plan.fields.duration_helper') }}
                                 </p>
                             </div> -->
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                :selected="form.owner_id"
+                                url="/users"
+                                style="width: 100%;"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
                         </div>
                     </div>
 
@@ -235,6 +247,7 @@ export default {
                 type_id: 4,
                 title:  '',
                 description:  '',
+                owner_id: null,
                 date: null,
                 begin: '',
                 end: '',

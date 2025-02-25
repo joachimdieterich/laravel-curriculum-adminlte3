@@ -27,8 +27,11 @@
                     style="margin-left: -10px;"
                 >
                     <span v-if="editable && showTools">
-                        <a @click="destroy(terminal)">
-                            <i class="fas fa-trash text-danger pointer p-1"></i>
+                        <a
+                            class="text-danger"
+                            @click="destroy(terminal)"
+                        >
+                            <i class="fas fa-trash pointer p-1"></i>
                         </a>
                     </span>
                 </div>

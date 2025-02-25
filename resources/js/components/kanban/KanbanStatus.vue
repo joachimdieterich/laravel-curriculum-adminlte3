@@ -1,18 +1,17 @@
 <template>
-    <div class="kanban-header"
+    <div
+        class="kanban-header"
         :style="{ backgroundColor: color }"
     >
         <div v-if="newStatus"
             id="kanbanStatusCreate"
-            class="d-flex align-items-center"
+            class="d-flex align-items-center pointer"
+            @click="edit()"
         >
-            <strong
-                class="text-secondary btn px-1 py-0"
-                @click="edit()"
-            >
+            <span class="text-secondary btn px-1 py-0">
                 <i class="fa fa-plus"></i>
                 {{ trans('global.kanbanStatus.create') }}
-            </strong>
+            </span>
         </div>
         <div v-else
             class="d-flex align-items-center"

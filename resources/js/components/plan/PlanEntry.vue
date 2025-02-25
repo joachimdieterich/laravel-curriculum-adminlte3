@@ -32,13 +32,15 @@
                                 class="card-tools mr-0"
                             >
                                 <i
-                                    class="fa fa-pencil-alt pointer link-muted p-1 mr-2"
+                                    class="fa fa-pencil-alt link-muted pointer p-1 mr-2"
                                     @click.stop="openModal(entry)"
                                 ></i>
-                                <i
-                                    class="fas fa-trash pointer text-danger p-1"
-                                    @click.stop="openConfirm()"
-                                ></i>
+                                <a class="text-danger">
+                                    <i
+                                        class="fas fa-trash pointer p-1"
+                                        @click.stop="openConfirm()"
+                                    ></i>
+                                </a>
                             </div>
                         </div>
 

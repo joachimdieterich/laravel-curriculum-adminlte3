@@ -87,12 +87,12 @@ class PlanEntryController extends Controller
 
         $planEntry->update([
             'title' => $update_entry['title'] ?? $planEntry->title,
-            'description' => $update_entry['description'] ?? $planEntry->description,
+            'description' => $update_entry['description'],
             'plan_id' => $planEntry->plan_id,
             'css_icon' => $update_entry['css_icon'] ?? $planEntry->css_icon,
             'color' => $update_entry['color'] ?? $planEntry->color,
             'order_id' => $update_entry['order_id'] ?? $planEntry->order_id,
-            'medium_id' => $medium_id ?? $planEntry->medium_id,
+            'medium_id' => $medium_id,
             'owner_id' => auth()->user()->id,
         ]);
 

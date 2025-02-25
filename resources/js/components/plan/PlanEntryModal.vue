@@ -59,13 +59,13 @@
                         </div>
     
                         <div class="card-body">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <v-swatches
                                     :swatch-size="49"
                                     :trigger-style="{}"
                                     popover-to="right"
                                     style="height: 42px;"
-                                    v-model="this.form.color"
+                                    v-model="form.color"
                                     show-fallback
                                     fallback-input-type="color"
                                     @input="(id) => {
@@ -75,11 +75,25 @@
                                     }"
                                     :max-height="300"
                                 />
-                                <!-- <MediumForm :form="form"
-                                    :id="component_id"
+
+                                <MediumForm v-if="form.id"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\PlanEntry"
                                     accept="image/*"
-                                /> -->
+                                    @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('plan-entry-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
+                                        this.form.medium_id = id;
+                                    }"
+                                />
+
                                 <div class="dropdown">
                                     <button
                                         class="btn btn-default"
@@ -129,6 +143,7 @@
 <script>
 import Form from 'form-backend-validation';
 import Editor from "@tinymce/tinymce-vue";
+import MediumForm from "../media/MediumForm.vue";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 import {useGlobalStore} from "../../store/global";
 
@@ -176,7 +191,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
@@ -227,6 +243,7 @@ export default {
     },
     components: {
         Editor,
+        MediumForm,
         FontAwesomePicker,
     },
 }

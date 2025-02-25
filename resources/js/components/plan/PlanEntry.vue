@@ -41,12 +41,14 @@
                                 ></i>
                             </div>
                         </div>
+
                         <div class="card-body py-2 collapse">
-                            <img v-if="Number.isInteger(entry.medium_id)"
-                                class="pull-right"
-                                :src="'/media/' + entry.medium_id + '/thumb'"
-                            />
-                            <span v-dompurify-html="entry.description ?? ''"></span>
+                            <div class="d-flex">
+                                <span class="flex-fill" v-dompurify-html="entry.description ?? ''"></span>
+                                <img v-if="entry.medium_id"
+                                    :src="'/media/' + entry.medium_id + '/thumb'"
+                                />
+                            </div>
 
                             <Objectives
                                 referenceable_type="App\PlanEntry"

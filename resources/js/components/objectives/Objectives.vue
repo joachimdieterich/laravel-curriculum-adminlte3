@@ -1,20 +1,10 @@
 <template>
     <div class="card mb-0">
         <div v-for="terminal in terminal_objectives"
-            class="card-body border-bottom"
+            class="card-body border-bottom p-0 pb-2 mb-3"
         >
-            <div class="row">
-                <div class="col-12">
-                    <div
-                        class="card-tools position-absolute"
-                        style="right: -10px;"    
-                    >
-                        <span v-if="editable && showTools">
-                            <a @click="destroy(terminal)">
-                                <i class="fas fa-trash text-danger pointer"></i>
-                            </a>
-                        </span>
-                    </div>
+            <div class="d-flex">
+                <div class="flex-fill">
                     <ObjectiveBox
                         type="terminal"
                         :objective="terminal"
@@ -31,6 +21,16 @@
                             :editable="editable"
                         />
                     </div>
+                </div>
+                <div
+                    class="card-tools"
+                    style="margin-left: -10px;"
+                >
+                    <span v-if="editable && showTools">
+                        <a @click="destroy(terminal)">
+                            <i class="fas fa-trash text-danger pointer p-1"></i>
+                        </a>
+                    </span>
                 </div>
             </div>
         </div>

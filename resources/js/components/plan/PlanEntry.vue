@@ -29,14 +29,14 @@
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
                             <div v-if="editable && showTools"
-                                class="card-tools"
+                                class="card-tools mr-0"
                             >
                                 <i
-                                    class="fa fa-pencil-alt pointer link-muted mr-3"
+                                    class="fa fa-pencil-alt pointer link-muted p-1 mr-2"
                                     @click.stop="openModal(entry)"
                                 ></i>
                                 <i
-                                    class="fas fa-trash pointer text-danger mr-1"
+                                    class="fas fa-trash pointer text-danger p-1"
                                     @click.stop="openConfirm()"
                                 ></i>
                             </div>
@@ -70,7 +70,7 @@
         </div>
         <Teleport to="body">
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.planEntry.delete')"
                 :description="trans('global.planEntry.delete_helper')"
                 @close="() => {

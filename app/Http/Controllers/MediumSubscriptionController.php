@@ -117,11 +117,14 @@ class MediumSubscriptionController extends Controller
             'subscribable_id' => $input['subscribable_id'],
             'sharing_level_id' => $input['sharing_level_id'],
             'visibility' => $input['visibility'],
-            //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
         ])->delete();
 
-        // since the subscription gets deleted instantly, we should remove the connection from the resource
-        $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
+        // skip this step if additional_data is set
+        // used for instances, where the medium isn't directly connected to a model
+        if (!$input['additional_data']) {
+            // since the subscription gets deleted instantly, we should remove the connection from the resource
+            $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
+        }
 
         $medium = Medium::select('id', 'adapter')->find($input['medium_id']);
         // if edusharing-medium, delete the Medium if no subscription is left

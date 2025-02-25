@@ -64,6 +64,8 @@
                         <div class="card-body">
                             <v-swatches
                                 :swatch-size="49"
+                                class="d-flex"
+                                style="height: 42px;"
                                 popover-to="right"
                                 v-model="this.form.color"
                                 show-fallback

@@ -29,24 +29,28 @@
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
                             <div v-if="editable && showTools"
-                                class="card-tools"
+                                class="card-tools mr-0"
                             >
                                 <i
-                                    class="fa fa-pencil-alt pointer link-muted mr-3"
+                                    class="fa fa-pencil-alt link-muted pointer p-1 mr-2"
                                     @click.stop="openModal(entry)"
                                 ></i>
-                                <i
-                                    class="fas fa-trash pointer text-danger mr-1"
-                                    @click.stop="openConfirm()"
-                                ></i>
+                                <a class="text-danger">
+                                    <i
+                                        class="fas fa-trash pointer p-1"
+                                        @click.stop="openConfirm()"
+                                    ></i>
+                                </a>
                             </div>
                         </div>
+
                         <div class="card-body py-2 collapse">
-                            <img v-if="Number.isInteger(entry.medium_id)"
-                                class="pull-right"
-                                :src="'/media/' + entry.medium_id + '/thumb'"
-                            />
-                            <span v-dompurify-html="entry.description ?? ''"></span>
+                            <div class="d-flex">
+                                <span class="flex-fill" v-dompurify-html="entry.description ?? ''"></span>
+                                <img v-if="entry.medium_id"
+                                    :src="'/media/' + entry.medium_id + '/thumb'"
+                                />
+                            </div>
 
                             <Objectives
                                 referenceable_type="App\PlanEntry"
@@ -70,7 +74,7 @@
         </div>
         <Teleport to="body">
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.planEntry.delete')"
                 :description="trans('global.planEntry.delete_helper')"
                 @close="() => {

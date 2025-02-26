@@ -80,6 +80,7 @@ return [
     'login_password_confirmation' => 'Password confirmation',
     'login_SSO' => 'Login with SSO',
     'owner' => 'Owner',
+    'change_owner' => 'Change owner',
     'yes' => 'Yes',
     'no' => 'No',
     'view_file' => 'View file',
@@ -605,7 +606,7 @@ return [
         'edit' => 'Edit glossary',
         'print' => 'Print glossary',
     ],
-    'media' => [
+    'medium' => [
         'title' => 'Media',
         'title_singular' => 'Media',
         'add' => 'Add media',

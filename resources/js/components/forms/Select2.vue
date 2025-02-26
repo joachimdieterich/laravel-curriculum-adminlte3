@@ -4,6 +4,7 @@
             :id="this.id + '_form_group'"
             class="form-group"
             :class="[(typeof this.css != 'undefined') ? this.css : '' ]"
+            :style="this.id == 'permissions' ? { 'margin-bottom': '200px' } : ''"
         >
             <label v-if="this.showLabel"
                 :for="this.id"

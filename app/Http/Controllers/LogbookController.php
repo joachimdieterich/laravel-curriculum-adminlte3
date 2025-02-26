@@ -190,6 +190,7 @@ class LogbookController extends Controller
             'medium_id' => $input['medium_id'],
             'color' => $input['color'],
             'css_icon' => $input['css_icon'],
+            'owner_id' => is_admin() ? $input['owner_id'] : $logbook->owner_id,
         ]);
 
         return $logbook;
@@ -253,7 +254,7 @@ class LogbookController extends Controller
      */
     private function checkPermissions(Logbook $logbook, $action = 'create'): void
     {
-        abort_unless((\Gate::allows('logbook_'.$action) and $logbook->isAccessible()), 403);
+        abort_unless(\Gate::allows('logbook_'.$action) and $logbook->isAccessible(), 403);
 
         /*
          * Check for role limiter
@@ -264,16 +265,17 @@ class LogbookController extends Controller
                 auth()->user()->role()->id,
                 'logbook_limiter',
                 'App\\Logbook',
-                'owner_id'), 402);
+                'owner_id'
+            ), 402);
         }
 
         if ($action === 'edit') {
-            abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
+            abort_unless(auth()->user()->id == $logbook->owner_id || is_admin(), 403); // owner or admin
             //todo: if user has subscription editable == true
         }
 
         if ($action === 'delete') {
-            abort_unless(auth()->user()->id == $logbook->owner_id, 403);                // user owns logbook
+            abort_unless(auth()->user()->id == $logbook->owner_id || is_admin(), 403); // owner or admin
         }
     }
 
@@ -320,6 +322,7 @@ class LogbookController extends Controller
             'css_icon' => 'sometimes',
             'subscribable_type' => 'sometimes',
             'subscribable_id' => 'sometimes',
+            'owner_id' => 'sometimes',
         ]);
     }
 

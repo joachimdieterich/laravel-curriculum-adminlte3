@@ -126,6 +126,7 @@
                         <button
                             id="enablingObjective-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

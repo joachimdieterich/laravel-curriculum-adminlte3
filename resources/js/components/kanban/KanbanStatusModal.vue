@@ -39,7 +39,7 @@
                                     name="title"
                                     class="form-control"
                                     v-model.trim="form.title"
-                                    :placeholder="trans('global.kanbanItem.fields.title')"
+                                    :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
                                     required
                                 />
                                 <p
@@ -147,6 +147,7 @@
                         <button
                             id="kanban-status-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

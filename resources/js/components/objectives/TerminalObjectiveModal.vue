@@ -152,6 +152,7 @@
                         <button
                             id="terminalObjective-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title || !form.objective_type_id"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

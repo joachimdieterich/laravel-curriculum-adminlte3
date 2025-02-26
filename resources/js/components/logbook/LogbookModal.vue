@@ -30,7 +30,7 @@
                     style="overflow-y: visible;"
                 >
                     <div class="card">
-                        <div class="card-body pb-0">
+                        <div class="card-body">
                             <div
                                 class="form-group"
                                 :class="form.errors.title ? 'has-error' : ''"
@@ -40,7 +40,7 @@
                                     id="title"
                                     name="title"
                                     class="form-control"
-                                    v-model="form.title"
+                                    v-model.trim="form.title"
                                     :placeholder="trans('global.title') + ' *'"
                                     required
                                 />
@@ -50,7 +50,7 @@
                                 ></p>
                             </div>
         
-                            <div class="form-group">
+                            <div>
                                 <textarea
                                     id="description"
                                     name="description"
@@ -64,6 +64,18 @@
                                     v-text="form.errors.description[0]"
                                 ></p>
                             </div>
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                css="mb-0 mt-3"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                url="/users"
+                                :selected="form.owner_id"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
                         </div>
                     </div>
 
@@ -99,6 +111,13 @@
                                     subscribable_type="App\Logbook"
                                     accept="image/*"
                                     @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('logbook-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
                                         this.form.medium_id = id;
                                     }"
                                 />
@@ -137,6 +156,7 @@
                         <button
                             id="logbook-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -176,6 +196,7 @@ export default {
                 id: '',
                 title:  '',
                 description:  '',
+                owner_id: null,
                 medium_id: null,
                 color:'#27AF60',
                 css_icon: 'fa fa-book',

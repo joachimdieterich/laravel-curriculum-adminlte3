@@ -52,7 +52,7 @@ class VideoconferenceController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('videoconference_access'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
 
         if (request()->wantsJson())
         {
@@ -127,7 +127,7 @@ class VideoconferenceController extends Controller
 
     public function list(Request $request)
     {
-        abort_unless(\Gate::allows('videoconference_access'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
 
         if (request()->has(['group_id']))
         {
@@ -490,8 +490,8 @@ class VideoconferenceController extends Controller
      */
     public function update(Request $request, Videoconference $videoconference)
     {
-        $input = $this->validateRequest();
         abort_unless((\Gate::allows('videoconference_edit') and $videoconference->isAccessible()), 403);
+        $input = $this->validateRequest();
 
         //todo: check if guestPolicy is changed. -> if not use initCreateMeeting() ?
         $videoconference->update([
@@ -538,12 +538,11 @@ class VideoconferenceController extends Controller
             'webcamsOnlyForModerator' => $input['webcamsOnlyForModerator'] ?? $videoconference->webcamsOnlyForModerator,
             'anyoneCanStart' => $input['anyoneCanStart'] ?? $videoconference->anyoneCanStart,
 
-            'owner_id' => auth()->user()->id,
+            'owner_id' => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
         $videoconference->save();
 
         return $videoconference;
-
     }
 
     /**
@@ -664,7 +663,8 @@ class VideoconferenceController extends Controller
             'medium_id' => 'sometimes',
             'webcamsOnlyForModerator' => 'sometimes|boolean',
             'anyoneCanStart' => 'sometimes|boolean',
-            'server' => 'sometimes|string'
+            'server' => 'sometimes|string',
+            'owner_id' => 'sometimes|integer',
         ]);
     }
 }

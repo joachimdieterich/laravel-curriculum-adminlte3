@@ -77,7 +77,7 @@
                                             id="title"
                                             name="title"
                                             class="form-control float"
-                                            v-model="form.title"
+                                            v-model.trim="form.title"
                                             :placeholder="trans('global.title') + ' *'"
                                             required
                                         />
@@ -263,6 +263,13 @@
                                             :subscribable_id="form.id"
                                             subscribable_type="'App\Curriculum'"
                                             @selectedValue="(id) => {
+                                                // on removal of medium, directly update the resource
+                                                if (this.form.medium_id !== null && id === null) {
+                                                    this.$eventHub.emit('curriculum-updated', {
+                                                        id: this.form.id,
+                                                        medium_id: null,
+                                                    });
+                                                }
                                                 this.form.medium_id = id;
                                             }"
                                         />
@@ -314,7 +321,7 @@
                                                 style="height: 44px;"
                                                 class="form-control"
                                                 multiple
-                                                @chansge="onChange($event)"
+                                                @change="onChange($event)"
                                             />
                                         </div>
                                     </div>
@@ -337,6 +344,7 @@
                         <button
                             id="curriculum-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title || !files"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

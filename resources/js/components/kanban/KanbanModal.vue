@@ -5,7 +5,7 @@
             @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card-header ">
+                <div class="card-header">
                     <h3 class="card-title">
                         <span v-if="method === 'post'">
                             {{ trans('global.kanban.create') }}
@@ -25,10 +25,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="modal-body" 
-                    style="overflow-y: visible;"
-                >
+                <div class="modal-body">
                     <div class="card">
                         <div class="card-body">
                             <div class="form-group">
@@ -61,6 +58,18 @@
                                     v-text="form.errors.description[0]"
                                 ></p>
                             </div>
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                css="mb-0 mt-3"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                url="/users"
+                                :selected="form.owner_id"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
                         </div>
                     </div>
 
@@ -96,6 +105,13 @@
                                     subscribable_type="App\Kanban"
                                     accept="image/*"
                                     @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('kanban-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
                                         this.form.medium_id = id;
                                     }"
                                 />
@@ -185,6 +201,7 @@
                         <button
                             id="kanban-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -210,8 +227,9 @@ export default {
     },
     props: {
         params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+            type: Object,
+            default: null,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -223,11 +241,11 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/kanbans',
             form: new Form({
                 id: '',
                 title:  '',
                 description:  '',
+                owner_id: null,
                 color:'#27AF60',
                 medium_id: null,
                 commentable: true,
@@ -253,7 +271,7 @@ export default {
             this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/kanbans', this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-added', r.data);
                 })
@@ -262,7 +280,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/kanbans/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-updated', r.data);
                 })

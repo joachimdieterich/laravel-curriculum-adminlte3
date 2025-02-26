@@ -33,7 +33,7 @@
                         >
                             <h5 class="card-title">{{ trans('global.general') }}</h5>
                         </div>
-                        <div class="card-body pb-0">
+                        <div class="card-body">
                             <div class="form-group">
                                 <Select2
                                     id="type_id"
@@ -72,14 +72,12 @@
                                 </span>
                             </div>
 
-                            <div class="form-group">
-                                <Editor
-                                    :id="'description' + component_id"
-                                    :name="'description' + component_id"
-                                    :init="tinyMCE"
-                                    v-model="form.description"
-                                />
-                            </div>
+                            <Editor
+                                :id="'description' + component_id"
+                                :name="'description' + component_id"
+                                :init="tinyMCE"
+                                v-model="form.description"
+                            />
                             <!-- currently not in use -->
                             <!-- <div class="form-group">
                                 <VueDatePicker
@@ -110,6 +108,18 @@
                                     {{ trans('global.plan.fields.duration_helper') }}
                                 </p>
                             </div> -->
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                :label="trans('global.change_owner')"
+                                css="mb-0 mt-3"
+                                model="User"
+                                url="/users"
+                                :selected="form.owner_id"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
                         </div>
                     </div>
 
@@ -144,6 +154,13 @@
                                     subscribable_type="App\Plan"
                                     accept="image/*"
                                     @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('plan-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
                                         this.form.medium_id = id;
                                     }"
                                 />
@@ -190,6 +207,7 @@
                         <button
                             id="plan-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -227,6 +245,7 @@ export default {
                 type_id: 4,
                 title:  '',
                 description:  '',
+                owner_id: null,
                 date: null,
                 begin: '',
                 end: '',

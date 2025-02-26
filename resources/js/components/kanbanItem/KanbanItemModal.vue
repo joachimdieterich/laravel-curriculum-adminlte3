@@ -64,6 +64,8 @@
                         <div class="card-body">
                             <v-swatches
                                 :swatch-size="49"
+                                class="d-flex"
+                                style="height: 42px;"
                                 popover-to="right"
                                 v-model="this.form.color"
                                 show-fallback
@@ -189,6 +191,7 @@
                         <button
                             id="kanban-item-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

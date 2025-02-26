@@ -36,13 +36,18 @@
                 </div>
             </div>
         </div>
-        <div class="card" style="border-radius: 0px;">
+        <div class="card rounded-0">
             <!-- /.card-header -->
             <div class="card-body">
-                <div class="row">
-                    <span class="col-12">
+                <div class="d-flex">
+                    <span class="flex-fill">
                         {{ htmlToText(currentPlan.description) }}
                     </span>
+                    <div v-if="currentPlan.medium_id"
+                        class="w-25"
+                        :style="{'background': 'url(/media/' + currentPlan.medium_id + '?model=App\\Plan&model_id=' + currentPlan.id + ') center no-repeat'}"
+                        style="min-height: 100px; background-size: contain !important;"
+                    ></div>
                 </div>
             </div>
         </div>
@@ -52,7 +57,7 @@
                 <draggable
                     v-model="entries"
                     v-bind="columnDragOptions"
-                    :disabled="disabled"
+                    :disabled="!editable"
                     itemKey="id"
                     @start="drag=true"
                     @end="handleEntryOrder"
@@ -94,17 +99,15 @@
             <SetAchievementsModal :users="users"/>
             <SubscribeModal/>
         </Teleport>
-        <Teleport v-if="$userId == plan.owner_id"
-            to="#customTitle"
-        >
+        <Teleport to="#customTitle">
             <small>{{ currentPlan.title }}</small>
-            <a
+            <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-flat"
                 @click="editPlan()"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
-            <button
+            <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-fla"
                 @click="share()"
             >
@@ -153,7 +156,6 @@ export default {
             entry_order: [],
             subscriptions: {},
             search: '',
-            disabled: false,
             showTools: false,
             errors: {},
         }
@@ -192,21 +194,6 @@ export default {
                     canEditCheckbox: true,
                 });
         },
-        handleEntryAdded(entry) {
-            this.entries.push(entry);
-            this.entry_order.push(entry.id);
-            this.updateEntryOrder();
-        },
-        handleEntryUpdated(updatedEntry) {
-            let entry = this.entries.find(e => e.id === updatedEntry.id);
-            Object.assign(entry, updatedEntry);
-        },
-        handleEntryDeleted(entry) {
-            let index = this.entries.indexOf(entry);
-            this.entries.splice(index, 1);
-            this.entry_order.splice(index, 1);
-            this.updateEntryOrder();
-        },
         handleEntryOrder(e) {
             if (e.newIndex === e.oldIndex) return;
             this.entry_order = this.entries.map(entry => entry.id);
@@ -222,22 +209,26 @@ export default {
         },
     },
     mounted() {
-        localStorage.removeItem('user-datatable-selection'); // reset selection to prevent wrong inputs
-        this.disabled = this.$userId != this.plan.owner_id;
         this.loaderEvent();
 
-        this.$eventHub.on('plan-updated', (e) => {
-            this.currentPlan = e;
+        this.$eventHub.on('plan-updated', (updatedPlan) => {
+            Object.assign(this.currentPlan, updatedPlan);
         });
         // ENTRY events
-        this.$eventHub.on('plan-entry-added', (e) => {
-            this.handleEntryAdded(e);
+        this.$eventHub.on('plan-entry-added', (entry) => {
+            this.entries.push(entry);
+            this.entry_order.push(entry.id);
+            this.updateEntryOrder();
         });
-        this.$eventHub.on('plan-entry-updated', (e) => {
-            this.handleEntryUpdated(e);
+        this.$eventHub.on('plan-entry-updated', (updatedEntry) => {
+            let entry = this.entries.find(e => e.id === updatedEntry.id);
+            Object.assign(entry, updatedEntry);
         });
-        this.$eventHub.on('plan-entry-deleted', (e) => {
-            this.handleEntryDeleted(e);
+        this.$eventHub.on('plan-entry-deleted', (entry) => {
+            let index = this.entries.indexOf(entry);
+            this.entries.splice(index, 1);
+            this.entry_order.splice(index, 1);
+            this.updateEntryOrder();
         });
     },
     computed: {

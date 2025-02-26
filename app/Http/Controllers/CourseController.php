@@ -17,8 +17,8 @@ class CourseController extends Controller
     {
         abort_unless(\Gate::allows('curriculum_show'), 403);
         $input = $this->validateRequest();
-
-        $courses = Curriculum::select('curricula.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
+        // get subscription-id instead of curriculum-id
+        $courses = Curriculum::select('curriculum_subscriptions.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
             ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
             ->where('subscribable_id', $input['group_id'])
             ->where('subscribable_type', "App\Group")
@@ -31,8 +31,7 @@ class CourseController extends Controller
 
     public function show(Course $course)
     {
-        abort_unless((\Gate::allows('curriculum_show') and $course->isAccessible()), 403);        //check if user is enrolled or admin -> else 403
-
+        abort_unless((\Gate::allows('curriculum_show') and $course->isAccessible()), 403); //check if user is enrolled or admin -> else 403
         LogController::set(get_class($this).'@'.__FUNCTION__, $course->curriculum_id);
 
         $curriculum = Curriculum::with([
@@ -52,21 +51,23 @@ class CourseController extends Controller
             'glossar.contents',
             'media',
         ])
-                        ->find($course->curriculum_id);
+        ->find($course->curriculum_id);
+
         $objectiveTypes = ObjectiveType::all();
         $certificates = Certificate::where([
             ['curriculum_id', '=', $course->curriculum_id],
             ['organization_id', '=', auth()->user()->current_organization_id],
         ])
-                        ->orWhere([
-                            ['curriculum_id', '=', $course->curriculum_id],
-                            ['global', '=', 1],
-                        ])
-                        ->orWhere([
-                            ['type', '=', 'group'],
-                            ['global', '=', 1],
-                        ])
-                        ->get();
+        ->orWhere([
+            ['curriculum_id', '=', $course->curriculum_id],
+            ['global', '=', 1],
+        ])
+        ->orWhere([
+            ['type', '=', 'group'],
+            ['global', '=', 1],
+        ])
+        ->get();
+
         /*$logbook = (null !== $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;*/
 
         $settings = json_encode([
@@ -77,26 +78,25 @@ class CourseController extends Controller
         ]);
 
         return view('curricula.show')
-                ->with(compact('curriculum'))
-                ->with(compact('objectiveTypes'))
-                ->with(compact('course'))
-                ->with(compact('certificates'))
-                /*->with(compact('logbook'))*/
-                ->with(compact('settings'));
+            ->with(compact('curriculum'))
+            ->with(compact('objectiveTypes'))
+            ->with(compact('course'))
+            ->with(compact('certificates'))
+            /*->with(compact('logbook'))*/
+            ->with(compact('settings'));
     }
 
     public function list()
     {
         $request = $this->validateRequest();
-        abort_unless(\Gate::allows('curriculum_show'), 403);                            //check if user is enrolled or admin -> else 403
+        abort_unless(\Gate::allows('curriculum_show'), 403); //check if user is enrolled or admin -> else 403
         abort_unless((auth()->user()
-                            ->with(['groups.courses' => function ($query, $request) {               //user enrolled
-                                $query->where('id', $request['course_id']);
-                            }])
-                            or (auth()->user()->currentRole()->first()->id == 1)), 403); // or admin
+            ->with(['groups.courses' => function ($query, $request) { // user enrolled
+                $query->where('id', $request['course_id']);
+            }])
+            or (auth()->user()->currentRole()->first()->id == 1)), 403); // or admin
 
         $course = CurriculumSubscription::where('id', $request['course_id'])->get()->first();
-
 
         $users = User::select([
             'users.id',

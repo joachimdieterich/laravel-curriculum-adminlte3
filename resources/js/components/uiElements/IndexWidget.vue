@@ -25,7 +25,7 @@
         >
             <div v-if="item.medium_id"
                 class="nav-item-box-image-size"
-                :style="{backgroundColor: item.color + ' !important'}"
+                :style="{ backgroundColor: item.color + ' !important', opacity: '75%' }"
                 @click="clickEvent(item)"
             >
                 <div

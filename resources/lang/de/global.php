@@ -90,6 +90,7 @@ return [
     'login_password_confirmation' => 'Passwort bestätigen',
     'login_SSO' => 'SSO Anmeldung',
     'owner' => 'Eigentümer/in',
+    'change_owner' => 'Besitzer/in ändern',
     'yes' => 'Ja',
     'no' => 'Nein',
     'view_file' => 'Datei anzeigen',
@@ -640,7 +641,7 @@ return [
         'create' => 'Medium erstellen',
         'edit' => 'Medium bearbeiten',
         'upload' => 'Medien/Medium hochladen',
-        'upload_helper' => 'Zum Hochladen Datei(en) hierher ziehen<br> oder  klicken um Datei(en) auszuwählen',
+        'upload_helper' => 'Zum Hochladen Datei(en) hierher ziehen<br> oder klicken um Datei(en) auszuwählen',
         'no_media' => 'Es wurden noch keine Medien verknüpft.',
         'link' => 'Link',
         'fields' => [

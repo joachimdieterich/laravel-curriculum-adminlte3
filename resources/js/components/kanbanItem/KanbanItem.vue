@@ -111,7 +111,7 @@
                     <span v-else v-html="item.description ?? '</br>'"></span>
                 </div>
             </div>
-            <mediaCarousel v-if="item.media_subscriptions.length > 0"
+            <MediaCarousel v-if="item.media_subscriptions.length > 0"
                 class="clearfix"
                 :subscriptions="item.media_subscriptions"
                 :width="width - 16"
@@ -208,7 +208,7 @@
 </template>
 <script>
 import DatePicker from 'vue3-datepicker';
-import mediaCarousel from '../media/MediaCarousel.vue';
+import MediaCarousel from '../media/MediaCarousel.vue';
 import avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
 import Comments from '../kanban/Comments.vue';
@@ -388,11 +388,6 @@ export default {
 
         this.getEditors();
         //this.due_date = this.item.due_date;
-        this.$eventHub.on('reload_kanban_item', (e) => {
-            if (this.item.id == e.id) {
-                this.reload();
-            }
-        });
         this.$eventHub.on('filter', (filter) => {
             // always case insensitive
             const content = this.$el.innerText.toLowerCase();
@@ -428,7 +423,7 @@ export default {
         HtmlRenderer,
         Comments,
         Reaction,
-        mediaCarousel,
+        MediaCarousel,
         avatar,
         DatePicker,
         ConfirmModal,

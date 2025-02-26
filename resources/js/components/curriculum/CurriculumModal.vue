@@ -344,7 +344,7 @@
                         <button
                             id="curriculum-save"
                             class="btn btn-primary ml-3"
-                            :disabled="!form.title || !files"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

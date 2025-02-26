@@ -77,13 +77,13 @@ class EnablingObjectiveSubscriptionsController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403);
+        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403, 'Model <' . $input['subscribable_type'] . ':' . $input['subscribable_id'] . '> not accessible!');
 
         $new_subscriptions = [];
         $objectives = EnablingObjective::find($input['enabling_objective_id']);
 
         foreach ($objectives as $objective) {
-            abort_unless($objective->isAccessible(), 403);
+            abort_unless($objective->isAccessible(), 403, 'EnablingObjective:' . $objective->id . ' not accessible!');
             array_push($new_subscriptions, [
                 'enabling_objective_id' => $objective->id,
                 'subscribable_type' => $input['subscribable_type'],

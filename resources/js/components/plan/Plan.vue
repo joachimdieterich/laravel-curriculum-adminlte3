@@ -102,17 +102,17 @@
         <Teleport to="#customTitle">
             <small>{{ currentPlan.title }}</small>
             <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat"
+                class="btn btn-flat text-secondary px-2 mx-1"
                 @click="editPlan()"
             >
-                <i class="fa fa-pencil-alt text-secondary"></i>
+                <i class="fa fa-pencil-alt"></i>
             </a>
-            <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-fla"
+            <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                class="btn btn-flat text-secondary px-2"
                 @click="share()"
             >
-                <i class="fa fa-share-alt text-secondary"></i>
-            </button>
+                <i class="fa fa-share-alt"></i>
+            </a>
         </Teleport>
     </div>
 </template>

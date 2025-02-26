@@ -260,20 +260,20 @@
 
         <teleport to="#customTitle">
             <small>{{ currentCurriculum.title }}</small>
-            <a
-                class="btn btn-flat"
+            <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
+                v-permission="'curriculum_edit'"
+                class="btn btn-flat text-secondary px-2 mx-1"
                 @click="edit()"
             >
-                <i class="fa fa-pencil-alt text-secondary"></i>
+                <i class="fa fa-pencil-alt"></i>
             </a>
 
-            <button v-if="$userId == curriculum.owner_id"
-                v-permission="'curriculum_edit'"
-                class="btn btn-flat"
+            <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
+                class="btn btn-flat text-secondary px-2"
                 @click="share()"
             >
-                <i class="fa fa-share-alt text-secondary"></i>
-            </button>
+                <i class="fa fa-share-alt"></i>
+            </a>
         </teleport>
     </div>
 </template>

@@ -15,6 +15,7 @@
                     <li>
                         <a
                             role="tab"
+                            class="pointer"
                             @click="createMarker()"
                         >
                             <i class="fa fa-plus"></i>
@@ -29,14 +30,14 @@
                     id="ll-home"
                     class="sidebar-pane active"
                 >
-                    <h1 class="sidebar-header mb-3">
+                    <h1 class="sidebar-header pr-2 mb-3">
                         {{ map.title }}
                         <a v-if="map.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'map_edit'"
-                            class="pull-right link-muted"
+                            class="pull-right link-muted text-light pointer"
                             @click="editMap(map)"
                         >
-                            <i class="fas fa-pencil-alt text-white"></i>
+                            <i class="fas fa-pencil-alt p-2"></i>
                         </a>
                     </h1>
                     <span class="pb-2">

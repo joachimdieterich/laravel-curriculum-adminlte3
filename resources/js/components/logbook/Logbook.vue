@@ -67,13 +67,13 @@
         </Teleport>
         <teleport to="#customTitle">
             <small>{{ logbook.title }}</small>
-            <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+            <a v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-flat"
                 @click="editLogbook(logbook)"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
-            <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+            <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-flat"
                 @click="share()"
             >

@@ -50,13 +50,16 @@ body {
     float: none;
     margin: 0 auto;
 }
-.text-cut{
+.text-cut {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 .pointer {
     cursor: pointer;
+}
+.btn.no-focus:focus {
+    box-shadow: none !important;
 }
 .pull-right {
     float: right !important;
@@ -152,36 +155,6 @@ tr:hover .vuehover {
     color: #dc3545;
     font-size: 0.8rem;
     width: min-content;
-}
-@media only screen and (max-width: 400px) {
-    div#searchbar > input {
-        transition: .5s width, .5s padding !important;
-
-        &:not(:focus-within) {
-            padding: 0 41px 0 0 !important;
-
-            & + div > #searchButton::before { content: none; }
-        }
-    }
-}
-@media only screen and (max-width: 576px) {
-    #searchbar {
-        > input {
-            width: calc(100vw - 183px);
-            max-width: 248px;
-            transition: .5s width, .4s padding;
-        }
-        &:not(:focus-within) > input {
-            width: 0;
-            padding: 0 96px 0 0 !important;
-            transition: .5s width .1s, .4s padding;
-
-            & + div {
-                > #clearSearch { display: none !important; }
-                > #searchButton::before { width: 55px; }
-            }
-        }
-    }
 }
 /*
  * Modal

@@ -17,7 +17,7 @@ class TerminalObjectiveController extends Controller
 
     public function getEnablingObjectives(TerminalObjective $terminalObjective) {
         if (request()->wantsJson()) {
-            return getEntriesForSelect2ByCollection($terminalObjective->enablingObjectives, '', 'title', 'order_id');
+            return getEntriesForSelect2ByCollectionAlternative($terminalObjective->enablingObjectives, '', 'title', 'order_id');
         }
     }
     /**

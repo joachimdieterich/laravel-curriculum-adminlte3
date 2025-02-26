@@ -61,34 +61,37 @@ export const useGlobalStore = defineStore('global', {
             subscribable_id: null,
             subscribeSelected: false,
         },
-        selectedMedia:[]
+        selectedMedia: [],
     }),
     actions: {
-        setItem(key, value){
+        setItem(key, value) {
             this.global[key] = value;
         },
         registerModal(title){
             this.modals[title] = {
                 show: false,
+                lock: false, // used to not reset modal-params, when more than 1 modal is showing
                 params: [],
             };
             //console.log(this.modals);
         },
-        showModal(title, params = null){
-            this.modals[title] = {
+        showModal(name, params = null){
+            this.modals[name] = {
                 show: true,
-                params: params
+                lock: false,
+                params: params,
             };
             //console.log(this.modals[title]);
         },
-        closeModal(title){
-            //console.log(title);
-            this.modals[title].show = false;
-            //this.modals[title].params = [];
+        closeModal(name) {
+            this.modals[name].show = false;
+            this.modals[name].lock = false;
         },
-        setModalParams(title, params){
-            //console.log(title);
-            this.modals[title].params = params;
+        lockModal(name) {
+            this.modals[name].lock = true;
+        },
+        setModalParams(name, params) {
+            this.modals[name].params = params;
         },
         addToMedia(item) {
             let index = this.media.findIndex(
@@ -114,9 +117,9 @@ export const useGlobalStore = defineStore('global', {
             }
             //console.log(this.media);
         },
-        setSelectedMedia(selection){
-            this.selectedMedia = selection;
-        }
+        setSelectedMedia(selection) {
+            Object.assign(this.selectedMedia, selection);
+        },
     },
     getters: {
         getItem(state) {

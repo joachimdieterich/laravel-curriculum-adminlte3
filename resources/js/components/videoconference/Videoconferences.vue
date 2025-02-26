@@ -92,7 +92,13 @@
                 :subscribable_id="subscribable_id"
                 :subscribable_type="subscribable_type"
                 :label="trans('global.videoconference.' + create_label_field)"
-            />
+            >
+                <template v-slot:itemIcon>
+                    <i v-if="create_label_field == 'enrol'"
+                        class="fa fa-2x fa-link text-muted"
+                    ></i>
+                </template>
+            </IndexWidget>
             <IndexWidget v-for="videoconference in videoconferences"
                 :key="'videoconferenceIndex' + videoconference.id"
                 :model="videoconference"
@@ -100,9 +106,10 @@
                 titleField="meetingName"
                 modelName="Videoconference"
                 url="/videoconferences"
+                :showSubscribable="subscribable"
             >
-                <template v-slot:icon>
-                    <i class="fa fa-videoconference-location-dot pt-2"></i>
+                <template v-slot:itemIcon>
+                    <i class="fa fa-2x fa-video"></i>
                 </template>
 
                 <template v-slot:dropdown
@@ -120,7 +127,7 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(videoconference)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-link mr-2"></i>
                             {{ trans('global.videoconference.expel') }}
                         </button>
                     </div>
@@ -162,6 +169,7 @@
                 </template>
             </IndexWidget>
         </div>
+
         <div
             id="videoconference-datatable-wrapper"
             class="w-100 dataTablesWrapper"
@@ -178,6 +186,7 @@
         </div>
 
         <Teleport to="body">
+            <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
             <VideoconferenceModal v-if="!subscribable"/>
             <SubscribeVideoconferenceModal v-if="subscribable"/>
@@ -197,6 +206,7 @@
 <script>
 import VideoconferenceModal from "../videoconference/VideoconferenceModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -274,12 +284,7 @@ export default {
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined') {
-                this.url = '/videoconferenceSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
-            } else {
-                this.url = '/videoconferences/list?filter=' + this.filter;
-            }
-
+            this.url = '/videoconferences/list?filter=' + this.filter;
             this.dt.ajax.url(this.url).load();
         },
         editVideoconference(videoconference) {
@@ -338,6 +343,7 @@ export default {
     components: {
         SubscribeVideoconferenceModal,
         ConfirmModal,
+        MediumModal,
         DataTable,
         VideoconferenceModal,
         IndexWidget,

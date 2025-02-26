@@ -122,7 +122,7 @@
                     </a>
                 </li>
                 <li
-                    v-permission="'reference_access'"
+                    v-permission="'achievement_create_self_assessment'"
                     class="nav-item small"
                 >
                     <a
@@ -207,8 +207,8 @@
 
                     <div
                         v-permission="'task_access'"
-                        class="tab-pane"
                         :id="'logbook_tasks_' + entry.id"
+                        class="tab-pane"
                     >
                         <Tasks
                             class="pb-2"
@@ -230,14 +230,15 @@
                     </div>
 
                     <div
-                        v-permission="'reference_access'"
-                        class="tab-pane"
+                        v-permission="'achievement_create_self_assessment'"
                         :id="'logbook_objectives_' + entry.id"
+                        class="tab-pane pb-2"
                     >
-                        <reference-list
-                            :subscribable_id="entry.id"
-                            subscribable_type="App\LogbookEntry"
-                            :entry="entry"
+                        <Objectives
+                            :referenceable_id="entry.id"
+                            referenceable_type="App\LogbookEntry"
+                            :owner_id="entry.owner_id"
+                            :editable="entry.owner_id == $userId"
                         />
                     </div>
 
@@ -292,7 +293,7 @@ import Contents from '../content/Contents.vue';
 import Tasks from '../task/Tasks.vue';
 import Media from '../media/Media.vue';
 import Lms from '../lms/Lms.vue';
-import ReferenceList from "../reference/ReferenceList.vue";
+import Objectives from "../objectives/Objectives.vue";
 import Avatar from "../uiElements/Avatar.vue";
 import {useGlobalStore} from "../../store/global";
 
@@ -453,7 +454,7 @@ export default {
     },
     components: {
         ConfirmModal,
-        ReferenceList,
+        Objectives,
         Absences,
         Avatar,
         Media,

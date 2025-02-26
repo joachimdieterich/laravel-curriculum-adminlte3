@@ -100,18 +100,17 @@
                 </template>
             </IndexWidget>
             <IndexWidget v-for="plan in plans"
-                :key="'planIndex'+plan.id"
+                :key="'planIndex' + plan.id"
                 :model="plan"
                 modelName="Plan"
                 url="/plans"
+                :showSubscribable="subscribable"
             >
                 <template v-slot:itemIcon>
                     <i class="fa fa-2x fa-clipboard-list"></i>
                 </template>
 
-                <template v-slot:dropdown
-                    v-permission="'plan_edit, plan_delete'"
-                >
+                <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"
@@ -133,7 +132,7 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <button
+                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'plan_edit'"
                             :name="'edit-plan-' + plan.id"
                             class="dropdown-item text-secondary"
@@ -142,16 +141,21 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.plan.edit') }}
                         </button>
+
                         <button v-if="plan.allow_copy"
-                            :name="'copy-plan-'+plan.id"
+                            :name="'copy-plan-' + plan.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmCopy(plan)"
                         >
                             <i class="fa fa-copy mr-2"></i>
                             {{ trans('global.plan.copy') }}
                         </button>
-                        <hr class="my-1">
-                        <button
+
+                        <hr v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                            class="my-1"
+                        />
+
+                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'plan_delete'"
                             :id="'delete-plan-' + plan.id"
                             type="submit"
@@ -181,11 +185,11 @@
         </div>
 
         <Teleport to="body">
-            <PlanModal/>
-            <SubscribePlanModal/>
-            <MediumModal/>
+            <PlanModal v-if="!subscribable"/>
+            <MediumModal v-if="!subscribable"/>
+            <SubscribePlanModal v-if="subscribable"/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.plan.' + delete_label_field)"
                 :description="trans('global.plan.' + delete_label_field +'_helper')"
                 @close="() => {
@@ -196,8 +200,8 @@
                     this.destroy();
                 }"
             />
-            <ConfirmModal
-                :showConfirm="this.showCopy"
+            <ConfirmModal v-if="!subscribable"
+                :showConfirm="showCopy"
                 :title="trans('global.plan.copy')"
                 :description="trans('global.plan.copy_helper')"
                 css='primary'
@@ -292,12 +296,7 @@ export default {
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            if (this.subscribable) {
-                this.url = '/planSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
-            } else {
-                this.url = '/plans/list?filter=' + this.filter;
-            }
-
+            this.url = '/plans/list?filter=' + this.filter;
             this.dt.ajax.url(this.url).load();
         },
         editPlan(plan) {

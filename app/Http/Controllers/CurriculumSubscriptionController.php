@@ -47,19 +47,17 @@ class CurriculumSubscriptionController extends Controller
                     ];
                 }
                 return [
-                    'subscribers' => [
-                        'tokens' => $tokens ?? [],
-                        'subscriptions' => optional(
+                    'tokens' => $tokens ?? [],
+                    'subscriptions' => optional(
                             optional(
                                 Curriculum::find(request('curriculum_id'))
                             )->subscriptions()
                         )->with('subscribable')
-                            ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                                if ($type == 'App\\User') {
-                                    $q->whereNot('id', env('GUEST_USER'));
-                                }
-                            })->get(),
-                    ],
+                        ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                            if ($type == 'App\\User') {
+                                $q->whereNot('id', env('GUEST_USER'));
+                            }
+                        })->get(),
                 ];
             }
         }
@@ -88,7 +86,13 @@ class CurriculumSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => $curriculum->subscriptions()->with('subscribable')->get()];
+            return CurriculumSubscription::with('subscribable')
+                ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                    if ($type == 'App\\User') {
+                        $q->whereNot('id', env('GUEST_USER'));
+                    }
+                })
+                ->find($subscribe->id);
         }
     }
 

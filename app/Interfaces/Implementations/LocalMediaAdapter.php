@@ -33,13 +33,12 @@ class LocalMediaAdapter implements MediaInterface
     public function list()
     {
         abort_unless(\Gate::allows('medium_access'), 403);
-        $media = (auth()->user()->role()->id == 1) ? Medium::all() : auth()->user()->media()->get();
+        $media = (auth()->user()->role()->id == 1)
+            ? Medium::where('adapter', '=', 'local')->get()
+            : auth()->user()->media()->get();
 
         return DataTables::of($media)
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 
@@ -59,6 +58,8 @@ class LocalMediaAdapter implements MediaInterface
             $input = $this->validateRequest();
 
             $files = $request->file('file');
+            if (gettype($files) == 'object') $files = [$files];
+
             $uploaded = new Collection();
             $pathPrefix = '/users/'.auth()->user()->id;//.'/';
             foreach ($files as $file) {
@@ -114,7 +115,7 @@ class LocalMediaAdapter implements MediaInterface
 
         /* check if User has access to model->medium_id*/
         $params = $this->validateRequest();
-        if ($params['model']) {
+        if (isset($params['model'])) {
             $class = 'App\\'.$params['model'];
             $model = (new $class)::where('id',$params['model_id'] )->get()->first();
 

@@ -1,81 +1,97 @@
-<template >
-
-    <ul id="test12341"
-        class="products-list product-list-in-card pl-2 pr-2">
-        <li v-if="subscriptions.length != 0">&nbsp;
+<template>
+    <ul class="products-list product-list-in-card pl-2 pr-2">
+        <li v-if="subscriptions.length > 0">
             <span class="pull-right">
                 <small>{{ canEditLabel }}</small>
             </span>
         </li>
-        <li style="clear:right;"
-            v-for="(item,index) in subscriptions"
+        <li v-for="item in subscriptions"
             :id="'subscription_'+item.token.id"
-            v-bind:value="item.token.id"
-            class="item">
+            class="item"
+            style="clear: right;"
+            :value="item.token.id"
+        >
             <div class="d-flex flex-column">
-                <div>
-                    {{ item.token.title }}
-                </div>
-                <div>
-                    <i class="fa fa-qrcode"
-                        @click="setQRCodeId(item.token.id)"></i>
+                <div>{{ item.token.title }}</div>
+                <div class="d-flex align-items-center">
+                    <i
+                        class="fa fa-qrcode mr-2 pointer"
+                        @click="setQRCodeId(item.token.id)"
+                    ></i>
                     <span>
                         {{ item.token.title }} |
-                        <small>
-                            {{ diffForHumans(item.token.due_date) }}
-                        </small>
+                        <small>{{ diffForHumans(item.token.due_date) }}</small>
                     </span>
-                    <span v-if="canEditCheckbox"
-                          class="pull-right custom-control custom-switch custom-switch-on-green">
-                        <input  v-model="item.token.editable"
-                                type="checkbox"
-                                class="custom-control-input pt-1 "
-                                :id="'subscription_input'+item.token.id"
-                                @click="setPermission(item.token.id, item.token.editable)">
-                        <label class="custom-control-label " :for="'subscription_input'+item.token.id" ></label>
-                    </span>
-                    <span class="pull-right pr-2" ></span>
-                    <button class="btn btn-flat py-0 pull-right"
-                            @click="unsubscribe(item.token.id)">
-                        <i class="fa fa-trash text-danger vuehover" ></i>
+                    <button
+                        class="btn btn-flat ml-auto py-0"
+                        @click="unsubscribe(item.token.id)"
+                    >
+                        <i class="fa fa-trash text-danger vuehover"></i>
                     </button>
+                    <span v-if="canEditCheckbox"
+                        class="pull-right custom-control custom-switch custom-switch-on-green"
+                    >
+                        <input
+                            :id="'subscription_input'+item.token.id"
+                            type="checkbox"
+                            class="custom-control-input pt-1"
+                            v-model="item.token.editable"
+                            @click="setPermission(item.token.id, item.token.editable)"
+                        />
+                        <label class="custom-control-label" :for="'subscription_input' + item.token.id"></label>
+                    </span>
                 </div>
                 <div>
-                    <span :id="'subscription_link_'+item.token.id"
-                          @click="copyToClipboard"
-                          class="pointer text-muted text-xs"
-                          v-dompurify-html="generateShareURL(item.token)"></span>
+                    <span
+                        :id="'subscription_link_'+item.token.id"
+                        class="pointer text-muted text-xs"
+                        v-dompurify-html="generateShareURL(item.token)"
+                        @click="copyToClipboard"
+                    ></span>
                 </div>
-                <div :id="'svgQrCode_'+item.token.id"
-                    v-if="item.token.id == showQrCodeId"
-                     v-dompurify-html="item.qr.image"
-                     style="width: 49px;"
-                     class="float-left"
-
-                     @click="downloadSVG(item)"></div>
+                <div v-if="item.token.id == showQrCodeId"
+                    :id="'svgQrCode_'+item.token.id"
+                    v-dompurify-html="item.qr.image"
+                    style="width: 212px;"
+                    class="pointer"
+                    @click="downloadSVG(item)"
+                ></div>
             </div>
         </li>
     </ul>
 </template>
-
 <script>
 import moment from 'moment';
+import {useToast} from "vue-toastification";
 
 export default {
     props: {
-        modelUrl: String,
-        subscriptions: {},
-        subscribing_model: String,
-        canEditLabel: String,
+        modelUrl: {
+            type: String,
+        },
+        subscriptions: {
+            type: Object,
+        },
+        subscribing_model: {
+            type: String,
+        },
+        canEditLabel: {
+            type: String,
+        },
         canEditCheckbox: {
             type: Boolean,
-            default: true
+            default: true,
+        },
+    },
+    setup() {
+        const toast = useToast();
+        return {
+            toast,
         }
     },
     data() {
         return {
             showQrCodeId: '',
-            errors: {}
         }
     },
     methods: {
@@ -85,7 +101,6 @@ export default {
             } else {
                 return window.location.origin + "/" + this.modelUrl + "s/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
             }
-
         },
         copyToClipboard(event) {
             console.log(event.target.innerText);
@@ -96,7 +111,7 @@ export default {
             try {
                 await axios.delete('/' + this.modelUrl + 'Subscriptions/' + id).data;
             } catch (error) {
-                //this.errors = error.response.data.errors;
+                console.log(error);
             }
             $("#subscription_" + id).hide();
         },
@@ -104,7 +119,7 @@ export default {
             try {
                 status = (await axios.patch('/' + this.modelUrl + 'Subscriptions/' + id, {'editable': !status})).data.editable;
             } catch (error) {
-                //this.errors = error.response.data.errors;
+                console.log(error);
             }
         },
         diffForHumans: function (date) {
@@ -114,7 +129,7 @@ export default {
             return window.trans.global.valid_to + ' ' + moment(date).locale('de').fromNow();
         },
         successNotification(message) {
-            this.$toast.success(message, {
+            this.toast.success(message, {
                 position: "top-right",
                 timeout: 3000,
                 closeOnClick: true,
@@ -126,7 +141,7 @@ export default {
                 hideProgressBar: true,
                 closeButton: "button",
                 icon: true,
-                rtl: false
+                rtl: false,
             });
         },
         setQRCodeId(id) {
@@ -153,7 +168,7 @@ export default {
             pWindow.close();
 
             return true;
-        }
-    }
+        },
+    },
 }
 </script>

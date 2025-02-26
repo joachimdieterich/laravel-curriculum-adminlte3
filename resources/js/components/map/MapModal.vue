@@ -27,10 +27,176 @@
 
                 <div class="modal-body">
                     <div class="card">
+                        <div
+                            class="card-header"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.general') }}</div>
+                        </div>
+
                         <div class="card-body">
-                            <div class="form-group d-flex align-items-center">
+                            <div class="form-group">
+                                <input
+                                    id="title"
+                                    name="title"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            </div>
+
+                            <div class="form-group">
+                                <input
+                                    id="subtitle"
+                                    name="subtitle"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.subtitle"
+                                    :placeholder="trans('global.map.fields.subtitle')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors?.subtitle" v-text="form.errors?.subtitle[0]"></p>
+                            </div>
+
+                            <div class="form-group">
+                                <Editor
+                                    id="description"
+                                    name="description"
+                                    :placeholder="trans('global.map.fields.description')"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model="form.description"
+                                />
+                            </div>
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                url="/users"
+                                :selected="form.owner_id"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
+
+                            <div class="form-group">
+                                <label for="tags">
+                                    {{ trans('global.map.fields.tags') }}
+                                </label>
+                                <input
+                                    id="tags"
+                                    name="tags"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.tags"
+                                    :placeholder="trans('global.map.fields.tags')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
+                            </div>
+
+                            <Select2
+                                id="map_marker_type"
+                                name="map_marker_type"
+                                url="/mapMarkerTypes"
+                                model="mapMarkerType"
+                                :selected="this.form.type_id"
+                                @selectedValue="(id) => {
+                                    this.form.type_id = id;
+                                }"
+                            />
+
+                            <Select2
+                                id="map_marker_category"
+                                name="map_marker_category"
+                                url="/mapMarkerCategories"
+                                model="mapMarkerCategory"
+                                :selected="this.form.category_id"
+                                @selectedValue="(id) => {
+                                    this.form.category_id = id;
+                                }"
+                            />
+
+                            <div class="form-group">
+                                <label for="border_url">
+                                    {{ trans('global.map.fields.border_url') }}
+                                </label>
+                                <input
+                                    id="border_url"
+                                    name="border_url"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.border_url"
+                                    :placeholder="trans('global.map.fields.border_url_helper')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors?.border_url" v-text="form.errors?.border_url[0]"></p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="latitude">
+                                    {{ trans('global.map.fields.latitude') }}
+                                </label>
+                                <input
+                                    id="latitude"
+                                    name="latitude"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.latitude"
+                                    :placeholder="trans('global.map.fields.latitude')"
+                                />
+                                <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="longitude">
+                                    {{ trans('global.map.fields.longitude') }}
+                                </label>
+                                <input
+                                    id="longitude"
+                                    name="longitude"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.longitude"
+                                    :placeholder="trans('global.map.fields.longitude')"
+                                />
+                                <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
+                            </div>
+
+                            <div>
+                                <label for="zone">
+                                    {{ trans('global.map.fields.zoom') }}
+                                </label>
+                                <input
+                                    id="zoom"
+                                    name="zoom"
+                                    type="number"
+                                    class="form-control"
+                                    v-model="form.zoom"
+                                    :placeholder="trans('global.map.fields.zoom')"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.zoom" v-text="form.errors.zoom[0]"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div
+                            class="card-header"
+                            data-card-widget="collapse"
+                        >
+                            <div class="card-title">{{ trans('global.display') }}</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <v-swatches
                                     :swatch-size="49"
+                                    :trigger-style="{}"
                                     style="height: 42px;"
                                     popover-to="right"
                                     v-model="this.form.color"
@@ -43,146 +209,23 @@
                                     }"
                                     :max-height="300"
                                 />
-                                <input
-                                    id="title"
-                                    type="text"
-                                    name="title"
-                                    class="form-control ml-3"
-                                    v-model="form.title"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                            </div>
-                            <div class="form-group">
-                                <input
-                                    type="text"
-                                    id="subtitle"
-                                    name="subtitle"
-                                    class="form-control"
-                                    v-model.trim="form.subtitle"
-                                    :placeholder="trans('global.map.fields.subtitle')"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors?.subtitle" v-text="form.errors?.subtitle[0]"></p>
-                            </div>
-                            <div class="form-group">
-                                <Editor
-                                    id="description"
-                                    name="description"
-                                    :placeholder="trans('global.map.fields.description')"
-                                    class="form-control"
-                                    :init="tinyMCE"
-                                    v-model="form.description"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <label for="tags">
-                                    {{ trans('global.map.fields.tags') }}
-                                </label>
-                                <input
-                                    type="text"
-                                    id="tags"
-                                    name="tags"
-                                    class="form-control"
-                                    v-model.trim="form.tags"
-                                    :placeholder="trans('global.map.fields.tags')"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors?.tags" v-text="form.errors?.tags[0]"></p>
-                            </div>
         
-                            <Select2
-                                id="map_marker_type"
-                                name="map_marker_type"
-                                url="/mapMarkerTypes"
-                                model="mapMarkerType"
-                                :selected="this.form.type_id"
-                                @selectedValue="(id) => {
-                                    this.form.type_id = id;
-                                }"
-                            />
-                            <Select2
-                                id="map_marker_category"
-                                name="map_marker_category"
-                                url="/mapMarkerCategories"
-                                model="mapMarkerCategory"
-                                :selected="this.form.category_id"
-                                @selectedValue="(id) => {
-                                    this.form.category_id = id;
-                                }"
-                            />
-        
-                            <div class="form-group">
-                                <label for="map_marker_category">
-                                    {{ trans('global.map.fields.border_url') }}
-                                </label>
-                                <input
-                                    type="text"
-                                    id="border_url"
-                                    name="border_url"
-                                    class="form-control"
-                                    v-model.trim="form.border_url"
-                                    :placeholder="trans('global.map.fields.border_url_helper')"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors?.border_url" v-text="form.errors?.border_url[0]"></p>
-                            </div>
-        
-                            <div class="form-group">
-                                <label for="latitude">
-                                    {{ trans('global.map.fields.latitude') }}
-                                </label>
-                                <input
-                                    type="text"
-                                    id="latitude"
-                                    name="latitude"
-                                    class="form-control"
-                                    v-model.trim="form.latitude"
-                                    :placeholder="trans('global.map.fields.latitude')"
-                                />
-                                <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
-                            </div>
-        
-                            <div class="form-group">
-                                <label for="longitude">
-                                    {{ trans('global.map.fields.longitude') }}
-                                </label>
-                                <input
-                                    type="text"
-                                    id="longitude"
-                                    name="longitude"
-                                    class="form-control"
-                                    v-model.trim="form.longitude"
-                                    :placeholder="trans('global.map.fields.longitude')"
-                                />
-                                <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
-                            </div>
-        
-                            <div class="form-group">
-                                <label for="longitude">
-                                    {{ trans('global.map.fields.zoom') }}
-                                </label>
-                                <input
-                                    type="number"
-                                    id="zoom"
-                                    name="zoom"
-                                    class="form-control"
-                                    v-model.trim="form.zoom"
-                                    :placeholder="trans('global.map.fields.zoom')"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors.zoom" v-text="form.errors.zoom[0]"></p>
-                            </div>
-        
-                            <div v-if="form.id"
-                                class="form-group"
-                            >
-                                <MediumModal
-                                    :form="form"
-                                    :id="component_id"
+                                <MediumForm v-if="form.id"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\Map"
                                     accept="image/*"
+                                    @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('map-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
+                                        this.form.medium_id = id;
+                                    }"
                                 />
                             </div>
                         </div>
@@ -202,6 +245,7 @@
                         <button
                             id="map-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -214,7 +258,7 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumModal from "../media/MediumModal.vue";
+import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
@@ -224,7 +268,7 @@ export default {
     name: 'map-modal',
     components:{
         Editor,
-        MediumModal,
+        MediumForm,
         Select2,
     },
     props: {},
@@ -243,6 +287,7 @@ export default {
                 title: '',
                 subtitle: '',
                 description: '',
+                owner_id: null,
                 tags: '',
                 type_id: 2,
                 category_id: 2,
@@ -304,7 +349,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

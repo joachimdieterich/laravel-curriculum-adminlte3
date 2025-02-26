@@ -19,13 +19,23 @@
                     </div>
                 </div>
 
-                <IndexWidget
+                <IndexWidget v-if="!subscribable"
                     v-permission="'user_create'"
                     key="userCreate"
                     modelName="User"
                     url="/users"
-                    :create="!subscribable"
-                    :subscribe="subscribable"
+                    :create="true"
+                    :subscribe="false"
+                    :subscribable_id="subscribable_id"
+                    :label="trans('global.user.' + create_label_field)"
+                />
+                <IndexWidget v-else="subscribable"
+                    v-permission="'group_enrolment'"
+                    key="userSubscribe"
+                    modelName="User"
+                    url="/users"
+                    :create="false"
+                    :subscribe="true"
                     :subscribable_id="subscribable_id"
                     :label="trans('global.user.' + create_label_field)"
                 >
@@ -41,49 +51,63 @@
                     modelName="User"
                     storeTitle="users"
                     url="/users"
+                    :showSubscribable="subscribable"
                 >
                     <template v-slot:icon>
                         <i class="fas fa-user pt-2"></i>
                     </template>
 
-                    <template v-slot:dropdown
-                        v-permission="'user_edit, user_delete'"
-                    >
+                    <template v-slot:dropdown>
                         <div
                             class="dropdown-menu dropdown-menu-right"
                             style="z-index: 1050;"
                             x-placement="left-start"
                         >
-                            <button v-if="!subscribable"
-                                v-permission="'user_edit'"
-                                :name="'edit-user-' + user.id"
-                                class="dropdown-item text-secondary"
-                                @click.prevent="editUser(user)"
+                            <div v-if="!subscribable"
+                                v-permission="'user_edit, user_delete'"
                             >
-                                <i class="fa fa-pencil-alt mr-2"></i>
-                                {{ trans('global.user.edit') }}
-                            </button>
-                            <hr v-if="!subscribable"
-                                class="my-1"
-                            />
-                            <button
-                                v-permission="'user_delete'"
-                                :id="'delete-user-' + user.id"
-                                type="submit"
-                                class="dropdown-item py-1 text-red"
-                                @click.prevent="confirmItemDelete(user)"
+                                <button
+                                    v-permission="'user_edit'"
+                                    :name="'edit-user-' + user.id"
+                                    class="dropdown-item text-secondary"
+                                    @click.prevent="editUser(user)"
+                                >
+                                    <i class="fa fa-pencil-alt mr-2"></i>
+                                    {{ trans('global.user.edit') }}
+                                </button>
+                                <hr class="my-1"/>
+                                <button
+                                    v-permission="'user_delete'"
+                                    :id="'delete-user-' + user.id"
+                                    type="submit"
+                                    class="dropdown-item py-1 text-red"
+                                    @click.prevent="confirmItemDelete(user)"
+                                >
+                                    <span>
+                                        <i class="fa fa-trash mr-2"></i>
+                                        {{ trans('global.user.delete') }}
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div v-else
+                                v-permission="'group_enrolment'"
                             >
-                                <span v-if="create_label_field == 'enrol'">
-                                    <i class="fa fa-unlink mr-2"></i>
-                                    {{ trans('global.user.expel') }}
-                                </span>
-                                <span v-else>
-                                    <i class="fa fa-trash mr-2"></i>
-                                    {{ trans('global.user.delete') }}
-                                </span>
-                            </button>
+                                <button
+                                    :id="'delete-user-' + user.id"
+                                    type="submit"
+                                    class="dropdown-item py-1 text-red"
+                                    @click.prevent="confirmItemDelete(user)"
+                                >
+                                    <span>
+                                        <i class="fa fa-unlink mr-2"></i>
+                                        {{ trans('global.user.expel') }}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </template>
+
                     <template v-slot:content>
                         <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                             <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
@@ -112,7 +136,7 @@
                 <UserModal v-if="!subscribable"/>
                 <SubscribeUserModal v-if="subscribable"/>
                 <ConfirmModal
-                    :showConfirm="this.showConfirm"
+                    :showConfirm="showConfirm"
                     :title="trans('global.user.' + delete_label_field)"
                     :description="trans('global.user.' + delete_label_field +'_helper')"
                     @close="() => {
@@ -238,7 +262,7 @@ export default {
             this.showConfirm = true;
         },
         destroy() {
-            if (this.subscribable){
+            if (this.subscribable) {
                 axios.delete('/groups/expel', {
                     data: {
                         expel_list: {

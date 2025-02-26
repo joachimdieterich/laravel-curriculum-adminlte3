@@ -26,40 +26,42 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model.trim="form.title"
-                            :placeholder="trans('global.training.fields.title') + ' *'"
-                            required
-                        />
-                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    v-model.trim="form.title"
+                                    :placeholder="trans('global.training.fields.title') + ' *'"
+                                    required
+                                />
+                            </div>
 
-                    <div class="form-group">
-                        <Editor
-                            :id="'description' + component_id"
-                            :name="'description' + component_id"
-                            class="form-control"
-                            :init="tinyMCE"
-                            v-model.trim="form.description"
-                        />
-                    </div>
+                            <div class="form-group">
+                                <Editor
+                                    :id="'description' + component_id"
+                                    :name="'description' + component_id"
+                                    class="form-control"
+                                    :init="tinyMCE"
+                                    v-model.trim="form.description"
+                                />
+                            </div>
 
-                    <div class="form-group">
-                        <VueDatePicker
-                            v-model="form.date"
-                            :teleport="true"
-                            format="dd.MM.yyy HH:mm"
-                            locale="de"
-                            range
-                            :partialRange="false"
-                            :placeholder="trans('global.selectDateRange')"
-                            :select-text="trans('global.ok')"
-                            :cancel-text="trans('global.close')"
-                        />
+                            <VueDatePicker
+                                v-model="form.date"
+                                :teleport="true"
+                                format="dd.MM.yyy HH:mm"
+                                locale="de"
+                                range
+                                :partialRange="false"
+                                :placeholder="trans('global.selectDateRange')"
+                                :select-text="trans('global.ok')"
+                                :cancel-text="trans('global.close')"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -76,6 +78,7 @@
                         <button
                             id="training-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

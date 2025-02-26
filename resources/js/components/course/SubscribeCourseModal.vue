@@ -19,23 +19,29 @@
                         </button>
                     </div>
                 </div>
+
                 <div
                     class="modal-body"
                     style="overflow-y: visible;"
                 >
-                    <Select2
-                        id="curricula"
-                        name="curricula"
-                        url="/curricula"
-                        model="curriculum"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.curriculum_id"
-                        @selectedValue="(id) => {
-                            this.form.curriculum_id = id;
-                        }"
-                    />
+                    <div class="card">
+                        <div class="card-body">
+                            <Select2
+                                id="curricula"
+                                name="curricula"
+                                url="/curricula"
+                                model="curriculum"
+                                option_id="id"
+                                option_label="title"
+                                :selected="this.form.curriculum_id"
+                                @selectedValue="(id) => {
+                                    this.form.curriculum_id = id;
+                                }"
+                            />
+                        </div>
+                    </div>
                 </div>
+
                 <div class="card-footer">
                     <span class="pull-right">
                         <button

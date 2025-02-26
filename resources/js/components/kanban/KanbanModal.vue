@@ -5,7 +5,7 @@
             @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card-header ">
+                <div class="card-header">
                     <h3 class="card-title">
                         <span v-if="method === 'post'">
                             {{ trans('global.kanban.create') }}
@@ -25,10 +25,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="modal-body" 
-                    style="overflow-y: visible;"
-                >
+                <div class="modal-body">
                     <div class="card">
                         <div class="card-body">
                             <div class="form-group">
@@ -61,6 +58,18 @@
                                     v-text="form.errors.description[0]"
                                 ></p>
                             </div>
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                css="mb-0 mt-3"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                url="/users"
+                                :selected="form.owner_id"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
                         </div>
                     </div>
 
@@ -90,15 +99,19 @@
                                 />
         
                                 <MediumForm v-if="form.id"
-                                    id="medium_id"
-                                    class="pull-right"
-                                    :form="form"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
-                                    :subscribable_type="'App\\Kanban'"
                                     :subscribable_id="form.id"
+                                    subscribable_type="App\Kanban"
                                     accept="image/*"
-                                    :selected="this.form.medium_id"
                                     @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('kanban-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
                                         this.form.medium_id = id;
                                     }"
                                 />
@@ -188,6 +201,7 @@
                         <button
                             id="kanban-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -200,7 +214,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumModal from "../media/MediumModal.vue";
 import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
 import Select2 from "../forms/Select2.vue";
@@ -209,14 +222,14 @@ import {useGlobalStore} from "../../store/global";
 export default {
     name: 'kanban-modal',
     components: {
-        MediumModal,
         Select2,
         MediumForm,
     },
     props: {
         params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
+            type: Object,
+            default: null,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -228,11 +241,11 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/kanbans',
             form: new Form({
                 id: '',
                 title:  '',
                 description:  '',
+                owner_id: null,
                 color:'#27AF60',
                 medium_id: null,
                 commentable: true,
@@ -258,7 +271,7 @@ export default {
             this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/kanbans', this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-added', r.data);
                 })
@@ -267,7 +280,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/kanbans/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-updated', r.data);
                 })
@@ -279,8 +292,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

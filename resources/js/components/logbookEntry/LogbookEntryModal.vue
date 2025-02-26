@@ -37,7 +37,7 @@
                                     id="title"
                                     name="title"
                                     class="form-control"
-                                    v-model="form.title"
+                                    v-model.trim="form.title"
                                     :placeholder="trans('global.title') + ' *'"
                                     required
                                 />
@@ -92,6 +92,7 @@
                         <button
                             id="logbook-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -189,7 +190,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

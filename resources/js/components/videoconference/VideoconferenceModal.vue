@@ -32,6 +32,7 @@
                         >
                             <h5 class="card-title">{{ trans('global.general') }}</h5>
                         </div>
+
                         <div class="card-body pb-0">
                             <div class="form-group">
                                 <input
@@ -45,6 +46,17 @@
                                 />
                                 <p class="help-block" v-if="form.errors.meetingName" v-text="form.errors.meetingName[0]"></p>
                             </div>
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                :label="trans('global.change_owner')"
+                                model="User"
+                                url="/users"
+                                :selected="form.owner_id"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
 
                             <div v-if="showExtendedSettings">
                                 <Select2 v-if="servers.length"
@@ -216,13 +228,20 @@
                                     :max-height="300"
                                 />
         
-                                <MediumForm
-                                    class="pull-right"
-                                    id="medium_id"
+                                <MediumForm v-if="form.id"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\Videoconference"
                                     accept="image/*"
-                                    :selected="this.form.medium_id"
                                     @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('videoconference-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
                                         this.form.medium_id = id;
                                     }"
                                 />
@@ -578,6 +597,7 @@
                         <button
                             id="videoconference-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.meetingName"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -590,7 +610,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumModal from "../media/MediumModal.vue";
 import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
@@ -601,7 +620,6 @@ export default {
     name: 'videoconference-modal',
     components: {
         Editor,
-        MediumModal,
         Select2,
         MediumForm,
     },
@@ -621,9 +639,10 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             form: new Form({
-                id: '',
+                id: null,
                 meetingID: '',
                 meetingName: '',
+                owner_id: null,
                 attendeePW: '',
                 moderatorPW: '',
                 endCallbackUrl: '',
@@ -760,7 +779,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
 
                 this.form.reset();

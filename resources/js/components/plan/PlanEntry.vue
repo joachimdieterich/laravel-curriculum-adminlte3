@@ -28,37 +28,44 @@
                             ></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
-                            <div v-if="$userId == plan.owner_id"
-                                class="card-tools"
+                            <div v-if="editable && showTools"
+                                class="card-tools mr-0"
                             >
                                 <i
-                                    class="fa fa-pencil-alt pointer link-muted mr-3"
+                                    class="fa fa-pencil-alt link-muted pointer p-1 mr-2"
                                     @click.stop="openModal(entry)"
                                 ></i>
-                                <i
-                                    class="fas fa-trash pointer text-danger mr-1"
-                                    @click.stop="openConfirm()"
-                                ></i>
+                                <a class="text-danger">
+                                    <i
+                                        class="fas fa-trash pointer p-1"
+                                        @click.stop="openConfirm()"
+                                    ></i>
+                                </a>
                             </div>
                         </div>
-                        <div class="card-body py-2 collapse">
-                            <img v-if="Number.isInteger(entry.medium_id)"
-                                class="pull-right"
-                                :src="'/media/' + entry.medium_id + '/thumb'"
-                            />
-                            <span v-dompurify-html="entry.description ?? ''"></span>
 
-                            <objectives
+                        <div class="card-body py-2 collapse">
+                            <div class="d-flex">
+                                <span class="flex-fill" v-dompurify-html="entry.description ?? ''"></span>
+                                <img v-if="entry.medium_id"
+                                    :src="'/media/' + entry.medium_id + '/thumb'"
+                                />
+                            </div>
+
+                            <Objectives
                                 referenceable_type="App\PlanEntry"
                                 :referenceable_id="entry.id"
                                 :owner_id="entry.owner_id"
                                 :editable="editable"
+                                :showTools="showTools"
                             />
 
                             <Trainings
                                 :plan="plan"
-                                subscribable_type="App\PlanEntry"
                                 :subscribable_id="entry.id"
+                                subscribable_type="App\PlanEntry"
+                                :editable="editable"
+                                :showTools="showTools"
                             />
                         </div>
                     </div>
@@ -67,7 +74,7 @@
         </div>
         <Teleport to="body">
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.planEntry.delete')"
                 :description="trans('global.planEntry.delete_helper')"
                 @close="() => {
@@ -90,17 +97,25 @@ import {useGlobalStore} from "../../store/global";
 export default {
     props: {
         entry: {
+            type: Object,
             default: null,
         },
         create: {
+            type: Boolean,
             default: false,
         },
         plan: {
             type: Object,
+            default: null,
         },
         editable: {
+            type: Boolean,
             default: false,
         },
+        showTools: {
+            type: Boolean,
+            default: false,
+        }
     },
     setup() {
         const globalStore = useGlobalStore();

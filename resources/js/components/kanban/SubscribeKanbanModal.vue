@@ -19,21 +19,27 @@
                         </button>
                     </div>
                 </div>
+
                 <div
                     class="modal-body"
                     style="overflow-y: visible;"
                 >
-                    <Select2
-                        id="kanbans_subscription"
-                        name="kanbans_subscription"
-                        url="/kanbans"
-                        model="kanban"
-                        :selected="this.form.kanban_id"
-                        @selectedValue="(id) => {
-                            this.form.kanban_id = id;
-                        }"
-                    />
+                    <div class="card">
+                        <div class="card-body">
+                            <Select2
+                                id="kanbans_subscription"
+                                name="kanbans_subscription"
+                                url="/kanbans"
+                                model="kanban"
+                                :selected="this.form.kanban_id"
+                                @selectedValue="(id) => {
+                                    this.form.kanban_id = id;
+                                }"
+                            />
+                        </div>
+                    </div>
                 </div>
+
                 <div class="card-footer">
                     <span class="pull-right">
                         <button

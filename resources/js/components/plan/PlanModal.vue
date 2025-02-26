@@ -33,7 +33,7 @@
                         >
                             <h5 class="card-title">{{ trans('global.general') }}</h5>
                         </div>
-                        <div class="card-body pb-0">
+                        <div class="card-body">
                             <div class="form-group">
                                 <Select2
                                     id="type_id"
@@ -72,14 +72,12 @@
                                 </span>
                             </div>
 
-                            <div class="form-group">
-                                <Editor
-                                    :id="'description' + component_id"
-                                    :name="'description' + component_id"
-                                    :init="tinyMCE"
-                                    v-model="form.description"
-                                />
-                            </div>
+                            <Editor
+                                :id="'description' + component_id"
+                                :name="'description' + component_id"
+                                :init="tinyMCE"
+                                v-model="form.description"
+                            />
                             <!-- currently not in use -->
                             <!-- <div class="form-group">
                                 <VueDatePicker
@@ -110,6 +108,18 @@
                                     {{ trans('global.plan.fields.duration_helper') }}
                                 </p>
                             </div> -->
+
+                            <Select2
+                                v-permission="'is_admin'"
+                                id="user_id"
+                                :label="trans('global.change_owner')"
+                                css="mb-0 mt-3"
+                                model="User"
+                                url="/users"
+                                :selected="form.owner_id"
+                                :placeholder="trans('global.pleaseSelect')"
+                                @selectedValue="(id) => this.form.owner_id = id[0]"
+                            />
                         </div>
                     </div>
 
@@ -138,12 +148,19 @@
                                     :max-height="300"
                                 />
                                 <MediumForm v-if="form.id"
-                                    class="ml-auto"
-                                    :id="'medium_id_' + component_id"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\Plan"
                                     accept="image/*"
-                                    :selected="this.form.medium_id"
                                     @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('plan-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
                                         this.form.medium_id = id;
                                     }"
                                 />
@@ -190,6 +207,7 @@
                         <button
                             id="plan-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -207,7 +225,6 @@ import Editor from '@tinymce/tinymce-vue';
 import MediumForm from "../media/MediumForm.vue";
 import {useGlobalStore} from "../../store/global";
 import VueDatePicker from "@vuepic/vue-datepicker";
-import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
     name: 'plan-modal',
@@ -228,6 +245,7 @@ export default {
                 type_id: 4,
                 title:  '',
                 description:  '',
+                owner_id: null,
                 date: null,
                 begin: '',
                 end: '',
@@ -245,14 +263,14 @@ export default {
             search: '',
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table code autoresize"
+                    "autolink link lists code autoresize"
                 ],
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
                 },
-                "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code curriculummedia",
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                ""
             ),
         }
     },
@@ -321,7 +339,8 @@ export default {
         Object.values(this.errors).forEach(value => value = false);
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

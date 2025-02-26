@@ -16,15 +16,15 @@
 }
 
 .box {
-      font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      border-radius: 0px;
-      position: relative;
-      border: 0;
-      background: $white;
-      margin-bottom: 20px;
-      width: 100%;
-      box-shadow: $box-boxshadow;
-      border-radius: 0.25rem;
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-radius: 0px;
+    position: relative;
+    border: 0;
+    background: $white;
+    margin-bottom: 20px;
+    width: 100%;
+    box-shadow: $box-boxshadow;
+    border-radius: 0.25rem;
 
     .symbol {
         position: absolute;
@@ -37,338 +37,332 @@
         left: 10px;
     }
 
-  &.box-objective {
-      margin: 0px;
-      height:50px;
-      border: 1px solid $gray-lte;
+    &.box-objective {
+        margin: 0px;
+        height: 50px;
+        border: 1px solid $gray-lte;
 
-      &.edusharing-box {
-          height: 300px !important;
-          min-width: 200px !important;
-          padding: 0;
-          background-size: cover;
-          background-repeat: no-repeat;
+        > a {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
 
-          .edusharing-box-bg {
-              position:absolute;
-              top:0px;
-              height: 150px;
-              width:100%;
-              background-size: cover;
-              background-repeat: no-repeat;
-              border-top-left-radius: 0.16rem;
-              border-top-right-radius: 0.16rem;
-          }
-      }
+            > :nth-child(1), >:nth-child(2) { flex: 1; }
+        }
+        &.edusharing-box {
+            height: 300px !important;
+            min-width: 200px !important;
+            padding: 0;
+            background-size: cover;
+            background-repeat: no-repeat;
 
-  }
-
-
-  // Box color variations
-  &.box-primary {
-    background-color: $light-blue;
-    > .box-header > .box-title > a {
-            color: $white;
-    }
-
-  }
-  &.box-info {
-    background-color: $info;
-    > .box-header > .box-title > a {
-            color: $white;
-    }
-  }
-  &.box-danger {
-    background-color: $danger;
-    > .box-header > .box-title > a {
-            color: $white;
-    }
-  }
-  &.box-warning {
-    background-color: $warning;
-    > .box-header > .box-title > a {
-            color: $white;
-    }
-  }
-  &.box-success {
-    background-color: $success;
-    > .box-header > .box-title > a {
-            color: $white;
-    }
-  }
-  &.box-default {
-    background-color: $white;
-    > .box-header > .box-title > a {
-            color: $black;
-    }
-    > .box-header:hover {
-        background-color: $gray-lighter;
-        > .box-title > a {
-            color: $blue;
+            .edusharing-box-bg {
+                position:absolute;
+                top:0px;
+                height: 150px;
+                width:100%;
+                background-size: cover;
+                background-repeat: no-repeat;
+                border-top-left-radius: 0.16rem;
+                border-top-right-radius: 0.16rem;
+            }
         }
     }
-  }
 
-  // collapsed mode
-  &.collapsed-box {
-    .box-body,
-    .box-footer {
-      display: none;
+    // Box color variations
+    &.box-primary {
+        background-color: $light-blue;
+        > .box-header > .box-title > a {
+            color: $white;
+        }
     }
-  }
-
-  .nav-stacked {
-    > li {
-      border-bottom: 1px solid $box-border-color;
-      margin: 0;
-      &:last-of-type {
-        border-bottom: none;
-      }
+    &.box-info {
+        background-color: $info;
+        > .box-header > .box-title > a {
+            color: $white;
+        }
     }
-  }
-
-  // fixed height to 300px
-  &.height-control {
-    .box-body {
-      max-height: 300px;
-      overflow: auto;
+    &.box-danger {
+        background-color: $danger;
+        > .box-header > .box-title > a {
+            color: $white;
+        }
     }
-  }
+    &.box-warning {
+        background-color: $warning;
+        > .box-header > .box-title > a {
+            color: $white;
+        }
+    }
+    &.box-success {
+        background-color: $success;
+        > .box-header > .box-title > a {
+            color: $white;
+        }
+    }
+    &.box-default {
+        background-color: $white;
+        > .box-header > .box-title > a {
+            color: $black;
+        }
+        > .box-header:hover {
+            background-color: $gray-lighter;
+            > .box-title > a {
+                color: $blue;
+            }
+        }
+    }
 
-  .border-right {
-    border-right: 1px solid $box-border-color;
-  }
-  .border-left {
-    border-left: 1px solid $box-border-color;
-  }
+    // collapsed mode
+    &.collapsed-box {
+        .box-body,
+        .box-footer {
+            display: none;
+        }
+    }
+
+    .nav-stacked {
+        > li {
+            border-bottom: 1px solid $box-border-color;
+            margin: 0;
+            &:last-of-type {
+                border-bottom: none;
+            }
+        }
+    }
+
+    // fixed height to 300px
+    &.height-control {
+        .box-body {
+            max-height: 300px;
+            overflow: auto;
+        }
+    }
+
+    .border-right {
+        border-right: 1px solid $box-border-color;
+    }
+    .border-left {
+        border-left: 1px solid $box-border-color;
+    }
 
   //SOLID BOX
   //---------
   //use this class to get a colored header and borders
 
-  &.box-solid {
-    border-top: 0;
-    > .box-header {
-      .btn.btn-default {
-        background: transparent;
-      }
-      .btn,
-      a {
-        &:hover {
-          background: rgba(0, 0, 0, 0.1);
+    &.box-solid {
+        border-top: 0;
+        > .box-header {
+            .btn.btn-default {
+                background: transparent;
+            }
+            .btn, a {
+                &:hover {
+                    background: rgba(0, 0, 0, 0.1);
+                }
+            }
         }
-      }
+        > .box-header > .box-tools .btn {
+            border: 0;
+            box-shadow: none;
+        }
+        // Fix font color for tiles
+        &[class*='bg'] {
+            > .box-header {
+                color: #fff;
+            }
+        }
     }
 
-    > .box-header > .box-tools .btn {
-      border: 0;
-      box-shadow: none;
+    //BOX GROUP
+    .box-group {
+        > .box {
+            margin-bottom: 5px;
+        }
     }
 
-    // Fix font color for tiles
-    &[class*='bg'] {
-      > .box-header {
-        color: #fff;
-      }
+    // jQuery Knob in a box
+    .knob-label {
+        text-align: center;
+        color: #333;
+        font-weight: 100;
+        font-size: 12px;
+        margin-bottom: 0.3em;
     }
-
-  }
-
-  //BOX GROUP
-  .box-group {
-    > .box {
-      margin-bottom: 5px;
-    }
-  }
-
-  // jQuery Knob in a box
-  .knob-label {
-    text-align: center;
-    color: #333;
-    font-weight: 100;
-    font-size: 12px;
-    margin-bottom: 0.3em;
-  }
 }
 
-.box,
-.overlay-wrapper {
-  // Box overlay for LOADING STATE effect
-  > .overlay,
-  > .loading-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .overlay {
-    z-index: 50;
-    background: rgba(255, 255, 255, 0.7);
-    > .fa {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-left: -15px;
-      margin-top: -15px;
-      color: #000;
-      font-size: 30px;
+.box, .overlay-wrapper {
+    // Box overlay for LOADING STATE effect
+    > .overlay,
+    > .loading-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
-  }
 
-  .overlay.dark {
-    background: rgba(0, 0, 0, 0.5);
-  }
+    .overlay {
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.7);
+        > .fa {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -15px;
+            margin-top: -15px;
+            color: #000;
+            font-size: 30px;
+        }
+    }
+
+    .overlay.dark {
+        background: rgba(0, 0, 0, 0.5);
+    }
 }
 
 //Box header
 .box-header {
-  color: $black;
-  font-size:14px !important;
-  display: block;
-  padding: $box-padding;
-  position: relative;
+    color: $black;
+    font-size:14px !important;
+    display: block;
+    padding: $box-padding;
+    position: relative;
 
-  //Add bottom border
-  &.with-border {
-    border: 1px solid $box-border-color;
-    .collapsed-box & {
-      border-bottom: none;
+    //Add bottom border
+    &.with-border {
+        border: 1px solid $box-border-color;
+        .collapsed-box & {
+            border-bottom: none;
+        }
     }
-  }
-  &.small {
-      border-left:0px;
-      border-right:0px;
-      border-bottom:0px;
-      padding: 5px 10px;
-  }
-
-  //Icons and box title
-  > .fa,
-  > .glyphicon,
-  > .ion,
-  .box-title {
-    display: inline-block;
-    font-size: 18px;
-    margin: 0;
-    line-height: 1;
     &.small {
-      font-size:14px !important;
-    }
-  }
-  > .fa,
-  > .glyphicon,
-  > .ion {
-    margin-right: 5px;
-  }
-  > .box-tools {
-    position: absolute;
-    right: 10px;
-    top: 5px;
-    [data-toggle="tooltip"] {
-      position: relative;
+        border-left:0px;
+        border-right:0px;
+        border-bottom:0px;
+        padding: 5px 10px;
     }
 
-    &.pull-right {
-      .dropdown-menu {
-        right: 0;
-        left: auto;
-      }
+    //Icons and box title
+    > .fa,
+    > .glyphicon,
+    > .ion,
+    .box-title {
+        display: inline-block;
+        font-size: 18px;
+        margin: 0;
+        line-height: 1;
+        &.small {
+            font-size:14px !important;
+        }
     }
-
-    .dropdown-menu > li > a {
-      color: #444!important;
+    > .fa,
+    > .glyphicon,
+    > .ion {
+        margin-right: 5px;
     }
-  }
+    > .box-tools {
+        position: absolute;
+        right: 10px;
+        top: 5px;
+        [data-toggle="tooltip"] {
+            position: relative;
+        }
+        &.pull-right {
+            .dropdown-menu {
+                right: 0;
+                left: auto;
+            }
+        }
+        .dropdown-menu > li > a {
+            color: #444!important;
+        }
+    }
 }
 
 //Box Tools Buttons
 .btn-box-tool {
-  padding: 5px;
-  font-size: 12px;
-  background: transparent;
-  color: darken($box-default-border-top-color, 20%);
-  .open &,
-  &:hover {
-    color: darken($box-default-border-top-color, 40%);
-  }
-  &.btn:active {
-    box-shadow: none;
-  }
+    padding: 5px;
+    font-size: 12px;
+    background: transparent;
+    color: darken($box-default-border-top-color, 20%);
+    .open &,
+    &:hover {
+        color: darken($box-default-border-top-color, 40%);
+    }
+    &.btn:active {
+        box-shadow: none;
+    }
 }
 
 //Box Body
 .box-body {
-  font-size:14px !important;
-  line-height: 21px;
-  color: $black;
-  border: 1px solid $box-border-color;
-  padding: $box-padding;
+    font-size:14px !important;
+    line-height: 21px;
+    color: $black;
+    border: 1px solid $box-border-color;
+    padding: $box-padding;
 
-  &.small {
-      border-left:0px;
-      border-right:0px;
-      border-bottom:0px;
-      font-size:12px;
-      line-height:15px;
-  }
-  // Tables within the box body
-  > .table {
-    margin-bottom: 0;
-  }
+    &.small {
+        border-left:0px;
+        border-right:0px;
+        border-bottom:0px;
+        font-size:12px;
+        line-height:15px;
+    }
+    // Tables within the box body
+    > .table {
+        margin-bottom: 0;
+    }
 
-  // Calendar within the box body
-  .fc {
-    margin-top: 5px;
-  }
-
-  .full-width-chart {
-    margin: -19px;
-  }
-  &.no-padding .full-width-chart {
-    margin: -9px;
-  }
-
+    // Calendar within the box body
+    .fc {
+        margin-top: 5px;
+    }
+    .full-width-chart {
+        margin: -19px;
+    }
+    &.no-padding .full-width-chart {
+        margin: -9px;
+    }
 }
 
 //Box footer
 .box-footer {
-  border-top: 1px solid $box-border-color;
-  padding: $box-padding;
-  background-color: $box-footer-bg;
+    border-top: 1px solid $box-border-color;
+    padding: $box-padding;
+    background-color: $box-footer-bg;
 }
-
 
 //Comment Box
 .box-comments {
-  background: #f7f7f7;
-  .box-comment {
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-    &:last-of-type {
-      border-bottom: 0;
+    background: #f7f7f7;
+    .box-comment {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        &:last-of-type {
+            border-bottom: 0;
+        }
+        &:first-of-type {
+            padding-top: 0;
+        }
+        img {
+            float: left;
+        }
     }
-    &:first-of-type {
-      padding-top: 0;
+    .comment-text {
+        margin-left: 40px;
+        color: #555;
     }
-    img {
-      float: left;
+    .username {
+        color: #444;
+        display: block;
+        font-weight: 600;
     }
-  }
-  .comment-text {
-    margin-left: 40px;
-    color: #555;
-  }
-  .username {
-    color: #444;
-    display: block;
-    font-weight: 600;
-  }
-  .text-muted {
-    font-weight: 400;
-    font-size: 12px;
-  }
+    .text-muted {
+        font-weight: 400;
+        font-size: 12px;
+    }
 }
 
 //Widgets
@@ -377,164 +371,148 @@
 /* Widget: TO-DO LIST */
 
 .todo-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  overflow: auto;
-  // To-do list element
-  > li {
-    padding: 10px;
-    background: #f4f4f4;
-    margin-bottom: 2px;
-    border-left: 2px solid #e6e7e8;
-    color: #444;
-    &:last-of-type {
-      margin-bottom: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: auto;
+    // To-do list element
+    > li {
+        padding: 10px;
+        background: #f4f4f4;
+        margin-bottom: 2px;
+        border-left: 2px solid #e6e7e8;
+        color: #444;
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+        > input[type='checkbox'] {
+            margin: 0 10px 0 5px;
+        }
+        .text {
+            display: inline-block;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+        // Time labels
+        .label {
+            margin-left: 10px;
+            font-size: 10px;
+        }
+        // Tools and options box
+        .tools {
+            display: none;
+            float: right;
+            color: $red;
+            // icons
+            > .fa, > .glyphicon, > .ion {
+                margin-right: 5px;
+                cursor: pointer;
+            }
+        }
+        &:hover .tools {
+            display: inline-block;
+        }
+        &.done {
+            color: #999;
+            .text {
+                text-decoration: line-through;
+                font-weight: 500;
+            }
+            .label {
+                background: $gray-lte !important;
+            }
+        }
     }
 
-    > input[type='checkbox'] {
-      margin: 0 10px 0 5px;
+    // Color varaity
+    .danger {
+        border-left-color: $red;
     }
-
-    .text {
-      display: inline-block;
-      margin-left: 5px;
-      font-weight: 600;
+    .warning {
+        border-left-color: $yellow;
     }
-
-    // Time labels
-    .label {
-      margin-left: 10px;
-      font-size: 10px;
+    .info {
+        border-left-color: $aqua;
     }
-
-    // Tools and options box
-    .tools {
-      display: none;
-      float: right;
-      color: $red;
-      // icons
-      > .fa, > .glyphicon, > .ion {
-        margin-right: 5px;
-        cursor: pointer;
-      }
-
+    .success {
+        border-left-color: $green;
     }
-    &:hover .tools {
-      display: inline-block;
+    .primary {
+        border-left-color: $light-blue;
     }
-
-    &.done {
-      color: #999;
-      .text {
-        text-decoration: line-through;
-        font-weight: 500;
-      }
-
-      .label {
-        background: $gray-lte !important;
-      }
+    .handle {
+        display: inline-block;
+        cursor: move;
+        margin: 0 5px;
     }
-  }
-
-  // Color varaity
-  .danger {
-    border-left-color: $red;
-  }
-  .warning {
-    border-left-color: $yellow;
-  }
-  .info {
-    border-left-color: $aqua;
-  }
-  .success {
-    border-left-color: $green;
-  }
-  .primary {
-    border-left-color: $light-blue;
-  }
-
-  .handle {
-    display: inline-block;
-    cursor: move;
-    margin: 0 5px;
-  }
-
 }
 
 // END TO-DO WIDGET
 
 /* Chat widget (DEPRECATED - this will be removed in the next major release. Use Direct Chat instead)*/
 .chat {
-  padding: 5px 20px 5px 10px;
+    padding: 5px 20px 5px 10px;
 
-  .item {
-    margin-bottom: 10px;
-    // The image
-    > img {
-      width: 40px;
-      height: 40px;
-      border: 2px solid transparent;
+    .item {
+        margin-bottom: 10px;
+        // The image
+        > img {
+            width: 40px;
+            height: 40px;
+            border: 2px solid transparent;
+        }
+        > .online {
+            border: 2px solid $green;
+        }
+        > .offline {
+            border: 2px solid $red;
+        }
 
+        // The message body
+        > .message {
+            margin-left: 55px;
+            margin-top: -40px;
+            > .name {
+                display: block;
+                font-weight: 600;
+            }
+        }
+
+        // The attachment
+        > .attachment {
+            background: #f4f4f4;
+            margin-left: 65px;
+            margin-right: 15px;
+            padding: 10px;
+            > h4 {
+                margin: 0 0 5px 0;
+                font-weight: 600;
+                font-size:14px !important;
+            }
+            > p, > .filename {
+                font-weight: 600;
+                font-size: 13px;
+                font-style: italic;
+                margin: 0;
+            }
+        }
     }
-
-    > .online {
-      border: 2px solid $green;
-    }
-    > .offline {
-      border: 2px solid $red;
-    }
-
-    // The message body
-    > .message {
-      margin-left: 55px;
-      margin-top: -40px;
-      > .name {
-        display: block;
-        font-weight: 600;
-      }
-    }
-
-    // The attachment
-    > .attachment {
-
-      background: #f4f4f4;
-      margin-left: 65px;
-      margin-right: 15px;
-      padding: 10px;
-      > h4 {
-        margin: 0 0 5px 0;
-        font-weight: 600;
-        font-size:14px !important;
-      }
-      > p, > .filename {
-        font-weight: 600;
-        font-size: 13px;
-        font-style: italic;
-        margin: 0;
-
-      }
-
-    }
-  }
-
 }
 
 //END CHAT WIDGET
 
 //Input in box
 .box-input {
-  max-width: 200px;
+    max-width: 200px;
 }
 
 //A fix for panels body text color when placed within
 // a modal
 .modal {
-  .panel-body {
-    color: #444;
-  }
+    .panel-body {
+        color: #444;
+    }
 }
-
 
 /*styles (xs, sm) */
 @media (max-width: 990px) {
@@ -543,7 +521,6 @@
     }
     .nav-item-box-image-size {
         min-height: 150px !important;
-        width: 40% !important;
         padding: 0;
         border-top-left-radius: 0.2rem;
         background-size: cover !important;
@@ -558,7 +535,7 @@
         border-bottom-right-radius: 0.2rem;
     }
     .nav-item-text {
-        padding-top: 3rem !important;
+        padding-top: 1.5rem !important;
     }
 
     .terminal-row{
@@ -567,13 +544,22 @@
 
     .box {
         &.box-objective {
-        float: left;
-        width: 100%;
-        height:150px;
-        position: relative;
-        margin: 0px;
-        padding-bottom: 0px;
-        border-top: 0px;
+            float: left;
+            width: 100%;
+            height:150px;
+            position: relative;
+            margin: 0px;
+            padding-bottom: 0px;
+            border-top: 0px;
+
+            > a {
+                flex-direction: row;
+
+                > :first-child {
+                    flex: none;
+                    width: 40%;
+                }
+            }
         }
 
         .boxheader {
@@ -586,7 +572,7 @@
             text-align: center;
         }
 
-        .boxscroll{
+        .boxscroll {
             width:100%;
             padding-top: 5px;
             overflow-x: hidden;
@@ -616,8 +602,8 @@
         .boxfooter {
             margin: -150px 0 0 15px;
             padding: 4px 10px 4px 10px;
-            position:absolute;
-            right:0px;
+            position: absolute;
+            right: 0px;
             width: 40px;
             height: 150px;
             overflow: auto;
@@ -629,9 +615,7 @@
             text-align: center;
             padding: 3px 1px 5px 1px;
             float: none !important;
-
         }
-
     }
 }
 /* /.sm view */
@@ -648,64 +632,56 @@
         background-size: cover !important;
     }
     .nav-item-box {
-        position:absolute;
-        bottom:0px;
+        position: absolute;
+        bottom: 0px;
         height: 150px;
-        width:100%;
+        width: 100%;
         border-bottom-left-radius: 0.2rem;
         border-bottom-right-radius: 0.2rem;
     }
     .box {
         &.box-objective {
-        float: left;
-        height: 200px;
-        width: 200px;
-        position: relative;
-        margin: 0px;
-        margin-bottom: 10px;
-        margin-right: 10px;
+            float: left;
+            height: 200px;
+            width: 200px;
+            position: relative;
+            margin: 0px;
+            margin-bottom: 10px;
+            margin-right: 10px;
         }
         .boxheader {
-        width: 100%;
-        margin: 0px;
-        margin-bottom: 20px;
-        padding: 4px 10px 0 10px;
-        height: 5px;
-        font-size: 90%;
-        position: relative;
+            width: 100%;
+            margin: 0px;
+            margin-bottom: 20px;
+            padding: 4px 10px 0 10px;
+            height: 5px;
+            font-size: 90%;
+            position: relative;
 
-        /* add top right radius*/
-    -webkit-border-top-right-radius: 0 !important;
-     -moz-border-top-right-radius: 0 !important;
-          border-top-right-radius: 0 !important;
+            /* add top right radius*/
+            -webkit-border-top-right-radius: 0 !important;
+            -moz-border-top-right-radius: 0 !important;
+            border-top-right-radius: 0 !important;
         }
         .boxheader > span, .boxheader > a > span, .padding-top-5 {
             padding-top: 5px;
         }
 
         .boxscroll{
-            width:200px;
+            width: 200px;
             padding-top: 5px;
             padding-right: 25px; /*for Firefox only*/
             overflow-x: hidden;
             overflow-y: auto;
-            height: 150px!important;
+            height: 150px !important;
             background:
-		/* Shadow covers */
-		linear-gradient(white 30%, rgba(255,255,255,0)),
-		linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-
-		/* Shadows */
-		radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
-		radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
-            background:
-                    /* Shadow covers */
-                    linear-gradient(white 30%, rgba(255,255,255,0)),
-                    linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
-
-                    /* Shadows */
-                    radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
-                    radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+                /* Shadow covers */
+                linear-gradient(white 30%, rgba(255,255,255,0)),
+                linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+                /* Shadows */
+                radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
+                radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%
+            ;
             background-repeat: no-repeat;
             background-color: white;
             background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
@@ -713,49 +689,45 @@
             /* Opera doesn't support this in the shorthand */
             background-attachment: local, local, scroll, scroll;
             height: 140px !important;
-
         }
         .boxwrap {
             overflow:hidden;
             padding: 0px;
         }
 
-
         .boxcontent {    /*Hack: boxwrap, boxscroll and boxcontent used to hide scroll crossbrowser compatible*/
             margin: 0px;
-            width:200px;
+            width: 200px;
             padding-left: 10px;
             padding-right: 10px;
             font-size: 90%;
         }
 
         .boxfooter {
-            position:absolute;
+            position: absolute;
             margin: 0px;
             padding: 4px 10px 0 10px;
             top: 173px;
-            bottom:0px;
-            left:0px;
-            right:0px;
+            bottom: 0px;
+            left :0px;
+            right: 0px;
             height: 25px;
-            width:100%;
+            width: 100%;
             font-size: 90%;
             text-align: left !important;
             /* get rid of top right radius*/
-        -webkit-border-top-right-radius: 0 !important;
-         -moz-border-top-right-radius: 0 !important;
-              border-top-right-radius: 0 !important;
+            -webkit-border-top-right-radius: 0 !important;
+            -moz-border-top-right-radius: 0 !important;
+            border-top-right-radius: 0 !important;
         }
 
-        .boxflex{
-            display: -webkit-box!important;
-            display: -ms-flexbox!important;
-            display: flex!important;
-            -webkit-box-pack: justify!important;
-            -ms-flex-pack: justify!important;
-            justify-content: space-between!important;
-
+        .boxflex {
+            display: -webkit-box !important;
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -webkit-box-pack: justify !important;
+            -ms-flex-pack: justify !important;
+            justify-content: space-between !important;
         }
     }
-
 }

@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="row">
         <div class="col-md-12 ">
             <ul
@@ -133,6 +133,7 @@
                 </template>
             </IndexWidget>
         </div>
+
         <div
             id="map-datatable-wrapper"
             class="w-100 dataTablesWrapper"
@@ -150,6 +151,7 @@
 
         <Teleport to="body">
             <MapModal/>
+            <MediumModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.map.delete')"
@@ -167,6 +169,7 @@
 </template>
 <script>
 import MapModal from "../map/MapModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -176,7 +179,7 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {},
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -258,6 +261,7 @@ export default {
         DataTable,
         MapModal,
         IndexWidget,
+        MediumModal,
     },
 }
 </script>

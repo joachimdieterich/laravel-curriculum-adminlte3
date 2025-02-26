@@ -109,16 +109,32 @@ class MediumSubscriptionController extends Controller
     public function destroySubscription(Request $request)
     {
         abort_unless(\Gate::allows('medium_delete'), 403);
-        $subscription = $this->validateRequest();
+        $input = $this->validateRequest();
 
-        return MediumSubscription::where([
-            'medium_id' => $subscription['medium_id'],
-            'subscribable_type' => $subscription['subscribable_type'],
-            'subscribable_id' => $subscription['subscribable_id'],
-            'sharing_level_id' => $subscription['sharing_level_id'],
-            'visibility' => $subscription['visibility'],
-            //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
+        MediumSubscription::where([
+            'medium_id' => $input['medium_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+            'sharing_level_id' => $input['sharing_level_id'],
+            'visibility' => $input['visibility'],
         ])->delete();
+
+        // skip this step if additional_data is set
+        // used for instances, where the medium isn't directly connected to a model
+        if (!$input['additional_data']) {
+            // since the subscription gets deleted instantly, we should remove the connection from the resource
+            $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
+        }
+
+        $medium = Medium::select('id', 'adapter')->find($input['medium_id']);
+        // if edusharing-medium, delete the Medium if no subscription is left
+        if ($medium->adapter == 'edusharing') {
+            if (MediumSubscription::where('medium_id', $input['medium_id'])->count() == 0) {
+                $medium->delete();
+            }
+        }
+
+        return true;
     }
 
     protected function validateRequest()

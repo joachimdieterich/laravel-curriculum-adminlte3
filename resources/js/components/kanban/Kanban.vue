@@ -53,9 +53,11 @@
                         :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus
-                            :kanban="kanban"
                             :status="status"
                             :editable="editable"
+                            :allow_copy="kanban.allow_copy"
+                            :kanban_owner_id="kanban.owner_id"
+                            :only_edit_owned_items="kanban.only_edit_owned_items"
                             :key="status.id"
                             filter=".ignore"
                         />
@@ -90,9 +92,10 @@
                                                 || ($userId == item.owner_id)
                                                 || ($userId == kanban.owner_id)"
                                             :key="item.id"
+                                            :allow_copy="kanban.allow_copy"
                                             :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
                                             :commentable="kanban.commentable"
-                                            :onlyEditOwnedItems="kanban.only_edit_owned_items"
+                                            :only_edit_owned_items="kanban.only_edit_owned_items"
                                             :ref="'kanbanItemId' + item.id"
                                             :index="status.id + '_' + item.id"
                                             :item="item"
@@ -113,56 +116,73 @@
                         class="no-border float-left pr-2"
                         :style="'width:' + itemWidth + 'px;'"
                     >
-                        <KanbanStatus
-                            :kanban="kanban"
-                            :editable="editable"
-                            :newStatus=true
-                        />
+                        <KanbanStatus :newStatus="true"/>
                     </div>
                 </template>
             </draggable>
         </div>
+        <Teleport to="body">
+            <KanbanModal/>
+            <KanbanItemModal/>
+            <KanbanStatusModal :kanban="kanban"/>
+            <MediumModal/>
+            <SubscribeModal/>
+            <ConfirmModal
+                :showConfirm="show_item_copy"
+                :title="trans('global.kanbanItem.copy')"
+                :description="trans('global.kanbanStatus.copy_helper')"
+                css="primary"
+                @close="show_item_copy = false"
+                @confirm="() => {
+                    this.show_item_copy = false;
+                    this.copyItem();
+                }"
+            />
+            <ConfirmModal
+                :showConfirm="show_status_copy"
+                :title="trans('global.kanbanStatus.copy')"
+                :description="trans('global.kanbanStatus.copy_helper')"
+                css="primary"
+                @close="show_status_copy = false"
+                @confirm="() => {
+                    this.show_status_copy = false;
+                    this.copyStatus();
+                }"
+            />
+        </Teleport>
+        <Teleport to="#customTitle">
+            <small>{{ kanban.title }}</small>
+            <a v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                class="btn btn-flat px-2 py-1 mx-1"
+                @click="editKanban(kanban)"
+            >
+                <i class="fa fa-pencil-alt text-secondary"></i>
+            </a>
+    
+            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                class="btn btn-flat px-2 py-1 mx-1"
+                @click="share()"
+            >
+                <i class="fa fa-share-alt text-secondary"></i>
+            </button>
+    
+            <a
+                :href="'/export_csv/' + kanban.id"
+                class="btn p-1 ml-2"
+            >
+                <i class="fa fa-file-csv text-secondary"></i>
+            </a>
+    
+            <a
+                :href="'/export_pdf/' + kanban.id"
+                class="btn p-1 ml-1"
+            >
+                <i class="fa fa-file-pdf text-secondary"></i>
+            </a>
+
+            <p class="h6">{{ trans('global.owner') }}: {{ kanban.owner.firstname + ' ' + kanban.owner.lastname }}</p>
+        </Teleport>
     </div>
-    <Teleport to="body">
-        <MediumModal/>
-        <KanbanModal/>
-        <KanbanItemModal/>
-        <KanbanStatusModal :kanban="kanban"/>
-        <SubscribeModal/>
-    </Teleport>
-    <teleport v-if="$userId == kanban.owner_id"
-        to="#customTitle"
-    >
-        <small>{{ kanban.title }}</small>
-        <a
-            class="btn btn-flat"
-            @click="editKanban(kanban)"
-        >
-            <i class="fa fa-pencil-alt text-secondary"></i>
-        </a>
-
-        <button v-if="$userId == kanban.owner_id"
-            v-permission="'kanban_create'"
-            class="btn btn-flat"
-            @click="share()"
-        >
-            <i class="fa fa-share-alt text-secondary"></i>
-        </button>
-
-        <a
-            :href="'/export_csv/' + kanban.id"
-            class="btn p-0"
-        >
-            <i class="fa fa-file-csv text-secondary"></i>
-        </a>
-
-        <a
-            :href="'/export_pdf/' + kanban.id"
-            class="btn p-0"
-        >
-            <i class="fa fa-file-pdf text-secondary"></i>
-        </a>
-    </teleport>
 </template>
 <script>
 import draggable from "vuedraggable";
@@ -170,14 +190,18 @@ import KanbanItem from "../kanbanItem/KanbanItem.vue";
 import KanbanItemModal from "../kanbanItem/KanbanItemModal.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import KanbanStatusModal from "./KanbanStatusModal.vue";
+import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
-import MediumModal from "../media/MediumModal.vue";
 
 export default {
     props: {
-        kanban: Object,
+        kanban: {
+            type: Object,
+            default: null,
+        },
         editable: {
             type: Boolean,
             default: true,
@@ -201,6 +225,9 @@ export default {
             newStatus: 0,
             itemWidth: 320,
             item: null,
+            copy_id: null,
+            show_item_copy: false,
+            show_status_copy: false,
             autoRefresh: false,
             refreshRate: 5000,
             usersOnline: [],
@@ -309,9 +336,17 @@ export default {
                 method: 'post',
             });
         },
+        copyStatus() {
+            axios.get('/kanbanStatuses/' + this.copy_id + '/copy')
+                .then(response => this.handleStatusAdded(response.data));
+        },
+        copyItem() {
+            axios.get('/kanbanItems/' + this.copy_id + '/copy')
+                .then(response => this.handleItemAdded(response.data));
+        },
         handleStatusAdded(newStatus) {
             // add items to prevent error if item is created without reloading page
-            newStatus['items'] = [];
+            if (newStatus['items'] == undefined) newStatus['items'] = [];
             this.statuses.push(newStatus);
         },
         handleStatusUpdated(newStatus) {
@@ -380,7 +415,7 @@ export default {
             return foundItem;
         },
         handleItemDeleted(item) {
-            // Find the index of the status where we should add the item
+            // Find the index of the status where we should delete the item
             const statusIndex = this.statuses.findIndex(
                 status => status.id === item.kanban_status_id
             );
@@ -549,6 +584,15 @@ export default {
         this.$eventHub.on('kanban-item-deleted', (item) => {
             this.handleItemDeleted(item);
         });
+        // COPY Events
+        this.$eventHub.on('kanban-show-copy', data => {
+            this.copy_id = data.id;
+            if (data.type == 'item') {
+                this.show_item_copy = true;
+            } else if (data.type == 'status') {
+                this.show_status_copy = true;
+            }
+        });
     },
     created() {
         this.statuses = this.kanban.statuses;
@@ -597,15 +641,16 @@ export default {
         },
     },
     components: {
-        MediumModal,
         KanbanStatus,
         draggable,
         KanbanItem,
         KanbanItemModal,
+        MediumModal,
         SubscribeModal,
         KanbanModal,
-        KanbanStatusModal
-    }
+        KanbanStatusModal,
+        ConfirmModal,
+    },
 }
 </script>
 <style scoped>

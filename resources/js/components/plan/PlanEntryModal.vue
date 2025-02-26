@@ -26,76 +26,94 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="form-group">
-                        <input
-                            id="title"
-                            name="title"
-                            type="text"
-                            class="form-control"
-                            v-model.trim="form.title"
-                            :placeholder="trans('global.planEntry.fields.title') + ' *'"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                    </div>
-
-                    <div class="form-group">
-                        <Editor
-                            :id="'description_' + component_id"
-                            :name="'description_' + component_id"
-                            :init="tinyMCE"
-                            v-model="form.description"
-                        />
-                    </div>
-
-                    <div class="card-header border-bottom">
-                        <h5 class="card-title">{{ trans('global.display') }}</h5>
-                    </div>
-
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <v-swatches
-                                :swatch-size="49"
-                                :trigger-style="{}"
-                                popover-to="right"
-                                style="height: 42px;"
-                                v-model="this.form.color"
-                                show-fallback
-                                fallback-input-type="color"
-                                @input="(id) => {
-                                    if (id.isInteger) {
-                                        this.form.color = id;
-                                    }
-                                }"
-                                :max-height="300"
-                            />
-                            <div class="dropdown">
-                                <button
-                                    class="btn btn-default"
-                                    style="width: 42px; padding: 6px 0px;"
-                                    type="button"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    <i :class="form.css_icon + ' pt-2'"></i>
-                                </button>
-                                <font-awesome-picker
-                                    class="dropdown-menu dropdown-menu-right"
-                                    style="min-width: min(385px, 90vw);"
-                                    :searchbox="trans('global.select_icon')"
-                                    @select-icon="(icon) => this.form.css_icon = 'fa fa-' + icon.className"
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <input
+                                    id="title"
+                                    name="title"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.title"
+                                    :placeholder="trans('global.planEntry.fields.title') + ' *'"
+                                    required
                                 />
+                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                             </div>
+        
+                            <Editor
+                                :id="'description_' + component_id"
+                                :name="'description_' + component_id"
+                                :init="tinyMCE"
+                                v-model="form.description"
+                            />
                         </div>
                     </div>
 
-                    <!-- <div class="form-group">
-                       <MediumForm :form="form"
-                            :id="component_id"
-                            :medium_id="form.medium_id"
-                            accept="image/*"
-                        />
-                    </div> -->
+                    <div class="card">
+                        <div
+                            class="card-header border-bottom"
+                            data-card-widget="collapse"
+                        >
+                            <h5 class="card-title">{{ trans('global.display') }}</h5>
+                        </div>
+    
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <v-swatches
+                                    :swatch-size="49"
+                                    :trigger-style="{}"
+                                    popover-to="right"
+                                    style="height: 42px;"
+                                    v-model="form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                    @input="(id) => {
+                                        if (id.isInteger) {
+                                            this.form.color = id;
+                                        }
+                                    }"
+                                    :max-height="300"
+                                />
+
+                                <MediumForm v-if="form.id"
+                                    :id="'medium_form' + component_id"
+                                    :medium_id="form.medium_id"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\PlanEntry"
+                                    accept="image/*"
+                                    @selectedValue="(id) => {
+                                        // on removal of medium, directly update the resource
+                                        if (this.form.medium_id !== null && id === null) {
+                                            this.$eventHub.emit('plan-entry-updated', {
+                                                id: this.form.id,
+                                                medium_id: null,
+                                            });
+                                        }
+                                        this.form.medium_id = id;
+                                    }"
+                                />
+
+                                <div class="dropdown">
+                                    <button
+                                        class="btn btn-default"
+                                        style="width: 42px; padding: 6px 0px;"
+                                        type="button"
+                                        data-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        <i :class="form.css_icon + ' pt-2'"></i>
+                                    </button>
+                                    <font-awesome-picker
+                                        class="dropdown-menu dropdown-menu-right"
+                                        style="min-width: min(385px, 90vw);"
+                                        :searchbox="trans('global.select_icon')"
+                                        @select-icon="(icon) => this.form.css_icon = 'fa fa-' + icon.className"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card-footer">
@@ -111,6 +129,7 @@
                         <button
                             id="entry-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -124,6 +143,7 @@
 <script>
 import Form from 'form-backend-validation';
 import Editor from "@tinymce/tinymce-vue";
+import MediumForm from "../media/MediumForm.vue";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 import {useGlobalStore} from "../../store/global";
 
@@ -132,6 +152,7 @@ export default {
     props: {
         plan: {
             type: Object,
+            default: null,
         },
     },
     setup() {
@@ -156,13 +177,13 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists table code autoresize"
+                    "autolink link lists curriculummedia code autoresize"
                 ],
                 {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
+                    callback: 'insertContent',
+                    callbackId: this.component_id,
                 },
-                "bold underline italic | alignleft aligncenter alignright | table",
+                "bold underline italic | alignleft aligncenter alignright",
                 "bullist numlist outdent indent | mathjax link code curriculummedia",
             ),
         }
@@ -170,7 +191,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
@@ -221,6 +243,7 @@ export default {
     },
     components: {
         Editor,
+        MediumForm,
         FontAwesomePicker,
     },
 }

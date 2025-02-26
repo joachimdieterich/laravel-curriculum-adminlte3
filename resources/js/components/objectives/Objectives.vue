@@ -1,20 +1,10 @@
 <template>
     <div class="card mb-0">
         <div v-for="terminal in terminal_objectives"
-            class="card-body border-bottom"
+            class="card-body border-bottom p-0 pb-2 mb-3"
         >
-            <div class="row">
-                <div class="col-12">
-                    <div
-                        class="card-tools position-absolute"
-                        style="right: -10px;"    
-                    >
-                        <span v-if="$userId == owner_id">
-                            <a @click="destroy(terminal)">
-                                <i class="fas fa-trash text-danger pointer"></i>
-                            </a>
-                        </span>
-                    </div>
+            <div class="d-flex">
+                <div class="flex-fill">
                     <ObjectiveBox
                         type="terminal"
                         :objective="terminal"
@@ -32,9 +22,22 @@
                         />
                     </div>
                 </div>
+                <div
+                    class="card-tools"
+                    style="margin-left: -10px;"
+                >
+                    <span v-if="editable && showTools">
+                        <a
+                            class="text-danger"
+                            @click="destroy(terminal)"
+                        >
+                            <i class="fas fa-trash pointer p-1"></i>
+                        </a>
+                    </span>
+                </div>
             </div>
         </div>
-        <div v-if="$userId == owner_id"
+        <div v-if="editable && showTools"
             class="card-footer pointer"
             @click="openModal()"
         >
@@ -52,13 +55,25 @@ import {useGlobalStore} from "../../store/global";
 export default {
     props: {
         owner_id: {
-            default: false,
+            type: Number,
+            default: null,
         },
         editable: {
+            type: Boolean,
             default: false,
         },
-        referenceable_type: {},
-        referenceable_id: {},
+        showTools: {
+            type: Boolean,
+            default: false,
+        },
+        referenceable_id: {
+            type: Number,
+            default: null,
+        },
+        referenceable_type: {
+            type: String,
+            default: null,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();

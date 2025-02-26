@@ -25,6 +25,7 @@
                 :model="course"
                 modelName="Course"
                 url="/courses"
+                :showSubscribable="true"
             >
                 <template v-slot:icon>
                     <i v-if="course.type_id === 1"

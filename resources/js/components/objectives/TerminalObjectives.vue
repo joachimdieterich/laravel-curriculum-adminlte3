@@ -208,7 +208,9 @@ export default {
             const type = terminal.type;
             if (!this.type_objectives[type.id]) {
                 this.objectivetypes.push(type);
-                this.typetabs.push(type.id);
+                // if new tab gets created, switch to this tab
+                let newTab = this.typetabs.push(type.id);
+                this.activetab = this.typetabs[newTab - 1];
                 this.type_objectives[type.id] = [];
             }
 

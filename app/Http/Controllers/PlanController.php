@@ -83,7 +83,6 @@ class PlanController extends Controller
         {
             $owned = Plan::where('owner_id', auth()->user()->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-
         }
 
         return $userCanSee->unique();
@@ -149,6 +148,7 @@ class PlanController extends Controller
         $plan = Plan::firstOrCreate([
             'title'             => $input['title'],
             'description'       => $input['description'],
+            'color'             => $input['color'],
             'begin'             => $input['begin'],
             'end'               => $input['end'],
             'duration'          => $input['duration'],
@@ -213,12 +213,17 @@ class PlanController extends Controller
     public function update(Request $request, Plan $plan)
     {
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
-        $clean_data = $this->validateRequest();
-        if (isset($clean_data['type_id'])) {
-            $clean_data['type_id'] = format_select_input($clean_data['type_id']); //hack to prevent array to string conversion
+        $input = $this->validateRequest();
+
+        if (isset($input['type_id'])) {
+            $input['type_id'] = format_select_input($input['type_id']); //hack to prevent array to string conversion
         }
 
-        $plan->update($clean_data);
+        if (!is_admin()) {
+            $input['owner_id'] = auth()->user()->id;
+        }
+
+        $plan->update($input);
 
         checkForEmbeddedMedia($plan, 'description');// subscribe embedded media
 
@@ -408,7 +413,9 @@ class PlanController extends Controller
             'type_id'       => 'sometimes',
             'entry_order'   => 'sometimes',
             'color'         => 'sometimes',
+            'medium_id'     => 'sometimes',
             'allow_copy'    => 'sometimes',
+            'owner_id'      => 'sometimes',
         ]);
     }
 }

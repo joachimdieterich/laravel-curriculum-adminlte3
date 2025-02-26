@@ -19,23 +19,29 @@
                         </button>
                     </div>
                 </div>
+
                 <div
                     class="modal-body"
                     style="overflow-y: visible;"
                 >
-                    <Select2
-                        id="users_subscription"
-                        name="users_subscription"
-                        url="/users"
-                        model="user"
-                        option_id="id"
-                        option_label="text"
-                        :selected="this.form.user_id"
-                        @selectedValue="(id) => {
-                            this.form.user_id = id;
-                        }"
-                    />
+                    <div class="card">
+                        <div class="card-body">
+                            <Select2
+                                id="users_subscription"
+                                name="users_subscription"
+                                url="/users"
+                                model="user"
+                                option_id="id"
+                                option_label="text"
+                                :selected="this.form.user_id"
+                                @selectedValue="(id) => {
+                                    this.form.user_id = id;
+                                }"
+                            />
+                        </div>
+                    </div>
                 </div>
+
                 <div class="card-footer">
                     <span class="pull-right">
                         <button

@@ -6,14 +6,12 @@ use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
 use App\KanbanSubscription;
-use App\Medium;
 use App\MediumSubscription;
 use App\Organization;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Maize\Markable\Models\Like;
 use Yajra\DataTables\DataTables;
 
 class KanbanController extends Controller
@@ -68,8 +66,6 @@ class KanbanController extends Controller
 
         return $kanbans;
     }
-
-
 
     public function userKanbans($withOwned = true)
     {
@@ -188,8 +184,8 @@ class KanbanController extends Controller
      */
     public function show(Kanban $kanban, $token = null)
     {
-
-        abort_unless(/*\Gate::allows('kanban_show') and*/ $kanban->isAccessible(), 403); // don't use kanban_show -> bugfix for 403 problem on tokens.
+        // don't use kanban_show -> bugfix for 403 problem on tokens.
+        abort_unless($kanban->isAccessible(), 403);
 
         $kanban = $this->getKanbanWithRelations($kanban);
 
@@ -242,7 +238,7 @@ class KanbanController extends Controller
             'auto_refresh' => $input['auto_refresh'],
             'only_edit_owned_items' => $input['only_edit_owned_items'],
             'allow_copy' => $input['allow_copy'],
-            'owner_id' => auth()->user()->id,
+            'owner_id' => is_admin() ? $input['owner_id'] : $kanban->owner_id,
         ]);
 
         if (request()->wantsJson())
@@ -373,21 +369,24 @@ class KanbanController extends Controller
     public function getKanbanWithRelations(Kanban $kanban)
     {
         return $kanban->with([
-            'statuses',
-            'statuses.items' => function ($query) use ($kanban) {
-                $query->where('kanban_id', $kanban->id)
-                    ->with([
-                        'comments',
-                        'comments.user',
-                        'comments.likes',
-                        'likes',
-                        'mediaSubscriptions.medium',
-                        'owner',
-                    ])
-                    ->orderBy('order_id');
+            'owner' => function($query) {
+                $query->select('id', 'firstname', 'lastname');
+            },
+            'statuses.items' => function($query) use ($kanban) {
+                $query->with([
+                    'comments',
+                    'comments.user',
+                    'comments.likes',
+                    'likes',
+                    'mediaSubscriptions.medium',
+                    'owner' => function($query) {
+                        $query->select('id', 'username', 'firstname', 'lastname');
+                    },
+                ])
+                ->orderBy('order_id');
             },
             'medium',
-        ])->where('id', $kanban->id)->get()->first();
+        ])->find($kanban->id);
     }
 
     public function getKanbanByToken(Kanban $kanban, Request $request)
@@ -401,12 +400,12 @@ class KanbanController extends Controller
         $input = $this->validateRequest();
 
         $subscription = KanbanSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
-        if ($subscription->due_date) {
-            $now = Carbon::now();
-            $due_date = Carbon::parse($subscription->due_date);
-            if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
-            }
+        if (!$subscription?->due_date) abort(403, "Token doesn't exist or isn't valid anymore");
+
+        $now = Carbon::now();
+        $due_date = Carbon::parse($subscription->due_date);
+        if ($due_date < $now) {
+            abort(410, 'Dieser Link ist nicht mehr gültig');
         }
 
         return $this->show($kanban, $input['sharing_token']);
@@ -483,7 +482,8 @@ class KanbanController extends Controller
             'filter' => 'sometimes',
             'only_edit_owned_items' => 'sometimes',
             'allow_copy' => 'sometimes',
-            'sharing_token' => 'sometimes'
+            'sharing_token' => 'sometimes',
+            'owner_id' => 'sometimes',
         ]);
     }
 }

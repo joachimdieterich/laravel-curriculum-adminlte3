@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Logbook;
 use App\LogbookSubscription;
+use App\Helpers\QRCodeHelper;
 use Illuminate\Http\Request;
 
 class LogbookSubscriptionController extends Controller
@@ -15,32 +16,37 @@ class LogbookSubscriptionController extends Controller
      */
     public function index()
     {
-        $input = $this->validateRequest();
+        // $tokens = null;
+        if (request()->wantsJson())
+        {
+            // $tokenscodes = LogbookSubscription::where('logbook_id', request('logbook_id'))
+            //     ->where('sharing_token', "!=", null)
+            //     ->get();
 
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
-            $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('logbook_access') and $model->isAccessible()), 403);
+            // foreach ($tokenscodes as $token)
+            // {
+            //     $tokens[] = [
+            //         "token" => $token,
+            //         "qr"    => (new QRCodeHelper())
+            //             ->generateQRCodeByString(
+            //                 env("APP_URL"). "/logbooks/" . request('logbook_id') ."/token?sharing_token=" .$token->sharing_token
+            //             )
+            //     ];
+            // }
 
-            $subscriptions = LogbookSubscription::where([
-                'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id'],
-            ]);
-
-            if (request()->wantsJson()) {
-                return ['subscriptions' => $subscriptions->with(['logbook'])->get()];
-            }
-        } else {
-            if (request()->wantsJson()) {
-                return [
-                    'subscribers' => [
-                        'subscriptions' => optional(
-                                optional(
-                                    Logbook::find(request('logbook_id'))
-                                )->subscriptions()
-                            )->with('subscribable')->get(),
-                    ],
-                ];
-            }
+            return [
+                // 'tokens' => $tokens,
+                'subscriptions' => optional(
+                        optional(
+                            Logbook::find(request('logbook_id'))
+                        )->subscriptions()
+                    )->with('subscribable')
+                    ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                        if ($type == 'App\\User') {
+                            $q->whereNot('id', env('GUEST_USER'));
+                        }
+                    })->get(),
+            ];
         }
     }
 
@@ -67,9 +73,7 @@ class LogbookSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return $logbook->subscriptions()
-                ->with(['subscribable', 'logbook'])
-                ->first();
+            return $subscribe->with(['subscribable', 'logbook'])->find($subscribe->id);
         }
     }
 

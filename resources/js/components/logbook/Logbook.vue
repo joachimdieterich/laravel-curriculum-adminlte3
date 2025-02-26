@@ -56,28 +56,24 @@
             <ContentModal/>
             <TaskModal/>
             <MediumPreviewModal/>
-            <subscribe-objective-modal/>
+            <SubscribeObjectiveModal/>
+            <!-- <SetAchievementsModal/> -->
             <lms-modal/>
-            <MediumModal
-                subscribable_type="App\\Logboook"
-                :subscribable_id="logbook.id"
-            />
+            <MediumModal/>
             <LogbookModal/>
             <LogbookEntryModal/>
             <LogbookEntrySubjectModal/>
             <SubscribeModal/>
         </Teleport>
-        <teleport v-if="$userId == logbook.owner_id"
-            to="#customTitle"
-        >
+        <teleport to="#customTitle">
             <small>{{ logbook.title }}</small>
-            <a
+            <a v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-flat"
                 @click="editLogbook(logbook)"
             >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
-            <button
+            <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                 class="btn btn-flat"
                 @click="share()"
             >
@@ -98,6 +94,7 @@ import ContentModal from "../content/ContentModal.vue";
 import {useGlobalStore} from "../../store/global";
 import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
+// import SetAchievementsModal from "../plan/SetAchievementsModal.vue";
 import AbsenceModal from "../absence/AbsenceModal.vue";
 import LogbookEntryModal from "../logbookEntry/LogbookEntryModal.vue";
 import LogbookEntrySubjectModal from "../logbookEntry/LogbookEntrySubjectModal.vue";
@@ -109,6 +106,7 @@ export default {
         LogbookEntryModal,
         AbsenceModal,
         SubscribeObjectiveModal,
+        // SetAchievementsModal,
         MediumPreviewModal,
         ContentModal,
         LmsModal,
@@ -194,7 +192,7 @@ export default {
                 shareWithUsers: true,
                 shareWithGroups: true,
                 shareWithOrganizations: true,
-                shareWithToken: true,
+                shareWithToken: false,
                 canEditCheckbox: true,
             });
         },

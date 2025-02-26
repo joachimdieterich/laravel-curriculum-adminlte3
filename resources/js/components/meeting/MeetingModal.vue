@@ -188,11 +188,11 @@
                                 />
 
                                 <MediumForm
-                                    class="pull-right"
-                                    id="medium_id"
+                                    :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
+                                    :subscribable_id="form.id"
+                                    subscribable_type="App\Meeting"
                                     accept="image/*"
-                                    :selected="this.form.medium_id"
                                     @selectedValue="(id) => {
                                         this.form.medium_id = id;
                                     }"
@@ -272,7 +272,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumModal from "../media/MediumModal.vue";
 import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
@@ -283,7 +282,6 @@ export default {
     name: 'meeting-modal',
     components: {
         Editor,
-        MediumModal,
         Select2,
         MediumForm
     },
@@ -300,23 +298,23 @@ export default {
             method: 'post',
             url: '/meetings',
             form: new Form({
-                'id': '',
-                'uid': '',
-                'title':  '',
-                'description':  '',
-                'info': '',
-                'speakers': '',
-                'livestream': '',
-                'color':'#27AF60',
-                'medium_id': null,
+                id: '',
+                uid: '',
+                title:  '',
+                description:  '',
+                info: '',
+                speakers: '',
+                livestream: '',
+                color:'#27AF60',
+                medium_id: null,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
                     "autolink link curriculummedia table lists autoresize"
                 ],
                 {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
+                    callback: 'insertContent',
+                    callbackId: this.component_id
                 }
             ),
             activetab: 'create_meeting',
@@ -377,7 +375,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {

@@ -92,12 +92,12 @@
         </div> -->
         <Teleport to="body">
             <PlanModal/>
-            <PlanEntryModal :plan="plan"/>
             <MediumModal/>
-            <SubscribeObjectiveModal/>
-            <TrainingModal :plan="plan"/>
-            <SetAchievementsModal :users="users"/>
             <SubscribeModal/>
+            <TrainingModal :plan="plan"/>
+            <PlanEntryModal :plan="plan"/>
+            <SetAchievementsModal :users="users"/>
+            <SubscribeObjectiveModal :users="users"/>
         </Teleport>
         <Teleport to="#customTitle">
             <small>{{ currentPlan.title }}</small>
@@ -140,7 +140,7 @@ export default {
         },
         users: {
             type: Object,
-            default: null
+            default: null,
         },
     },
     setup() {

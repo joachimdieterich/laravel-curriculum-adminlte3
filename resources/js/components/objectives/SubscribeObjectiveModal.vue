@@ -107,7 +107,12 @@ export default {
     components: {
         Select2,
     },
-    props: {},
+    props: {
+        users: {
+            type: Object,
+            default: null,
+        },
+    },
     setup() { //use database store
         const globalStore = useGlobalStore();
         return {
@@ -135,7 +140,8 @@ export default {
                 terminal_objective_id:    this.form.terminal_objective_id,
                 enabling_objective_id:    this.form.enabling_objective_id, // will be discarded in terminal-controller
                 subscribable_type:        this.form.subscribable_type,
-                subscribable_id:          this.form.subscribable_id
+                subscribable_id:          this.form.subscribable_id,
+                users:                    this.users.map(user => user.id),
             })
             .then(response => {
                 this.$eventHub.emit('subscriptions-added', {

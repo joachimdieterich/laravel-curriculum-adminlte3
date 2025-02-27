@@ -191,7 +191,6 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false, $token = null)
     {
-
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
@@ -227,11 +226,10 @@ class CurriculumController extends Controller
         }
 
         return view('curricula.show')
-                ->with(compact('curriculum'))
-                ->with(compact('objectiveTypes'))
-                ->with(compact('levels'))
-                ->with(compact('settings'))
-            ;
+            ->with(compact('curriculum'))
+            ->with(compact('objectiveTypes'))
+            ->with(compact('levels'))
+            ->with(compact('settings'));
     }
 
     /**

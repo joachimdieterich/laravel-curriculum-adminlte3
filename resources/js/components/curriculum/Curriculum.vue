@@ -315,9 +315,11 @@ export default {
     props: {
         curriculum: {
             type: Object,
+            default: null,
         },
         course: {
             type: Object,
+            default: null,
         },
        /* usersCurricula: {
             default: null
@@ -327,9 +329,11 @@ export default {
         },*/
         objectivetypes: {
             type: Array,
+            default: null,
         },
         settings: {
             type: Object,
+            default: null,
         },
     },
     setup() {

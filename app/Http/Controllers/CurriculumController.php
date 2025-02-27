@@ -81,19 +81,9 @@ class CurriculumController extends Controller
         {
             $owned = Curriculum::where('owner_id', $user->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-            // temporary fix to show global curricula
+            // global curricula are visible for all users, but shouldn't be shown on 'shared with me'
             $global = Curriculum::where('type_id', 1)->get();
             $userCanSee = $userCanSee->merge($global);
-        }
-
-        if ((env('GUEST_USER') != null))
-        {
-            $guest_groups = User::find(env('GUEST_USER'))->groups;
-        }
-
-        foreach ($guest_groups as $group)
-        {
-            $userCanSee = $userCanSee->merge($group->curricula);
         }
 
         return $userCanSee->unique();

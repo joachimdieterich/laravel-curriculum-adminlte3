@@ -133,8 +133,7 @@ export default {
 
             axios.post('/' + type + 'ObjectiveSubscriptions', {
                 terminal_objective_id:    this.form.terminal_objective_id,
-                // will be discarded in terminal-controller
-                enabling_objective_id:    this.form.enabling_objective_id,
+                enabling_objective_id:    this.form.enabling_objective_id, // will be discarded in terminal-controller
                 subscribable_type:        this.form.subscribable_type,
                 subscribable_id:          this.form.subscribable_id
             })
@@ -143,6 +142,7 @@ export default {
                     terminal_objectives: response.data[0],
                     id: this.form.subscribable_id,
                 });
+                this.globalStore.closeModal(this.$options.name);
             })
             .catch(e => {
                 console.log(e.response);

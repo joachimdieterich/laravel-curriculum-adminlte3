@@ -139,6 +139,14 @@ export default {
     },
     methods: {
         submit() {
+            if (this.form.date) {
+                this.form.begin = this.form.date[0];
+                this.form.end = this.form.date[1];
+            } else {
+                this.form.begin = null;
+                this.form.end = null;
+            }
+
             if (this.method == 'post') {
                 this.add();
             } else {
@@ -150,8 +158,6 @@ export default {
         add() {
             axios.post('/trainings', this.form)
                 .then(response => {
-                    console.log('successfull response');
-                    
                     this.$eventHub.emit('training-added', {
                         training: response.data,
                         id: this.form.subscribable_id,
@@ -182,7 +188,10 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    this.form.date = [new Date(this.form.begin) ?? '', new Date(this.form.end) ?? ''];
+
+                    if (this.form.begin && this.form.end) {
+                        this.form.date = [new Date(this.form.begin), new Date(this.form.end)];
+                    }
                     this.form.description = this.$decodeHTMLEntities(params.description);
 
                     if (this.form.id != '') {

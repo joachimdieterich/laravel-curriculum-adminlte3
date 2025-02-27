@@ -64,7 +64,7 @@ export default {
         },
         showTools: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         referenceable_id: {
             type: Number,

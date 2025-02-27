@@ -155,7 +155,7 @@ export default {
         destroy(subscription) {
             const type = subscription.enabling_subscriptions ? 'enabling' : 'terminal';
 
-            axios.post('/' + type + 'ObjectiveSubscriptions/destroy', { 
+            axios.post('/' + type + 'ObjectiveSubscriptions/destroy', {
                 subscribable_id: this.referenceable_id,
                 subscribable_type: this.referenceable_type,
                 terminal_objective_id: subscription.id,
@@ -197,7 +197,9 @@ export default {
         this.$eventHub.on('subscriptions-added', data => {
             if (data.id === this.referenceable_id) {
                 this.terminal_objectives.push(data.terminal_objectives);
+                this.globalStore.closeModal('subscribe-objective-modal');
             }
+
         });
 
         this.$eventHub.on('achievements-set', data => {

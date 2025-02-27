@@ -3,7 +3,7 @@
         <div class="col-12 pt-2">
             <div class="card">
                 <div v-if="create">
-                    <div 
+                    <div
                         class="card-header pointer"
                         @click="openModal()"
                     >

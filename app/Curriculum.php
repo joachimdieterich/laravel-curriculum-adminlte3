@@ -214,7 +214,7 @@ class Curriculum extends Model
     public function isAccessible()
     {
         if (
-            $this->type_id == 4 // global = allowed for everybody (even guests)
+            $this->type_id == 1 // global = allowed for everybody (even guests)
             or is_admin() // or admin
             or auth()->user()->curricula->contains('id', $this->id) // user enrolled
             or ($this->owner_id == auth()->user()->id) // or owner

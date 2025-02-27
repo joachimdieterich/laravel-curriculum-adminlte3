@@ -6,7 +6,7 @@
         >
             <div class="card-header d-flex align-items-center">
                 <div class="card-title">{{ currentPlan.title }}</div>
-                <div v-if="$userId == plan.owner_id"
+                <div v-if="editable || checkPermission('is_admin')"
                     v-permission="'plan_edit'"
                     class="card-tools d-flex pr-2 ml-auto no-print"
                     style="gap: 5px;"

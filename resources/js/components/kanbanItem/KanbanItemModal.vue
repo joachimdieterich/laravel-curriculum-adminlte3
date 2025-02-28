@@ -102,7 +102,7 @@
                                     :placeholder="trans('global.kanbanItem.fields.due_date')"
                                 />
                             </div>
-        
+
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
                                     :id="'locked_'+ form.id"
@@ -241,7 +241,7 @@ export default {
                     'callbackId': this.component_id
                 },
                 "bold underline italic | alignleft aligncenter alignright alignjustify | table",
-                "bullist numlist outdent indent | mathjax link code curriculummedia"
+                "bullist numlist outdent indent | mathjax link code"
             ),
         }
     },

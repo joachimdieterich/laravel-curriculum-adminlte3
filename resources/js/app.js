@@ -337,7 +337,8 @@ app.config.globalProperties.$initTinyMCE = function(
         "autoresize"
     ];
 
-    return {// allows adding additional attributes for specific cases
+    return {
+        // allows adding additional attributes for specific cases
         // attributes can be overwritten if they are set BEFORE this line
         ...attr,
         path_absolute : "/",
@@ -418,7 +419,7 @@ app.config.globalProperties.$initTinyMCE = function(
             editor.ui.registry.addButton('curriculummedia',  {
                 text: window.trans.global.medium.title,
                 icon: 'image',
-                tooltip: 'Medien',
+                tooltip: window.trans.global.medium.title,
                 onAction: function () {
                     globalStore.showModal('medium-modal', attr);
                     app.config.globalProperties.$eventHub.on('insertContent', (event) => {

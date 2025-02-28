@@ -28,7 +28,11 @@
 
                 <div class="modal-body">
                     <div class="d-md-flex">
-                        <div class="card-pane-left p-0">
+                        <!-- left side of menu only visible to admins -->
+                        <div
+                            v-permission="'is_admin'"
+                            class="card-pane-left p-0"
+                        >
                             <ul class="nav flex-column">
                                 <li
                                     v-permission="'is_admin'"
@@ -79,7 +83,6 @@
                                 </li>
                             </ul>
                         </div>
-                        <!-- /.left-menu -->
 
                         <div class="p-1 flex-fill border-left">
                             <div class="tab-content">
@@ -94,7 +97,7 @@
                                         method="post"
                                         @submit.prevent="uploadSubmit"
                                     >
-                                        <div v-if="this.message != ''"
+                                        <div v-if="message != ''"
                                             class="alert alert-success"
                                         >
                                             {{ message }}
@@ -133,10 +136,9 @@
                                             aria-valuemax="100"
                                         ></div>
                                     </div>
-                                </div><!-- /.tab-pane -->
+                                </div>
 
-                                <div
-                                    v-permission="'is_admin'"
+                                <div v-if="checkPermission('is_admin')"
                                     id="media"
                                     class="tab-pane m-2"
                                 >
@@ -168,21 +170,7 @@
                                             />
                                         </div>
                                     </div>
-                                </div><!-- /.tab-pane -->
-
-                                <!-- <div class="tab-pane"
-                                    id="link"
-                                    v-can="'link_create'">
-                                    <div class="form-group " >
-                                        <input
-                                            type="text" id="link"
-                                            name="search"
-                                            class="form-control"
-                                            v-model="form.link"
-                                            required
-                                        />
-                                    </div>
-                                </div>--><!-- /.tab-pane -->
+                                </div>
 
                                 <div
                                     v-permission="'external_medium_create'"
@@ -199,9 +187,8 @@
                                         <i class="fa fa-spinner fa-pulse fa-fw"></i>
                                         <span>Fertigstellen...</span>
                                     </div>
-                                </div><!-- /.tab-pane -->
+                                </div>
                             </div>
-                            <!-- /.description-block -->
                         </div>
                     </div>
                 </div>

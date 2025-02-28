@@ -73,7 +73,7 @@ import _ from 'lodash'; //needed to get
 
 /**
  * search for key in language file
- * @param {String} key 
+ * @param {String} key
  * @returns translated String or key if not found
  */
 app.config.globalProperties.trans = (key) => {
@@ -252,7 +252,7 @@ app.component('navigators', defineAsyncComponent(() => import('./components/navi
 app.component('navigator', defineAsyncComponent(() => import('./components/navigator/Navigator.vue')));
 
 app.component('note-modal', defineAsyncComponent(() => import('./components/note/NoteModal.vue')));
-//app.component('notes', defineAsyncComponent(() => import('./components/note/Notes.vue')));
+app.component('notes', defineAsyncComponent(() => import('./components/note/Notes.vue')));
 
 app.component('objective', defineAsyncComponent(() => import('./components/objectives/Objective.vue')));
 app.component('objective-box', defineAsyncComponent(() => import('./components/objectives/ObjectiveBox.vue')));

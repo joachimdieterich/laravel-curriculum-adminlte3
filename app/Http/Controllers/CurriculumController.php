@@ -81,19 +81,9 @@ class CurriculumController extends Controller
         {
             $owned = Curriculum::where('owner_id', $user->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-            // temporary fix to show global curricula
+            // global curricula are visible for all users, but shouldn't be shown on 'shared with me'
             $global = Curriculum::where('type_id', 1)->get();
             $userCanSee = $userCanSee->merge($global);
-        }
-
-        if ((env('GUEST_USER') != null))
-        {
-            $guest_groups = User::find(env('GUEST_USER'))->groups;
-        }
-
-        foreach ($guest_groups as $group)
-        {
-            $userCanSee = $userCanSee->merge($group->curricula);
         }
 
         return $userCanSee->unique();
@@ -201,7 +191,6 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false, $token = null)
     {
-
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
@@ -237,11 +226,10 @@ class CurriculumController extends Controller
         }
 
         return view('curricula.show')
-                ->with(compact('curriculum'))
-                ->with(compact('objectiveTypes'))
-                ->with(compact('levels'))
-                ->with(compact('settings'))
-            ;
+            ->with(compact('curriculum'))
+            ->with(compact('objectiveTypes'))
+            ->with(compact('levels'))
+            ->with(compact('settings'));
     }
 
     /**

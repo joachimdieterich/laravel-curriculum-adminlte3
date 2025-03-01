@@ -28,12 +28,16 @@ class UsersController extends Controller
         if (auth()->user()->role()->id > 6) {   //todo check: should students see all other user of current org?
             abort(403);
         }
-        //every user should share with users of current org.
-        if (request()->wantsJson() /*and request()->has(['term', 'page'])*/) {
-            return  getEntriesForSelect2ByCollection(
-                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users(), //->noSharing(),
+        // every user should share with users of current organization except admins
+        if (request()->wantsJson()) {
+            $users = is_admin()
+                ? User::noSharing()
+                : Organization::find(auth()->user()->current_organization_id)->users();
+
+            return getEntriesForSelect2ByCollection(
+                $users,
                 'users.',
-                ['username', 'firstname', 'lastname', 'medium_id'],
+                ['username', 'firstname', 'lastname'],
                 'lastname',
                 "CONCAT(firstname, ' ' ,lastname)",
             );

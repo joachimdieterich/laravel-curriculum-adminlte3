@@ -19,7 +19,12 @@ class Training extends Model
         'order_id',
         'subscribable_type',
         'subscribable_id',
-        'owner_id'
+        'owner_id',
+    ];
+
+    protected $casts = [
+        'begin' => 'datetime',
+        'end' => 'datetime',
     ];
 
     /**

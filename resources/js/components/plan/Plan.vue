@@ -6,7 +6,7 @@
         >
             <div class="card-header d-flex align-items-center">
                 <div class="card-title">{{ currentPlan.title }}</div>
-                <div v-if="$userId == plan.owner_id"
+                <div v-if="editable || checkPermission('is_admin')"
                     v-permission="'plan_edit'"
                     class="card-tools d-flex pr-2 ml-auto no-print"
                     style="gap: 5px;"
@@ -92,27 +92,27 @@
         </div> -->
         <Teleport to="body">
             <PlanModal/>
-            <PlanEntryModal :plan="plan"/>
             <MediumModal/>
-            <SubscribeObjectiveModal/>
-            <TrainingModal :plan="plan"/>
-            <SetAchievementsModal :users="users"/>
             <SubscribeModal/>
+            <TrainingModal :plan="plan"/>
+            <PlanEntryModal :plan="plan"/>
+            <SetAchievementsModal :users="users"/>
+            <SubscribeObjectiveModal :users="users"/>
         </Teleport>
         <Teleport to="#customTitle">
             <small>{{ currentPlan.title }}</small>
             <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat"
+                class="btn btn-flat text-secondary px-2 mx-1"
                 @click="editPlan()"
             >
-                <i class="fa fa-pencil-alt text-secondary"></i>
+                <i class="fa fa-pencil-alt"></i>
             </a>
-            <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-fla"
+            <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                class="btn btn-flat text-secondary px-2"
                 @click="share()"
             >
-                <i class="fa fa-share-alt text-secondary"></i>
-            </button>
+                <i class="fa fa-share-alt"></i>
+            </a>
         </Teleport>
     </div>
 </template>
@@ -140,7 +140,7 @@ export default {
         },
         users: {
             type: Object,
-            default: null
+            default: null,
         },
     },
     setup() {

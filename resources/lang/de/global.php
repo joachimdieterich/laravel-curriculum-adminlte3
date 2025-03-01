@@ -1251,7 +1251,7 @@ return [
             'zoom_helper' => '',
         ],
     ],
-    'mapMarker' => [
+    'marker' => [
         'title' => 'Marker',
         'title_singular' => 'Marker',
         'create' => 'Marker erstellen',
@@ -1260,10 +1260,11 @@ return [
         'delete_helper' => 'Soll der Marker gelöscht werden?',
         'fields' => [
             'teaser_text' => 'Kurzbeschreibung',
+            'author' => 'Ansprechperson',
             'latitude' => 'Latitude (geografische Breite)',
             'longitude' => 'Longitude (geografische Länge)',
             'link' => 'Link',
-            'link_helper' => '',
+            'link_helper' => 'Link zum Projekt',
         ],
     ],
     'mapMarkerType'=> [

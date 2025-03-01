@@ -28,12 +28,18 @@
                                 </span>
                                 {{ exercise.title }}
                                 <span v-if="$userId == training.owner_id">
-                                    <i class="fa fa-pencil-alt text-secondary pointer ml-2 mr-1"
+                                    <a
+                                        class="text-secondary pointer mx-1"
                                         @click="openModal(exercise)"
-                                    ></i>
-                                    <i class="fa fa-trash text-danger pointer ml-2"
+                                    >
+                                        <i class="fa fa-pencil-alt px-1"></i>
+                                    </a>
+                                    <a
+                                        class="text-danger pointer mx-1"
                                         @click="confirmItemDelete(exercise)"
-                                    ></i>
+                                    >
+                                    <i class="fa fa-trash px-1"></i>
+                                    </a>
                                 </span>
                             </div>
 
@@ -61,7 +67,7 @@
         <Teleport to="body">
             <ExerciseModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.exercise.delete')"
                 :description="trans('global.exercise.delete_helper')"
                 @close="() => {
@@ -118,16 +124,6 @@ export default {
         this.$eventHub.on('exercise_dones_added', (e) => {
             this.loaderEvent();
         });
-
-        this.$initTinyMCE(
-            [
-                "autolink link"
-            ],
-            {
-                'eventHubCallbackFunction': 'insertContent',
-                'eventHubCallbackFunctionParams': this.component_id,
-            }
-        );
     },
     methods: {
         loaderEvent() {

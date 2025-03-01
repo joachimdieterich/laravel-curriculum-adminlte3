@@ -77,13 +77,13 @@ class EnablingObjectiveSubscriptionsController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403);
+        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403, 'Model <' . $input['subscribable_type'] . ':' . $input['subscribable_id'] . '> not accessible!');
 
         $new_subscriptions = [];
         $objectives = EnablingObjective::find($input['enabling_objective_id']);
 
         foreach ($objectives as $objective) {
-            abort_unless($objective->isAccessible(), 403);
+            abort_unless($objective->isAccessible(), 403, 'EnablingObjective:' . $objective->id . ' not accessible!');
             array_push($new_subscriptions, [
                 'enabling_objective_id' => $objective->id,
                 'subscribable_type' => $input['subscribable_type'],
@@ -105,13 +105,14 @@ class EnablingObjectiveSubscriptionsController extends Controller
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
                     $query->select('id', 'title', 'description', 'terminal_objective_id')
                         ->without(['terminalObjective', 'level'])
-                        // query enabling objectives again, incase a input existed before
+                        // only get enabling-objectives that are subscribed to the current model
                         ->join('enabling_objective_subscriptions', 'enabling_objectives.id', '=', 'enabling_objective_subscriptions.enabling_objective_id')
                         ->where('subscribable_type', $input['subscribable_type'])
                         ->where('subscribable_id', $input['subscribable_id'])
-                        ->with('achievements')
-                        ->orderBy('order_id')
-                        ->get();
+                        ->with(['achievements' => function($query) use ($input) {
+                            $query->whereIn('user_id', $input['users']);
+                        }])
+                        ->orderBy('order_id');
                 }])->get();
         }
     }
@@ -137,6 +138,7 @@ class EnablingObjectiveSubscriptionsController extends Controller
             'subscribable_id' => 'required',
             'sharing_level_id' => 'sometimes',
             'visibility' => 'sometimes',
+            'users' => 'sometimes|array',
         ]);
     }
 }

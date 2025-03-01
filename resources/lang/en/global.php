@@ -1217,10 +1217,12 @@ return [
         'delete' => 'delete marker',
         'delete_helper' => 'Should marker be deleted?',
         'fields' => [
+            'teaser_text' => 'Teaser',
+            'author' => 'Contact person',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'link' => 'Link',
-            'link_helper' => '',
+            'link_helper' => 'Link to project',
         ],
     ],
     'level' => [

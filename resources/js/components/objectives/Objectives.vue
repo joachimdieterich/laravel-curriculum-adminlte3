@@ -64,7 +64,7 @@ export default {
         },
         showTools: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         referenceable_id: {
             type: Number,
@@ -197,7 +197,6 @@ export default {
         this.$eventHub.on('subscriptions-added', data => {
             if (data.id === this.referenceable_id) {
                 this.terminal_objectives.push(data.terminal_objectives);
-                this.globalStore.closeModal('subscribe-objective-modal');
             }
 
         });

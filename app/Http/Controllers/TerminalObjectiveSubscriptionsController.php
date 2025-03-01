@@ -65,13 +65,13 @@ class TerminalObjectiveSubscriptionsController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403);
+        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403, 'Model <' . $input['subscribable_type'] . ':' . $input['subscribable_id'] . '> not accessible!');
 
         $new_subscriptions = [];
         $objectives = TerminalObjective::find($input['terminal_objective_id']);
 
         foreach ($objectives as $objective) {
-            abort_unless($objective->isAccessible(), 403);
+            abort_unless($objective->isAccessible(), 403, 'TerminalObjective:' . $objective->id . ' not accessible!');
             array_push($new_subscriptions, [
                 'terminal_objective_id' => $objective->id,
                 'subscribable_type' => $input['subscribable_type'],
@@ -88,11 +88,13 @@ class TerminalObjectiveSubscriptionsController extends Controller
 
         if (request()->wantsJson()) {
             return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
-                ->with(['enablingObjectives' => function ($query) {
+                ->with(['enablingObjectives' => function ($query) use ($input) {
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
                     $query->select('id', 'title', 'description', 'terminal_objective_id')
                         ->without(['terminalObjective', 'level'])
-                        ->with('achievements')
+                        ->with(['achievements' => function($query) use ($input) {
+                            $query->whereIn('user_id', $input['users']);
+                        }])
                         ->orderBy('order_id');
                 }])
                 ->find($input['terminal_objective_id']);
@@ -119,6 +121,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
             'subscribable_id' => 'required',
             'sharing_level_id' => 'sometimes',
             'visibility' => 'sometimes',
+            'users' => 'sometimes|array',
         ]);
     }
 }

@@ -127,7 +127,7 @@ input[type="search"]::-webkit-search-results-decoration {
         }
         &:not(:focus-within) > input {
             width: 0;
-            padding: 0 96px 0 0 !important;
+            padding: 0 95px 0 0 !important;
 
             & + div {
                 > #clearSearch { display: none !important; }

@@ -153,31 +153,31 @@
         <Teleport to="#customTitle">
             <small>{{ kanban.title }}</small>
             <a v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat px-2 py-1 mx-1"
+                class="btn btn-flat text-secondary px-2 mx-1"
                 @click="editKanban(kanban)"
             >
-                <i class="fa fa-pencil-alt text-secondary"></i>
+                <i class="fa fa-pencil-alt"></i>
             </a>
     
-            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat px-2 py-1 mx-1"
+            <a v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                class="btn btn-flat text-secondary px-2 mx-1"
                 @click="share()"
             >
-                <i class="fa fa-share-alt text-secondary"></i>
-            </button>
+                <i class="fa fa-share-alt"></i>
+            </a>
     
             <a
                 :href="'/export_csv/' + kanban.id"
-                class="btn p-1 ml-2"
+                class="btn text-secondary px-1 ml-2"
             >
-                <i class="fa fa-file-csv text-secondary"></i>
+                <i class="fa fa-file-csv"></i>
             </a>
     
             <a
                 :href="'/export_pdf/' + kanban.id"
-                class="btn p-1 ml-1"
+                class="btn text-secondary px-1 ml-1"
             >
-                <i class="fa fa-file-pdf text-secondary"></i>
+                <i class="fa fa-file-pdf"></i>
             </a>
 
             <p class="h6">{{ trans('global.owner') }}: {{ kanban.owner.firstname + ' ' + kanban.owner.lastname }}</p>

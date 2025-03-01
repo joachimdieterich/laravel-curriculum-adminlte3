@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Config;
 use App\Curriculum;
-use App\Http\Requests\StoreTerminalObjectiveRequest;
-use App\Http\Requests\UpdateTerminalObjectiveRequest;
+use Illuminate\Http\Request;
 use App\QuoteSubscription;
 use App\ReferenceSubscription;
 use App\TerminalObjective;
@@ -26,7 +25,7 @@ class TerminalObjectiveController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreTerminalObjectiveRequest $request)
+    public function store(Request $request)
     {
         abort_unless(Curriculum::find(request('curriculum_id'))->isAccessible(), 403);
 
@@ -70,7 +69,7 @@ class TerminalObjectiveController extends Controller
      * @param  \App\TerminalObjective  $terminalObjective
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateTerminalObjectiveRequest $request, TerminalObjective $terminalObjective)
+    public function update(Request $request, TerminalObjective $terminalObjective)
     {
         abort_unless($terminalObjective->isAccessible(), 403);
 

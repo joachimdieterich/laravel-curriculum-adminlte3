@@ -19,7 +19,7 @@ class ExerciseController extends Controller
         abort_unless((\Gate::allows('plan_access') and $model->isAccessible()), 403);
 
         $exercises = $model->exercises()
-            ->select('id', 'title', 'description', 'recommended_iterations')
+            ->select('id', 'training_id', 'title', 'description', 'recommended_iterations')
             ->with(['dones' => function ($query) {
                 $query->select('id', 'exercise_id', 'iterations', 'created_at')
                     ->where('owner_id', auth()->user()->id);

@@ -25,17 +25,29 @@
                             </small>
                         </span>
                         <span v-if="editable && showTools">
-                            <a @click="lower(training)">
-                                <i class="px-1 fa fa-caret-up text-muted pointer mx-1"></i>
+                            <a
+                                class="text-secondary pointer mx-1"
+                                @click="lower(training)"
+                            >
+                                <i class="fa fa-caret-up px-1"></i>
                             </a>
-                            <a @click="higher(training)">
-                                <i class="px-1 fa fa-caret-down text-muted pointer mx-1"></i>
+                            <a
+                                class="text-secondary pointer mx-1"
+                                @click="higher(training)"
+                            >
+                                <i class="fa fa-caret-down px-1"></i>
                             </a>
-                            <a @click="openModal(training)">
-                                <i class="px-1 fa fa-pencil-alt text-muted pointer mx-1"></i>
+                            <a
+                                class="text-secondary pointer mx-1"
+                                @click="openModal(training)"
+                            >
+                                <i class="fa fa-pencil-alt px-1"></i>
                             </a>
-                            <a @click="destroy(training)">
-                                <i class="px-1 fas fa-trash text-danger pointer mx-1"></i>
+                            <a
+                                class="text-danger pointer mx-1"
+                                @click="destroy(training)"
+                            >
+                                <i class="fas fa-trash px-1"></i>
                             </a>
                         </span>
                     </div>

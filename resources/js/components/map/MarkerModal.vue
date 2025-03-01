@@ -8,10 +8,10 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <span v-if="method === 'post'">
-                            {{ trans('global.mapMarker.create') }}
+                            {{ trans('global.marker.create') }}
                         </span>
                         <span v-if="method === 'patch'">
-                            {{ trans('global.mapMarker.edit') }}
+                            {{ trans('global.marker.edit') }}
                         </span>
                     </h3>
                     <div class="card-tools">
@@ -51,7 +51,7 @@
                                     type="text"
                                     class="form-control"
                                     v-model.trim="form.teaser_text"
-                                    :placeholder="trans('global.mapMarker.fields.teaser_text')"
+                                    :placeholder="trans('global.marker.fields.teaser_text')"
                                     required
                                 />
                                 <p v-if="form.errors?.teaser_text"
@@ -64,7 +64,7 @@
                                 <Editor
                                     id="description"
                                     name="description"
-                                    :placeholder="trans('global.mapMarker.fields.description')"
+                                    :placeholder="trans('global.marker.fields.description')"
                                     class="form-control"
                                     :init="tinyMCE"
                                     :initial-value="form.description"
@@ -73,7 +73,7 @@
 
                             <div class="form-group">
                                 <label for="author">
-                                    {{ trans('global.mapMarker.fields.author') }}
+                                    {{ trans('global.marker.fields.author') }}
                                 </label>
                                 <input
                                     id="author"
@@ -81,7 +81,7 @@
                                     type="text"
                                     class="form-control"
                                     v-model.trim="form.author"
-                                    :placeholder="trans('global.mapMarker.fields.author')"
+                                    :placeholder="trans('global.marker.fields.author')"
                                     required
                                 />
                                 <p v-if="form.errors?.author"
@@ -92,7 +92,7 @@
 
                             <div class="form-group">
                                 <label for="tags">
-                                    {{ trans('global.mapMarker.fields.tags') }}
+                                    {{ trans('global.marker.fields.tags') }}
                                 </label>
                                 <input
                                     id="tags"
@@ -100,7 +100,7 @@
                                     type="text"
                                     class="form-control"
                                     v-model.trim="form.tags"
-                                    :placeholder="trans('global.mapMarker.fields.tags')"
+                                    :placeholder="trans('global.marker.fields.tags')"
                                     required
                                 />
                                 <p v-if="form.errors?.tags"
@@ -133,7 +133,7 @@
 
                             <div class="form-group">
                                 <label for="latitude">
-                                    {{ trans('global.mapMarker.fields.latitude') }} *
+                                    {{ trans('global.marker.fields.latitude') }} *
                                 </label>
                                 <input
                                     id="latitude"
@@ -141,7 +141,7 @@
                                     type="text"
                                     class="form-control"
                                     v-model.trim="form.latitude"
-                                    :placeholder="trans('global.mapMarker.fields.latitude')"
+                                    :placeholder="trans('global.marker.fields.latitude')"
                                     required
                                 />
                                 <p v-if="form.errors?.latitude"
@@ -152,7 +152,7 @@
 
                             <div class="form-group">
                                 <label for="longitude">
-                                    {{ trans('global.mapMarker.fields.longitude') }} *
+                                    {{ trans('global.marker.fields.longitude') }} *
                                 </label>
                                 <input
                                     id="longitude"
@@ -160,7 +160,7 @@
                                     type="text"
                                     class="form-control"
                                     v-model.trim="form.longitude"
-                                    :placeholder="trans('global.mapMarker.fields.longitude')"
+                                    :placeholder="trans('global.marker.fields.longitude')"
                                     required
                                 />
                                 <p v-if="form.errors?.longitude"
@@ -171,7 +171,7 @@
 
                             <div class="form-group">
                                 <label for="address">
-                                    {{ trans('global.mapMarker.fields.address') }}
+                                    {{ trans('global.address') }}
                                 </label>
                                 <input
                                     id="address"
@@ -179,7 +179,7 @@
                                     type="text"
                                     class="form-control"
                                     v-model.trim="form.address"
-                                    :placeholder="trans('global.mapMarker.fields.address')"
+                                    :placeholder="trans('global.address')"
                                     required
                                 />
                                 <p v-if="form.errors?.address"
@@ -190,7 +190,7 @@
         
                             <div class="form-group">
                                 <label for="url">
-                                    {{ trans('global.mapMarker.fields.url') }}
+                                    {{ trans('global.url') }}
                                 </label>
                                 <input
                                     id="url"
@@ -198,7 +198,7 @@
                                     type="text"
                                     class="form-control"
                                     v-model.trim="form.url"
-                                    :placeholder="trans('global.mapMarker.fields.url')"
+                                    :placeholder="trans('global.url')"
                                 />
                                 <p v-if="form.errors?.url"
                                     class="help-block"
@@ -208,7 +208,7 @@
 
                             <div>
                                 <label for="url_title">
-                                    {{ trans('global.mapMarker.fields.url_title') }}
+                                    {{ trans('global.url_title') }}
                                 </label>
                                 <input
                                     id="url_title"
@@ -216,7 +216,7 @@
                                     type="text"
                                     class="form-control"
                                     v-model.trim="form.url_title"
-                                    :placeholder="trans('global.mapMarker.fields.url_title')"
+                                    :placeholder="trans('global.url_title')"
                                 />
                                 <p v-if="form.errors?.url_title"
                                     class="help-block"

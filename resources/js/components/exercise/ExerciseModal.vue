@@ -26,39 +26,43 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model="form.title"
-                            :placeholder="trans('global.exercise.fields.title') + ' *'"
-                            required
-                        />
-                    </div>
-                    <div class="form-group">
-                        <Editor
-                            :id="'description'+component_id"
-                            :name="'description'+component_id"
-                            class="form-control"
-                            :placeholder="trans('global.exercise.fields.description')"
-                            :init="tinyMCE"
-                            v-model="form.description"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="recommended_iterations">{{ trans('global.exercise.fields.recommended_iterations') }} *</label>
-                        <input
-                            type="number"
-                            min="1"
-                            id="recommended_iterations"
-                            name="recommended_iterations"
-                            class="form-control"
-                            v-model.trim="form.recommended_iterations"
-                            :placeholder="trans('global.exercise.fields.recommended_iterations_short')"
-                            required
-                        />
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-control"
+                                    v-model="form.title"
+                                    :placeholder="trans('global.exercise.fields.title') + ' *'"
+                                    required
+                                />
+                            </div>
+                            <div class="form-group">
+                                <Editor
+                                    :id="'description'+component_id"
+                                    :name="'description'+component_id"
+                                    class="form-control"
+                                    :placeholder="trans('global.exercise.fields.description')"
+                                    :init="tinyMCE"
+                                    v-model="form.description"
+                                />
+                            </div>
+                            <div>
+                                <label for="recommended_iterations">{{ trans('global.exercise.fields.recommended_iterations') }} *</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    id="recommended_iterations"
+                                    name="recommended_iterations"
+                                    class="form-control"
+                                    v-model.trim="form.recommended_iterations"
+                                    :placeholder="trans('global.exercise.fields.recommended_iterations_short')"
+                                    required
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -75,6 +79,7 @@
                         <button
                             id="exercise-save"
                             class="btn btn-primary ml-3"
+                            :disabled="!form.title || !form.recommended_iterations"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -96,11 +101,7 @@ export default {
     components: {
         Editor,
     },
-    props: {
-        map: {
-            type: Object,
-        }
-    },
+    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -112,8 +113,8 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             form: new Form({
-                id:'',
-                training_id:'',
+                id: '',
+                training_id: '',
                 title: '',
                 description: '',
                 recommended_iterations: '',
@@ -126,7 +127,9 @@ export default {
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
-                }
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link",
+                ""
             ),
         }
     },

@@ -18,42 +18,44 @@
             </span>
         </div>
 
-        <h5 class="pt-3">{{ trans('global.author') }}</h5>
+        <h5 class="pt-3">{{ trans('global.marker.fields.author') }}</h5>
         <div>{{ this.marker.author }}</div>
 
         <h5 class="pt-3">{{ trans('global.description') }}</h5>
-        <div class="pb-2" v-html="this.marker.description"></div>
+        <div class="pb-2" v-html="marker.description"></div>
 
         <h5 class="pt-3 clearfix">{{ trans('global.medium.title') }}</h5>
         <div v-if="marker.id != null"
-             v-permission="'medium_access'"
-             v-bind:id="'map_marker_media_'+marker.id">
+            v-permission="'medium_access'"
+            v-bind:id="'map_marker_media_' + marker.id"
+        >
             <media
                 subscribable_type="App\MapMarker"
                :subscribable_id="marker.id"
-               format="list"/>
+               format="list"
+            />
         </div>
 
-        <h5 class="pt-3">{{ trans('global.marker.fields.address') }}</h5>
-        <div v-dompurify-html="this.marker.address"></div>
+        <h5 class="pt-3">{{ trans('global.address') }}</h5>
+        <div v-dompurify-html="marker.address"></div>
 
-        <h5 class="pt-3">{{ trans('global.mapMarker.fields.link') }}</h5>
+        <h5 class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
         <div>
-            <a :href="this.marker.url"
-            target="_blank">
-                <span v-if="this.marker.url_title">
-                    {{ this.marker.url_title }}
+            <a
+                :href="marker.url"
+                target="_blank"
+            >
+                <span v-if="marker.url_title">
+                    {{ marker.url_title }}
                 </span>
-                <span v-else>Link zum Projekt</span>
+                <span v-else>{{ trans('global.marker.fields.link_helper') }}</span>
             </a>
         </div>
 
-        ...
-        <SubscribableList
-            v-if="typeof this.marker.id != 'undefined'"
+        <SubscribableList v-if="marker.id"
             url="/mapMarkerSubscriptions?map_marker_id"
-            :model_id="this.marker.id"
-        ></SubscribableList>
+            :model_id="marker.id"
+        />
     </div>
 </template>
 <script>

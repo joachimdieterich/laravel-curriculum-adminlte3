@@ -5,14 +5,20 @@
                 <div class="card-body">
                     <h5>
                         {{ videoconference.meetingName }}
-                        <span v-if="videoconference.owner_id == this.$userId"
-                              class="pointer">
-                            <i class="fa fa-share-alt text-secondary pl-2"
-                               @click="share()"
-                            ></i>
-                            <a class="pointer"
-                                @click="editVideoconference(videoconference)">
-                                <i class="fa fa-pencil-alt text-secondary pull-right"></i>
+                        <span v-if="videoconference.owner_id == $userId || checkPermission('is_admin')"
+                            class="pointer"
+                        >
+                            <a class="text-secondary p-1">
+                                <i
+                                    class="fa fa-share-alt"
+                                    @click="share()"
+                                ></i>
+                            </a>
+                            <a
+                                class="text-secondary pull-right"
+                                @click="editVideoconference(videoconference)"
+                            >
+                                <i class="fa fa-pencil-alt"></i>
                             </a>
                         </span>
                     </h5>

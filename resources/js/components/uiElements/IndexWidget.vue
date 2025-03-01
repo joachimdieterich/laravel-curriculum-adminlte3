@@ -25,11 +25,12 @@
         >
             <div v-if="item.medium_id"
                 class="nav-item-box-image-size"
-                :style="{ backgroundColor: item.color + ' !important', opacity: '75%' }"
+                :style="{ backgroundColor: item.color + ' !important' }"
                 @click="clickEvent(item)"
             >
                 <div
                     class="nav-item-box-image-size h-100 w-100"
+                    style="opacity: 75%"
                     :style="{'background': 'url(/media/' + item.medium_id + '?model=' + modelName + '&model_id=' + item.DT_RowId + ') center no-repeat'}"
                 >
                 </div>

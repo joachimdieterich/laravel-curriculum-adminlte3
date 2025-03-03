@@ -75,7 +75,7 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return $subscribe->with(['subscribable', 'kanban'])->find($subscribe->id);
+            return $subscribe->with('subscribable')->find($subscribe->id);
         }
     }
 

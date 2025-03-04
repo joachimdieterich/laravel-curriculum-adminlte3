@@ -268,8 +268,12 @@ export default {
             events: {},
             sidebar: {},
             search: 'digiWerkzeug',
+            searchCircle: null,
+            searchDistance: 20000,
+            foundMarkers: [],
             bordersGroup: {},
             namesGroup: {},
+            currentPositionMarker: null,
             markers: {},
             leafletMarkers:[],
             currentMarker:{},
@@ -406,6 +410,7 @@ export default {
             });
 
             let leafletMarker = L.marker([lat, lon], {
+                'id': entry.id,
                 'icon': svgMarker,
                 'title': title // accessibility
             })
@@ -474,6 +479,108 @@ export default {
         edit(marker) {
             this.globalStore?.showModal('map-marker-modal', marker);
         },
+
+        processClick(lat,lon){
+            console.log("You clicked the map at LAT: "+ lat+" and LONG: "+lon );
+
+            //Clear existing marker, circle, and selected points if selecting new points
+            if (this.searchCircle != null) {
+                this.mapCanvas.removeLayer(this.searchCircle);
+            };
+            if (this.currentPositionMarker != null) {
+                this.mapCanvas.removeLayer(this.currentPositionMarker);
+            };
+            /*if (geojsonLayer != undefined) {
+                this.mapCanvas.removeLayer(geojsonLayer);
+            };*/
+
+            //Add a marker to show where you clicked.
+            this.currentPositionMarker = L.marker([lat,lon]).addTo(this.mapCanvas);
+            this.selectPoints(lat,lon);
+        },
+        selectPoints(lat,lon){
+            this.foundMarkers.length = 0;  //Reset the array if selecting new points
+
+            this.clusterGroup.eachLayer(function (layer) {
+                // Lat, long of current point as it loops through.
+                let layer_lat_long = layer.getLatLng();
+
+                // See if meters is within radius, add the to array
+                console.log(this.searchDistance)
+                if (layer_lat_long.distanceTo([lat,lon]) <= this.searchDistance) {
+                    console.log(layer.options);
+                    this.foundMarkers.push(layer.feature);
+                }
+            }.bind(this));
+
+            // draw circle to see the selection area
+            this.searchCircle = L.circle([lat,lon], this.searchDistance , {   /// Number is in Meters
+                color: 'orange',
+                fillOpacity: 0,
+                opacity: 1
+            }).addTo(this.mapCanvas);
+
+            /*//Symbolize the Selected Points
+            geojsonLayer = L.geoJson(this.foundMarkers, {
+
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        radius: 4, //expressed in pixels circle size
+                        color: "green",
+                        stroke: true,
+                        weight: 7,		//outline width  increased width to look like a filled circle.
+                        fillOpcaity: 1
+                    });
+                }
+            });
+            //Add selected points back into map as green circles.
+            this.mapCanvas.addLayer(geojsonLayer); */
+
+            //Take array of features and make a GeoJSON feature collection
+            var GeoJS = { type: "FeatureCollection",  features: this.foundMarkers   };
+
+            //Show number of selected features.
+            console.log(GeoJS.features.length +" Selected features");
+
+            // show selected GEOJSON data in console
+            console.log(JSON.stringify(GeoJS));
+
+            //////////////////////////////////////////
+
+            /// Putting the selected team name in the table
+
+            //Clean up prior records
+           /* $("#myTable tr").remove();
+
+            var table = document.getElementById("myTable");
+            //Add the header row.
+            var row = table.insertRow(-1);
+            var headerCell = document.createElement("th");
+            headerCell.innerHTML = "Team";  //Fieldname
+            row.appendChild(headerCell);*/
+
+            //Add the data rows.
+            //console.log(this.foundMarkers);
+           /* for (var i = 0; i < this.foundMarkers.length; i++) {
+                //console.log(this.foundMarkers[i].properties.Team);
+                row = table.insertRow(-1);
+
+                var cell = row.insertCell(-1);
+                cell.innerHTML = this.foundMarkers[i].properties.Team;
+            }
+            //Get the Team name in the cell.
+            $('#myTable tr').click(function(x) {
+                theTeam = (this.getElementsByTagName("td").item(0)).innerHTML;
+                console.log(theTeam);
+                map._layers[theTeam].fire('click');
+                var coords = map._layers[theTeam]._latlng;
+                console.log(coords);
+                map.setView(coords, 12);
+            });*/
+
+
+        }
+
     },
     mounted() {
         this.$eventHub.on('edit_marker', (marker) => {
@@ -546,6 +653,12 @@ export default {
         this.getBorder();
 
         this.loader();
+
+       /* //  click to set position > wip on distance search
+        this.mapCanvas.on('click', function(e){
+            this.processClick(e.latlng.lat, e.latlng.lng);
+        }.bind(this));
+*/
     },
 }
 </script>

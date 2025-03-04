@@ -9,6 +9,10 @@
                 <a @click="editMarker(marker)" >
                     <i class="fa fa-pencil-alt"></i>
                 </a>
+                 <a  v-permission="'is_admin'"
+                     @click="shareMarker(marker)" >
+                     <i class="ml-3 fa fa-share-alt"></i>
+                </a>
             </span>
         </h1>
         <div>
@@ -56,6 +60,11 @@
             url="/mapMarkerSubscriptions?map_marker_id"
             :model_id="marker.id"
         />
+
+        <Teleport to="body">
+            <SubscribeModal/>
+        </Teleport>
+
     </div>
 </template>
 <script>
@@ -63,10 +72,13 @@
 import Media from '../media/Media.vue';
 import SubscribableList from "../subscription/SubscribableList.vue";
 import tokens from "../subscription/Tokens.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
+import {useGlobalStore} from "../../store/global.js";
 
 export default {
     name: 'MarkerView',
     components: {
+        SubscribeModal,
         tokens,
         SubscribableList,
         Media,
@@ -83,6 +95,12 @@ export default {
             subscribers: {}
         }
     },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     watch: { // reload if context change
         marker: function(newVal, oldVal) {
             this.tag_array = newVal.tags.split(",");
@@ -91,6 +109,17 @@ export default {
     methods: {
         editMarker(marker){
             this.$eventHub.emit('edit_marker', marker);
+        },
+        shareMarker(marker) {
+            this.globalStore?.showModal('subscribe-modal', {
+                modelId: this.marker.id,
+                modelUrl: 'mapMarker',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: false,
+                canEditCheckbox: false,
+            });
         },
 
     },

@@ -567,7 +567,7 @@ return [
         'title_singular' => 'Curriculum',
         'create' => 'Curriculum erstellen',
         'edit' => 'Curriculum bearbeiten',
-        'edit_owner' => 'Besitzer von curriculum ändern',
+        'edit_owner' => 'Besitzer von Curriculum ändern',
         'import' => 'Curriculum importieren',
         'export' => 'Curriculum exportieren',
         'print' => 'Curriculum drucken',

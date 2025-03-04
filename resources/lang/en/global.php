@@ -1214,8 +1214,8 @@ return [
         'title_singular' => 'Marker',
         'create' => 'Create marker ',
         'edit' => 'Edit marker',
-        'delete' => 'delete marker',
-        'delete_helper' => 'Should marker be deleted?',
+        'delete' => 'Delete marker',
+        'delete_helper' => 'Should this marker be deleted?',
         'fields' => [
             'teaser_text' => 'Teaser',
             'author' => 'Contact person',

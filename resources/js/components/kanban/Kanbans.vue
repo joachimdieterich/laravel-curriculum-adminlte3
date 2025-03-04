@@ -146,6 +146,15 @@
                             {{ trans('global.kanban.edit') }}
                         </button>
 
+                        <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                            :name="'kanban-share_' + kanban.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="shareKanban(kanban)"
+                        >
+                            <i class="fa fa-share-alt mr-2"></i>
+                            {{ trans('global.kanban.share') }}
+                        </button>
+
                         <button v-if="kanban.allow_copy"
                             :name="'copy-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
@@ -193,6 +202,7 @@
         <Teleport to="body">
             <KanbanModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
+            <SubscribeModal v-if="!subscribable"/>
             <SubscribeKanbanModal v-if="subscribable"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
@@ -223,6 +233,7 @@
     </div>
 </template>
 <script>
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 import SubscribeKanbanModal from "../kanban/SubscribeKanbanModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -310,6 +321,19 @@ export default {
         editKanban(kanban) {
             this.globalStore?.showModal('kanban-modal', kanban);
         },
+        shareKanban(kanban) {
+            this.globalStore?.showModal(
+                'subscribe-modal',
+                {
+                    modelId: kanban.id,
+                    modelUrl: 'kanban' ,
+                    shareWithUsers: true,
+                    shareWithGroups: true,
+                    shareWithOrganizations: true,
+                    shareWithToken: true,
+                    canEditCheckbox: true,
+                });
+        },
         loaderEvent() {
             this.dt = $('#kanban-datatable').DataTable();
 
@@ -357,6 +381,7 @@ export default {
         },
     },
     components: {
+        SubscribeModal,
         SubscribeKanbanModal,
         MediumModal,
         ConfirmModal,

@@ -118,6 +118,16 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.map.edit') }}
                         </button>
+
+                        <button
+                            :name="'map-share_' + map.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="shareMap(map)"
+                        >
+                            <i class="fa fa-share-alt mr-2"></i>
+                            {{ trans('global.map.share') }}
+                        </button>
+
                         <hr class="my-1">
                         <button
                             v-permission="'map_delete'"
@@ -152,8 +162,9 @@
         <Teleport to="body">
             <MapModal/>
             <MediumModal/>
+            <SubscribeModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.map.delete')"
                 :description="trans('global.map.delete_helper')"
                 @close="() => {
@@ -169,6 +180,7 @@
 </template>
 <script>
 import MapModal from "../map/MapModal.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
@@ -232,6 +244,19 @@ export default {
         editMap(map) {
             this.globalStore?.showModal('map-modal', map);
         },
+        shareMap(map) {
+            this.globalStore?.showModal(
+                'subscribe-modal',
+                {
+                    modelId: map.id,
+                    modelUrl: 'map' ,
+                    shareWithUsers: true,
+                    shareWithGroups: true,
+                    shareWithOrganizations: true,
+                    shareWithToken: false,
+                    canEditCheckbox: true,
+                });
+        },
         loaderEvent() {
             this.dt = $('#map-datatable').DataTable();
 
@@ -258,6 +283,7 @@ export default {
     },
     components: {
         ConfirmModal,
+        SubscribeModal,
         DataTable,
         MapModal,
         IndexWidget,

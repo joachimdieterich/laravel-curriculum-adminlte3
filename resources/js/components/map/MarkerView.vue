@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h1 class="sidebar-header  mb-3">
-            {{ this.marker.title }}
+        <h1 class="sidebar-header mb-3">
+            {{ marker.title }}
             <span
                 v-permission="'map_edit'"
                 class="card-tools pl-2"
@@ -12,35 +12,42 @@
             </span>
         </h1>
         <div>
-            <span v-for="tag in this.tag_array"
-                  class="right badge badge-primary mr-2">
+            <span v-for="tag in tag_array"
+                class="right badge badge-primary mr-2"
+            >
                 {{ tag }}
             </span>
         </div>
 
-        <h5 class="pt-3">{{ trans('global.marker.fields.author') }}</h5>
-        <div>{{ this.marker.author }}</div>
+        <div v-if="marker.author">
+            <h5 class="pt-3">{{ trans('global.marker.fields.author') }}</h5>
+            <div>{{ marker.author }}</div>
+        </div>
 
-        <h5 class="pt-3">{{ trans('global.description') }}</h5>
-        <div class="pb-2" v-html="marker.description"></div>
+        <div v-if="marker.description">
+            <h5 class="pt-3">{{ trans('global.description') }}</h5>
+            <div v-html="marker.description"></div>
+        </div>
 
         <h5 class="pt-3 clearfix">{{ trans('global.medium.title') }}</h5>
         <div v-if="marker.id != null"
             v-permission="'medium_access'"
-            v-bind:id="'map_marker_media_' + marker.id"
+            :id="'map_marker_media_' + marker.id"
         >
             <media
                 subscribable_type="App\MapMarker"
-               :subscribable_id="marker.id"
-               format="list"
+                :subscribable_id="marker.id"
+                format="list"
             />
         </div>
 
-        <h5 class="pt-3">{{ trans('global.address') }}</h5>
-        <div v-dompurify-html="marker.address"></div>
+        <div v-if="marker.address">
+            <h5 class="pt-3">{{ trans('global.address') }}</h5>
+            <div v-dompurify-html="marker.address"></div>
+        </div>
 
-        <h5 class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
-        <div>
+        <div v-if="marker.url">
+            <h5 class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
             <a
                 :href="marker.url"
                 target="_blank"
@@ -59,10 +66,10 @@
     </div>
 </template>
 <script>
-
 import Media from '../media/Media.vue';
 import SubscribableList from "../subscription/SubscribableList.vue";
 import tokens from "../subscription/Tokens.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'MarkerView',
@@ -73,30 +80,33 @@ export default {
     },
     props: {
         marker: {
-            default: null
+            type: Object,
+            default: null,
         },
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
             component_id: this.$.uid,
             tag_array: {},
-            subscribers: {}
+            subscribers: {},
         }
     },
     watch: { // reload if context change
         marker: function(newVal, oldVal) {
-            this.tag_array = newVal.tags.split(",");
+            this.tag_array = newVal.tags?.split(",");
         },
     },
     methods: {
-        editMarker(marker){
-            this.$eventHub.emit('edit_marker', marker);
+        editMarker(marker) {
+            this.globalStore?.showModal('map-marker-modal', marker);
         },
-
     },
-    mounted() {
-
-    }
-
+    mounted() {},
 }
 </script>

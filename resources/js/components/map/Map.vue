@@ -206,7 +206,7 @@
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.marker.delete')"
-                :description="trans('global.role.marker')"
+                :description="trans('global.marker.delete_helper')"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -298,7 +298,6 @@ export default {
                 .then(res => {
                     this.markers = res.data.markers;
                     this.currentMarker = this.markers[0];
-                    //console.log(this.markers);
                     this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
 
                     this.markers.forEach((marker) => {
@@ -324,7 +323,6 @@ export default {
                 });
             console.log('Clustergroup');
             console.log(this.clusterGroup);
-            console.log('Clustergroup');
         },
         async markerSearch() {
             $("#loading-events").show();
@@ -363,19 +361,18 @@ export default {
         refreshMap() {
             // parse property from Observer to JSON
             const eventsData = JSON.parse(JSON.stringify(this.events));
-            //console.log(eventsData);
 
             this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
             // add all event-locations
             Object.entries(eventsData).forEach(event => {
                 const data = event[1];
                 let address = data.termine.key_0.VO_ADRESSE;
-                //console.log(address);
-                if(address.includes("online")||address.includes("Online")) {
+ 
+                if (address.includes("online")||address.includes("Online")) {
                     address = 'Rheinland-Pfalz';
                 }
                 const url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURI(address) + '&format=jsonv2';
-                //console.log(url);
+
                 axios.get(url)
                     .then(res => {
                         this.clusterGroup.addLayer(
@@ -415,7 +412,6 @@ export default {
                 this.sidebar.open(sidebar_target);
             }.bind(this, sidebar_target));
 
-            console.log(leafletMarker);
             this.leafletMarkers.push(leafletMarker);
 
             return leafletMarker;
@@ -465,7 +461,7 @@ export default {
                     this.loader();
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
         editMap(currentMap) {
@@ -476,16 +472,27 @@ export default {
         },
     },
     mounted() {
-        this.$eventHub.on('edit_marker', (marker) => {
-            this.edit(marker);
+        this.$eventHub.on('marker-added', (marker) => {
+            this.markers.push(marker);
+            this.clusterGroup.addLayer(
+                this.generateMarker(
+                    marker.latitude,
+                    marker.longitude,
+                    marker,
+                    marker.title,
+                    marker.teaser_text,
+                    'll-marker',
+                    marker.type.css_icon,
+                    marker.type.color,
+                    marker.category.shape,
+                    'fa'
+                )
+            );
         });
 
-        this.$eventHub.on('marker-updated', (marker) => {
-            let index = this.markers.findIndex(
-                i => i.id === this.currentMarker.id
-            );
-            this.markers.splice(index, 1);
-            this.markers[index] = marker;
+        this.$eventHub.on('marker-updated', (updatedMarker) => {
+            let marker = this.markers.find(m => m.id === this.currentMarker.id);
+            Object.assign(marker, updatedMarker);
         });
 
         this.$eventHub.on('map-updated', (map) => {

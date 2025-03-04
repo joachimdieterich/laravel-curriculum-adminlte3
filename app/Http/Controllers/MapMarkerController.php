@@ -16,8 +16,6 @@ class MapMarkerController extends Controller
     {
         //abort_unless(\Gate::allows('map_access'), 403);
 
-
-
         if (request()->wantsJson() AND request()->has(['type_id', 'category_id'])) {
             $input = $this->validateRequest();
             return [
@@ -31,7 +29,6 @@ class MapMarkerController extends Controller
         }
 
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -63,11 +60,9 @@ class MapMarkerController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return ['marker' => $marker];
+            return $marker->with(['type', 'category'])->find($marker->id);
         }
     }
-
-
 
     /**f
      * Update the specified resource in storage.
@@ -101,9 +96,8 @@ class MapMarkerController extends Controller
         $mapMarker->save();
 
         if (request()->wantsJson()) {
-            return ['marker' => $mapMarker];
+            return $mapMarker;
         }
-
     }
 
     /**

@@ -67,7 +67,7 @@
                                     :placeholder="trans('global.marker.fields.description')"
                                     class="form-control"
                                     :init="tinyMCE"
-                                    :initial-value="form.description"
+                                    v-model="form.description"
                                 />
                             </div>
 
@@ -114,9 +114,9 @@
                                 name="map_marker_type"
                                 url="/mapMarkerTypes"
                                 model="mapMarkerType"
-                                :selected="this.form.type_id"
+                                :selected="form.type_id"
                                 @selectedValue="(id) => {
-                                    this.form.type_id = id;
+                                    this.form.type_id = id[0];
                                 }"
                             />
 
@@ -125,9 +125,9 @@
                                 name="map_marker_category"
                                 url="/mapMarkerCategories"
                                 model="mapMarkerCategory"
-                                :selected="this.form.category_id"
+                                :selected="form.category_id"
                                 @selectedValue="(id) => {
-                                    this.form.category_id = id;
+                                    this.form.category_id = id[0];
                                 }"
                             />
 
@@ -138,7 +138,7 @@
                                 <input
                                     id="latitude"
                                     name="latitude"
-                                    type="text"
+                                    type="number"
                                     class="form-control"
                                     v-model.trim="form.latitude"
                                     :placeholder="trans('global.marker.fields.latitude')"
@@ -157,7 +157,7 @@
                                 <input
                                     id="longitude"
                                     name="longitude"
-                                    type="text"
+                                    type="number"
                                     class="form-control"
                                     v-model.trim="form.longitude"
                                     :placeholder="trans('global.marker.fields.longitude')"
@@ -240,7 +240,7 @@
                         <button
                             id="marker-save"
                             class="btn btn-primary ml-3"
-                            :disabled="!form.title"
+                            :disabled="!form.title || !form.latitude || !form.longitude || !form.type_id || !form.category_id"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -281,20 +281,20 @@ export default {
             method: 'post',
             url: '/mapMarkers',
             form: new Form({
-                'id':'',
-                'title':'',
-                'teaser_tesxt':'',
-                'description': '',
-                'author': '',
-                'type_id': 1,
-                'category_id': 1,
-                'tags': '',
-                'latitude': null,
-                'longitude': null,
-                'address': '',
-                'url': '',
-                'url_title': '',
-                'map_id': '',
+                id: '',
+                title: '',
+                teaser_tesxt: '',
+                description: '',
+                author: '',
+                type_id: 1,
+                category_id: 1,
+                tags: '',
+                latitude: null,
+                longitude: null,
+                address: '',
+                url: '',
+                url_title: '',
+                map_id: '',
             }),
             tinyMCE: this.$initTinyMCE(
                 [
@@ -318,22 +318,21 @@ export default {
         add() {
             axios.post(this.url, this.form)
                 .then(r => {
-                    this.$eventHub.emit('marker-added', r.data.marker);
+                    this.$eventHub.emit('marker-added', r.data);
                     this.globalStore?.closeModal(this.$options.name)
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
         update() {
-            console.log('update');
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
-                    this.$eventHub.emit('marker-updated', r.data.marker);
+                    this.$eventHub.emit('marker-updated', r.data);
                     this.globalStore?.closeModal(this.$options.name)
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
     },
@@ -357,4 +356,3 @@ export default {
     },
 }
 </script>
-

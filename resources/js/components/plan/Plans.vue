@@ -142,6 +142,15 @@
                             {{ trans('global.plan.edit') }}
                         </button>
 
+                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                            :name="'plan-share_' + plan.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="sharePlan(plan)"
+                        >
+                            <i class="fa fa-share-alt mr-2"></i>
+                            {{ trans('global.plan.share') }}
+                        </button>
+
                         <button v-if="plan.allow_copy"
                             :name="'copy-plan-' + plan.id"
                             class="dropdown-item text-secondary"
@@ -187,6 +196,7 @@
         <Teleport to="body">
             <PlanModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
+            <SubscribeModal v-if="!subscribable"/>
             <SubscribePlanModal v-if="subscribable"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
@@ -218,6 +228,7 @@
 </template>
 <script>
 import PlanModal from "../plan/PlanModal.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
 import SubscribePlanModal from "../plan/SubscribePlanModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -302,6 +313,19 @@ export default {
         editPlan(plan) {
             this.globalStore?.showModal('plan-modal', plan);
         },
+        sharePlan(plan) {
+            this.globalStore?.showModal(
+                'subscribe-modal',
+                {
+                    modelId: plan.id,
+                    modelUrl: 'plan' ,
+                    shareWithUsers: true,
+                    shareWithGroups: true,
+                    shareWithOrganizations: true,
+                    shareWithToken: false,
+                    canEditCheckbox: true,
+                });
+        },
         loaderEvent() {
             this.dt = $('#plan-datatable').DataTable();
 
@@ -355,6 +379,7 @@ export default {
     },
     components: {
         PlanModal,
+        SubscribeModal,
         SubscribePlanModal,
         MediumModal,
         ConfirmModal,

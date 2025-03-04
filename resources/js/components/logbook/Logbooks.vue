@@ -185,8 +185,8 @@
 
         <Teleport to="body">
             <LogbookModal v-if="!subscribable"/>
-            <SubscribeModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
+            <SubscribeModal v-if="!subscribable"/>
             <SubscribeLogbookModal v-if="subscribable"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
@@ -286,8 +286,8 @@ export default {
                     shareWithUsers: true,
                     shareWithGroups: true,
                     shareWithOrganizations: true,
-                    shareWithToken: true,
-                    canEditCheckbox: true
+                    shareWithToken: false,
+                    canEditCheckbox: true,
                 });
         },
         setFilter(filter)  {

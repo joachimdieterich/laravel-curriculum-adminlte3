@@ -288,7 +288,7 @@ export default {
                     this.subscribers = res.data;
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
         subscribe(subscribable_type, subscribable_id) {
@@ -301,7 +301,7 @@ export default {
                 this.subscribers.subscriptions.push(res.data);
             })
             .catch(err => {
-                console.log(err.response);
+                console.log(err);
             });
         },
         changeCanEditTokenValue(value) {

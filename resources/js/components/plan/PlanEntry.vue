@@ -49,6 +49,7 @@
                                 <span class="flex-fill" v-dompurify-html="entry.description ?? ''"></span>
                                 <img v-if="entry.medium_id"
                                     :src="'/media/' + entry.medium_id + '/thumb'"
+                                    class="h-100"
                                 />
                             </div>
 

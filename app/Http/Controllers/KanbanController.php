@@ -452,7 +452,7 @@ class KanbanController extends Controller
 
             foreach ($status->items as $item)
             {
-               $kanbanItemCopy = KanbanItem::Create([
+                $kanbanItemCopy = KanbanItem::Create([
                     'title'             => $item->title,
                     'description'       => $item->description,
                     'order_id'          => $item->order_id,
@@ -462,10 +462,10 @@ class KanbanController extends Controller
                     'due_date'          => $item->due_date,
                     'owner_id'          => auth()->user()->id,
                 ]);
-               // dump($item->mediaSubscriptions);
-               foreach ($item->mediaSubscriptions as $mediaSubscription)
-               {
-                   $subscribe = MediumSubscription::Create([
+
+                foreach ($item->mediaSubscriptions as $mediaSubscription)
+                {
+                    MediumSubscription::Create([
                        'medium_id' => $mediaSubscription->medium_id,
                        'subscribable_type' => $mediaSubscription->subscribable_type,
                        'subscribable_id' => $kanbanItemCopy->id,
@@ -473,11 +473,12 @@ class KanbanController extends Controller
                        'visibility' => $mediaSubscription->visibility,
                        'additional_data' => $mediaSubscription->additional_data,
                        'owner_id' => auth()->user()->id,
-                   ]);
-               }
+                    ]);
+                }
             }
         }
-        return redirect('/kanbans');
+
+        return $kanbanCopy;
     }
 
     protected function validateRequest()

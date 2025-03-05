@@ -351,7 +351,10 @@ export default {
             this.showCopy = true;
         },
         copy() {
-            window.location = "/kanbans/" + this.currentKanban.id + "/copy";
+            axios.get('/kanbans/' + this.currentKanban.id + '/copy')
+                .then(response => {
+                    this.kanbans.push(response.data);
+                });
         },
         destroy() {
             if (this.subscribable) {

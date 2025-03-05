@@ -1,7 +1,7 @@
 <template>
     <div
         class="kanban-header"
-        :style="{ backgroundColor: color }"
+        :style="{ backgroundColor: status?.color }"
     >
         <div v-if="newStatus"
             id="kanbanStatusCreate"
@@ -148,7 +148,6 @@ export default {
             edit_rights: false,
             copy_rights: false,
             delete_rights: false,
-            color: this.status?.color ?? '#FFF',
         }
     },
     methods: {

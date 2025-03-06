@@ -116,7 +116,6 @@ export default {
             axios.post('/contentSubscriptions', this.form)
                 .then(r => {
                     this.$eventHub.emit('content-added', r.data);
-                    // vorher: this.$parent.$emit('addContent', this.form);
                 })
                 .catch(e => {
                     console.log(e.response);

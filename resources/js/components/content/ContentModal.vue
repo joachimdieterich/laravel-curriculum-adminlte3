@@ -1,5 +1,5 @@
 <template>
-    <Transition name="modal" >
+    <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
             @click.self="globalStore.closeModal($options.name)"
@@ -115,7 +115,9 @@ export default {
                 {
                     callback: 'insertContent',
                     callbackId: this.component_id
-                }
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link mathjax code",
+                ""
             ),
         }
     },
@@ -132,11 +134,10 @@ export default {
         add() {
             axios.post('/contents', this.form)
                 .then(r => {
-                    r.data.subscribable_id = this.form.subscribable_id;
                     this.$eventHub.emit('content-added', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
         update() {
@@ -146,14 +147,15 @@ export default {
                     this.$eventHub.emit('content-updated', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
 
                 this.form.reset();

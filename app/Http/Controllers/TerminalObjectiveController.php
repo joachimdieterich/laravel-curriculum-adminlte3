@@ -56,10 +56,12 @@ class TerminalObjectiveController extends Controller
             ->get()->first();
 
         $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
+        $editable = $objective->curriculum->isEditable();
 
         return view('objectives.show')
             ->with(compact('objective'))
-            ->with(compact('repository'));
+            ->with(compact('repository'))
+            ->with(compact('editable'));
     }
 
     /**

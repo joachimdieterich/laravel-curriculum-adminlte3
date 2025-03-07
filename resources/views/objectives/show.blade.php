@@ -1,8 +1,5 @@
 @extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
 
-@section('title')
-    {{ trans('global.details') }}
-@endsection
 @section('breadcrumb')
     @if (Auth::user()->id == env('GUEST_USER'))
         <breadcrumbs
@@ -20,10 +17,16 @@
         ></breadcrumbs>
     @endif
 @endsection
+
+@section('title')
+    <title-component></title-component>
+@endsection
+
 @section('content')
     <objective
         ref="curriculumView"
         :repository="{{ $repository }}"
         :objective="{{ $objective }}"
+        :editable="{{ json_encode($editable) }}"
     ></objective>
 @endsection

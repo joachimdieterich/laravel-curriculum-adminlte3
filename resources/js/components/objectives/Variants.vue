@@ -1,60 +1,56 @@
 <template>
     <div>
-            <!-- no variantdefinitions in curriculum OR no variants on objective -->
-            <div v-if="model.curriculum.variants === null || (!enableDraggable && model.variants.length === 0)"
-                 class="col-12 pb-2">
-                <div v-if="field === 'description'"
-                     v-dompurify-html="model.description">
-                </div>
-                <div v-else
-                     v-dompurify-html="model.title"></div>
-            </div>
+        <!-- no variantdefinitions in curriculum OR no variants on objective -->
+        <div v-if="model.curriculum.variants === null || (!enableDraggable && model.variants.length === 0)"
+            class="col-12 pb-2"
+        >
+            <div v-html="fieldText"></div>
+        </div>
 
-            <!-- with variants -->
-            <div v-else
-                 >
-                <draggable
-                    :disabled='!enableDraggable'
-                    v-model="definitions"
-                    @start="drag=true"
-                    @end="handleVariantMoved"
-                    class="row px-2"
-                    itemKey="id">
-                    <template
-                        #item="{ element: variant_definition , index }">
-                            <div
-                                :class="width_css"
-                                 >
-                                <div :class="css_form"
-                                     style="height:100%">
-                                    <i v-if="field !== 'description' && variant_definition.id !== 0"
-                                       v-permission="'curriculum_edit'"
-                                       class="fa fa-pencil-alt pointer pull-right"
-                                       @click="togglEdit(variant_definition.id)"></i>
-                                    <p class="text-bold" v-if="showTitle">
-                                        {{ variant_definition.title }}
-                                    </p>
-                                    <div v-if="variant_definition.id === 0">
-                                        <div v-if="field === 'description' "
-                                             v-dompurify-html="model.description"></div>
-                                        <div v-else v-dompurify-html="model.title"></div>
-                                    </div>
-                                    <div v-else>
-                                    <span v-if="filterVariant(variant_definition.id).length !== 0">
-                                        <div v-if="filterVariant(variant_definition.id)[0][field] != '' "
-                                             style="height:100%">
-                                            <span v-dompurify-html="filterVariant(variant_definition.id)[0][field]"></span>
-                                        </div>
-                                    </span>
-
-                                    </div>
+        <!-- with variants -->
+        <div v-else
+                >
+            <draggable
+                :disabled='!enableDraggable'
+                v-model="definitions"
+                @start="drag=true"
+                @end="handleVariantMoved"
+                class="row px-2"
+                itemKey="id">
+                <template
+                    #item="{ element: variant_definition , index }">
+                        <div
+                            :class="width_css"
+                                >
+                            <div :class="css_form"
+                                    style="height:100%">
+                                <i v-if="field !== 'description' && variant_definition.id !== 0"
+                                    v-permission="'curriculum_edit'"
+                                    class="fa fa-pencil-alt pointer pull-right"
+                                    @click="togglEdit(variant_definition.id)"></i>
+                                <p class="text-bold" v-if="showTitle">
+                                    {{ variant_definition.title }}
+                                </p>
+                                <div v-if="variant_definition.id === 0">
+                                    <div v-if="field === 'description' "
+                                            v-dompurify-html="model.description"></div>
+                                    <div v-else v-dompurify-html="model.title"></div>
                                 </div>
+                                <div v-else>
+                                <span v-if="filterVariant(variant_definition.id).length !== 0">
+                                    <div v-if="filterVariant(variant_definition.id)[0][field] != '' "
+                                            style="height:100%">
+                                        <span v-dompurify-html="filterVariant(variant_definition.id)[0][field]"></span>
+                                    </div>
+                                </span>
 
+                                </div>
                             </div>
-                    </template>
-                </draggable>
-            </div>
 
+                        </div>
+                </template>
+            </draggable>
+        </div>
 
         <div v-if="edit"
              class="row pt-2 ">
@@ -93,51 +89,56 @@
                 </div>
             </div>
         </div>
-
     </div>
-
 </template>
 <script>
 import Form from 'form-backend-validation';
 import draggable from "vuedraggable";
 import Editor from "@tinymce/tinymce-vue";
 
-
-
 export default {
     name: 'variants',
     props: {
         model: {},
-        referenceable_type: String,
-        referenceable_id: Number,
-        variant_order: {},
+        referenceable_type: {
+            type: String,
+            default: null,
+        },
+        referenceable_id: {
+            type: Number,
+            default: null,
+        },
+        variant_order: {
+            type: Object,
+            default: null,
+        },
         field: {
             type: String,
-            default:'title'
+            default: 'description',
         },
-        showTitle:{
+        showTitle: {
             type: Boolean,
-            default:true,
+            default: true,
         },
         css_size: {
             type: String,
-            default:'col-md-4 col-sm-12'
+            default:'col-md-4 col-sm-12',
         },
         css_form: {
             type: String,
-            default: 'callout callout-primary'
-        }
+            default: 'callout callout-primary',
+        },
     },
     data() {
         return {
             component_id: this.$.uid,
             form: new Form({
-                'id': '',
-                'title': '',
-                'description': '',
-                'referenceable_type': '',
-                'referenceable_id': '',
-                'variant_definition_id': '',
+                id: '',
+                title: '',
+                description: '',
+                referenceable_type: '',
+                referenceable_id: '',
+                variant_definition_id: '',
             }),
             tinyMCE: this.$initTinyMCE(
                 [
@@ -148,7 +149,7 @@ export default {
                     'referenceable_type': 'App\\\Curriculum',
                     'referenceable_id': this.model?.curriculum_id,
                     'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id
+                    'eventHubCallbackFunctionParams': this.component_id,
                 }
             ),
             variants: {},
@@ -156,8 +157,6 @@ export default {
             edit: false,
         }
     },
-
-
     methods: {
         loadVariantDefinitions: function () {
             axios.get('/curricula/' + this.model.curriculum.id + '/variantDefinitions')
@@ -244,7 +243,7 @@ export default {
         this.variants = this.model.variants;
     },
     computed: {
-        enableDraggable(){
+        enableDraggable() {
             return window.Laravel.permissions.indexOf('curriculum_edit') !== -1;
         },
         width_css() {
@@ -270,12 +269,18 @@ export default {
                 default: return 'col-md-4 col-sm-12';
                     break;
             }
-        }
+        },
+        fieldText() {
+            let text = this.model[this.field];
+            if (!text) { // empty string or null
+                text = window.trans.global.no_description;
+            }
+            return text;
+        },
     },
     components: {
         draggable,
         Editor,
-
-    }
+    },
 }
 </script>

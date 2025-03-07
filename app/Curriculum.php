@@ -274,11 +274,12 @@ class Curriculum extends Model
                 ->first());
         }
         if (
-            $userSubscription->editable // user enrolled
-            or $groupSubscription->editable ?? false // group enrolled
-            or $organizationSubscription->editable ?? false // organization enrolled
-            or ($this->owner_id == $user_id)            // or owner
-            or is_admin() // or admin
+            ($this->owner_id == $user_id or is_admin()) or // owner or admin
+            ($this->type_id !== 1 and ( // non-global
+                $userSubscription->editable // user enrolled
+                or $groupSubscription->editable ?? false // group enrolled
+                or $organizationSubscription->editable ?? false // organization enrolled
+            ))
         ) {
             return true;
         } else {

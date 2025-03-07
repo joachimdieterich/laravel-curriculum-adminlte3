@@ -258,7 +258,7 @@
             <SubscribeModal/>
         </Teleport>
 
-        <teleport to="#customTitle">
+        <Teleport to="#customTitle">
             <small>{{ currentCurriculum.title }}</small>
             <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
                 v-permission="'curriculum_edit'"
@@ -274,7 +274,7 @@
             >
                 <i class="fa fa-share-alt"></i>
             </a>
-        </teleport>
+        </Teleport>
     </div>
 </template>
 <script>

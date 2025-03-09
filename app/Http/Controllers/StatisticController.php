@@ -7,7 +7,6 @@ use App\EnablingObjective;
 use App\Log;
 use App\TerminalObjective;
 use Carbon\Carbon;
-USE App\Kanban;
 
 class StatisticController extends Controller
 {
@@ -111,10 +110,6 @@ class StatisticController extends Controller
                     ),
             ],
         ];
-        /*return Log::select('created_at', 'counter')->where('key', $key)
-            ->get()->map(function ($item) {
-                return ['created_at' => Carbon::parse($item['created_at'])->format('Y-m-d'), 'counter' => $item['counter']];
-            });*/
     }
 
     protected function getEntriesByKey($key, $date_begin, $date_end)
@@ -162,18 +157,6 @@ class StatisticController extends Controller
                     'counter' => $item['counter']
                 ];
             });
-        /*return Log::groupBy('logs.value')
-            ->selectRaw("{$table}.title, logs.value, sum(`logs`.`counter`) AS counter")
-            ->where('key', $key)
-            ->whereBetween('logs.created_at', [
-                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
-            ])
-            //->whereDate('logs.created_at', $date)
-            ->join($table, "{$table}.{$field}", '=', 'logs.value')
-            ->get()->map(function ($item) {
-                return ['value' => mb_strimwidth(strip_tags($item['title']), 0, 70, '...'), 'counter' => $item['counter']];
-            });*/
     }
 
     protected function getEntriesByKeyWithRelatedTitleFromUuid($key, $table, $date_begin, $date_end, $field = 'id')
@@ -193,16 +176,6 @@ class StatisticController extends Controller
                     'counter' => $item['counter']
                 ];
             });
-       /* return Log::groupBy('value')
-            ->selectRaw('value, sum(`counter`) AS counter')
-            ->where('key', $key)
-            ->whereBetween('created_at', [
-                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
-            ])//->whereDate('created_at', $date)
-            ->get()->map(function ($item) {
-                return ['value' => $this->getTitleFromUuid($item['value']), 'counter' => $item['counter']];
-            });*/
     }
 
     protected function getTitleFromUuid($uuid)

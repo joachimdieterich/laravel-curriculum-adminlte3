@@ -23,39 +23,55 @@ class StatisticController extends Controller
                 case 'login':
                 case 'ssoLogin':
                 case 'guestLogin':
-                    return ['message' => $this->getLogins(request('chart'), request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getLogins(request('chart'), request('date_begin'), request('date_end'))];
+                    break;
                 case 'browsers':
-                    return ['message' => $this->getEntriesByKey('browser', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('browser', request('date_begin'), request('date_end'))];
+                    break;
                 case 'devices':
-                    return ['message' => $this->getEntriesByKey('device', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('device', request('date_begin'), request('date_end'))];
+                    break;
                 case 'curricula':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CurriculumController@show', 'curricula', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CurriculumController@show', 'curricula', request('date_begin'), request('date_end'))];
+                    break;
                 case 'courses':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CourseController@show', 'curricula', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CourseController@show', 'curricula', request('date_begin'), request('date_end'))];
+                    break;
                 case 'eventPlugin':
-                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\EventSubscriptionController@getEvents', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('App\Http\Controllers\EventSubscriptionController@getEvents', request('date_begin'), request('date_end'))];
+                    break;
                 case 'repositoryPlugin':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitleFromUuid('App\Http\Controllers\RepositorySubscriptionController@getMedia', 'enabling_objectives', request('date_begin'), request('date_end'), 'uuid')];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitleFromUuid('App\Http\Controllers\RepositorySubscriptionController@getMedia', 'enabling_objectives', request('date_begin'), request('date_end'), 'uuid')];
+                    break;
                 case 'bbbPlugin':
-                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@start', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@start', request('date_begin'), request('date_end'))];
+                    break;
                 case 'bbbPluginParticipants':
-                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@endCallback->participantCount',  request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@endCallback->participantCount',  request('date_begin'), request('date_end'))];
+                    break;
                 case 'organizations':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('activeOrg', 'organizations', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('activeOrg', 'organizations', request('date_begin'), request('date_end'))];
+                    break;
                 case 'groups':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\GroupsController@show', 'groups', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\GroupsController@show', 'groups', request('date_begin'), request('date_end'))];
+                    break;
                 case 'achievements':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\AchievementController@store', 'roles', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\AchievementController@store', 'roles', request('date_begin'), request('date_end'))];
+                    break;
                 case 'certificates':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CertificateController@generate', 'certificates', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CertificateController@generate', 'certificates', request('date_begin'), request('date_end'))];
+                    break;
                 case 'kanbans':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@show', 'kanbans', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@show', 'kanbans', request('date_begin'), request('date_end'))];
+                    break;
                 case 'model':
-                    return ['message' => $this->getEntriesByModel(request('model'), request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByModel(request('model'), request('date_begin'), request('date_end'))];
+                    break;
                 default:
                    break;
             }
         }
+        return $result;
     }
 
     protected function getLogins($key, $date_begin, $date_end )

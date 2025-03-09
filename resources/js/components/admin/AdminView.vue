@@ -40,8 +40,7 @@
                  aria-labelledby="statistic-nav-tab">
 
                 <div class="row">
-                    <span media="print"
-                          class="col-12 mt-2">
+                    <span class="col-12 mt-2">
                         <span  class="pull-left">
                             <label for="from">{{ trans('global.timeFrom')}}</label>
                              <VueDatePicker

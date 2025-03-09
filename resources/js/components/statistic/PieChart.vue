@@ -177,7 +177,7 @@ export default {
 
         isVisible(item){
             if (item.value === null){
-                if (this.search.toLowerCase() != ''){
+                if (this.search.toLowerCase() !== ''){
                     return "display:none";
                 } else {
                     return "";

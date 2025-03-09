@@ -371,8 +371,8 @@ export default {
         dt.on('select', function(e, dt, type, indexes) {
             let selection = dt.rows('.selected').data().toArray()
             this.store.setSelectedIds('curriculum-user-datatable', selection);
-            // TODO: needs rework
-            // this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
+
+            this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
         }.bind(this));
 
         this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {

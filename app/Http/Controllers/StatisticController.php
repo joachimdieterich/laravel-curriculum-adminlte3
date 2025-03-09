@@ -7,6 +7,7 @@ use App\EnablingObjective;
 use App\Log;
 use App\TerminalObjective;
 use Carbon\Carbon;
+USE App\Kanban;
 
 class StatisticController extends Controller
 {
@@ -65,6 +66,9 @@ class StatisticController extends Controller
                 case 'kanbans':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@show', 'kanbans', request('date_begin'), request('date_end'))];
                     break;
+                case 'model':
+                    return ['message' => $this->getEntriesByModel(request('model'), request('date_begin'), request('date_end'))];
+                    break;
                 default:
                    break;
             }
@@ -85,8 +89,8 @@ class StatisticController extends Controller
         $labels = Log::select('created_at', 'counter')
             ->where('key', $key)
             ->whereBetween('created_at', [
-                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
             ])
             ->get()->map(function ($item) {
                 return Carbon::parse($item['created_at'])->format('Y-m-d');
@@ -120,17 +124,46 @@ class StatisticController extends Controller
         ->selectRaw('value, sum(`counter`) AS counter')
             ->where('key', $key)
             ->whereBetween('created_at', [
-                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
             ])//->whereDate('created_at', $date)
             ->get()->map(function ($item) {
                 return ['value' => $item['value'], 'counter' => $item['counter']];
             });
     }
 
+    protected function getEntriesByModel($model, $date_begin, $date_end)
+    {
+        $class = 'App\\'.$model;
+        $entries =  $class::whereBetween('created_at', [
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+            ])
+            ->get();
+        return [
+            'value' => $model,
+            'counter' => count($entries),
+            ];
+    }
+
     protected function getEntriesByKeyWithRelatedTitle($key, $table, $date_begin, $date_end, $field = 'id')
     {
-        return Log::groupBy('logs.value')
+        return Log::selectRaw("{$table}.title, logs.value, sum(logs.counter) AS counter")
+            ->join($table, "{$table}.{$field}", '=', 'logs.value')
+            ->where('key', $key)
+            ->whereBetween('logs.created_at', [
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+            ])
+            ->groupBy('logs.value', "{$table}.title") // Füge die title-Spalte zur GROUP BY-Klausel hinzu
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'value' => mb_strimwidth(strip_tags($item['title']), 0, 70, '...'),
+                    'counter' => $item['counter']
+                ];
+            });
+        /*return Log::groupBy('logs.value')
             ->selectRaw("{$table}.title, logs.value, sum(`logs`.`counter`) AS counter")
             ->where('key', $key)
             ->whereBetween('logs.created_at', [
@@ -141,12 +174,27 @@ class StatisticController extends Controller
             ->join($table, "{$table}.{$field}", '=', 'logs.value')
             ->get()->map(function ($item) {
                 return ['value' => mb_strimwidth(strip_tags($item['title']), 0, 70, '...'), 'counter' => $item['counter']];
-            });
+            });*/
     }
 
     protected function getEntriesByKeyWithRelatedTitleFromUuid($key, $table, $date_begin, $date_end, $field = 'id')
     {
-        return Log::groupBy('value')
+        return Log::selectRaw('logs.value, groups.title, sum(logs.counter) AS counter')
+            ->join('groups', 'groups.id', '=', 'logs.value') // Füge den Join zur Gruppen-Tabelle hinzu
+            ->where('key', $key)
+            ->whereBetween('logs.created_at', [
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+            ])
+            ->groupBy('logs.value', 'groups.title') // Füge die title-Spalte zur GROUP BY-Klausel hinzu
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'value' => $item['title'], // Verwende den Titel direkt aus dem Ergebnis
+                    'counter' => $item['counter']
+                ];
+            });
+       /* return Log::groupBy('value')
             ->selectRaw('value, sum(`counter`) AS counter')
             ->where('key', $key)
             ->whereBetween('created_at', [
@@ -155,7 +203,7 @@ class StatisticController extends Controller
             ])//->whereDate('created_at', $date)
             ->get()->map(function ($item) {
                 return ['value' => $this->getTitleFromUuid($item['value']), 'counter' => $item['counter']];
-            });
+            });*/
     }
 
     protected function getTitleFromUuid($uuid)

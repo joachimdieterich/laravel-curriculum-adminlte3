@@ -91,19 +91,18 @@ class TerminalObjectiveController extends Controller
                 $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
             }
             if (request()->wantsJson()) {
-                return ['message' => $terminalObjective];
+                return $terminalObjective->without('curriculum')->find($terminalObjective->id);
             }
         }
 
         // update order_id
         if ($request->has('order_id')) {
             if (request()->wantsJson()) {
-                return ['message' => $this->toggleOrderId($old_objective, request('order_id'))];
+                return $this->toggleOrderId($old_objective, request('order_id'));
             }
         }
 
         // default
-
         return $terminalObjective->update($request->all());
     }
 

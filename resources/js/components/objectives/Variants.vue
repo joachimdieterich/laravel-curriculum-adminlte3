@@ -6,46 +6,48 @@
         </div>
 
         <!-- with variants -->
-        <div v-else
-                >
+        <div v-else>
             <draggable
                 :disabled='!enableDraggable'
                 v-model="definitions"
                 @start="drag=true"
                 @end="handleVariantMoved"
                 class="row px-2"
-                itemKey="id">
-                <template
-                    #item="{ element: variant_definition , index }">
+                itemKey="id"
+            >
+                <template #item="{ element: variant_definition , index }">
+                    <div :class="width_css">
                         <div
-                            :class="width_css"
-                                >
-                            <div :class="css_form"
-                                    style="height:100%">
-                                <i v-if="field !== 'description' && variant_definition.id !== 0"
-                                    v-permission="'curriculum_edit'"
-                                    class="fa fa-pencil-alt pointer pull-right"
-                                    @click="togglEdit(variant_definition.id)"></i>
-                                <p class="text-bold" v-if="showTitle">
-                                    {{ variant_definition.title }}
-                                </p>
-                                <div v-if="variant_definition.id === 0">
-                                    <div v-if="field === 'description' "
-                                            v-dompurify-html="model.description"></div>
-                                    <div v-else v-dompurify-html="model.title"></div>
-                                </div>
-                                <div v-else>
+                            class="h-100"
+                            :class="css_form"
+                        >
+                            <i v-if="field !== 'description' && variant_definition.id !== 0"
+                                v-permission="'curriculum_edit'"
+                                class="fa fa-pencil-alt pointer pull-right"
+                                @click="togglEdit(variant_definition.id)"
+                            ></i>
+                            <p class="text-bold" v-if="showTitle">
+                                {{ variant_definition.title }}
+                            </p>
+
+                            <div v-if="variant_definition.id === 0">
+                                <div v-if="field === 'description'"
+                                    v-dompurify-html="model.description"
+                                ></div>
+                                <div v-else v-dompurify-html="model.title"></div>
+                            </div>
+
+                            <div v-else>
                                 <span v-if="filterVariant(variant_definition.id).length !== 0">
                                     <div v-if="filterVariant(variant_definition.id)[0][field] != '' "
-                                            style="height:100%">
+                                        class="h-100"
+                                    >
                                         <span v-dompurify-html="filterVariant(variant_definition.id)[0][field]"></span>
                                     </div>
                                 </span>
-
-                                </div>
                             </div>
-
                         </div>
+                    </div>
                 </template>
             </draggable>
         </div>
@@ -97,7 +99,10 @@ import Editor from "@tinymce/tinymce-vue";
 export default {
     name: 'variants',
     props: {
-        model: {},
+        model: {
+            type: Object,
+            default: null,
+        },
         referenceable_type: {
             type: String,
             default: null,

@@ -180,15 +180,15 @@ describe('kanban tests (teacher role)', () => {
                 .get('button[name="kanbanItemAddMedia_0_0"]')
                 .click()
 
-                .get('div[id="medium-modal"] a[href="#upload"]')
+                .get('div[id="medium-create-modal"] a[href="#upload"]')
                 .click()
 
-                .get('div[id="medium-modal"] input[type="file"]')
+                .get('div[id="medium-create-modal"] input[type="file"]')
                 .selectFile('tests/cypress/integration/media/example.png', {
                     action: 'drag-drop'
                 })
 
-                .get('button[name="medium-modal-submit"]')
+                .get('button[name="medium-create-modal-submit"]')
                 .click();
         });
 

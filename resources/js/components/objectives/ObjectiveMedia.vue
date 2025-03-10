@@ -50,10 +50,6 @@ export default {
         setCurrentTab(id) {
             this.currentTab = id;
         },
-        loaderEvent() {
-            this.$refs.objectiveMedia.loader();
-            this.$refs.artefactsMedia.loader();
-        },
     },
     mounted() {
         this.$refs.repositoryPlugin.loader();

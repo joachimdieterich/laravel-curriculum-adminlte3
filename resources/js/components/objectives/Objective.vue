@@ -94,7 +94,6 @@
                         role="tab"
                         aria-controls="media"
                         aria-selected="true"
-                        @click="loadMedia()"
                     >
                         <i class="fa fa-folder-open pr-2"></i>
                         <span v-if="help">{{ trans('global.medium.title') }}</span>
@@ -571,9 +570,6 @@ export default {
         //Loader
         loaderContents: function() {
             this.$refs.Contents.loaderEvent();
-        },
-        loadMedia() {
-            this.$refs.Media.loaderEvent();
         },
         loadReferences() {
             this.$refs.References.loaderEvent();

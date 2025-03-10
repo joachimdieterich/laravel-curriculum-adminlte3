@@ -79,8 +79,8 @@
                         </div>
                     </div>
                 </div>
-            </div><!-- /.tab-pane -->
-        </div> <!-- /.tab-content -->
+            </div>
+        </div>
 
         <div v-if="settings.edit"
             v-permission="'curriculum_edit'"
@@ -149,46 +149,52 @@ export default {
         setActiveTab(typetab) {
             this.activetab = typetab;
         },
+        processObjectives(response, objective_type_id = 0) {
+            let terminal = {};
+            this.typetabs.forEach(type => terminal[type] = []);
+
+            response.data.forEach(t => {
+                terminal[t.objective_type_id].push(t);
+            });
+
+            this.typetabs.forEach(type => this.max_ids[type] = terminal[type][terminal[type].length - 1].id);
+
+            Object.assign(this.type_objectives, terminal);
+
+            if (this.type_objectives.length === 0) return;
+
+            if (this.curriculum.objective_type_order) {
+                if (this.curriculum.objective_type_order.length === this.typetabs.length) {
+                    this.typetabs = this.curriculum.objective_type_order;
+                }
+            }
+            if (objective_type_id === 0) {
+                this.activetab = this.typetabs[0];
+            }
+        },
+
         loaderEvent(objective_type_id = 0) {
             axios.get('/curricula/' + this.curriculum.id + '/objectives')
                 .then(response => {
-                    let terminal = {};
-                    this.typetabs.forEach(type => terminal[type] = []);
-
-                    response.data.forEach(t => {
-                        terminal[t.objective_type_id].push(t);
-                    });
-
-                    this.typetabs.forEach(type => this.max_ids[type] = terminal[type][terminal[type].length - 1].id);
-
-                    Object.assign(this.type_objectives, terminal);
-
-                    if (this.type_objectives.length === 0) return;
-
-                    if (this.curriculum.objective_type_order) {
-                        if (this.curriculum.objective_type_order.length ===  this.typetabs.length) {
-                            this.typetabs = this.curriculum.objective_type_order;
-                        }
-                    }
-                    if (objective_type_id === 0) {
-                        this.activetab = this.typetabs[0];
-                    }
+                    this.processObjectives(response, objective_type_id);
                 })
                 .catch(e => {
                     console.log(e);
                 });
         },
-        // TODO: needs rework
-        // externalEvent: function(ids) {
-        //     this.reloadEnablingObjectives(ids);
-        // },
-        // async reloadEnablingObjectives(ids) {
-        //     try {
-        //         this.type_objectives = (await axios.post('/curricula/' + this.curriculum.id + '/achievements', { 'user_ids' : ids })).data.curriculum.terminal_objectives;
-        //     } catch(e) {
-        //         console.log(e);
-        //     }
-        // },
+         externalEvent: function(ids) {
+             this.reloadEnablingObjectives(ids);
+         },
+         reloadEnablingObjectives(ids) {
+             axios.post('/curricula/' + this.curriculum.id + '/achievements', { 'user_ids' : ids })
+                 .then(response => {
+
+                     this.processObjectives(response);
+                 })
+                 .catch(e => {
+                     console.log(e);
+                 });
+        },
         handleTypeMoved() {
             // Send the entire list of statuses to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", { objective_type_order: this.typetabs })

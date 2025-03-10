@@ -12,10 +12,8 @@ class StatisticController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : array
     {
         abort_unless(is_admin(), 403);
 
@@ -24,51 +22,55 @@ class StatisticController extends Controller
                 case 'login':
                 case 'ssoLogin':
                 case 'guestLogin':
-                    return ['message' => $this->getLogins(request('chart'), request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getLogins(request('chart'), request('date_begin'), request('date_end'))];
                     break;
                 case 'browsers':
-                    return ['message' => $this->getEntriesByKey('browser', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('browser', request('date_begin'), request('date_end'))];
                     break;
                 case 'devices':
-                    return ['message' => $this->getEntriesByKey('device', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('device', request('date_begin'), request('date_end'))];
                     break;
                 case 'curricula':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CurriculumController@show', 'curricula', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CurriculumController@show', 'curricula', request('date_begin'), request('date_end'))];
                     break;
                 case 'courses':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CourseController@show', 'curricula', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CourseController@show', 'curricula', request('date_begin'), request('date_end'))];
                     break;
                 case 'eventPlugin':
-                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\EventSubscriptionController@getEvents', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('App\Http\Controllers\EventSubscriptionController@getEvents', request('date_begin'), request('date_end'))];
                     break;
                 case 'repositoryPlugin':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitleFromUuid('App\Http\Controllers\RepositorySubscriptionController@getMedia', 'enabling_objectives', request('date_begin'), request('date_end'), 'uuid')];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitleFromUuid('App\Http\Controllers\RepositorySubscriptionController@getMedia', 'enabling_objectives', request('date_begin'), request('date_end'), 'uuid')];
                     break;
                 case 'bbbPlugin':
-                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@start', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@start', request('date_begin'), request('date_end'))];
                     break;
                 case 'bbbPluginParticipants':
-                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@endCallback->participantCount',  request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@endCallback->participantCount',  request('date_begin'), request('date_end'))];
                     break;
                 case 'organizations':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('activeOrg', 'organizations', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('activeOrg', 'organizations', request('date_begin'), request('date_end'))];
                     break;
                 case 'groups':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\GroupsController@show', 'groups', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\GroupsController@show', 'groups', request('date_begin'), request('date_end'))];
                     break;
                 case 'achievements':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\AchievementController@store', 'roles', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\AchievementController@store', 'roles', request('date_begin'), request('date_end'))];
                     break;
                 case 'certificates':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CertificateController@generate', 'certificates', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CertificateController@generate', 'certificates', request('date_begin'), request('date_end'))];
                     break;
                 case 'kanbans':
-                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@show', 'kanbans', request('date_begin'), request('date_end'))];
+                    $result =  ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@show', 'kanbans', request('date_begin'), request('date_end'))];
+                    break;
+                case 'model':
+                    $result =  ['message' => $this->getEntriesByModel(request('model'), request('date_begin'), request('date_end'))];
                     break;
                 default:
                    break;
             }
         }
+        return $result;
     }
 
     protected function getLogins($key, $date_begin, $date_end )
@@ -85,8 +87,8 @@ class StatisticController extends Controller
         $labels = Log::select('created_at', 'counter')
             ->where('key', $key)
             ->whereBetween('created_at', [
-                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
             ])
             ->get()->map(function ($item) {
                 return Carbon::parse($item['created_at'])->format('Y-m-d');
@@ -108,10 +110,6 @@ class StatisticController extends Controller
                     ),
             ],
         ];
-        /*return Log::select('created_at', 'counter')->where('key', $key)
-            ->get()->map(function ($item) {
-                return ['created_at' => Carbon::parse($item['created_at'])->format('Y-m-d'), 'counter' => $item['counter']];
-            });*/
     }
 
     protected function getEntriesByKey($key, $date_begin, $date_end)
@@ -120,41 +118,63 @@ class StatisticController extends Controller
         ->selectRaw('value, sum(`counter`) AS counter')
             ->where('key', $key)
             ->whereBetween('created_at', [
-                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
             ])//->whereDate('created_at', $date)
             ->get()->map(function ($item) {
                 return ['value' => $item['value'], 'counter' => $item['counter']];
             });
     }
 
+    protected function getEntriesByModel($model, $date_begin, $date_end)
+    {
+        $class = 'App\\'.$model;
+        $entries =  $class::whereBetween('created_at', [
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+            ])
+            ->get();
+        return [
+            'value' => $model,
+            'counter' => count($entries),
+            ];
+    }
+
     protected function getEntriesByKeyWithRelatedTitle($key, $table, $date_begin, $date_end, $field = 'id')
     {
-        return Log::groupBy('logs.value')
-            ->selectRaw("{$table}.title, logs.value, sum(`logs`.`counter`) AS counter")
+        return Log::selectRaw("{$table}.title, logs.value, sum(logs.counter) AS counter")
+            ->join($table, "{$table}.{$field}", '=', 'logs.value')
             ->where('key', $key)
             ->whereBetween('logs.created_at', [
-                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
             ])
-            //->whereDate('logs.created_at', $date)
-            ->join($table, "{$table}.{$field}", '=', 'logs.value')
-            ->get()->map(function ($item) {
-                return ['value' => mb_strimwidth(strip_tags($item['title']), 0, 70, '...'), 'counter' => $item['counter']];
+            ->groupBy('logs.value', "{$table}.title") // Füge die title-Spalte zur GROUP BY-Klausel hinzu
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'value' => mb_strimwidth(strip_tags($item['title']), 0, 70, '...'),
+                    'counter' => $item['counter']
+                ];
             });
     }
 
     protected function getEntriesByKeyWithRelatedTitleFromUuid($key, $table, $date_begin, $date_end, $field = 'id')
     {
-        return Log::groupBy('value')
-            ->selectRaw('value, sum(`counter`) AS counter')
+        return Log::selectRaw('logs.value, groups.title, sum(logs.counter) AS counter')
+            ->join('groups', 'groups.id', '=', 'logs.value') // Füge den Join zur Gruppen-Tabelle hinzu
             ->where('key', $key)
-            ->whereBetween('created_at', [
-                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
-                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
-            ])//->whereDate('created_at', $date)
-            ->get()->map(function ($item) {
-                return ['value' => $this->getTitleFromUuid($item['value']), 'counter' => $item['counter']];
+            ->whereBetween('logs.created_at', [
+                Carbon::parse($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::parse($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+            ])
+            ->groupBy('logs.value', 'groups.title') // Füge die title-Spalte zur GROUP BY-Klausel hinzu
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'value' => $item['title'], // Verwende den Titel direkt aus dem Ergebnis
+                    'counter' => $item['counter']
+                ];
             });
     }
 

@@ -53,7 +53,13 @@ class CourseController extends Controller
         ])
         ->find($course->curriculum_id);
 
-        $objectiveTypes = ObjectiveType::all();
+        $objectiveTypes = \App\ObjectiveType::select('objective_types.id', 'objective_types.title', 'objective_types.uuid')
+            ->join('terminal_objectives', 'objective_types.id', '=', 'terminal_objectives.objective_type_id')
+            ->join('curricula', 'curricula.id', '=', 'terminal_objectives.curriculum_id')
+            ->where('curricula.id', $curriculum->id)
+            ->distinct()
+            ->get();
+
         $certificates = Certificate::where([
             ['curriculum_id', '=', $course->curriculum_id],
             ['organization_id', '=', auth()->user()->current_organization_id],

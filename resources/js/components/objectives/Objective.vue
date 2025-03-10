@@ -3,26 +3,28 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <span v-html="objective.title" class="p-margin-0"></span>
+                    <span v-html="currentObjective.title" class="p-margin-0"></span>
                 </div>
                 <div class="card-body">
-                    <span>
-                        <Variants
-                            :model="objective"
-                            :referenceable_type="model"
-                            :referenceable_id="objective.id"
-                            :variant_order="variant_order"
-                        />
-                    </span>
+                    <Variants v-if="objective.curriculum.variants?.length > 0"
+                        :model="currentObjective"
+                        :referenceable_type="model"
+                        :referenceable_id="objective.id"
+                        :variant_order="variant_order"
+                    />
+                    <span v-else
+                        v-html="currentObjective.description?.length > 0 ? currentObjective.description : trans('global.no_description')"
+                        class="p-margin-0"
+                    ></span>
                 </div>
                 <div class="card-footer">
                     <div class="float-left">
                         <small>
-                            {{ trans('global.enablingObjective.fields.time_approach') }}: {{ objective.time_approach }}
+                            {{ trans('global.enablingObjective.fields.time_approach') }}: {{ currentObjective.time_approach }}
                         </small>
                     </div>
                     <small class="float-right">
-                        {{ trans('global.updated_at') }}: {{ objective.updated_at }}
+                        {{ trans('global.updated_at') }}: {{ currentObjective.updated_at }}
                     </small>
                 </div>
             </div>
@@ -480,6 +482,7 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
+            currentObjective: {},
             type: null,
             media_subscriptions: [],
             categories: [],
@@ -495,6 +498,8 @@ export default {
         }
     },
     mounted() {
+        this.currentObjective = this.objective;
+
         if (typeof this.objective.terminal_objective === 'object') {
             this.type = 'enabling';
             this.model = 'App\\EnablingObjective';
@@ -504,14 +509,12 @@ export default {
         }
 
         //event listener
-        this.$eventHub.on('terminalObjective-updated', () => {
-            this.globalStore?.closeModal('terminal-objective-modal');
-            this.loadObjectives(this.activetab);
+        this.$eventHub.on('terminal-objective-updated', (updatedObjective) => {
+            Object.assign(this.currentObjective, updatedObjective);
         });
 
-        this.$eventHub.on('enablingObjective-updated', () => {
-            this.globalStore?.closeModal('enabling-objective-modal');
-            this.loadObjectives(this.activetab);
+        this.$eventHub.on('enabling-objective-updated', (updatedObjective) => {
+            Object.assign(this.currentObjective, updatedObjective);
         });
 
         this.$eventHub.on('reference-added', () => {

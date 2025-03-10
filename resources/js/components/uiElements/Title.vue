@@ -1,13 +1,12 @@
 <template>
     <div :id="component_id">
         <slot name="title"></slot>
-        <slot id="titleToolbar"
-              name="toolbar"
+        <slot name="toolbar"
+            id="titleToolbar"
         ></slot>
         <div id="customTitle"></div>
     </div>
 </template>
-
 <script>
 export default {
     props: {},
@@ -16,7 +15,5 @@ export default {
             component_id: this.$.uid,
         }
     },
-    mounted() {},
-    methods: {}
 }
 </script>

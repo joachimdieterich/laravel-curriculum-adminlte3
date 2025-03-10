@@ -103,6 +103,7 @@
         <Teleport to="body">
             <TerminalObjectiveModal/>
             <EnablingObjectiveModal/>
+            <MoveTerminalObjectiveModal/>
         </Teleport>
     </div>
 </template>
@@ -111,6 +112,7 @@ import ObjectiveBox from './ObjectiveBox.vue';
 import EnablingObjectives from './EnablingObjectives.vue';
 import TerminalObjectiveModal from "./TerminalObjectiveModal.vue";
 import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
+import MoveTerminalObjectiveModal from './MoveTerminalObjectiveModal.vue';
 import Select2 from '../forms/Select2.vue';
 import draggable from "vuedraggable";
 import {useGlobalStore} from "../../store/global";
@@ -272,6 +274,7 @@ export default {
     components: {
         TerminalObjectiveModal,
         EnablingObjectiveModal,
+        MoveTerminalObjectiveModal,
         ObjectiveBox,
         EnablingObjectives,
         Select2,

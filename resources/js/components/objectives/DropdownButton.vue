@@ -106,7 +106,7 @@ export default {
             this.globalStore.showModal(entry.value, this.objective);
         },
         moveObjective(entry) {
-            this.$modal.show(entry.value, {'objective': this.objective, 'method': 'PATCH' });
+            this.globalStore.showModal(entry.value, this.objective);
         },
         emitDeleteEvent(entry) {
             axios.delete('/' + entry.model + '/' + this.objective.id)

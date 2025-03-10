@@ -3,16 +3,10 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-bullseye mr-2"></i>
-                    <span v-if="type === 'enabling'">
-                        {{ trans('global.enablingObjective.title_singular') }}
-                    </span>
-                    <span v-else>
-                        {{ trans('global.terminalObjective.title_singular') }}
-                    </span>
+                    <span v-html="objective.title" class="p-margin-0"></span>
                 </div>
-                <div class="card-body row">
-                    <span class="col-12">
+                <div class="card-body">
+                    <span>
                         <Variants
                             :model="objective"
                             :referenceable_type="model"
@@ -402,7 +396,14 @@
                 <EnablingObjectiveModal/>
             </Teleport>
             <Teleport to="#customTitle">
-                <small v-html="objective.title.slice(3, -4)"></small>
+                <small>
+                    <span v-if="type === 'enabling'">
+                        {{ trans('global.enablingObjective.title_singular') }}
+                    </span>
+                    <span v-else>
+                        {{ trans('global.terminalObjective.title_singular') }}
+                    </span>
+                </small>
                 <a v-if="editable"
                     class="btn btn-flat text-secondary px-2 mx-1"
                     @click="editObjective()"
@@ -587,3 +588,6 @@ export default {
     },
 }
 </script>
+<style>
+.p-margin-0 p { margin-bottom: 0px !important }
+</style>

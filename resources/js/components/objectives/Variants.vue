@@ -1,9 +1,7 @@
 <template>
     <div>
         <!-- no variantdefinitions in curriculum OR no variants on objective -->
-        <div v-if="model.curriculum.variants === null || (!enableDraggable && model.variants.length === 0)"
-            class="col-12 pb-2"
-        >
+        <div v-if="model.curriculum.variants === null || (!enableDraggable && model.variants.length === 0)">
             <div v-html="fieldText"></div>
         </div>
 

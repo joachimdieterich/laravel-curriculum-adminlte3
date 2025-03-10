@@ -56,10 +56,12 @@ class TerminalObjectiveController extends Controller
             ->get()->first();
 
         $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
+        $editable = $objective->curriculum->isEditable();
 
         return view('objectives.show')
             ->with(compact('objective'))
-            ->with(compact('repository'));
+            ->with(compact('repository'))
+            ->with(compact('editable'));
     }
 
     /**
@@ -89,19 +91,18 @@ class TerminalObjectiveController extends Controller
                 $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
             }
             if (request()->wantsJson()) {
-                return ['message' => $terminalObjective];
+                return $terminalObjective->without('curriculum')->find($terminalObjective->id);
             }
         }
 
         // update order_id
         if ($request->has('order_id')) {
             if (request()->wantsJson()) {
-                return ['message' => $this->toggleOrderId($old_objective, request('order_id'))];
+                return $this->toggleOrderId($old_objective, request('order_id'));
             }
         }
 
         // default
-
         return $terminalObjective->update($request->all());
     }
 
@@ -111,13 +112,13 @@ class TerminalObjectiveController extends Controller
      * @param  \App\TerminalObjective  $old_objective
      * @param $request
      */
-    public function moveToCurriculum($old_objective, $request)
+    public function moveToCurriculum($objective, $request)
     {
-        abort_unless(Curriculum::find($old_objective->curriculum_id)->isAccessible(), 403);
+        abort_unless(Curriculum::find($objective->curriculum_id)->isAccessible(), 403);
 
-        $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
+        $this->resetOrderIds($objective->curriculum_id, $objective->objective_type_id, $objective->order_id);
         DB::table('enabling_objectives')
-            ->where('terminal_objective_id', $old_objective->id)
+            ->where('terminal_objective_id', $objective->id)
             ->update(['curriculum_id' => request('curriculum_id')]);
     }
 

@@ -18,6 +18,7 @@ return [
     'title_helper' => '',
     'description' => 'Description',
     'description_helper' => '',
+    'no_description' => 'No description was provided.',
     'name' => 'Name',
     'created_at' => 'Created at',
     'created_at_helper' => '',

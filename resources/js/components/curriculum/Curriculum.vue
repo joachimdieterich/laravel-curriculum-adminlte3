@@ -258,7 +258,7 @@
             <SubscribeModal/>
         </Teleport>
 
-        <teleport to="#customTitle">
+        <Teleport to="#customTitle">
             <small>{{ currentCurriculum.title }}</small>
             <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
                 v-permission="'curriculum_edit'"
@@ -274,7 +274,7 @@
             >
                 <i class="fa fa-share-alt"></i>
             </a>
-        </teleport>
+        </Teleport>
     </div>
 </template>
 <script>
@@ -371,8 +371,8 @@ export default {
         dt.on('select', function(e, dt, type, indexes) {
             let selection = dt.rows('.selected').data().toArray()
             this.store.setSelectedIds('curriculum-user-datatable', selection);
-            // TODO: needs rework
-            // this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
+
+            this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
         }.bind(this));
 
         this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {

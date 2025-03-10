@@ -20,6 +20,7 @@ return [
     'title_helper' => '',
     'description' => 'Beschreibung',
     'description_helper' => '',
+    'no_description' => 'Es wurde keine Beschreibung hinterlegt.',
     'type' => 'Typ',
     'url' => 'URL',
     'url_title' => 'URL Titel',

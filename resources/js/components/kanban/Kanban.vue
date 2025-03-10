@@ -3,16 +3,16 @@
         id="kanban_board_container"
         class="kanban_board_container"
     >
-        <img v-if="kanban.medium_id !== null"
+        <img v-if="currentKanban.medium_id"
             class="kanban_board_wrapper position-absolute p-0"
             style="object-fit: cover;"
-            :src="'/media/' + kanban.medium_id + '?model=Kanban&model_id=' + kanban.id"
+            :src="'/media/' + currentKanban.medium_id + '?model=Kanban&model_id=' + currentKanban.id"
             alt="background image"
         />
         <div
             id="kanban_board_wrapper"
             class="kanban_board_wrapper position-relative"
-            :style="'background-color:' + kanbanColor"
+            :style="'background-color: ' + currentKanban.color + 'B2;'"
         >
             <div
                 class="position-absolute pointer"
@@ -219,7 +219,7 @@ export default {
     },
     data() {
         return {
-            kanbanColor: '',
+            currentKanban: {},
             statuses: [],
             newItem: 0, // track the ID of the status we want to add to
             newStatus: 0,
@@ -250,7 +250,7 @@ export default {
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {
-                modelId: this.kanban.id,
+                modelId: this.currentKanban.id,
                 modelUrl: 'kanban',
                 shareWithUsers: true,
                 shareWithGroups: true,
@@ -268,7 +268,7 @@ export default {
                 (visible_from == null && visible_until == null);
         },
         sync() {
-            axios.get("/kanbanStatuses/" + this.kanban.id + "/checkSync")
+            axios.get("/kanbanStatuses/" + this.currentKanban.id + "/checkSync")
                 .then(res => {
                     if (res.data.message !== 'uptodate') {
                         this.refreshRate = 5000;
@@ -330,7 +330,7 @@ export default {
         openItemModal(status_id) {
             this.globalStore?.showModal('kanban-item-modal', {
                 item: {
-                    kanban_id: this.kanban.id,
+                    kanban_id: this.currentKanban.id,
                     kanban_status_id: status_id,
                 },
                 method: 'post',
@@ -450,9 +450,6 @@ export default {
             // Add updated item to our column
             this.statuses[statusIndex].items[itemIndex]['comments'] = updatedItem.comments;
         },
-        handleKanbanColorUpdated(color) {
-            this.kanbanColor = color;
-        },
         startPusher() {
             if (this.pusher === true) {
                 this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
@@ -487,7 +484,7 @@ export default {
                         this.handleItemDeleted(payload.message);
                     })
                     .listen('.kanbanColorUpdated', (payload) => {
-                        this.handleKanbanColorUpdated(payload.message);
+                        this.currentKanban.color = payload.message;
                     })
                     .listen('.kanbanItemCommentUpdated', (payload) => {
                         //console.log('kanbanItemCommentUpdated');
@@ -542,27 +539,17 @@ export default {
                 return true;
             }
         },
-        hexToRgbA(hex){
-            let c;
-            if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-                c = hex.substring(1).split('');
-                if (c.length == 3) {
-                    c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-                }
-                c = '0x'+c.join('');
-                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+', 0.7)';
-            }
-            throw new Error('Bad Hex');
-        }
     },
     mounted() {
+        this.currentKanban = this.kanban;
+
         // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
         this.startPusher();
         this.$eventHub.on('reload_kanban_board', () => {
             this.sync()
         });
-        this.$eventHub.on('kanban-updated', () => {
-            window.location.href = '/kanbans/'+this.kanban.id;
+        this.$eventHub.on('kanban-updated', (updatedKanban) => {
+            Object.assign(this.currentKanban, updatedKanban);
         });
         // STATUS Events
         this.$eventHub.on('kanban-status-added', (status) => {
@@ -597,13 +584,7 @@ export default {
     created() {
         this.statuses = this.kanban.statuses;
 
-        if (this.kanban.color.length < 8) {
-            this.kanbanColor = this.hexToRgbA(this.kanban.color)
-        } else {
-            this.kanbanColor = this.kanban.color;
-        }
-
-        if (this.kanban.auto_refresh === true) {
+        if (this.kanban.auto_refresh) {
             this.autoRefresh = true;
             this.timer();
         } else {
@@ -612,8 +593,8 @@ export default {
     },
     computed: {
         textColor: function() {
-            if (this.kanban.color == "" || this.kanban.color == null) return;
-            return this.$textcolor(this.kanban.color, '#333333');
+            if (this.currentKanban.color == "" || this.currentKanban.color == null) return;
+            return this.$textcolor(this.currentKanban.color, '#333333');
         },
         columnDragOptions() {
             return {

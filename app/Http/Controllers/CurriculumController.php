@@ -248,15 +248,20 @@ class CurriculumController extends Controller
         $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
             ->where('curriculum_id', $curriculum->id)
             ->with([
-                'enablingObjectives' => function($query) {
+                'enablingObjectives',
+                'enablingObjectives.achievements' => function ($query) {
+                    $query->where('user_id', auth()->user()->id);
+                }
+               /* 'enablingObjectives' => function($query) {
                     $query->select('id', 'terminal_objective_id', 'title', 'description', 'level_id', 'curriculum_id', 'order_id', 'time_approach', 'uuid', 'visibility')
                         ->without('terminalObjective')
                         ->with(['achievements' => function($query) {
                             $query->select('id', 'status', 'updated_at')
                                 ->where('user_id', auth()->user()->id);
                         }]);
-                },
+                },*/
             ])
+            ->without('terminalObjective')
             ->orderBy('order_id')
             ->get();
 
@@ -277,22 +282,20 @@ class CurriculumController extends Controller
         //check if user is enrolled or admin -> else 403
         abort_unless((auth()->user()->curricula->contains('id', $curriculum->id) // user enrolled
                   or (auth()->user()->currentRole()->first()->id == 1)), 403);     // or admin
-        $user_ids = request()->user_ids;
 
-        $curriculum = Curriculum::with(
-            [
-                'terminalObjectives',
-                'terminalObjectives.achievements' => function ($query) use ($user_ids) {
-                    $query->whereIn('user_id', $user_ids);
-                },
-                'terminalObjectives.enablingObjectives',
-                'terminalObjectives.enablingObjectives.achievements' => function ($query) use ($user_ids) {
-                    $query->whereIn('user_id', $user_ids);
-                },
+        $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
+            ->where('curriculum_id', $curriculum->id)
+            ->with([
+                'enablingObjectives',
+                'enablingObjectives.achievements' => function ($query) {
+                    $query->whereIn('user_id', request()->user_ids);
+                }
             ])
-            ->find($curriculum->id);
+            ->orderBy('order_id')
+            ->get();
+
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $terminal;
         }
     }
 

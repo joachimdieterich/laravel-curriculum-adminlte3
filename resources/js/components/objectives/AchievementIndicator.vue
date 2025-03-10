@@ -179,7 +179,7 @@ export default {
             if (window.Laravel.permissions.indexOf('achievement_access') !== -1) {
                 return "fabadge";
             }
-        },
+        }
     },
     created() {
         if (typeof this.objective.achievements !== 'undefined') {

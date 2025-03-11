@@ -14,9 +14,7 @@
                 @end="handleTypeMoved"
             >
                 <template #item="{ element: typetab }">
-                    <li
-                        class="nav-item pl-0 pr-2 pb-2 pt-2"
-                    >
+                    <li class="nav-item pl-0 pr-2 pb-2 pt-2">
                         <a
                             :href="'#tab_' + typetab"
                             class="nav-link"

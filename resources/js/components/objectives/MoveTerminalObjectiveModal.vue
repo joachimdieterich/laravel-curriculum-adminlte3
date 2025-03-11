@@ -89,6 +89,7 @@ export default {
             form: new Form({
                 id: null,
                 curriculum_id: null,
+                objective_type_id: null, // only needed for check in backend
             }),
         }
     },
@@ -107,26 +108,14 @@ export default {
     },
     methods: {
         submit() {
-            this.form.submit('patch', '/terminalObjectives/' + this.form.id)
+            axios.patch('/terminalObjectives/' + this.form.id, this.form)
                 .then(response => {
-                    window.location = response.message;
+                    this.$eventHub.emit('objective-deleted', response.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
-                .catch(response => function () {
-                    if (response.errors)
-                    {
-                        alert(response.errors);
-                    }
+                .catch(response => {
+                    console.log(response);
                 });
-            /* try {
-                if (this.method === 'patch'){
-                    this.location = (await axios.patch('/terminalObjectives/' + this.form.id , {
-                        'curriculum_id' : this.form.curriculum_id
-                    })).data.message;
-                }
-                location.reload(true);
-            } catch(error) {
-                //
-            }*/
         },
     },
 }

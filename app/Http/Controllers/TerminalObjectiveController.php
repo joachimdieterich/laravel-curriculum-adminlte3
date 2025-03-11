@@ -87,7 +87,7 @@ class TerminalObjectiveController extends Controller
                 if ($terminalObjective->update(['curriculum_id' => request('curriculum_id'), 'order_id' => $order_id]) == true) {
                     $this->moveToCurriculum($old_objective, $request);
                 }
-            } elseif (($terminalObjective->update($request->all()) == true) and ($old_objective->order_id != request('order_id'))) {
+            } else if (($terminalObjective->update($request->all()) == true) and ($old_objective->order_id != request('order_id'))) {
                 $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
             }
             if (request()->wantsJson()) {

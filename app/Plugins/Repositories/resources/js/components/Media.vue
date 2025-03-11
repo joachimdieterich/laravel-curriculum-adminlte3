@@ -17,11 +17,6 @@ export default {
             default: null,
         },
     },
-    data() {
-        return {
-            errors: {},
-        }
-    },
     methods: {
         loader: function() {
             if (this.repository.value == 'edusharing') {

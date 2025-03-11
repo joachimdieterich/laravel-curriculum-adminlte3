@@ -1,6 +1,7 @@
 <template>
-    <div class="col-12">
-        <ul class="nav nav-tabs"
+    <div>
+        <ul
+            class="nav nav-tabs px-2"
             role="tablist"
         >
             <li v-if="$userId != 8"
@@ -41,114 +42,116 @@
             <span class="sr-only">Loading...</span>
         </div>
 
-        <!-- Add Media -->
-        <div v-if="model.curriculum.type_id !== 1"
-            v-permission="'external_medium_create, is_teacher'"
-            :id="'media-add'"
-            class="box box-objective nav-item-box-image pointer my-1"
-            style="min-width: 200px !important; border-style: solid !important;"
-            @click="addMedia()"
-        >
-            <div class="nav-item-box-image-size text-center">
-                <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
-            </div>
-
-            <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
-                <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                    {{ trans('global.media.create') }}
-                </h1>
-            </span>
-        </div>
-
-        <!-- Media uploaded from Curriculum -->
-        <div v-for="subscription in filteredMedia"
-            class="box box-objective nav-item-box-image pointer my-1"
-            style="min-width: 200px !important; border-style: solid !important; overflow: auto"
-        >
-            <render-usage
-                class="d-flex align-items-center nav-item-box-image-size user-select-none"
-                :medium="subscription.medium"
-            />
-            <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
-                <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                    {{ subscription.medium.title ?? subscription.medium.name }}
-                </h1>
-            </span>
-            <span v-if="subscription.medium.owner_id == $userId"
-                v-permission="'medium_delete'"
-                class="position-absolute w-100 p-1 pointer"
-                accesskey=""
-                style="top:0; height: 30px;"
+        <div class="px-2">
+            <!-- Add Media -->
+            <div v-if="model.curriculum.type_id !== 1"
+                v-permission="'external_medium_create, is_teacher'"
+                :id="'media-add'"
+                class="box box-objective nav-item-box-image pointer my-1"
+                style="min-width: 200px !important; border-style: solid !important;"
+                @click="addMedia()"
             >
-                <button
-                    id="delete-navigator-item"
-                    class="btn btn-danger btn-sm pull-right"
-                    type="submit"
-                    @click.stop="unlinkMedium(subscription);"
+                <div class="nav-item-box-image-size text-center">
+                    <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
+                </div>
+    
+                <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
+                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                        {{ trans('global.media.create') }}
+                    </h1>
+                </span>
+            </div>
+    
+            <!-- Media uploaded from Curriculum -->
+            <div v-for="subscription in filteredMedia"
+                class="box box-objective nav-item-box-image pointer my-1"
+                style="min-width: 200px !important; border-style: solid !important; overflow: auto"
+            >
+                <render-usage
+                    class="d-flex align-items-center nav-item-box-image-size user-select-none"
+                    :medium="subscription.medium"
+                />
+                <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
+                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                        {{ subscription.medium.title ?? subscription.medium.name }}
+                    </h1>
+                </span>
+                <span v-if="subscription.medium.owner_id == $userId"
+                    v-permission="'medium_delete'"
+                    class="position-absolute w-100 p-1 pointer"
+                    accesskey=""
+                    style="top:0; height: 30px;"
                 >
-                    <small><i class="fa fa-unlink"></i></small>
-                </button>
-            </span>
-        </div>
-
-        <!-- Media linked from Edusharing -->
-        <div v-for="medium in filteredExternalMedia"
-            :id="medium.node_id"
-            style="border: 1px solid #d2d6de;"
-            class="box box-objective edusharing-box pointer my-1"
-            @click="show(medium)"
-        >
-            <div
-                class="bg-white text-center edusharing-box-bg p-1 overflow-auto"
-                :style="{ 'background-image': 'url(' + href(medium) + ')' }"
+                    <button
+                        id="delete-navigator-item"
+                        class="btn btn-danger btn-sm pull-right"
+                        type="submit"
+                        @click.stop="unlinkMedium(subscription);"
+                    >
+                        <small><i class="fa fa-unlink"></i></small>
+                    </button>
+                </span>
+            </div>
+    
+            <!-- Media linked from Edusharing -->
+            <div v-for="medium in filteredExternalMedia"
+                :id="medium.node_id"
+                style="border: 1px solid #d2d6de;"
+                class="box box-objective edusharing-box pointer my-1"
+                @click="show(medium)"
             >
                 <div
-                    class="symbol"
-                    :style="{ 'background': 'white url(' + iconUrl(medium) + ') no-repeat center', 'background-size': '24px' }"
-                ></div>
+                    class="bg-white text-center edusharing-box-bg p-1 overflow-auto"
+                    :style="{ 'background-image': 'url(' + href(medium) + ')' }"
+                >
+                    <div
+                        class="symbol"
+                        :style="{ 'background': 'white url(' + iconUrl(medium) + ') no-repeat center', 'background-size': '24px' }"
+                    ></div>
+                </div>
+    
+                <span
+                    class="position-absolute bg-white text-center w-100 p-1 overflow-auto"
+                    style="bottom: 0; height: 150px;"
+                >
+                    <h6 class="events-heading pt-1 hyphens" v-dompurify-html="medium.title"></h6>
+                    <p class="text-muted small" v-dompurify-html="medium.description"></p>
+                </span>
+                <span style="position: absolute; bottom: 5px; left: 5px;">
+                    <img
+                        style="height: 16px;"
+                        :src="medium.license.icon"
+                    />
+                </span>
             </div>
-
-            <span
-                class="position-absolute bg-white text-center w-100 p-1 overflow-auto"
-                style="bottom: 0; height: 150px;"
+    
+            <div v-if="media !== null"
+                class="row w-100 pt-1"
             >
-                <h6 class="events-heading pt-1 hyphens" v-dompurify-html="medium.title"></h6>
-                <p class="text-muted small" v-dompurify-html="medium.description"></p>
-            </span>
-            <span style="position: absolute; bottom: 5px; left: 5px;">
-                <img
-                    style="height: 16px;"
-                    :src="medium.license.icon"
-                />
-            </span>
-        </div>
-
-        <div v-if="media !== null"
-            class="row w-100 pt-1"
-        >
-            <span v-if="[0].length > maxItems">
-                <span class="col-6">
-                    <button
-                        type="button"
-                        class="btn btn-block btn-primary"
-                        :class="page > 0 ? '' : 'disabled'"
-                        @click="lastPage()"
-                    >
-                        <i class="fa fa-arrow-left"></i>
-                    </button>
+                <span v-if="[0].length > maxItems">
+                    <span class="col-6">
+                        <button
+                            type="button"
+                            class="btn btn-block btn-primary"
+                            :class="page > 0 ? '' : 'disabled'"
+                            @click="lastPage()"
+                        >
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+                    </span>
+    
+                    <span class="col-6">
+                        <button
+                            type="button"
+                            class="btn btn-block btn-primary"
+                            :class="media[0].length == maxItems ? '' : 'disabled'"
+                            @click="nextPage()"
+                        >
+                            <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </span>
                 </span>
-
-                <span class="col-6">
-                    <button
-                        type="button"
-                        class="btn btn-block btn-primary"
-                        :class="media[0].length == maxItems ? '' : 'disabled'"
-                        @click="nextPage()"
-                    >
-                        <i class="fa fa-arrow-right"></i>
-                    </button>
-                </span>
-            </span>
+            </div>
         </div>
     </div>
 </template>

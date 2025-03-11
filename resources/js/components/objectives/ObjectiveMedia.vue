@@ -1,25 +1,14 @@
 <template>
-    <div class="col-12 px-0">
+    <div id="custom-content-below-tabContent">
         <div
-            id="custom-content-below-tabContent"
-            class="tab-content"
+            v-permission="'external_medium_access'"
+            id="objective-media-external"
         >
-            <div
-                v-permission="'external_medium_access'"
-                id="objective-media-external"
-                class="tab-pane fade show"
-                :class="[(currentTab === 2) ? 'active' : '']"
-                role="tabpanel"
-                aria-labelledby="curriculum-nav-tab"
-            >
-                <div class="row">
-                    <Repository v-if="repository"
-                        :repository="repository"
-                        ref="repositoryPlugin"
-                        :model="objective"
-                    />
-                </div>
-            </div>
+            <Repository v-if="repository"
+                :repository="repository"
+                ref="repositoryPlugin"
+                :model="objective"
+            />
         </div>
     </div>
 </template>
@@ -39,16 +28,6 @@ export default {
         repository: {
             type: Object,
             default: null,
-        },
-    },
-    data() {
-        return {
-            currentTab: 2,
-        }
-    },
-    methods:{
-        setCurrentTab(id) {
-            this.currentTab = id;
         },
     },
     mounted() {

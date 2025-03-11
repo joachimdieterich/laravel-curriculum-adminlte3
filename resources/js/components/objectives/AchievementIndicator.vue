@@ -181,6 +181,16 @@ export default {
             }
         }
     },
+    watch: {
+        objective: function(val, oldVal) {
+            if (typeof this.objective.achievements[0] === 'object') {
+                //console.log(val.achievements[0].status);
+                this.status = val.achievements[0].status;
+            } else {
+                this.status = '00';
+            }
+        },
+    },
     created() {
         if (typeof this.objective.achievements !== 'undefined') {
             if (typeof this.objective.achievements[0] === 'object') {

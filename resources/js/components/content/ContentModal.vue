@@ -47,7 +47,6 @@
                             <Editor
                                 id="content"
                                 name="content"
-                                :placeholder="trans('global.content.fields.content')"
                                 class="form-control"
                                 :init="tinyMCE"
                                 v-model="form.content"
@@ -69,7 +68,7 @@
                         <button
                             id="content-save"
                             class="btn btn-primary ml-3"
-                            :disabled="!form.title"
+                            :disabled="!form.title || !form.content"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -114,7 +113,8 @@ export default {
                 ],
                 {
                     callback: 'insertContent',
-                    callbackId: this.component_id
+                    callbackId: this.component_id,
+                    placeholder: window.trans.global.description + ' *',
                 },
                 "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link mathjax code",
                 ""

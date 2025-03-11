@@ -168,7 +168,6 @@
         </div>
 
         <Teleport to="body">
-            <ContentModal/>
             <ContentSubscriptionModal
                 :show="showContentSubscriptionModal"
                 @close="this.showContentSubscriptionModal = false"
@@ -177,7 +176,6 @@
                     subscribable_id: subscribable_id,
                 }"
             />
-
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.content.delete')"
@@ -196,7 +194,6 @@
 <script>
 import ContentSubscriptionModal from "./ContentSubscriptionModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import ContentModal from "./ContentModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -221,7 +218,6 @@ export default {
     components: {
         ContentSubscriptionModal,
         ConfirmModal,
-        ContentModal,
     },
     setup() {
         const globalStore = useGlobalStore();

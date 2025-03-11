@@ -91,7 +91,7 @@ class TerminalObjectiveController extends Controller
                 $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
             }
             if (request()->wantsJson()) {
-                return $terminalObjective->without('curriculum')->find($terminalObjective->id);
+                return $terminalObjective->without('curriculum')->with('type')->find($terminalObjective->id);
             }
         }
 

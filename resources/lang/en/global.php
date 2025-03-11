@@ -575,7 +575,7 @@ return [
         'title_singular' => 'Terminal objective',
         'create' => 'Create terminal objective',
         'edit' => 'Edit terminal objective',
-        'move' => 'Change curriculum',
+        'move_to_curriculum' => 'Move to other curriculum',
         'delete' => 'Delete terminal objective',
         'fields' => [
             'time_approach' => 'Time approach',

@@ -603,7 +603,7 @@ return [
         'title_singular' => 'Bereich',
         'create' => 'Bereich erstellen',
         'edit' => 'Bereich bearbeiten',
-        'move' => 'Curriculum ändern',
+        'move_to_curriculum' => 'In anderes Curriculum verschieben',
         'delete' => 'Bereich löschen',
         'fields' => [
             'time_approach' => 'Zeitansatz',

@@ -35,7 +35,7 @@
                         class="mr-4"
                         :class="entry.icon"
                     ></i>
-                    {{ trans('global.terminalObjective.move') }}
+                    {{ trans('global.terminalObjective.move_to_curriculum') }}
                 </button>
                 <button v-else-if="entry.action === 'resetOrderIds'"
                     class="dropdown-item"

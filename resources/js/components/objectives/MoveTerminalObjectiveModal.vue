@@ -7,7 +7,7 @@
             <div class="modal-container">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <span>{{ trans('global.terminalObjective.move') }}</span>
+                        <span>{{ trans('global.terminalObjective.move_to_curriculum') }}</span>
                     </h3>
                     <div class="card-tools">
                         <button

@@ -1,5 +1,5 @@
 <template >
-    <div class="card border-0">
+    <div class="card border-0 mb-0">
         <div class="card-header px-3">
             <h3 v-if="subscriptions.length > 0"
                 class="card-title"
@@ -23,7 +23,7 @@
                 </span>
             </h3>
             <h3 v-else class="card-title">
-                <span class="pl-2">
+                <span>
                     {{ trans('global.content.no_content') }}
                 </span>
             </h3>

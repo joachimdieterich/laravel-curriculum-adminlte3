@@ -259,7 +259,7 @@ export default {
                     this.$eventHub.emit('terminal-objective-updated', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
     },

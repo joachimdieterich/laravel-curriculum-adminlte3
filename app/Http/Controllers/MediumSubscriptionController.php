@@ -121,7 +121,7 @@ class MediumSubscriptionController extends Controller
 
         // skip this step if additional_data is set
         // used for instances, where the medium isn't directly connected to a model
-        if (!$input['additional_data']) {
+        if (!isset($input['additional_data'])) {
             // since the subscription gets deleted instantly, we should remove the connection from the resource
             $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
         }

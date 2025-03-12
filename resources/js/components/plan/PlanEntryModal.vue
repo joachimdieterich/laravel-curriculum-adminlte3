@@ -183,8 +183,8 @@ export default {
                     callback: 'insertContent',
                     callbackId: this.component_id,
                 },
-                "bold underline italic | alignleft aligncenter alignright",
-                "bullist numlist outdent indent | mathjax link code curriculummedia",
+                "bold underline italic | alignleft aligncenter alignright alignjustify",
+                "bullist numlist outdent indent | curriculummedia link mathjax code",
             ),
         }
     },

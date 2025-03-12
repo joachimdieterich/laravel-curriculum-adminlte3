@@ -29,8 +29,9 @@ class UserTest extends DuskTestCase
                     ->type('email', $new_user['email'])
                     ->type('password', $new_user['password'])
                     ->click('#user-save')
-                    ->waitForText($new_user['username']);
-                    //->screenshot('see-user-details');
+                    ->waitForText($new_user['username'])
+                    //->screenshot('see-user-details')
+;
         });
     }
 

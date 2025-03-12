@@ -4,12 +4,14 @@ namespace App;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class LogbookEntry extends Model
 {
     protected $guarded = [];
 
     protected $casts = [
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
         'begin'  => 'datetime',

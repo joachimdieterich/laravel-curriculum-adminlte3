@@ -210,7 +210,7 @@ export default {
                     callbackId: this.component_id,
                     placeholder: this.trans('global.objective_content'),
                 },
-                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                "bold underline italic | alignleft aligncenter alignright alignjustify",
                 ""
             ),
             tinyMCE_description: this.$initTinyMCE(
@@ -259,7 +259,7 @@ export default {
                     this.$eventHub.emit('terminal-objective-updated', r.data);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
     },

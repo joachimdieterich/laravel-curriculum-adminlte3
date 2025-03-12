@@ -1,32 +1,31 @@
-<template >
-    <media
-        v-if="repository.value == 'edusharing'"
-        ref="mediaPlugin" :model="model">
-    </media>
+<template>
+    <Media v-if="repository.value == 'edusharing'"
+        ref="mediaPlugin"
+        :model="model"
+    />
 </template>
-
 <script>
-    import media from '../../../edusharing/resources/js/components/Media.vue';
-    export default {
-        props: {
-            model: {},
-            repository: Object
+import Media from '../../../edusharing/resources/js/components/Media.vue';
+export default {
+    props: {
+        model: {
+            type: Object,
+            default: null,
         },
-        data() {
-            return {
-                errors: {}
+        repository: {
+            type: Object,
+            default: null,
+        },
+    },
+    methods: {
+        loader: function() {
+            if (this.repository.value == 'edusharing') {
+                this.$refs.mediaPlugin.loader();
             }
         },
-        methods: {
-            loader: function() {
-                if (this.repository.value == 'edusharing'){
-                    this.$refs.mediaPlugin.loader();
-                }
-            }
-        },
-
-        components: {
-            media,
-        }
-    }
+    },
+    components: {
+        Media,
+    },
+}
 </script>

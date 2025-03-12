@@ -344,7 +344,10 @@ export default {
             this.showCopy = true;
         },
         copy() {
-            window.location = "/plans/" + this.currentPlan.id + "/copy";
+            axios.get('/plans/' + this.currentPlan.id + '/copy')
+                .then(response => {
+                    this.plans.push(response.data);
+                });
         },
         destroy() {
             if (this.subscribable) {

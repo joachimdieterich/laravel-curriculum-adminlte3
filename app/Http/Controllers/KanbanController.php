@@ -262,7 +262,17 @@ class KanbanController extends Controller
     {
         abort_unless((\Gate::allows('kanban_delete') and $kanban->isAccessible()), 403);
 
-        //delete relations
+        // delete medium if edusharing-medium
+        if ($kanban->medium_id) {
+            $medium = $kanban->medium;
+
+            if ($medium->adapter == 'edusharing') {
+                $medium->subscriptions()->delete();
+                $medium->delete();
+            }
+        }
+
+        // delete relations
         $kanban->items()->delete();
         $kanban->statuses()->delete();
         $kanban->subscriptions()->delete();
@@ -442,7 +452,7 @@ class KanbanController extends Controller
 
             foreach ($status->items as $item)
             {
-               $kanbanItemCopy = KanbanItem::Create([
+                $kanbanItemCopy = KanbanItem::Create([
                     'title'             => $item->title,
                     'description'       => $item->description,
                     'order_id'          => $item->order_id,
@@ -452,10 +462,10 @@ class KanbanController extends Controller
                     'due_date'          => $item->due_date,
                     'owner_id'          => auth()->user()->id,
                 ]);
-               // dump($item->mediaSubscriptions);
-               foreach ($item->mediaSubscriptions as $mediaSubscription)
-               {
-                   $subscribe = MediumSubscription::Create([
+
+                foreach ($item->mediaSubscriptions as $mediaSubscription)
+                {
+                    MediumSubscription::Create([
                        'medium_id' => $mediaSubscription->medium_id,
                        'subscribable_type' => $mediaSubscription->subscribable_type,
                        'subscribable_id' => $kanbanItemCopy->id,
@@ -463,11 +473,12 @@ class KanbanController extends Controller
                        'visibility' => $mediaSubscription->visibility,
                        'additional_data' => $mediaSubscription->additional_data,
                        'owner_id' => auth()->user()->id,
-                   ]);
-               }
+                    ]);
+                }
             }
         }
-        return redirect('/kanbans');
+
+        return $kanbanCopy;
     }
 
     protected function validateRequest()

@@ -56,9 +56,10 @@ class Content extends Model
     {
         $order_id = ContentSubscription::where([
             'subscribable_type' => get_class($model),
-            'subscribable_id' => $model->id, ])->max('order_id');
+            'subscribable_id' => $model->id,
+        ])->max('order_id');
 
-        $subscribe = new ContentSubscription([
+        $subscribe = ContentSubscription::firstOrCreate([
             'content_id' => $this->id,
             'subscribable_type' => get_class($model),
             'subscribable_id' => $model->id,
@@ -67,7 +68,8 @@ class Content extends Model
             'owner_id' => auth()->user()->id,
             'order_id' => is_int($order_id) ? $order_id + 1 : 0,
         ]);
-        $subscribe->save();
+
+        return $subscribe;
     }
 
     public function mediaSubscriptions()

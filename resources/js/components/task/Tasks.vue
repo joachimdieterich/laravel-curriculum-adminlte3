@@ -121,7 +121,9 @@ export default {
             tasks: null,
             search: '',
             showConfirm: false,
-            url: '/tasks/list',
+            url: this.subscribable_type && this.subscribable_id
+                ? '/tasksSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
+                : '/tasks/list?filter=' + this.filter,
             currentTask: {},
             columns: [
                 { title: 'check', data: 'check' },
@@ -130,6 +132,7 @@ export default {
                 { title: 'subscriptions', data: 'subscriptions'},
             ],
             options : this.$dtOptions,
+            dt: null,
         }
     },
     mounted() {
@@ -152,20 +155,23 @@ export default {
             this.globalStore?.showModal('task-modal', task)
         },
         loaderEvent() {
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                this.url = '/tasksSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
-            } else {
-                this.url = '/tasks/list?filter=' + this.filter;
-            }
+            // console.log(this.subscribable_id, this.subscribable_type)
+            // console.log(typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined')
+            // if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined') {
+            //     this.url = '/tasksSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
+            // } else {
+            //     this.url = '/tasks/list?filter=' + this.filter;
+            // }
 
-            const dt = $('#task-datatable_' + this.component_id).DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.tasks = dt.rows({page: 'current'}).data().toArray();
+            this.dt = $('#task-datatable_' + this.component_id).DataTable();
+            this.dt.on('draw.dt', () => {
+                this.tasks = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#task-content').insertBefore('#task-datatable-wrapper');
             });
+
             this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
+                this.dt.search(filter).draw();
             });
         },
         confirmItemDelete(task) {

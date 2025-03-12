@@ -122,7 +122,7 @@ class TaskController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return $task;
+            return $task->with('subscriptions')->find($task->id);
         }
     }
 

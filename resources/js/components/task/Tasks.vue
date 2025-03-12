@@ -73,7 +73,7 @@
         </div>
 
         <Teleport to="body">
-            <TaskModal/>
+            <TaskModal v-if="subscribable_id == null && subscribable_type == null"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.task.delete')"
@@ -122,7 +122,7 @@ export default {
             search: '',
             showConfirm: false,
             url: this.subscribable_type && this.subscribable_id
-                ? '/tasksSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
+                ? '/taskSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
                 : '/tasks/list?filter=' + this.filter,
             currentTask: {},
             columns: [
@@ -145,24 +145,22 @@ export default {
         });
 
         this.$eventHub.on('task-updated', (updatedTask) => {
-            let task = this.tasks.find(t => t.id === updatedTask.id);
+            if (this.subscribable_type == updatedTask.subscriptions[0].subscribable_type
+                && this.subscribable_id == updatedTask.subscriptions[0].subscribable_id) {
+                let task = this.tasks.find(t => t.id === updatedTask.id);
 
-            Object.assign(task, updatedTask);
+                Object.assign(task, updatedTask);
+            }
         });
     },
     methods: {
         openModal(task = {}) {
+            task.subscribable_type = this.subscribable_type;
+            task.subscribable_id = this.subscribable_id;
+
             this.globalStore?.showModal('task-modal', task)
         },
         loaderEvent() {
-            // console.log(this.subscribable_id, this.subscribable_type)
-            // console.log(typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined')
-            // if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined') {
-            //     this.url = '/tasksSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
-            // } else {
-            //     this.url = '/tasks/list?filter=' + this.filter;
-            // }
-
             this.dt = $('#task-datatable_' + this.component_id).DataTable();
             this.dt.on('draw.dt', () => {
                 this.tasks = this.dt.rows({page: 'current'}).data().toArray();
@@ -198,8 +196,7 @@ export default {
                 });
         },
         isCompleted(task) {
-            let subscription = task.subscriptions
-            return ( subscription[0]?.completion_date != null && typeof (subscription[0]?.completion_date) !== 'undefined' ) ? true : false;
+            return task.subscriptions[0]?.completion_date;
         },
     },
     components: {

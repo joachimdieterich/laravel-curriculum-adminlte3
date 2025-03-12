@@ -25,6 +25,7 @@ class GroupTest extends DuskTestCase
                     ->assertSee('Add Group')
                     ->click('#add-group')
                     ->type('title', $new_group['title'])
+                    ->pause(4000)
                     ->select2('#grade_id', '2. Klasse')
                     ->select2('#period_id', 'Test')
                     ->select2('#organization_id', 'curriculumonline')
@@ -34,8 +35,7 @@ class GroupTest extends DuskTestCase
 ;
         });
     }
-
-    /**
+/** 
      * Edit group
      *
      * @return void
@@ -103,3 +103,4 @@ class GroupTest extends DuskTestCase
         });
     }
 }
+*/

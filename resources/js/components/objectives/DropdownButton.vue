@@ -35,7 +35,7 @@
                         class="mr-4"
                         :class="entry.icon"
                     ></i>
-                    {{ trans('global.terminalObjective.move') }}
+                    {{ trans('global.terminalObjective.move_to_curriculum') }}
                 </button>
                 <button v-else-if="entry.action === 'resetOrderIds'"
                     class="dropdown-item"
@@ -106,7 +106,7 @@ export default {
             this.globalStore.showModal(entry.value, this.objective);
         },
         moveObjective(entry) {
-            this.$modal.show(entry.value, {'objective': this.objective, 'method': 'PATCH' });
+            this.globalStore.showModal(entry.value, this.objective);
         },
         emitDeleteEvent(entry) {
             axios.delete('/' + entry.model + '/' + this.objective.id)

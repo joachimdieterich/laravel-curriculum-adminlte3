@@ -19,11 +19,11 @@ class OrganizationsController extends Controller
     {
         if (request()->wantsJson()) {
             if (is_admin()) {
-                return  getEntriesForSelect2ByModel(
+                return getEntriesForSelect2ByModel(
                     "App\Organization"
                 );
             } else {
-                return  getEntriesForSelect2ByCollection(
+                return getEntriesForSelect2ByCollection(
                     auth()->user()->organizations(),
                     'organizations.'
                 );

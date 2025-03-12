@@ -166,16 +166,18 @@ export default {
         },
         async sortEvent(amount) {
             let objective = {
-                'id': this.objective.id,
-                'order_id': this.objective.order_id + parseInt(amount),
+                id: this.objective.id,
+                order_id: this.objective.order_id + parseInt(amount),
             }
 
             try {
-                this.location = (await axios.patch('/' + this.type + 'Objectives/' + this.objective.id, objective)).data.message;
+                axios.patch('/' + this.type + 'Objectives/' + this.objective.id, objective)
+                    .then(response => {
+                        window.location = response.data;
+                    });
             } catch(error) {
-                this.errors = error.response.data.errors;
+                console.log(error);
             }
-            window.location = this.location;
         },
         showDetails() {
             if (this.settings?.achievements === undefined || !this.editable) {
@@ -188,7 +190,6 @@ export default {
                 });
             }
         },
-
     },
     computed: {
         background: function () {

@@ -69,7 +69,7 @@ class TaskController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return $task;
+            return $task->with('subscriptions')->find($task->id);
         }
     }
 

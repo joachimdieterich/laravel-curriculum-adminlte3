@@ -179,18 +179,15 @@
             <span class="clearfix"></span>
             <hr class="m-1">
 
-            <div class="pb-2 px-1">
-                <div class="tab-content">
+            <div class="px-1">
+                <div class="tab-content mb-1">
                     <!-- tab-pane -->
                     <div
                         :id="'logbook_description_' + entry.id"
-                        class="tab-pane p-2 active"
+                        class="tab-pane p-2 active p-margin-0"
                     >
-                        <span v-if="entry.description"
-                            v-dompurify-html="entry.description"
-                        ></span>
+                        <span v-html="entry.description?.length > 0 ? entry.description : trans('global.no_description')"></span>
                     </div>
-
                     <!-- tab-pane -->
                     <div
                         v-permission="'content_access'"
@@ -198,7 +195,6 @@
                         class="tab-pane"
                     >
                         <contents
-                            class="mb-0"
                             ref="Contents"
                             subscribable_type="App\LogbookEntry"
                             :subscribable_id="entry.id"

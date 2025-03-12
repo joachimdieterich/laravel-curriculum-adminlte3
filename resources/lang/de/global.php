@@ -20,6 +20,7 @@ return [
     'title_helper' => '',
     'description' => 'Beschreibung',
     'description_helper' => '',
+    'no_description' => 'Es wurde keine Beschreibung hinterlegt.',
     'type' => 'Typ',
     'url' => 'URL',
     'url_title' => 'URL Titel',
@@ -602,7 +603,7 @@ return [
         'title_singular' => 'Bereich',
         'create' => 'Bereich erstellen',
         'edit' => 'Bereich bearbeiten',
-        'move' => 'Curriculum ändern',
+        'move_to_curriculum' => 'In anderes Curriculum verschieben',
         'delete' => 'Bereich löschen',
         'fields' => [
             'time_approach' => 'Zeitansatz',

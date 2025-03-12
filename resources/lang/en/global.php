@@ -18,6 +18,7 @@ return [
     'title_helper' => '',
     'description' => 'Description',
     'description_helper' => '',
+    'no_description' => 'No description was provided.',
     'name' => 'Name',
     'created_at' => 'Created at',
     'created_at_helper' => '',
@@ -574,7 +575,7 @@ return [
         'title_singular' => 'Terminal objective',
         'create' => 'Create terminal objective',
         'edit' => 'Edit terminal objective',
-        'move' => 'Change curriculum',
+        'move_to_curriculum' => 'Move to other curriculum',
         'delete' => 'Delete terminal objective',
         'fields' => [
             'time_approach' => 'Time approach',

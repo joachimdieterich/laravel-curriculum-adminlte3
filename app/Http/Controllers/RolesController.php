@@ -15,11 +15,11 @@ class RolesController extends Controller
     {
         abort_unless(\Gate::allows('role_access'), 403);
 
-        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+        if (request()->wantsJson()) {
             if (is_admin()) {
-                return  getEntriesForSelect2ByModel("App\Role");
+                return getEntriesForSelect2ByModel("App\Role");
             } else {
-                return  getEntriesForSelect2ByCollection(
+                return getEntriesForSelect2ByCollection(
                     Role::where('id', '>', auth()->user()->role()->id)
                 );
             }

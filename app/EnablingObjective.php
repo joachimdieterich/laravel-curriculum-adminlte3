@@ -5,12 +5,14 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class EnablingObjective extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title',
+    protected $fillable = [
+        'title',
         'description',
         'order_id',
         'time_approach',
@@ -21,6 +23,8 @@ class EnablingObjective extends Model
     ];
 
     protected $casts = [
+        'title' => CleanHtml::class,
+        'description' => CleanHtml::class,
         'visibility' => 'boolean',
         'referencing_curriculum_id' => 'object',
         'updated_at' => 'datetime',

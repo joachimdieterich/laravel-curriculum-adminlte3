@@ -55,6 +55,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.p-margin-0 p { margin-bottom: 0px !important; }
 .pointer {
     cursor: pointer;
 }

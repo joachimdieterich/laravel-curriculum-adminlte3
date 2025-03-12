@@ -355,7 +355,7 @@ class PlanController extends Controller
         $planCopy->entry_order = $newEntryOrder ?? null;
         $planCopy->save();
 
-        return redirect('/plans');
+        return $planCopy;
     }
     /**
      * Get all users with the student-role that are enroled in a plan

@@ -33,7 +33,10 @@ class ContentController extends Controller
         //subscribe to model
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
-            $content->subscribe($model);
+            $subscription = $content->subscribe($model)->toArray();
+            $subscription['content'] = $content;
+
+            return $subscription;
         }
 
         if (request()->wantsJson()) {
@@ -78,7 +81,7 @@ class ContentController extends Controller
         $this->checkForEmbeddedMedia($content);
 
         if (request()->wantsJson()) {
-            return ['message' => $content];
+            return $content;
         }
     }
 

@@ -460,7 +460,7 @@ app.config.globalProperties.$dtOptions = {
             "previous":   '<i class="fa fa-angle-left"></id>',
         },
     },
-    select: true
+    select: 'multiple'
 };
 
 /**

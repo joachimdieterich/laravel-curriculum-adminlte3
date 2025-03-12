@@ -14,6 +14,8 @@
                     :ajax="'/courses/list?course_id=' + course.id"
                     :search="search"
                     width="100%"
+                    @select="updateAchievements"
+                    @deselect="updateAchievements"
                 />
             </div>
         </div>
@@ -258,7 +260,7 @@
             <SubscribeModal/>
         </Teleport>
 
-        <teleport to="#customTitle">
+        <Teleport to="#customTitle">
             <small>{{ currentCurriculum.title }}</small>
             <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
                 v-permission="'curriculum_edit'"
@@ -274,7 +276,7 @@
             >
                 <i class="fa fa-share-alt"></i>
             </a>
-        </teleport>
+        </Teleport>
     </div>
 </template>
 <script>
@@ -321,12 +323,6 @@ export default {
             type: Object,
             default: null,
         },
-       /* usersCurricula: {
-            default: null
-        },
-        current_curriculum_cross_reference_id: {
-            default: null
-        },*/
         objectivetypes: {
             type: Array,
             default: null,
@@ -357,6 +353,7 @@ export default {
             ],
             options : this.$dtOptions,
             search: '',
+            dt: null,
         }
     },
     mounted() {
@@ -367,13 +364,7 @@ export default {
             select: (this.store.getDatatable('curriculum-user-datatable')?.select) ? false : true,
             selectedItems: [],
         });
-        const dt = $('#curriculum-user-datatable').DataTable();
-        dt.on('select', function(e, dt, type, indexes) {
-            let selection = dt.rows('.selected').data().toArray()
-            this.store.setSelectedIds('curriculum-user-datatable', selection);
-
-            this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
-        }.bind(this));
+        this.dt = $('#curriculum-user-datatable').DataTable();
 
         this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {
             Object.assign(this.currentCurriculum, updatedCurriculum);
@@ -412,8 +403,14 @@ export default {
                 shareWithGroups: true,
                 shareWithOrganizations: true,
                 shareWithToken: true,
-                canEditCheckbox: true,
+                canEditCheckbox: false,
             });
+        },
+        updateAchievements() {
+            let selection = this.dt.rows('.selected').data().toArray();
+            this.store.setSelectedIds('curriculum-user-datatable', selection);
+
+            this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
         },
     }
 }

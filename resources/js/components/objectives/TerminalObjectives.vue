@@ -14,9 +14,7 @@
                 @end="handleTypeMoved"
             >
                 <template #item="{ element: typetab }">
-                    <li
-                        class="nav-item pl-0 pr-2 pb-2 pt-2"
-                    >
+                    <li class="nav-item pl-0 pr-2 pb-2 pt-2">
                         <a
                             :href="'#tab_' + typetab"
                             class="nav-link"
@@ -103,6 +101,7 @@
         <Teleport to="body">
             <TerminalObjectiveModal/>
             <EnablingObjectiveModal/>
+            <MoveTerminalObjectiveModal/>
         </Teleport>
     </div>
 </template>
@@ -111,6 +110,7 @@ import ObjectiveBox from './ObjectiveBox.vue';
 import EnablingObjectives from './EnablingObjectives.vue';
 import TerminalObjectiveModal from "./TerminalObjectiveModal.vue";
 import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
+import MoveTerminalObjectiveModal from './MoveTerminalObjectiveModal.vue';
 import Select2 from '../forms/Select2.vue';
 import draggable from "vuedraggable";
 import {useGlobalStore} from "../../store/global";
@@ -172,7 +172,6 @@ export default {
                 this.activetab = this.typetabs[0];
             }
         },
-
         loaderEvent(objective_type_id = 0) {
             axios.get('/curricula/' + this.curriculum.id + '/objectives')
                 .then(response => {
@@ -182,18 +181,17 @@ export default {
                     console.log(e);
                 });
         },
-         externalEvent: function(ids) {
-             this.reloadEnablingObjectives(ids);
-         },
-         reloadEnablingObjectives(ids) {
-             axios.post('/curricula/' + this.curriculum.id + '/achievements', { 'user_ids' : ids })
-                 .then(response => {
-
-                     this.processObjectives(response);
-                 })
-                 .catch(e => {
-                     console.log(e);
-                 });
+        externalEvent: function(ids) {
+            this.reloadEnablingObjectives(ids);
+        },
+        reloadEnablingObjectives(ids) {
+            axios.post('/curricula/' + this.curriculum.id + '/achievements', { 'user_ids' : ids })
+                .then(response => {
+                    this.processObjectives(response);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         },
         handleTypeMoved() {
             // Send the entire list of statuses to the server
@@ -202,6 +200,13 @@ export default {
                     console.log(err.response);
                     alert(err.response.statusText);
                 });
+        },
+        addNewType(type) {
+            this.objectivetypes.push(type);
+            // if new tab gets created, switch to this tab
+            let newTab = this.typetabs.push(type.id);
+            this.activetab = this.typetabs[newTab - 1];
+            this.type_objectives[type.id] = [];
         },
     },
     mounted() {
@@ -213,11 +218,7 @@ export default {
         this.$eventHub.on('terminal-objective-added', (terminal) => {
             const type = terminal.type;
             if (!this.type_objectives[type.id]) {
-                this.objectivetypes.push(type);
-                // if new tab gets created, switch to this tab
-                let newTab = this.typetabs.push(type.id);
-                this.activetab = this.typetabs[newTab - 1];
-                this.type_objectives[type.id] = [];
+                this.addNewType(type);
             }
 
             this.max_ids[type.id] = terminal.id;
@@ -225,9 +226,46 @@ export default {
         });
 
         this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
-            let terminal = this.type_objectives[updatedTerminal.objective_type_id].find(t => t.id === updatedTerminal.id);
+            let terminal = this.type_objectives[updatedTerminal.objective_type_id]?.find(t => t.id === updatedTerminal.id);
+            // objective-type got changed
+            if (terminal === undefined) {
+                // changed objective-type was not in use before
+                if (this.type_objectives[updatedTerminal.objective_type_id] === undefined) {
+                    this.addNewType(updatedTerminal.type);
+                }
+                // find original objective
+                Object.values(this.type_objectives).forEach(type => {
+                    let objective = type.find(obj => obj.id === updatedTerminal.id);
+                    if (objective !== undefined) {
+                        terminal = objective;
+                        return;
+                    }
+                });
+                
+                // move the enabling-objectives from the old model to the new one
+                updatedTerminal.enabling_objectives = terminal.enabling_objectives;
+                // add updated objective to its new type
+                this.type_objectives[updatedTerminal.objective_type_id].push(updatedTerminal);
+                // remove old objective
+                const index = this.type_objectives[terminal.objective_type_id].indexOf(terminal);
+                console.log('index = ', index);
+                // this.type_objectives[terminal.objective_type_id] = this.type_objectives[terminal.objective_type_id].filter(obj => obj.id !== terminal.id);
+                this.type_objectives[terminal.objective_type_id].splice(index, 1);
 
-            Object.assign(terminal, updatedTerminal);
+                // update order-ids
+                for (let i = index; i < this.type_objectives[terminal.objective_type_id].length; i++) {
+                    this.type_objectives[terminal.objective_type_id][i].order_id--;
+                }
+                
+                // update max-ids 
+                this.max_ids[updatedTerminal.objective_type_id] = updatedTerminal.id;
+                if (this.max_ids[terminal.objective_type_id] === terminal.id) {
+                    let type = this.type_objectives[terminal.objective_type_id];
+                    this.max_ids[terminal.objective_type_id] = type[type.length - 1]?.id ?? 0;
+                }
+            } else {
+                Object.assign(terminal, updatedTerminal);
+            }
         });
 
         // enabling objectives
@@ -272,6 +310,7 @@ export default {
     components: {
         TerminalObjectiveModal,
         EnablingObjectiveModal,
+        MoveTerminalObjectiveModal,
         ObjectiveBox,
         EnablingObjectives,
         Select2,

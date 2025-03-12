@@ -85,7 +85,7 @@ export default {
         return {
             settings: {
                 last: null,
-                course : true,
+                course : false,
                 edit : false,
                 achievements : true,
             },

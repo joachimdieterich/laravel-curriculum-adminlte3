@@ -183,6 +183,9 @@ export default {
     },
     watch: {
         objective: function(val, oldVal) {
+            // only update the status when in a course
+            if (!this.settings.course) return;
+
             if (typeof this.objective.achievements[0] === 'object') {
                 //console.log(val.achievements[0].status);
                 this.status = val.achievements[0].status;

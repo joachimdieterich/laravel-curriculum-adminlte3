@@ -369,7 +369,7 @@ export default {
         });
         const dt = $('#curriculum-user-datatable').DataTable();
         dt.on('select', function(e, dt, type, indexes) {
-            let selection = dt.rows('.selected').data().toArray()
+            let selection = dt.rows('.selected').data().toArray();
             this.store.setSelectedIds('curriculum-user-datatable', selection);
 
             this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));

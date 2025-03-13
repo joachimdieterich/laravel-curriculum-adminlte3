@@ -1,4 +1,4 @@
-@extends((Auth::user()->id == env('GUEST_USER')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
+@extends('layouts.contentonly')
 
 @section('breadcrumb')
     @if (Auth::user()->id == env('GUEST_USER'))

@@ -14,7 +14,7 @@ class NavigatorViewController extends Controller
 
     public function list(NavigatorView $navigator_view)
     {
-        abort_unless(\Gate::allows('navigator_access'), 403);
+        abort_unless(\Gate::allows('navigator_show'), 403);
         $items = NavigatorItem::select([
             'id',
             'title',

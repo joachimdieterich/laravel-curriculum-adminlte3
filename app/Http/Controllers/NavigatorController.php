@@ -16,14 +16,14 @@ class NavigatorController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('navigator_access'), 403);
+        abort_unless(\Gate::allows('navigator_show'), 403);
 
         return view('navigators.index');
     }
 
     public function list()
     {
-        abort_unless(\Gate::allows('navigator_access'), 403);
+        abort_unless(\Gate::allows('navigator_show'), 403);
         $navigators = Navigator::select([
             'id',
             'title',

@@ -667,7 +667,7 @@ class VideoconferenceController extends Controller
             'webcamsOnlyForModerator' => 'sometimes|boolean',
             'anyoneCanStart' => 'sometimes|boolean',
             'server' => 'sometimes|string',
-            'owner_id' => 'sometimes|integer',
+            'owner_id' => 'sometimes|integer|nullable',
         ]);
     }
 }

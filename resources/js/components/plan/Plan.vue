@@ -39,16 +39,7 @@
         <div class="card rounded-0">
             <!-- /.card-header -->
             <div class="card-body">
-                <div class="d-flex">
-                    <span class="flex-fill">
-                        {{ htmlToText(currentPlan.description) }}
-                    </span>
-                    <div v-if="currentPlan.medium_id"
-                        class="w-25"
-                        :style="{'background': 'url(/media/' + currentPlan.medium_id + '?model=App\\Plan&model_id=' + currentPlan.id + ') center no-repeat'}"
-                        style="min-height: 100px; background-size: contain !important;"
-                    ></div>
-                </div>
+                <div v-html="description"></div>
             </div>
         </div>
 
@@ -232,6 +223,14 @@ export default {
         });
     },
     computed: {
+        // add an img-tag, so the medium can be placed within the text
+        description() {
+            let img = '';
+            if (this.currentPlan.medium_id) {
+                img = '<img class="pull-right" src="/media/' + this.currentPlan.medium_id + '?preview=true"/>';
+            }
+            return img + this.currentPlan.description;
+        },
         columnDragOptions() {
             return {
                 animation: 200,

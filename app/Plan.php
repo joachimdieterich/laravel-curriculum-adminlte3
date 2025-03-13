@@ -3,12 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Plan extends Model
 {
     protected $guarded = [];
 
     protected $casts = [
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
         'entry_order' => 'array',
         'allow_copy' => 'boolean',
     ];

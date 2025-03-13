@@ -639,7 +639,7 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             form: new Form({
-                id: null,
+                id: '',
                 meetingID: '',
                 meetingName: '',
                 owner_id: null,

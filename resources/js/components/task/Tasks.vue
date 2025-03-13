@@ -73,7 +73,7 @@
         </div>
 
         <Teleport to="body">
-            <TaskModal/>
+            <TaskModal v-if="subscribable_id == null && subscribable_type == null"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.task.delete')"
@@ -121,7 +121,9 @@ export default {
             tasks: null,
             search: '',
             showConfirm: false,
-            url: '/tasks/list',
+            url: this.subscribable_type && this.subscribable_id
+                ? '/taskSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
+                : '/tasks/list?filter=' + this.filter,
             currentTask: {},
             columns: [
                 { title: 'check', data: 'check' },
@@ -130,6 +132,7 @@ export default {
                 { title: 'subscriptions', data: 'subscriptions'},
             ],
             options : this.$dtOptions,
+            dt: null,
         }
     },
     mounted() {
@@ -142,30 +145,31 @@ export default {
         });
 
         this.$eventHub.on('task-updated', (updatedTask) => {
-            let task = this.tasks.find(t => t.id === updatedTask.id);
+            if (this.subscribable_type == updatedTask.subscriptions[0].subscribable_type
+                && this.subscribable_id == updatedTask.subscriptions[0].subscribable_id) {
+                let task = this.tasks.find(t => t.id === updatedTask.id);
 
-            Object.assign(task, updatedTask);
+                Object.assign(task, updatedTask);
+            }
         });
     },
     methods: {
         openModal(task = {}) {
+            task.subscribable_type = this.subscribable_type;
+            task.subscribable_id = this.subscribable_id;
+
             this.globalStore?.showModal('task-modal', task)
         },
         loaderEvent() {
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                this.url = '/tasksSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
-            } else {
-                this.url = '/tasks/list?filter=' + this.filter;
-            }
-
-            const dt = $('#task-datatable_' + this.component_id).DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.tasks = dt.rows({page: 'current'}).data().toArray();
+            this.dt = $('#task-datatable_' + this.component_id).DataTable();
+            this.dt.on('draw.dt', () => {
+                this.tasks = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#task-content').insertBefore('#task-datatable-wrapper');
             });
+
             this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
+                this.dt.search(filter).draw();
             });
         },
         confirmItemDelete(task) {
@@ -192,8 +196,7 @@ export default {
                 });
         },
         isCompleted(task) {
-            let subscription = task.subscriptions
-            return ( subscription[0]?.completion_date != null && typeof (subscription[0]?.completion_date) !== 'undefined' ) ? true : false;
+            return task.subscriptions[0]?.completion_date;
         },
     },
     components: {

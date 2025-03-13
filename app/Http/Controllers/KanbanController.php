@@ -413,7 +413,7 @@ class KanbanController extends Controller
 
         if (!isset($subscription)) abort(410, 'Dieser Link existiert nicht mehr');
 
-        if ($subscription->due_date) {
+        if (isset($subscription->due_date)) {
             $now = Carbon::now();
             $due_date = Carbon::parse($subscription->due_date);
             if ($due_date < $now) {

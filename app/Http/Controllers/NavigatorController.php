@@ -76,7 +76,7 @@ class NavigatorController extends Controller
      */
     public function show(Navigator $navigator)
     {
-        abort_unless(\Gate::allows('navigator_access'), 403);
+        abort_unless(\Gate::allows('navigator_show'), 403);
         $model = 'navigator'; //strtolower(class_basename( $navigator ));
 
 

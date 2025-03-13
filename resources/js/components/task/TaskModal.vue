@@ -124,12 +124,6 @@ export default {
         Editor,
         VueDatePicker,
     },
-    props: {
-        params: {
-            type: Object,
-            default: null,
-        },
-    },
     setup() {
         const globalStore = useGlobalStore();
 
@@ -147,6 +141,8 @@ export default {
                 description: '',
                 start_date: new Date(),
                 due_date: null,
+                subscribable_type: null,
+                subscribable_id: null,
             }),
             tinyMCE: this.$initTinyMCE(
                 [

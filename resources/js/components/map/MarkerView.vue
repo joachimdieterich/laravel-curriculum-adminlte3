@@ -63,10 +63,10 @@
             </a>
         </div>
 
-        <SubscribableList v-if="marker.id"
+<!--        <SubscribableList v-if="marker.id"
             url="/mapMarkerSubscriptions?map_marker_id"
             :model_id="marker.id"
-        />
+        />-->
 
         <Teleport to="body">
             <SubscribeModal/>

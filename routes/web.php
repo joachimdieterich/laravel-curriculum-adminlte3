@@ -383,6 +383,8 @@ if (env('GUEST_USER') !== null) {
     Route::get('kanban/share/{token}', 'ShareTokenController@auth');
     Route::get('curricula/{curriculum}/token', 'CurriculumController@getCurriculumByToken');
     Route::get('curriculum/share/{token}', 'ShareTokenController@auth');
+    Route::get('navigatorViews/{navigator_view}/list', 'NavigatorViewController@list')->name('navigator.list');
+    Route::get('navigators/list', 'NavigatorController@list');
 
     Route::get('/guest', function () {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest

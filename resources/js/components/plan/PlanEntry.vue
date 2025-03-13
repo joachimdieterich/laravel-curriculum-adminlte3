@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="card-body py-2 collapse">
-                            <div v-html="description"></div>
+                            <div class="overflow-auto" v-html="description"></div>
 
                             <Objectives
                                 referenceable_type="App\PlanEntry"
@@ -157,7 +157,7 @@ export default {
         description() {
             let img = '';
             if (this.entry.medium_id) {
-                img = '<img class="pull-right" src="/media/' + this.entry.medium_id + '?preview=true"/>';
+                img = '<img class="pull-right" style="max-width: 25%;" src="/media/' + this.entry.medium_id + '?preview=true"/>';
             }
             return img + this.entry.description;
         },

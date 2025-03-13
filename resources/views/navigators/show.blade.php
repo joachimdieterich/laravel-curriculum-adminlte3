@@ -4,7 +4,7 @@
     @if (Auth::user()->id == env('GUEST_USER'))
         <breadcrumbs
             :entries="{{json_encode([
-            ['active'=> true, 'title'=> Str::limit($kanban->title, 10) ]
+            ['active'=> true, 'title'=> Str::limit($navigator->title, 10) ]
         ])}}"
         ></breadcrumbs>
     @else

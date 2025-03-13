@@ -117,6 +117,7 @@
                 :width="width - 16"
             />
         </div>
+
         <div v-if="item.due_date != null
                 && (item.visible_from != null || item.visible_until != null)"
             class="card-footer px-3 py-2"
@@ -190,7 +191,7 @@
             @removeComment="removeComment"
         />
 
-        <Teleport to="body">
+        <Teleport to=".content">
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.kanbanItem.delete')"

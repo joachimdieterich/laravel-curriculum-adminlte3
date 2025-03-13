@@ -41,10 +41,13 @@
                 </div>
             </div>
         </section>
-        <div class="d-flex flex-column flex-fill px-3">
+
+        <!-- Main content -->
+        <section class="content d-flex flex-column flex-fill px-3">
             @yield('content')
-            <input id="medium_id" class="invisible"> <!-- DONT REMOVE - used by TINYMCE -->
-        </div>
+            <input id="medium_id" class="d-none"> <!-- DONT REMOVE - used by TINYMCE -->
+        </section>
+
         <!-- Footer -->
         @include('partials.footer', ['contentonly' => true])
     </div>

@@ -86,7 +86,7 @@
             </div>
         </div>
 
-        <Teleport to="body">
+        <Teleport to=".content">
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.kanbanStatus.delete')"

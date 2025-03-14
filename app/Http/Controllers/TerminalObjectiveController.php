@@ -80,7 +80,10 @@ class TerminalObjectiveController extends Controller
 
         // update objective type
         if ($request->has('objective_type_id')) {
-            $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
+            $order_id = $old_objective->order_id;
+            if ($old_objective->objective_type_id != $request['objective_type_id']) {
+                $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
+            }
             $request->request->add(['order_id' => $order_id]);
             // if moved to another curriculum
             if ($old_objective->curriculum_id != request('curriculum_id')) {

@@ -85,7 +85,7 @@
             <PlanModal/>
             <MediumModal/>
             <SubscribeModal/>
-            <TrainingModal :plan="plan"/>
+            <TrainingModal/>
             <PlanEntryModal :plan="plan"/>
             <SetAchievementsModal :users="users"/>
             <SubscribeObjectiveModal :users="users"/>

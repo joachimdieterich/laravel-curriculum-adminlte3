@@ -75,10 +75,6 @@ export default {
         VueDatePicker,
     },
     props: {
-        plan: {
-            type: Object,
-            default: null,
-        },
         editable: {
             type: Boolean,
             default: false,

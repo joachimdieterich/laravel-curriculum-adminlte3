@@ -98,11 +98,6 @@ import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
     name: 'training-modal',
-    props: {
-        plan: {
-            type: Object,
-        }
-    },
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -120,7 +115,6 @@ export default {
                 date: null,
                 begin: '',
                 end: '',
-                plan_id: this.plan.id,
                 subscribable_id: null,
                 subscribable_type: null,
             }),

@@ -46,7 +46,7 @@
                                     :name="'description' + component_id"
                                     class="form-control"
                                     :init="tinyMCE"
-                                    v-model.trim="form.description"
+                                    v-model="form.description"
                                 />
                             </div>
 
@@ -123,11 +123,11 @@ export default {
                     "autolink link lists table code autoresize"
                 ],
                 {
-                    'eventHubCallbackFunction': 'insertContent',
-                    'eventHubCallbackFunctionParams': this.component_id,
+                    callback: 'insertContent',
+                    callbackId: this.component_id,
                 },
-                "bold underline italic | alignleft aligncenter alignright | table",
-                "bullist numlist outdent indent | mathjax link code",
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link",
+                "",
             ),
         }
     },
@@ -177,7 +177,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
@@ -186,7 +187,6 @@ export default {
                     if (this.form.begin && this.form.end) {
                         this.form.date = [new Date(this.form.begin), new Date(this.form.end)];
                     }
-                    this.form.description = this.$decodeHTMLEntities(params.description);
 
                     if (this.form.id != '') {
                         this.method = 'patch';

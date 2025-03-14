@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 use DateTimeInterface;
 
 class Training extends Model
@@ -23,6 +24,7 @@ class Training extends Model
     ];
 
     protected $casts = [
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
         'begin' => 'datetime',
         'end' => 'datetime',
     ];

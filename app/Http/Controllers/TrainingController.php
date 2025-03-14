@@ -117,8 +117,8 @@ class TrainingController extends Controller
             'description' => 'sometimes|string|nullable',
             'begin' => 'sometimes',
             'end' => 'sometimes',
-            'subscribable_type' => 'sometimes|string',
-            'subscribable_id' => 'sometimes|integer',
+            'subscribable_type' => 'sometimes|string|nullable',
+            'subscribable_id' => 'sometimes|integer|nullable',
             'owner_id' => 'sometimes|integer'
         ]);
     }

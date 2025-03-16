@@ -10,30 +10,27 @@
             alt="background image"
         />
         <div
+            class="position-absolute pointer"
+            style="top: 10px; left: 10px; line-height: 1; z-index: 10;"
+            :style="{ color: textColor }"
+            @click="toggleFullscreen"
+        >
+            <i class="fa fa-expand"></i>
+        </div>
+        <div
+            class="position-absolute pointer"
+            style="top: 10px; right: 10px; line-height: 1; z-index: 10;"
+            :style="{ color: textColor }"
+            @click="toggleCollapseAll"
+        >
+            <i class="fa fa-angle-up"></i>
+        </div>
+
+        <div
             id="kanban_board_wrapper"
             class="kanban_board_wrapper position-relative"
             :style="'background-color: ' + currentKanban.color + 'B2;'"
         >
-            <div
-                class="position-absolute pointer"
-                style="top: 10px; left: 10px;"
-                :style="{ color: textColor }"
-                @click="toggleFullscreen"
-            >
-                <i class="fa fa-expand position-fixed"></i>
-            </div>
-            <div
-                class="position-absolute pointer"
-                style="top: 10px; right: 10px;"
-                :style="{ color: textColor }"
-                @click="toggleCollapseAll"
-            >
-                <i
-                    class="fa fa-angle-up position-fixed"
-                    style="transform: translateX(-100%);"
-                ></i>
-            </div>
-
             <!-- Columns (Statuses) -->
             <draggable
                 v-model="statuses"
@@ -121,7 +118,8 @@
                 </template>
             </draggable>
         </div>
-        <Teleport to="body">
+
+        <Teleport to=".content">
             <KanbanModal/>
             <KanbanItemModal/>
             <KanbanStatusModal :kanban="kanban"/>
@@ -241,7 +239,8 @@ export default {
             if (document.fullscreenElement) {
                 document.exitFullscreen();
             } else {
-                $('#kanban_board_container').get(0).requestFullscreen();
+                document.querySelector('.content').requestFullscreen();
+                // $('#kanban_board_container').get(0).requestFullscreen();
             }
         },
         toggleCollapseAll(e) {
@@ -642,7 +641,6 @@ export default {
 .kanban_board_container {
     background-color: #fff;
     position: relative;
-    height: calc(100vh - 205px);
     width: 100%;
 }
 .kanban_board_wrapper {
@@ -659,5 +657,5 @@ export default {
     }
 }
 .fa-angle-up { transition: 0.4s transform; }
-.collapsed .fa-angle-up { transform: translateX(-100%) rotate(-180deg) !important; }
+.collapsed .fa-angle-up { transform: rotate(-180deg) !important; }
 </style>

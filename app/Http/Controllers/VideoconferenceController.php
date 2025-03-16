@@ -575,12 +575,15 @@ class VideoconferenceController extends Controller
         $input = $this->validateRequest();
 
         $subscription = VideoconferenceSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
-        if (!$subscription?->due_date) abort(403, "Token doesn't exist or isn't valid anymore");
 
-        $now = Carbon::now();
-        $due_date = Carbon::parse($subscription->due_date);
-        if ($due_date < $now) {
-            abort(410, 'Dieser Link ist nicht mehr gültig');
+        if (!isset($subscription)) abort(410, 'Dieser Link existiert nicht mehr');
+
+        if (isset($subscription->due_date)) {
+            $now = Carbon::now();
+            $due_date = Carbon::parse($subscription->due_date);
+            if ($due_date < $now) {
+                abort(410, 'Dieser Link ist nicht mehr gültig');
+            }
         }
 
         return $this->show($videoconference, $subscription->editable);
@@ -664,7 +667,7 @@ class VideoconferenceController extends Controller
             'webcamsOnlyForModerator' => 'sometimes|boolean',
             'anyoneCanStart' => 'sometimes|boolean',
             'server' => 'sometimes|string',
-            'owner_id' => 'sometimes|integer',
+            'owner_id' => 'sometimes|integer|nullable',
         ]);
     }
 }

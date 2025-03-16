@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\KanbanSubscription;
 use App\VideoconferenceSubscription;
 use App\CurriculumSubscription;
+use App\MapSubscription;
 use App\User;
 use Carbon\Carbon;
 use App\Helpers\QRCodeHelper;
@@ -44,6 +45,11 @@ class ShareTokenController extends Controller
                 $subscriptionClass = new CurriculumSubscription();
                 $field_model_id = 'curriculum_id';
                 $model_url = 'curricula';
+                break;
+            case 'map':
+                $subscriptionClass = new MapSubscription();
+                $field_model_id = 'map_id';
+                $model_url = 'maps';
                 break;
             default:
                 abort(422, "Model doesn't accept sharing-tokens");

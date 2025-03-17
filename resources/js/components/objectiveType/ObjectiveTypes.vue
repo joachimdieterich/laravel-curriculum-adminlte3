@@ -1,38 +1,43 @@
 <template >
     <div class="row">
-        <div id="objective-type-content"
-             class="col-md-12 m-0">
+        <div
+            id="objective-type-content"
+            class="col-md-12 m-0"
+        >
             <IndexWidget
                 v-permission="'objectivetype_create'"
-                key="'objectiveTypeCreate'"
+                key="objectiveTypeCreate"
                 modelName="ObjectiveType"
                 url="/objectiveTypes"
                 :create=true
-                :label="trans('global.objectiveType.create')">
-            </IndexWidget>
-            <IndexWidget
-                v-for="objectiveType in objectiveTypes"
-                :key="'objectiveTypeIndex'+objectiveType.id"
+                :label="trans('global.objectiveType.create')"
+            />
+            <IndexWidget v-for="objectiveType in objectiveTypes"
+                :key="'objectiveTypeIndex' + objectiveType.id"
                 :model="objectiveType"
                 modelName="ObjectiveType"
-                url="/objectiveTypes">
+                url="/objectiveTypes"
+            >
                 <template v-slot:icon>
                     <i class="fa fa-university pt-2"></i>
                 </template>
 
-                <template
+                <template v-slot:dropdown
                     v-permission="'objectivetype_edit, objectivetype_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
                         <button
                             v-permission="'objectivetype_edit'"
                             :name="'edit-objective-type-' + objectiveType.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editObjectiveType(objectiveType)">
+                            @click.prevent="editObjectiveType(objectiveType)"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
-                            {{ trans('global.objective.edit') }}
+                            {{ trans('global.objectiveType.edit') }}
                         </button>
                         <hr class="my-1">
                         <button
@@ -40,7 +45,8 @@
                             :id="'delete-objective-type-' + objectiveType.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(objectiveType)">
+                            @click.prevent="confirmItemDelete(objectiveType)"
+                        >
                             <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.objectiveType.delete') }}
                         </button>
@@ -48,26 +54,39 @@
                 </template>
             </IndexWidget>
         </div>
-        <div id="objective-type-datatable-wrapper"
-             class="w-100 dataTablesWrapper">
+
+        <div
+            id="objective-type-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
             <DataTable
                 id="objective-type-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
+                ajax="/objectiveTypes/list"
                 :search="search"
                 width="100%"
-                style="display:none; "
-            ></DataTable>
+                style="display: none;"
+            />
         </div>
 
         <Teleport to="body">
-            <ObjectiveTypeModal></ObjectiveTypeModal>
+            <ObjectiveTypeModal/>
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.objectiveType.delete')"
+                :description="trans('global.objectiveType.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            />
         </Teleport>
     </div>
 </template>
-
-
 <script>
 import ObjectiveTypeModal from "../objectiveType/ObjectiveTypeModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -78,10 +97,7 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {
-
-    },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -91,9 +107,8 @@ export default {
         return {
             component_id: this.$.uid,
             objectiveTypes: null,
+            showConfirm: false,
             search: '',
-            url: '/objectiveTypes/list',
-            errors: {},
             currentObjectiveType: {},
             columns: [
                 { title: 'check', data: 'check' },
@@ -101,7 +116,7 @@ export default {
                 { title: 'title', data: 'title', searchable: true},
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
+            dt: null,
         }
     },
     mounted() {
@@ -110,31 +125,33 @@ export default {
         this.loaderEvent();
 
         this.$eventHub.on('objectiveType-added', (objectiveType) => {
-            this.loaderEvent();
-            this.globalStore?.closeModal('objective-type-modal');
+            this.objectiveTypes.push(objectiveType);
         });
 
-        this.$eventHub.on('objectiveType-updated', (objectiveType) => {
-            this.globalStore?.closeModal('objective-type-modal');
+        this.$eventHub.on('objectiveType-updated', (updatedObjectiveType) => {
+            let objectiveType = this.objectiveTypes.find(type => type.id === updatedObjectiveType.id);
+
+            Object.assign(objectiveType, updatedObjectiveType);
         });
-        this.$eventHub.on('createObjectiveType', () => {
-            this.globalStore?.showModal('objective-type-modal', {});
+
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
         });
     },
     methods: {
-        editObjectiveType(objectiveType){
-            this.currentObjectiveType = objectiveType;
-            this.globalStore?.showModal('objective-type-modal', this.currentObjectiveType);
+        editObjectiveType(objectiveType) {
+            this.globalStore?.showModal('objectivetype-modal', objectiveType);
         },
-        loaderEvent(){
-            const dt = $('#objective-type-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.objectiveTypes = dt.rows({page: 'current'}).data().toArray();
+        confirmItemDelete(objectiveType) {
+            this.currentObjectiveType = objectiveType;
+            this.showConfirm = true;
+        },
+        loaderEvent() {
+            this.dt = $('#objective-type-datatable').DataTable();
+            this.dt.on('draw.dt', () => {
+                this.objectiveTypes = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#objective-type-content').insertBefore('#objective-type-datatable-wrapper');
-            });
-            this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
             });
         },
         destroy() {
@@ -144,24 +161,15 @@ export default {
                     this.objectiveTypes.splice(index, 1);
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
-        update(objectiveType) {
-            const index = this.objectiveTypes.findIndex(
-                vc => vc.id === objectiveType.id
-            );
-
-            for (const [key, value] of Object.entries(objectiveType)) {
-                this.objectives[index][key] = value;
-            }
-        }
     },
     components: {
         ConfirmModal,
         DataTable,
         ObjectiveTypeModal,
-        IndexWidget
+        IndexWidget,
     },
 }
 </script>

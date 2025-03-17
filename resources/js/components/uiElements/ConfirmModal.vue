@@ -4,7 +4,10 @@
             class="modal-mask"
             @click.self="$emit('close')"
         >
-            <div class="modal-container">
+            <div
+                class="modal-container"
+                style="border-top-left-radius: 5px; border-top-right-radius: 5px;"
+            >
                 <div
                     class="card-header"
                     :class="'bg-' + this.css"

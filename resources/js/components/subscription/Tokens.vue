@@ -77,6 +77,7 @@ export default {
         },
         canEditLabel: {
             type: String,
+            default: window.trans.global.can_edit,
         },
         canEditCheckbox: {
             type: Boolean,

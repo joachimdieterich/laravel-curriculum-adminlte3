@@ -56,7 +56,6 @@
                             />
 
                             <Trainings
-                                :plan="plan"
                                 :subscribable_id="entry.id"
                                 subscribable_type="App\PlanEntry"
                                 :editable="editable"

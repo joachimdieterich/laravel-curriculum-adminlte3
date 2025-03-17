@@ -1,7 +1,9 @@
 @extends('layouts.master')
+
 @section('title')
-    {{ trans('global.training.title_singular') }}
+    <title-component/>
 @endsection
+
 @section('breadcrumb')
     <breadcrumbs
         :entries="{{json_encode([
@@ -10,10 +12,11 @@
         ])}}"
     ></breadcrumbs>
 @endsection
+
 @section('content')
 <div class="row">
     <div class="col-12">
-        <training :training="{{ $training }}"></training>
+        <Training :training="{{ $training }}"/>
     </div>
 </div>
 @endsection

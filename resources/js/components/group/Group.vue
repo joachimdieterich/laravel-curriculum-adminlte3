@@ -5,235 +5,268 @@
                 class="nav nav-tabs"
                 role="tablist"
             >
+                <!-- 1 Curricula -->
                 <li
                     class="nav-item"
+                    role="presentation"
                     @click="setGlobalStorage('#group_' + group.id, '#group_curriculum_' + group.id)"
                 >
-                    <a
-                        id="curriculum-nav-tab"
-                        class="nav-link link-muted"
-                        :class="getGlobalStorage('#group_' + group.id, '#group_curriculum_' + group.id, 'active', true)"
-                        data-toggle="pill"
-                        href="#curriculum-tab"
+                    <button
+                        id="curricula-tab"
+                        class="nav-link link-muted active"
+                        data-toggle="tab"
+                        data-target="#curricula"
+                        type="button"
                         role="tab"
-                        aria-controls="curriculum-tab"
-                        aria-selected="false"
+                        aria-controls="curricula"
+                        aria-selected="true"
                     >
                         <i class="fas fa-th"></i>
                         <span v-if="help">{{ trans('global.curriculum.title') }}</span>
-                    </a>
+                    </button>
                 </li>
+                <!-- 2 Users -->
                 <li
                     v-permission="'group_enrolment'"
                     class="nav-item"
+                    role="presentation"
                     @click="setGlobalStorage('#group_' + group.id, '#group_users_' + group.id);"
                 >
-                    <a
-                        id="user-nav-tab"
+                    <button
+                        id="users-tab"
                         class="nav-link link-muted"
-                        :class="getGlobalStorage('#group_' + group.id, '#group_users_' + group.id)"
-                        data-toggle="pill"
-                        href="#users-tab"
+                        data-toggle="tab"
+                        data-target="#users"
+                        type="button"
                         role="tab"
-                        aria-controls="users-tab"
-                        aria-selected="true"
+                        aria-controls="users"
+                        aria-selected="false"
                     >
                         <i class="fa fa-users"></i>
                         <span v-if="help">{{ trans('global.user.title') }}</span>
-                    </a>
+                    </button>
                 </li>
+                <!-- 3 Logbooks -->
                 <li
                     v-permission="'logbook_access'"
-                    class="nav-item "
+                    class="nav-item"
+                    role="presentation"
                     @click="setGlobalStorage('#group_' + group.id, '#group_logbooks_' + group.id);"
                 >
-                    <a
-                        id="logbook-nav-tab"
+                    <button
+                        id="logbooks-tab"
                         class="nav-link link-muted"
-                        :class="getGlobalStorage('#group_' + group.id, '#group_logbooks_' + group.id)"
-                        data-toggle="pill"
-                        href="#logbook-tab"
+                        data-toggle="tab"
+                        data-target="#logbooks"
+                        type="button"
                         role="tab"
-                        aria-controls="logbook-tab"
-                        aria-selected="true"
+                        aria-controls="logbooks"
+                        aria-selected="false"
                     >
-                        <i class="fas fa-book "></i>
+                        <i class="fas fa-book"></i>
                         <span v-if="help">{{ trans('global.logbook.title') }}</span>
-                    </a>
+                    </button>
                 </li>
+                <!-- 4 Kanbans -->
                 <li
                     v-permission="'kanban_access'"
-                    class="nav-item "
+                    class="nav-item"
+                    role="presentation"
                     @click="setGlobalStorage('#group_' + group.id, '#group_kanbans_' + group.id);"
                 >
-                    <a
-                        id="kanban-nav-tab"
+                    <button
+                        id="kanbans-tab"
                         class="nav-link link-muted"
-                        :class="getGlobalStorage('#group_' + group.id, '#group_kanbans_' + group.id)"
-                        data-toggle="pill"
-                        href="#kanban-tab"
+                        data-toggle="tab"
+                        data-target="#kanbans"
+                        type="button"
                         role="tab"
-                        aria-controls="kanban-tab"
-                        aria-selected="true"
+                        aria-controls="kanbans"
+                        aria-selected="false"
                     >
                         <i class="fa fa-columns"></i>
                         <span v-if="help">{{ trans('global.kanban.title') }}</span>
-                    </a>
+                    </button>
                 </li>
-<!--                <li class="nav-item"
+                <!-- 5 Tasks -->
+                <!-- <li
                     v-permission="'task_access'"
-                    @click="setGlobalStorage('#group_'+group.id, '#group_tasks_'+group.id);">
-                    <a class="nav-link link-muted"
-                       :class="getGlobalStorage('#group_'+group.id, '#group_tasks_'+group.id)"
-                       id="task-nav-tab"
-                       data-toggle="pill"
-                       href="#task-tab"
-                       role="tab"
-                       aria-controls="task-tab"
-                       aria-selected="true">
+                    class="nav-item"
+                    role="presentation"
+                    @click="setGlobalStorage('#group_' + group.id, '#group_tasks_' + group.id);"
+                >
+                    <button
+                        id="tasks-tab"
+                        class="nav-link link-muted"
+                        data-toggle="tab"
+                        data-target="#tasks"
+                        type="button"
+                        role="tab"
+                        aria-controls="tasks"
+                        aria-selected="false"
+                    >
                         <i class="fas fa-tasks"></i>
                         <span v-if="help">{{ trans('global.task.title') }}</span>
-                    </a>
-                </li>-->
+                    </button>
+                </li> -->
+                <!-- 6 Plans -->
                 <li
                     v-permission="'plan_access'"
                     class="nav-item"
+                    role="presentation"
                     @click="setGlobalStorage('#group_' + group.id, '#group_plans_' + group.id);"
                 >
-                    <a
-                        id="plans-nav-tab"
+                    <button
+                        id="plans-tab"
                         class="nav-link link-muted"
-                        :class="getGlobalStorage('#group_' + group.id, '#group_plans_' + group.id)"
-                        data-toggle="pill"
-                        href="#plan-tab"
+                        data-toggle="tab"
+                        data-target="#plans"
+                        type="button"
                         role="tab"
-                        aria-controls="plan-tab"
-                        aria-selected="true"
+                        aria-controls="plans"
+                        aria-selected="false"
                     >
                         <i class="fa fa-clipboard-list"></i>
                         <span v-if="help">{{ trans('global.plan.title') }}</span>
-                    </a>
+                    </button>
                 </li>
-                <!-- TODO: needs fix -->
-                 <li
+                <!-- 7 Exams -->
+                <li
                     v-permission="'exam_access'"
                     class="nav-item"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_tests_' + group.id);"
+                    role="presentation"
+                    @click="setGlobalStorage('#group_' + group.id, '#group_exams_' + group.id);"
                 >
-                    <a
-                        id="test-nav-tab"
+                    <button
+                        id="exams-tab"
                         class="nav-link link-muted"
-                        :class="getGlobalStorage('#group_' + group.id, '#group_tests_' + group.id)"
-                        data-toggle="pill"
-                        href="#tests-tab"
+                        data-toggle="tab"
+                        data-target="#exams"
+                        type="button"
                         role="tab"
-                        aria-controls="tests-tab"
-                        aria-selected="true"
+                        aria-controls="exams"
+                        aria-selected="false"
                     >
                         <i class="fa-solid fa-ranking-star"></i>
                         <span v-if="help">{{ trans('global.exam.title') }}</span>
-                    </a>
+                    </button>
                 </li>
+                <!-- 8 Videoconferences -->
                 <li
                     v-permission="'videoconference_access'"
                     class="nav-item"
+                    role="presentation"
                     @click="setGlobalStorage('#group_' + group.id, '#group_videoconference_' + group.id);"
                 >
                     <a
-                        id="test-nav-tab"
+                        id="videoconferences-tab"
                         class="nav-link link-muted"
-                        :class="getGlobalStorage('#group_' + group.id, '#group_videoconference_' + group.id)"
-                        data-toggle="pill"
-                        href="#videoconference-tab"
+                        data-toggle="tab"
+                        data-target="#videoconferences"
+                        type="button"
                         role="tab"
-                        aria-controls="videoconference-tab"
-                        aria-selected="true"
+                        aria-controls="videoconferences"
+                        aria-selected="false"
                     >
                         <i class="fa-solid fa-video"></i>
                         <span v-if="help">{{ trans('global.videoconference.title') }}</span>
                     </a>
                 </li>
-<!--                <li class="nav-item ">
-                    <a v-if="group.glossar != null"
-                       class="nav-link link-muted"
-                       id="glossar-nav-tab"
-                       data-toggle="pill"
-                       href="#glossar-tab"
-                       role="tab"
-                       aria-controls="glossar-tab"
-                       aria-selected="true">
-                        <i class="fa fa-book-open pr-2"></i>
-                        <span v-if="help"> {{ trans('global.glossar.title_singular') }}</span>
-                    </a>
-                    <a v-else
-                       v-permission="'glossar_create'"
-                       class="nav-link link-muted"
-                       id="glossar-nav-tab"
-                       :href="'/glossar/create?subscribable_type=App\\Group&subscribable_id='+ group.id "
+                <!-- 9 Glossar -->
+                <!-- <li
+                    class="nav-item"
+                    role="presentation"
+                >
+                    <button v-if="group.glossar != null"
+                        id="glossar-tab"
+                        class="nav-link link-muted"
+                        data-toggle="tab"
+                        data-target="#glossar"
+                        type="button"
+                        role="tab"
+                        aria-controls="glossar"
+                        aria-selected="false"
                     >
-                        <i class="fa fa-book-open pr-2"></i>{{ trans('global.glossar.create') }}
-                    </a>
-                </li>-->
-                <!-- <li class="nav-item ">
-                    <a class="nav-link link-muted"
-                       id="medium-nav-tab"
-                       data-toggle="pill"
-                       href="#medium-tab"
-                       role="tab"
-                       aria-controls="medium-tab"
-                       aria-selected="true">
-                        <i class="fa fa-folder-open pr-2"></i>{{trans('global.medium.title')}}
-                    </a>
-                </li>-->
+                        <i class="fa fa-book-open pr-2"></i>
+                        <span v-if="help">{{ trans('global.glossar.title_singular') }}</span>
+                    </button>
+                    <button v-else
+                        v-permission="'glossar_create'"
+                        class="nav-link link-muted"
+                        id="create-glossar"
+                        :href="'/glossar/create?subscribable_type=App\\Group&subscribable_id=' + group.id"
+                    >
+                        <i class="fa fa-book-open pr-2"></i>
+                        {{ trans('global.glossar.create') }}
+                    </button>
+                </li> -->
+                <!-- 10 Media -->
+                <!-- <li
+                    class="nav-item"
+                    role="presentation"
+                >
+                    <button
+                        id="media-tab"
+                        class="nav-link link-muted"
+                        data-toggle="tab"
+                        data-target="#media"
+                        type="button"
+                        role="tab"
+                        aria-controls="media"
+                        aria-selected="false"
+                    >
+                        <i class="fa fa-folder-open pr-2"></i>
+                        {{ trans('global.medium.title') }}
+                    </button>
+                </li> -->
+                <!-- Help -->
                 <li class="nav-item ml-auto pull-right">
-                    <a
+                    <button
                         class="nav-link small link-muted pointer"
                         style="line-height: 24px;"
                         @click="help = !help"
                     >
                         <i class="fa fa-question pr-1" style="font-size: 16px;"></i>
-                    </a>
+                    </button>
                 </li>
+                <!-- Edit -->
                 <li
-                    v-permission="'organization_edit'"
+                    v-permission="'group_edit'"
                     class="nav-item"
                 >
-                    <a
+                    <button
                         class="nav-link link-muted"
                         @click="editGroup()"
                     >
                         <i class="fas fa-pencil-alt"></i>
-                    </a>
+                    </button>
                 </li>
             </ul>
 
-            <div
-                id="custom-content-below-tabContent"
-                class="tab-content"
-            >
+            <div class="tab-content">
+                <!-- 1 Curricula -->
                 <div
-                    id="curriculum-tab"
-                    class="tab-pane show"
-                    :class="getGlobalStorage('#group_' + group.id, '#group_curriculum_' + group.id, 'active', true)"
+                    id="curricula"
+                    class="tab-pane fade show active"
                     role="tabpanel"
-                    aria-labelledby="curriculum-nav-tab"
+                    aria-labelledby="curriculum-tab"
                 >
-                    <courses
+                    <Courses
                         ref="Courses"
                         :group="group"
                         create_label_field="enrol"
                         delete_label_field="expel"
                     />
                 </div>
-               <div
+                <!-- 2 Users -->
+                <div
                     v-permission="'group_enrolment'"
-                    id="users-tab"
-                    class="tab-pane"
-                    :class="getGlobalStorage('#group_' + group.id, '#group_users_' + group.id)"
-                    role="tab"
-                    aria-labelledby="users-nav-tab"
+                    id="users"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="users-tab"
                 >
-                    <users
+                    <Users
                         ref="Users"
                         :reference="group"
                         delete_label_field="expel"
@@ -242,16 +275,16 @@
                         :subscribable="true"
                         create_label_field="enrol"
                     />
-               </div>
-               <div
+                </div>
+                <!-- 3 Logbooks -->
+                <div
                     v-permission="'logbook_access'"
-                    id="logbook-tab"
-                    class="tab-pane"
-                    :class="getGlobalStorage('#group_' + group.id, '#group_logbooks_' + group.id)"
-                    role="tab"
-                    aria-labelledby="logbook-nav-tab"
+                    id="logbooks"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="logbooks-tab"
                 >
-                    <logbooks
+                    <Logbooks
                         ref="Logbooks"
                         :reference="group"
                         delete_label_field="expel"
@@ -259,16 +292,16 @@
                         :subscribable_id="group.id"
                         :subscribable="true"
                     />
-               </div>
-               <div
+                </div>
+                <!-- 4 Kanbans -->
+                <div
                     v-permission="'kanban_access'"
-                    id="kanban-tab"
-                    class="tab-pane"
-                    :class="getGlobalStorage('#group_' + group.id, '#group_kanbans_' + group.id)"
-                    role="tab"
-                    aria-labelledby="kanban-nav-tab"
+                    id="kanbans"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="kanbans-tab"
                 >
-                    <kanbans
+                    <Kanbans
                         ref="Kanbans"
                         delete_label_field="expel"
                         subscribable_type="App\Group"
@@ -277,15 +310,29 @@
                         create_label_field="enrol"
                     />
                 </div>
+                <!-- 5 Tasks -->
+                <!-- <div
+                    v-permission="'task_access'"
+                    id="tasks"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="tasks-tab"
+                >
+                    <Tasks
+                        ref="Tasks"
+                        subscribable_type="App\Group"
+                        :subscribable_id="group.id"
+                    />
+                </div> -->
+                <!-- 6 Plans -->
                 <div
                     v-permission="'plan_access'"
-                    id="plan-tab"
-                    class="tab-pane"
-                    :class="getGlobalStorage('#group_' + group.id, '#group_plans_' + group.id)"
-                    role="tab"
-                    aria-labelledby="plan-nav-tab"
+                    id="plans"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="plans-tab"
                 >
-                    <plans
+                    <Plans
                         ref="Plans"
                         delete_label_field="expel"
                         subscribable_type="App\Group"
@@ -294,14 +341,13 @@
                         create_label_field="enrol"
                     />
                 </div>
-                <!-- TODO: needs fix -->
-                 <div
+                <!-- 7 Exams -->
+                <div
                     v-permission="'exam_access'"
-                    id="tests-tab"
-                    class="tab-pane"
-                    :class="getGlobalStorage('#group_' + group.id, '#group_tests_' + group.id)"
-                    role="tab"
-                    aria-labelledby="tests-nav-tab"
+                    id="exams"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="exams-tab"
                 >
                     <Exams
                         ref="Exams"
@@ -312,15 +358,15 @@
                         create_label_field="enrol"
                     />
                 </div>
+                <!-- 8 Videoconferences -->
                 <div
                     v-permission="'videoconference_access'"
-                    id="videoconference-tab"
-                    class="tab-pane"
-                    :class="getGlobalStorage('#group_' + group.id, '#group_videoconference_' + group.id)"
-                    role="tab"
-                    aria-labelledby="tests-nav-tab"
+                    id="videoconferences"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="videoconferences-tab"
                 >
-                    <videoconferences
+                    <Videoconferences
                         ref="Videoconference"
                         subscribable_type="App\Group"
                         :subscribable_id="group.id"
@@ -329,34 +375,28 @@
                         delete_label_field="expel"
                     />
                 </div>
-                <!-- <div v-permission="'task_access'"
-                        class="tab-pane fade "
-                        id="task-tab"
-                        role="tab"
-                        aria-labelledby="content-nav-tab">
-                       <tasks
-                           ref="Tasks"
-                           subscribable_type="App\Group"
-                           :subscribable_id="group.id"></tasks>
-                   </div> -->
+                <!-- 9 Glossar -->
                 <!-- <div v-if="group.glossar !== null"
-                          class="tab-pane fade"
-                          id="glossar-tab"
-                          role="tab"
-                          aria-labelledby="glossar-nav-tab">
-                         <glossars
-                             :glossar="group.glossar">
-                         </glossars>
-                     </div>-->
-                <!--<div class="tab-pane fade "
-                    id="medium-tab"
-                    role="tab"
-                    aria-labelledby="medium-nav-tab">
-                   <media subscribable_type="App\Group"
-                          :subscribable_id="group.id"
-                          format="list">
-                   </media>
-               </div>-->
+                    id="glossar"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="glossar-tab"
+                >
+                    <Glossars :glossar="group.glossar"/>
+                </div> -->
+                <!-- 10 Media -->
+                <!-- <div
+                    id="media"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    aria-labelledby="media-tab"
+                >
+                   <Media
+                        subscribable_type="App\Group"
+                        :subscribable_id="group.id"
+                        format="list"
+                    />
+               </div> -->
             </div>
         </div>
         <Teleport to="body">
@@ -396,7 +436,7 @@ export default {
         Kanbans,
         //Tasks,
         Plans,
-        Exams
+        Exams,
         //Tests,
     },
     setup() {

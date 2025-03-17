@@ -23,7 +23,7 @@
                         <small>{{ diffForHumans(item.token.due_date) }}</small>
                     </span>
                     <button
-                        class="btn btn-flat ml-auto py-0"
+                        class="btn btn-flat ml-auto py-0 mr-1"
                         @click="unsubscribe(item.token.id)"
                     >
                         <i class="fa fa-trash text-danger vuehover"></i>

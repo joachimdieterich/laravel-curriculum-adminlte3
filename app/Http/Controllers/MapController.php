@@ -7,6 +7,8 @@ use App\Organization;
 use App\Videoconference;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Auth;
+use App\MapSubscription;
 
 class MapController extends Controller
 {
@@ -172,6 +174,31 @@ class MapController extends Controller
 
     }
 
+    public function getMapByToken(Map $map, Request $request)
+    {
+        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
+            LogController::set('guestLogin');
+            LogController::setStatistics();
+            Auth::loginUsingId((env('GUEST_USER')), true);
+        }
+
+        $input = $this->validateRequest();
+
+        $subscription = MapSubscription::where('sharing_token', $input['sharing_token'] )->get()->first();
+
+        if (!isset($subscription)) abort(410, 'Dieser Link existiert nicht mehr');
+
+        if (isset($subscription->due_date)) {
+            $now = Carbon::now();
+            $due_date = Carbon::parse($subscription->due_date);
+            if ($due_date < $now) {
+                abort(410, 'Dieser Link ist nicht mehr gültig');
+            }
+        }
+
+        return $this->show($map, $input['sharing_token']);
+
+    }
     protected function validateRequest()
     {
         return request()->validate([
@@ -189,6 +216,8 @@ class MapController extends Controller
             'color'=> 'sometimes',
             'medium_id'=> 'sometimes',
             'owner_id' => 'sometimes',
+            'sharing_token' => 'sometimes',
+
         ]);
     }
 }

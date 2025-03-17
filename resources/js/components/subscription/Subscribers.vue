@@ -3,7 +3,7 @@
         class="products-list product-list-in-card pl-2 pr-2"
     >
         <li v-if="canEditCheckbox">
-            <span class="btn btn-flat pull-right py-0">
+            <span class="pull-right">
                 <small>{{ canEditLabel }}</small>
             </span>
         </li>

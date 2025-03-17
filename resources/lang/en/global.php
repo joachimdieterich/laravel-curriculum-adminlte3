@@ -549,6 +549,8 @@ return [
         'export' => 'Export curriculum',
         'print' => 'Print curriculum',
         'print_references' => 'Print curriculum references',
+        'delete' => 'Delete curriculum',
+        'delete_helper' => 'Should this curriculum and all its corresponding data be deleted?',
         'fields' => [
             'publisher' => 'Publisher',
             'publisher_helper' => '',
@@ -582,10 +584,12 @@ return [
         ],
     ],
     'objectiveType' => [
-        'title' => 'Type',
+        'title' => 'Types',
         'title_singular' => 'Type',
         'create' => 'Create type',
         'edit' => 'Edit type',
+        'delete' => 'Delete type',
+        'delete_helper' => 'Should this type be deleted?',
         'fields' => [
             'title_short' => 'Title (short)',
         ],

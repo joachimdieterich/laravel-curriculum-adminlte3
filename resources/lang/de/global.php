@@ -614,6 +614,8 @@ return [
         'title_singular' => 'Bereichstyp',
         'create' => 'Bereichstyp erstellen',
         'edit' => 'Bereichstyp bearbeiten',
+        'delete' => 'Bereichstyp löschen',
+        'delete_helper' => 'Soll der Bereichstyp gelöscht werden?',
         'fields' => [
             'title_short' => 'Kurzbezeichnung',
         ],

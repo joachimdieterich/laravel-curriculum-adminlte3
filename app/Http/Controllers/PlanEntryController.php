@@ -49,9 +49,6 @@ class PlanEntryController extends Controller
         ]);
         // subscribe embedded media
         checkForEmbeddedMedia($entry, 'description');
-        if ($new_entry['medium_id'] != null) {
-            $this->subscribeMedium($entry); // for medium_id
-        }
 
         // axios call?
         if (request()->wantsJson()) {
@@ -96,9 +93,6 @@ class PlanEntryController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
 
-        if ($medium_id != null) {
-            $this->subscribeMedium($planEntry); // for medium_id
-        }
         // axios call?
         if (request()->wantsJson()) {
             return $planEntry;

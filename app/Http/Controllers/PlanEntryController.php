@@ -116,19 +116,6 @@ class PlanEntryController extends Controller
         }
     }
 
-    protected function subscribeMedium($entry){
-        $subscribe = MediumSubscription::updateOrCreate([
-            'medium_id' => $entry->medium_id,
-            'subscribable_type' => 'App\PlanEntry',
-            'subscribable_id' => $entry->id,
-        ], [
-            'sharing_level_id' => 1,
-            'visibility' => 1,
-            'owner_id' => auth()->user()->id,
-        ]);
-        $subscribe->save();
-    }
-
     protected function validateRequest()
     {
         return request()->validate([

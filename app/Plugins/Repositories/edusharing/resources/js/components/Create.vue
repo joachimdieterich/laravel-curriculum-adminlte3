@@ -77,8 +77,7 @@ export default {
         receiveMessage(event) {
             let data = event.data.data;
 
-            if(event.data.event === 'APPLY_NODE') {
-                console.log(data);
+            if (event.data.event === 'APPLY_NODE') {
                 setTimeout(() => { this.emitEvent(data); }, 250);
 
                 window.removeEventListener("message", this.receiveMessage);
@@ -143,6 +142,9 @@ export default {
             });
 
         window.addEventListener("message", this.receiveMessage, false);
+    },
+    unmounted() {
+        window.removeEventListener("message", this.receiveMessage);
     },
 }
 </script>

@@ -201,8 +201,7 @@
                         />
                     </div>
 
-                    <div
-                        v-permission="'task_access'"
+                    <div v-if="checkPermission('task_access')"
                         :id="'logbook_tasks_' + entry.id"
                         class="tab-pane"
                     >

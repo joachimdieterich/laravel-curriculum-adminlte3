@@ -89,6 +89,7 @@
                             </button>
                         </div>
                     </div>
+
                     <div v-permission="'group_enrolment'"
                          id="tab_group" class="tab-pane active row" >
                         <div class="form-horizontal col-xs-12 px-4">
@@ -135,8 +136,11 @@
                             </button>
                         </div>
                     </div>
-                    <div v-permission="'organization_enrolment'"
-                        id="tab_organization" class="tab-pane row " >
+
+                    <div v-if="checkPermission('organization_enrolment')"
+                        id="tab_organization"
+                        class="tab-pane row"
+                    >
                         <div class="form-horizontal col-xs-12 px-4">
                             <div id="form_group"
                                  class="form-group">
@@ -192,6 +196,7 @@
                             </button>
                         </div>
                     </div>
+
                     <div id="tab_register"
                          class="tab-pane row " >
                         <div class="form-horizontal col-xs-12 px-4">
@@ -227,6 +232,7 @@
                             </button>
                         </div>
                     </div>
+
                     <div v-permission="'user_delete'"
                          id="tab_delete" class="tab-pane row" >
                         <div class="form-horizontal col-xs-12 px-4">
@@ -248,8 +254,6 @@
         </div>
     </div>
 </template>
-
-
 <script>
 import { useDatatableStore } from "../../store/datatables";
 import Form from "form-backend-validation";

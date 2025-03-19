@@ -71,8 +71,8 @@ class UsersController extends Controller
         else
         {
             $users = (auth()->user()->role()->id == 1)
-                ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'common_name', 'email', 'medium_id', 'deleted_at')
-                : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
+                ? User::select('id', 'username', 'firstname', 'lastname', 'common_name', 'email', 'medium_id', 'deleted_at')->noSharing()->get()
+                : Organization::find(auth()->user()->current_organization_id)->users()->noSharing()->get();
 
         }
 

@@ -393,7 +393,6 @@ export default {
             }
         },
         externalAdd(form) {
-            console.log(form);
             this.postProcess = true;
             axios.post('/media?repository=edusharing', form)
                 .then((response) => {

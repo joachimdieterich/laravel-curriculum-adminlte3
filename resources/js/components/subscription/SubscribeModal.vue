@@ -174,9 +174,8 @@
                                         locale="de"
                                         :select-text="trans('global.ok')"
                                         :cancel-text="trans('global.close')"
-                                        :placeholder="trans('global.valid_from_to')"
+                                        :placeholder="trans('global.valid_to')"
                                     />
-                                    <small>{{ canEditLabel }}</small>
     
         <!--                            <span v-if="canEditCheckbox"
                                         class="pull-right custom-control custom-switch custom-switch-on-green">

@@ -49,9 +49,6 @@ class PlanEntryController extends Controller
         ]);
         // subscribe embedded media
         checkForEmbeddedMedia($entry, 'description');
-        if ($new_entry['medium_id'] != null) {
-            $this->subscribeMedium($entry); // for medium_id
-        }
 
         // axios call?
         if (request()->wantsJson()) {
@@ -96,9 +93,6 @@ class PlanEntryController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
 
-        if ($medium_id != null) {
-            $this->subscribeMedium($planEntry); // for medium_id
-        }
         // axios call?
         if (request()->wantsJson()) {
             return $planEntry;
@@ -120,19 +114,6 @@ class PlanEntryController extends Controller
         if (request()->wantsJson()) {
             return true;
         }
-    }
-
-    protected function subscribeMedium($entry){
-        $subscribe = MediumSubscription::updateOrCreate([
-            'medium_id' => $entry->medium_id,
-            'subscribable_type' => 'App\PlanEntry',
-            'subscribable_id' => $entry->id,
-        ], [
-            'sharing_level_id' => 1,
-            'visibility' => 1,
-            'owner_id' => auth()->user()->id,
-        ]);
-        $subscribe->save();
     }
 
     protected function validateRequest()

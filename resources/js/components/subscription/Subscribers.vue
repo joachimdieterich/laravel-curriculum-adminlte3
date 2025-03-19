@@ -3,7 +3,7 @@
         class="products-list product-list-in-card pl-2 pr-2"
     >
         <li v-if="canEditCheckbox">
-            <span class="btn btn-flat pull-right py-0">
+            <span class="pull-right">
                 <small>{{ canEditLabel }}</small>
             </span>
         </li>
@@ -12,7 +12,7 @@
                 :id="'subscription_' + subscription.id"
                 :value="subscription.id"
                 style="clear: right;"
-                class="item"
+                class="item d-flex"
             >
                 <span v-if="subscription.subscribable_type == 'App\\User'">
                     {{ subscription?.subscribable.firstname }}  {{ subscription.subscribable.lastname }}
@@ -21,8 +21,15 @@
                     {{ subscription.subscribable.title }}
                 </span>
 
+                <button v-if="$userId == subscription.owner_id"
+                    class="btn btn-flat py-0 ml-auto mr-1"
+                    @click="unsubscribe(subscription)"
+                >
+                    <i class="fa fa-trash text-danger vuehover"></i>
+                </button>
+
                 <span v-if="canEditCheckbox"
-                    class="pull-right custom-control custom-switch custom-switch-on-green"
+                    class="custom-control custom-switch custom-switch-on-green"
                 >
                     <input
                         :id="'subscription_input' + subscription.id"
@@ -36,15 +43,6 @@
                         :for="'subscription_input' + subscription.id"
                     ></label>
                 </span>
-
-                <span class="pull-right pr-2"></span>
-
-                <button v-if="$userId == subscription.owner_id"
-                    class="btn btn-flat py-0 pull-right"
-                    @click="unsubscribe(subscription)"
-                >
-                    <i class="fa fa-trash text-danger vuehover"></i>
-                </button>
             </li>
         </template>
     </ul>

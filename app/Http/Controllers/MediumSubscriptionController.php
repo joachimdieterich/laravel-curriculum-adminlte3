@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
+use App\Plugins\Repositories\edusharing\Edusharing;
 
 class MediumSubscriptionController extends Controller
 {
@@ -111,27 +112,41 @@ class MediumSubscriptionController extends Controller
         abort_unless(\Gate::allows('medium_delete'), 403);
         $input = $this->validateRequest();
 
-        MediumSubscription::where([
+        // technically there could be more than 1 result, but in practice a model can only have 1 attached medium
+        // also, for each edusharing-subscription a new medium is created, so these should always be unique (1:1)
+        $query = MediumSubscription::where([
             'medium_id' => $input['medium_id'],
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
             'sharing_level_id' => $input['sharing_level_id'],
             'visibility' => $input['visibility'],
-        ])->delete();
+        ]);
 
-        // skip this step if additional_data is set
-        // used for instances, where the medium isn't directly connected to a model
-        if (!isset($input['additional_data'])) {
-            // since the subscription gets deleted instantly, we should remove the connection from the resource
-            $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
+        $subscription = $query->first();
+
+        // if subscription doesn't exist => curriculum-media attached to a model->medium_id
+        if (isset($subscription)) {
+            // additional-data is needed to delete the usage
+            $additional_data = $subscription->additional_data;
+            // subscription needs to be deleted before deleting the medium
+            $query->delete();
+
+            if (isset($additional_data)) {
+                // delete the usage
+                $edusharing = new Edusharing;
+                $edusharing->deleteUsage(
+                    $additional_data['nodeId'],
+                    $additional_data['usageId'],
+                );
+                // and then delete the medium-entry
+                Medium::find($input['medium_id'])->delete();
+            }
         }
 
-        $medium = Medium::select('id', 'adapter')->find($input['medium_id']);
-        // if edusharing-medium, delete the Medium if no subscription is left
-        if ($medium->adapter == 'edusharing') {
-            if (MediumSubscription::where('medium_id', $input['medium_id'])->count() == 0) {
-                $medium->delete();
-            }
+        // if request didn't send additional_data (only needed on curriculum-media)
+        if (!isset($input['additional_data'])) {
+            // since there is no subscription, we should just remove the attached medium-id from the resource
+            $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
         }
 
         return true;

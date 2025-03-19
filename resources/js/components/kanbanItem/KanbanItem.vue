@@ -11,9 +11,9 @@
             aria-expanded="true"
         >
             <div
-                class="card-header-title px-3 py-2 w-100"
+                class="card-header-title pl-3 py-2"
                 :style="{ backgroundColor: item.color }"
-                style="border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem;"
+                style="border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem; padding-right: 3.5rem;"
             >
                 {{ item.title }}
                 <i class="fa fa-angle-up"></i>

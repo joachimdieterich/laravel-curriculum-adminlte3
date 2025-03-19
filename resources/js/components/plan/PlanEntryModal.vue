@@ -182,6 +182,8 @@ export default {
                 {
                     callback: 'insertContent',
                     callbackId: this.component_id,
+                    subscribable_type: 'App\\Plan',
+                    subscribable_id: this.plan.id,
                 },
                 "bold underline italic | alignleft aligncenter alignright alignjustify",
                 "bullist numlist outdent indent | curriculummedia link mathjax code",

@@ -451,6 +451,8 @@ app.config.globalProperties.$initTinyMCE = function(
 app.config.globalProperties.$dtOptions = {
     dom: 'tilpr',
     pageLength: 10,
+    serverSide: true,
+    processing: true,
     language: {
         url: '/datatables/i18n/German.json',
         paginate: {

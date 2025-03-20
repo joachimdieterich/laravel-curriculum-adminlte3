@@ -31,7 +31,7 @@
                 <div
                     class="nav-item-box-image-size h-100 w-100"
                     style="opacity: 75%"
-                    :style="{'background': 'url(/media/' + item.medium_id + '?model=' + modelName + '&model_id=' + item.DT_RowId + ') center no-repeat'}"
+                    :style="{'background': 'url(/media/' + item.medium_id + '?preview=true) center no-repeat'}"
                 >
                 </div>
             </div>

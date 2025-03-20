@@ -21,7 +21,7 @@
                     {{ subscription.subscribable.title }}
                 </span>
 
-                <button v-if="$userId == subscription.owner_id"
+                <button
                     class="btn btn-flat py-0 ml-auto mr-1"
                     @click="unsubscribe(subscription)"
                 >

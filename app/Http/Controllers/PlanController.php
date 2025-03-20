@@ -156,7 +156,7 @@ class PlanController extends Controller
             'owner_id'          => auth()->user()->id,
         ]);
 
-        checkForEmbeddedMedia($plan, 'description'); // subscribe embedded media
+        // checkForEmbeddedMedia($plan, 'description'); // subscribe embedded media
 
         if (request()->wantsJson()) {
             return $plan;
@@ -225,7 +225,7 @@ class PlanController extends Controller
 
         $plan->update($input);
 
-        checkForEmbeddedMedia($plan, 'description');// subscribe embedded media
+        // checkForEmbeddedMedia($plan, 'description');// subscribe embedded media
 
         if (request()->wantsJson()) {
             return $plan;

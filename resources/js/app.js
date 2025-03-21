@@ -84,6 +84,14 @@ import VSwatches from 'vue3-swatches';
 import 'vue3-swatches/dist/style.css';
 app.use(VSwatches);
 
+app.config.globalProperties.$swatches = [
+    ['#166534', '#16a34a', '#10b981', '#14b8a6', '#06b6d4'], // green
+    ['#1d4ed8', '#0284c7', '#60a5fa', '#a5b4fc', '#6366f1'], // blue
+    ['#991b1b', '#dc2626', '#86198f', '#7c3aed', '#581c87'], // red -> purple
+    ['#c2410c', '#f97316', '#fb923c', '#f59e0b', '#facc15'], // orange -> yellow
+    ['#111827', '#9ca3af', '#d1d5db', '#78716c', '#78350f'], // grey -> brown
+];
+
 app.config.globalProperties.$textcolor = (color, dark = '#000', light = '#fff') => {
     if (typeof(color) != 'string') {
         color = 'ffffff';

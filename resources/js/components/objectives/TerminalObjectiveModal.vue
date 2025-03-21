@@ -94,20 +94,21 @@
                             <div class="card-title">{{ trans('global.display') }}</div>
                         </div>
                         <div class="card-body">
-                            <v-swatches
-                                :swatch-size="49"
-                                :trigger-style="{}"
-                                popover-to="right"
-                                v-model="form.color"
-                                show-fallback
-                                fallback-input-type="color"
-                                @input="(id) => {
-                                    if (id.isInteger) {
-                                        this.form.color = id;
-                                    }
-                                }"
-                                :max-height="300"
-                            />
+                            <div class="d-flex">
+                                <v-swatches
+                                    style="height: 42px;"
+                                    :swatches="$swatches"
+                                    row-length="5"
+                                    v-model="form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                    @input="(id) => {
+                                        if (id.isInteger) {
+                                            this.form.color = id;
+                                        }
+                                    }"
+                                />
+                            </div>
                         </div>
                     </div>
 

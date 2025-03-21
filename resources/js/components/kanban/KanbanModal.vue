@@ -83,11 +83,9 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <v-swatches
-                                    :swatch-size="49"
-                                    :trigger-style="{}"
                                     style="height: 42px;"
-                                    popover-to="right"
-                                    v-model="this.form.color"
+                                    popover-y="top"
+                                    v-model="form.color"
                                     show-fallback
                                     fallback-input-type="color"
                                     @input="(id) => {
@@ -95,7 +93,6 @@
                                             this.form.color = id;
                                         }
                                     }"
-                                    :max-height="300"
                                 />
         
                                 <MediumForm v-if="form.id"

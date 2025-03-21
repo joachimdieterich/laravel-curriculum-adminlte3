@@ -82,7 +82,7 @@
                 aria-expanded="false"
             >
                 <i class="fa fa-ellipsis-v"
-                    :style="'color:' + $textcolor(item.color)"
+                    :style="'color:' + (screenWidth > 990 ? $textcolor(item.color) : '#000')"
                 ></i>
                 <slot name="dropdown"></slot>
             </div>
@@ -218,7 +218,12 @@ export default {
                 rtl: false,
             });
         },
-    }
+    },
+    computed: {
+        screenWidth() {
+            return window.innerWidth;
+        },
+    },
 }
 </script>
 <style>

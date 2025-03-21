@@ -19,7 +19,7 @@
                 url="/subjects"
             >
                 <template v-slot:icon>
-                    <i class="fa fa-swatchbook pt-2"></i>
+                    <i class="fa fa-swatchbook"></i>
                 </template>
 
                 <template v-slot:dropdown

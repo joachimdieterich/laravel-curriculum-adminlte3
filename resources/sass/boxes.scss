@@ -28,13 +28,11 @@
 
     .symbol {
         position: absolute;
-        padding: 6px;
-        z-index: 1;
-        width: 30px;
-        height: 40px;
-        top: 0px;
+        padding: 6px 10px;
         font-size: 1.2em;
-        left: 10px;
+        top: 0px;
+        left: 0px;
+        z-index: 1;
     }
 
     &.box-objective {

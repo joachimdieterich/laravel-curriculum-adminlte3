@@ -64,7 +64,7 @@
             >
                 <slot name="icon">
                     <i
-                        class="fa pt-2"
+                        class="fa"
                         :class="item.owner_id == $userId ? 'fa-user' : 'fa-share-nodes'"
                     ></i>
                 </slot>

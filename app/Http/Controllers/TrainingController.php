@@ -37,17 +37,19 @@ class TrainingController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
 
+        $order_id = TrainingSubscription::where([
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ])->count();
+
         TrainingSubscription::create([
             'training_id' => $training->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
-            'order_id' => $input['order_id'] ?? 0,
+            'order_id' => $order_id,
             'editable' => 1, //needed?
             'owner_id' => auth()->user()->id,
         ]);
-
-        // subscribe embedded media
-        checkForEmbeddedMedia($training, 'description');
 
         if (request()->wantsJson()) {
             return $training;
@@ -89,7 +91,7 @@ class TrainingController extends Controller
         // subscribe embedded media
         checkForEmbeddedMedia($training, 'description');
 
-        return $training;
+        return $training->without('subscriptions.subscribable')->find($training->id);
     }
 
     /**
@@ -102,7 +104,15 @@ class TrainingController extends Controller
     {
         abort_unless(\Gate::allows('plan_delete'), 403);
 
-        $training->delete(); //subscriptions will be deleted too see booted function in Training.php
+        // decrement order_id of all subscriptions with higher order_id
+        $subscription = $training->subscriptions->first();
+        TrainingSubscription::where([
+            'subscribable_type' => $subscription->subscribable_type,
+            'subscribable_id' => $subscription->subscribable_id,
+            ['order_id', '>', $subscription->order_id],
+        ])->decrement('order_id', 1);
+
+        $training->delete(); //subscriptions will be deleted too, see booted function in Training.php
 
         if (request()->wantsJson()) {
             return true;
@@ -113,13 +123,12 @@ class TrainingController extends Controller
     {
         return request()->validate([
             'id' => 'sometimes|integer|nullable',
-            'title' => 'sometimes|string|nullable',
+            'title' => 'required|string',
             'description' => 'sometimes|string|nullable',
             'begin' => 'sometimes',
             'end' => 'sometimes',
             'subscribable_type' => 'sometimes|string|nullable',
             'subscribable_id' => 'sometimes|integer|nullable',
-            'owner_id' => 'sometimes|integer'
         ]);
     }
 }

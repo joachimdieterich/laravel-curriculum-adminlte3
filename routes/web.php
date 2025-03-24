@@ -321,6 +321,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('terminalObjectiveSubscriptions', 'TerminalObjectiveSubscriptionsController');
 
     Route::resource('trainings', 'TrainingController');
+    Route::patch('trainingsSubscriptions/{trainingSubscription}/lower', 'TrainingSubscriptionController@lower');
+    Route::patch('trainingsSubscriptions/{trainingSubscription}/higher', 'TrainingSubscriptionController@higher');
     Route::resource('trainingSubscriptions', 'TrainingSubscriptionController');
 
     /* reference(Subscription)  */

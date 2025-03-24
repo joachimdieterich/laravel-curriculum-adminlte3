@@ -126,7 +126,7 @@ export default {
                     callback: 'insertContent',
                     callbackId: this.component_id,
                 },
-                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link",
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
                 "",
             ),
         }
@@ -153,7 +153,6 @@ export default {
             axios.post('/trainings', this.form)
                 .then(response => {
                     this.$eventHub.emit('training-added', {
-                        training: response.data,
                         id: this.form.subscribable_id,
                     });
                 })

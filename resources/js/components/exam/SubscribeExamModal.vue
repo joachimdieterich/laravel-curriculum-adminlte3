@@ -23,17 +23,22 @@
                     class="modal-body"
                     style="overflow-y: visible;"
                 >
-                    <Select2
-                        id="exams_subscription"
-                        name="exams_subscription"
-                        :list="options"
-                        model="exam"
-                        option_label="name"
-                        :selected="this.form.exam_id"
-                        @selectedValue="(id) => {
-                            this.form.exam_id = id;
-                        }"
-                    />
+                    <div class="card">
+                        <div class="card-body">
+                            <Select2
+                                id="exams_subscription"
+                                name="exams_subscription"
+                                css="mb-0"
+                                :list="options"
+                                model="exam"
+                                option_label="name"
+                                :selected="form.exam_id"
+                                @selectedValue="(id) => {
+                                    this.form.exam_id = id;
+                                }"
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <span class="pull-right">
@@ -68,7 +73,6 @@ export default {
     components: {
         Select2,
     },
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -90,18 +94,19 @@ export default {
     methods: {
         submit() {
             let test = this.options.filter((t) => t.id == this.form.exam_id);
-            console.log(test[0]);
-            this.SendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.subscribable_id);
+
+            this.sendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.subscribable_id);
         },
-        async SendCreateExamRequest(tool, test_id, test_name, group_id) {
+        async sendCreateExamRequest(tool, test_id, test_name, group_id) {
             console.log({'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
             await axios.post('/exams', {'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
                 .then(response => {
-                    this.$eventHub.emit('exam-added', response.data)
+                    this.$eventHub.emit('exam-added', response.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(errors => {
                     this.$emit('failedNotification', errors)
-                })
+                });
         }
     },
     mounted() {
@@ -126,7 +131,7 @@ export default {
             })
             .catch(error => {
                 console.warn(error.response);
-            })
+            });
     },
 }
 </script>

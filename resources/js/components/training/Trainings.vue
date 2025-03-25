@@ -45,7 +45,7 @@
                             </a>
                             <a
                                 class="text-danger pointer mx-1"
-                                @click="destroy(training)"
+                                @click="confirmDelete(training)"
                             >
                                 <i class="fas fa-trash px-1"></i>
                             </a>
@@ -62,18 +62,34 @@
                 </div>
             </div>
         </div>
+        <Teleport to="body">
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.training.delete')"
+                :description="trans('global.training.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy(this.training);
+                }"
+            />
+        </Teleport>
     </div>
 </template>
 <script>
+import VueDatePicker from '@vuepic/vue-datepicker';
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import moment from "moment/moment";
 import {useGlobalStore} from "../../store/global";
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import axios from "axios";
 
 export default {
     components: {
         VueDatePicker,
+        ConfirmModal,
     },
     props: {
         editable: {
@@ -103,6 +119,8 @@ export default {
         return {
             component_id: this.$.uid,
             trainings: [],
+            training: {},
+            showConfirm: false,
             max_order_id: 0,
         }
     },
@@ -144,6 +162,10 @@ export default {
             training.subscribable_id = this.subscribable_id;
             training.subscribable_type = this.subscribable_type;
             this.globalStore.showModal('training-modal', training);
+        },
+        confirmDelete(training) {
+            this.training = training;
+            this.showConfirm = true;
         },
         destroy(training) {
             axios.delete('/trainings/' + training.id)

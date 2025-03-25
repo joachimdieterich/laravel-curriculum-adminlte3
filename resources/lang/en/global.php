@@ -931,6 +931,8 @@ return [
         'create' => 'Create training',
         'search' => 'Search training',
         'edit' => 'Edit training',
+        'delete' => 'Delete training',
+        'delete_helper' => 'Should this training and all its corresponding data be deleted?',
     ],
     'exercise' => [
         'title' => 'Exercises',

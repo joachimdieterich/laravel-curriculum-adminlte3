@@ -967,6 +967,8 @@ return [
         'create' => 'Training erstellen',
         'search' => 'Training suchen',
         'edit' => 'Training bearbeiten',
+        'delete' => 'Training löschen',
+        'delete_helper' => 'Soll das Training sowie die zugehörigen Daten gelöscht werden?',
     ],
     'exercise' => [
         'title' => 'Übungen',

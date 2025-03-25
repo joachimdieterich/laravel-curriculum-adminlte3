@@ -112,8 +112,8 @@ export default {
         // TRAINING events
         this.$eventHub.on('training-added', (e) => {
             if (this.subscribable_id === e.id) {
-                // don't manually add the training, because of the order_id logic
-                this.loaderEvent();
+                this.trainings.push(e.training);
+                this.max_order_id = e.training.subscriptions[0].order_id;
             }
         });
         this.$eventHub.on('training-updated', (e) => {
@@ -145,7 +145,14 @@ export default {
         destroy(training) {
             axios.delete('/trainings/' + training.id)
                 .then(response => {
-                    this.loaderEvent();
+                    let index = this.trainings.indexOf(training);
+                    // decrease the order_id of each training below the deleted training
+                    for (let i = index + 1; i < this.trainings.length; i++) {
+                        this.trainings[i].subscriptions[0].order_id -= 1;
+                    }
+
+                    this.trainings.splice(index, 1);
+                    this.max_order_id -= 1;
                 })
                 .catch(e => {
                     console.log(e);

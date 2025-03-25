@@ -153,6 +153,7 @@ export default {
             axios.post('/trainings', this.form)
                 .then(response => {
                     this.$eventHub.emit('training-added', {
+                        training: response.data,
                         id: this.form.subscribable_id,
                     });
                 })

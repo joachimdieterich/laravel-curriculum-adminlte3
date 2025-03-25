@@ -42,14 +42,14 @@ class TrainingController extends Controller
             'subscribable_id' => $input['subscribable_id'],
         ])->count();
 
-        TrainingSubscription::create([
+        $training['subscriptions'] = [TrainingSubscription::create([
             'training_id' => $training->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
             'order_id' => $order_id,
             'editable' => 1, //needed?
             'owner_id' => auth()->user()->id,
-        ]);
+        ])];
 
         if (request()->wantsJson()) {
             return $training;

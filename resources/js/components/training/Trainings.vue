@@ -130,8 +130,11 @@ export default {
             axios.get('/trainingSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id)
                 .then(response => {
                     this.trainings = response.data;
-                    // trainings are already sorted by order_id
-                    this.max_order_id = this.trainings.at(-1).subscriptions[0].order_id;
+
+                    if (this.trainings.length > 0) {
+                        // trainings are already sorted by order_id
+                        this.max_order_id = this.trainings.at(-1).subscriptions[0].order_id;
+                    }
                 })
                 .catch(e => {
                     console.log(e);

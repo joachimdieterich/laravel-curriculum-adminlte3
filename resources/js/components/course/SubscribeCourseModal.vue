@@ -27,13 +27,11 @@
                     <div class="card">
                         <div class="card-body">
                             <Select2
-                                id="curricula"
-                                name="curricula"
+                                id="course_subscription"
+                                name="course_subscription"
                                 url="/curricula"
                                 model="curriculum"
-                                option_id="id"
-                                option_label="title"
-                                :selected="this.form.curriculum_id"
+                                :selected="form.curriculum_id"
                                 @selectedValue="(id) => {
                                     this.form.curriculum_id = id;
                                 }"
@@ -75,7 +73,6 @@ export default {
     components: {
         Select2,
     },
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -88,7 +85,6 @@ export default {
             form: new Form({
                 id: '',
                 curriculum_id: '',
-                enrollment_list: {},
             }),
             subscribable_id: null,
         }

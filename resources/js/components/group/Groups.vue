@@ -114,8 +114,6 @@
             <GroupOptions/>
         </div>
     </div>
-
-
 </template>
 <script>
 import GroupModal from "../group/GroupModal.vue";

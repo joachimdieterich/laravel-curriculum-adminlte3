@@ -216,64 +216,56 @@ import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce pay
 app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
 app.component('admin-view',  defineAsyncComponent(() => import('./components/admin/AdminView.vue')));
 app.component('breadcrumbs',  defineAsyncComponent(() => import('./components/uiElements/Breadcrumbs.vue')));
-app.component('certificate-generate-modal', defineAsyncComponent(() => import('./components/certificate/GenerateCertificateModal.vue')));
+
 app.component('certificates', defineAsyncComponent(() => import('./components/certificate/Certificates.vue')));
 app.component('certificate', defineAsyncComponent(() => import('./components/certificate/Certificate.vue')));
 
-app.component('config', defineAsyncComponent(() => import('./components/config/Config.vue')));
 app.component('configs', defineAsyncComponent(() => import('./components/config/Configs.vue')));
-app.component('content-modal', defineAsyncComponent(() => import('./components/content/ContentModal.vue')));
-app.component('curriculum',  defineAsyncComponent(() => import('./components/curriculum/Curriculum.vue')));
-app.component('curricula',  defineAsyncComponent(() => import('./components/curriculum/Curricula.vue')));
+app.component('config', defineAsyncComponent(() => import('./components/config/Config.vue')));
 
-app.component('enabling-objective-modal', defineAsyncComponent(() => import('./components/objectives/EnablingObjectiveModal.vue')));
+app.component('curricula',  defineAsyncComponent(() => import('./components/curriculum/Curricula.vue')));
+app.component('curriculum',  defineAsyncComponent(() => import('./components/curriculum/Curriculum.vue')));
+
 app.component('events', defineAsyncComponent(() => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents.vue')));
 app.component('exam', defineAsyncComponent(() => import('./components/exam/Exam.vue')));
 app.component('exams_list', defineAsyncComponent(() => import('./components/exam/Exams.vue')));
+
 app.component('grades', defineAsyncComponent(() => import('./components/grade/Grades.vue')));
 app.component('grade', defineAsyncComponent(() => import('./components/grade/Grade.vue')));
 
 app.component('groups', defineAsyncComponent(() => import('./components/group/Groups.vue')));
 app.component('group', defineAsyncComponent(() => import('./components/group/Group.vue')));
-app.component('group-modal', defineAsyncComponent(() => import('./components/group/GroupModal.vue')));
-
-app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue'))); //cannot be "map" -> name map is reserved
-app.component('link-item', defineAsyncComponent(() => import('./components/uiElements/LinkItem.vue')));
-app.component('logbook', defineAsyncComponent(() => import('./components/logbook/Logbook.vue')));
-app.component('logbooks', defineAsyncComponent(() => import('./components/logbook/Logbooks.vue')));
-app.component('logbook-entry-modal', defineAsyncComponent(() => import('./components/logbookEntry/LogbookEntryModal.vue')));
-app.component('logbook-entry-subject-modal', defineAsyncComponent(() => import('./components/logbookEntry/LogbookEntrySubjectModal.vue')));
-
-app.component('reference-objective-modal', defineAsyncComponent(() => import('./components/reference/ReferenceObjectiveModal.vue')));
 
 app.component('maps', defineAsyncComponent(() => import('./components/map/Maps.vue')));
+app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue'))); // cannot be "map" -> name map is reserved
+
+app.component('link-item', defineAsyncComponent(() => import('./components/uiElements/LinkItem.vue')));
+
+app.component('logbooks', defineAsyncComponent(() => import('./components/logbook/Logbooks.vue')));
+app.component('logbook', defineAsyncComponent(() => import('./components/logbook/Logbook.vue')));
+
 app.component('media-index', defineAsyncComponent(() => import('./components/media/MediaIndex.vue')));
 app.component('media-renderer', defineAsyncComponent(() => import('./components/media/MediaRenderer.vue')));
-app.component('medium-modal', defineAsyncComponent(() => import('./components/media/MediumModal.vue')));
-app.component('medium-export-modal', defineAsyncComponent(() => import('./components/media/MediumExportModal.vue')));
+
 app.component('meeting', defineAsyncComponent(() => import('./components/meeting/Meeting.vue')));
 app.component('meetings', defineAsyncComponent(() => import('./components/meeting/Meetings.vue')));
+
 app.component('metadatasets', defineAsyncComponent(() => import('./components/metadataset/Metadatasets.vue')));
 app.component('model-limiter', defineAsyncComponent(() => import('./components/config/ModelLimiter.vue')));
 
 app.component('navigators', defineAsyncComponent(() => import('./components/navigator/Navigators.vue')));
 app.component('navigator', defineAsyncComponent(() => import('./components/navigator/Navigator.vue')));
 
-app.component('note-modal', defineAsyncComponent(() => import('./components/note/NoteModal.vue')));
 app.component('notes', defineAsyncComponent(() => import('./components/note/Notes.vue')));
 
 app.component('objective', defineAsyncComponent(() => import('./components/objectives/Objective.vue')));
 app.component('objective-box', defineAsyncComponent(() => import('./components/objectives/ObjectiveBox.vue')));
-app.component('objective-progress-subscription-modal', defineAsyncComponent(() => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue')));
 
 app.component('objective-types', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveTypes.vue')));
 app.component('objective-type', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveType.vue')));
-app.component('objective-type-modal', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveTypeModal.vue')));
-
 
 app.component('organizations', defineAsyncComponent(() => import('./components/organization/Organizations.vue')));
 app.component('organization', defineAsyncComponent(() => import('./components/organization/Organization.vue')));
-app.component('organization-modal', defineAsyncComponent(() => import('./components/organization/OrganizationModal.vue')));
 
 app.component('organization-types', defineAsyncComponent(() => import('./components/organizationType/OrganizationTypes.vue')));
 app.component('organization-type', defineAsyncComponent(() => import('./components/organizationType/OrganizationType.vue')));
@@ -281,29 +273,19 @@ app.component('organization-type', defineAsyncComponent(() => import('./componen
 app.component('kanbans', defineAsyncComponent(() => import('./components/kanban/Kanbans.vue')));
 app.component('kanban', defineAsyncComponent(() => import('./components/kanban/Kanban.vue')));
 
-app.component('move-terminal-objective-modal', defineAsyncComponent(() => import('./components/objectives/MoveTerminalObjectiveModal.vue')));
-app.component('prerequisite-modal', defineAsyncComponent(() => import('./components/prerequisites/PrerequisiteObjectiveModal.vue')));
-//app.component('lms-modal', defineAsyncComponent(() => import('./../../app/Plugins/Lms/resources/js/components/Create.vue')));
-//app.component('color-picker-input', defineAsyncComponent(() => import('./components/kanban/ColorPickerInput.vue'))); // not used anymore ->
-
 app.component('searchbar', defineAsyncComponent(() => import('./components/uiElements/Searchbar.vue')));
-//app.component('set-achievements-modal', defineAsyncComponent(() => import('./components/plan/SetAchievementsModal.vue')));
 app.component('sidebar', defineAsyncComponent(() => import('./components/uiElements/Sidebar.vue')));
 
-app.component('subscribe-objective-modal', defineAsyncComponent(() => import('./components/objectives/SubscribeObjectiveModal.vue')));
 app.component('subjects', defineAsyncComponent(() => import('./components/subject/Subjects.vue')));
 app.component('subject', defineAsyncComponent(() => import('./components/subject/Subject.vue')));
 
 app.component('tests-table', defineAsyncComponent(() => import('./components/tests/TestsTable.vue')));
 app.component('title-component', defineAsyncComponent(() => import('./components/uiElements/Title.vue')));
 
-app.component('task-modal', defineAsyncComponent(() => import('./components/task/TaskModal.vue')));
 app.component('task', defineAsyncComponent(() => import('./components/task/Task.vue')));
 app.component('tasks', defineAsyncComponent(() => import('./components/task/Tasks.vue')));
 
-app.component('terminal-objective-modal', defineAsyncComponent(() => import('./components/objectives/TerminalObjectiveModal.vue')));
 app.component('training', defineAsyncComponent(() => import('./components/training/Training.vue')));
-
 
 app.component('permissions', defineAsyncComponent(() => import('./components/permission/Permissions.vue')));
 app.component('permission', defineAsyncComponent(() => import('./components/permission/Permission.vue')));
@@ -311,22 +293,21 @@ app.component('permission', defineAsyncComponent(() => import('./components/perm
 app.component('periods', defineAsyncComponent(() => import('./components/period/Periods.vue')));
 app.component('period', defineAsyncComponent(() => import('./components/period/Period.vue')));
 
-app.component('plan', defineAsyncComponent(() => import('./components/plan/Plan.vue')));
 app.component('plans', defineAsyncComponent(() => import('./components/plan/Plans.vue')));
-
+app.component('plan', defineAsyncComponent(() => import('./components/plan/Plan.vue')));
 
 app.component('roles', defineAsyncComponent(() => import('./components/role/Roles.vue')));
 app.component('role', defineAsyncComponent(() => import('./components/role/Role.vue')));
-app.component('user', defineAsyncComponent(() => import('./components/user/User.vue')));
+
 app.component('users', defineAsyncComponent(() => import('./components/user/Users.vue')));
+app.component('user', defineAsyncComponent(() => import('./components/user/User.vue')));
 
 app.component('variant-definition-modal', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinitionModal.vue')));
 app.component('variant-definition', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinition.vue')));
 app.component('variant-definitions', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinitions.vue')));
 
-
-app.component('videoconference', defineAsyncComponent(() => import('./components/videoconference/Videoconference.vue')));
 app.component('videoconferences', defineAsyncComponent(() => import('./components/videoconference/Videoconferences.vue')));
+app.component('videoconference', defineAsyncComponent(() => import('./components/videoconference/Videoconference.vue')));
 
 app.config.globalProperties.$initTinyMCE = function(
     tinyMcePlugins,

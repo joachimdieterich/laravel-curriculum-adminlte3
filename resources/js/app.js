@@ -295,6 +295,7 @@ app.component('period', defineAsyncComponent(() => import('./components/period/P
 
 app.component('plans', defineAsyncComponent(() => import('./components/plan/Plans.vue')));
 app.component('plan', defineAsyncComponent(() => import('./components/plan/Plan.vue')));
+app.component('plan-achievements', defineAsyncComponent(() => import('./components/plan/PlanAchievements.vue')));
 
 app.component('roles', defineAsyncComponent(() => import('./components/role/Roles.vue')));
 app.component('role', defineAsyncComponent(() => import('./components/role/Role.vue')));

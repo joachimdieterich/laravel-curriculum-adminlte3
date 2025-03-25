@@ -258,7 +258,7 @@ class PlanController extends Controller
             'entry_order' => $input['entry_order']
         ]);
 
-        return ['entry_order' => $plan->entry_order];
+        return $plan->entry_order;
     }
 
     public function copyPlan(Plan $plan) {
@@ -400,6 +400,43 @@ class PlanController extends Controller
             ->distinct()->get()->toArray();
 
         return $users;
+    }
+
+    public function getUserAchievements(Plan $plan, $userIds)
+    {
+        $ids = explode(',', $userIds);
+        $accessibleUserIds = array_map(function($user) { return $user['id']; }, $this->getUsers($plan));
+
+        foreach ($ids as $id) {
+            if (array_search($id, $accessibleUserIds) === false) {
+                abort(403, 'No access to user with id: ' . $id);
+            }
+        }
+
+        $terminal = TerminalObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
+            ->whereIn('subscribable_id', $plan->entry_order)
+            ->with([
+                'terminalObjective.enablingObjectives.achievements' => function ($query) use ($ids) {
+                    $query->whereIn('user_id', $ids);
+                },
+            ])
+            ->get();
+
+        $enabling = EnablingObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
+            ->whereIn('subscribable_id', $plan->entry_order)
+            ->with([
+                'enablingObjective.achievements' => function ($query) use ($ids) {
+                    $query->whereIn('user_id', $ids);
+                },
+            ])
+            ->get();
+
+        $users = User::find($ids);
+
+        return view('plans.achievements')
+            ->with(compact('terminal'))
+            ->with(compact('enabling'))
+            ->with(compact('users'));
     }
 
     protected function validateRequest()

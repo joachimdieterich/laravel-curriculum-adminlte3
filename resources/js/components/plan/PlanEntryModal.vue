@@ -61,10 +61,9 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <v-swatches
-                                    :swatch-size="49"
-                                    :trigger-style="{}"
-                                    popover-to="right"
-                                    style="height: 42px;"
+                                    style="height: 42px"
+                                    :swatches="$swatches"
+                                    row-length="5"
                                     v-model="form.color"
                                     show-fallback
                                     fallback-input-type="color"

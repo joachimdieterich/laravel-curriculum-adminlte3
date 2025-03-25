@@ -6,7 +6,7 @@
         <img v-if="currentKanban.medium_id"
             class="kanban_board_wrapper position-absolute p-0"
             style="object-fit: cover;"
-            :src="'/media/' + currentKanban.medium_id + '?model=Kanban&model_id=' + currentKanban.id"
+            :src="'/media/' + currentKanban.medium_id + '?preview=true'"
             alt="background image"
         />
         <div

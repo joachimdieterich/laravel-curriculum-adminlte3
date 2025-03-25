@@ -1,17 +1,19 @@
 <template>
     <div>
-        <h1 class="sidebar-header mb-3">
+        <h1 class="sidebar-header d-flex mb-3">
             {{ marker.title }}
-            <span
+            <span v-if="marker.owner_id == $userId || checkPermission('is_admin')"
                 v-permission="'map_edit'"
-                class="card-tools pl-2"
+                class="card-tools ml-auto pl-2"
             >
                 <a @click="editMarker(marker)" >
                     <i class="fa fa-pencil-alt"></i>
                 </a>
-                 <a  v-permission="'is_admin'"
-                     @click="shareMarker(marker)" >
-                     <i class="ml-3 fa fa-share-alt"></i>
+                <a
+                    v-permission="'is_admin'"
+                    @click="shareMarker(marker)"
+                >
+                    <i class="ml-3 fa fa-share-alt"></i>
                 </a>
             </span>
         </h1>
@@ -71,11 +73,9 @@
         <Teleport to="body">
             <SubscribeModal/>
         </Teleport>
-
     </div>
 </template>
 <script>
-
 import Media from '../media/Media.vue';
 import SubscribableList from "../subscription/SubscribableList.vue";
 import tokens from "../subscription/Tokens.vue";
@@ -129,8 +129,6 @@ export default {
                 canEditCheckbox: false,
             });
         },
-
     },
-    mounted() {},
 }
 </script>

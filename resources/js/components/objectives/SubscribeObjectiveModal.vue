@@ -141,7 +141,7 @@ export default {
                 enabling_objective_id:    this.form.enabling_objective_id, // will be discarded in terminal-controller
                 subscribable_type:        this.form.subscribable_type,
                 subscribable_id:          this.form.subscribable_id,
-                users:                    this.users.map(user => user.id),
+                users:                    this.users.map(user => user.id), // needed to return their previous set achievements
             })
             .then(response => {
                 this.$eventHub.emit('subscriptions-added', {

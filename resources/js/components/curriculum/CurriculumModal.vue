@@ -101,7 +101,6 @@
                                             model="User"
                                             url="/users"
                                             :selected="form.owner_id"
-                                            :placeholder="trans('global.pleaseSelect')"
                                             @selectedValue="(id) => this.form.owner_id = id[0]"
                                         />
                                     </div>
@@ -165,9 +164,8 @@
                                             :id="'grade_id'"
                                             model="grade"
                                             :label="trans('global.grade.title_singular') + ' *'"
-                                            :selected="this.form.grade_id"
+                                            :selected="form.grade_id"
                                             url="/grades"
-                                            :placeholder="trans('global.pleaseSelect')"
                                             @selectedValue="(id) => this.form.grade_id = id"
                                         />
                                     </div>
@@ -176,9 +174,8 @@
                                             :id="'subject_id'"
                                             model="subject"
                                             :label="trans('global.subject.title_singular') + ' *'"
-                                            :selected="this.form.subject_id"
+                                            :selected="form.subject_id"
                                             url="/subjects"
-                                            :placeholder="trans('global.pleaseSelect')"
                                             @selectedValue="(id) => this.form.subject_id = id"
                                         />
                                     </div>
@@ -192,7 +189,7 @@
                                             :label="trans('global.organizationType.title_singular') + ' *'"
                                             option_id="id"
                                             option_label="title"
-                                            :selected="this.form.organization_type_id"
+                                            :selected="form.organization_type_id"
                                             @selectedValue="(id) => {
                                                 this.form.organization_type_id = id;
                                             }"
@@ -207,7 +204,7 @@
                                             :label="trans('global.curriculumtype.title_singular') + ' *'"
                                             option_id="id"
                                             option_label="title"
-                                            :selected="this.form.type_id"
+                                            :selected="form.type_id"
                                             @selectedValue="(id) => {
                                                 this.form.type_id = id;
                                             }"
@@ -221,7 +218,7 @@
                                         url="/countries"
                                         model="country"
                                         :label="trans('global.country.title_singular') + ' *'"
-                                        :selected="this.form.country_id"
+                                        :selected="form.country_id"
                                         @selectedValue="(id) => {
                                             this.form.country_id = id;
                                             this.form.state_id = '';
@@ -233,10 +230,10 @@
                                         css="mb-0"
                                         option_id="code"
                                         option_label="lang_de"
-                                        :url="'/countries/' + this.form.country_id + '/states/'"
-                                        :term="this.form.country_id"
+                                        :url="'/countries/' + form.country_id + '/states/'"
+                                        :term="form.country_id"
                                         model="state"
-                                        :selected="this.form.state_id"
+                                        :selected="form.state_id"
                                         @selectedValue="(id) => {
                                             this.form.state_id = id;
                                         }"

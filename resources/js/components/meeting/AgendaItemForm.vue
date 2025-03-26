@@ -8,7 +8,6 @@
                     model="agendaItemType"
                     :selected="this.form.agenda_item_type_id"
                     url="/agendaItemTypes"
-                    :placeholder="trans('global.pleaseSelect')"
                     @selectedValue="(id) => this.form.agenda_item_type_id = id"
                 ></Select2>
             </div>

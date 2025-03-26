@@ -117,7 +117,7 @@ export default {
         },
         placeholder: {
             type: String,
-            default: '',
+            default: window.trans.global.pleaseSelect,
         },
         allowClear: {
             type: Boolean,

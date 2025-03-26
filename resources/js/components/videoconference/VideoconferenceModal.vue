@@ -53,7 +53,6 @@
                                 model="User"
                                 url="/users"
                                 :selected="form.owner_id"
-                                :placeholder="trans('global.pleaseSelect')"
                                 @selectedValue="(id) => this.form.owner_id = id[0]"
                             />
 

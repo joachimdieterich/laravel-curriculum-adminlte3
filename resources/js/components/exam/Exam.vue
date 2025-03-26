@@ -1,8 +1,9 @@
 <template>
     <div class="row">
         <div class="col-sm-12 py-4">
-            <div id="exam-enrolled-user-datatable-wrapper"
-                 class="w-100 dataTablesWrapper">
+            <div
+                id="exam-enrolled-user-datatable-wrapper"
+                class="w-100 dataTablesWrapper">
                 <h5>{{ trans('global.exam.add_remove_users.students_exam_title') }} {{  exam.test_name }}</h5>
                 <DataTable
                     id="exam-enrolled-user-datatable"
@@ -12,7 +13,7 @@
                     :ajax="'/exams/' + exam.exam_id + '/list'"
                     :search="search"
                     width="100%"
-                ></DataTable>
+                />
             </div>
 
             <button
@@ -23,14 +24,13 @@
                 @click="expelFromExam()"
             >
                 <i class="fa fa-minus mr-2"></i>
-                {{ trans('global.exam.enrol_user') }}
+                {{ trans('global.exam.expel_user') }}
             </button>
-            <button
+            <button v-if="exam.status !== 0"
                 v-permission="'exam_edit'"
-                v-if="this.exam.status !== 0"
-                :id="'edit-exam-' + this.exam.id"
+                :id="'edit-exam-' + exam.id"
                 type="button"
-                :name="'edit-exam-' + this.exam.id"
+                :name="'edit-exam-' + exam.id"
                 class="btn btn-primary pull-left mt-3 mr-2"
                 @click="getReport()"
             >
@@ -42,8 +42,10 @@
         <hr style="width: 100%; border: 1px solid lightgray !important;">
 
         <div class="col-sm-12 pt-4">
-            <div id="exam-expelled-user-datatable-wrapper"
-                 class="w-100 dataTablesWrapper">
+            <div
+                id="exam-expelled-user-datatable-wrapper"
+                class="w-100 dataTablesWrapper"
+            >
                 <h5> {{ trans('global.exam.add_remove_users.users_group_title')}} </h5>
                 <DataTable
                     id="exam-expelled-user-datatable"
@@ -53,30 +55,30 @@
                     :ajax="'/exams/' + exam.exam_id + '/users/list'"
                     :search="search"
                     width="100%"
-                ></DataTable>
+                />
             </div>
             <button
                 id="expelFromCurricula"
                 type="button"
                 name="expelFromCurricula"
                 class="btn btn-primary pull-right mt-3"
-                @click="enroleIntoExam()"
+                @click="enrolIntoExam()"
             >
                 <i class="fa fa-plus mr-2"></i>
-                {{ trans('global.exam.expel_user') }}
+                {{ trans('global.exam.enrol_user') }}
             </button>
         </div>
 
         <Teleport to="body">
             <ExamModal
-                :show="this.showExamModal"
+                :show="showExamModal"
+                :params="currentExam"
                 @close="this.showExamModal = false"
-                :params="this.currentExam"
-            ></ExamModal>
+            />
             <ConfirmModal
-                :showConfirm="this.showConfirm"
-                :title="this.confirmTitle"
-                :description="this.confirmDescription"
+                :showConfirm="showConfirm"
+                :title="confirmTitle"
+                :description="confirmDescription"
                 @close="() => {
                     this.showConfirm = false;
                 }"
@@ -84,11 +86,10 @@
                     this.showConfirm = false;
                     this.confirmFunction;
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
 <script>
 import ExamModal from "../exam/ExamModal.vue";
 import DataTable from 'datatables.net-vue3';
@@ -110,7 +111,8 @@ export default {
     },
     props: {
         exam: {
-            default: null
+            type: Object,
+            default: null,
         },
     },
     data() {
@@ -125,7 +127,7 @@ export default {
                 {
                     title: window.trans.global.exam.fields.status,
                     data: 'pivot.exam_started',
-                    'render': function (data, type, row) {
+                    render: function (data, type, row) {
                         if (type === 'display') {
                             return row.pivot.exam_started && row.pivot.exam_completed_at ?
                                 '<i class="fa-solid fa-circle" style="color: limegreen"></i>' :
@@ -139,7 +141,7 @@ export default {
                 {
                     title: window.trans.global.exam.fields.completed_at,
                     data: 'pivot.exam_completed_at',
-                    'render': function (data, type, row) {
+                    render: function (data, type, row) {
                         if (type === 'display') {
                             if(row.pivot.exam_completed_at) {
                                 var myDate = new Date(row.pivot.exam_completed_at)
@@ -164,7 +166,7 @@ export default {
             confirmFunction: null,
         }
     },
-    setup () {
+    setup() {
         const store = useDatatableStore();
         const globalStore = useGlobalStore();
         const toast = useToast();
@@ -187,10 +189,9 @@ export default {
             this.currentExam = exam;
             this.showExamModal = false;
         });
-
     },
     methods: {
-        resetExamEnrolledUserDatatable(){
+        resetExamEnrolledUserDatatable() {
             this.store.addToDatatables(
                 {
                     'datatable': 'exam-enrolled-user-datatable',
@@ -199,7 +200,7 @@ export default {
                 }
             );
         },
-        resetExamExpelledUserDatatable(){
+        resetExamExpelledUserDatatable() {
             this.store.addToDatatables(
                 {
                     'datatable': 'exam-expelled-user-datatable',
@@ -208,7 +209,7 @@ export default {
                 }
             );
         },
-        loaderEvent(){
+        loaderEvent() {
             this.dt = $('#exam-enrolled-user-datatable').DataTable();
 
             this.dt.on('select', (e, dt, type, indexes) => {
@@ -242,45 +243,45 @@ export default {
                 this.dt2.search(filter).draw();
             });
         },
-        editExam(){
+        editExam() {
             this.showExamModal = true;
         },
-         enroleIntoExam() {
-             let ids = this.store.getSelectedValuesByField('exam-expelled-user-datatable', 'user_id');
+        enrolIntoExam() {
+            let ids = this.store.getSelectedValuesByField('exam-expelled-user-datatable', 'user_id');
 
-             if (ids.length == 0) {
-                 this.toast.error(window.trans.global.datatables.zero_selected);
-             } else {
-                 axios.post(
-                     '/exams/' + this.exam.exam_id + '/users/enrol',
-                     {
-                         'tool': this.exam.tool,
-                         'enrollment_list': ids,
-                         _method: 'POST'
-                     }
-                 )
-                 .then(r => { location.reload(); })
-                 .catch(e => { console.log(e.response); });
-             }
+            if (ids.length == 0) {
+                this.toast.error(window.trans.global.datatables.zero_selected);
+            } else {
+                axios.post(
+                    '/exams/' + this.exam.exam_id + '/users/enrol',
+                    {
+                        'tool': this.exam.tool,
+                        'enrollment_list': ids,
+                        _method: 'POST'
+                    }
+                )
+                .then(r => { location.reload(); })
+                .catch(e => { console.log(e.response); });
+            }
         },
-         expelFromExam() {
-             let ids = this.store.getSelectedIds('exam-enrolled-user-datatable');
+        expelFromExam() {
+            let ids = this.store.getSelectedIds('exam-enrolled-user-datatable');
 
-             if (ids.length == 0) {
-                 this.toast.error(window.trans.global.datatables.zero_selected);
-             } else {
-                 axios.delete(
-                     '/exams/' + this.exam.exam_id + '/users/expel',
-                     {
-                         data: {
-                             'tool': this.exam.tool,
-                             'expel_list': ids,
-                         }
-                     }
-                 )
-                 .then(r => { location.reload(); })
-                 .catch(e => { console.log(e.response); });
-             }
+            if (ids.length == 0) {
+                this.toast.error(window.trans.global.datatables.zero_selected);
+            } else {
+                axios.delete(
+                    '/exams/' + this.exam.exam_id + '/users/expel',
+                    {
+                        data: {
+                            'tool': this.exam.tool,
+                            'expel_list': ids,
+                        }
+                    }
+                )
+                .then(r => { location.reload(); })
+                .catch(e => { console.log(e.response); });
+            }
         },
         getReport() {
             axios.post('/exams/' + this.exam.exam_id + '/report', {tool: this.exam.tool}, {responseType: 'arraybuffer'})
@@ -295,6 +296,6 @@ export default {
                     console.log(errors)
                 })
         },
-    }
+    },
 }
 </script>

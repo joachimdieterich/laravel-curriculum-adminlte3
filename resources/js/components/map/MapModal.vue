@@ -72,8 +72,7 @@
                                 />
                             </div>
 
-                            <Select2
-                                v-permission="'is_admin'"
+                            <Select2 v-if="checkPermission('is_admin')"
                                 id="user_id"
                                 :label="trans('global.change_owner')"
                                 model="User"

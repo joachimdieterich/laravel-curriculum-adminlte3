@@ -168,8 +168,8 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        abort_unless(\Gate::allows('user_show'), 403);
-        abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403);
+        abort_unless(\Gate::allows('user_show'), 403, "Missing permission to view user");
+        abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403, "No access to view user");
 
         if (request()->wantsJson()) {
             return ['user' => $user];

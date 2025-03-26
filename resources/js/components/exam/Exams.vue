@@ -11,8 +11,8 @@
             >
                 <li class="nav-item">
                     <a
-                        id="curriculum-filter-all"
-                        class="nav-link"
+                        id="exam-filter-all"
+                        class="nav-link pointer"
                         :class="filter === 'all' ? 'active' : ''"
                         data-toggle="pill"
                         role="tab"
@@ -25,7 +25,7 @@
                 <li class="nav-item">
                     <a
                         id="custom-filter-by-student"
-                        class="nav-link"
+                        class="nav-link pointer"
                         :class="filter === 'student' ? 'active' : ''"
                         data-toggle="pill"
                         role="tab"
@@ -61,7 +61,7 @@
                 descriptionField="subject"
                 modelName="Exam"
                 :url="getLoginUrl(exam)"
-                url-only="true"
+                :urlOnly="true"
                 urlTarget="_blank"
                 :active="isActive(exam)"
                 info_deactivated="Test wurde bereits abgeschlossen."
@@ -164,12 +164,12 @@
         <Teleport to="body">
             <SubscribeExamModal v-if="subscribable"/>
             <ExamModal v-if="!subscribable"
-                :show="this.showExamModal"
+                :show="showExamModal"
                 @close="this.showExamModal = false"
                 :params="currentExam"
             />
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.exam.delete')"
                 :description="trans('global.exam.delete_helper')"
                 @close="() => {
@@ -208,8 +208,14 @@ export default {
             type: String,
             default: 'delete',
         },
-        subscribable_type: '',
-        subscribable_id: '',
+        subscribable_type: {
+            type: String,
+            default: null,
+        },
+        subscribable_id: {
+            type: Number,
+            default: null,
+        },
     },
     setup() {
         const toast = useToast();
@@ -235,7 +241,7 @@ export default {
                 { title: 'subject', data: 'subject', searchable: true },
             ],
             options : this.$dtOptions,
-            filter: 'student',
+            filter: 'student', // only returns entries if user has student-role
             dt: null,
             url: (this.subscribable_id) ? '/exams/list?group_id=' + this.subscribable_id + '&filter=student' : '/exams/list',
         }
@@ -284,30 +290,18 @@ export default {
             this.showConfirm = true;
         },
         destroy() {
-            if (this.subscribable === true) {
+            if (this.subscribable) {
                 axios.delete('/exams/' + this.currentExam.exam_id + '?tool=' + this.currentExam.tool)
                     .then(response => {
-                    if (response.status === 200) {
-                        this.toast.success(Vue.prototype.trans('global.exam.success_messages.exam_removed'))
-                    }
-                })
-                .catch(errors => {
-                    var message = errors.response.status === 403 ? Vue.prototype.trans('global.exam.error_messages.remove_exam') : errors.message
-                    this.toast.error(message);
-                })
-
-               /* axios.post('/examSubscriptions/expel', {
-                    'model_id' : this.currentExam.id,
-                    'subscribable_type' : this.subscribable_type,
-                    'subscribable_id' : this.subscribable_id,
-                })
-                    .then(r => {
-                        let index = this.exams.indexOf(this.currentExam);
-                        this.exams.splice(index, 1);
+                        if (response.status === 200) {
+                            this.exams.splice(this.exams.indexOf(this.currentExam), 1);
+                            this.toast.success(this.trans('global.exam.success_messages.exam_removed'));
+                        }
                     })
-                    .catch(e => {
-                        console.log(e);
-                    });*/
+                    .catch(errors => {
+                        console.log(errors);
+                        this.toast.error(this.trans('global.exam.error_messages.remove_exam'));
+                    })
             } else {
                 axios.delete('/exams/' + this.currentExam.id)
                     .then(res => {

@@ -212,7 +212,7 @@ class EdusharingMediaAdapter implements MediaInterface
             }
         }
         /* end checkIfUserHasSubscription and visibility */
-        abort(403); // user has no permission to access this file !
+        abort(403, "No permission to view Edusharing media"); // user has no permission to access this file !
     }
 
     public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs

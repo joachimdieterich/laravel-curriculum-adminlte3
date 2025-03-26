@@ -19,7 +19,7 @@
                 url="/organizationTypes"
             >
                 <template v-slot:icon>
-                    <i class="fa fa-university pt-2"></i>
+                    <i class="fa fa-university"></i>
                 </template>
 
                 <template v-slot:dropdown

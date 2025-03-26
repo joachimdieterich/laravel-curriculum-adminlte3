@@ -32,7 +32,7 @@
                     url="/groups"
                 >
                     <template v-slot:icon>
-                        <i class="fa fa-layer-group pt-2"></i>
+                        <i class="fa fa-layer-group"></i>
                     </template>
 
                     <template v-slot:dropdown
@@ -114,8 +114,6 @@
             <GroupOptions/>
         </div>
     </div>
-
-
 </template>
 <script>
 import GroupModal from "../group/GroupModal.vue";

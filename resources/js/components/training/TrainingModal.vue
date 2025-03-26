@@ -126,7 +126,7 @@ export default {
                     callback: 'insertContent',
                     callbackId: this.component_id,
                 },
-                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link",
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
                 "",
             ),
         }

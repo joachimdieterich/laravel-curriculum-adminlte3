@@ -54,7 +54,7 @@
                     :showSubscribable="subscribable"
                 >
                     <template v-slot:icon>
-                        <i class="fas fa-user pt-2"></i>
+                        <i class="fas fa-user"></i>
                     </template>
 
                     <template v-slot:dropdown>

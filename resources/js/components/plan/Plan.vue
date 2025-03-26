@@ -11,10 +11,18 @@
                     class="card-tools d-flex pr-2 ml-auto no-print"
                     style="gap: 5px;"
                 >
+                    <a
+                        class="link-muted mr-2 px-1 pointer"
+                        @click="openUserModal()"
+                    >
+                        <i class="fa fa-chart-simple"></i>
+                    </a>
                     <a onclick="window.print()" class="link-muted px-1 pointer">
                         <i class="fa fa-print"></i>
                     </a>
+
                     <span class="pr-2 mr-2" style="border-right: 1px solid black;"></span>
+
                     <span
                         class="link-muted pointer"
                         @click.prevent="showTools = !showTools"
@@ -87,6 +95,7 @@
             <SubscribeModal/>
             <TrainingModal/>
             <PlanEntryModal :plan="plan"/>
+            <SelectUsersModal :users="users" :multiple="true"/>
             <SetAchievementsModal :users="users"/>
             <SubscribeObjectiveModal :users="users"/>
         </Teleport>
@@ -113,6 +122,7 @@ import PlanModal from "./PlanModal.vue";
 import PlanEntry from './PlanEntry.vue';
 import PlanEntryModal from "./PlanEntryModal.vue";
 import MediumModal from "../media/MediumModal.vue";
+import SelectUsersModal from "../user/SelectUsersModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import TrainingModal from "../training/TrainingModal.vue";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
@@ -185,6 +195,9 @@ export default {
                     canEditCheckbox: true,
                 });
         },
+        openUserModal() {
+            this.globalStore.showModal('select-users-modal');
+        },
         handleEntryOrder(e) {
             if (e.newIndex === e.oldIndex) return;
             this.entry_order = this.entries.map(entry => entry.id);
@@ -194,7 +207,7 @@ export default {
             // Send the current order of entries to the server
             axios.put("/plans/" + this.plan.id + "/syncEntriesOrder", {entry_order: this.entry_order})
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                     alert(err.response.statusText);
                 });
         },
@@ -204,6 +217,10 @@ export default {
 
         this.$eventHub.on('plan-updated', (updatedPlan) => {
             Object.assign(this.currentPlan, updatedPlan);
+        });
+
+        this.$eventHub.on('users-selected', (users) => {
+            window.open('/plans/' + this.plan.id + '/getUserAchievements/' + users.map(u => u.id));
         });
         // ENTRY events
         this.$eventHub.on('plan-entry-added', (entry) => {
@@ -248,6 +265,7 @@ export default {
         PlanEntry,
         PlanEntryModal,
         MediumModal,
+        SelectUsersModal,
         SubscribeObjectiveModal,
         TrainingModal,
         SetAchievementsModal,

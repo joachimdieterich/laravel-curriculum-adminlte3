@@ -102,16 +102,16 @@
             >
                 <template v-slot:icon>
                     <i v-if="curriculum.type_id === 1"
-                        class="fas fa-globe pt-2"
+                        class="fas fa-globe"
                     ></i>
                     <i v-else-if="curriculum.type_id === 2"
-                        class="fas fa-university pt-2"
+                        class="fas fa-university"
                     ></i>
                     <i v-else-if="curriculum.type_id === 3"
-                        class="fa fa-users pt-2"
+                        class="fa fa-users"
                     ></i>
                     <i v-else
-                        class="fa fa-user pt-2"
+                        class="fa fa-user"
                     ></i>
                 </template>
 

@@ -256,9 +256,12 @@ export default {
         }.bind(this));
     },
     mounted() {
+        // remove move-enabling option, since this option hasn't been implemented yet
+        if (this.type === 'enabling') this.menuEntries.splice(1, 1);
+
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
-        })
+        });
     },
     beforeDestroy: function() {
         this.$root.$off('eventSort');

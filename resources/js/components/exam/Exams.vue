@@ -65,6 +65,7 @@
                 urlTarget="_blank"
                 :active="isActive(exam)"
                 info_deactivated="Test wurde bereits abgeschlossen."
+                :showSubscribable="subscribable"
             >
                 <template v-slot:icon>
                     <i class="fa-solid fa-ranking-star pt-2"></i>

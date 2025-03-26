@@ -18,7 +18,7 @@
                 :urlOnly=true
                 :url="navigator.url">
                 <template v-slot:icon>
-                    <i class="fa fa-history pt-2"></i>
+                    <i class="fa fa-history"></i>
                 </template>
 
                 <template

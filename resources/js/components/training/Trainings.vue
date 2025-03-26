@@ -25,27 +25,27 @@
                             </small>
                         </span>
                         <span v-if="editable && showTools">
-                            <a
+                            <a v-if="training.subscriptions[0].order_id > 0"
                                 class="text-secondary pointer mx-1"
                                 @click="lower(training)"
                             >
-                                <i class="fa fa-caret-up px-1"></i>
+                                <i class="fa fa-arrow-up px-1"></i>
                             </a>
-                            <a
+                            <a v-if="training.subscriptions[0].order_id < max_order_id"
                                 class="text-secondary pointer mx-1"
                                 @click="higher(training)"
                             >
-                                <i class="fa fa-caret-down px-1"></i>
+                                <i class="fa fa-arrow-down px-1"></i>
                             </a>
                             <a
-                                class="text-secondary pointer mx-1"
+                                class="text-secondary pointer mx-2"
                                 @click="openModal(training)"
                             >
                                 <i class="fa fa-pencil-alt px-1"></i>
                             </a>
                             <a
                                 class="text-danger pointer mx-1"
-                                @click="destroy(training)"
+                                @click="confirmDelete(training)"
                             >
                                 <i class="fas fa-trash px-1"></i>
                             </a>
@@ -62,17 +62,34 @@
                 </div>
             </div>
         </div>
+        <Teleport to="body">
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.training.delete')"
+                :description="trans('global.training.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy(this.training);
+                }"
+            />
+        </Teleport>
     </div>
 </template>
 <script>
+import VueDatePicker from '@vuepic/vue-datepicker';
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import moment from "moment/moment";
 import {useGlobalStore} from "../../store/global";
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import axios from "axios";
 
 export default {
     components: {
         VueDatePicker,
+        ConfirmModal,
     },
     props: {
         editable: {
@@ -102,6 +119,9 @@ export default {
         return {
             component_id: this.$.uid,
             trainings: [],
+            training: {},
+            showConfirm: false,
+            max_order_id: 0,
         }
     },
     mounted() {
@@ -111,6 +131,7 @@ export default {
         this.$eventHub.on('training-added', (e) => {
             if (this.subscribable_id === e.id) {
                 this.trainings.push(e.training);
+                this.max_order_id = e.training.subscriptions[0].order_id;
             }
         });
         this.$eventHub.on('training-updated', (e) => {
@@ -127,6 +148,11 @@ export default {
             axios.get('/trainingSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id)
                 .then(response => {
                     this.trainings = response.data;
+
+                    if (this.trainings.length > 0) {
+                        // trainings are already sorted by order_id
+                        this.max_order_id = this.trainings.at(-1).subscriptions[0].order_id;
+                    }
                 })
                 .catch(e => {
                     console.log(e);
@@ -137,26 +163,51 @@ export default {
             training.subscribable_type = this.subscribable_type;
             this.globalStore.showModal('training-modal', training);
         },
-        destroy(training){
+        confirmDelete(training) {
+            this.training = training;
+            this.showConfirm = true;
+        },
+        destroy(training) {
             axios.delete('/trainings/' + training.id)
                 .then(response => {
-                    this.loaderEvent();
+                    let index = this.trainings.indexOf(training);
+                    // decrease the order_id of each training below the deleted training
+                    for (let i = index + 1; i < this.trainings.length; i++) {
+                        this.trainings[i].subscriptions[0].order_id -= 1;
+                    }
+
+                    this.trainings.splice(index, 1);
+                    this.max_order_id -= 1;
                 })
                 .catch(e => {
                     console.log(e);
                 });
         },
-        lower(training){
-            this.form.id = training.id;
-            this.form.order_id = this.form.order_id - 1;
-            this.method = 'patch';
-            this.submit(training);
+        /**
+         * decrease the order_id of the training an increase the order_id of the training below
+         * @param training 
+         */
+        lower(training) {
+            axios.patch('/trainingsSubscriptions/' + training.subscriptions[0].id + '/lower')
+                .then(response => {
+                    this.trainings = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         },
-        higher(training){
-            this.form.id = training.id;
-            this.form.order_id = this.form.order_id + 1;
-            this.method = 'patch';
-            this.submit(training);
+        /**
+         * increase the order_id of the training an decrease the order_id of the training above
+         * @param training 
+         */
+        higher(training) {
+            axios.patch('/trainingsSubscriptions/' + training.subscriptions[0].id + '/higher')
+                .then(response => {
+                    this.trainings = response.data;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         },
         diffForHumans: function (date) {
             return moment(date).locale('de').fromNow();

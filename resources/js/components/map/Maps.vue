@@ -98,7 +98,7 @@
                 url="/maps"
             >
                 <template v-slot:icon>
-                    <i class="fa fa-map-location-dot pt-2"></i>
+                    <i class="fa fa-map-location-dot"></i>
                 </template>
 
                 <template v-slot:dropdown

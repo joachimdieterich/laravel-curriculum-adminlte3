@@ -57,14 +57,18 @@
                         <li v-for="marker in this.markers">
                             <i class="fa fa-location-dot pr-2"></i>
                             <a
-                                class="text-decoration-none"
+                                class="text-decoration-none pointer"
                                 @click="setCurrentMarker(marker)"
                             >
                                 {{ marker.title }}
                             </a>
                             <div class="tools">
-                                <i class="fa fa-pencil-alt text-secondary" @click="edit(marker)"></i>
-                                <i class="fa fa-trash text-danger ml-2" @click="confirmItemDelete(marker)"></i>
+                                <a class="link-muted text-secondary px-1 pointer">
+                                    <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
+                                </a>
+                                <a class="link-muted text-danger ml-2 px-1 pointer">
+                                    <i class="fa fa-trash" @click="confirmItemDelete(marker)"></i>
+                                </a>
                             </div>
                         </li>
                     </ul>

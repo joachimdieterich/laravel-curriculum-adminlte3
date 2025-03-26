@@ -40,9 +40,8 @@
                 <Select2
                     :id="'userlist_agenda_item_'+ item.id"
                     model="user"
-                    :selected="this.form.user_id"
+                    :selected="form.user_id"
                     url="/users"
-                    :placeholder="trans('global.pleaseSelect')"
                     @selectedValue="(id) => this.form.user_id = id"
                 />
             </div>

@@ -59,15 +59,13 @@
                                 ></p>
                             </div>
 
-                            <Select2
-                                v-permission="'is_admin'"
+                            <Select2 v-if="checkPermission('is_admin')"
                                 id="user_id"
                                 css="mb-0 mt-3"
                                 :label="trans('global.change_owner')"
                                 model="User"
                                 url="/users"
                                 :selected="form.owner_id"
-                                :placeholder="trans('global.pleaseSelect')"
                                 @selectedValue="(id) => this.form.owner_id = id[0]"
                             />
                         </div>
@@ -83,11 +81,9 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <v-swatches
-                                    :swatch-size="49"
-                                    :trigger-style="{}"
                                     style="height: 42px;"
-                                    popover-to="right"
-                                    v-model="this.form.color"
+                                    popover-y="top"
+                                    v-model="form.color"
                                     show-fallback
                                     fallback-input-type="color"
                                     @input="(id) => {
@@ -95,7 +91,6 @@
                                             this.form.color = id;
                                         }
                                     }"
-                                    :max-height="300"
                                 />
         
                                 <MediumForm v-if="form.id"

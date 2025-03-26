@@ -65,15 +65,13 @@
                                 ></p>
                             </div>
 
-                            <Select2
-                                v-permission="'is_admin'"
+                            <Select2 v-if="checkPermission('is_admin')"
                                 id="user_id"
                                 css="mb-0 mt-3"
                                 :label="trans('global.change_owner')"
                                 model="User"
                                 url="/users"
                                 :selected="form.owner_id"
-                                :placeholder="trans('global.pleaseSelect')"
                                 @selectedValue="(id) => this.form.owner_id = id[0]"
                             />
                         </div>

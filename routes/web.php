@@ -263,6 +263,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('plans/{plan}/copy', 'PlanController@copyPlan');
     Route::get('plans/{plan}/getUsers', 'PlanController@getUsers');
     Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder')->name('plans.syncEntriesOrder');
+    Route::get('plans/{plan}/getUserAchievements/{userIds}', 'PlanController@getUserAchievements');
     Route::resource('plans', 'PlanController');
 
     Route::resource('planTypes', 'PlanTypeController');
@@ -321,6 +322,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('terminalObjectiveSubscriptions', 'TerminalObjectiveSubscriptionsController');
 
     Route::resource('trainings', 'TrainingController');
+    Route::patch('trainingsSubscriptions/{trainingSubscription}/lower', 'TrainingSubscriptionController@lower');
+    Route::patch('trainingsSubscriptions/{trainingSubscription}/higher', 'TrainingSubscriptionController@higher');
     Route::resource('trainingSubscriptions', 'TrainingSubscriptionController');
 
     /* reference(Subscription)  */

@@ -96,13 +96,13 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 
             $term = $input['term'];
 
-            $count = Count($collection->where(  // count all entries FIRST with filter to get pagination working
+            $count = $collection->where(  // count all entries FIRST with filter to get pagination working
                 function ($query) use ($field, $term) {
                     foreach ((array)$field as $f) {
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
-                ->get());
+                ->count();
 
             $entries = $collection->where(
                 function ($query) use ($field, $term) {

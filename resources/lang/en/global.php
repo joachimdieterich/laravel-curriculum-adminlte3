@@ -128,6 +128,7 @@ return [
     'curricula_cross_references_description' => 'Suggestions for lesson planning',
     'myProfile' => 'Userprofile',
     'settings' => 'Settings',
+    'options' => 'Options',
     'minutes' => 'Minutes',
     'sum' => 'Sum',
     'active' => 'Active',
@@ -904,6 +905,16 @@ return [
             'duration' => 'Duration',
             'duration_helper' => 'Specify how much time (in minutes) should be scheduled to complete the learning/work schedule.',
         ],
+        'options' => [
+            'timespan' => 'Show achievements made within specified time period',
+            'toggle_unset' => 'Hide competencies with unset achievements',
+            'toggle_teacher' => 'Show achievements made by teachers',
+            'toggle_student' => 'Show achievements made by students',
+            'toggle_objectives' => 'Fold/Unfold objectives',
+        ],
+        'types' => [
+            'trainingsplan' => 'Trainingsplan',
+        ],
     ],
     'planItem' => [
         'title' => 'Tasks',
@@ -931,6 +942,8 @@ return [
         'create' => 'Create training',
         'search' => 'Search training',
         'edit' => 'Edit training',
+        'delete' => 'Delete training',
+        'delete_helper' => 'Should this training and all its corresponding data be deleted?',
     ],
     'exercise' => [
         'title' => 'Exercises',

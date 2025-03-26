@@ -19,7 +19,7 @@
                 url="/grades"
             >
                 <template v-slot:icon>
-                    <i class="fas fa-layer-group pt-2"></i>
+                    <i class="fas fa-layer-group"></i>
                 </template>
 
                 <template v-slot:dropdown

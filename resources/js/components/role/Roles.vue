@@ -19,7 +19,7 @@
                 url="/roles"
             >
                 <template v-slot:icon>
-                    <i class="fas fa-user-tag pt-2"></i>
+                    <i class="fas fa-user-tag"></i>
                 </template>
 
                 <template v-slot:dropdown

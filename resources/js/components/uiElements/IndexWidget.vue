@@ -31,7 +31,7 @@
                 <div
                     class="nav-item-box-image-size h-100 w-100"
                     style="opacity: 75%"
-                    :style="{'background': 'url(/media/' + item.medium_id + '?model=' + modelName + '&model_id=' + item.DT_RowId + ') center no-repeat'}"
+                    :style="{'background': 'url(/media/' + item.medium_id + '?preview=true) center no-repeat'}"
                 >
                 </div>
             </div>
@@ -64,7 +64,7 @@
             >
                 <slot name="icon">
                     <i
-                        class="fa pt-2"
+                        class="fa"
                         :class="item.owner_id == $userId ? 'fa-user' : 'fa-share-nodes'"
                     ></i>
                 </slot>
@@ -82,7 +82,7 @@
                 aria-expanded="false"
             >
                 <i class="fa fa-ellipsis-v"
-                    :style="'color:' + $textcolor(item.color)"
+                    :style="'color:' + (screenWidth > 990 ? $textcolor(item.color) : '#000')"
                 ></i>
                 <slot name="dropdown"></slot>
             </div>
@@ -218,7 +218,12 @@ export default {
                 rtl: false,
             });
         },
-    }
+    },
+    computed: {
+        screenWidth() {
+            return window.innerWidth;
+        },
+    },
 }
 </script>
 <style>

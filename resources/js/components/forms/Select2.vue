@@ -53,11 +53,11 @@ export default {
         id: {
             type: String,
             default: 'select2',
-            required: true
+            required: true,
         },
         list: {
             type: [Array, Object],
-            default: null
+            default: null,
         },
         url: {
             type: String,
@@ -65,69 +65,70 @@ export default {
         },
         model: {
             type: String,
-            required: true
+            required: true,
         },
         error: {
-            type: Array
+            type: Array,
+            default: null,
         },
         css: {
             type: String,
-            default: ''
+            default: '',
         },
         styles: {
             type: String,
-            default: 'width:100%;'
+            default: 'width: 100%;',
         },
         showLabel: {
             type: Boolean,
-            default: true
+            default: true,
         },
         classLeft: {
             type: String,
-            default: 'p-0 col-sm-12'
+            default: 'p-0 col-sm-12',
         },
         classRight: {
             type: String,
-            default: 'col-sm-12'
+            default: 'col-sm-12',
         },
         label: {
             type: String,
-            default: ''
+            default: '',
         },
         multiple: {
             type: Boolean,
-            default: false
+            default: false,
         },
         readOnly: {
             type: Boolean,
-            default: false
+            default: false,
         },
         option_id: {
             type: String,
-            default: 'id'
+            default: 'id',
         },
         option_icon: {
             type: String,
-            default: ''
+            default: '',
         },
         option_label: {
             type: String,
-            default: 'title'
+            default: 'title',
         },
         placeholder: {
             type: String,
-            default: ''
+            default: window.trans.global.pleaseSelect,
         },
         allowClear: {
             type: Boolean,
-            default: false
+            default: false,
         },
         selected: {
-            default: false
+            default: false,
         },
         term: {
             type: String,
-            default: ''
+            default: '',
         },
     },
     data() {

@@ -724,11 +724,11 @@ class CurriculumController extends Controller
      */
     private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
     {
-        if (is_admin() || is_creator())
+        if (is_admin())
         {
             return getEntriesForSelect2ByModel("App\Curriculum");
         }
-        else if (is_schooladmin() || is_teacher())
+        else if (is_creator() || is_schooladmin() || is_teacher())
         {
             $curriculum = Curriculum::where('owner_id', auth()->user()->id) // owner
                 ->orWhere('type_id', 1) // global curricula

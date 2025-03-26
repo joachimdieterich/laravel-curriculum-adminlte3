@@ -20,7 +20,8 @@ class TrainingSubscriptionController extends Controller
             abort_unless((\Gate::allows('plan_show') and $model->isAccessible()), 403);
 
             if (request()->wantsJson()) {
-                return $model->trainings;
+                // INFO: if trainings can be added to other models in the future, its subscriptions need to be filtered for the order_id to work correctly
+                return $model->trainings()->orderBy('order_id')->get();
             }
         }
     }
@@ -78,6 +79,39 @@ class TrainingSubscriptionController extends Controller
     public function update(Request $request, TrainingSubscription $trainingSubscription)
     {
         //
+    }
+
+    public function higher(TrainingSubscription $trainingSubscription)
+    {
+        // decrease order_id of the training with the next highest order_id
+        TrainingSubscription::where([
+            'subscribable_type' => $trainingSubscription->subscribable_type,
+            'subscribable_id' => $trainingSubscription->subscribable_id,
+            'order_id' => $trainingSubscription->order_id + 1,
+        ])->decrement('order_id', 1);
+
+        $trainingSubscription->order_id++;
+        $trainingSubscription->save();
+
+
+        $model = $trainingSubscription->subscribable_type::find($trainingSubscription->subscribable_id);
+        return $model->trainings()->orderBy('order_id')->get();
+    }
+
+    public function lower(TrainingSubscription $trainingSubscription)
+    {
+        // increase order_id of the training with the next lowest order_id
+        TrainingSubscription::where([
+            'subscribable_type' => $trainingSubscription->subscribable_type,
+            'subscribable_id' => $trainingSubscription->subscribable_id,
+            'order_id' => $trainingSubscription->order_id - 1,
+        ])->increment('order_id', 1);
+
+        $trainingSubscription->order_id--;
+        $trainingSubscription->save();
+
+        $model = $trainingSubscription->subscribable_type::find($trainingSubscription->subscribable_id);
+        return $model->trainings()->orderBy('order_id')->get();
     }
 
     /**

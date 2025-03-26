@@ -20,7 +20,7 @@
                 url="/permissions"
             >
                 <template v-slot:icon>
-                    <i class="fas fa-unlock-alt pt-2"></i>
+                    <i class="fas fa-unlock-alt"></i>
                 </template>
 
                 <template v-slot:dropdown

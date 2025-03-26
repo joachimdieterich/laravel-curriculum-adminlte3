@@ -29,6 +29,8 @@ class Training extends Model
         'end' => 'datetime',
     ];
 
+    protected $with = ['subscriptions:id,training_id,order_id,subscribable_type,subscribable_id'];
+
     /**
      * Prepare a date for array / JSON serialization.
      *
@@ -58,9 +60,9 @@ class Training extends Model
     public function isAccessible()
     {
         if (
-            $this->subscriptions->first()->subscribable->plan->isAccessible() //user has access throught a plan
-            or ($this->owner_id == auth()->user()->id)            // or owner
-            or is_admin() // or admin
+            is_admin()
+            or ($this->owner_id == auth()->user()->id)
+            or $this->subscriptions->first()->subscribable->plan->isAccessible() // user has access through a plan
         ) {
             return true;
         } else {

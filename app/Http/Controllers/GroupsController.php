@@ -35,15 +35,16 @@ class GroupsController extends Controller
         $group_id_field = 'id'; // if auth()->user()->groups() is used query uses group_user table therefore group_id_field = group_id
 
         switch (auth()->user()->role()->id) {
-            case 1:  $groups = Group::with(['grade', 'period', 'organization']);
+            case 1: // admin
+                $groups = Group::with(['grade', 'period', 'organization']);
                 break;
-            case 4:         //schooladmin
-            case 5:         //teacher
+            case 4: // schooladmin
+            case 5: // teacher
                 $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization']);
                 break;
-
-            default: $groups = auth()->user()->groups()->with(['grade', 'period', 'organization']);
-                $group_id_field = 'group_id';
+            default: // student
+                // needs get() because DataTables will try to order by 'id', but because of the 'join group_user' it should be 'groups.id'
+                $groups = auth()->user()->groups()->with(['grade', 'period', 'organization'])->get();
                 break;
         }
 

@@ -797,14 +797,16 @@ export default {
                 }
             }
         });
-
-        axios.get('/videoconferences/servers')
+        // get server-list only for admins, since its only visible under extended settings
+        if (this.checkPermission('is_admin')) {
+            axios.get('/videoconferences/servers')
             .then(response => {
                 this.servers = response.data;
             })
             .catch(e => {
                 console.log(e);
             });
+        }
     },
 }
 </script>

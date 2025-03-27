@@ -165,7 +165,11 @@
 
                 <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
-                    class="position-relative mr-2 px-2 py-1 pointer"
+                    class="position-relative badge-pill mr-2 px-2 py-1 pointer"
+                    :style="show_comments ? { 'background-color': '#dcdcdc' } : ''"
+                    data-toggle="collapse"
+                    :data-target="'#comments_' + item.id"
+                    aria-expanded="false"
                     @click="openComments"
                 >
                     <i class="far fa-comments"></i>
@@ -183,7 +187,7 @@
             </div>
         </div>
 
-        <Comments v-if="show_comments"
+        <Comments v-if="commentable"
             :comments="item.comments"
             :model="item"
             :kanban_owner_id="kanban_owner_id"

@@ -1,10 +1,12 @@
 <template>
-    <div class="comments p-3 border-top">
+    <div
+        :id="'comments_' + model.id"
+        class="comments px-3 border-top collapse"
+    >
         <div
-            :id="'comments_of_model_id_' + model.id"
             ref="scroll_container"
             style="max-height: 300px;"
-            class="hide-scrollbars overflow-auto"
+            class="hide-scrollbars overflow-auto pt-3"
         >
             <div v-for="comment in comments"
                 class="direct-chat-msg"
@@ -62,7 +64,7 @@
             </div>
         </div>
 
-        <div class="input-group">
+        <div class="input-group pb-3">
             <input
                 type="text"
                 name="message"

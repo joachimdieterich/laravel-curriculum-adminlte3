@@ -62,27 +62,25 @@
             </div>
         </div>
 
-
-        <form action="#" method="post">
-            <div class="input-group">
-                <input
-                    type="text"
-                    name="message"
-                    v-model="form.comment"
-                    :placeholder="trans('global.comment') + '...'"
-                    class="form-control"
-                />
-                <span class="input-group-append">
-                    <button
-                        class="btn btn-primary "
-                        @keyup.enter="sendComment()"
-                        @click.prevent="sendComment()"
-                    >
-                        <i class="far fa-paper-plane"></i>
-                    </button>
-                </span>
-            </div>
-        </form>
+        <div class="input-group">
+            <input
+                type="text"
+                name="message"
+                class="form-control"
+                v-model.trim="form.comment"
+                :placeholder="trans('global.comment') + '...'"
+                @keyup.enter="sendComment()"
+            />
+            <span class="input-group-append">
+                <button
+                    class="btn btn-primary"
+                    :disabled="!form.comment"
+                    @click.prevent="sendComment()"
+                >
+                    <i class="far fa-paper-plane"></i>
+                </button>
+            </span>
+        </div>
     </div>
 </template>
 <script>
@@ -121,6 +119,8 @@ export default {
     },
     methods: {
         sendComment() {
+            if (this.form.comment.trim().length === 0) return;
+
             axios.post('/kanbanItemComment', this.form)
                 .then(res => {
                     this.$emit('addComment', res.data);

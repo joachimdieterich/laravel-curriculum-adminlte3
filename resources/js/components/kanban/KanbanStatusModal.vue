@@ -38,6 +38,7 @@
                                     id="title"
                                     name="title"
                                     class="form-control"
+                                    maxlength="191"
                                     v-model.trim="form.title"
                                     :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
                                     required
@@ -162,17 +163,19 @@
 import Form from 'form-backend-validation';
 import axios from "axios";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'kanban-status-modal',
-    components: {},
     props: {
         kanban: Object,
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -200,25 +203,27 @@ export default {
             } else {
                 this.add();
             }
-
-            this.globalStore?.closeModal(this.$options.name);
         },
         add() {
             axios.post('/kanbanStatuses', this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-status-added', r.data);
+                    this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    this.toast.error(this.trans('global.error'));
+                    console.log(e);
                 });
         },
         update() {
             axios.patch('/kanbanStatuses/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-status-updated', r.data);
+                    this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    this.toast.error(this.trans('global.error'));
+                    console.log(e);
                 });
         },
     },

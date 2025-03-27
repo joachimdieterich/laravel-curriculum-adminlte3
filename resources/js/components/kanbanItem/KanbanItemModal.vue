@@ -34,6 +34,7 @@
                                     name="title"
                                     type="text"
                                     class="form-control"
+                                    maxlength="191"
                                     v-model.trim="form.title"
                                     :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
                                     required
@@ -208,6 +209,7 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import Editor from '@tinymce/tinymce-vue';
 import axios from "axios";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'kanban-item-modal',
@@ -247,8 +249,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     mounted() {
@@ -275,15 +279,15 @@ export default {
             } else {
                 this.add();
             }
-
-            this.globalStore?.closeModal(this.$options.name);
         },
         add() {
             axios.post('/kanbanItems', this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-item-added', r.data);
+                    this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
         },
@@ -291,8 +295,10 @@ export default {
             axios.patch('/kanbanItems/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-item-updated', r.data);
+                    this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
         },

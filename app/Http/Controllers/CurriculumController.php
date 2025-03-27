@@ -749,9 +749,9 @@ class CurriculumController extends Controller
                                 ->where('subscribable_id', auth()->user()->id);
                         }
                     );
-                });
+                })->get();
 
-            return getEntriesForSelect2ByCollection($curriculum);
+            return getEntriesForSelect2ByCollectionAlternative($curriculum);
         }
         else
         {

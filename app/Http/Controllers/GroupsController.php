@@ -167,25 +167,22 @@ class GroupsController extends Controller
 
     public function enrol()
     {
-        abort_unless(\Gate::allows('group_enrolment'), 403);
+        abort_unless(\Gate::allows('group_enrolment'), 403, "No permission to enrol users into groups");
 
         foreach ((request()->enrollment_list) as $enrolment) {
-            abort_unless(
-                (
-                    auth()->user()->groups->contains($enrolment['group_id'])
-                    or is_admin()
-                    or (Group::find($enrolment['group_id'])->first()->organization_id == auth()->user()->current_organization_id)
-                ), 403);
+            abort_unless((
+                is_admin()
+                or auth()->user()->groups->contains($enrolment['group_id']) // user is enrolled in group
+                or Group::find($enrolment['group_id'])->organization_id == auth()->user()->current_organization_id // current set organization is group's organization
+            ), 403, "Need to be enroled in group or have its organization be set as current organization");
 
-            foreach ((array) $enrolment['user_id'] as $user_id) //iterate over user_ids
+            foreach ((array) $enrolment['user_id'] as $user_id) // iterate over user_ids
             {
                 $user = User::findOrFail(format_select_input($user_id));
-                foreach ((array) $enrolment['group_id'] as $group_id) //iterate over group_ids
+                foreach ((array) $enrolment['group_id'] as $group_id) // iterate over group_ids
                 {
-                   // dump($group_id);
                     $group = Group::findOrFail($group_id);
-                    //dump($group);
-                    //if user isn't enrolled to organization, enrol with student role
+                    // if user isn't enrolled to organization, enrol with student role
                     OrganizationRoleUser::firstOrCreate([
                             'user_id' => $user->id,
                             'organization_id' => $group->first()->organization_id,

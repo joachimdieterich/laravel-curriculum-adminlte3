@@ -165,7 +165,7 @@
 
                 <span class="d-flex flex-fill"></span>
                 <div v-if="commentable"
-                    class="position-relative mr-2 px-1 pointer"
+                    class="position-relative mr-2 px-2 py-1 pointer"
                     @click="openComments"
                 >
                     <i class="far fa-comments"></i>

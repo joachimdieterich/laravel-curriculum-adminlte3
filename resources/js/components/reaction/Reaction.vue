@@ -1,7 +1,7 @@
 <template>
     <div
        @click="toggle()"
-       class="position-relative px-1 pointer"
+       class="position-relative px-2 py-1 pointer"
     >
         <i  v-if="userHasReaction()"
            class="fa fa-heart"
@@ -9,10 +9,10 @@
         <i v-else
            class="far fa-heart"
         ></i>
-        <span v-if="this.likes !== null && likes_count > 0"
+        <span v-if="likes !== null && likes_count > 0"
             class="comment-count bg-success"
         >
-            {{ this.likes_count }}
+            {{ likes_count }}
         </span>
     </div>
 </template>
@@ -20,12 +20,17 @@
 export default {
     name: 'Reaction',
     props: {
-        model: {},
+        model: {
+            type: Object,
+            default: null,
+        },
         url: {
             type: String,
+            default: null,
         },
         reaction: {
-          type: String,
+            type: String,
+            default: 'like',
         },
     },
     data() {
@@ -36,7 +41,7 @@ export default {
     methods: {
         toggle() {
             axios.post(this.url + "/" + this.model.id + "/react", {
-                'reaction': this.likes,
+                reaction: this.likes,
             })
                 .then(res => {
                     this.likes = res.data.message.likes;

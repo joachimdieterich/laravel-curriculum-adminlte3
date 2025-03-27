@@ -137,54 +137,51 @@
         </div>
 
         <div
-            class="card-footer px-3 py-2"
-            :class="{ 'border-top-0': item.description === null }"
+            class="card-footer d-flex align-items-center px-3 py-2"
         >
-            <div class="d-flex align-items-center">
-               <avatar
-                    :key="item.id + '_editor_' + item.owner.id"
-                    :title="item.owner.firstname + ' ' + item.owner.lastname"
-                    :username="item.owner.username"
-                    :firstname="item.owner.firstname"
-                    :lastname="item.owner.lastname"
-                    :size="25"
-                    class="contacts-list-img"
-                    data-toggle="tooltip"
-                />
-                <avatar v-if="editors != null && $userId != 8"
-                    v-for="(editor_user, index) in editors"
-                    :key="item.id + '_editor_' + index"
-                    :title="editor_user.firstname + ' ' + editor_user.lastname"
-                    :username="editor_user.username"
-                    :firstname="editor_user.firstname"
-                    :lastname="editor_user.lastname"
-                    :size="25"
-                    class="contacts-list-img"
-                    data-toggle="tooltip"
-                />
+            <Avatar
+                :key="item.id + '_editor_' + item.owner.id"
+                :title="item.owner.firstname + ' ' + item.owner.lastname"
+                :username="item.owner.username"
+                :firstname="item.owner.firstname"
+                :lastname="item.owner.lastname"
+                :size="25"
+                class="contacts-list-img"
+                data-toggle="tooltip"
+            />
+            <Avatar v-if="editors != null && $userId != 8"
+                v-for="(editor_user, index) in editors"
+                :key="item.id + '_editor_' + index"
+                :title="editor_user.firstname + ' ' + editor_user.lastname"
+                :username="editor_user.username"
+                :firstname="editor_user.firstname"
+                :lastname="editor_user.lastname"
+                :size="25"
+                class="contacts-list-img"
+                data-toggle="tooltip"
+            />
 
-                <span class="d-flex flex-fill"></span>
-                <div v-if="commentable"
-                    class="position-relative badge-pill mr-2 px-2 py-1 pointer"
-                    :style="show_comments ? { 'background-color': '#dcdcdc' } : ''"
-                    data-toggle="collapse"
-                    :data-target="'#comments_' + item.id"
-                    aria-expanded="false"
-                    @click="openComments"
+
+            <div v-if="commentable"
+                class="position-relative badge-pill ml-auto mr-2 px-2 py-1 pointer"
+                :style="show_comments ? { 'background-color': '#dcdcdc' } : ''"
+                data-toggle="collapse"
+                :data-target="'#comments_' + item.id"
+                aria-expanded="false"
+                @click="openComments"
+            >
+                <i class="far fa-comments"></i>
+                <span v-if="item.comments.length > 0"
+                    class="comment-count bg-success"
                 >
-                    <i class="far fa-comments"></i>
-                    <span v-if="item.comments.length > 0"
-                        class="comment-count bg-success"
-                    >
-                        {{ item.comments.length }}
-                    </span>
-                </div>
-                <Reaction
-                    :model="item"
-                    reaction="like"
-                    url="/kanbanItems"
-                />
+                    {{ item.comments.length }}
+                </span>
             </div>
+            <Reaction
+                :model="item"
+                reaction="like"
+                url="/kanbanItems"
+            />
         </div>
 
         <Comments v-if="commentable"
@@ -214,7 +211,7 @@
 <script>
 import DatePicker from 'vue3-datepicker';
 import MediaCarousel from '../media/MediaCarousel.vue';
-import avatar from '../uiElements/Avatar.vue';
+import Avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
 import Comments from '../kanban/Comments.vue';
 import moment from 'moment';
@@ -429,7 +426,7 @@ export default {
         Comments,
         Reaction,
         MediaCarousel,
-        avatar,
+        Avatar,
         DatePicker,
         ConfirmModal,
     },

@@ -26,40 +26,48 @@
                         {{ comment.created_at }}
                     </span>
                 </div>
-                <img v-if="comment.user.medium_id != null"
-                    class="direct-chat-img"
-                    :class="(comment.user_id != $userId) ? 'pull-left' : 'pull-right'"
-                    :src="'/media/' + comment.user.medium_id"
-                    alt="User profile picture"
-                />
-                <avatar v-else
-                    data-toggle="tooltip"
-                    :class="(comment.user_id != $userId) ? 'pull-left' : 'pull-right'"
-                    :title="comment.user.username"
-                    :username="comment.user.username"
-                    :firstname="comment.user.firstname"
-                    :lastname="comment.user.lastname"
-                    :size="40"
-                />
                 <div
-                    class="direct-chat-text"
-                    @mouseover="hover = comment.id"
-                    @mouseleave="hover = false"
+                    class="d-flex"
+                    :class="comment.user_id == $userId ? 'flex-row-reverse' : 'flex-row'"
                 >
-                    <Reaction
-                        :model="comment"
-                        class="pull-right"
-                        reaction="like"
-                        url="/kanbanItemComments"
+                    <img v-if="comment.user.medium_id != null"
+                        class="direct-chat-img"
+                        :src="'/media/' + comment.user.medium_id"
+                        alt="User profile picture"
                     />
-                    <i v-if="($userId == comment.user.id && hover == comment.id)
-                            || ($userId == kanban_owner_id && hover == comment.id)
-                        "
-                        v-permission="'message_delete'"
-                        class="text-danger pull-right p-1 mr-1 fa fa-trash pointer"
-                        @click="deleteComment(comment)"
-                    ></i>
-                    <small>{{ comment.comment }}</small>
+                    <avatar v-else
+                        data-toggle="tooltip"
+                        :title="comment.user.username"
+                        :username="comment.user.username"
+                        :firstname="comment.user.firstname"
+                        :lastname="comment.user.lastname"
+                        :size="40"
+                    />
+                    <div
+                        class="direct-chat-text flex-fill"
+                        @mouseover="hover = comment.id"
+                        @mouseleave="hover = false"
+                    >
+                        <div class="d-flex align-items-center pull-right">
+                            <a v-if="$userId == comment.user.id
+                                    || $userId == model.owner_id
+                                    || checkPermission('is_admin')
+                                "
+                                v-permission="'message_delete'"
+                                class="btn btn-flat text-danger px-2 py-1 mr-1 invisible"
+                                @click="deleteComment(comment)"
+                            >
+                                <i class="fa fa-trash"></i>
+                            </a>
+                            <Reaction
+                                :model="comment"
+                                class="pull-right"
+                                reaction="like"
+                                url="/kanbanItemComments"
+                            />
+                        </div>
+                        <small>{{ comment.comment }}</small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,10 +113,6 @@ export default {
             type: Object,
             default: null,
         },
-        kanban_owner_id: {
-            type: Number,
-            default: null,
-        },
     },
     data() {
         return {
@@ -151,3 +155,6 @@ export default {
     },
 }
 </script>
+<style scoped>
+.direct-chat-text:hover .text-danger { visibility: visible !important; }
+</style>

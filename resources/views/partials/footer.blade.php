@@ -16,14 +16,16 @@
         </div>
 
         <div class="navbar-expand col-lg-8">
-            <ul class="navbar-nav d-flex p-2">
+            <ul class="navbar-nav d-flex flex-column flex-sm-row text-center p-2">
                 @php ($footer_iterator = 1)
                 @while ( env('FOOTER_TITLE_'.$footer_iterator) )
-                <li class="nav-item flex-fill ">
-                    <a class=" nav-item d-none d-sm-inline-block text-white small text-decoration-none"
-                        href="{{ env('FOOTER_URL_'.$footer_iterator) }}">
-                         {{ env('FOOTER_TITLE_'.$footer_iterator) }}
-                     </a>
+                <li class="nav-item flex-fill py-2">
+                    <a
+                        class="nav-item text-white small"
+                        href="{{ env('FOOTER_URL_'.$footer_iterator) }}"
+                    >
+                        {{ env('FOOTER_TITLE_'.$footer_iterator) }}
+                    </a>
                 </li>
                 @php ($footer_iterator++)
                 @endwhile

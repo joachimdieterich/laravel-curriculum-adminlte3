@@ -13,14 +13,13 @@
 </template>
 <script>
 import LinkItem from "./LinkItem.vue";
-import Html from "./html.vue";
 
 export default {
     props: {
         htmlContent: {
             type: String,
             required: true,
-        }
+        },
     },
     data() {
         return {
@@ -47,12 +46,12 @@ export default {
 
                 //console.log(matches);
                 matches.forEach((match) => {
-                    if (typeof (match[2]) !==  'undefined') {
-                        //console.log(match);
+                    if (typeof (match[2]) !== 'undefined') {
                         if (this.isValidHttpUrl(match[2])) {
+                            const target = match[1].includes('target="_blank"') ? '_blank' : '_self';
                             parts.push({
                                 component: 'LinkItem',
-                                props: { href: match[2], text: match[3] }
+                                props: { href: match[2], text: match[3], target: target }
                             });
                         }
                     } else {
@@ -63,7 +62,6 @@ export default {
             return parts;
         }
     },
-    mounted() {},
     methods: {
         isValidHttpUrl(string) {
             let url;
@@ -75,11 +73,10 @@ export default {
             }
 
             return url.protocol === "http:" || url.protocol === "https:";
-        }
+        },
     },
     components: {
         LinkItem,
-        Html,
     },
 }
 </script>

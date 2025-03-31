@@ -20,9 +20,9 @@
                 type="button"
                 class="btn btn-default"
             >
-                <img v-if="this.thumbnail_medium_id"
+                <img v-if="thumbnail_medium_id"
                     alt="preview"
-                    :src="'/media/' + this.thumbnail_medium_id"
+                    :src="'/media/' + thumbnail_medium_id + '?preview=true'"
                     height="50px"
                     class="pull-left"
                 />
@@ -71,13 +71,13 @@ export default {
             component_id: this.$.uid,
             showMediumModal: false,
             thumbnail_medium_id: '',
-            selectedMediumId: ''
+            selectedMediumId: '',
         }
     },
     watch: {
         medium_id: function(newVal, oldVal) {
             this.thumbnail_medium_id = newVal;
-        }
+        },
     },
     mounted() {
         if (this.medium_id) {

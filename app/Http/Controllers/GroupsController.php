@@ -38,6 +38,7 @@ class GroupsController extends Controller
             case 1: // admin
                 $groups = Group::with(['grade', 'period', 'organization']);
                 break;
+            case 2: // creator
             case 4: // schooladmin
             case 5: // teacher
                 $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization']);

@@ -129,7 +129,7 @@
                                     >
                                         <a
                                             class="btn-tool text-danger"
-                                            @click.prevent="deleteSubscription(item)"
+                                            @click.prevent="confirmDelete(item)"
                                         >
                                             <i class="fa fa-trash"></i>
                                         </a>
@@ -313,13 +313,17 @@ export default {
                 subscribable_id:    item.subscribable_id,
             });
         },
-        deleteSubscription(contentSubscription) {
-            axios.post('/contents/' + contentSubscription.content_id + '/destroy', {
-                    subscribable_type:  contentSubscription.subscribable_type,
-                    subscribable_id:    contentSubscription.subscribable_id,
+        confirmDelete(item) {
+            this.currentContent = item;
+            this.showConfirm = true;
+        },
+        destroy() {
+            axios.post('/contents/' + this.currentContent.content_id + '/destroy', {
+                    subscribable_type:  this.currentContent.subscribable_type,
+                    subscribable_id:    this.currentContent.subscribable_id,
                 })
                 .then(res => {
-                    let index = this.subscriptions.indexOf(contentSubscription);
+                    let index = this.subscriptions.indexOf(this.currentContent);
                     this.subscriptions.splice(index, 1);
                 })
                 .catch(e => {
@@ -349,11 +353,6 @@ export default {
                 this.subscriptions.find(s => s.content.id == content.id).content = content;
             }
         });
-
-        this.currentContent = {
-            subscribable_type:  this.subscribable_type,
-            subscribable_id:    this.subscribable_id,
-        }
     },
 }
 </script>

@@ -549,6 +549,8 @@ return [
         'title_singular' => 'Inhalt',
         'create' => 'Inhalt erstellen',
         'edit' => 'Inhalt bearbeiten',
+        'delete' => 'Inhalt löschen',
+        'delete_helper' => 'Soll dieser Inhalt gelöscht werden?',
         'copy' => 'Inhalt aus bestehendem Curriculum übernehmen',
         'no_content' => 'Keine (zusätzlichen) Inhalte vorhanden.',
         'index' => 'Inhaltsverzeichnis',

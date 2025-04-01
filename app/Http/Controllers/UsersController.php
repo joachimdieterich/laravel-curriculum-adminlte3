@@ -37,7 +37,7 @@ class UsersController extends Controller
             return getEntriesForSelect2ByCollection(
                 $users,
                 'users.',
-                ['username', 'firstname', 'lastname'],
+                ['username', "CONCAT(firstname, ' ' ,lastname)"],
                 'lastname',
                 "CONCAT(firstname, ' ' ,lastname)",
             );

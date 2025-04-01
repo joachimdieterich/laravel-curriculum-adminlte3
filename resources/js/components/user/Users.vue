@@ -170,7 +170,10 @@ DataTable.use(DataTablesCore);
 
 export default {
     props: {
-        reference : Object,
+        reference: {
+            type: Object,
+            default: null,
+        },
         subscribable: {
             type: Boolean,
             default: false,
@@ -183,8 +186,14 @@ export default {
             type: String,
             default: 'delete',
         },
-        subscribable_type: '',
-        subscribable_id: '',
+        subscribable_type: {
+            type: String,
+            default: null,
+        },
+        subscribable_id: {
+            type: Number,
+            default: null,
+        },
     },
     setup() {
         const store = useDatatableStore();
@@ -200,12 +209,13 @@ export default {
             users: null,
             search: '',
             showConfirm: false,
-            url: (this.subscribable_id) ? '/users/list?group_id=' + this.reference.id : '/users/list', // if subscibable == true get enrolled users
+            url: (this.subscribable_id) ? '/users/list?group_id=' + this.reference.id : '/users/list', // if subscribable == true get enrolled users
             errors: {},
             currentUser: {},
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
+                { title: 'username', data: 'username', searchable: true },
                 { title: 'firstname', data: 'firstname', searchable: true },
                 { title: 'lastname', data: 'lastname', searchable: true },
                 { title: 'medium_id', data: 'medium_id' },

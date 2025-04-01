@@ -73,7 +73,6 @@ class UsersController extends Controller
             $users = (auth()->user()->role()->id == 1)
                 ? User::select('id', 'username', 'firstname', 'lastname', 'common_name', 'email', 'medium_id', 'deleted_at')->noSharing()
                 : Organization::find(auth()->user()->current_organization_id)->users()->noSharing();
-
         }
 
         return DataTables::of($users)

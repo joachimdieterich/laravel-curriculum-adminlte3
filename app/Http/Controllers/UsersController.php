@@ -66,7 +66,7 @@ class UsersController extends Controller
                     'group_id' => 'required',
                 ]
             );
-            $users = Group::where('id',$request['group_id'])->first()->users;
+            $users = Group::where('id',$request['group_id'])->first()->users();
         }
         else
         {

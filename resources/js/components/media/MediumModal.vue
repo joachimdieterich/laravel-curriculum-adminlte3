@@ -52,7 +52,7 @@
                                     class="nav-link text-sm"
                                 >
                                     <a
-                                        href="#media"
+                                        href="#local-media"
                                         class="link-muted"
                                         data-toggle="tab"
                                         @click="setTab('media');"
@@ -139,7 +139,7 @@
                                 </div>
 
                                 <div v-if="checkPermission('is_admin')"
-                                    id="media"
+                                    id="local-media"
                                     class="tab-pane m-2"
                                 >
                                     <div

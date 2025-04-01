@@ -214,11 +214,11 @@ export default {
             currentUser: {},
             columns: [
                 { title: 'check', data: 'check' },
-                { title: 'id', data: 'id' },
+                { title: 'id', data: 'id', searchable: false },
                 { title: 'username', data: 'username', searchable: true },
                 { title: 'firstname', data: 'firstname', searchable: true },
                 { title: 'lastname', data: 'lastname', searchable: true },
-                { title: 'medium_id', data: 'medium_id' },
+                { title: 'medium_id', data: 'medium_id', searchable: false },
             ],
             options : this.$dtOptions,
             dt: null,

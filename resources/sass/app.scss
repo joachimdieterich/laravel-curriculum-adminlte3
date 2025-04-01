@@ -113,6 +113,16 @@ textarea {
 .dt-length {
     float: right !important;
 }
+// truncates text to one line and adds ellipsis
+.line-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1; // compatibility
+    overflow: hidden;
+
+    & p { margin: 0; } // if Editor was used, text is wrapped in <p> tags
+}
 .vuehover {
     display: none;
 }

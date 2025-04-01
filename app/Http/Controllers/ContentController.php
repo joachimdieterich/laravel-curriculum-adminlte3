@@ -20,7 +20,7 @@ class ContentController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $this->permissionCheck($input['subscribable_type'], $input['subscribable_id']); //check context permission
+        $this->permissionCheck($input['subscribable_type'], $input['subscribable_id']);
 
         $content = Content::Create([
             'title' => $input['title'],
@@ -108,17 +108,18 @@ class ContentController extends Controller
          * - if not -> delete only content_subscription
          */
 
-        //delete unused embedded media
-        $media = $content->media;
-
         $content->mediaSubscriptions()
-            ->where('subscribable_type', '=', 'App\Content')
-            ->where('subscribable_id', '=', $content->id)
+            ->orWhere([ // new media subscriptions are connected through their subscribed model
+                ['subscribable_type', '=', $subscribable_type],
+                ['subscribable_id', '=', $subscribable_id],
+            ])
             ->delete();
 
         if ($content->subscriptions()->count() <= 1) {
-            ContentSubscription::where('subscribable_type',
-                    (isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])) ? request('subscribable')['content_subscriptions'][0]['subscribable_type'] : $subscribable_type)
+            ContentSubscription::where('subscribable_type', isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])
+                    ? request('subscribable')['content_subscriptions'][0]['subscribable_type']
+                    : $subscribable_type
+                )
                 ->where('subscribable_id', (isset(request('subscribable')['id'])) ? request('subscribable')['id'] : $subscribable_id)
                 ->where('content_id', $content->id)
                 ->delete();
@@ -133,12 +134,16 @@ class ContentController extends Controller
         } else {
             $subscription = ContentSubscription::where('subscribable_type', $subscribable_type)
                 ->where('subscribable_id', $subscribable_id)
-                ->where('content_id', $content->id)->get()->first(); //load subscription to get order_id for reordering
-            ContentSubscription::where('subscribable_type',
-                (isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])) ? request('subscribable')['content_subscriptions'][0]['subscribable_type'] : $subscribable_type)
+                ->where('content_id', $content->id)->get()->first(); // load subscription to get order_id for reordering
+
+            ContentSubscription::where('subscribable_type', isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])
+                    ? request('subscribable')['content_subscriptions'][0]['subscribable_type']
+                    : $subscribable_type
+                )
                 ->where('subscribable_id', (isset(request('subscribable')['id'])) ? request('subscribable')['id'] : $subscribable_id)
                 ->where('content_id', $content->id)
                 ->delete();
+
             //reset order_ids
             return (new ContentSubscription)
                 ->where('subscribable_type', $subscribable_type)
@@ -149,13 +154,9 @@ class ContentController extends Controller
                 ]);
         }
 
-        //delete unused media
-        foreach ($media as $medium) {
-            Medium::where('id', $medium->id)->delete();
-        }
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => true];
+            return true;
         }
     }
 
@@ -171,8 +172,8 @@ class ContentController extends Controller
     {
         $subscribe = MediumSubscription::updateOrCreate([
             'medium_id' => $medium->id,
-            'subscribable_type' => get_class($model),
-            'subscribable_id' => $model->id,
+            'subscribable_type' => request()->subscribable_type ?? get_class($model),
+            'subscribable_id' => request()->subscribable_id ?? $model->id,
         ], [
             'sharing_level_id' => 1, // has to be global = 1
             'visibility' => 1, // has to be public  = 1

@@ -107,18 +107,7 @@ export default {
                 subscribable_id: null,
                 subscribable_type: null,
             }),
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink link curriculummedia table lists code autoresize"
-                ],
-                {
-                    callback: 'insertContent',
-                    callbackId: this.component_id,
-                    placeholder: window.trans.global.description + ' *',
-                },
-                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link mathjax code",
-                ""
-            ),
+            tinyMCE: null,
         }
     },
     methods: {
@@ -168,6 +157,21 @@ export default {
                     } else {
                         this.method = 'post';
                     }
+                    // Editor needs to be re-initialized when the modal is opened again...
+                    this.tinyMCE = this.$initTinyMCE(
+                        [
+                            "autolink link curriculummedia table lists code autoresize"
+                        ],
+                        {
+                            callback: 'insertContent',
+                            callbackId: this.component_id,
+                            subscribable_type: this.form.subscribable_type, // ...so the subscribable values can be passed to it
+                            subscribable_id: this.form.subscribable_id,
+                            placeholder: window.trans.global.description + ' *',
+                        },
+                        "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link mathjax code",
+                        ""
+                    );
                 }
             }
         });

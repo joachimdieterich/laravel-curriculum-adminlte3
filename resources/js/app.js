@@ -504,7 +504,9 @@ app.directive('permission', function (el, binding, vnode) {
         }
 
         if (!allowed) {
-            el.parentNode.removeChild(vnode.el);
+            if (el.parentNode) { // needed since parent might not exist because of v-if
+                el.parentNode.removeChild(vnode.el);
+            }
         }
 });
 

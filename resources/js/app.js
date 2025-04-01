@@ -472,25 +472,6 @@ app.config.globalProperties.$dtOptions = {
     subscribeSelected: false,
     target: 'medium_id',
 },*/
-/**
- * Custom Vue directive "can" to check against permissions.
- * If permission is not given element gets style display:none
- *
- * ! Always check permissions in the backend.
- * This directive enables shorter syntax on vue.
- *
- * Example:
- * <element v-can="'curriculum_edit'" ><element>
- *
- * @type Vue
- */
-
-app.directive('can', function (el, binding) {
-    if (window.Laravel.permissions.indexOf(binding.value) == -1) {
-        el.style.display = 'none';
-    }
-    return window.Laravel.permissions.indexOf(binding.value) !== -1;
-});
 
 app.directive('hide-if-permission', function (el, binding) {
     if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
@@ -514,19 +495,17 @@ app.directive('hide-if-permission', function (el, binding) {
  * @type Vue
  */
 app.directive('permission', function (el, binding, vnode) {
-        let allowed = false;
-        binding.value.split(',').forEach(function (permission){
-            if(window.Laravel.permissions.indexOf(permission.trim()) !== -1) {
-                allowed = true;
-            }
-        });
-
-        if (allowed == false){
-            if (el.parentNode) {
-                el.parentNode.removeChild(vnode.el);
+        let allowed = true;
+        for (const permission of binding.value.split(',')) {
+            if (window.Laravel.permissions.indexOf(permission.trim()) === -1) {
+                allowed = false;
+                break;
             }
         }
 
+        if (!allowed) {
+            el.parentNode.removeChild(vnode.el);
+        }
 });
 
 app.directive("inline", (element) => {

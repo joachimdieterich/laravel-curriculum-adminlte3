@@ -2,24 +2,31 @@
     <div class="card border-0 mb-0">
         <div class="card-header px-3">
             <h3 v-if="subscriptions.length > 0"
-                class="card-title"
+                class="card-title d-flex align-items-center"
             >
-                <span
+                <a
                     :data-target="'#contentCarousel_' + uid"
                     data-slide-to="0"
-                    class="text-sm"
+                    class="btn btn-flat text-secondary p-0"
+                    @click="setSlide(0)"
                 >
                     <i class="fa fa-list"></i>
-                </span>
+                </a>
                 <span v-if="currentSlide === 0"
                     class="pl-2"
                 >
                     Index
                 </span>
                 <span v-else
-                    class="pl-2"
+                    class="d-flex align-items-center pl-2"
                 >
                     {{ subscriptions[currentSlide-1].content.title }}
+                    <a
+                        class="btn btn-flat text-secondary link-muted py-0 ml-1"
+                        @click="edit(subscriptions[currentSlide - 1])"
+                    >
+                        <i class="fa fa-pencil"></i>
+                    </a>
                 </span>
             </h3>
             <h3 v-else class="card-title">

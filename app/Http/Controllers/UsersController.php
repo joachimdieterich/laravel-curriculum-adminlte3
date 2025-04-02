@@ -36,9 +36,7 @@ class UsersController extends Controller
 
             // only get users with teacher-role or higher
             if (request()->has('no_students') && !is_admin()) { // skip this step for admins
-                if (request()->no_students) {
-                    $users = $users->whereNotIn('organization_role_users.role_id', [6, 7, 8, 9]); // student-, parent-, guest-, token-role
-                }
+                $users = $users->whereNotIn('organization_role_users.role_id', [6, 7, 8, 9]); // student-, parent-, guest-, token-role
             }
 
             return getEntriesForSelect2ByCollection(

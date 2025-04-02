@@ -482,6 +482,10 @@ app.directive('hide-if-permission', function (el, binding) {
  * Custom Vue directive "permission" to check against permissions.
  * csv with permissions.
  * If permission(s) is/are not given element gets removed from dom
+ * 
+ * ! IMPORTANT: even if element gets removed, Vue will act like its still there.
+ * This can cause weird bugs that seem like a logic-error, but the actual problem is this behaviour.
+ * To solve those issues use v-if="checkPermission('permission_name')"
  *
  * ! Always check permissions in the backend.
  * This directive enables shorter syntax on vue.

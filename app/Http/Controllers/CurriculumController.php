@@ -376,7 +376,7 @@ class CurriculumController extends Controller
                                         $input['variant_default_description'] ?? NULL
                                        ),
             'archived'              =>  $input['archived'] ?? false,
-            'owner_id'              => auth()->user()->id,
+            'owner_id'              => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {

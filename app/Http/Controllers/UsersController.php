@@ -37,9 +37,9 @@ class UsersController extends Controller
             return getEntriesForSelect2ByCollection(
                 $users,
                 'users.',
-                ['username', "CONCAT(firstname, ' ' ,lastname)"],
+                ['username', DB::raw("CONCAT(firstname, ' ', lastname)")],
                 'lastname',
-                "CONCAT(firstname, ' ' ,lastname)",
+                "CONCAT(firstname, ' ', lastname)",
             );
         }
         else

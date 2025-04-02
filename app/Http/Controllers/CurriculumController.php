@@ -329,7 +329,7 @@ class CurriculumController extends Controller
      */
     public function storeOwner(Request $request, Curriculum $curriculum)
     {
-        abort_unless(Gate::allows('curriculum_edit'), 403);
+        abort_unless(Gate::allows('curriculum_edit'), 403, "No permission to change owner");
         $input = $this->validateRequest();
 
         $curriculum->update([

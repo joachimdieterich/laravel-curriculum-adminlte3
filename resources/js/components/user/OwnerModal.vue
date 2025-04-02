@@ -30,7 +30,7 @@
                                 id="owner_id"
                                 name="owner_id"
                                 css="mb-0"
-                                url="/users"
+                                url="/users?no_students=true"
                                 model="user"
                                 option_id="id"
                                 option_label="text"

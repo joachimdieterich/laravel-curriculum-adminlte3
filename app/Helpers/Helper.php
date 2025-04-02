@@ -113,12 +113,8 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
                 })
                 ->count();
 
-            $entries = $collection->where(
-                function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
-                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                    }
-                })
+            // where-clause is kept from count-builder
+            $entries = $collection
                 ->orderBy($orderby)
                 ->skip($offset)
                 ->take($resultCount)

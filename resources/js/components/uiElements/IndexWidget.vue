@@ -190,7 +190,12 @@ export default {
         clickEvent(item) {
             if (this.active) {
                 if (this.store.getDatatable(this.storeTitle)?.select) { // selectMode
-                    this.store.addSelectItems(this.storeTitle, item);
+                    // also select/deselect entry in datatable, in case the DataTable is visible
+                    if (this.store.addSelectItems(this.storeTitle, item)) { // item got added
+                        this.$parent.dt.row('#' + item.DT_RowId).select();
+                    } else { // item got removed
+                        this.$parent.dt.row('#' + item.DT_RowId).deselect();
+                    }
                 } else {
                     if (this.urlOnly) {
                         window.open(this.url /*+ '/' + item.id*/, this.urlTarget);

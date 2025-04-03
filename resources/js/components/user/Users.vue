@@ -271,16 +271,17 @@ export default {
     },
     methods: {
         setMode() {
-            console.log(this.store.getDatatable('users'));
+            this.dt.rows('.selected').deselect();
+
+            // toggle selection on/off
+            const toggle = !this.store.getDatatable('users')?.select;
             this.store.addToDatatables(
                 {
                     datatable: 'users',
-                    select: (this.store.getDatatable('users')?.select) ? false : true,
+                    select: toggle,
                     selectedItems: [],
                 }
-            )
-            console.log(this.store.getDatatable('users')?.select);
-
+            );
         },
         toggleTable() {
             document.getElementById('user-datatable').classList.toggle('d-none');
@@ -298,6 +299,20 @@ export default {
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
                 this.users = this.dt.rows({page: 'current'}).data().toArray();
             });
+            this.dt.on('select deselect', (e, dt) => {
+                if (!this.toggleView) return; // stop event if not visible
+                // add datatable to store if not exists
+                if (!this.store.getDatatable('users')?.select) {
+                    this.store.addToDatatables({
+                        datatable: 'users',
+                        select: true,
+                        selectedItems: [],
+                    });
+                }
+
+                this.store.addSelectItems('users', this.users[dt[0][0]]);
+            });
+            this.dt
         },
         confirmItemDelete(user) {
             this.currentUser = user;

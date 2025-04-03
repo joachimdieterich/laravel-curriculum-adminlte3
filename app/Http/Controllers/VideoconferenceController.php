@@ -87,12 +87,8 @@ class VideoconferenceController extends Controller
                     function ($query) {
                         $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
                     }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
-                    }
                 );
-            })->orWhere('owner_id', auth()->user()->id);
+            });
 
         if ($withOwned) {
             $videoconferences = $videoconferences->orWhere('owner_id', auth()->user()->id);
@@ -100,7 +96,6 @@ class VideoconferenceController extends Controller
 
         return $videoconferences;
     }
-
 
     public function userVideoconferences($withOwned = true, $user = null)
     {

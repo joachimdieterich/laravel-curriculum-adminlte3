@@ -81,7 +81,6 @@ class UsersController extends Controller
         }
 
         return DataTables::of($users)
-            ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }

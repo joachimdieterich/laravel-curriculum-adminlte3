@@ -8,9 +8,26 @@
                 <div v-if="create_label_field != 'enrol'"
                     class="row"
                 >
-                    <div class="col-md-12 m-0 pb-2">
-                        <button
-                            class="pull-right btn"
+                    <div class="col d-flex pb-2">
+                        <span v-if="adminTools"
+                            class="custom-control custom-switch custom-switch-on-green"
+                        >
+                            <input
+                                id="toggle-view"
+                                class="custom-control-input pt-1"
+                                type="checkbox"
+                                v-model="toggleView"
+                                @click="toggleTable"
+                            />
+                            <label
+                                class="custom-control-label text-muted"
+                                for="toggle-view"
+                            >
+                                Tabellenansicht
+                            </label>
+                        </span>
+                        <button v-if="!toggleView"
+                            class="btn ml-auto"
                             :class="classObject"
                             @click="setMode()"
                         >
@@ -19,116 +36,122 @@
                     </div>
                 </div>
 
-                <IndexWidget v-if="!subscribable"
-                    v-permission="'user_create'"
-                    key="userCreate"
-                    modelName="User"
-                    url="/users"
-                    :create="true"
-                    :subscribe="false"
-                    :subscribable_id="subscribable_id"
-                    :label="trans('global.user.' + create_label_field)"
-                />
-                <IndexWidget v-else="subscribable"
-                    v-permission="'group_enrolment'"
-                    key="userSubscribe"
-                    modelName="User"
-                    url="/users"
-                    :create="false"
-                    :subscribe="true"
-                    :subscribable_id="subscribable_id"
-                    :label="trans('global.user.' + create_label_field)"
-                >
-                    <template v-slot:itemIcon>
-                        <i v-if="create_label_field == 'enrol'"
-                            class="fa fa-2x fa-link text-muted"
-                        ></i>
-                    </template>
-                </IndexWidget>
-                <IndexWidget v-for="user in users"
-                    :key="'userIndex' + user.id"
-                    :model="user"
-                    modelName="User"
-                    storeTitle="users"
-                    url="/users"
-                    :showSubscribable="subscribable"
-                >
-                    <template v-slot:icon>
-                        <i class="fas fa-user"></i>
-                    </template>
-
-                    <template v-slot:dropdown>
-                        <div
-                            class="dropdown-menu dropdown-menu-right"
-                            style="z-index: 1050;"
-                            x-placement="left-start"
-                        >
-                            <div v-if="!subscribable"
-                                v-permission="'user_edit, user_delete'"
+                <div :class="toggleView ? 'd-none' : ''">
+                    <IndexWidget v-if="!subscribable"
+                        v-permission="'user_create'"
+                        key="userCreate"
+                        modelName="User"
+                        url="/users"
+                        :create="true"
+                        :subscribe="false"
+                        :subscribable_id="subscribable_id"
+                        :label="trans('global.user.' + create_label_field)"
+                    />
+                    <IndexWidget v-else="subscribable"
+                        v-permission="'group_enrolment'"
+                        key="userSubscribe"
+                        modelName="User"
+                        url="/users"
+                        :create="false"
+                        :subscribe="true"
+                        :subscribable_id="subscribable_id"
+                        :label="trans('global.user.' + create_label_field)"
+                    >
+                        <template v-slot:itemIcon>
+                            <i v-if="create_label_field == 'enrol'"
+                                class="fa fa-2x fa-link text-muted"
+                            ></i>
+                        </template>
+                    </IndexWidget>
+                    <IndexWidget v-for="user in users"
+                        :key="'userIndex' + user.id"
+                        :model="user"
+                        modelName="User"
+                        storeTitle="users"
+                        url="/users"
+                        :showSubscribable="subscribable"
+                    >
+                        <template v-slot:icon>
+                            <i class="fas fa-user"></i>
+                        </template>
+    
+                        <template v-slot:dropdown>
+                            <div
+                                class="dropdown-menu dropdown-menu-right"
+                                style="z-index: 1050;"
+                                x-placement="left-start"
                             >
-                                <button
-                                    v-permission="'user_edit'"
-                                    :name="'edit-user-' + user.id"
-                                    class="dropdown-item text-secondary"
-                                    @click.prevent="editUser(user)"
+                                <div v-if="!subscribable"
+                                    v-permission="'user_edit, user_delete'"
                                 >
-                                    <i class="fa fa-pencil-alt mr-2"></i>
-                                    {{ trans('global.user.edit') }}
-                                </button>
-                                <hr class="my-1"/>
-                                <button
-                                    v-permission="'user_delete'"
-                                    :id="'delete-user-' + user.id"
-                                    type="submit"
-                                    class="dropdown-item py-1 text-red"
-                                    @click.prevent="confirmItemDelete(user)"
+                                    <button
+                                        v-permission="'user_edit'"
+                                        :name="'edit-user-' + user.id"
+                                        class="dropdown-item text-secondary"
+                                        @click.prevent="editUser(user)"
+                                    >
+                                        <i class="fa fa-pencil-alt mr-2"></i>
+                                        {{ trans('global.user.edit') }}
+                                    </button>
+                                    <hr class="my-1"/>
+                                    <button
+                                        v-permission="'user_delete'"
+                                        :id="'delete-user-' + user.id"
+                                        type="submit"
+                                        class="dropdown-item py-1 text-red"
+                                        @click.prevent="confirmItemDelete(user)"
+                                    >
+                                        <span>
+                                            <i class="fa fa-trash mr-2"></i>
+                                            {{ trans('global.user.delete') }}
+                                        </span>
+                                    </button>
+                                </div>
+    
+                                <div v-else
+                                    v-permission="'group_enrolment'"
                                 >
-                                    <span>
-                                        <i class="fa fa-trash mr-2"></i>
-                                        {{ trans('global.user.delete') }}
-                                    </span>
-                                </button>
+                                    <button
+                                        :id="'delete-user-' + user.id"
+                                        type="submit"
+                                        class="dropdown-item py-1 text-red"
+                                        @click.prevent="confirmItemDelete(user)"
+                                    >
+                                        <span>
+                                            <i class="fa fa-unlink mr-2"></i>
+                                            {{ trans('global.user.expel') }}
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
-
-                            <div v-else
-                                v-permission="'group_enrolment'"
-                            >
-                                <button
-                                    :id="'delete-user-' + user.id"
-                                    type="submit"
-                                    class="dropdown-item py-1 text-red"
-                                    @click.prevent="confirmItemDelete(user)"
-                                >
-                                    <span>
-                                        <i class="fa fa-unlink mr-2"></i>
-                                        {{ trans('global.user.expel') }}
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </template>
-
-                    <template v-slot:content>
-                        <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                            <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                                {{ user.firstname }} {{ user.lastname }}
-                            </h1>
-                        </span>
-                    </template>
-                </IndexWidget>
+                        </template>
+    
+                        <template v-slot:content>
+                            <span class="bg-white text-center p-1 overflow-auto nav-item-box">
+                                <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                                    {{ user.firstname }} {{ user.lastname }}
+                                </h1>
+                                <p v-if="adminTools" class="text-muted small">
+                                    {{ user.username }} </br>
+                                    {{ user.email }} </br>
+                                    {{ user.common_name }}
+                                </p>
+                            </span>
+                        </template>
+                    </IndexWidget>
+                </div>
             </div>
             <div
                 id="user-datatable-wrapper"
-                class="w-100 dataTablesWrapper"
+                class="dataTablesWrapper"
             >
                 <DataTable
                     id="user-datatable"
+                    class="d-none"
                     :columns="columns"
                     :options="options"
                     :ajax="url"
                     :search="search"
-                    width="100%"
-                    style="display: none;"
                 />
             </div>
 
@@ -162,6 +185,7 @@ import UserModal from "../user/UserModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
+import 'datatables.net-select-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import { useDatatableStore } from "../../store/datatables";
 import UserOptions from "./UserOptions.vue";
@@ -210,15 +234,16 @@ export default {
             search: '',
             showConfirm: false,
             url: (this.subscribable_id) ? '/users/list?group_id=' + this.reference.id : '/users/list', // if subscribable == true get enrolled users
-            errors: {},
+            adminTools: false,
+            toggleView: false,
             currentUser: {},
             columns: [
-                { title: 'check', data: 'check' },
-                { title: 'id', data: 'id', searchable: false },
+                { title: 'ID', data: 'id', searchable: false },
+                { title: 'common_name', data: 'common_name', searchable: false },
                 { title: 'username', name: 'username', data: 'username', searchable: true },
                 { title: 'firstname', name: 'firstname', data: 'firstname', searchable: true },
                 { title: 'lastname', name: 'lastname', data: 'lastname', searchable: true },
-                { title: 'medium_id', data: 'medium_id', searchable: false },
+                { title: 'E-Mail', data: 'email', searchable: false },
             ],
             options: this.$dtOptions,
             dt: null,
@@ -226,6 +251,7 @@ export default {
     },
     mounted() {
         this.$eventHub.emit('showSearchbar', true);
+        this.adminTools = !this.subscribable && this.checkPermission('is_admin');
 
         this.loaderEvent();
 
@@ -256,6 +282,9 @@ export default {
             console.log(this.store.getDatatable('users')?.select);
 
         },
+        toggleTable() {
+            document.getElementById('user-datatable').classList.toggle('d-none');
+        },
         editUser(user) {
             this.globalStore?.showModal('user-modal', user);
         },
@@ -268,8 +297,6 @@ export default {
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
                 this.users = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#user-content').insertBefore('#user-datatable-wrapper');
             });
         },
         confirmItemDelete(user) {

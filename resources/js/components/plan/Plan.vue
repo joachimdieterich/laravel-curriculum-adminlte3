@@ -242,11 +242,14 @@ export default {
     computed: {
         // add an img-tag, so the medium can be placed within the text
         description() {
-            let img = '';
-            if (this.currentPlan.medium_id) {
-                img = '<img class="pull-right" style="max-width: 25%;" src="/media/' + this.currentPlan.medium_id + '?preview=true"/>';
+            let description = this.currentPlan.description;
+            if (this.currentPlan.medium_id) { // prepend img-tag
+                description = '<img class="pull-right" style="max-width: 25%;" src="/media/' + this.currentPlan.medium_id + '?preview=true"/>' + description;
             }
-            return img + this.currentPlan.description;
+
+            if (description.trim().length === 0) description = this.trans('global.no_description');
+
+            return description;
         },
         columnDragOptions() {
             return {

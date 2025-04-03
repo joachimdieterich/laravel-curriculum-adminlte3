@@ -32,10 +32,15 @@
                                 class="card-tools mr-0"
                             >
                                 <i
-                                    class="fa fa-pencil-alt link-muted pointer p-1 mr-2"
+                                    class="fa fa-pencil-alt link-muted pointer p-1"
                                     @click.stop="openModal(entry)"
                                 ></i>
-                                <a class="text-danger">
+                                <a v-if="entry.owner_id == $userId
+                                        || plan.owner_id == $userId
+                                        || checkPermission('is_admin')
+                                    "
+                                    class="text-danger ml-2"
+                                >
                                     <i
                                         class="fas fa-trash pointer p-1"
                                         @click.stop="openConfirm()"
@@ -59,6 +64,7 @@
                                 :subscribable_id="entry.id"
                                 subscribable_type="App\PlanEntry"
                                 :editable="editable"
+                                :deletable="entry.owner_id == $userId || plan.owner_id == $userId"
                                 :showTools="showTools"
                             />
                         </div>

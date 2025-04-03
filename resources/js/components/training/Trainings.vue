@@ -26,25 +26,25 @@
                         </span>
                         <span v-if="editable && showTools">
                             <a v-if="training.subscriptions[0].order_id > 0"
-                                class="text-secondary pointer mx-1"
+                                class="text-secondary pointer"
                                 @click="lower(training)"
                             >
                                 <i class="fa fa-arrow-up px-1"></i>
                             </a>
                             <a v-if="training.subscriptions[0].order_id < max_order_id"
-                                class="text-secondary pointer mx-1"
+                                class="text-secondary pointer ml-2"
                                 @click="higher(training)"
                             >
                                 <i class="fa fa-arrow-down px-1"></i>
                             </a>
                             <a
-                                class="text-secondary pointer mx-2"
+                                class="text-secondary pointer ml-3"
                                 @click="openModal(training)"
                             >
                                 <i class="fa fa-pencil-alt px-1"></i>
                             </a>
-                            <a
-                                class="text-danger pointer mx-1"
+                            <a v-if="training.owner_id == $userId || deletable || checkPermission('is_admin')"
+                                class="text-danger pointer ml-3"
                                 @click="confirmDelete(training)"
                             >
                                 <i class="fas fa-trash px-1"></i>
@@ -93,6 +93,10 @@ export default {
     },
     props: {
         editable: {
+            type: Boolean,
+            default: false,
+        },
+        deletable: {
             type: Boolean,
             default: false,
         },

@@ -145,6 +145,7 @@ import Editor from "@tinymce/tinymce-vue";
 import MediumForm from "../media/MediumForm.vue";
 import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'plan-entry-modal',
@@ -156,8 +157,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -221,14 +224,15 @@ export default {
                 this.update();
             }
 
-            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post('/planEntries', this.form)
                 .then(response => {
                     this.$eventHub.emit('plan-entry-added', response.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(error => {
+                    this.toast.error(error.response?.data.message ?? this.trans('global.error'));
                     console.log(error)
                 });
         },
@@ -236,8 +240,10 @@ export default {
             axios.patch('/planEntries/' + this.form.id, this.form)
                 .then(response => {
                     this.$eventHub.emit('plan-entry-updated', response.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(error => {
+                    this.toast.error(error.response?.data.message ?? this.trans('global.error'));
                     console.log(error)
                 });
         },

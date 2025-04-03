@@ -128,6 +128,7 @@ import TrainingModal from "../training/TrainingModal.vue";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -146,8 +147,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -208,7 +211,7 @@ export default {
             axios.put("/plans/" + this.plan.id + "/syncEntriesOrder", {entry_order: this.entry_order})
                 .catch(err => {
                     console.log(err);
-                    alert(err.response.statusText);
+                    this.toast.error(err.response?.data.message);
                 });
         },
     },

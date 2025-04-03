@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Medium;
-use App\MediumSubscription;
+use App\Plan;
 use App\PlanEntry;
-use App\TerminalObjective;
 use Illuminate\Http\Request;
 
 class PlanEntryController extends Controller
@@ -34,7 +32,7 @@ class PlanEntryController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('plan_create'), 403);
+        abort_unless(\Gate::allows('plan_create') and Plan::find($request->plan_id)->isEditable(), 403, "No permission to create entries for this plan");
         $new_entry = $this->validateRequest();
 
         $entry = PlanEntry::create([
@@ -67,7 +65,6 @@ class PlanEntryController extends Controller
         //
     }
 
-
     /**
      * Update the specified resource in storage.
      *
@@ -77,7 +74,7 @@ class PlanEntryController extends Controller
      */
     public function update(Request $request, PlanEntry $planEntry)
     {
-        abort_unless(\Gate::allows('plan_edit'), 403);
+        abort_unless(\Gate::allows('plan_edit') and Plan::find($request->plan_id)->isEditable(), 403, "No permission to edit entries of this plan");
         $update_entry = $this->validateRequest();
 
         $medium_id = is_array($update_entry['medium_id']) ? $update_entry['medium_id'][0] : $update_entry['medium_id'];
@@ -90,7 +87,6 @@ class PlanEntryController extends Controller
             'color' => $update_entry['color'] ?? $planEntry->color,
             'order_id' => $update_entry['order_id'] ?? $planEntry->order_id,
             'medium_id' => $medium_id,
-            'owner_id' => auth()->user()->id,
         ]);
 
         // axios call?
@@ -107,7 +103,12 @@ class PlanEntryController extends Controller
      */
     public function destroy(PlanEntry $planEntry)
     {
-        abort_unless(\Gate::allows('plan_delete'), 403);
+        $user_id = auth()->user()->id;
+        abort_unless(\Gate::allows('plan_delete') and (
+            is_admin()
+            or $planEntry->owner_id == $user_id
+            or Plan::find($planEntry->plan_id)->owner_id == $user_id
+        ), 403, "No permission to delete entry, only plan-owner or entry-owner");
 
         $planEntry->delete();
 

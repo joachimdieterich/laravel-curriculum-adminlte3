@@ -5,7 +5,7 @@
             @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="modal-header">
+                <div class="card-header">
                     <h3 class="card-title">
                         <span v-if="method === 'post'">
                             {{ trans('global.training.create') }}
@@ -65,7 +65,7 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="card-footer">
                     <span class="pull-right">
                         <button
                             id="training-cancel"

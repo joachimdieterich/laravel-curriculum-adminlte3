@@ -24,7 +24,7 @@ class AchievementController extends Controller
         $user_ids = ! empty($input['user_id']) ? $input['user_id'] : auth()->user()->id;
 
         foreach ((array) $user_ids as $user_id) {
-            abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);
+            abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403, "User $user_id is not enroled in current organization.");
 
             $achievement = Achievement::where('referenceable_type', '=', $input['referenceable_type'])
                 ->where('referenceable_id', '=', $input['referenceable_id'])

@@ -278,8 +278,7 @@ class CurriculumController extends Controller
      */
     public function getAchievements(Curriculum $curriculum)
     {
-        abort_unless(Gate::allows('curriculum_show'), 403);
-        abort_unless($curriculum->isAccessible() or is_admin(), 403, "No access to this curriculum");
+        abort_unless(Gate::allows('curriculum_show') and $curriculum->isAccessible(), 403, "No access to this curriculum");
 
         $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
             ->where('curriculum_id', $curriculum->id)

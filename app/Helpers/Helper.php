@@ -159,7 +159,7 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
         if (request()->has('selected'))
         {
             //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
-            return response()->json($collection->whereIn($table . $id, (array)$input['selected']));
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->values());
         }
         else
         {

@@ -206,16 +206,15 @@ export default {
                 }
 
                 if (this.url !== '' && selectedParam != '') {
-                    axios.get(this.url + "?selected=" + selectedParam)
+                    // cut off parameters for this request
+                    axios.get(this.url.split('?')[0] + "?selected=" + selectedParam)
                         .then((res) => {
-                            //console.log(res);
                             res.data.forEach((entry) => {
                                 let label = entry[this.option_label];
-                                //console.log(this.option_label);
                                 if ((typeof label) === 'undefined') {
                                     label = entry['firstname'] + ' ' + entry['lastname'];
                                 }
-                                //console.log(label +'('+this.option_label + ') _' + entry[this.option_id] +' '+label);
+
                                 let option = new Option(label, entry[this.option_id], true, true);
                                 this.componentInstance.append(option).trigger('change');
                             });

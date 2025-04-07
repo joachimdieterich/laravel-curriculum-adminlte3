@@ -26,7 +26,11 @@ class CurriculumController extends Controller
     public function index()
     {
         if (request()->wantsJson()) {
-            return $this->getEntriesForSelect2();
+            if (request()->has('owner')) {
+                return getEntriesForSelect2ByCollection(Curriculum::where('owner_id', auth()->user()->id));
+            } else {
+                return $this->getEntriesForSelect2();
+            }
         }
 
         abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users

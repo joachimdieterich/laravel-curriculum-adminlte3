@@ -49,24 +49,26 @@
                             </div>
                         </div>
 
-                        <div class="card-body py-2 collapse">
-                            <div class="overflow-auto" v-html="description"></div>
-
-                            <Objectives
-                                referenceable_type="App\PlanEntry"
-                                :referenceable_id="entry.id"
-                                :owner_id="entry.owner_id"
-                                :editable="editable"
-                                :showTools="showTools"
-                            />
-
-                            <Trainings
-                                :subscribable_id="entry.id"
-                                subscribable_type="App\PlanEntry"
-                                :editable="editable"
-                                :deletable="entry.owner_id == $userId || plan.owner_id == $userId"
-                                :showTools="showTools"
-                            />
+                        <div class="card-body py-0 collapse">
+                            <div class="py-2">
+                                <div class="overflow-auto" v-html="description"></div>
+    
+                                <Objectives
+                                    referenceable_type="App\PlanEntry"
+                                    :referenceable_id="entry.id"
+                                    :owner_id="entry.owner_id"
+                                    :editable="editable"
+                                    :showTools="showTools"
+                                />
+    
+                                <Trainings
+                                    :subscribable_id="entry.id"
+                                    subscribable_type="App\PlanEntry"
+                                    :editable="editable"
+                                    :deletable="entry.owner_id == $userId || plan.owner_id == $userId"
+                                    :showTools="showTools"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

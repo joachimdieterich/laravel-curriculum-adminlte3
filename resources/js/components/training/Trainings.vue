@@ -53,11 +53,15 @@
             </div>
 
             <div v-if="editable && showTools"
-                class="card-footer pointer"
                 @click="openModal()"
             >
-                <i class="fas fa-add pr-1"></i>
-                {{ trans('global.training.create') }}
+                <button
+                    class="btn btn-default btn-flat text-left border-0 rounded-pill mt-2"
+                    style="padding: 0.75rem 1.25rem;"
+                >
+                    <i class="fas fa-add pr-1"></i>
+                    {{ trans('global.training.create') }}
+                </button>
             </div>
         </div>
         <Teleport to="body">

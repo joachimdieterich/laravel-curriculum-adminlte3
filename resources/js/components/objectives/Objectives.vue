@@ -1,7 +1,7 @@
 <template>
     <div class="card mb-0">
         <div v-for="terminal in terminal_objectives"
-            class="card-body border-bottom p-0 pb-2 mb-3"
+            class="card-body p-0"
         >
             <div class="d-flex">
                 <div class="flex-fill">
@@ -38,11 +38,15 @@
             </div>
         </div>
         <div v-if="editable && showTools"
-            class="card-footer pointer"
             @click="openModal()"
         >
-            <i class="fas fa-add pr-1"></i>
-            {{ trans('global.referenceable_types.link') }}
+            <button
+                class="btn btn-default btn-flat text-left border-0 rounded-pill"
+                style="padding: 0.75rem 1.25rem;"
+            >
+                <i class="fas fa-add pr-1"></i>
+                {{ trans('global.referenceable_types.link') }}
+            </button>
         </div>
     </div>
 </template>

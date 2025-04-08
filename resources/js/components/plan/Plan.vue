@@ -11,12 +11,13 @@
                     class="card-tools d-flex pr-2 ml-auto no-print"
                     style="gap: 5px;"
                 >
-                    <a
-                        class="link-muted mr-2 px-1 pointer"
+                    <button
+                        class="btn btn-flat link-muted mr-2 px-1 py-0"
+                        :disabled="users.length === 0"
                         @click="openUserModal()"
                     >
                         <i class="fa fa-chart-simple"></i>
-                    </a>
+                    </button>
                     <a onclick="window.print()" class="link-muted px-1 pointer">
                         <i class="fa fa-print"></i>
                     </a>

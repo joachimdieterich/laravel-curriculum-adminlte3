@@ -60,7 +60,7 @@
                                     :editable="editable"
                                     :showTools="showTools"
                                 />
-    
+
                                 <Trainings
                                     :subscribable_id="entry.id"
                                     subscribable_type="App\PlanEntry"

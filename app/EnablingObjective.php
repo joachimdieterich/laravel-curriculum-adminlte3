@@ -31,12 +31,7 @@ class EnablingObjective extends Model
         'created_at'  => 'datetime',
     ];
 
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
-
-    protected $with = ['terminalObjective', 'level'];
+    protected $with = ['terminalObjective', 'level:id,title,css_color'];
 
     /**
      * Prepare a date for array / JSON serialization.

@@ -29,7 +29,7 @@ class CurriculaApiController extends Controller
         // might need to be broken down in chunks, since there's a lot of data
         return response()->json([
             Curriculum::select('id', 'title', 'description', 'grade_id', 'subject_id', 'organization_type_id', 'type_id')
-            ->where('type_id', 2)
+            ->where('type_id', 1)
             ->with([
                 'grade' => function ($query) {
                     $query->select('id', 'title');

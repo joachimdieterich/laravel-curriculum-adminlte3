@@ -27,16 +27,32 @@ class CurriculaApiController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
         // might need to be broken down in chunks, since there's a lot of data
-        return Curriculum::select('id', 'title', 'description', 'grade_id', 'subject_id', 'organization_type_id', 'type_id')
-            ->where('type_id', 1)
+        return response()->json([
+            Curriculum::select('id', 'title', 'description', 'grade_id', 'subject_id', 'organization_type_id', 'type_id')
+            ->where('type_id', 2)
             ->with([
-                'grade',
-                'subject',
-                'organization_type',
-                'terminalObjectives',
-                'terminalObjectives.enablingObjectives'
+                'grade' => function ($query) {
+                    $query->select('id', 'title');
+                },
+                'subject' => function ($query) {
+                    $query->select('id', 'title');
+                },
+                'organizationType' => function ($query) {
+                    $query->select('id', 'title');
+                },
+                'terminalObjectives' => function ($query) {
+                    $query->select('id', 'title', 'description', 'curriculum_id')
+                        ->with([
+                            'enablingObjectives' => function ($query) {
+                                //! maybe sort by their order-id
+                                $query->select('id', 'title', 'description', 'level_id', 'terminal_objective_id')
+                                    ->without('terminalObjective');
+                            }
+                        ]);
+                },
             ])
-            ->get();
+            ->get()
+        ]);
     }
 
     public function show(Curriculum $curriculum)

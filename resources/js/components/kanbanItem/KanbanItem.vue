@@ -161,27 +161,37 @@
                 data-toggle="tooltip"
             />
 
-
-            <div v-if="commentable"
-                class="position-relative badge-pill ml-auto mr-2 px-2 py-1 pointer"
-                :style="show_comments ? { 'background-color': '#dcdcdc' } : ''"
-                data-toggle="collapse"
-                :data-target="'#comments_' + item.id"
-                aria-expanded="false"
-                @click="openComments"
-            >
-                <i class="far fa-comments"></i>
-                <span v-if="item.comments.length > 0"
-                    class="comment-count bg-success"
+            <div class="d-flex ml-auto">
+                <div v-if="commentable"
+                    class="btn-group-toggle mr-2"
+                    data-toggle="buttons"
                 >
-                    {{ item.comments.length }}
-                </span>
+                    <label
+                        class="btn btn-icon px-2 py-1"
+                        data-toggle="collapse"
+                        :data-target="'#comments_' + item.id"
+                        aria-expanded="false"
+                        @click="openComments"
+                    >
+                        <input
+                            type="checkbox"
+                            autocomplete="off"
+                            v-model="show_comments"
+                        />
+                        <i class="far fa-comments"></i>
+                        <span v-if="item.comments.length > 0"
+                            class="comment-count bg-success"
+                        >
+                            {{ item.comments.length }}
+                        </span>
+                    </label>
+                </div>
+                <Reaction
+                    :model="item"
+                    reaction="like"
+                    url="/kanbanItems"
+                />
             </div>
-            <Reaction
-                :model="item"
-                reaction="like"
-                url="/kanbanItems"
-            />
         </div>
 
         <Comments v-if="commentable"

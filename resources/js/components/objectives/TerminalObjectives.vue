@@ -5,7 +5,7 @@
             class="nav nav-pills bg-gray-light position-sticky"
             style="top: 56px; z-index: 100"
         >
-           <draggable
+            <draggable
                 class="nav nav-pills"
                 v-model="typetabs"
                 :disabled="curriculum.owner_id != $userId"

@@ -3,6 +3,7 @@
 @section('title')
     <title-component></title-component>
 @endsection
+
 @section('breadcrumb')
     @if (Auth::user()->id == env('GUEST_USER'))
         <breadcrumbs
@@ -32,12 +33,11 @@
 @endsection
 
 @section('content')
-    <curriculum
-        :curriculum="{{ $curriculum  ?? null}}"
+    <Curriculum
+        :curriculum="{{ $curriculum }}"
         :course="{{ $course ?? null }}"
         :objectivetypes="{{ $objectiveTypes }}"
         :settings="{{ $settings }}"
-    ></curriculum>
+    />
     <div id="content_top_placeholder"></div>
 @endsection
-

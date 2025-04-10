@@ -44,9 +44,12 @@ class CurriculaApiController extends Controller
                     $query->select('id', 'title', 'description', 'curriculum_id')
                         ->with([
                             'enablingObjectives' => function ($query) {
-                                //! maybe sort by their order-id
                                 $query->select('id', 'title', 'description', 'level_id', 'terminal_objective_id')
-                                    ->without('terminalObjective');
+                                    ->with(['level' => function ($query) {
+                                        $query->select('id', 'title');
+                                    }])
+                                    ->without('terminalObjective')
+                                    ->orderBy('order_id', 'asc');
                             }
                         ]);
                 },

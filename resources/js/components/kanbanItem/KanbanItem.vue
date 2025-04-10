@@ -168,10 +168,10 @@
                 >
                     <label
                         class="btn btn-icon px-2 py-1"
+                        role="button"
                         data-toggle="collapse"
                         :data-target="'#comments_' + item.id"
                         aria-expanded="false"
-                        @click="openComments"
                     >
                         <input
                             type="checkbox"
@@ -326,9 +326,6 @@ export default {
                 item: this.item,
                 method: 'patch',
             });
-        },
-        openComments() {
-            this.show_comments = !this.show_comments;
         },
         addComment(newComment) {
             this.item.comments.push(newComment);

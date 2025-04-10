@@ -139,7 +139,7 @@ export default {
             currentCurriculaEnrolments: null,
             currentTerminalObjective: null,
             currentEnablingObjective: null,
-            type_objectives: {},
+            type_objectives: [],
         }
     },
     methods: {
@@ -248,8 +248,6 @@ export default {
                 this.type_objectives[updatedTerminal.objective_type_id].push(updatedTerminal);
                 // remove old objective
                 const index = this.type_objectives[terminal.objective_type_id].indexOf(terminal);
-                console.log('index = ', index);
-                // this.type_objectives[terminal.objective_type_id] = this.type_objectives[terminal.objective_type_id].filter(obj => obj.id !== terminal.id);
                 this.type_objectives[terminal.objective_type_id].splice(index, 1);
 
                 // update order-ids

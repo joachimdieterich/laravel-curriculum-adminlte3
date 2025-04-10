@@ -1,7 +1,8 @@
 <template>
     <div
-       @click="toggle()"
-       class="position-relative px-2 py-1 pointer"
+        class="btn btn-icon px-2 py-1"
+        role="button"
+        @click="toggle()"
     >
         <i  v-if="userHasReaction()"
            class="fa fa-heart"

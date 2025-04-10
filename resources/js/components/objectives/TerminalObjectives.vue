@@ -291,6 +291,13 @@ export default {
             Object.assign(enabling, updatedEnabling);
         });
 
+        this.$eventHub.on('enabling-objectives-reordered', (data) => {
+            const type_id = data.type_id;
+            const terminal_id = data.objectives[0].terminal_objective_id;
+
+            this.type_objectives[type_id].find(t => t.id === terminal_id).enabling_objectives = data.objectives;
+        });
+
         this.$eventHub.on('objective-deleted', (deletedObjective) => {
             if (deletedObjective.terminal_objective_id === undefined) { // terminal
                 let index = this.type_objectives[deletedObjective.objective_type_id].findIndex(t => t.id === deletedObjective.id);

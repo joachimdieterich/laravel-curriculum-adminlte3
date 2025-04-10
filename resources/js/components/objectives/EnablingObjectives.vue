@@ -7,12 +7,13 @@
             <ObjectiveBox
                 type="enabling"
                 :objective="objective"
+                :objective_type_id="terminalobjective.objective_type_id"
                 :referenceable_id="referenceable_id"
                 :referenceable_type="referenceable_type"
                 :color="terminalobjective.color"
                 :settings="settings"
                 :editable="editable"
-                :max_id="localSettings.last"
+                :max_id="objectives[objectives.length - 1]?.id"
             />
         </div>
 
@@ -28,7 +29,7 @@
                 }"
                 :color="terminalobjective.color"
                 :settings="settings"
-                :max_id="localSettings.last"
+                :max_id="objectives[objectives.length - 1]?.id"
             />
         </div>
     </div>
@@ -38,29 +39,33 @@ import ObjectiveBox from './ObjectiveBox.vue';
 
 export default {
     props: {
-        objectives: Array,
-        terminalobjective: Object,
-        referenceable_id: null,
-        referenceable_type: null,
-        settings: Object,
+        objectives: {
+            type: Array,
+            default: null,
+        },
+        terminalobjective: {
+            type: Object,
+            default: null,
+        },
+        referenceable_id: {
+            type: Number,
+            default: null,
+        },
+        referenceable_type: {
+            type: String,
+            default: null,
+        },
+        settings: {
+            type: Object,
+            default: null,
+        },
         editable: {
+            type: Boolean,
             default: false,
         },
     },
-    data() {
-        return {
-            localSettings: {
-                last: null,
-            },
-        }
-    },
-    mounted() {
-        if (this.objectives.length != 0) {
-            this.localSettings.last = this.objectives[this.objectives.length-1].id;
-        }
-    },
     components: {
         ObjectiveBox,
-    }
+    },
 }
 </script>

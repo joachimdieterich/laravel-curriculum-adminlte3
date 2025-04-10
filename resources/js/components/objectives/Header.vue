@@ -7,23 +7,37 @@
             v-permission="'curriculum_edit'"
             class="mr-auto"
         >
-            <span v-if="(type == 'terminal' && objective.order_id != 0)"
-                class="fa fa-arrow-up mr-1"
-                @click="$emit('eventSort','-1')"
-            ></span>
-            <span v-if="(type == 'terminal' && max_id != objective.id)"
-                class="fa fa-arrow-down"
-                @click="$emit('eventSort','1')"
-            ></span>
+            <a v-if="(type == 'terminal' && objective.order_id != 0)"
+                class="pointer mr-2"
+                style="color: inherit;"
+                role="button"
+                @click="changeOrder(false)"
+            >
+                <i class="fa fa-arrow-up"></i>
+            </a>
+            <a v-if="(type == 'terminal' && max_id != objective.id)"
+                class="link-muted pointer"
+                style="color: inherit;"
+                role="button"
+                @click="changeOrder(true)"
+            >
+                <i class="fa fa-arrow-down"></i>
+            </a>
 
-            <span v-if="(type == 'enabling'  && objective.order_id != 0)"
-                class="fa fa-arrow-left mr-1"
-                @click="$emit('eventSort','-1')"
-            ></span>
-            <span v-if="(type == 'enabling' && max_id != objective.id)"
-                class="fa fa-arrow-right"
-                @click="$emit('eventSort','1')"
-            ></span>
+            <a v-if="(type == 'enabling' && objective.order_id != 0)"
+                class="btn btn-icon btn-sm px-1 py-0 text-secondary mr-2"
+                role="button"
+                @click="changeOrder(false)"
+            >
+                <i class="fa fa-arrow-left"></i>
+            </a>
+            <a v-if="(type == 'enabling' && max_id != objective.id)"
+                class="btn btn-icon btn-sm px-1 py-0 text-secondary"
+                role="button"
+                @click="changeOrder(true)"
+            >
+                <i class="fa fa-arrow-right"></i>
+            </a>
         </span>
 
         <span v-if="(type == 'enabling' && objective.level != null)">
@@ -55,29 +69,66 @@
 </template>
 <script>
 import DropdownButton from './DropdownButton.vue';
+import {useToast} from "vue-toastification";
+
 export default {
     props: {
         objective: {
             type: Object,
+            default: null,
+        },
+        objective_type_id: {
+            type: Number,
+            default: null,
         },
         type: {
             type: String,
+            default: null,
         },
         menuEntries: {
             type: Array,
+            default: null,
         },
         settings: {
             type: Object,
+            default: null,
         },
         textcolor: {
             type: String,
-            default: '#000'
+            default: '#000',
         },
         max_id: {
             type: Number,
+            default: null,
         },
     },
-    methods: {},
+    setup() {
+        const toast = useToast();
+        return {
+            toast,
+        }
+    },
+    methods: {
+        /**
+         * increase or decrease the order-id of this and the adjacent objective
+         * @param {Boolean} higher true to increase and false to decrease order-id
+         */
+        changeOrder(higher) {
+            let url = '/' + this.type + 'Objectives/' + this.objective.id;
+            url += higher ? '/higher' : '/lower';
+
+            axios.patch(url)
+                .then(response => {
+                    this.$eventHub.emit('enabling-objectives-reordered', {
+                        type_id: this.objective_type_id,
+                        objectives: response.data,
+                    });
+                })
+                .catch(error => {
+                    this.toast.error("Error");
+                });
+        },
+    },
     computed: {
         edit_settings: function() {
             if (typeof this.settings !== "undefined"){
@@ -85,9 +136,8 @@ export default {
             } else {
                 return false;
             }
-        }
+        },
     },
-    mounted() {},
     components: {
         DropdownButton,
     },

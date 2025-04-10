@@ -252,20 +252,15 @@ class CurriculumController extends Controller
         $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
             ->where('curriculum_id', $curriculum->id)
             ->with([
-                'enablingObjectives',
-                'enablingObjectives.achievements' => function ($query) {
-                    $query->where('user_id', auth()->user()->id);
-                }
-               /* 'enablingObjectives' => function($query) {
-                    $query->select('id', 'terminal_objective_id', 'title', 'description', 'level_id', 'curriculum_id', 'order_id', 'time_approach', 'uuid', 'visibility')
-                        ->without('terminalObjective')
+                'enablingObjectives' => function($query) {
+                    $query->without('terminalObjective')
                         ->with(['achievements' => function($query) {
                             $query->select('id', 'status', 'updated_at')
                                 ->where('user_id', auth()->user()->id);
-                        }]);
-                },*/
+                        }])
+                        ->orderBy('order_id');
+                },
             ])
-            ->without('terminalObjective')
             ->orderBy('order_id')
             ->get();
 

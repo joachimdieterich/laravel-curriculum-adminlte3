@@ -264,6 +264,28 @@ class CurriculumController extends Controller
             ->orderBy('order_id')
             ->get();
 
+        // WIP
+        // $terminal = \App\ObjectiveType::select('id', 'title', 'uuid')
+        //     ->whereHas('objectives', function ($query) use ($curriculum) {
+        //         $query->where('curriculum_id', $curriculum->id);
+        //     })
+        //     ->with(['objectives' => function ($query) use ($curriculum) {
+        //         $query->select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
+        //             ->where('curriculum_id', $curriculum->id)
+        //             ->with([
+        //                 'enablingObjectives' => function($query) {
+        //                     $query->without('terminalObjective')
+        //                         ->with(['achievements' => function($query) {
+        //                             $query->select('id', 'status', 'updated_at')
+        //                                 ->where('user_id', auth()->user()->id);
+        //                         }])
+        //                         ->orderBy('order_id');
+        //                 },
+        //             ])
+        //             ->orderBy('order_id');
+        //     }])
+        //     ->get();
+
         if (request()->wantsJson()) {
             return $terminal;
         }

@@ -33,6 +33,6 @@ class ObjectiveType extends Model
 
     public function objectives()
     {
-        return $this->belongsTo('App\TerminalObjective', 'objective_type_id', 'id');
+        return $this->hasMany('App\TerminalObjective', 'objective_type_id', 'id');
     }
 }

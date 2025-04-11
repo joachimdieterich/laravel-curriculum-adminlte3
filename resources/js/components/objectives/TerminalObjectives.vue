@@ -2,27 +2,35 @@
     <div>
         <ul
             id="terminalObjectivesTopNav"
-            class="nav nav-pills bg-gray-light position-sticky"
+            class="nav bg-gray-light position-sticky"
             style="top: 56px; z-index: 100"
         >
             <draggable
                 class="nav nav-pills"
-                v-model="typetabs"
+                v-model="type_order"
                 v-bind="dragOptions"
+                tag="ul"
+                role="tablist"
                 item-key="id"
                 @start="drag=true"
                 @end="handleTypeMoved"
             >
-                <template #item="{ element: typetab }">
-                    <li class="nav-item pl-0 pr-2 pb-2 pt-2">
+                <template #item="{ element: type_index, index }">
+                    <li
+                        class="nav-item pl-0 pr-2 pb-2 pt-2"
+                        role="presentation"
+                    >
                         <a
-                            :href="'#tab_' + typetab"
+                            :id="objective_types[type_index].id + '-tab'"
+                            :href="'#Type-' + objective_types[type_index].id"
                             class="nav-link"
-                            :class="(activetab == typetab) ? 'active' : ''"
+                            type="button"
+                            role="tab"
                             data-toggle="tab"
-                            @click="setActiveTab(typetab)"
+                            aria-selected="false"
+                            @click="setActiveTab(index)"
                         >
-                            {{ getTypeTitle(typetab)[0]['title'] }}
+                            {{ objective_types[type_index].title }}
                         </a>
                     </li>
                </template>
@@ -40,24 +48,23 @@
             </li>
         </ul>
         <hr class="mt-0">
-        <div v-for="typetab in typetabs"
-            class="tab-content"
-        >
-            <div
-                :id="'tab_' + typetab"
-                class="tab-pane"
-                :class="(activetab == typetab) ? 'active show' : ''"
+        <div class="tab-content">
+            <div v-for="type in objective_types"
+                :id="'Type-' + type.id"
+                class="tab-pane fade"
+                role="tabpanel"
+                :aria-labelledby="type.title + '-tab'"
             >
-                <div v-for="objective in type_objectives[typetab]"
-                    :id="'terminalObjective_' + objective.id"
+                <div v-for="terminal in type.terminal_objectives"
+                    :id="'terminalObjective_' + terminal.id"
                 >
                     <div class="row">
                         <div class="col-12 terminal-row">
                             <ObjectiveBox
                                 type="terminal"
-                                :objective="objective"
+                                :objective="terminal"
                                 :settings="settings"
-                                :max_id="max_ids[activetab]"
+                                :max_id="max_ids[activeTab]"
                                 @createTerminalObjective="(createObjective) => {
                                     this.createTerminalObjective(createObjective);
                                 }"
@@ -69,8 +76,8 @@
 
                             <div class="ml-auto">
                                 <EnablingObjectives
-                                    :terminalobjective="objective"
-                                    :objectives="objective.enabling_objectives"
+                                    :terminalobjective="terminal"
+                                    :objectives="terminal.enabling_objectives"
                                     :settings="settings"
                                 />
                             </div>
@@ -91,9 +98,9 @@
                 <ObjectiveBox
                     type="createterminal"
                     :objective="{ curriculum_id: curriculum.id }"
-                    :objective_type_id="activetab"
+                    :objective_type_id="activeTab"
                     :settings="settings"
-                    :max_id="max_ids[activetab]"
+                    :max_id="max_ids[activeTab]"
                 />
             </div>
         </div>
@@ -134,20 +141,22 @@ export default {
         return {
             settings: {},
             max_ids: {},
+            type_order: [],
             typetabs: [],
-            activetab: null,
+            activeTab: null,
             currentCurriculaEnrolments: null,
             currentTerminalObjective: null,
             currentEnablingObjective: null,
             type_objectives: [],
+            objective_types: [],
         }
     },
     methods: {
         getTypeTitle(id) {
             return this.objectivetypes.filter(type => type.id === id);
         },
-        setActiveTab(typetab) {
-            this.activetab = typetab;
+        setActiveTab(index) {
+            this.activeTab = index;
         },
         processObjectives(response, objective_type_id = 0) {
             let terminal = {};
@@ -169,13 +178,17 @@ export default {
                 }
             }
             if (objective_type_id === 0) {
-                this.activetab = this.typetabs[0];
+                this.activeTab = this.typetabs[0];
             }
         },
-        loaderEvent(objective_type_id = 0) {
-            axios.get('/curricula/' + this.curriculum.id + '/objectives')
+        async loaderEvent() {
+            await axios.get('/curricula/' + this.curriculum.id + '/objectives')
                 .then(response => {
-                    this.processObjectives(response, objective_type_id);
+                    this.objective_types = response.data;
+                    // get the order by their current index instead of their id
+                    this.type_order = this.curriculum.objective_type_order.map(
+                        type_id => this.objective_types.findIndex(type => type.id === type_id)
+                    );
                 })
                 .catch(e => {
                     console.log(e);
@@ -194,7 +207,10 @@ export default {
                 });
         },
         handleTypeMoved() {
-            // Send the entire list of statuses to the server
+            // active-state needs to be reset, since it changes to a new index
+            this.$el.querySelector('.nav-link.active').classList.remove('active');
+            document.getElementById(this.objective_types[this.activeTab].id + '-tab').classList.add('active');
+            // send new order to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", { objective_type_order: this.typetabs })
                 .catch(err => {
                     console.log(err.response);
@@ -205,14 +221,22 @@ export default {
             this.objectivetypes.push(type);
             // if new tab gets created, switch to this tab
             let newTab = this.typetabs.push(type.id);
-            this.activetab = this.typetabs[newTab - 1];
+            this.activeTab = this.typetabs[newTab - 1];
             this.type_objectives[type.id] = [];
         },
     },
-    mounted() {
+    async mounted() {
         this.settings = this.$attrs.settings;
         this.typetabs = this.objectivetypes.map(type => type.id);
-        this.loaderEvent();
+        await this.loaderEvent();
+
+        // wait until data is loaded to show the first tab
+        this.activeTab = this.type_order[0];
+        let firstTab = this.objective_types[this.type_order[0]].id;
+        // the 'active'-state does only need to be set programmatically for the initial tab
+        // the rest will be handled by the default nav-tabs behaviour
+        $('#' + firstTab + '-tab')[0].classList.add('active');
+        $('#Type-' + firstTab).tab('show');
 
         // terminal objectives
         this.$eventHub.on('terminal-objective-added', (terminal) => {

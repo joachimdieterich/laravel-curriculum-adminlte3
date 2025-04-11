@@ -8,7 +8,7 @@
             <draggable
                 class="nav nav-pills"
                 v-model="typetabs"
-                :disabled="curriculum.owner_id != $userId"
+                v-bind="dragOptions"
                 item-key="id"
                 @start="drag=true"
                 @end="handleTypeMoved"
@@ -311,6 +311,17 @@ export default {
                 terminal.enabling_objectives.splice(index, 1);
             }
         });
+    },
+    computed: {
+        dragOptions() {
+            return {
+                animation: 200,
+                // checks if a mobile-browser is used and if true, add delay
+                ...(/Mobi/i.test(window.navigator.userAgent) && {delay: 200}),
+                group: 'objective-types',
+                disabled: this.curriculum.owner_id != this.$userId,
+            };
+        },
     },
     components: {
         TerminalObjectiveModal,

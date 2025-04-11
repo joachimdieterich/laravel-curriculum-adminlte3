@@ -121,20 +121,21 @@ import MoveTerminalObjectiveModal from './MoveTerminalObjectiveModal.vue';
 import Select2 from '../forms/Select2.vue';
 import draggable from "vuedraggable";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     props: {
         curriculum: {
             type: Object,
-        },
-        objectivetypes: {
-            type: Array,
+            default: null,
         },
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -152,9 +153,6 @@ export default {
         }
     },
     methods: {
-        getTypeTitle(id) {
-            return this.objectivetypes.filter(type => type.id === id);
-        },
         setActiveTab(index) {
             const type_id = this.objective_types[index].id;
             this.activeTab = type_id;
@@ -212,14 +210,19 @@ export default {
             this.$el.querySelector('.nav-link.active').classList.remove('active');
             document.getElementById(this.activeTab + '-tab').classList.add('active');
             // send new order to the server
-            axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", { objective_type_order: this.typetabs })
-                .catch(err => {
-                    console.log(err.response);
-                    alert(err.response.statusText);
+            axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", {
+                objective_type_order: this.type_order.map(index => this.objective_types[index].id),
+            })
+                .catch(error => {
+                    if (error.status === 403) {
+                        this.toast.error(error.response.data.message);
+                    } else {
+                        this.toast.error(this.trans('global.error'));
+                    }
+                    console.log(error);
                 });
         },
         addNewType(type) {
-            this.objectivetypes.push(type);
             // if new tab gets created, switch to this tab
             let newTab = this.typetabs.push(type.id);
             this.activeTab = this.typetabs[newTab - 1];
@@ -228,7 +231,6 @@ export default {
     },
     async mounted() {
         this.settings = this.$attrs.settings;
-        this.typetabs = this.objectivetypes.map(type => type.id);
         await this.loaderEvent();
 
         // wait until data is loaded to show the first tab

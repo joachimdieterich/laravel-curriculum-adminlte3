@@ -545,15 +545,18 @@ class CurriculumController extends Controller
 
     public function syncObjectiveTypesOrder(Curriculum $curriculum)
     {
-        abort_unless(auth()->user()->id === $curriculum->owner_id, 403);
+        abort_unless((
+            auth()->user()->id === $curriculum->owner_id
+            OR is_admin()
+        ), 403, "Only the owner has permission to change the order of objective types");
 
         $input = $this->validateRequest();
 
         $curriculum->update([
-            'objective_type_order'                 => $input['objective_type_order']
+            'objective_type_order' => $input['objective_type_order']
         ]);
 
-        return ['objective_type_order' => $curriculum->objective_type_order];
+        return $curriculum->objective_type_order;
     }
 
     public function getVariantDefinitions(Curriculum $curriculum)

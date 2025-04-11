@@ -36,7 +36,6 @@
     <Curriculum
         :curriculum="{{ $curriculum }}"
         :course="{{ $course ?? null }}"
-        :objectivetypes="{{ $objectiveTypes }}"
         :settings="{{ $settings }}"
     />
     <div id="content_top_placeholder"></div>

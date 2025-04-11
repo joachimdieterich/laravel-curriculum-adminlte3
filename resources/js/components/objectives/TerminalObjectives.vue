@@ -316,8 +316,8 @@ export default {
         dragOptions() {
             return {
                 animation: 200,
-                // checks if a mobile-browser is used and if true, add delay
-                ...(/Mobi/i.test(window.navigator.userAgent) && {delay: 200}),
+                delay: 200,
+                delayOnTouchOnly: true,
                 group: 'objective-types',
                 disabled: this.curriculum.owner_id != this.$userId,
             };

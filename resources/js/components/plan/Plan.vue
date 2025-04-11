@@ -212,7 +212,7 @@ export default {
             axios.put("/plans/" + this.plan.id + "/syncEntriesOrder", {entry_order: this.entry_order})
                 .catch(err => {
                     console.log(err);
-                    this.toast.error(err.response?.data.message);
+                    this.toast.error(err.response?.data.message ?? this.trans('global.error'));
                 });
         },
     },

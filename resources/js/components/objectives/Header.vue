@@ -125,7 +125,7 @@ export default {
                     });
                 })
                 .catch(error => {
-                    this.toast.error("Error");
+                    this.toast.error(this.trans('global.error'));
                 });
         },
     },

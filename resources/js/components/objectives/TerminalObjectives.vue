@@ -15,7 +15,7 @@
                 @start="drag=true"
                 @end="handleTypeMoved"
             >
-                <template #item="{ element: type_index, index }">
+                <template #item="{ element: type_index }">
                     <li
                         class="nav-item pl-0 pr-2 pb-2 pt-2"
                         role="presentation"
@@ -28,7 +28,7 @@
                             role="tab"
                             data-toggle="tab"
                             aria-selected="false"
-                            @click="setActiveTab(index)"
+                            @click="setActiveTab(type_index)"
                         >
                             {{ objective_types[type_index].title }}
                         </a>
@@ -156,7 +156,8 @@ export default {
             return this.objectivetypes.filter(type => type.id === id);
         },
         setActiveTab(index) {
-            this.activeTab = index;
+            const type_id = this.objective_types[index].id;
+            this.activeTab = type_id;
         },
         processObjectives(response, objective_type_id = 0) {
             let terminal = {};
@@ -209,7 +210,7 @@ export default {
         handleTypeMoved() {
             // active-state needs to be reset, since it changes to a new index
             this.$el.querySelector('.nav-link.active').classList.remove('active');
-            document.getElementById(this.objective_types[this.activeTab].id + '-tab').classList.add('active');
+            document.getElementById(this.activeTab + '-tab').classList.add('active');
             // send new order to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", { objective_type_order: this.typetabs })
                 .catch(err => {
@@ -231,7 +232,7 @@ export default {
         await this.loaderEvent();
 
         // wait until data is loaded to show the first tab
-        this.activeTab = this.type_order[0];
+        this.activeTab = this.curriculum.objective_type_order[0];
         let firstTab = this.objective_types[this.type_order[0]].id;
         // the 'active'-state does only need to be set programmatically for the initial tab
         // the rest will be handled by the default nav-tabs behaviour

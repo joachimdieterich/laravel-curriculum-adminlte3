@@ -549,6 +549,8 @@ return [
         'title_singular' => 'Inhalt',
         'create' => 'Inhalt erstellen',
         'edit' => 'Inhalt bearbeiten',
+        'delete' => 'Inhalt löschen',
+        'delete_helper' => 'Soll dieser Inhalt gelöscht werden?',
         'copy' => 'Inhalt aus bestehendem Curriculum übernehmen',
         'no_content' => 'Keine (zusätzlichen) Inhalte vorhanden.',
         'index' => 'Inhaltsverzeichnis',
@@ -850,8 +852,8 @@ return [
             'confirm_delete' => 'Sind Sie sicher, dass Sie diese Lernstandsanalyse löschen wollen?',
         ],
         'success_messages' => [
-            'exam_created' => 'Erfolgreich erstellte Lernstandsanalyse',
-            'exam_removed' => 'Erfolgreich entfernte Lernstandsanalyse',
+            'exam_created' => 'Lernstandsanalyse erstellt',
+            'exam_removed' => 'Lernstandsanalyse wurde erfolgreich entfernt',
         ],
         'error_messages' => [
             'get_tests' => 'Testhefte konnten nicht abgerufen werden',

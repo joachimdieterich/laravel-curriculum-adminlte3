@@ -10,6 +10,9 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 //@import '~datatables.net-buttons-bs5/css/buttons.bootstrap5.css';
 //@import '~datatables.net-select-bs5/css/select.bootstrap5.css';
 
+.dataTable td, .dataTable th {
+    padding: 5px;
+} 
 .dataTable tbody tr {
     border-bottom: 1px solid lightgray;
 }
@@ -58,6 +61,21 @@ body {
 .p-margin-0 p { margin-bottom: 0px !important; }
 .pointer {
     cursor: pointer;
+}
+.btn.btn-icon {
+    position: relative;
+    border: 0;
+    border-radius: 50%;
+
+    &:hover {
+        background-color: #dcdcdc;
+    }
+    &.active, &:active {
+        background-color: #cbcbcb;
+    }
+    &:focus, &.focus {
+        box-shadow: none !important;
+    }
 }
 .btn.no-focus:focus {
     box-shadow: none !important;
@@ -113,6 +131,16 @@ textarea {
 .dt-length {
     float: right !important;
 }
+// truncates text to one line and adds ellipsis
+.line-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1; // compatibility
+    overflow: hidden;
+
+    & p { margin: 0; } // if Editor was used, text is wrapped in <p> tags
+}
 .vuehover {
     display: none;
 }
@@ -139,8 +167,8 @@ tr:hover .vuehover {
     background-color: red;
     line-height: 15px;
     color: white;
-    top: -2px;
-    left: 14px;
+    top: 0px;
+    right: 0px;
 }
 .with-comment-count{
     padding-top: 5px;

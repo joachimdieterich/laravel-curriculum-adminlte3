@@ -37,13 +37,11 @@
                 v-bind="columnDragOptions"
                 :move="isLocked"
                 @end="syncStatusMoved"
-                handle=".handle"
                 item-key="id"
-                :emptyInsertThreshold="500"
                 class="d-flex m-0 pr-0 h-100"
                 style="width: max-content; gap: 16px; padding-right: 2rem"
             >
-                <template #item="{ element: status , index }">
+                <template #item="{ element: status, index }">
                     <span v-if="(status.visibility) || ($userId == status.owner_id)"
                         :key="'drag_status_' + status.id"
                         class="d-flex flex-column h-100"
@@ -66,46 +64,41 @@
                             <i class="text-white fa fa-2x fa-plus-circle"></i>
                         </div>
                         <div v-else class="py-2"></div>
-                        <div
-                            class="hide-scrollbars"
+                        <draggable
+                            v-model="status.items"
+                            v-bind="itemDragOptions"
+                            :move="isLocked"
+                            @end="syncItemMoved"
+                            item-key="id"
+                            class="d-flex flex-column hide-scrollbars"
                             style="overflow-y: scroll;"
                         >
-                            <draggable
-                                :list="status.items"
-                                v-bind="itemDragOptions"
-                                :move="isLocked"
-                                @end="syncItemMoved"
-                                handle=".handle"
-                                item-key="kanban_status_id"
-                                :component-data="{ name: 'fade' }"
+                            <template
+                                #item="{ element: item }"
+                                :style="'width:' + itemWidth + 'px;'"
+                                class="d-flex flex-column pr-3"
                             >
-                                <template
-                                    #item="{ element: item, itemIndex }"
-                                    :style="'width:' + itemWidth + 'px;'"
-                                    class="d-flex flex-column pr-3"
-                                >
-                                    <span :key="'item_' + item.id">
-                                        <KanbanItem v-if="(item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
-                                                || ($userId == item.owner_id)
-                                                || ($userId == kanban.owner_id)"
-                                            :key="item.id"
-                                            :allow_copy="kanban.allow_copy"
-                                            :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
-                                            :commentable="kanban.commentable"
-                                            :only_edit_owned_items="kanban.only_edit_owned_items"
-                                            :ref="'kanbanItemId' + item.id"
-                                            :index="status.id + '_' + item.id"
-                                            :item="item"
-                                            :width="itemWidth"
-                                            :kanban_owner_id="kanban.owner_id"
-                                            v-on:item-edit=""
-                                            v-on:sync="sync"
-                                            filter=".ignore"
-                                        />
-                                    </span>
-                                </template>
-                            </draggable>
-                        </div>
+                                <span :key="'drag_item_' + item.id">
+                                    <KanbanItem v-if="(item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
+                                            || ($userId == item.owner_id)
+                                            || ($userId == kanban.owner_id)"
+                                        :key="item.id"
+                                        :allow_copy="kanban.allow_copy"
+                                        :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
+                                        :commentable="currentKanban.commentable"
+                                        :only_edit_owned_items="kanban.only_edit_owned_items"
+                                        :ref="'kanbanItemId' + item.id"
+                                        :index="status.id + '_' + item.id"
+                                        :item="item"
+                                        :width="itemWidth"
+                                        :kanban_owner_id="kanban.owner_id"
+                                        v-on:item-edit=""
+                                        v-on:sync="sync"
+                                        filter=".ignore"
+                                    />
+                                </span>
+                            </template>
+                        </draggable>
                     </span>
                 </template>
                 <template #footer>
@@ -598,22 +591,19 @@ export default {
         columnDragOptions() {
             return {
                 animation: 200,
-                // checks if a mobile-browser is used and if true, add delay
-                ...(/Mobi/i.test(window.navigator.userAgent) && {delay: 200}),
+                delay: 200,
+                delayOnTouchOnly: true,
                 group: "columns",
-                dragClass: "status-drag",
-                fallbackTolerance: 5,
-                disabled: !this.editable
+                disabled: !this.editable,
             };
         },
         itemDragOptions() {
             return {
                 animation: 200,
-                ...(/Mobi/i.test(window.navigator.userAgent) && {delay: 200}),
-                group: "item-list",
-                dragClass: "status-drag",
-                fallbackTolerance: 5,
-                disabled: !this.editable
+                delay: 200,
+                delayOnTouchOnly: true,
+                group: "items",
+                disabled: !this.editable,
             };
         },
         kanbanWidth() {
@@ -634,10 +624,6 @@ export default {
 }
 </script>
 <style scoped>
-.status-drag {
-    transition: transform 0.5s;
-    transition-property: all;
-}
 .kanban_board_container {
     background-color: #fff;
     position: relative;

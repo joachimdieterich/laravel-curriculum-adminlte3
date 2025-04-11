@@ -21,7 +21,7 @@
         </a>
         <a v-else
             class="text-decoration-none"
-            :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected(item) ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
+            :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected() ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
         >
             <div v-if="item.medium_id"
                 class="nav-item-box-image-size"
@@ -173,8 +173,8 @@ export default {
         }
     },
     methods: {
-        isSelected(item) {
-            return (this.store.isSelected(this.storeTitle, item));
+        isSelected() {
+            return (this.store.isSelected(this.storeTitle, this.model));
         },
         openModal() {
             let modal = this.subscribe
@@ -190,7 +190,12 @@ export default {
         clickEvent(item) {
             if (this.active) {
                 if (this.store.getDatatable(this.storeTitle)?.select) { // selectMode
-                    this.store.addSelectItems(this.storeTitle, item);
+                    // also select/deselect entry in datatable, in case the DataTable is visible
+                    if (this.store.addSelectItems(this.storeTitle, this.model)) { // item got added
+                        this.$parent.dt.row('#' + item.DT_RowId).select();
+                    } else { // item got removed
+                        this.$parent.dt.row('#' + item.DT_RowId).deselect();
+                    }
                 } else {
                     if (this.urlOnly) {
                         window.open(this.url /*+ '/' + item.id*/, this.urlTarget);

@@ -31,8 +31,8 @@ class ObjectiveType extends Model
         return route('objectiveTypes.show', $this->id);
     }
 
-    public function objectives()
+    public function terminalObjectives()
     {
-        return $this->belongsTo('App\TerminalObjective', 'objective_type_id', 'id');
+        return $this->hasMany('App\TerminalObjective', 'objective_type_id', 'id');
     }
 }

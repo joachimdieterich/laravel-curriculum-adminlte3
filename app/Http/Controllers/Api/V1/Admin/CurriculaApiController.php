@@ -11,9 +11,51 @@ use Illuminate\Http\Request;
 
 class CurriculaApiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Curriculum::all();
+        $config = Config::where([
+            ['key', '=',  'metadata_password'],
+        ])->first();
+
+        if ($config !== null) {
+            if ($config->value != $request->query('password')) {
+                return response()->json(['error' => 'Not authorized.'], 403);
+            }
+        } else {
+            return response()->json(['error' => 'config (metadata_password) missing'], 420);
+        }
+
+        LogController::set(get_class($this).'@'.__FUNCTION__);
+        // might need to be broken down in chunks, since there's a lot of data
+        return response()->json([
+            Curriculum::select('id', 'title', 'description', 'grade_id', 'subject_id', 'organization_type_id', 'type_id')
+            ->where('type_id', 1)
+            ->with([
+                'grade' => function ($query) {
+                    $query->select('id', 'title');
+                },
+                'subject' => function ($query) {
+                    $query->select('id', 'title');
+                },
+                'organizationType' => function ($query) {
+                    $query->select('id', 'title');
+                },
+                'terminalObjectives' => function ($query) {
+                    $query->select('id', 'title', 'description', 'curriculum_id')
+                        ->with([
+                            'enablingObjectives' => function ($query) {
+                                $query->select('id', 'title', 'description', 'level_id', 'terminal_objective_id')
+                                    ->with(['level' => function ($query) {
+                                        $query->select('id', 'title');
+                                    }])
+                                    ->without('terminalObjective')
+                                    ->orderBy('order_id', 'asc');
+                            }
+                        ]);
+                },
+            ])
+            ->get()
+        ]);
     }
 
     public function show(Curriculum $curriculum)

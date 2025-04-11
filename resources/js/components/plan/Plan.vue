@@ -11,12 +11,13 @@
                     class="card-tools d-flex pr-2 ml-auto no-print"
                     style="gap: 5px;"
                 >
-                    <a
-                        class="link-muted mr-2 px-1 pointer"
+                    <button
+                        class="btn btn-flat link-muted mr-2 px-1 py-0"
+                        :disabled="users.length === 0"
                         @click="openUserModal()"
                     >
                         <i class="fa fa-chart-simple"></i>
-                    </a>
+                    </button>
                     <a onclick="window.print()" class="link-muted px-1 pointer">
                         <i class="fa fa-print"></i>
                     </a>
@@ -128,6 +129,7 @@ import TrainingModal from "../training/TrainingModal.vue";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -146,8 +148,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -208,7 +212,7 @@ export default {
             axios.put("/plans/" + this.plan.id + "/syncEntriesOrder", {entry_order: this.entry_order})
                 .catch(err => {
                     console.log(err);
-                    alert(err.response.statusText);
+                    this.toast.error(err.response?.data.message ?? this.trans('global.error'));
                 });
         },
     },
@@ -242,11 +246,14 @@ export default {
     computed: {
         // add an img-tag, so the medium can be placed within the text
         description() {
-            let img = '';
-            if (this.currentPlan.medium_id) {
-                img = '<img class="pull-right" style="max-width: 25%;" src="/media/' + this.currentPlan.medium_id + '?preview=true"/>';
+            let description = this.currentPlan.description;
+            if (this.currentPlan.medium_id) { // prepend img-tag
+                description = '<img class="pull-right" style="max-width: 25%;" src="/media/' + this.currentPlan.medium_id + '?preview=true"/>' + description;
             }
-            return img + this.currentPlan.description;
+
+            if (description.trim().length === 0) description = this.trans('global.no_description');
+
+            return description;
         },
         columnDragOptions() {
             return {

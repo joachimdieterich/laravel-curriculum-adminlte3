@@ -1,65 +1,67 @@
 <template >
-    <div class="row ">
-        <div class="col-12 pt-2">
-            <div class="card mb-0">
-                <div v-if="trainings.length > 0"
-                    class="card-header"
-                >
-                    {{ trans('global.training.title') }}
+    <div>
+        <div class="card mb-0">
+            <div v-if="trainings.length > 0"
+                class="card-header"
+            >
+                {{ trans('global.training.title') }}
+            </div>
+            <div v-for="training in trainings"
+                class="card-footer"
+            >
+                <a :href="'/trainings/' + training.id">{{ training.title }}</a>
+                <!-- General tools such as edit or delete-->
+                <div class="tools pull-right">
+                    <span>
+                        <small v-if="training.begin !== null && training.end !== null" class="badge badge-secondary mr-2">
+                            {{ diffForHumans(training.begin) }} - {{ diffForHumans(training.end) }}
+                        </small>
+                        <small v-else-if="training.begin !== null" class="badge badge-secondary mr-2">
+                            {{ trans('global.begin') + ' ' + diffForHumans(training.begin) }}
+                        </small>
+                        <small v-else-if="training.end !== null" class="badge badge-secondary mr-2">
+                            {{ trans('global.end') + ' ' + diffForHumans(training.end) }}
+                        </small>
+                    </span>
+                    <span v-if="editable && showTools">
+                        <a v-if="training.subscriptions[0].order_id > 0"
+                            class="text-secondary pointer"
+                            @click="lower(training)"
+                        >
+                            <i class="fa fa-arrow-up px-1"></i>
+                        </a>
+                        <a v-if="training.subscriptions[0].order_id < max_order_id"
+                            class="text-secondary pointer ml-2"
+                            @click="higher(training)"
+                        >
+                            <i class="fa fa-arrow-down px-1"></i>
+                        </a>
+                        <a
+                            class="text-secondary pointer ml-3"
+                            @click="openModal(training)"
+                        >
+                            <i class="fa fa-pencil-alt px-1"></i>
+                        </a>
+                        <a v-if="training.owner_id == $userId || deletable || checkPermission('is_admin')"
+                            class="text-danger pointer ml-3"
+                            @click="confirmDelete(training)"
+                        >
+                            <i class="fas fa-trash px-1"></i>
+                        </a>
+                    </span>
                 </div>
-                <div v-for="training in trainings"
-                    class="card-footer"
-                >
-                    <a :href="'/trainings/' + training.id">{{ training.title }}</a>
-                    <!-- General tools such as edit or delete-->
-                    <div class="tools pull-right">
-                        <span>
-                            <small v-if="training.begin !== null && training.end !== null" class="badge badge-secondary mr-2">
-                                {{ diffForHumans(training.begin) }} - {{ diffForHumans(training.end) }}
-                            </small>
-                            <small v-else-if="training.begin !== null" class="badge badge-secondary mr-2">
-                                {{ trans('global.begin') + ' ' + diffForHumans(training.begin) }}
-                            </small>
-                            <small v-else-if="training.end !== null" class="badge badge-secondary mr-2">
-                                {{ trans('global.end') + ' ' + diffForHumans(training.end) }}
-                            </small>
-                        </span>
-                        <span v-if="editable && showTools">
-                            <a v-if="training.subscriptions[0].order_id > 0"
-                                class="text-secondary pointer mx-1"
-                                @click="lower(training)"
-                            >
-                                <i class="fa fa-arrow-up px-1"></i>
-                            </a>
-                            <a v-if="training.subscriptions[0].order_id < max_order_id"
-                                class="text-secondary pointer mx-1"
-                                @click="higher(training)"
-                            >
-                                <i class="fa fa-arrow-down px-1"></i>
-                            </a>
-                            <a
-                                class="text-secondary pointer mx-2"
-                                @click="openModal(training)"
-                            >
-                                <i class="fa fa-pencil-alt px-1"></i>
-                            </a>
-                            <a
-                                class="text-danger pointer mx-1"
-                                @click="confirmDelete(training)"
-                            >
-                                <i class="fas fa-trash px-1"></i>
-                            </a>
-                        </span>
-                    </div>
-                </div>
+            </div>
 
-                <div v-if="editable && showTools"
-                    class="card-footer pointer"
-                    @click="openModal()"
+            <div v-if="editable && showTools"
+                @click="openModal()"
+            >
+                <button
+                    class="btn btn-default btn-flat text-left border-0 rounded-pill mt-2"
+                    style="padding: 0.75rem 1.25rem;"
                 >
                     <i class="fas fa-add pr-1"></i>
                     {{ trans('global.training.create') }}
-                </div>
+                </button>
             </div>
         </div>
         <Teleport to="body">
@@ -93,6 +95,10 @@ export default {
     },
     props: {
         editable: {
+            type: Boolean,
+            default: false,
+        },
+        deletable: {
             type: Boolean,
             default: false,
         },

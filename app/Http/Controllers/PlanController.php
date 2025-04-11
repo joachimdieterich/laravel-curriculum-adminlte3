@@ -250,7 +250,7 @@ class PlanController extends Controller
 
     public function syncEntriesOrder(Plan $plan)
     {
-        abort_unless(auth()->user()->id == $plan->owner_id, 403);
+        abort_unless($plan->isEditable(), 403, "No permission to re-order entries of this plan");
 
         $input = $this->validateRequest();
 

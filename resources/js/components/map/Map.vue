@@ -290,15 +290,11 @@ export default {
             initialLongitude: '8.413913138283617',
             zoom: 10,
             marker: null,
-            method: {
-                type: String,
-                default: 'post'
-            },
             showConfirm: false,
         }
     },
     methods: {
-        createMarker(method = 'post') {
+        createMarker() {
             this.globalStore?.showModal('map-marker-modal', {});
         },
         loader() {

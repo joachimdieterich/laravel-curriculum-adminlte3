@@ -34,12 +34,17 @@ class UsersController extends Controller
                 ? User::noSharing()
                 : Organization::find(auth()->user()->current_organization_id)->users();
 
+            // only get users with teacher-role or higher
+            if (request()->has('no_students') && !is_admin()) { // skip this step for admins
+                $users = $users->whereNotIn('organization_role_users.role_id', [6, 7, 8, 9]); // student-, parent-, guest-, token-role
+            }
+
             return getEntriesForSelect2ByCollection(
                 $users,
                 'users.',
-                ['username', 'firstname', 'lastname'],
+                ['username', DB::raw("CONCAT(firstname, ' ', lastname)")],
                 'lastname',
-                "CONCAT(firstname, ' ' ,lastname)",
+                "CONCAT(firstname, ' ', lastname)",
             );
         }
         else
@@ -66,18 +71,16 @@ class UsersController extends Controller
                     'group_id' => 'required',
                 ]
             );
-            $users = Group::where('id',$request['group_id'])->first()->users;
+            $users = Group::where('id',$request['group_id'])->first()->users();
         }
         else
         {
             $users = (auth()->user()->role()->id == 1)
                 ? User::select('id', 'username', 'firstname', 'lastname', 'common_name', 'email', 'medium_id', 'deleted_at')->noSharing()
                 : Organization::find(auth()->user()->current_organization_id)->users()->noSharing();
-
         }
 
         return DataTables::of($users)
-            ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }
@@ -168,8 +171,8 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        abort_unless(\Gate::allows('user_show'), 403);
-        abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403);
+        abort_unless(\Gate::allows('user_show'), 403, "Missing permission to view user");
+        abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403, "No access to view user");
 
         if (request()->wantsJson()) {
             return ['user' => $user];

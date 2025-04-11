@@ -83,9 +83,11 @@
             id="curriculum-content"
             class="col-md-12 m-0"
         >
-            <IndexWidget v-if="(filter === 'all' && !this.subscribable_type && !this.subscribable_id)
-                    || filter  === 'owner'"
-                v-permission="'curriculum_create'"
+            <IndexWidget v-if="checkPermission('curriculum_create')
+                    && (
+                        (filter === 'all' && !this.subscribable_type && !this.subscribable_id)
+                        || filter  === 'owner'
+                    )"
                 key="curriculumCreate"
                 modelName="Curriculum"
                 url="/curricula"
@@ -265,7 +267,6 @@ export default {
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
-                { title: 'medium_id', data: 'medium_id' },
             ],
             options : this.$dtOptions,
             filter: 'all',

@@ -34,6 +34,7 @@
                                     id="title"
                                     name="title"
                                     class="form-control"
+                                    maxlength="191"
                                     v-model.trim="form.title"
                                     :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
                                     required
@@ -262,13 +263,12 @@ export default {
             } else {
                 this.add();
             }
-
-            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post('/kanbans', this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-added', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
                     console.log(e.response);
@@ -278,6 +278,7 @@ export default {
             axios.patch('/kanbans/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-updated', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
                     console.log(e.response);

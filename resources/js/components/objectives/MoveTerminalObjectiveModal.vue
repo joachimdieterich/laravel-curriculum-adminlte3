@@ -29,7 +29,7 @@
                             <Select2
                                 id="curriculum_id"
                                 name="curriculum_id"
-                                url="/curricula"
+                                url="/curricula?owner"
                                 model="curriculum"
                                 css="mb-1"
                                 :label="trans('global.curriculum.title_singular') + ' *'"

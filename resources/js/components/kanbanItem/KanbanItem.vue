@@ -13,7 +13,6 @@
             <div
                 class="card-header-title pl-3 py-2"
                 :style="{ backgroundColor: item.color }"
-                style="border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem; padding-right: 3.5rem;"
             >
                 {{ item.title }}
                 <i class="fa fa-angle-up"></i>
@@ -137,43 +136,54 @@
         </div>
 
         <div
-            class="card-footer px-3 py-2"
-            :class="{ 'border-top-0': item.description === null }"
+            class="card-footer d-flex align-items-center px-3 py-2"
         >
-            <div class="d-flex align-items-center">
-               <avatar
-                    :key="item.id + '_editor_' + item.owner.id"
-                    :title="item.owner.firstname + ' ' + item.owner.lastname"
-                    :username="item.owner.username"
-                    :firstname="item.owner.firstname"
-                    :lastname="item.owner.lastname"
-                    :size="25"
-                    class="contacts-list-img"
-                    data-toggle="tooltip"
-                />
-                <avatar v-if="editors != null && $userId != 8"
-                    v-for="(editor_user, index) in editors"
-                    :key="item.id + '_editor_' + index"
-                    :title="editor_user.firstname + ' ' + editor_user.lastname"
-                    :username="editor_user.username"
-                    :firstname="editor_user.firstname"
-                    :lastname="editor_user.lastname"
-                    :size="25"
-                    class="contacts-list-img"
-                    data-toggle="tooltip"
-                />
+            <Avatar
+                :key="item.id + '_editor_' + item.owner.id"
+                :title="item.owner.firstname + ' ' + item.owner.lastname"
+                :username="item.owner.username"
+                :firstname="item.owner.firstname"
+                :lastname="item.owner.lastname"
+                :size="25"
+                class="contacts-list-img"
+                data-toggle="tooltip"
+            />
+            <Avatar v-if="editors != null && $userId != 8"
+                v-for="(editor_user, index) in editors"
+                :key="item.id + '_editor_' + index"
+                :title="editor_user.firstname + ' ' + editor_user.lastname"
+                :username="editor_user.username"
+                :firstname="editor_user.firstname"
+                :lastname="editor_user.lastname"
+                :size="25"
+                class="contacts-list-img"
+                data-toggle="tooltip"
+            />
 
-                <span class="d-flex flex-fill"></span>
+            <div class="d-flex ml-auto">
                 <div v-if="commentable"
-                    class="position-relative mr-2 px-1 pointer"
-                    @click="openComments"
+                    class="btn-group-toggle mr-2"
+                    data-toggle="buttons"
                 >
-                    <i class="far fa-comments"></i>
-                    <span v-if="item.comments.length > 0"
-                        class="comment-count bg-success"
+                    <label
+                        class="btn btn-icon px-2 py-1"
+                        role="button"
+                        data-toggle="collapse"
+                        :data-target="'#comments_' + item.id"
+                        aria-expanded="false"
                     >
-                        {{ item.comments.length }}
-                    </span>
+                        <input
+                            type="checkbox"
+                            autocomplete="off"
+                            v-model="show_comments"
+                        />
+                        <i class="far fa-comments"></i>
+                        <span v-if="item.comments.length > 0"
+                            class="comment-count bg-success"
+                        >
+                            {{ item.comments.length }}
+                        </span>
+                    </label>
                 </div>
                 <Reaction
                     :model="item"
@@ -183,7 +193,7 @@
             </div>
         </div>
 
-        <Comments v-if="show_comments"
+        <Comments v-if="commentable"
             :comments="item.comments"
             :model="item"
             :kanban_owner_id="kanban_owner_id"
@@ -210,7 +220,7 @@
 <script>
 import DatePicker from 'vue3-datepicker';
 import MediaCarousel from '../media/MediaCarousel.vue';
-import avatar from '../uiElements/Avatar.vue';
+import Avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
 import Comments from '../kanban/Comments.vue';
 import moment from 'moment';
@@ -315,9 +325,6 @@ export default {
                 item: this.item,
                 method: 'patch',
             });
-        },
-        openComments() {
-            this.show_comments = !this.show_comments;
         },
         addComment(newComment) {
             this.item.comments.push(newComment);
@@ -425,7 +432,7 @@ export default {
         Comments,
         Reaction,
         MediaCarousel,
-        avatar,
+        Avatar,
         DatePicker,
         ConfirmModal,
     },
@@ -444,6 +451,12 @@ export default {
     font-size: 10px;
     line-height: 11px;
     vertical-align: middle;
+}
+.card-header-title {
+    transition: filter 0.25s;
+    padding-right: 3.5rem;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
 }
 .card-header-title:hover { filter: brightness(90%); }
 .fa-angle-up { transition: 0.4s transform; }

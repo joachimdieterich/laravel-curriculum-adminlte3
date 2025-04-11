@@ -439,7 +439,8 @@ class User extends Authenticatable
     public function mayAccessUser(User $user, $context = 'organization')
     {
         switch ($context) {
-            case 'organization': return $user->organizations->pluck('id')->contains($this->current_organization_id);
+            case 'organization':
+                return $user->organizations()->pluck('organizations.id')->contains($this->current_organization_id);
             //Todo: check for groups
             break;
             default: return false;

@@ -413,19 +413,18 @@ app.config.globalProperties.$initTinyMCE = function(
                 onAction: function () {
                     globalStore.showModal('medium-modal', attr);
                     app.config.globalProperties.$eventHub.on('insertContent', (event) => {
-                        console.log(event);
                         if (attr.callbackId == event.id) {
                             let html = '';
                             globalStore.selectedMedia.forEach((media) => {
                                 html = html.concat(
                                     editor.insertContent(
-                                        '<img src="/media/'+ media.id +'?preview=true" width="500">',
-                                        {format: 'raw'}
+                                        '<img src="/media/' + media.id + '?preview=true" width="500">',
+                                        { format: 'raw' }
                                     )
                                 );
                             });
-                            app.config.globalProperties.$eventHub.off('insertContent'); //remove listender
-                            globalStore.setSelectedMedia(null); // deselect
+                            app.config.globalProperties.$eventHub.off('insertContent'); // remove listener
+                            globalStore.setSelectedMedia(null); // unselect
                             return html;
                         }
                     });
@@ -472,25 +471,6 @@ app.config.globalProperties.$dtOptions = {
     subscribeSelected: false,
     target: 'medium_id',
 },*/
-/**
- * Custom Vue directive "can" to check against permissions.
- * If permission is not given element gets style display:none
- *
- * ! Always check permissions in the backend.
- * This directive enables shorter syntax on vue.
- *
- * Example:
- * <element v-can="'curriculum_edit'" ><element>
- *
- * @type Vue
- */
-
-app.directive('can', function (el, binding) {
-    if (window.Laravel.permissions.indexOf(binding.value) == -1) {
-        el.style.display = 'none';
-    }
-    return window.Laravel.permissions.indexOf(binding.value) !== -1;
-});
 
 app.directive('hide-if-permission', function (el, binding) {
     if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
@@ -502,6 +482,10 @@ app.directive('hide-if-permission', function (el, binding) {
  * Custom Vue directive "permission" to check against permissions.
  * csv with permissions.
  * If permission(s) is/are not given element gets removed from dom
+ * 
+ * ! IMPORTANT: even if element gets removed, Vue will act like its still there.
+ * This can cause weird bugs that seem like a logic-error, but the actual problem is this behaviour.
+ * To solve those issues use v-if="checkPermission('permission_name')"
  *
  * ! Always check permissions in the backend.
  * This directive enables shorter syntax on vue.
@@ -514,19 +498,19 @@ app.directive('hide-if-permission', function (el, binding) {
  * @type Vue
  */
 app.directive('permission', function (el, binding, vnode) {
-        let allowed = false;
-        binding.value.split(',').forEach(function (permission){
-            if(window.Laravel.permissions.indexOf(permission.trim()) !== -1) {
-                allowed = true;
-            }
-        });
-
-        if (allowed == false){
-            if (el.parentNode) {
-                el.parentNode.removeChild(vnode.el);
+        let allowed = true;
+        for (const permission of binding.value.split(',')) {
+            if (window.Laravel.permissions.indexOf(permission.trim()) === -1) {
+                allowed = false;
+                break;
             }
         }
 
+        if (!allowed) {
+            if (el.parentNode) { // needed since parent might not exist because of v-if
+                el.parentNode.removeChild(vnode.el);
+            }
+        }
 });
 
 app.directive("inline", (element) => {

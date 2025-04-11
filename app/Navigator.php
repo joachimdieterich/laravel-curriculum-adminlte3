@@ -35,7 +35,7 @@ class Navigator extends Model
 
     public function path()
     {
-        return "/navigators/{$this->id}";
+        return "/navigatorViews/{$this->id}";
     }
 
     public function views()

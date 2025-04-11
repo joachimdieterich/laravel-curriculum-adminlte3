@@ -39,12 +39,12 @@
         <!-- don't load Header if it isn't needed -->
         <Header
             :objective="objective"
+            :objective_type_id="objective_type_id"
             :type="type"
             :menuEntries="menuEntries"
             :settings="settings"
             :max_id="max_id"
             :textcolor="textcolor"
-            @eventSort="sortEvent"
         />
 
         <div
@@ -58,7 +58,7 @@
                 <div
                     class="boxcontent"
                     :style="{ 'color': textcolor }"
-                    v-dompurify-html="objective.title"    
+                    v-html="objective.title"    
                 ></div>
             </div>
         </div>
@@ -112,6 +112,7 @@ export default {
         },
         max_id: {
             type: Number,
+            default: null,
         },
     },
     setup() {
@@ -163,21 +164,6 @@ export default {
                 curriculum_id: this.objective.curriculum_id,
                 terminal_objective_id: this.objective.terminal_objective_id,
             });
-        },
-        async sortEvent(amount) {
-            let objective = {
-                id: this.objective.id,
-                order_id: this.objective.order_id + parseInt(amount),
-            }
-
-            try {
-                axios.patch('/' + this.type + 'Objectives/' + this.objective.id, objective)
-                    .then(response => {
-                        window.location = response.data;
-                    });
-            } catch(error) {
-                console.log(error);
-            }
         },
         showDetails() {
             if (this.settings?.achievements === undefined || !this.editable) {
@@ -262,9 +248,6 @@ export default {
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
         });
-    },
-    beforeDestroy: function() {
-        this.$root.$off('eventSort');
     },
     components: {
         Header,

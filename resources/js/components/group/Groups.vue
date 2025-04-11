@@ -110,7 +110,9 @@
                 />
             </Teleport>
         </div>
-        <div class="row mt-4">
+        <div v-if="checkPermission('is_schooladmin')"
+            class="row mt-4"
+        >
             <GroupOptions/>
         </div>
     </div>

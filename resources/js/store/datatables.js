@@ -22,7 +22,13 @@ export const useDatatableStore = defineStore('datatable', {
             }
             //console.log(this.datatables);
         },
-        addSelectItems(title, item){
+        /**
+         * adds an item to the selection-list. If item is already in list, it will be removed.
+         * @param {String} title name of datatable e.g. 'users'
+         * @param {Object} item 
+         * @returns true if item got added, false if item got removed
+         */
+        addSelectItems(title, item) {
             let datatable = this.datatables.find(dt => dt.datatable === title);
 
             let index = datatable.selectedItems?.findIndex(
@@ -30,11 +36,12 @@ export const useDatatableStore = defineStore('datatable', {
             );
 
             if (index === -1){
-                datatable.selectedItems.push(item); //add item
+                datatable.selectedItems.push(item); // add item
+                return true;
             } else {
-                datatable.selectedItems.splice(index, 1); //remove item
+                datatable.selectedItems.splice(index, 1); // remove item
+                return false;
             }
-            //console.log(this.datatables);
         },
         setSelectedIds(title, selection){
             let datatable = this.datatables.find(dt => dt.datatable === title);

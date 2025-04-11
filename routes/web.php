@@ -100,6 +100,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
     Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
     Route::get('enablingObjectives/{enablingObjective}/achievements/{group?}', 'EnablingObjectiveController@showAchievements')->name('enablingObjectives.showAchievements');
+    Route::patch('enablingObjectives/{enablingObjective}/higher', 'EnablingObjectiveController@higher');
+    Route::patch('enablingObjectives/{enablingObjective}/lower', 'EnablingObjectiveController@lower');
     Route::resource('enablingObjectives', 'EnablingObjectiveController');
     /* enablingObjectiveSubscriptions */
     Route::post('enablingObjectiveSubscriptions/destroy', 'EnablingObjectiveSubscriptionsController@destroy');

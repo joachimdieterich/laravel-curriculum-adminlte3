@@ -94,7 +94,7 @@ class LocalMediaAdapter implements MediaInterface
             $path = storage_path('app'.$medium->path.$medium->medium_name);
             //dd($path);
             if (! file_exists($path)) {
-                abort(404);
+                abort(404, "File doesn't exist");
             }
         }
 
@@ -125,7 +125,7 @@ class LocalMediaAdapter implements MediaInterface
         }
 
         /* user has permission to access this file ! */
-        abort(403);
+        abort(403, "No permission to view local media");
     }
 
     public function thumb(Medium $medium, $size)

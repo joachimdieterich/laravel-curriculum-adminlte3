@@ -270,7 +270,7 @@
                                             :medium_id="form.medium_id"
                                             accept="image/*"
                                             :subscribable_id="form.id"
-                                            subscribable_type="'App\Curriculum'"
+                                            subscribable_type="App\Curriculum"
                                             @selectedValue="(id) => {
                                                 // on removal of medium, directly update the resource
                                                 if (this.form.medium_id !== null && id === null) {

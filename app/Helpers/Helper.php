@@ -36,13 +36,13 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 
             $term = $input['term'];
 
-            $count = Count($model::where(   // count all enties FIRST with filter to get pagination working
+            $count = $model::where(   // count all enties FIRST with filter to get pagination working
                 function ($query) use ($field, $term) {
                     foreach ((array)$field as $f) {
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
-                ->get());
+                ->count();
 
             $entries = $model::where(
                 function ($query) use ($field, $term) {
@@ -74,6 +74,16 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 
 if (! function_exists('getEntriesForSelect2ByCollection'))
 {
+    /**
+     * helper function to paginate on select2 fields. Actually needs a Builder instead of a Collection
+     * @param $collection
+     * @param string $table
+     * @param string|array $field one or multiple table-columns to filter by
+     * @param string $orderby
+     * @param string $text
+     * @param string $id column to use as id
+     * @return \Illuminate\Http\JsonResponse
+     */
     function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
     {
         $input = request()->validate([
@@ -84,7 +94,6 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 
         if (request()->has('selected'))
         {
-            //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
             return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->get());
         }
         else
@@ -104,12 +113,8 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
                 })
                 ->count();
 
-            $entries = $collection->where(
-                function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
-                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                    }
-                })
+            // where-clause is kept from count-builder
+            $entries = $collection
                 ->orderBy($orderby)
                 ->skip($offset)
                 ->take($resultCount)
@@ -133,6 +138,16 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 
 if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
 {
+    /**
+     * helper function to paginate on select2 fields. Actually needs a Collection, not a Builder
+     * @param $collection
+     * @param string $table
+     * @param string|array $field one or multiple table-columns to filter by
+     * @param string $orderby
+     * @param string $text
+     * @param string $id column to use as id
+     * @return \Illuminate\Http\JsonResponse
+     */
     function getEntriesForSelect2ByCollectionAlternative($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
     {
         $input = request()->validate([
@@ -144,7 +159,7 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
         if (request()->has('selected'))
         {
             //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
-            return response()->json($collection->whereIn($table . $id, (array)$input['selected']));
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->values());
         }
         else
         {
@@ -153,12 +168,12 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
 
             $offset = ($page - 1) * $resultCount;
 
-            $term = $input['term'];
+            $term = strtolower($input['term']); // str_contains is case sensitive
 
             $allEntries = $collection->filter(function($obj) use ($field, $term) {
                 foreach ((array)$field as $f) {
                     // if any match is true, return the entry
-                    if (str_contains($obj[$f], $term)) return true;
+                    if (str_contains(strtolower($obj[$f]), $term)) return true;
                 }
                 return false;
             });

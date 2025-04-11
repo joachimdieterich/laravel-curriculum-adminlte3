@@ -26,7 +26,11 @@ class CurriculumController extends Controller
     public function index()
     {
         if (request()->wantsJson()) {
-            return $this->getEntriesForSelect2();
+            if (request()->has('owner')) {
+                return getEntriesForSelect2ByCollection(Curriculum::where('owner_id', auth()->user()->id));
+            } else {
+                return $this->getEntriesForSelect2();
+            }
         }
 
         abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users
@@ -245,24 +249,25 @@ class CurriculumController extends Controller
 
     public function getObjectives(Curriculum $curriculum)
     {
-        $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
-            ->where('curriculum_id', $curriculum->id)
-            ->with([
-                'enablingObjectives',
-                'enablingObjectives.achievements' => function ($query) {
-                    $query->where('user_id', auth()->user()->id);
-                }
-               /* 'enablingObjectives' => function($query) {
-                    $query->select('id', 'terminal_objective_id', 'title', 'description', 'level_id', 'curriculum_id', 'order_id', 'time_approach', 'uuid', 'visibility')
-                        ->without('terminalObjective')
-                        ->with(['achievements' => function($query) {
-                            $query->select('id', 'status', 'updated_at')
-                                ->where('user_id', auth()->user()->id);
-                        }]);
-                },*/
-            ])
-            ->without('terminalObjective')
-            ->orderBy('order_id')
+        $terminal = \App\ObjectiveType::select('id', 'title', 'uuid')
+            ->whereHas('terminalObjectives', function ($query) use ($curriculum) {
+                $query->where('curriculum_id', $curriculum->id);
+            })
+            ->with(['terminalObjectives' => function ($query) use ($curriculum) {
+                $query->select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
+                    ->where('curriculum_id', $curriculum->id)
+                    ->with([
+                        'enablingObjectives' => function($query) {
+                            $query->without('terminalObjective')
+                                ->with(['achievements' => function($query) {
+                                    $query->select('id', 'status', 'updated_at')
+                                        ->where('user_id', auth()->user()->id);
+                                }])
+                                ->orderBy('order_id');
+                        },
+                    ])
+                    ->orderBy('order_id');
+            }])
             ->get();
 
         if (request()->wantsJson()) {
@@ -278,10 +283,7 @@ class CurriculumController extends Controller
      */
     public function getAchievements(Curriculum $curriculum)
     {
-        abort_unless(Gate::allows('curriculum_show'), 403);
-        //check if user is enrolled or admin -> else 403
-        abort_unless((auth()->user()->curricula->contains('id', $curriculum->id) // user enrolled
-                  or (auth()->user()->currentRole()->first()->id == 1)), 403);     // or admin
+        abort_unless(Gate::allows('curriculum_show') and $curriculum->isAccessible(), 403, "No access to this curriculum");
 
         $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
             ->where('curriculum_id', $curriculum->id)
@@ -329,7 +331,7 @@ class CurriculumController extends Controller
      */
     public function storeOwner(Request $request, Curriculum $curriculum)
     {
-        abort_unless(Gate::allows('curriculum_edit'), 403);
+        abort_unless(Gate::allows('curriculum_edit'), 403, "No permission to change owner");
         $input = $this->validateRequest();
 
         $curriculum->update([
@@ -376,7 +378,7 @@ class CurriculumController extends Controller
                                         $input['variant_default_description'] ?? NULL
                                        ),
             'archived'              =>  $input['archived'] ?? false,
-            'owner_id'              => auth()->user()->id,
+            'owner_id'              => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
@@ -543,15 +545,18 @@ class CurriculumController extends Controller
 
     public function syncObjectiveTypesOrder(Curriculum $curriculum)
     {
-        abort_unless(auth()->user()->id === $curriculum->owner_id, 403);
+        abort_unless((
+            auth()->user()->id === $curriculum->owner_id
+            OR is_admin()
+        ), 403, "Only the owner has permission to change the order of objective types");
 
         $input = $this->validateRequest();
 
         $curriculum->update([
-            'objective_type_order'                 => $input['objective_type_order']
+            'objective_type_order' => $input['objective_type_order']
         ]);
 
-        return ['objective_type_order' => $curriculum->objective_type_order];
+        return $curriculum->objective_type_order;
     }
 
     public function getVariantDefinitions(Curriculum $curriculum)
@@ -749,9 +754,9 @@ class CurriculumController extends Controller
                                 ->where('subscribable_id', auth()->user()->id);
                         }
                     );
-                });
+                })->get();
 
-            return getEntriesForSelect2ByCollection($curriculum);
+            return getEntriesForSelect2ByCollectionAlternative($curriculum);
         }
         else
         {

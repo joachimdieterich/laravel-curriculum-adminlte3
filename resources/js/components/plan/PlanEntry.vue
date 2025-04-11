@@ -32,10 +32,15 @@
                                 class="card-tools mr-0"
                             >
                                 <i
-                                    class="fa fa-pencil-alt link-muted pointer p-1 mr-2"
+                                    class="fa fa-pencil-alt link-muted pointer p-1"
                                     @click.stop="openModal(entry)"
                                 ></i>
-                                <a class="text-danger">
+                                <a v-if="entry.owner_id == $userId
+                                        || plan.owner_id == $userId
+                                        || checkPermission('is_admin')
+                                    "
+                                    class="text-danger ml-2"
+                                >
                                     <i
                                         class="fas fa-trash pointer p-1"
                                         @click.stop="openConfirm()"
@@ -44,23 +49,26 @@
                             </div>
                         </div>
 
-                        <div class="card-body py-2 collapse">
-                            <div class="overflow-auto" v-html="description"></div>
+                        <div class="card-body py-0 collapse">
+                            <div class="py-2">
+                                <div class="overflow-auto" v-html="description"></div>
+    
+                                <Objectives
+                                    referenceable_type="App\PlanEntry"
+                                    :referenceable_id="entry.id"
+                                    :owner_id="entry.owner_id"
+                                    :editable="editable"
+                                    :showTools="showTools"
+                                />
 
-                            <Objectives
-                                referenceable_type="App\PlanEntry"
-                                :referenceable_id="entry.id"
-                                :owner_id="entry.owner_id"
-                                :editable="editable"
-                                :showTools="showTools"
-                            />
-
-                            <Trainings
-                                :subscribable_id="entry.id"
-                                subscribable_type="App\PlanEntry"
-                                :editable="editable"
-                                :showTools="showTools"
-                            />
+                                <Trainings
+                                    :subscribable_id="entry.id"
+                                    subscribable_type="App\PlanEntry"
+                                    :editable="editable"
+                                    :deletable="entry.owner_id == $userId || plan.owner_id == $userId"
+                                    :showTools="showTools"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

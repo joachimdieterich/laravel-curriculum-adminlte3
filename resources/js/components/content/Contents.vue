@@ -2,24 +2,31 @@
     <div class="card border-0 mb-0">
         <div class="card-header px-3">
             <h3 v-if="subscriptions.length > 0"
-                class="card-title"
+                class="card-title d-flex align-items-center"
             >
-                <span
+                <a
                     :data-target="'#contentCarousel_' + uid"
                     data-slide-to="0"
-                    class="text-sm"
+                    class="btn btn-flat text-secondary p-0"
+                    @click="setSlide(0)"
                 >
                     <i class="fa fa-list"></i>
-                </span>
+                </a>
                 <span v-if="currentSlide === 0"
                     class="pl-2"
                 >
                     Index
                 </span>
                 <span v-else
-                    class="pl-2"
+                    class="d-flex align-items-center pl-2"
                 >
                     {{ subscriptions[currentSlide-1].content.title }}
+                    <a
+                        class="btn btn-flat text-secondary link-muted py-0 ml-1"
+                        @click="edit(subscriptions[currentSlide - 1])"
+                    >
+                        <i class="fa fa-pencil"></i>
+                    </a>
                 </span>
             </h3>
             <h3 v-else class="card-title">
@@ -86,82 +93,98 @@
         </div>
 
         <div v-if="subscriptions.length !== 0"
-            class="card-content">
-            <div :id="'contentCarousel_'+uid" class="carousel slide" data-interval="false">
+            class="card-content"
+        >
+            <div
+                :id="'contentCarousel_' + uid"
+                class="carousel slide"
+                data-interval="false"
+            >
                 <ol class="carousel-indicators">
-                    <li :data-target="'#contentCarousel_'+uid"
+                    <li
+                        :data-target="'#contentCarousel_' + uid"
                         data-slide-to="0"
                         class="active"
-                        @click="setSlide(0)">
-                    </li>
+                        @click="setSlide(0)"
+                    ></li>
                     <li v-for="(item,index) in subscriptions"
                         data-placement="top"
                         :title="item.content.title"
-                        :data-target="'#contentCarousel_'+uid"
-                        :data-slide-to="index+1"
-                        @click="setSlide(index+1)"
+                        :data-target="'#contentCarousel_' + uid"
+                        :data-slide-to="index + 1"
+                        @click="setSlide(index + 1)"
                     ></li>
                 </ol>
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <ul class="list-unstyled p-3" title="Index">
                             <li v-for="(item,index) in subscriptions"
-                                class="pb-2">
+                                class="pb-2"
+                            >
                                 <span class="pointer">
-                                    <span :data-target="'#contentCarousel_'+uid"
-                                        :data-slide-to="index+1"
-                                        @click="setSlide(index+1)">
+                                    <span
+                                        :data-target="'#contentCarousel_' + uid"
+                                        :data-slide-to="index + 1"
+                                        @click="setSlide(index + 1)"
+                                    >
                                         {{ item.content.title }}
                                     </span>
-                                    <span v-permission="'content_delete, ' + subscribable_type + '_content_delete'"
+                                    <span
+                                        v-permission="'content_delete,' + subscribable_type + '_content_delete'"
                                         class="pull-right vuehover"
-                                        :aria-label="trans('global.delete')">
-                                        <span
-                                            class="btn-tool fa fa-trash text-danger"
-                                            @click.prevent="deleteSubscription(item)"
+                                        :aria-label="trans('global.delete')"
+                                    >
+                                        <a
+                                            class="btn-tool text-danger"
+                                            @click.prevent="confirmDelete(item)"
                                         >
-                                        </span>
+                                            <i class="fa fa-trash"></i>
+                                        </a>
                                     </span>
-                                    <span v-permission="'content_edit, ' + subscribable_type + '_content_edit'"
+                                    <span
+                                        v-permission="'content_edit,' + subscribable_type + '_content_edit'"
                                         class="pull-right vuehover"
-                                        :aria-label="trans('global.edit')">
+                                        :aria-label="trans('global.edit')"
+                                    >
                                         <span
                                             class="btn-tool fa fa-pencil-alt"
                                             @click.prevent="edit(item)"
-                                        >
-                                        </span>
+                                        ></span>
                                     </span>
-                                    <span v-permission="'content_create, ' + subscribable_type + '_content_create'"
-                                        class="pull-right vuehover"><!--Order_id: {{ item.order_id }}-->
+                                    <span
+                                        v-permission="'content_create,' + subscribable_type + '_content_create'"
+                                        class="pull-right vuehover"
+                                    >
                                         <span v-if="(item.order_id !== 0)"
                                             class="btn-tool fa fa-arrow-up"
                                             aria-label="up"
-                                            @click.prevent="sortEvent(item,-1)">
-                                        </span>
+                                            @click.prevent="sortEvent(item, -1)"
+                                        ></span>
 
-                                        <span v-if="( subscriptions.length-1 !== item.order_id)"
+                                        <span v-if="(subscriptions.length - 1 !== item.order_id)"
                                             class="btn-tool fa fa-arrow-down"
                                             aria-label="down"
-                                            @click.prevent="sortEvent(item,1)">
-                                        </span>
+                                            @click.prevent="sortEvent(item, 1)"
+                                        ></span>
                                     </span>
                                     <br>
-                                    <small class="text-muted"
-                                            :data-target="'#contentCarousel_'+uid"
-                                            :data-slide-to="index+1"
-                                            @click="setSlide(index+1)"
-                                    v-html="item.content.content">
-                                    </small>
+                                    <small
+                                        class="text-muted line-clamp"
+                                        :data-target="'#contentCarousel_' + uid"
+                                        :data-slide-to="index + 1"
+                                        @click="setSlide(index + 1)"
+                                        v-html="item.content.content"
+                                    ></small>
                                 </span>
                             </li>
                         </ul>
                     </div>
 
                     <div v-for="item in subscriptions"
-                        class="carousel-item" :title="item.content.title">
-                        <div class="p-3"
-                            v-html="item.content.content"
-                        ></div>
+                        class="carousel-item"
+                        :title="item.content.title"
+                    >
+                        <div class="p-3" v-html="item.content.content"></div>
                     </div>
                 </div>
             </div>
@@ -297,13 +320,17 @@ export default {
                 subscribable_id:    item.subscribable_id,
             });
         },
-        deleteSubscription(contentSubscription) {
-            axios.post('/contents/' + contentSubscription.content_id + '/destroy', {
-                    subscribable_type:  contentSubscription.subscribable_type,
-                    subscribable_id:    contentSubscription.subscribable_id,
+        confirmDelete(item) {
+            this.currentContent = item;
+            this.showConfirm = true;
+        },
+        destroy() {
+            axios.post('/contents/' + this.currentContent.content_id + '/destroy', {
+                    subscribable_type:  this.currentContent.subscribable_type,
+                    subscribable_id:    this.currentContent.subscribable_id,
                 })
                 .then(res => {
-                    let index = this.subscriptions.indexOf(contentSubscription);
+                    let index = this.subscriptions.indexOf(this.currentContent);
                     this.subscriptions.splice(index, 1);
                 })
                 .catch(e => {
@@ -333,11 +360,6 @@ export default {
                 this.subscriptions.find(s => s.content.id == content.id).content = content;
             }
         });
-
-        this.currentContent = {
-            subscribable_type:  this.subscribable_type,
-            subscribable_id:    this.subscribable_id,
-        }
     },
 }
 </script>

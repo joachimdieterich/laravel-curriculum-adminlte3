@@ -39,6 +39,7 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 $OpenSansFontPath: 'open-sans-all/fonts';
 @import "open-sans-all/scss/open-sans.scss";
 
+html { scroll-behavior: smooth; }
 body {
     font-family: 'Open Sans', Arial, sans-serif !important;
     color: #333;

@@ -58,6 +58,13 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+// highlight-animation
+p[id]:target { animation: yellowfade 1.5s; }
+@keyframes yellowfade {
+    from { background: yellow; }
+    to { background: transparent; }
+}
+
 .p-margin-0 p { margin-bottom: 0px !important; }
 .pointer {
     cursor: pointer;

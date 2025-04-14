@@ -188,7 +188,7 @@ export default {
             ),
             tinyMCE_description: this.$initTinyMCE(
                 [
-                    "autolink link table lists autoresize"
+                    "autolink link table lists autoresize code"
                 ],
                 {
                     public: 1,
@@ -197,7 +197,7 @@ export default {
                     subscribable_type: 'App\\Curriculum',
                     callbackId: this.component_id,
                 },
-                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link code",
                 ""
             ),
         }

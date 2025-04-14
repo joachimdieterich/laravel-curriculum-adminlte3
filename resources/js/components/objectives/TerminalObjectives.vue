@@ -185,9 +185,9 @@ export default {
                 .then(response => {
                     this.objective_types = response.data;
                     // get the order by their current index instead of their id
-                    this.type_order = this.curriculum.objective_type_order.map(
+                    this.type_order = this.curriculum.objective_type_order?.map(
                         type_id => this.objective_types.findIndex(type => type.id === type_id)
-                    );
+                    ) ?? [0]; // type-order unset => only one entry with index 0
                 })
                 .catch(e => {
                     console.log(e);
@@ -234,7 +234,10 @@ export default {
         await this.loaderEvent();
 
         // wait until data is loaded to show the first tab
-        this.activeTab = this.curriculum.objective_type_order[0];
+        this.activeTab = (
+            this.curriculum.objective_type_order
+            ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
+        )[0];
         let firstTab = this.objective_types[this.type_order[0]].id;
         // the 'active'-state does only need to be set programmatically for the initial tab
         // the rest will be handled by the default nav-tabs behaviour

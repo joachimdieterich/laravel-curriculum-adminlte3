@@ -35,11 +35,12 @@
             <draggable
                 v-model="statuses"
                 v-bind="columnDragOptions"
-                :move="isLocked"
-                @end="syncStatusMoved"
                 item-key="id"
+                handle=".handle"
                 class="d-flex m-0 pr-0 h-100"
                 style="width: max-content; gap: 16px; padding-right: 2rem"
+                :move="isLocked"
+                @end="syncStatusMoved"
             >
                 <template #item="{ element: status, index }">
                     <span v-if="(status.visibility) || ($userId == status.owner_id)"
@@ -67,11 +68,12 @@
                         <draggable
                             v-model="status.items"
                             v-bind="itemDragOptions"
-                            :move="isLocked"
-                            @end="syncItemMoved"
                             item-key="id"
+                            handle=".handle"
                             class="d-flex flex-column hide-scrollbars"
                             style="overflow-y: scroll;"
+                            :move="isLocked"
+                            @end="syncItemMoved"
                         >
                             <template
                                 #item="{ element: item }"

@@ -1,10 +1,10 @@
 <template>
     <div
-        id="kanban_board_container"
-        class="kanban_board_container"
+        id="kanban-container"
+        class="kanban-container"
     >
         <img v-if="currentKanban.medium_id"
-            class="kanban_board_wrapper position-absolute p-0"
+            class="position-absolute p-0 h-100 w-100"
             style="object-fit: cover;"
             :src="'/media/' + currentKanban.medium_id + '?preview=true'"
             alt="background image"
@@ -27,8 +27,8 @@
         </div>
 
         <div
-            id="kanban_board_wrapper"
-            class="kanban_board_wrapper position-relative"
+            id="kanban-wrapper"
+            class="kanban-wrapper position-relative"
             :style="'background-color: ' + currentKanban.color + 'B2;'"
         >
             <!-- Columns (Statuses) -->
@@ -70,16 +70,12 @@
                             v-bind="itemDragOptions"
                             item-key="id"
                             handle=".handle"
-                            class="d-flex flex-column hide-scrollbars"
+                            class="kanban-items-container d-flex flex-column hide-scrollbars"
                             style="overflow-y: scroll;"
                             :move="isLocked"
                             @end="syncItemMoved"
                         >
-                            <template
-                                #item="{ element: item }"
-                                :style="'width:' + itemWidth + 'px;'"
-                                class="d-flex flex-column pr-3"
-                            >
+                            <template #item="{ element: item }">
                                 <span :key="'drag_item_' + item.id">
                                     <KanbanItem v-if="(item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
                                             || ($userId == item.owner_id)
@@ -235,12 +231,11 @@ export default {
                 document.exitFullscreen();
             } else {
                 document.querySelector('.content').requestFullscreen();
-                // $('#kanban_board_container').get(0).requestFullscreen();
             }
         },
         toggleCollapseAll(e) {
             const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'hide' : 'show';
-            $('#kanban_board_wrapper .card-body').collapse(collapse);
+            $('#kanban-wrapper .card-body').collapse(collapse);
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {
@@ -626,20 +621,22 @@ export default {
 }
 </script>
 <style scoped>
-.kanban_board_container {
+.kanban-container {
     background-color: #fff;
     position: relative;
     width: 100%;
 }
-.kanban_board_wrapper {
+.kanban-wrapper {
     height: 100%;
     width: 100%;
     padding: 2rem;
     overflow-x: overlay;
     overflow-y: clip;
 }
+.kanban-items-container { scroll-behavior: smooth; }
+.kanban-items-container > :last-child > .card { margin-bottom: 0px; }
 @media (max-width: 991px) {
-    .kanban_board_container {
+    .kanban-container {
         width: 100vw;
         margin-left: -1rem;
     }

@@ -53,7 +53,7 @@
                 :id="'Type-' + type.id"
                 class="tab-pane fade"
                 role="tabpanel"
-                :aria-labelledby="type.title + '-tab'"
+                :aria-labelledby="type.id + '-tab'"
             >
                 <div v-for="terminal in type.terminal_objectives"
                     :id="'terminalObjective_' + terminal.id"
@@ -85,23 +85,20 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div v-if="settings.edit"
-            v-permission="'curriculum_edit'"
-            class="row"
-        >
-            <div
-                id="createTerminalRow"
-                class="col-12"
+            <div v-if="settings.edit"
+                v-permission="'curriculum_edit'"
             >
-                <ObjectiveBox
-                    type="createterminal"
-                    :objective="{ curriculum_id: curriculum.id }"
-                    :objective_type_id="activeTypeId"
-                    :settings="settings"
-                    :max_id="max_ids[activeTypeId]"
-                />
+                <div id="Create-TerminalObjective">
+                    <div class="row">
+                        <div class="col-12 terminal-row">
+                            <ObjectiveBox
+                                type="createterminal"
+                                :objective="{ curriculum_id: curriculum.id }"
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -156,37 +153,17 @@ export default {
         setActiveTab(index) {
             this.activeTypeId = this.objective_types[index].id;
         },
-        processObjectives(response, objective_type_id = 0) {
-            let terminal = {};
-            this.typetabs.forEach(type => terminal[type] = []);
-
-            response.data.forEach(t => {
-                terminal[t.objective_type_id].push(t);
-            });
-
-            this.typetabs.forEach(type => this.max_ids[type] = terminal[type][terminal[type].length - 1].id);
-
-            Object.assign(this.type_objectives, terminal);
-
-            if (this.type_objectives.length === 0) return;
-
-            if (this.curriculum.objective_type_order) {
-                if (this.curriculum.objective_type_order.length === this.typetabs.length) {
-                    this.typetabs = this.curriculum.objective_type_order;
-                }
-            }
-            if (objective_type_id === 0) {
-                this.activeTypeId = this.typetabs[0];
-            }
-        },
         async loaderEvent() {
             await axios.get('/curricula/' + this.curriculum.id + '/objectives')
                 .then(response => {
                     this.objective_types = response.data;
-                    // get the order by their current index instead of their id
-                    this.type_order = this.curriculum.objective_type_order?.map(
-                        type_id => this.objective_types.findIndex(type => type.id === type_id)
-                    ) ?? [0]; // type-order unset => only one entry with index 0
+
+                    if (this.objective_types.length > 0) {
+                        // get the order by their current index instead of their id
+                        this.type_order = this.curriculum.objective_type_order?.map(
+                            type_id => this.objective_types.findIndex(type => type.id === type_id)
+                        ) ?? [0]; // type-order unset => only one entry with index 0
+                    }
                 })
                 .catch(e => {
                     console.log(e);
@@ -222,10 +199,26 @@ export default {
                 });
         },
         addNewType(type) {
-            // if new tab gets created, switch to this tab
-            let newTab = this.typetabs.push(type.id);
-            this.activeTypeId = this.typetabs[newTab - 1];
-            this.type_objectives[type.id] = [];
+            this.objective_types.push(type);
+            this.type_order.push(this.type_order.length); // index-based
+            this.activeTypeId = type.id;
+            this.$nextTick(() => { // wait for DOM to be updated
+                $('#' + type.id + '-tab')[0].click(); // switch to new tab
+                this.handleTypeMoved(); // send new order to the server
+            });
+        },
+        removeType(type) {
+            // switch tab first, if the current tab is the one to be removed
+            if (this.activeTypeId === type.id) {
+                this.activeTypeId = this.objective_types[this.type_order[0]].id;
+                $('#' + this.activeTypeId + '-tab')[0].click();
+            }
+
+            let index = this.objective_types.findIndex(t => t.id === type.id);
+            this.objective_types.splice(index, 1);
+            this.type_order.splice(index, 1);
+
+            this.handleTypeMoved(); // send new order to the server
         },
     },
     async mounted() {
@@ -233,63 +226,75 @@ export default {
         await this.loaderEvent();
 
         // wait until data is loaded to show the first tab
-        this.activeTypeId = (
-            this.curriculum.objective_type_order
-            ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
-        )[0];
-        let firstTab = this.objective_types[this.type_order[0]].id;
-        // the 'active'-state does only need to be set programmatically for the initial tab
-        // the rest will be handled by the default nav-tabs behaviour
-        $('#' + firstTab + '-tab')[0].classList.add('active');
-        $('#Type-' + firstTab).tab('show');
+        if (this.objective_types.length > 0) { // if Curriculum is not empty
+            this.activeTypeId = (
+                this.curriculum.objective_type_order
+                ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
+            )[0];
+            let firstTab = this.objective_types[this.type_order[0]].id;
+            // the 'active'-state does only need to be set programmatically for the initial tab
+            // the rest will be handled by the default nav-tabs behaviour
+            $('#' + firstTab + '-tab')[0].classList.add('active');
+            $('#Type-' + firstTab).tab('show'); // doing a click() would also work, but the transition seems to be smoother this way
+        }
 
         // terminal objectives
         this.$eventHub.on('terminal-objective-added', (terminal) => {
             const type = terminal.type;
-            if (!this.type_objectives[type.id]) {
+            let obj_type = this.objective_types.find(t => t.id === type.id);
+            if (obj_type === undefined) {
                 this.addNewType(type);
+                this.objective_types[this.objective_types.length - 1].terminal_objectives = [terminal];
+            } else {
+                // this.max_ids[type.id] = terminal.id;
+                obj_type.terminal_objectives.push(terminal);
             }
-
-            this.max_ids[type.id] = terminal.id;
-            this.type_objectives[type.id].push(terminal);
         });
 
         this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
-            let terminal = this.type_objectives[updatedTerminal.objective_type_id]?.find(t => t.id === updatedTerminal.id);
-            // objective-type got changed
+            let type = this.objective_types.find(type => type.id === updatedTerminal.objective_type_id);
+            // objective-type was changed and the new type was not in use before
+            if (type === undefined) {
+                this.addNewType(updatedTerminal.type);
+                type = this.objective_types[this.objective_types.length - 1];
+                // don't add the updated objective to the new type yet
+            }
+
+            let terminal = type.terminal_objectives.find(terminal => terminal.id === updatedTerminal.id);
+            // objective-type was changed, so we need to find where the old objective is
             if (terminal === undefined) {
-                // changed objective-type was not in use before
-                if (this.type_objectives[updatedTerminal.objective_type_id] === undefined) {
-                    this.addNewType(updatedTerminal.type);
-                }
+                let old_type;
                 // find original objective
-                Object.values(this.type_objectives).forEach(type => {
-                    let objective = type.find(obj => obj.id === updatedTerminal.id);
-                    if (objective !== undefined) {
-                        terminal = objective;
-                        return;
+                for (const obj_type of this.objective_types) {
+                    terminal = obj_type.terminal_objectives.find(t => t.id === updatedTerminal.id);
+                    if (terminal !== undefined) {
+                        old_type = obj_type;
+                        break;
                     }
-                });
+                }
                 
                 // move the enabling-objectives from the old model to the new one
                 updatedTerminal.enabling_objectives = terminal.enabling_objectives;
                 // add updated objective to its new type
-                this.type_objectives[updatedTerminal.objective_type_id].push(updatedTerminal);
+                type.terminal_objectives.push(updatedTerminal);
                 // remove old objective
-                const index = this.type_objectives[terminal.objective_type_id].indexOf(terminal);
-                this.type_objectives[terminal.objective_type_id].splice(index, 1);
+                const index = old_type.terminal_objectives.indexOf(terminal);
+                old_type.terminal_objectives.splice(index, 1);
 
-                // update order-ids
-                for (let i = index; i < this.type_objectives[terminal.objective_type_id].length; i++) {
-                    this.type_objectives[terminal.objective_type_id][i].order_id--;
+                // update order-ids of the old type
+                for (let i = index; i < old_type.terminal_objectives.length; i++) {
+                    old_type.terminal_objectives[i].order_id--;
                 }
                 
                 // update max-ids 
                 this.max_ids[updatedTerminal.objective_type_id] = updatedTerminal.id;
                 if (this.max_ids[terminal.objective_type_id] === terminal.id) {
-                    let type = this.type_objectives[terminal.objective_type_id];
-                    this.max_ids[terminal.objective_type_id] = type[type.length - 1]?.id ?? 0;
+                    let last_terminal = old_type.terminal_objectives[old_type.terminal_objectives.length - 1];
+                    this.max_ids[terminal.objective_type_id] = last_terminal?.id ?? 0;
                 }
+
+                // remove the old type if its last terminal-objective was moved to another type
+                if (old_type.terminal_objectives.length === 0) this.removeType(old_type);
             } else {
                 Object.assign(terminal, updatedTerminal);
             }
@@ -327,8 +332,11 @@ export default {
 
         this.$eventHub.on('objective-deleted', (deletedObjective) => {
             if (deletedObjective.terminal_objective_id === undefined) { // terminal
-                let index = this.type_objectives[deletedObjective.objective_type_id].findIndex(t => t.id === deletedObjective.id);
-                this.type_objectives[deletedObjective.objective_type_id].splice(index, 1);
+                let type = this.objective_types.find(type => type.id === deletedObjective.objective_type_id);
+                let index = type.terminal_objectives.findIndex(terminal => terminal.id === deletedObjective.id);
+                type.terminal_objectives.splice(index, 1);
+                // if not objective remains in this type, remove its tab and its ID from the order
+                if (type.terminal_objectives.length === 0) this.removeType(type);
             } else { // enabling
                 let terminal;
                 for (const arr of Object.values(this.type_objectives)) {

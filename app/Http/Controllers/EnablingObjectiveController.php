@@ -212,7 +212,6 @@ class EnablingObjectiveController extends Controller
         $enablingObjective->save();
 
         return EnablingObjective::where('terminal_objective_id', $enablingObjective->terminal_objective_id)->without('terminalObjective')->orderBy('order_id')->get();
-        // return TerminalObjective::find($enablingObjective->terminal_objective_id)->enablingObjectives()->get();
     }
 
     public function lower(EnablingObjective $enablingObjective)

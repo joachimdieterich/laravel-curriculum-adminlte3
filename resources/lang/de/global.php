@@ -608,6 +608,7 @@ return [
         'edit' => 'Bereich bearbeiten',
         'move_to_curriculum' => 'In anderes Curriculum verschieben',
         'delete' => 'Bereich löschen',
+        'delete_helper' => 'Soll der Bereich sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [
             'time_approach' => 'Zeitansatz',
         ],
@@ -628,6 +629,8 @@ return [
         'title_singular' => 'Baustein',
         'create' => 'Baustein erstellen',
         'edit' => 'Baustein bearbeiten',
+        'delete' => 'Baustein löschen',
+        'delete_helper' => 'Soll der Baustein sowie die dazugehörigen Daten gelöscht werden?',
         'fields' => [
             'time_approach' => 'Zeitansatz',
         ],

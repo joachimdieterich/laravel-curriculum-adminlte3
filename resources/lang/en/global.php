@@ -582,6 +582,7 @@ return [
         'edit' => 'Edit terminal objective',
         'move_to_curriculum' => 'Move to other curriculum',
         'delete' => 'Delete terminal objective',
+        'delete_helper' => 'Should this terminal objective and all its corresponding data be deleted?',
         'fields' => [
             'time_approach' => 'Time approach',
         ],
@@ -602,6 +603,8 @@ return [
         'title_singular' => 'Enabling objective',
         'create' => 'Create enabling objective',
         'edit' => 'Edit enabling objective',
+        'delete' => 'Delete enabling objective',
+        'delete_helper' => 'Should this enabling objective and all its corresponding data be deleted?',
         'fields' => [
             'time_approach' => 'Time approach',
         ],

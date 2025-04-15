@@ -15,7 +15,7 @@
             class="dropdown-menu position-absolute"
             x-placement="top-start"
         >
-            <span v-for="entry in entries">
+            <span v-for="entry in menuEntries">
                 <hr v-if="entry.hr" style="margin: 0.4rem 0;">
                 <button v-else-if="entry.action === 'edit'"
                     class="dropdown-item"
@@ -25,7 +25,7 @@
                         class="mr-4"
                         :class="entry.icon"
                     ></i>
-                    {{ trans('global.terminalObjective.edit') }}
+                    {{ trans('global.' + entry.model + '.edit') }}
                 </button>
                 <button v-else-if="entry.action === 'move'"
                     class="dropdown-item"
@@ -55,7 +55,7 @@
                         class="mr-4"
                         :class="entry.icon"
                     ></i>
-                    {{ trans('global.terminalObjective.delete') }}
+                    {{ trans('global.' + entry.model + '.delete') }}
                 </button>
                 <button v-else
                     class="dropdown-item"
@@ -78,7 +78,7 @@ export default {
     props: {
         menuEntries: {
             type: Object,
-            default: {},
+            default: null,
         },
         objective: {
             type: Object,
@@ -109,20 +109,14 @@ export default {
             this.globalStore.showModal(entry.value, this.objective);
         },
         emitDeleteEvent(entry) {
-            axios.delete('/' + entry.model + '/' + this.objective.id)
-                .then(res => {
-                    this.$eventHub.emit('objective-deleted', this.objective);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+            this.$eventHub.emit('confirm-objective-delete', {
+                objective: this.objective,
+                model: entry.model,
+            });
         },
         action(entry) {
             this.$modal.show(entry.value);
         }
-    },
-    mounted(){
-        this.entries = this.menuEntries;
     },
 }
 </script>

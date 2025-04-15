@@ -106,11 +106,24 @@
             <TerminalObjectiveModal/>
             <EnablingObjectiveModal/>
             <MoveTerminalObjectiveModal/>
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="delete_title"
+                :description="delete_description"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.delete();
+                }"
+            />
         </Teleport>
     </div>
 </template>
 <script>
 import ObjectiveBox from './ObjectiveBox.vue';
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import EnablingObjectives from './EnablingObjectives.vue';
 import TerminalObjectiveModal from "./TerminalObjectiveModal.vue";
 import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
@@ -138,6 +151,10 @@ export default {
     data() {
         return {
             settings: {},
+            showConfirm: false,
+            delete_objective: null,
+            delete_title: null,
+            delete_description: null,
             max_ids: {},
             type_order: [],
             activeTypeId: null,
@@ -166,6 +183,9 @@ export default {
                 .catch(e => {
                     console.log(e);
                 });
+        },
+        delete() {
+            this.removeObjective(this.delete_objective);
         },
         externalEvent: function(ids) {
             this.reloadEnablingObjectives(ids);
@@ -217,6 +237,27 @@ export default {
             this.type_order.splice(index, 1);
 
             this.handleTypeMoved(); // send new order to the server
+        },
+        removeObjective(deletedObjective) {
+            if (deletedObjective.terminal_objective_id === undefined) { // terminal
+                let type = this.objective_types.find(type => type.id === deletedObjective.objective_type_id);
+                let index = type.terminal_objectives.findIndex(terminal => terminal.id === deletedObjective.id);
+                type.terminal_objectives.splice(index, 1);
+                // if no objective remains in this type, remove its tab and its ID from the order
+                if (type.terminal_objectives.length === 0) this.removeType(type);
+                else if (this.max_ids[type.id] === deletedObjective.id) {
+                    this.max_ids[type.id] = type.terminal_objectives[type.terminal_objectives.length - 1].id;
+                }
+            } else { // enabling
+                let terminal;
+                for (const type of this.objective_types) {
+                    terminal = type.terminal_objectives.find(t => t.id === deletedObjective.terminal_objective_id);
+                    if (terminal) break;
+                }
+
+                let index = terminal.enabling_objectives.findIndex(e => e.id === deletedObjective.id);
+                terminal.enabling_objectives.splice(index, 1);
+            }
         },
     },
     async mounted() {
@@ -362,23 +403,15 @@ export default {
                 .enabling_objectives = data.objectives;
         });
 
-        this.$eventHub.on('objective-deleted', (deletedObjective) => {
-            if (deletedObjective.terminal_objective_id === undefined) { // terminal
-                let type = this.objective_types.find(type => type.id === deletedObjective.objective_type_id);
-                let index = type.terminal_objectives.findIndex(terminal => terminal.id === deletedObjective.id);
-                type.terminal_objectives.splice(index, 1);
-                // if no objective remains in this type, remove its tab and its ID from the order
-                if (type.terminal_objectives.length === 0) this.removeType(type);
-            } else { // enabling
-                let terminal;
-                for (const type of this.objective_types) {
-                    terminal = type.terminal_objectives.find(t => t.id === deletedObjective.terminal_objective_id);
-                    if (terminal) break;
-                }
+        this.$eventHub.on('confirm-objective-delete', (data) => {
+            this.delete_objective = data.objective;
+            this.delete_title = this.trans('global.' + data.model + '.delete');
+            this.delete_description = this.trans('global.' + data.model + '.delete_helper');
+            this.showConfirm = true;
+        });
 
-                let index = terminal.enabling_objectives.findIndex(e => e.id === deletedObjective.id);
-                terminal.enabling_objectives.splice(index, 1);
-            }
+        this.$eventHub.on('objective-deleted', (deletedObjective) => {
+            this.removeObjective(deletedObjective);
         });
     },
     computed: {
@@ -397,6 +430,7 @@ export default {
         EnablingObjectiveModal,
         MoveTerminalObjectiveModal,
         ObjectiveBox,
+        ConfirmModal,
         EnablingObjectives,
         Select2,
         draggable,

@@ -64,7 +64,7 @@
                                 type="terminal"
                                 :objective="terminal"
                                 :settings="settings"
-                                :max_id="max_ids[activeTab]"
+                                :max_id="max_ids[activeTypeId]"
                                 @createTerminalObjective="(createObjective) => {
                                     this.createTerminalObjective(createObjective);
                                 }"
@@ -98,9 +98,9 @@
                 <ObjectiveBox
                     type="createterminal"
                     :objective="{ curriculum_id: curriculum.id }"
-                    :objective_type_id="activeTab"
+                    :objective_type_id="activeTypeId"
                     :settings="settings"
-                    :max_id="max_ids[activeTab]"
+                    :max_id="max_ids[activeTypeId]"
                 />
             </div>
         </div>
@@ -144,7 +144,7 @@ export default {
             max_ids: {},
             type_order: [],
             typetabs: [],
-            activeTab: null,
+            activeTypeId: null,
             currentCurriculaEnrolments: null,
             currentTerminalObjective: null,
             currentEnablingObjective: null,
@@ -154,8 +154,7 @@ export default {
     },
     methods: {
         setActiveTab(index) {
-            const type_id = this.objective_types[index].id;
-            this.activeTab = type_id;
+            this.activeTypeId = this.objective_types[index].id;
         },
         processObjectives(response, objective_type_id = 0) {
             let terminal = {};
@@ -177,7 +176,7 @@ export default {
                 }
             }
             if (objective_type_id === 0) {
-                this.activeTab = this.typetabs[0];
+                this.activeTypeId = this.typetabs[0];
             }
         },
         async loaderEvent() {
@@ -208,7 +207,7 @@ export default {
         handleTypeMoved() {
             // active-state needs to be reset, since it changes to a new index
             this.$el.querySelector('.nav-link.active').classList.remove('active');
-            document.getElementById(this.activeTab + '-tab').classList.add('active');
+            document.getElementById(this.activeTypeId + '-tab').classList.add('active');
             // send new order to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", {
                 objective_type_order: this.type_order.map(index => this.objective_types[index].id),
@@ -225,7 +224,7 @@ export default {
         addNewType(type) {
             // if new tab gets created, switch to this tab
             let newTab = this.typetabs.push(type.id);
-            this.activeTab = this.typetabs[newTab - 1];
+            this.activeTypeId = this.typetabs[newTab - 1];
             this.type_objectives[type.id] = [];
         },
     },
@@ -234,7 +233,7 @@ export default {
         await this.loaderEvent();
 
         // wait until data is loaded to show the first tab
-        this.activeTab = (
+        this.activeTypeId = (
             this.curriculum.objective_type_order
             ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
         )[0];

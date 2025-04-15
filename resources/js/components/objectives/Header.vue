@@ -131,11 +131,7 @@ export default {
     },
     computed: {
         edit_settings: function() {
-            if (typeof this.settings !== "undefined"){
-                return this.settings.edit;
-            } else {
-                return false;
-            }
+            return this.settings?.edit ?? false;
         },
     },
     components: {

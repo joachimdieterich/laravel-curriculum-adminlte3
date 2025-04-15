@@ -64,7 +64,7 @@
                                 type="terminal"
                                 :objective="terminal"
                                 :settings="settings"
-                                :max_id="max_ids[activeTypeId]"
+                                :max_id="max_ids[type.id]"
                                 @createTerminalObjective="(createObjective) => {
                                     this.createTerminalObjective(createObjective);
                                 }"
@@ -140,12 +140,10 @@ export default {
             settings: {},
             max_ids: {},
             type_order: [],
-            typetabs: [],
             activeTypeId: null,
             currentCurriculaEnrolments: null,
             currentTerminalObjective: null,
             currentEnablingObjective: null,
-            type_objectives: [],
             objective_types: [],
         }
     },
@@ -227,10 +225,17 @@ export default {
 
         // wait until data is loaded to show the first tab
         if (this.objective_types.length > 0) { // if Curriculum is not empty
+            // max-ids are structured with the objective-type-id as key
+            this.max_ids = this.objective_types.reduce((acc, type) => {
+                acc[type.id] = type.terminal_objectives[type.terminal_objectives.length - 1].id;
+                return acc;
+            }, {});
+
             this.activeTypeId = (
                 this.curriculum.objective_type_order
                 ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
             )[0];
+
             let firstTab = this.objective_types[this.type_order[0]].id;
             // the 'active'-state does only need to be set programmatically for the initial tab
             // the rest will be handled by the default nav-tabs behaviour
@@ -246,7 +251,7 @@ export default {
                 this.addNewType(type);
                 this.objective_types[this.objective_types.length - 1].terminal_objectives = [terminal];
             } else {
-                // this.max_ids[type.id] = terminal.id;
+                this.max_ids[type.id] = terminal.id;
                 obj_type.terminal_objectives.push(terminal);
             }
         });
@@ -303,8 +308,8 @@ export default {
         // enabling objectives
         this.$eventHub.on('enabling-objective-added', (enabling) => {
             let terminal;
-            for (const arr of Object.values(this.type_objectives)) {
-                terminal = arr.find(terminal => terminal.id === enabling.terminal_objective_id);
+            for (const type of this.objective_types) {
+                terminal = type.terminal_objectives.find(terminal => terminal.id === enabling.terminal_objective_id);
                 if (terminal) break;
             }
 
@@ -313,8 +318,8 @@ export default {
 
         this.$eventHub.on('enabling-objective-updated', (updatedEnabling) => {
             let terminal;
-            for (const arr of Object.values(this.type_objectives)) {
-                terminal = arr.find(terminal => terminal.id === updatedEnabling.terminal_objective_id);
+            for (const type of this.objective_types) {
+                terminal = type.terminal_objectives.find(terminal => terminal.id === updatedEnabling.terminal_objective_id);
                 if (terminal) break;
             }
 
@@ -324,10 +329,12 @@ export default {
         });
 
         this.$eventHub.on('enabling-objectives-reordered', (data) => {
-            const type_id = data.type_id;
             const terminal_id = data.objectives[0].terminal_objective_id;
 
-            this.type_objectives[type_id].find(t => t.id === terminal_id).enabling_objectives = data.objectives;
+            this.objective_types
+                .find(type => type.id === data.type_id).terminal_objectives
+                .find(t => t.id === terminal_id)
+                .enabling_objectives = data.objectives;
         });
 
         this.$eventHub.on('objective-deleted', (deletedObjective) => {
@@ -335,12 +342,12 @@ export default {
                 let type = this.objective_types.find(type => type.id === deletedObjective.objective_type_id);
                 let index = type.terminal_objectives.findIndex(terminal => terminal.id === deletedObjective.id);
                 type.terminal_objectives.splice(index, 1);
-                // if not objective remains in this type, remove its tab and its ID from the order
+                // if no objective remains in this type, remove its tab and its ID from the order
                 if (type.terminal_objectives.length === 0) this.removeType(type);
             } else { // enabling
                 let terminal;
-                for (const arr of Object.values(this.type_objectives)) {
-                    terminal = arr.find(t => t.id === deletedObjective.terminal_objective_id);
+                for (const type of this.objective_types) {
+                    terminal = type.terminal_objectives.find(t => t.id === deletedObjective.terminal_objective_id);
                     if (terminal) break;
                 }
 

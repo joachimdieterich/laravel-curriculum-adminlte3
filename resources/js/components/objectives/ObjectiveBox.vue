@@ -104,7 +104,7 @@ export default {
         },
         settings: {
             type: Object,
-            default: {},
+            default: undefined,
         },
         editable: {
             type: Boolean,

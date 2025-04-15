@@ -305,6 +305,31 @@ export default {
             }
         });
 
+        this.$eventHub.on('terminal-objectives-reordered', (data) => {
+            const type_id = data.objectives.objective_type_id;
+            let objectives = this.objective_types.find(type => type.id === type_id).terminal_objectives;
+            let movingIndex = objectives.findIndex(t => t.id === data.objectives.id);
+            // objective which was clicked on to be moved
+            let movingTerminal = objectives[movingIndex];
+            // objective with which it was swapped
+            let swappedTerminal = objectives[movingIndex + data.higher]; // higher = 1 or -1
+
+            movingTerminal.order_id = swappedTerminal.order_id;
+            swappedTerminal.order_id -= data.higher;
+
+            if (data.higher === 1) { // e.g. [item, move, swap, item] => [item, swap, move, item]
+                objectives.splice(movingIndex, 2, swappedTerminal, movingTerminal);
+                if (this.max_ids[type_id] === swappedTerminal.id) {
+                    this.max_ids[type_id] = movingTerminal.id;
+                }
+            } else { // e.g. [swap, move, item, item] => [move, swap, item, item]
+                objectives.splice(movingIndex - 1, 2, movingTerminal, swappedTerminal);
+                if (this.max_ids[type_id] === movingTerminal.id) {
+                    this.max_ids[type_id] = swappedTerminal.id;
+                }
+            }
+        });
+
         // enabling objectives
         this.$eventHub.on('enabling-objective-added', (enabling) => {
             let terminal;

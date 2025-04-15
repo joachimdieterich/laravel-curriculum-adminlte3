@@ -95,6 +95,7 @@
                             <ObjectiveBox
                                 type="createterminal"
                                 :objective="{ curriculum_id: curriculum.id }"
+                                :objective_type_id="activeTypeId"
                             />
                         </div>
                     </div>
@@ -225,9 +226,9 @@ export default {
                 this.handleTypeMoved(); // send new order to the server
             });
         },
-        removeType(type) {
+        removeType(type, changeTab = true) {
             // switch tab first, if the current tab is the one to be removed
-            if (this.activeTypeId === type.id) {
+            if (changeTab && this.activeTypeId === type.id) {
                 this.activeTypeId = this.objective_types[this.type_order[0]].id;
                 $('#' + this.activeTypeId + '-tab')[0].click();
             }
@@ -340,7 +341,11 @@ export default {
                 }
 
                 // remove the old type if its last terminal-objective was moved to another type
-                if (old_type.terminal_objectives.length === 0) this.removeType(old_type);
+                if (old_type.terminal_objectives.length === 0) {
+                    this.removeType(old_type, false);
+                    this.activeTypeId = type.id;
+                    $('#' + this.activeTypeId + '-tab')[0].click();
+                }
             } else {
                 Object.assign(terminal, updatedTerminal);
             }

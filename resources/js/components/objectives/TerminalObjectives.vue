@@ -178,7 +178,7 @@ export default {
                         // get the order by their current index instead of their id
                         this.type_order = this.curriculum.objective_type_order?.map(
                             type_id => this.objective_types.findIndex(type => type.id === type_id)
-                        ) ?? [0]; // type-order unset => only one entry with index 0
+                        ) ?? this.objective_types.map((t, index) => index);
                     }
                 })
                 .catch(e => {

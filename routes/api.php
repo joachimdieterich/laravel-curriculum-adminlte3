@@ -49,6 +49,8 @@ Route::group([
 //    Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
 //    Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
     Route::apiResource('curricula', 'CurriculaApiController');
+    // index-Route needs to be defined after Resource-Route, otherwise it will be overridden
+    Route::get('curricula', 'CurriculaApiController@index')->middleware('throttle:1,10');
     Route::apiResource('permissions', 'PermissionsApiController');
 
     Route::apiResource('roles', 'RolesApiController');

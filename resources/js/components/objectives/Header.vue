@@ -119,23 +119,21 @@ export default {
 
             axios.patch(url)
                 .then(response => {
-                    this.$eventHub.emit('enabling-objectives-reordered', {
+                    this.$eventHub.emit(this.type + '-objectives-reordered', {
                         type_id: this.objective_type_id,
                         objectives: response.data,
+                        higher: higher ? 1 : -1, // only used for terminal-objectives
                     });
                 })
                 .catch(error => {
                     this.toast.error(this.trans('global.error'));
+                    console.log(error);
                 });
         },
     },
     computed: {
         edit_settings: function() {
-            if (typeof this.settings !== "undefined"){
-                return this.settings.edit;
-            } else {
-                return false;
-            }
+            return this.settings?.edit ?? false;
         },
     },
     components: {

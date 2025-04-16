@@ -40,10 +40,22 @@ import {useDatatableStore} from "../../store/datatables";
 
 export default {
     props: {
-        objective: {},
-        type: {},
-        settings: {},
-        disabled: false,
+        objective: {
+            type: Object,
+            default: null,
+        },
+        type: {
+            type: String,
+            default: null,
+        },
+        settings: {
+            type: Object,
+            default: null,
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
         users: {
             type: Array,
             default: () => [],

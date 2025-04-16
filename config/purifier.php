@@ -25,7 +25,8 @@ return [
     'settings'      => [
         'default' => [
             'HTML.Doctype'             => 'HTML 4.01 Transitional',
-            'HTML.Allowed'             => 'div[style],b,strong,i,em,u,a[href|target|title],ul,ol,li,p[style],br,span[style|class],img[width|height|alt|src],table[style|border],tbody,tr,td[style|colspan|rowspan],sup,sub,code,h1[style],h2[style],h3[style],h4[style],h5[style],h6[style]',
+            'HTML.Allowed'             => 'div[style],b,strong,i,em,u,a[href|target|title],ul,ol,li,p[style|id],br,span[style|class],img[width|height|alt|src],table[style|border],tbody,tr,td[style|colspan|rowspan],sup,sub,code,h1[style],h2[style],h3[style],h4[style],h5[style],h6[style]',
+            'Attr.EnableID'            => 'true', // ID-attribute is currently only allowed on p-tags
             'CSS.AllowedProperties'    => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,line-height,width,border-style,border-color',
             'AutoFormat.AutoParagraph' => true,
             'AutoFormat.RemoveEmpty'   => true,

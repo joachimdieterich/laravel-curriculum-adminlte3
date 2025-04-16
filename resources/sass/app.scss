@@ -39,6 +39,7 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 $OpenSansFontPath: 'open-sans-all/fonts';
 @import "open-sans-all/scss/open-sans.scss";
 
+html { scroll-behavior: smooth; }
 body {
     font-family: 'Open Sans', Arial, sans-serif !important;
     color: #333;
@@ -58,6 +59,13 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+// highlight-animation
+p[id]:target { animation: yellowfade 1.5s; }
+@keyframes yellowfade {
+    from { background: yellow; }
+    to { background: transparent; }
+}
+
 .p-margin-0 p { margin-bottom: 0px !important; }
 .pointer {
     cursor: pointer;

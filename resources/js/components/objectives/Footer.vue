@@ -15,14 +15,26 @@
 </template>
 <script>
 import AchievementIndicator from './AchievementIndicator.vue';
+
 export default {
     props: {
-        objective: {},
-        textcolor: '#000',
-        type: {},
-        settings: {},
+        objective: {
+            type: Object,
+            default: null,
+        },
+        textcolor: {
+            type: String,
+            default: '#000',
+        },
+        type: {
+            type: String,
+            default: null,
+        },
+        settings: {
+            type: Object,
+            default: null,
+        },
     },
-    methods: {},
     components: {
         AchievementIndicator,
     },

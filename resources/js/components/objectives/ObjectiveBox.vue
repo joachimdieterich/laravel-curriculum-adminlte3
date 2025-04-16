@@ -104,7 +104,7 @@ export default {
         },
         settings: {
             type: Object,
-            default: {},
+            default: undefined,
         },
         editable: {
             type: Boolean,
@@ -128,14 +128,14 @@ export default {
                     title: 'Edit',
                     icon: 'fa fa-pencil-alt',
                     action: 'edit',
-                    model: this.type + 'Objectives',
+                    model: this.type + 'Objective',
                     value: this.type + '-objective-modal',
                 },
                 {
                     title: 'Move',
                     icon: 'fa fa-repeat',
                     action: 'move',
-                    model: this.type + 'Objectives',
+                    model: this.type + 'Objective',
                     value: 'move-' + this.type + '-objective-modal',
                 },
                 {
@@ -145,7 +145,7 @@ export default {
                     title: 'Delete',
                     icon: 'fa fa-trash',
                     action: 'delete',
-                    model: this.type + 'Objectives',
+                    model: this.type + 'Objective',
                 }
             ],
             visibility: 100,

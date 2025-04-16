@@ -318,6 +318,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('terminalObjectives/{terminalObjective}/enablingObjectives', 'TerminalObjectiveController@getEnablingObjectives');
     Route::get('terminalObjectives/{terminalObjective}/referenceSubscriptionSiblings', 'TerminalObjectiveController@referenceSubscriptionSiblings');
     Route::get('terminalObjectives/{terminalObjective}/quoteSubscriptions', 'TerminalObjectiveController@quoteSubscriptions');
+    Route::patch('terminalObjectives/{terminalObjective}/higher', 'TerminalObjectiveController@higher');
+    Route::patch('terminalObjectives/{terminalObjective}/lower', 'TerminalObjectiveController@lower');
     Route::resource('terminalObjectives', 'TerminalObjectiveController');
     /* terminalObjectiveSubscriptions */
     Route::post('terminalObjectiveSubscriptions/destroy', 'TerminalObjectiveSubscriptionsController@destroySubscription');

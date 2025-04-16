@@ -80,18 +80,19 @@ class TerminalObjectiveController extends Controller
 
         // update objective type
         if ($request->has('objective_type_id')) {
-            $order_id = $old_objective->order_id;
-            if ($old_objective->objective_type_id != $request['objective_type_id']) {
-                $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
-            }
-            $request->request->add(['order_id' => $order_id]);
             // if moved to another curriculum
             if ($old_objective->curriculum_id != request('curriculum_id')) {
+                $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
                 if ($terminalObjective->update(['curriculum_id' => request('curriculum_id'), 'order_id' => $order_id]) == true) {
                     $this->moveToCurriculum($old_objective, $request);
                 }
-            } else if (($terminalObjective->update($request->all()) == true) and ($old_objective->order_id != request('order_id'))) {
-                $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
+            } else {
+                // if objective type got changed
+                if ($old_objective->objective_type_id != $request['objective_type_id']) {
+                    $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
+                    $request->request->add(['order_id' => $order_id]);
+                }
+                $terminalObjective->update($request->all());
             }
             if (request()->wantsJson()) {
                 return $terminalObjective->without('curriculum')->with('type')->find($terminalObjective->id);
@@ -213,6 +214,40 @@ class TerminalObjectiveController extends Controller
         }
 
         return ['quotes_subscriptions' => $quotes_subscriptions, 'curricula_list' => $curricula_list];
+    }
+
+    public function higher(TerminalObjective $terminalObjective)
+    {
+        abort_unless($terminalObjective->isAccessible(), 403);
+
+        // decrease order_id of the objective with the next highest order_id
+        TerminalObjective::where([
+            'curriculum_id' => $terminalObjective->curriculum_id,
+            'objective_type_id' => $terminalObjective->objective_type_id,
+            'order_id' => $terminalObjective->order_id + 1,
+        ])->decrement('order_id', 1);
+
+        $terminalObjective->order_id++;
+        $terminalObjective->save();
+
+        return $terminalObjective;
+    }
+
+    public function lower(TerminalObjective $terminalObjective)
+    {
+        abort_unless($terminalObjective->isAccessible(), 403);
+
+        // increase order_id of the objective with the next lowest order_id
+        TerminalObjective::where([
+            'curriculum_id' => $terminalObjective->curriculum_id,
+            'objective_type_id' => $terminalObjective->objective_type_id,
+            'order_id' => $terminalObjective->order_id - 1,
+        ])->increment('order_id', 1);
+
+        $terminalObjective->order_id--;
+        $terminalObjective->save();
+
+        return $terminalObjective;
     }
 
     protected function getMaxOrderId($curriculum_id, $objective_type_id)

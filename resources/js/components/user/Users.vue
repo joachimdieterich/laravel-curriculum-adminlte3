@@ -326,7 +326,8 @@ export default {
                             0: {
                                 group_id: this.reference.id,
                                 user_id: {
-                                    0: this.currentUser.id,
+                                    // ID is normally the group_user_id, but if the user has been added with no reload, it is the user_id
+                                    0: this.currentUser.user_id ?? this.currentUser.id,
                                 },
                             },
                         },

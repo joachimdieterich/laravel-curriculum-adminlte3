@@ -205,12 +205,14 @@ class GroupsController extends Controller
 
     public function expel()
     {
-        abort_unless(\Gate::allows('group_enrolment'), 403);
+        abort_unless(\Gate::allows('group_enrolment'), 403, "No permission to remove users from groups");
 
         foreach ((request()->expel_list) as $expel) {
-            abort_unless((auth()->user()->groups->contains($expel['group_id'])
-                or is_admin()
-                or (Group::find($expel['group_id'])->first()->organization_id == auth()->user()->current_organization_id)), 403);
+            abort_unless((
+                is_admin()
+                or auth()->user()->groups->contains($expel['group_id']) // user is enrolled in group
+                or Group::find($expel['group_id'])->organization_id == auth()->user()->current_organization_id // current set organization is group's organization
+            ), 403, "Need to be enroled in group or have its organization be set as current organization");
 
             foreach ((array) $expel['user_id'] as $user_id)
             {

@@ -1027,6 +1027,7 @@ return [
         'enrol' => 'Pinnwand verknüpfen',
         'expel_helper' => 'Gruppe aus Pinnwand ausschreiben',
         'only_edit_owned_items' => 'Nutzer können nur selbst erstellte Status/Karten bearbeiten.',
+        'collapse_items' => 'Karteninhalt standardmäßig einklappen',
         'allow_copy' => 'Pinnwand darf kopiert werden.',
         'delete' => 'Pinnwand löschen',
         'delete_helper' => 'Soll die Pinnwand sowie die zugehörigen Daten gelöscht werden?',

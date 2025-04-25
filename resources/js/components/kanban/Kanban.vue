@@ -19,6 +19,7 @@
         </div>
         <div
             class="position-absolute pointer"
+            :class="kanban.collapse_items && 'collapsed'"
             style="top: 10px; right: 10px; line-height: 1; z-index: 10;"
             :style="{ color: textColor }"
             @click="toggleCollapseAll"
@@ -81,10 +82,11 @@
                                             || ($userId == item.owner_id)
                                             || ($userId == kanban.owner_id)"
                                         :key="item.id"
-                                        :allow_copy="kanban.allow_copy"
                                         :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
                                         :commentable="currentKanban.commentable"
                                         :only_edit_owned_items="kanban.only_edit_owned_items"
+                                        :collapse_items="kanban.collapse_items"
+                                        :allow_copy="kanban.allow_copy"
                                         :ref="'kanbanItemId' + item.id"
                                         :index="status.id + '_' + item.id"
                                         :item="item"

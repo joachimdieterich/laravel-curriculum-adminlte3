@@ -163,6 +163,7 @@ class KanbanController extends Controller
             'commentable' => $new_kanban['commentable'],
             'auto_refresh' => $new_kanban['auto_refresh'],
             'only_edit_owned_items' => $new_kanban['only_edit_owned_items'],
+            'collapse_items' => $new_kanban['collapse_items'],
             'allow_copy' => $new_kanban['allow_copy'],
             'owner_id' => auth()->user()->id,
         ]);
@@ -237,6 +238,7 @@ class KanbanController extends Controller
             'commentable' => $input['commentable'],
             'auto_refresh' => $input['auto_refresh'],
             'only_edit_owned_items' => $input['only_edit_owned_items'],
+            'collapse_items' => $input['collapse_items'],
             'allow_copy' => $input['allow_copy'],
             'owner_id' => is_admin() ? $input['owner_id'] : $kanban->owner_id,
         ]);
@@ -495,6 +497,7 @@ class KanbanController extends Controller
             'color' => 'sometimes',
             'filter' => 'sometimes',
             'only_edit_owned_items' => 'sometimes',
+            'collapse_items' => 'sometimes|boolean',
             'allow_copy' => 'sometimes',
             'sharing_token' => 'sometimes',
             'owner_id' => 'sometimes',

@@ -5,6 +5,7 @@
     >
         <div
             class="card-header p-0"
+            :class="collapse_items && 'collapsed'"
             :style="{ color: textColor }"
             data-toggle="collapse"
             :data-target="'#item-' + item.id + ' > .card-body'"
@@ -101,7 +102,10 @@
             </div>
         </div>
 
-        <div class="card-body p-0 collapse show">
+        <div
+            class="card-body p-0 collapse"
+            :class="!collapse_items && 'show'"
+        >
             <div>
                 <div class="text-muted small px-3 py-2">
                     <span v-if="item.replace_links">
@@ -251,6 +255,10 @@ export default {
             default: false,
         },
         editable: {
+            type: Boolean,
+            default: false,
+        },
+        collapse_items: {
             type: Boolean,
             default: false,
         },

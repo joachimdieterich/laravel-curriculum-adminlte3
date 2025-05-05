@@ -142,6 +142,7 @@ import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'enabling-objective-modal',
@@ -152,8 +153,10 @@ export default {
     props: {},
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -213,15 +216,15 @@ export default {
             } else {
                 this.add();
             }
-
-            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post('/enablingObjectives', this.form)
                 .then(r => {
                     this.$eventHub.emit('enabling-objective-added', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
         },
@@ -229,8 +232,10 @@ export default {
             axios.patch('/enablingObjectives/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('enabling-objective-updated', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
         },

@@ -60,7 +60,7 @@ body {
     text-overflow: ellipsis;
 }
 // highlight-animation
-p[id]:target { animation: yellowfade 1.5s; }
+p[id]:target, p[id].target { animation: yellowfade 1.5s; }
 @keyframes yellowfade {
     from { background: yellow; }
     to { background: transparent; }

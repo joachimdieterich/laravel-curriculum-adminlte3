@@ -10,8 +10,8 @@
                         </h5>
                     </div>
                     <div
-                        v-permission="'organization_edit'"
-                        class="card-tools pr-2"
+                        v-permission="'organization_edit,is_admin'"
+                        class="card-tools pr-2 pointer"
                     >
                         <a  @click="editOrganization(false, false)">
                             <i class="fas fa-pencil-alt"></i>
@@ -34,8 +34,8 @@
                         {{ trans('global.place') }}
                     </strong>
                     <a
-                        v-permission="'organization_edit_address'"
-                        class="pull-right link-muted"
+                        v-permission="'organization_edit'"
+                        class="pull-right link-muted pointer"
                         @click="editOrganization(true, false)"
                     >
                         <i class="fas fa-pencil-alt"></i>
@@ -60,8 +60,8 @@
                         {{ trans('global.lms.title_singular') }}-URL
                     </strong>
                     <a
-                        v-permission="'organization_edit_address'"
-                        class="pull-right link-muted"
+                        v-permission="'organization_edit'"
+                        class="pull-right link-muted pointer"
                         @click="editOrganization(false, true)"
                     >
                         <i class="fas fa-pencil-alt"></i>

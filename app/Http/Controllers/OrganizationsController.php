@@ -117,8 +117,8 @@ class OrganizationsController extends Controller
      */
     public function update(Organization $organization)
     {
-        abort_unless(\Gate::allows('organization_edit'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
+        abort_unless(\Gate::allows('organization_edit'), 403, "No permission to edit organization information");
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403, "Need to be registered in this organization");
 
         $clean_data = $this->validateRequest();
         $clean_data['state_id'] = format_select_input($clean_data['state_id']);

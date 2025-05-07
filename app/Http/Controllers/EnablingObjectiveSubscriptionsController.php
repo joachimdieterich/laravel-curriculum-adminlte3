@@ -42,7 +42,7 @@ class EnablingObjectiveSubscriptionsController extends Controller
         );
 
         if (request()->wantsJson()) {
-            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
+            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id', 'visibility')
                 ->whereIn('id', $terminal_ids)
                 ->with(['enablingObjectives' => function($query) use ($input, $user_ids) {
                     $query->select('id', 'title', 'description', 'terminal_objective_id')

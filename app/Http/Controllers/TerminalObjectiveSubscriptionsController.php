@@ -31,7 +31,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
         }
 
         if (request()->wantsJson()) {
-            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
+            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id', 'terminal_objectives.visibility')
                 ->join('terminal_objective_subscriptions', 'terminal_objectives.id', '=', 'terminal_objective_subscriptions.terminal_objective_id')
                 ->where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])

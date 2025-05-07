@@ -168,6 +168,20 @@
                             </span>
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
+                                    :id="'collapse_items_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.collapse_items"
+                                />
+                                <label
+                                    class="custom-control-label text-muted"
+                                    :for="'collapse_items_' + form.id"
+                                >
+                                    {{ trans('global.kanban.collapse_items') }}
+                                </label>
+                            </span>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
                                     :id="'allow_copy_' + form.id"
                                     class="custom-control-input pt-1"
                                     type="checkbox"
@@ -247,6 +261,7 @@ export default {
                 commentable: true,
                 auto_refresh: false,
                 only_edit_owned_items: false,
+                collapse_items: false,
                 allow_copy: true,
             }),
         }

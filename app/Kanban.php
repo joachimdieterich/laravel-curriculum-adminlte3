@@ -37,6 +37,7 @@ class Kanban extends Model
         'commentable' => 'boolean',
         'auto_refresh' => 'boolean',
         'only_edit_owned_items' => 'boolean',
+        'collapse_items' => 'boolean',
         'allow_copy' => 'boolean',
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',

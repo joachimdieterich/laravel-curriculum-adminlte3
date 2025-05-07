@@ -34,7 +34,7 @@
     <div v-else
         :id="id"
         class="box box-objective"
-        :style="{ 'background-color': backgroundcolor, 'border-color': bordercolor, 'opacity': opacity, 'filter': filter }"
+        :style="{ 'background-color': backgroundcolor, 'border-color': bordercolor }"
     >
         <!-- don't load Header if it isn't needed -->
         <Header
@@ -53,7 +53,7 @@
         >
             <div
                 class="boxscroll hide-scrollbars"
-                :style="{'background': background, 'background-color': backgroundcolor, 'border-color': objective.color }"
+                style="background-color: inherit;"
             >
                 <div
                     class="boxcontent"
@@ -149,7 +149,6 @@ export default {
                 }
             ],
             visibility: 100,
-            errors: {},
         }
     },
     methods: {
@@ -182,10 +181,14 @@ export default {
             return (this.type === 'terminal' ? 'none' : "");
         },
         backgroundcolor: function () {
-            return (this.type === 'terminal' ? this.objective.color : "#fff");
+            return this.type === 'terminal'
+                ? this.objective.color + (this.objective.visibility ? 'FF' : '40')
+                : "#fff";
         },
         bordercolor: function () {
-            return this.objective.color ?? this.color;
+            return this.type === 'terminal'
+                ? this.objective.color + (this.objective.visibility ? 'FF' : '40')
+                : this.color + (this.objective.visibility ? 'FF' : '40');
         },
         textcolor: function() {
             if (this.type === 'terminal') {
@@ -196,17 +199,6 @@ export default {
         },
         id: function() {
             return this.type + '_' + this.objective.id;
-        },
-        opacity: function() {
-            if (this.objective.visibility == false) {
-                this.visibility = 20/100;
-                return this.visibility;
-            } else {
-                return this.visibility/100;
-            }
-        },
-        filter: function() {
-            return "alpha(opacity=" + this.visibility + ")";
         },
         cross_reference: function() {
             if (typeof this.settings !== "undefined") {

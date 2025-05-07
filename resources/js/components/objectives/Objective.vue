@@ -452,6 +452,7 @@ import MediumModal from "../media/MediumModal.vue";
 import ReferenceObjectiveModal from "../reference/ReferenceObjectiveModal.vue";
 import PrerequisiteObjectiveModal from "../prerequisites/PrerequisiteObjectiveModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
+import { nextTick } from "vue";
 
 export default {
     name: "objective",
@@ -514,7 +515,7 @@ export default {
             search: '',
         }
     },
-    mounted() {
+    async mounted() {
         this.currentObjective = this.objective;
 
         if (typeof this.objective.terminal_objective === 'object') {
@@ -524,6 +525,20 @@ export default {
             this.type = 'terminal';
             this.model = 'App\\TerminalObjective';
         }
+
+        await nextTick(); // wait for DOM to render
+        const ref = this.$el.querySelectorAll('a[href*="#"]');
+        ref.forEach(elem => {
+            // manually create event to scroll reference into view
+            elem.addEventListener('click', (e) => {
+                e.preventDefault(); // default would scroll reference to top (hiding it behind the header)
+                const target = document.querySelector(elem.attributes.href.value);
+                target.scrollIntoView({ block: 'center' });
+                target.classList.add('target'); // classname to trigger highlight-animation
+                // remove class after animation finishes, so the highlight-animation can be triggered again
+                setTimeout(() => target.classList.remove('target'), 1500);
+            });
+        });
 
         //event listener
         this.$eventHub.on('terminal-objective-updated', (updatedObjective) => {

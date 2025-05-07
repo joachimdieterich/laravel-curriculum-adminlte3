@@ -2,7 +2,6 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
-            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -170,6 +169,7 @@ import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'terminal-objective-modal',
@@ -179,15 +179,16 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/terminalObjectives',
             form: new Form({
                 id: '',
                 title: '',
@@ -215,7 +216,7 @@ export default {
             ),
             tinyMCE_description: this.$initTinyMCE(
                 [
-                    "autolink link table lists autoresize code"
+                    "autolink link table lists autoresize code fullscreen"
                 ],
                 {
                     public: 1,
@@ -224,7 +225,7 @@ export default {
                     subscribable_type: 'App\\Curriculum',
                     callbackId: this.component_id,
                 },
-                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link code",
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link code fullscreen",
                 ""
             ),
         }
@@ -241,24 +242,26 @@ export default {
             } else {
                 this.add();
             }
-
-            this.globalStore.closeModal(this.$options.name);
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/terminalObjectives', this.form)
                 .then(r => {
                     this.$eventHub.emit('terminal-objective-added', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/terminalObjectives/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('terminal-objective-updated', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
         },

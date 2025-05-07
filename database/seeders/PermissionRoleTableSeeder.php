@@ -211,7 +211,6 @@ class PermissionRoleTableSeeder extends Seeder
                 'navigator_show',
                 'organization_show',
                 'organization_enrolment',
-                'organization_edit_address',
                 'user_access',
                 'user_create',
                 'user_show',

@@ -1116,12 +1116,6 @@ class PermissionsTableSeeder extends Seeder
                 'updated_at' => '2020-06-07 17:57:44',
             ],
             [
-                'id' => '208',
-                'title' => 'organization_edit_address',
-                'created_at' => '2020-06-07 17:57:10',
-                'updated_at' => '2020-06-07 17:57:10',
-            ],
-            [
                 'id' => '209',
                 'title' => 'App\Curriculum_content_create',
                 'created_at' => '2020-06-07 17:57:19',

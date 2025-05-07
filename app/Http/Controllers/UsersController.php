@@ -64,6 +64,8 @@ class UsersController extends Controller
 
     public function list()
     {
+        $rowID = 'id';
+
         if (request()->has(['group_id']))
         {
             $request = request()->validate(
@@ -72,6 +74,7 @@ class UsersController extends Controller
                 ]
             );
             $users = Group::where('id',$request['group_id'])->first()->users();
+            $rowID = 'user_id';
         }
         else
         {
@@ -81,7 +84,7 @@ class UsersController extends Controller
         }
 
         return DataTables::of($users)
-            ->setRowId('id')
+            ->setRowId($rowID)
             ->make(true);
     }
 

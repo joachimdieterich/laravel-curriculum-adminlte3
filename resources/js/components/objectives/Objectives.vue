@@ -1,31 +1,27 @@
 <template>
-    <div class="card mb-0">
-        <div v-for="terminal in terminal_objectives"
-            class="card-body p-0"
-        >
+    <div
+        class="d-flex flex-column"
+        style="gap: 10px;"
+    >
+        <div v-for="terminal in terminal_objectives">
             <div class="d-flex">
-                <div class="flex-fill">
+                <div class="objectives d-flex flex-fill flex-wrap">
                     <ObjectiveBox
                         type="terminal"
                         :objective="terminal"
                         :settings="settings"
                     />
 
-                    <div class="ml-auto">
-                        <EnablingObjectives
-                            :terminalobjective="terminal"
-                            :objectives="terminal.enabling_objectives"
-                            :referenceable_id="referenceable_id"
-                            :referenceable_type="referenceable_type"
-                            :settings="settings"
-                            :editable="editable"
-                        />
-                    </div>
+                    <EnablingObjectives
+                        :terminalobjective="terminal"
+                        :objectives="terminal.enabling_objectives"
+                        :referenceable_id="referenceable_id"
+                        :referenceable_type="referenceable_type"
+                        :settings="settings"
+                        :editable="editable"
+                    />
                 </div>
-                <div
-                    class="card-tools"
-                    style="margin-left: -10px;"
-                >
+                <div class="card-tools">
                     <span v-if="editable && showTools">
                         <a
                             class="text-danger"

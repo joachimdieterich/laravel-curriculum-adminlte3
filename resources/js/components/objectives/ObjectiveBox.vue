@@ -1,74 +1,78 @@
-<template >
-    <!--  v-if create terminal-->
-    <div v-if="type === 'createterminal'"
-        class="box box-objective user-select-none pointer"
-        :style="{ 'background-color': '#fff'}"
-        @click.prevent="openTerminalModal()"
-    >
-        <h1
-            class="h5 position-absolute text-center w-100"
-            style="top: 20px;"
-        >
-            {{ trans("global.terminalObjective.title_singular") }}
-        </h1>
-        <div style="text-align: center; padding: 25px; font-size: 100px;">+</div>
-    </div>
-
-    <!--  v-else-if create enabling-->
-    <div v-else-if="type === 'createenabling'"
-        class="box box-objective user-select-none pointer"
-        :style="{ 'background-color': backgroundcolor }"
-        @click.prevent="openEnablingModal()"
-    >
-        <h1
-            class="h5 position-absolute text-center w-100"
-            style="top: 20px;"
-        >
-            {{ trans("global.enablingObjective.title_singular") }}
-        </h1>
-
-        <div style="text-align: center; padding: 25px; font-size: 100px;">+</div>
-    </div>
-
-    <!--  v-else-if render existing objective-->
-    <div v-else
-        :id="id"
-        class="box box-objective"
+<template>
+    <div
+        class="box box-objective m-0"
+        style="border-radius: 10px;"
         :style="{ 'background-color': backgroundcolor, 'border-color': bordercolor }"
     >
-        <!-- don't load Header if it isn't needed -->
-        <Header
-            :objective="objective"
-            :objective_type_id="objective_type_id"
-            :type="type"
-            :menuEntries="menuEntries"
-            :settings="settings"
-            :max_id="max_id"
-            :textcolor="textcolor"
-        />
-
-        <div
-            class="panel-body boxwrap pointer"
-            @click.prevent="showDetails()"
+        <!--  v-if create terminal-->
+        <div v-if="type === 'createterminal'"
+            class="user-select-none pointer"
+            style="border-radius: 10px;"
+            :style="{ 'background-color': '#fff'}"
+            @click.prevent="openTerminalModal()"
         >
+            <h1
+                class="h5 position-absolute text-center w-100"
+                style="top: 20px;"
+            >
+                {{ trans("global.terminalObjective.title_singular") }}
+            </h1>
+            <div class="add-objective" style="text-align: center; padding: 25px;">+</div>
+        </div>
+    
+        <!--  v-else-if create enabling-->
+        <div v-else-if="type === 'createenabling'"
+            class="user-select-none pointer"
+            style="border-radius: 10px;"
+            :style="{ 'background-color': backgroundcolor }"
+            @click.prevent="openEnablingModal()"
+        >
+            <h1
+                class="h5 position-absolute text-center w-100"
+                style="top: 20px;"
+            >
+                {{ trans("global.enablingObjective.title_singular") }}
+            </h1>
+    
+            <div class="add-objective" style="text-align: center; padding: 25px;">+</div>
+        </div>
+    
+        <!--  v-else-if render existing objective-->
+        <div v-else
+            :id="id"
+            class="d-flex flex-column h-100"
+            style="padding: 0px 10px;"
+        >
+            <!-- don't load Header if it isn't needed -->
+            <Header
+                :objective="objective"
+                :objective_type_id="objective_type_id"
+                :type="type"
+                :menuEntries="menuEntries"
+                :settings="settings"
+                :max_id="max_id"
+                :textcolor="textcolor"
+            />
+    
             <div
-                class="boxscroll hide-scrollbars"
-                style="background-color: inherit;"
+                class="flex-fill overflow-hidden pointer"
+                @click.prevent="showDetails()"
             >
                 <div
-                    class="boxcontent"
+                    class="small hide-scrollbars overflow-auto h-100 p-margin-0"
+                    style="background-color: inherit; overscroll-behavior: none;"
                     :style="{ 'color': textcolor }"
                     v-html="objective.title"    
                 ></div>
             </div>
+    
+            <Footer v-if="objective.achievements !== undefined"
+                :objective="objective"
+                :textcolor="textcolor"
+                :type="type"
+                :settings="settings"
+            />
         </div>
-
-        <Footer
-            :objective="objective"
-            :textcolor="textcolor"
-            :type="type"
-            :settings="settings"
-        />
     </div>
 </template>
 <script>

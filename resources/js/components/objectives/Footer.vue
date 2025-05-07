@@ -1,16 +1,14 @@
 <template >
     <div
-        class="boxfooter row"
+        class="d-flex my-1"
         :style="{ 'color': textcolor }"
     >
-        <div class="p-0 col-12">
-            <AchievementIndicator v-if="(typeof this.objective.achievements !== 'undefined')"
-                v-permission="'achievement_create'"
-                :objective="objective"
-                :type="type"
-                :settings="settings"
-            />
-        </div>
+        <AchievementIndicator
+            v-permission="'achievement_create'"
+            :objective="objective"
+            :type="type"
+            :settings="settings"
+        />
     </div>
 </template>
 <script>

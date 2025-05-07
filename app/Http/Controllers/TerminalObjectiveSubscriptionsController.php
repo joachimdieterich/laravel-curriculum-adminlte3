@@ -36,7 +36,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
                 ->where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
                 ->with(['enablingObjectives' => function($query) use ($user_ids) {
-                    $query->select('id', 'title', 'description', 'terminal_objective_id')
+                    $query->select('id', 'title', 'description', 'terminal_objective_id', 'visibility')
                         ->without(['terminalObjective', 'level'])
                         ->with(['achievements' => function($query) use ($user_ids) {
                             $query->whereIn('user_id', $user_ids)

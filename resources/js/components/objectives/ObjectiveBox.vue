@@ -1,43 +1,28 @@
 <template>
     <div
-        class="box box-objective m-0"
-        style="border-radius: 10px;"
+        class="objective m-0"
         :style="{ 'background-color': backgroundcolor, 'border-color': bordercolor }"
     >
-        <!--  v-if create terminal-->
         <div v-if="type === 'createterminal'"
-            class="user-select-none pointer"
-            style="border-radius: 10px;"
-            :style="{ 'background-color': '#fff'}"
+            class="add-objective user-select-none pointer h-100"
             @click.prevent="openTerminalModal()"
         >
-            <h1
-                class="h5 position-absolute text-center w-100"
-                style="top: 20px;"
-            >
-                {{ trans("global.terminalObjective.title_singular") }}
-            </h1>
-            <div class="add-objective" style="text-align: center; padding: 25px;">+</div>
+            <span>{{ trans("global.terminalObjective.title_singular") }}</span>
+            <div class="d-flex align-items-center justify-content-center h-100">
+                <span>+</span>
+            </div>
         </div>
-    
-        <!--  v-else-if create enabling-->
+
         <div v-else-if="type === 'createenabling'"
-            class="user-select-none pointer"
-            style="border-radius: 10px;"
-            :style="{ 'background-color': backgroundcolor }"
+            class="add-objective user-select-none pointer h-100"
             @click.prevent="openEnablingModal()"
         >
-            <h1
-                class="h5 position-absolute text-center w-100"
-                style="top: 20px;"
-            >
-                {{ trans("global.enablingObjective.title_singular") }}
-            </h1>
-    
-            <div class="add-objective" style="text-align: center; padding: 25px;">+</div>
+            <span>{{ trans("global.enablingObjective.title_singular") }}</span>
+            <div class="d-flex align-items-center justify-content-center h-100">
+                <span>+</span>
+            </div>
         </div>
-    
-        <!--  v-else-if render existing objective-->
+
         <div v-else
             :id="id"
             class="d-flex flex-column h-100"

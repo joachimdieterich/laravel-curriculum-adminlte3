@@ -61,7 +61,7 @@
                 >
                     <div v-for="terminal in type.terminal_objectives"
                         :id="'terminalObjective_' + terminal.id"
-                        class="objectives d-flex flex-wrap"
+                        class="objectives"
                     >
                         <ObjectiveBox
                             type="terminal"
@@ -88,7 +88,7 @@
 
             <div v-if="settings.edit"
                 v-permission="'curriculum_edit'"
-                id="Create-TerminalObjective"
+                class="objectives"
                 style="margin: 10px 0px;"
             >
                 <ObjectiveBox

@@ -535,8 +535,6 @@
     .nav-item-text {
         padding-top: 1.5rem !important;
     }
-    .objectives { flex-direction: column; }
-    .add-objective { font-size: 66px; }
     .box {
         &.box-objective {
             width: 100%;
@@ -633,11 +631,6 @@
         border-bottom-left-radius: 0.2rem;
         border-bottom-right-radius: 0.2rem;
     }
-    .objectives {
-        flex-direction: row;
-        gap: 10px;
-    }
-    .add-objective { font-size: 98px; }
     .box {
         &.box-objective {
             height: 200px;

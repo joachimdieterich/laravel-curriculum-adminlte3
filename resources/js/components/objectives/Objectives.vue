@@ -3,34 +3,34 @@
         class="d-flex flex-column"
         style="gap: 10px;"
     >
-        <div v-for="terminal in terminal_objectives">
-            <div class="d-flex">
-                <div class="objectives d-flex flex-fill flex-wrap">
-                    <ObjectiveBox
-                        type="terminal"
-                        :objective="terminal"
-                        :settings="settings"
-                    />
+        <div v-for="terminal in terminal_objectives"
+            class="d-flex"
+        >
+            <div class="objectives">
+                <ObjectiveBox
+                    type="terminal"
+                    :objective="terminal"
+                    :settings="settings"
+                />
 
-                    <EnablingObjectives
-                        :terminalobjective="terminal"
-                        :objectives="terminal.enabling_objectives"
-                        :referenceable_id="referenceable_id"
-                        :referenceable_type="referenceable_type"
-                        :settings="settings"
-                        :editable="editable"
-                    />
-                </div>
-                <div class="card-tools">
-                    <span v-if="editable && showTools">
-                        <a
-                            class="text-danger"
-                            @click="destroy(terminal)"
-                        >
-                            <i class="fas fa-trash pointer p-1"></i>
-                        </a>
-                    </span>
-                </div>
+                <EnablingObjectives
+                    :terminalobjective="terminal"
+                    :objectives="terminal.enabling_objectives"
+                    :referenceable_id="referenceable_id"
+                    :referenceable_type="referenceable_type"
+                    :settings="settings"
+                    :editable="editable"
+                />
+            </div>
+            <div class="card-tools">
+                <span v-if="editable && showTools">
+                    <a
+                        class="text-danger"
+                        @click="destroy(terminal)"
+                    >
+                        <i class="fas fa-trash pointer p-1"></i>
+                    </a>
+                </span>
             </div>
         </div>
         <div v-if="editable && showTools"

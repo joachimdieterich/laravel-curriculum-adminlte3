@@ -1,35 +1,26 @@
 <template>
-    <div v-for="objective in objectives"
-        :id="'enablingObjective_' + objective.id"
-        class="box-objective"
-    >
-        <ObjectiveBox
-            type="enabling"
-            :objective="objective"
-            :objective_type_id="terminalobjective.objective_type_id"
-            :referenceable_id="referenceable_id"
-            :referenceable_type="referenceable_type"
-            :color="terminalobjective.color"
-            :settings="settings"
-            :editable="editable"
-            :max_id="objectives[objectives.length - 1]?.id"
-        />
-    </div>
+    <ObjectiveBox v-for="objective in objectives"
+        type="enabling"
+        :objective="objective"
+        :objective_type_id="terminalobjective.objective_type_id"
+        :referenceable_id="referenceable_id"
+        :referenceable_type="referenceable_type"
+        :color="terminalobjective.color"
+        :settings="settings"
+        :editable="editable"
+        :max_id="objectives[objectives.length - 1]?.id"
+    />
 
-    <div v-if="settings.edit === true"
+    <ObjectiveBox v-if="settings.edit === true"
         v-permission="'curriculum_edit'"
-        id="createEnablingRow"
-    >
-        <ObjectiveBox
-            type="createenabling"
-            :objective="{
-                curriculum_id: terminalobjective.curriculum_id,
-                terminal_objective_id: terminalobjective.id
-            }"
-            :settings="settings"
-            :max_id="objectives[objectives.length - 1]?.id"
-        />
-    </div>
+        type="createenabling"
+        :objective="{
+            curriculum_id: terminalobjective.curriculum_id,
+            terminal_objective_id: terminalobjective.id
+        }"
+        :settings="settings"
+        :max_id="objectives[objectives.length - 1]?.id"
+    />
 </template>
 <script>
 import ObjectiveBox from './ObjectiveBox.vue';

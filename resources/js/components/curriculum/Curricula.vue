@@ -141,15 +141,14 @@
                     </p>
                 </template>
 
-                <template v-slot:dropdown
-                    v-permission="'curriculum_edit, curriculum_delete'"
-                >
+                <template v-slot:dropdown>
                     <div
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
                         <button
+                            v-permission="'curriculum_edit'"
                             :name="'curriculum-edit_' + curriculum.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="editCurriculum(curriculum)"
@@ -173,8 +172,9 @@
                             <i class="fa fa-share-alt mr-2"></i>
                             {{ trans('global.curriculum.share') }}
                         </button>
-                        <hr class="my-1">
+                        <hr v-permission="'curriculum_delete'" class="my-1">
                         <button
+                            v-permission="'curriculum_delete'"
                             :id="'delete-curriculum-' + curriculum.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"

@@ -27,35 +27,67 @@ class CurriculaApiController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
         // might need to be broken down in chunks, since there's a lot of data
-        return response()->json([
-            Curriculum::select('id', 'title', 'description', 'grade_id', 'subject_id', 'organization_type_id', 'type_id')
+        $curricula = Curriculum::select(
+                'curricula.id', 'curricula.title', 'description',
+                'grades.title as grade',
+                'subjects.title as subject',
+                'organization_types.title as organization_type'
+            )
             ->where('type_id', 1)
+            ->join('grades', 'grades.id', '=', 'curricula.grade_id')
+            ->join('subjects', 'subjects.id', '=', 'curricula.subject_id')
+            ->join('organization_types', 'organization_types.id', '=', 'curricula.organization_type_id')
             ->with([
-                'grade' => function ($query) {
-                    $query->select('id', 'title');
-                },
-                'subject' => function ($query) {
-                    $query->select('id', 'title');
-                },
-                'organizationType' => function ($query) {
-                    $query->select('id', 'title');
-                },
                 'terminalObjectives' => function ($query) {
                     $query->select('id', 'title', 'description', 'curriculum_id')
                         ->with([
                             'enablingObjectives' => function ($query) {
-                                $query->select('id', 'title', 'description', 'level_id', 'terminal_objective_id')
-                                    ->with(['level' => function ($query) {
-                                        $query->select('id', 'title');
-                                    }])
-                                    ->without('terminalObjective')
-                                    ->orderBy('order_id', 'asc');
+                                $query->select('enabling_objectives.id', 'enabling_objectives.title', 'enabling_objectives.description', 'levels.title as level', 'terminal_objective_id')
+                                ->leftjoin('levels', 'levels.id', '=', 'enabling_objectives.level_id')
+                                ->without('terminalObjective', 'level')
+                                ->orderBy('order_id', 'asc');
                             }
                         ]);
                 },
             ])
-            ->get()
-        ]);
+            ->without('owner')
+            ->get();
+
+        // strip each HTML-field of its tags
+        foreach ($curricula as $curriculum) {
+            // since these attributes are casted as 'CleanHTML' they will always be wrapped with a 'p'-tag
+            $curriculum->mergeCasts(['description' => 'string']);
+            $curriculum->description = strip_tags($curriculum->description);
+            // terminal-objectives
+            foreach ($curriculum->terminalObjectives as $terminal) {
+                // same casting problem
+                $terminal->mergeCasts([
+                    'title' => 'string',
+                    'description' => 'string',
+                ]);
+                $terminal->title = strip_tags($terminal->title);
+                $terminal->description = strip_tags($terminal->description);
+                // truncate the description if it's too long and add ellipsis
+                if (strlen($terminal->description) > 75) {
+                    $terminal->description = substr($terminal->description, 0, 75).'...';
+                }
+                // enabling-objectives
+                foreach ($terminal->enablingObjectives as $enabling) {
+                    // same casting problem
+                    $enabling->mergeCasts([
+                        'title' => 'string',
+                        'description' => 'string',
+                    ]);
+                    $enabling->title = strip_tags($enabling->title);
+                    $enabling->description = strip_tags($enabling->description);
+                    if (strlen($enabling->description) > 75) {
+                        $enabling->description = substr($enabling->description, 0, 75).'...';
+                    }
+                }
+            }
+        }
+
+        return response()->json($curricula);
     }
 
     public function show(Curriculum $curriculum)

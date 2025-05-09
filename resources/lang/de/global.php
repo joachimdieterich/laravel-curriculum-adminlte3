@@ -57,6 +57,7 @@ return [
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen',
     'error' => 'Ein Fehler ist aufgetreten',
+    'error_too_long' => 'Der eingegebene Text ist zu lang',
     'save' => 'Speichern',
     'open' => 'Öffnen',
     'cancel' => 'Abbrechen',

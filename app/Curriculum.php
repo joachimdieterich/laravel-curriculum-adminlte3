@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 /**
  *   @OA\Schema(
@@ -36,6 +37,7 @@ class Curriculum extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'description' => CleanHtml::class,
         'objective_type_order' => 'array',
         'variants' => 'array',
         'date'  => 'datetime',

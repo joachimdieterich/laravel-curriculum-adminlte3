@@ -22,8 +22,8 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      path="/v1/moodle/curricula",
  *      operationId="getCurricula",
  *      tags={"Moodle v1"},
- *      summary="Get currcula by common name",
- *      description="Returns a collection of available curricula",
+ *      summary="Get curricula by common name",
+ *      description="Returns a collection of global and owned curricula",
  *      security={
  *           {"passport": {"*"}},
  *      },

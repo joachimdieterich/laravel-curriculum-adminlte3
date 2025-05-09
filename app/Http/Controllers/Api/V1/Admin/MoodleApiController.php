@@ -54,13 +54,12 @@ class MoodleApiController extends Controller
 
     public function getCurricula(Request $request)
     {
-        $this->validateRequest();
-        $user = User::where('common_name', request()->input('common_name'));
+        $input = $this->validateRequest();
+        $user_id = User::select('id')->where('common_name', $input['common_name'])->first()->id;
 
         //return $user->first()->curricula(['curricula.id', 'curricula.title']);
 
-        return Curriculum::where('type_id', 1)->select(['curricula.id', 'curricula.title'])->get();
-
+        return Curriculum::where('type_id', 1)->orWhere('owner_id', $user_id)->select(['curricula.id', 'curricula.title'])->get();
     }
 
     public function getTerminalObjectives(\App\Curriculum $curriculum,Request $request)

@@ -64,9 +64,9 @@ class PlanSubscriptionController extends Controller
             // remove duplicates and keys
             $curriculum_ids = $terminal->merge($enabling)->unique()->flatten();
 
-            // subscribe those Curricula to the group
+            // subscribe those Curricula to the group if it isn't already
             foreach ($curriculum_ids as $id) {
-                CurriculumSubscription::updateOrCreate([
+                CurriculumSubscription::firstOrCreate([
                     'curriculum_id' => $id,
                     'subscribable_type' => 'App\\Group',
                     'subscribable_id' => $input['subscribable_id'],

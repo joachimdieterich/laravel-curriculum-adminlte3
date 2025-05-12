@@ -53,6 +53,8 @@ class CurriculaApiController extends Controller
             ->without('owner')
             ->get();
 
+        $max = Config::where('key', 'api_description_length')->first()?->value ?: 75;
+
         // strip each HTML-field of its tags
         foreach ($curricula as $curriculum) {
             // since these attributes are casted as 'CleanHTML' they will always be wrapped with a 'p'-tag
@@ -68,8 +70,8 @@ class CurriculaApiController extends Controller
                 $terminal->title = strip_tags($terminal->title);
                 $terminal->description = strip_tags($terminal->description);
                 // truncate the description if it's too long and add ellipsis
-                if (strlen($terminal->description) > 75) {
-                    $terminal->description = substr($terminal->description, 0, 75).'...';
+                if (strlen($terminal->description) > $max) {
+                    $terminal->description = substr($terminal->description, 0, $max).'...';
                 }
                 // enabling-objectives
                 foreach ($terminal->enablingObjectives as $enabling) {
@@ -80,8 +82,8 @@ class CurriculaApiController extends Controller
                     ]);
                     $enabling->title = strip_tags($enabling->title);
                     $enabling->description = strip_tags($enabling->description);
-                    if (strlen($enabling->description) > 75) {
-                        $enabling->description = substr($enabling->description, 0, 75).'...';
+                    if (strlen($enabling->description) > $max) {
+                        $enabling->description = substr($enabling->description, 0, $max).'...';
                     }
                 }
             }

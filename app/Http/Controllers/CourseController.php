@@ -18,7 +18,7 @@ class CourseController extends Controller
         abort_unless(\Gate::allows('curriculum_show'), 403);
         $input = $this->validateRequest();
         // get subscription-id instead of curriculum-id
-        $courses = Curriculum::select('curriculum_subscriptions.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
+        $courses = Curriculum::select('curricula.id as curriculum_id', 'curriculum_subscriptions.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
             ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
             ->where('subscribable_id', $input['group_id'])
             ->where('subscribable_type', "App\Group")

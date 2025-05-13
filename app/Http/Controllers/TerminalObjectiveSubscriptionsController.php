@@ -90,7 +90,7 @@ class TerminalObjectiveSubscriptionsController extends Controller
             return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id', 'visibility')
                 ->with(['enablingObjectives' => function ($query) use ($input) {
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
-                    $query->select('id', 'title', 'description', 'terminal_objective_id')
+                    $query->select('id', 'title', 'description', 'visibility', 'terminal_objective_id')
                         ->without(['terminalObjective', 'level'])
                         ->with(['achievements' => function($query) use ($input) {
                             $query->whereIn('user_id', $input['users']);

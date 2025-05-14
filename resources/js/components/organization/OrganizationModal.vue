@@ -45,7 +45,7 @@
                                 <p class="help-block" v-if="form.errors.common_name" v-text="form.errors.common_name[0]"></p>
                             </div>
         
-                            <div v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <div
                                 class="form-group"
                                 :class="form.errors.title ? 'has-error' : ''"
                             >
@@ -56,14 +56,13 @@
                                     class="form-control"
                                     v-model="form.title"
                                     :placeholder="trans('global.organization.fields.title') + ' *'"
+                                    :disabled="!checkPermission('is_admin')"
                                     required
                                 />
                                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                             </div>
         
-                            <div v-if="(!onlyAddress && !onlyLmsUrl)"
-                                class="form-group"
-                            >
+                            <div class="form-group">
                                 <Editor
                                     id="description"
                                     name="description"
@@ -71,7 +70,6 @@
                                     :init="tinyMCE"
                                     v-model="form.description"
                                 />
-                                <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                             </div>
         
                             <div class="form-group">
@@ -126,9 +124,7 @@
                                 <p class="help-block" v-if="form.errors.lms_url" v-text="form.errors.lms_url[0]"></p>
                             </div>
         
-                            <div v-if="(!onlyAddress && !onlyLmsUrl)"
-                                class="form-group"
-                            >
+                            <div class="form-group">
                                 <label for="phone">{{ trans('global.organization.fields.phone') }}</label>
                                 <input
                                     id="phone"
@@ -141,9 +137,7 @@
                                 <p class="help-block" v-if="form.errors.phone" v-text="form.errors.phone[0]"></p>
                             </div>
         
-                            <div v-if="(!onlyAddress && !onlyLmsUrl)"
-                                class="form-group"
-                            >
+                            <div class="form-group">
                                 <label for="email">{{ trans('global.organization.fields.email') }}</label>
                                 <input
                                     id="email"
@@ -185,7 +179,7 @@
                                 }"
                             />
         
-                            <Select2 v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <Select2 v-if="checkPermission('is_admin')"
                                 id="organization_type_id"
                                 name="organization_type_id"
                                 url="/organizationTypes"
@@ -194,11 +188,11 @@
                                 option_label="title"
                                 :selected="form.organization_type_id"
                                 @selectedValue="(id) => {
-                                    this.form.organization_type_id = id;
+                                    this.form.organization_type_id = id[0];
                                 }"
                             />
         
-                            <Select2 v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <Select2 v-if="checkPermission('is_admin')"
                                 id="status_definition_id"
                                 name="status_definition_id"
                                 url="/statusdefinitions"
@@ -206,9 +200,9 @@
                                 css="mb-0"
                                 option_id="status_definition_id"
                                 option_label="lang_de"
-                                :selected="this.form.status_id"
+                                :selected="form.status_id"
                                 @selectedValue="(id) => {
-                                    this.form.status_id = id;
+                                    this.form.status_id = id[0];
                                 }"
                             />
                         </div>

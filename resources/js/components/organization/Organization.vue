@@ -10,10 +10,10 @@
                         </h5>
                     </div>
                     <div
-                        v-permission="'organization_edit,is_admin'"
+                        v-permission="'organization_edit'"
                         class="card-tools pr-2 pointer"
                     >
-                        <a  @click="editOrganization(false, false)">
+                        <a  @click="editOrganization()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
@@ -33,13 +33,6 @@
                         <i class="fa fa-map-marker mr-1"></i>
                         {{ trans('global.place') }}
                     </strong>
-                    <a
-                        v-permission="'organization_edit'"
-                        class="pull-right link-muted pointer"
-                        @click="editOrganization(true, false)"
-                    >
-                        <i class="fas fa-pencil-alt"></i>
-                    </a>
                     <p class="text-muted">
                         {{ currentOrganization.street }}<br>
                         {{ currentOrganization.postcode }} {{ currentOrganization.city }}<br>
@@ -59,13 +52,6 @@
                     <strong><i class="fa fa-graduation-cap mr-1"></i>
                         {{ trans('global.lms.title_singular') }}-URL
                     </strong>
-                    <a
-                        v-permission="'organization_edit'"
-                        class="pull-right link-muted pointer"
-                        @click="editOrganization(false, true)"
-                    >
-                        <i class="fas fa-pencil-alt"></i>
-                    </a>
                     <p class="text-muted">
                         {{ currentOrganization.lms_url }}
                     </p>
@@ -105,7 +91,7 @@ import {useGlobalStore} from "../../store/global.js";
 
 export default {
     name: "Organization",
-    components:{
+    components: {
         OrganizationModal,
     },
     props: {
@@ -141,7 +127,7 @@ export default {
         });
     },
     methods: {
-        editOrganization(onlyAddress, onlyLmsUrl){
+        editOrganization() {
             this.globalStore?.showModal('organization-modal', {
                 id: this.currentOrganization.id,
                 common_name:this.currentOrganization.common_name,
@@ -157,8 +143,6 @@ export default {
                 email: this.currentOrganization.email,
                 status_id: this.currentOrganization.status_id,
                 lms_url: this.currentOrganization.lms_url,
-                onlyAddress: onlyAddress ?? this.onlyAddress,
-                onlyLmsUrl : onlyLmsUrl ?? this.onlyLmsUrl,
             });
         },
     },

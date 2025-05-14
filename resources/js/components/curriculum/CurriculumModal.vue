@@ -220,8 +220,8 @@
                                         :label="trans('global.country.title_singular') + ' *'"
                                         :selected="form.country_id"
                                         @selectedValue="(id) => {
-                                            this.form.country_id = id;
-                                            this.form.state_id = '';
+                                            this.form.country_id = id[0];
+                                            this.form.state_id = null;
                                         }"
                                     />
                                     <Select2
@@ -230,12 +230,12 @@
                                         css="mb-0"
                                         option_id="code"
                                         option_label="lang_de"
-                                        :url="'/countries/' + form.country_id + '/states/'"
+                                        :url="'/countries/' + form.country_id + '/states'"
                                         :term="form.country_id"
                                         model="state"
                                         :selected="form.state_id"
                                         @selectedValue="(id) => {
-                                            this.form.state_id = id;
+                                            this.form.state_id = id[0];
                                         }"
                                     />
                                 </div>

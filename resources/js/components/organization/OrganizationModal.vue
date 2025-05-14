@@ -156,32 +156,32 @@
                                 <p class="help-block" v-if="form.errors.email" v-text="form.errors.email[0]"></p>
                             </div>
         
-                            <Select2 v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <Select2
                                 id="country_id"
                                 name="country_id"
-                                option_id="alpha2"
-                                option_label="lang_de"
                                 url="/countries"
                                 model="country"
-                                :selected="this.form.country_id"
+                                option_id="alpha2"
+                                option_label="lang_de"
+                                :selected="form.country_id"
                                 @selectedValue="(id) => {
-                                    console.log(id);
-                                    this.form.country_id = id;
-                                    this.form.state_id = '';
+                                    this.form.country_id = id[0];
+                                    this.form.state_id = null;
                                 }"
                             />
         
-                            <Select2 v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <Select2
                                 id="state_id"
                                 name="state_id"
+                                :url="'/countries/' + form.country_id + '/states'"
+                                model="state"
+                                :term="form.country_id"
                                 option_id="code"
                                 option_label="lang_de"
-                                :url="'/countries/' + this.form.country_id + '/states/'"
-                                :term="this.form.country_id"
-                                model="state"
-                                :selected="this.form.state_id"
+                                :selected="form.state_id"
+                                :readOnly="form.country_id == null"
                                 @selectedValue="(id) => {
-                                    this.form.state_id = id;
+                                    this.form.state_id = id[0];
                                 }"
                             />
         
@@ -192,7 +192,7 @@
                                 model="organizationType"
                                 option_id="id"
                                 option_label="title"
-                                :selected="this.form.organization_type_id"
+                                :selected="form.organization_type_id"
                                 @selectedValue="(id) => {
                                     this.form.organization_type_id = id;
                                 }"
@@ -250,7 +250,6 @@ export default {
         Editor,
         Select2,
     },
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -279,20 +278,20 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia autoresize"
+                    "autolink link curriculummedia autoresize",
                 ],
                 {
                     'callback': 'insertContent',
-                    'callbackId': this.component_id
+                    'callbackId': this.component_id,
                 }
             ),
             onlyAddress: {
                 type: Boolean,
-                default: false
+                default: false,
             },
             onlyLmsUrl: {
                 type: Boolean,
-                default: false
+                default: false,
             },
         }
     },

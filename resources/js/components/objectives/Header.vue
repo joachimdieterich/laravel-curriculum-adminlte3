@@ -1,6 +1,7 @@
 <template>
     <div
-        class="boxheader row"
+        class="d-flex align-items-center mt-1"
+        style="min-height: 20px;"
         :style="{ 'color': textcolor }"
     >
         <span v-if="edit_settings"

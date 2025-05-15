@@ -55,51 +55,47 @@
                 role="tabpanel"
                 :aria-labelledby="type.id + '-tab'"
             >
-                <div v-for="terminal in type.terminal_objectives"
-                    :id="'terminalObjective_' + terminal.id"
+                <div
+                    class="d-flex flex-column"
+                    style="gap: 10px;"
                 >
-                    <div class="row">
-                        <div class="col-12 terminal-row">
-                            <ObjectiveBox
-                                type="terminal"
-                                :objective="terminal"
-                                :settings="settings"
-                                :max_id="max_ids[type.id]"
-                                @createTerminalObjective="(createObjective) => {
-                                    this.createTerminalObjective(createObjective);
-                                }"
-                                @update="(objective) => {
-                                    this.currentTerminalObjective = objective;
-                                    this.globalStore?.closeModal('terminal-objective-modal');
-                                }"
-                            />
+                    <div v-for="terminal in type.terminal_objectives"
+                        :id="'terminalObjective_' + terminal.id"
+                        class="objectives"
+                    >
+                        <ObjectiveBox
+                            type="terminal"
+                            :objective="terminal"
+                            :settings="settings"
+                            :max_id="max_ids[type.id]"
+                            @createTerminalObjective="(createObjective) => {
+                                this.createTerminalObjective(createObjective);
+                            }"
+                            @update="(objective) => {
+                                this.currentTerminalObjective = objective;
+                                this.globalStore?.closeModal('terminal-objective-modal');
+                            }"
+                        />
 
-                            <div class="ml-auto">
-                                <EnablingObjectives
-                                    :terminalobjective="terminal"
-                                    :objectives="terminal.enabling_objectives"
-                                    :settings="settings"
-                                />
-                            </div>
-                        </div>
+                        <EnablingObjectives
+                            :terminalobjective="terminal"
+                            :objectives="terminal.enabling_objectives"
+                            :settings="settings"
+                        />
                     </div>
                 </div>
             </div>
 
             <div v-if="settings.edit"
                 v-permission="'curriculum_edit'"
+                class="objectives"
+                style="margin: 10px 0px;"
             >
-                <div id="Create-TerminalObjective">
-                    <div class="row">
-                        <div class="col-12 terminal-row">
-                            <ObjectiveBox
-                                type="createterminal"
-                                :objective="{ curriculum_id: curriculum.id }"
-                                :objective_type_id="activeTypeId"
-                            />
-                        </div>
-                    </div>
-                </div>
+                <ObjectiveBox
+                    type="createterminal"
+                    :objective="{ curriculum_id: curriculum.id }"
+                    :objective_type_id="activeTypeId"
+                />
             </div>
         </div>
 

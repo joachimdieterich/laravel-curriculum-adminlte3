@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Plan;
 use App\PlanSubscription;
+use App\CurriculumSubscription;
+use App\TerminalObjective;
+use App\EnablingObjective;
 use Illuminate\Http\Request;
 
 class PlanSubscriptionController extends Controller
@@ -44,6 +47,33 @@ class PlanSubscriptionController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
+
+        // if group-subscription, connect Curricula used in Plan to the group
+        if ($input['subscribable_type'] == "App\Group") {
+            $entry_ids = $plan->entries()->pluck('id');
+            // get connected Curricula-IDs through its terminal-/enabling-subscriptions
+            $terminal = TerminalObjective::join('terminal_objective_subscriptions AS sub', 'terminal_objectives.id', '=', 'sub.terminal_objective_id')
+                ->where('subscribable_type', 'App\\PlanEntry')
+                ->whereIn('subscribable_id', $entry_ids)
+                ->pluck('curriculum_id');
+
+            $enabling = EnablingObjective::join('enabling_objective_subscriptions AS sub', 'enabling_objectives.id', '=', 'sub.enabling_objective_id')
+                ->where('subscribable_type', 'App\\PlanEntry')
+                ->whereIn('subscribable_id', $entry_ids)
+                ->pluck('curriculum_id');
+            // remove duplicates and keys
+            $curriculum_ids = $terminal->merge($enabling)->unique()->flatten();
+
+            // subscribe those Curricula to the group if it isn't already
+            foreach ($curriculum_ids as $id) {
+                CurriculumSubscription::firstOrCreate([
+                    'curriculum_id' => $id,
+                    'subscribable_type' => 'App\\Group',
+                    'subscribable_id' => $input['subscribable_id'],
+                    'owner_id' => auth()->user()->id,
+                ]);
+            }
+        }
 
         if (request()->wantsJson()) {
             return $subscribe->with(['subscribable', 'plan'])->find($subscribe->id);

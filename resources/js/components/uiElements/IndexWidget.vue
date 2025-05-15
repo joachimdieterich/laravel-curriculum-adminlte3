@@ -2,7 +2,7 @@
     <div 
         :id="item.DT_RowId"
         :value="item.DT_RowId"
-        class="box box-objective nav-item-box-image pointer my-1 "
+        class="box box-objective nav-item-box-image pointer my-1 pull-left"
         :class="active === false ? 'not-allowed' : ''"
         style="min-width: 200px !important;"
         :style="'border-bottom: 5px solid ' + item.color"

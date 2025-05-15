@@ -31,12 +31,12 @@ class TerminalObjectiveSubscriptionsController extends Controller
         }
 
         if (request()->wantsJson()) {
-            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
+            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id', 'terminal_objectives.visibility')
                 ->join('terminal_objective_subscriptions', 'terminal_objectives.id', '=', 'terminal_objective_subscriptions.terminal_objective_id')
                 ->where('subscribable_type', $input['subscribable_type'])
                 ->where('subscribable_id', $input['subscribable_id'])
                 ->with(['enablingObjectives' => function($query) use ($user_ids) {
-                    $query->select('id', 'title', 'description', 'terminal_objective_id')
+                    $query->select('id', 'title', 'description', 'terminal_objective_id', 'visibility')
                         ->without(['terminalObjective', 'level'])
                         ->with(['achievements' => function($query) use ($user_ids) {
                             $query->whereIn('user_id', $user_ids)
@@ -87,10 +87,10 @@ class TerminalObjectiveSubscriptionsController extends Controller
         TerminalObjectiveSubscriptions::insertOrIgnore($new_subscriptions);
 
         if (request()->wantsJson()) {
-            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id')
+            return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id', 'visibility')
                 ->with(['enablingObjectives' => function ($query) use ($input) {
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
-                    $query->select('id', 'title', 'description', 'terminal_objective_id')
+                    $query->select('id', 'title', 'description', 'visibility', 'terminal_objective_id')
                         ->without(['terminalObjective', 'level'])
                         ->with(['achievements' => function($query) use ($input) {
                             $query->whereIn('user_id', $input['users']);

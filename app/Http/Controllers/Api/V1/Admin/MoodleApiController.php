@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-
 use App\Http\Controllers\KanbanController;
 use App\Http\Controllers\LogbookController;
 use App\KanbanSubscription;
@@ -10,57 +9,53 @@ use App\LogbookSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use App\Logbook;
-use App\Kanban;
 use App\User;
 use App\Curriculum;
 use App\Group;
-
 
 class MoodleApiController extends Controller
 {
     public function getModelTypes()
     {
         $modelTypes = [
-                [
-                    "model" => "App\Curriculum",
-                    "url"   => "/curricula",
-                    "title"	=> trans('global.curriculum.title'),
-                ],
-                [
-                    "model" => "App\TerminalObjective",
-                    "url"	=> "/terminalObjectives",
-                    "title"	=> trans('global.terminalObjective.title'),
-                ],
-                [
-                    "model" => "App\EnabingObjective",
-                    "url"	=> "/enablingObjectives",
-                    "title"	=> trans('global.enablingObjective.title'),
-                ],
-                [
-                    "model" => "App\Logbook",
-                    "url"	=> "/logbooks",
-                    "title"	=> trans('global.logbook.title'),
-                ],
-                [
-                    "model" => "App\Kanban",
-                    "url"	=> "/kanbans",
-                    "title"	=> trans('global.kanban.title'),
-                ]
-            ];
+            [
+                "model" => "App\Curriculum",
+                "url"   => "/curricula",
+                "title"	=> trans('global.curriculum.title'),
+            ],
+            [
+                "model" => "App\TerminalObjective",
+                "url"	=> "/terminalObjectives",
+                "title"	=> trans('global.terminalObjective.title'),
+            ],
+            [
+                "model" => "App\EnabingObjective",
+                "url"	=> "/enablingObjectives",
+                "title"	=> trans('global.enablingObjective.title'),
+            ],
+            [
+                "model" => "App\Logbook",
+                "url"	=> "/logbooks",
+                "title"	=> trans('global.logbook.title'),
+            ],
+            [
+                "model" => "App\Kanban",
+                "url"	=> "/kanbans",
+                "title"	=> trans('global.kanban.title'),
+            ]
+        ];
 
         return $modelTypes;
     }
 
     public function getCurricula(Request $request)
     {
-        $this->validateRequest();
-        $user = User::where('common_name', request()->input('common_name'));
+        $input = $this->validateRequest();
+        $user_id = User::select('id')->where('common_name', $input['common_name'])->first()->id;
 
         //return $user->first()->curricula(['curricula.id', 'curricula.title']);
 
-        return Curriculum::where('type_id', 1)->select(['curricula.id', 'curricula.title'])->get();
-
+        return Curriculum::where('type_id', 1)->orWhere('owner_id', $user_id)->select(['curricula.id', 'curricula.title'])->get();
     }
 
     public function getTerminalObjectives(\App\Curriculum $curriculum,Request $request)
@@ -146,52 +141,63 @@ class MoodleApiController extends Controller
         return $groups->map->only('id', 'title')->unique('id');
     }
 
-
     public function enrolToGroup(Request $request)
     {
-
         $input = $this->validateRequest();
+        $groups = Group::whereIn('common_name', $input['groups'])->pluck('id');
+        $owner = User::where('common_name', $input['common_name'])->first()->id;
+        $response = [];
 
-        $return = [];
-        foreach($input['groups'] AS $group_id)
+        foreach($groups AS $group_id)
         {
+            // enrol to curricula
+            // foreach($input['curricula'] AS $curriculum_id)
+            // {
+            //     $response['groups'] = Group::findOrFail($group_id)->curricula()->syncWithoutDetaching($curriculum_id);
+            // }
 
-            //enrol to curricula
-            foreach($input['curricula'] AS $curriculum_id)
-            {
-                $return['groups'] = Group::findOrFail($group_id)->curricula()->syncWithoutDetaching($curriculum_id);
+            // enrol to logbooks
+            if (!empty($input['logbooks'])) {
+                $logbooks = [];
+
+                foreach($input['logbooks'] AS $logbook_id)
+                {
+                    $subscribe = LogbookSubscription::updateOrCreate([
+                        'logbook_id' => $logbook_id,
+                        'subscribable_type' => "App\Group",
+                        'subscribable_id' => $group_id,
+                    ], [
+                        'editable' => $input['editable'] ?? false,
+                        'owner_id' => $owner,
+                    ]);
+                    array_push($logbooks, $subscribe->save());
+                }
+
+                $response['logbooks'] = $logbooks;
             }
 
-            //enrol to logbooks
-            foreach($input['logbooks'] AS $logbook_id)
-            {
-                $subscribe = LogbookSubscription::updateOrCreate([
-                    'logbook_id' => $logbook_id,
-                    'subscribable_type' => "App\Group",
-                    'subscribable_id' => $group_id,
-                ], [
-                    'editable' => $input['editable'] ?? false,
-                    'owner_id' => User::where('common_name', $input['common_name'])->get()->first()->id
-                ]);
-                $return['logbooks'] = $subscribe->save();
-            }
+            // enrol to kanbans
+            if (!empty($input['kanbans'])) {
+                $kanbans = [];
 
-            //enrol to kanbans
-            foreach($input['kanbans'] AS $kanban_id)
-            {
-                //dump($kanban_id);
-                $subscribe = KanbanSubscription::updateOrCreate([
-                    'kanban_id' => $kanban_id,
-                    'subscribable_type' => "App\Group",
-                    'subscribable_id' => $group_id,
-                ], [
-                    'editable' => $input['editable'] ?? false,
-                    'owner_id' => User::where('common_name', $input['common_name'])->get()->first()->id
-                ]);
-                $return['kanbans'] =$subscribe->save();
+                foreach($input['kanbans'] AS $kanban_id)
+                {
+                    $subscribe = KanbanSubscription::updateOrCreate([
+                        'kanban_id' => $kanban_id,
+                        'subscribable_type' => "App\Group",
+                        'subscribable_id' => $group_id,
+                    ], [
+                        'editable' => $input['editable'] ?? false,
+                        'owner_id' => $owner,
+                    ]);
+                    array_push($kanbans, $subscribe->save());
+                }
+
+                $response['kanbans'] = $kanbans;
             }
         }
-        return $return;
+
+        return $response;
     }
 
     protected function validateRequest()
@@ -199,11 +205,11 @@ class MoodleApiController extends Controller
         return request()->validate([
             'common_name' => 'required|string',
             'users' => 'sometimes',
-            'groups' => 'sometimes',
-            'curricula' => 'sometimes',
-            'logbooks' => 'sometimes',
-            'kanbans' => 'sometimes',
-            'editable' => 'sometimes'
+            'groups' => 'sometimes|array',
+            'curricula' => 'sometimes|array',
+            'logbooks' => 'sometimes|array',
+            'kanbans' => 'sometimes|array',
+            'editable' => 'sometimes|boolean'
         ]);
     }
 }

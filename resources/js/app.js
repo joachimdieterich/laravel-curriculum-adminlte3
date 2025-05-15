@@ -111,12 +111,6 @@ app.config.globalProperties.$textcolor = (color, dark = '#000', light = '#fff') 
     }
 };
 
-app.config.globalProperties.$decodeHTMLEntities = (text) => {
-    return $("<textarea/>")
-        .html(text)
-        .text();
-};
-
 /**
  * Store current ab in global storage
  * example @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
@@ -145,31 +139,65 @@ app.config.globalProperties.getGlobalStorage = (key, value, class_string = "acti
     }
 };
 
-
 //-> use v-permission in vue3 templates, use checkPermission in scripts
 app.config.globalProperties.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
 };
 
-app.config.globalProperties.htmlToText = (html) => {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = html ?? '';
+/**
+ * removes HTML-tags of given String via parsing it through a <textarea>
+ * @param {String} text 
+ * @returns raw text without HTML-tags
+ */
+app.config.globalProperties.$decodeHTMLEntities = (text) => {
+    return $("<textarea/>")
+        .html(text)
+        .text();
+};
+
+/**
+ * Decodes html entities (used in datatable/list-results) via RegEx
+ */
+app.config.globalProperties.$decodeHtml = (str) =>  {
     let map =
         {
             '&amp;': '&',
             '&lt;': '<',
             '&gt;': '>',
             '&quot;': '"',
-            '&#039;': "'",
-            '&nbsp;': " ",
-            '&szlig;': "ß",
-            '&Auml;': 'Ä',
-            '&auml;': 'ä',
-            '&Uuml;': 'Ü',
-            '&uuml;': 'ü',
-            '&Ouml;': 'Ö',
-            '&ouml;': 'ö',
-            '&copy;': '©',
+            '&#039;': "'"
+        };
+    if (str !== null) {
+        return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, function(m) {return map[m];});
+    } else {
+        return '';
+    }
+};
+
+/**
+ * selected special chars are replaced with their actual char (e.g. '&amp;' => '&')
+ * @param {String} html 
+ * @returns 
+ */
+app.config.globalProperties.htmlToText = (html) => {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html ?? '';
+    let map =
+        {
+            '&amp;':    '&',
+            '&lt;':     '<',
+            '&gt;':     '>',
+            '&quot;':   '"',
+            '&#039;':   "'",
+            '&nbsp;':   " ",
+            '&szlig;':  "ß",
+            '&Auml;':   'Ä',
+            '&auml;':   'ä',
+            '&Uuml;':   'Ü',
+            '&uuml;':   'ü',
+            '&Ouml;':   'Ö',
+            '&ouml;':   'ö',
+            '&copy;':   '©',
         };
 
     txt =  txt.value.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&nbsp;|&szlig;|&Auml;|&auml;|&Uuml;|&uuml;|&Ouml;|&ouml;|&copy;/g, function(m) {return map[m];})
@@ -191,16 +219,13 @@ import Sticky from 'vue-sticky-directive';
 
 app.use(Sticky);
 
-/*
-
- */
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
 app.use(Toast, {
     transition: "Vue-Toastification__bounce",
     maxToasts: 20,
-    newestOnTop: true
+    newestOnTop: true,
 });
 
 /**
@@ -210,7 +235,6 @@ app.use(Toast, {
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
-
 import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce payload for users
 
 app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
@@ -451,26 +475,8 @@ app.config.globalProperties.$dtOptions = {
             "previous":   '<i class="fa fa-angle-left"></id>',
         },
     },
-    select: 'multiple'
+    select: 'multiple',
 };
-
-/**
- * Medium Modal Params
- */
-/*app.config.globalProperties.$mediumModalParams  = {
-    accept: '',
-    callbackFunction: null,
-    callbackParentComponent: null,
-    callbackComponent: null,
-    eventHubCallbackFunction: null,
-    eventHubCallbackFunctionParams: null,
-    public: 0,
-    repository: 'local',
-    subscribable_type: null,
-    subscribable_id: null,
-    subscribeSelected: false,
-    target: 'medium_id',
-},*/
 
 app.directive('hide-if-permission', function (el, binding) {
     if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
@@ -485,15 +491,15 @@ app.directive('hide-if-permission', function (el, binding) {
  * 
  * ! IMPORTANT: even if element gets removed, Vue will act like its still there.
  * This can cause weird bugs that seem like a logic-error, but the actual problem is this behaviour.
- * To solve those issues use v-if="checkPermission('permission_name')"
+ * To solve this issue use v-if="checkPermission('permission_name')"
  *
  * ! Always check permissions in the backend.
  * This directive enables shorter syntax on vue.
  *
  * Examples:
- * <element v-permission="'curriculum_edit'" ><element>
- * <element v-permission="'content_create, ' + subscribable_type + '_content_create'" ><element>
- *  ! you have to use 'App\\Curriculum_content_create' to get 'App\Curriculum_content_create'
+ * <element v-permission="'curriculum_edit'"><element>
+ * <element v-permission="'content_create, ' + subscribable_type + '_content_create'"><element>
+ * ! you have to use 'App\\Curriculum_content_create' to get 'App\Curriculum_content_create'
  *
  * @type Vue
  */
@@ -516,26 +522,6 @@ app.directive('permission', function (el, binding, vnode) {
 app.directive("inline", (element) => {
     element.replaceWith(...element.children);
 });
-
-/**
-* Decodes html entities (used in datatable/list-results)
-**/
-app.config.globalProperties.$decodeHtml = (str) =>  {
-    let map =
-        {
-            '&amp;': '&',
-            '&lt;': '<',
-            '&gt;': '>',
-            '&quot;': '"',
-            '&#039;': "'"
-        };
-    if (str !== null) {
-        return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, function(m) {return map[m];});
-    } else {
-        return '';
-    }
-
-};
 
 //mount vue
 app.mount('#app');

@@ -22,8 +22,8 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      path="/v1/moodle/curricula",
  *      operationId="getCurricula",
  *      tags={"Moodle v1"},
- *      summary="Get currcula by common name",
- *      description="Returns a collection of available curricula",
+ *      summary="Get curricula by common name",
+ *      description="Returns a collection of global and owned curricula",
  *      security={
  *           {"passport": {"*"}},
  *      },
@@ -198,12 +198,81 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *          response=200,
  *          description="successful operation",
  *          @OA\Schema(ref="#/components/schemas/SelectList"),
- *       ),
- *       @OA\Response(response=400, description="Bad request"),
+ *      ),
+ *      @OA\Response(response=400, description="Bad request"),
+ * )
+ * 
+ * @OA\Post(
+ *      path="/v1/moodle/groups/enrol",
+ *      operattionId="enrolToGroup",
+ *      tags={"Moodle v1"},
+ *      summary="Enrol groups to different ressources",
+ *      description="Creates or updates group-subscriptions to Kanbans/Logbooks and returns the subscriptions",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *      @OA\RequestBody(
+ *          required="true",
+ *          @OA\JsonContent(
+ *              example={
+ *                  "common_name": "user_common_name",
+ *                  "groups": ["common_name_1", "common_name_2"],
+ *                  "kanbans": [1, 28, 357],
+ *                  "logbooks": [13, 73, 166],
+ *                  "editable": true,
+ *              },
+ *              @OA\Schema(
+ *                  type="object",
+ *                  @OA\Property(
+ *                      property="common_name",
+ *                      description="user common_name"
+ *                      required="true",
+ *                      type="string"
+ *                  ),
+ *                  @OA\Property(
+ *                      property="groups",
+ *                      description="array of group common_names"
+ *                      required="true",
+ *                      @OA\Schema(
+ *                          type="array",
+ *                          @OA\Items(type="string")
+ *                      )
+ *                  ),
+ *                  @OA\Property(
+ *                      property="kanbans",
+ *                      description="array of kanban IDs"
+ *                      required="false",
+ *                      @OA\Schema(
+ *                          type="array",
+ *                          @OA\Items(type="integer")
+ *                      )
+ *                  ),
+ *                  @OA\Property(
+ *                      property="logbooks",
+ *                      description="array of logbook IDs"
+ *                      required="false",
+ *                      @OA\Schema(
+ *                          type="array",
+ *                          @OA\Items(type="integer")
+ *                      )
+ *                  ),
+ *                  @OA\Property(
+ *                      property="editable",
+ *                      description="allow users to create/edit content inside the ressource, default => false"
+ *                      required="false",
+ *                      type="boolean"
+ *                  ),
+ *              )
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *          @OA\Schema(ref="#/components/schemas/SelectList"),
+ *      ),
+ *      @OA\Response(response=400, description="Bad request"),
  * )
  */
 class MoodleDefinitions
 {
 }
-
-

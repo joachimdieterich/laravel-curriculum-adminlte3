@@ -27,7 +27,7 @@ class CountryController extends Controller
     public function getStates(Country $country)
     {
         if (request()->wantsJson()) {
-            return getEntriesForSelect2ByModel("App\State", 'code', 'code', 'lang_de', 'code');
+            return getEntriesForSelect2ByModel("App\State", 'code', 'lang_de', 'lang_de', 'code');
         }
     }
 }

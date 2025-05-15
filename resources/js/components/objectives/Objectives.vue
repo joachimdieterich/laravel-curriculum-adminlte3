@@ -1,40 +1,36 @@
 <template>
-    <div class="card mb-0">
+    <div
+        class="d-flex flex-column"
+        style="gap: 10px;"
+    >
         <div v-for="terminal in terminal_objectives"
-            class="card-body p-0"
+            class="d-flex"
         >
-            <div class="d-flex">
-                <div class="flex-fill">
-                    <ObjectiveBox
-                        type="terminal"
-                        :objective="terminal"
-                        :settings="settings"
-                    />
+            <div class="objectives">
+                <ObjectiveBox
+                    type="terminal"
+                    :objective="terminal"
+                    :settings="settings"
+                />
 
-                    <div class="ml-auto">
-                        <EnablingObjectives
-                            :terminalobjective="terminal"
-                            :objectives="terminal.enabling_objectives"
-                            :referenceable_id="referenceable_id"
-                            :referenceable_type="referenceable_type"
-                            :settings="settings"
-                            :editable="editable"
-                        />
-                    </div>
-                </div>
-                <div
-                    class="card-tools"
-                    style="margin-left: -10px;"
-                >
-                    <span v-if="editable && showTools">
-                        <a
-                            class="text-danger"
-                            @click="destroy(terminal)"
-                        >
-                            <i class="fas fa-trash pointer p-1"></i>
-                        </a>
-                    </span>
-                </div>
+                <EnablingObjectives
+                    :terminalobjective="terminal"
+                    :objectives="terminal.enabling_objectives"
+                    :referenceable_id="referenceable_id"
+                    :referenceable_type="referenceable_type"
+                    :settings="settings"
+                    :editable="editable"
+                />
+            </div>
+            <div class="card-tools">
+                <span v-if="editable && showTools">
+                    <a
+                        class="text-danger"
+                        @click="destroy(terminal)"
+                    >
+                        <i class="fas fa-trash pointer p-1"></i>
+                    </a>
+                </span>
             </div>
         </div>
         <div v-if="editable && showTools"

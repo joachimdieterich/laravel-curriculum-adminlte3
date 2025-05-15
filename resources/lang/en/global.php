@@ -51,6 +51,7 @@ return [
     'delete' => 'delete',
     'forceDelete' => 'Delete dataset permanently',
     'error' => 'An error occurred',
+    'error_too_long' => 'The given text is too long',
     'save' => 'Save',
     'open' => 'open',
     'cancel' => 'Cancel',

@@ -132,7 +132,7 @@ class OrganizationsController extends Controller
         $organization->update($clean_data);
 
         if (request()->wantsJson()) {
-            return $organization;
+            return $organization->with(['country', 'state', 'type'])->find($organization->id);
         }
     }
 

@@ -171,14 +171,12 @@ export default {
         destroy() {
             axios.delete('/curricula/expel', {
                 data: {
-                    expel_list: {
-                        0: {
+                    expel_list: [
+                        {
                             group_id : this.group.id,
-                            curriculum_id: {
-                                0: this.currentCourse.id,
-                            },
+                            curriculum_id: [this.currentCourse.curriculum_id],
                         },
-                    },
+                    ],
                 },
             })
             .then(res => {

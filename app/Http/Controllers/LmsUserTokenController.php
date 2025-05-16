@@ -59,7 +59,7 @@ class LmsUserTokenController extends Controller
             ]);
 
         if (request()->wantsJson()) {
-            return ['token' => $token];
+            return $token;
         }
     }
 

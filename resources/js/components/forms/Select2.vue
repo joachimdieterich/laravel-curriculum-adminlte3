@@ -229,7 +229,10 @@ export default {
     watch: {
         url: function() {
             this.loader();
-        }
+        },
+        list: function() {
+            this.loader();
+        },
     },
     mounted() {
         this.loader();

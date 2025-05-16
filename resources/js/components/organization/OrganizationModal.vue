@@ -45,7 +45,7 @@
                                 <p class="help-block" v-if="form.errors.common_name" v-text="form.errors.common_name[0]"></p>
                             </div>
         
-                            <div v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <div
                                 class="form-group"
                                 :class="form.errors.title ? 'has-error' : ''"
                             >
@@ -56,14 +56,13 @@
                                     class="form-control"
                                     v-model="form.title"
                                     :placeholder="trans('global.organization.fields.title') + ' *'"
+                                    :disabled="!checkPermission('is_admin')"
                                     required
                                 />
                                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                             </div>
         
-                            <div v-if="(!onlyAddress && !onlyLmsUrl)"
-                                class="form-group"
-                            >
+                            <div class="form-group">
                                 <Editor
                                     id="description"
                                     name="description"
@@ -71,7 +70,6 @@
                                     :init="tinyMCE"
                                     v-model="form.description"
                                 />
-                                <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                             </div>
         
                             <div class="form-group">
@@ -126,9 +124,7 @@
                                 <p class="help-block" v-if="form.errors.lms_url" v-text="form.errors.lms_url[0]"></p>
                             </div>
         
-                            <div v-if="(!onlyAddress && !onlyLmsUrl)"
-                                class="form-group"
-                            >
+                            <div class="form-group">
                                 <label for="phone">{{ trans('global.organization.fields.phone') }}</label>
                                 <input
                                     id="phone"
@@ -141,9 +137,7 @@
                                 <p class="help-block" v-if="form.errors.phone" v-text="form.errors.phone[0]"></p>
                             </div>
         
-                            <div v-if="(!onlyAddress && !onlyLmsUrl)"
-                                class="form-group"
-                            >
+                            <div class="form-group">
                                 <label for="email">{{ trans('global.organization.fields.email') }}</label>
                                 <input
                                     id="email"
@@ -156,49 +150,49 @@
                                 <p class="help-block" v-if="form.errors.email" v-text="form.errors.email[0]"></p>
                             </div>
         
-                            <Select2 v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <Select2
                                 id="country_id"
                                 name="country_id"
-                                option_id="alpha2"
-                                option_label="lang_de"
                                 url="/countries"
                                 model="country"
-                                :selected="this.form.country_id"
+                                option_id="alpha2"
+                                option_label="lang_de"
+                                :selected="form.country_id"
                                 @selectedValue="(id) => {
-                                    console.log(id);
-                                    this.form.country_id = id;
-                                    this.form.state_id = '';
+                                    this.form.country_id = id[0];
+                                    this.form.state_id = null;
                                 }"
                             />
         
-                            <Select2 v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <Select2
                                 id="state_id"
                                 name="state_id"
+                                :url="'/countries/' + form.country_id + '/states'"
+                                model="state"
+                                :term="form.country_id"
                                 option_id="code"
                                 option_label="lang_de"
-                                :url="'/countries/' + this.form.country_id + '/states/'"
-                                :term="this.form.country_id"
-                                model="state"
-                                :selected="this.form.state_id"
+                                :selected="form.state_id"
+                                :readOnly="form.country_id == null"
                                 @selectedValue="(id) => {
-                                    this.form.state_id = id;
+                                    this.form.state_id = id[0];
                                 }"
                             />
         
-                            <Select2 v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <Select2 v-if="checkPermission('is_admin')"
                                 id="organization_type_id"
                                 name="organization_type_id"
                                 url="/organizationTypes"
                                 model="organizationType"
                                 option_id="id"
                                 option_label="title"
-                                :selected="this.form.organization_type_id"
+                                :selected="form.organization_type_id"
                                 @selectedValue="(id) => {
-                                    this.form.organization_type_id = id;
+                                    this.form.organization_type_id = id[0];
                                 }"
                             />
         
-                            <Select2 v-if="(!onlyAddress && !onlyLmsUrl)"
+                            <Select2 v-if="checkPermission('is_admin')"
                                 id="status_definition_id"
                                 name="status_definition_id"
                                 url="/statusdefinitions"
@@ -206,9 +200,9 @@
                                 css="mb-0"
                                 option_id="status_definition_id"
                                 option_label="lang_de"
-                                :selected="this.form.status_id"
+                                :selected="form.status_id"
                                 @selectedValue="(id) => {
-                                    this.form.status_id = id;
+                                    this.form.status_id = id[0];
                                 }"
                             />
                         </div>
@@ -250,7 +244,6 @@ export default {
         Editor,
         Select2,
     },
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -279,20 +272,20 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia autoresize"
+                    "autolink link curriculummedia autoresize",
                 ],
                 {
                     'callback': 'insertContent',
-                    'callbackId': this.component_id
+                    'callbackId': this.component_id,
                 }
             ),
             onlyAddress: {
                 type: Boolean,
-                default: false
+                default: false,
             },
             onlyLmsUrl: {
                 type: Boolean,
-                default: false
+                default: false,
             },
         }
     },

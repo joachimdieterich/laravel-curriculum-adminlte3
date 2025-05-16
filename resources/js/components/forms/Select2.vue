@@ -164,7 +164,7 @@ export default {
 
                     templateSelection: this.formatText,
                     templateResult: this.formatText,
-                })
+                });
             } else { // this.list is set
                 this.componentInstance = $('#' + this.id).select2({
                     placeholder: this.placeholder,
@@ -174,7 +174,7 @@ export default {
             }
 
             this.componentInstance.on("select2:select", function(e) {
-                this.$emit("selectedValue", this.componentInstance.select2("data").map(i => i[this.option_id]));
+                this.$emit("selectedValue", this.componentInstance.select2("data").map(i => i['id']));
             }.bind(this))
             .on("select2:unselect", function(e) {
                 this.$emit("selectedValue", this.componentInstance.select2("data").map(i => i[this.option_id]));

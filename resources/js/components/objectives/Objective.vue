@@ -402,15 +402,15 @@
                 <ReferenceObjectiveModal/>
                 <PrerequisiteObjectiveModal
                     :params="{
-                        successor_type: this.model,
-                        successor_id: this.objective.id,
+                        successor_type: model,
+                        successor_id: objective.id,
                         url: '/prerequisites',
                     }"
                 />
                 <LmsModal
                     :params="{
-                        referenceable_type: this.model,
-                        referenceable_id: this.objective.id,
+                        referenceable_type: model,
+                        referenceable_id: objective.id,
                         url: '/lmsReferences'
                     }"
                 />
@@ -511,7 +511,6 @@ export default {
                 last: null,
             },
             model: '',
-            errors: {},
             search: '',
         }
     },

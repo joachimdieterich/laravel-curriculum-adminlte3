@@ -20,20 +20,13 @@ class LmsUserTokenController extends Controller
             ->get()
             ->first())->token;
 
-        if (request()->wantsJson()) {
-            if (!is_string($token)) {
-                $current_organization = Organization::where('id', auth()->user()->current_organization_id)->get()->first();
+        $lms_url = Organization::find(auth()->user()->current_organization_id)->lms_url;
 
-                return [
-                    'lms_url' => $current_organization->lms_url,
-                    'token' => false,
-                ];
-            } else {
-                return [
-                    'lms_url' => '',
-                    'token' => is_null($token) ? false : true,
-                ];
-            }
+        if (request()->wantsJson()) {
+            return [
+                'lms_url' => $lms_url,
+                'token' => !is_null($token),
+            ];
         }
     }
 

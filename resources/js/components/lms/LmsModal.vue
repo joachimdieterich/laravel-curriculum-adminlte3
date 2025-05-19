@@ -68,13 +68,12 @@
                                         :selected="null"
                                         @selectedValue="(id) => {
                                             this.form.course_content_id = parseInt(id[0]);
-                                            this.form.course_item = null;
                                             this.loadCourseItems(parseInt(id[0]));
                                         }"
                                     />
                                 </div>
             
-                                <div v-if="form.course_content_id"
+                                <div v-if="form.course_content_id && course_content_items.length"
                                     class="form-group"
                                 >
                                     <Select2
@@ -92,11 +91,10 @@
                                 </div>
             
                                 <div v-if="loading"
-                                    class="overlay text-center"
-                                    style="width:100% !important;"
+                                    class="overlay flex-column"
                                 >
                                     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                                    <span class="sr-only">Loading...</span>
+                                    <span>{{ trans('global.loading') }}</span>
                                 </div>
                             </span>
                         </div>
@@ -186,9 +184,6 @@ export default {
                 .then(response => {
                     this.token      = response.data.token;
                     this.lms_url    = response.data.lms_url;
-                    if (this.lms_url !== ''){
-                        this.getTokenFromLms(this.lms_url + '/mod/curriculum/get_token.php');
-                    }
                 }).catch(e => {
                     console.log(e);
                 });
@@ -202,7 +197,7 @@ export default {
                     ws_function: 'core_course_get_courses_by_field',
                 })
                 .then(r => {
-                    this.courses = r.data
+                    this.courses = r.data.entries;
                     this.loading = false;
                 }).catch(e => {
                     console.log(e);
@@ -211,6 +206,11 @@ export default {
         loadCourseContents(course_id) {
             this.loading = true;
             this.form.course_id = course_id;
+            // save the course name incase no further items are selected
+            this.form.course_item = {
+                name: this.courses.find(c => c.id === course_id).fullname,
+                url: this.lms_url + 'course/view.php?id=' + course_id
+            };
 
             axios.post('/lmsReferences/get', {
                 plugin: 'moodle',
@@ -218,7 +218,7 @@ export default {
                 course_id: course_id,
             })
                 .then(r => {
-                    this.course_contents = r.data
+                    this.course_contents = r.data.entries;
                     if (typeof (this.course_contents.exception) !== "undefined") {
                         if (this.course_contents.exception == "moodle_exception") {
                             alert(this.course_contents.message);
@@ -231,20 +231,23 @@ export default {
         },
         loadCourseItems(id) {
             const index = this.course_contents.findIndex(c => c.id === id);
+            this.form.course_item = {
+                name: this.course_contents[index].name,
+                url: this.lms_url + 'course/view.php?id=' + this.form.course_id + '&section=' + index,
+            };
             this.course_content_items = this.course_contents[index].modules;
         },
         setItems(id) {
             const index = this.course_content_items.findIndex(i => i.id === id);
-            this.form.course_item = this.course_content_items[index];
+            // manually select needed attributes, to avoid saving irrelevant data
+            // since this field will be saved as JSON, the attributes cannot be distinctively selected in the backend
+            this.form.course_item = {
+                modicon: this.course_content_items[index].modicon,
+                name: this.course_content_items[index].name,
+                url: this.course_content_items[index].url,
+            };
         },
-        submit(method) {
-            if (method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
+        submit() {
             axios.post('/lmsReferences', {
                 plugin: 'moodle',
                 course_id: this.form.course_id,
@@ -255,42 +258,12 @@ export default {
                 sharing_level: this.form.sharing_level,
             })
                 .then(r => {
+                    this.globalStore.closeModal('lms-modal');
                     this.$eventHub.emit('lms-added', r.data);
                 })
                 .catch(e => {
                     console.log(e.response);
                 });
-        },
-        update() {
-            axios.patch('/lmsReferences/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('lms-updated', r.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
-        },
-        async getTokenFromLms(url) {
-            axios.get(url)
-                .then(response => {
-                    this.token = response.data.privatetoken ;
-                    this.setUserToken();
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-        },
-        async setUserToken() {
-            try {
-                const token = (await axios.post('/lmsUserTokens',
-                    {
-                        'token': this.form.token,
-                    })).data.token;
-                this.$emit('newToken', token)
-
-            } catch (error) {
-                console.log(error);
-            }
         },
         onNewToken() {
             this.token = true;

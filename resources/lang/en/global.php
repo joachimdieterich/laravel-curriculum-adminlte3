@@ -59,6 +59,7 @@ return [
     'generate' => 'Generate',
     'share' => 'Share',
     'pleaseSelect' => 'Please select',
+    'loading' => 'Loading...',
     'waitForFile' => 'Generating file...',
     'areYouSure' => 'Are you sure?',
     'allRightsReserved' => 'All rights reserved.',

@@ -67,6 +67,7 @@ return [
     'generate' => 'erzeugen',
     'share' => 'Teilen',
     'pleaseSelect' => 'Bitte wählen ',
+    'loading' => 'Wird geladen...',
     'waitForFile' => 'Datei wird erzeugt...',
     'areYouSure' => 'Sind Sie sicher?',
     'allRightsReserved' => 'Alle Rechte vorbehalten.',

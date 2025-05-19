@@ -1,20 +1,18 @@
 <template>
     <div>
         <div
-            :id="this.id + '_form_group'"
+            :id="id + '_form_group'"
             class="form-group"
-            :class="[(typeof this.css != 'undefined') ? this.css : '' ]"
-            :style="this.id == 'permissions' ? { 'margin-bottom': '200px' } : ''"
+            :class="[(typeof css != 'undefined') ? css : '' ]"
+            :style="id == 'permissions' ? { 'margin-bottom': '200px' } : ''"
         >
-            <label v-if="this.showLabel"
-                :for="this.id"
-                :class="[(typeof this.classLeft != 'undefined') ? this.classLeft : 'p-0 col-sm-12' ]"
+            <label v-if="showLabel"
+                :for="id"
+                :class="[(typeof classLeft != 'undefined') ? classLeft : 'p-0 col-sm-12' ]"
             >
-                <span v-if="this.label != ''">
-                    {{ this.label }}
-                </span>
+                <span v-if="label != ''">{{ label }}</span>
                 <span v-else>
-                    {{ trans('global.' + this.model + '.title_singular') }}
+                    {{ trans('global.' + model + '.title_singular') }}
                 </span>
                 <span v-if="multiple">
                     <span class="btn btn-info btn-xs deselect-all pull-right">
@@ -27,21 +25,22 @@
             </label>
 
             <select
-                :name="this.id + '[]'"
-                :id="this.id"
+                :name="id + '[]'"
+                :id="id"
                 class="form-control select2"
-                :class="[(typeof this.classRight != 'undefined') ? this.classRight : 'col-sm-12' ]"
-                :style="this.styles"
-                :multiple="this.multiple"
-                :disabled="this.readOnly"
-                :placeholder="this.placeholder"
+                :class="[(typeof classRight != 'undefined') ? classRight : 'col-sm-12' ]"
+                :style="styles"
+                :multiple="multiple"
+                :disabled="readOnly"
+                :placeholder="placeholder"
             >
+                <option v-if="list" disabled selected value>{{ placeholder }}</option>
                 <option v-if="list"
                     v-for="item in list"
-                    :value="item[this.option_id]"
-                    :data-icon="this.option_icon"
+                    :value="item[option_id]"
+                    :data-icon="option_icon"
                 >
-                    {{ item[this.option_label] }}
+                    {{ item[option_label] }}
                 </option>
             </select>
         </div>

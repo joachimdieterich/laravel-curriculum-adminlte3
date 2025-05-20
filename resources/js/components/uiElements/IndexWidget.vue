@@ -5,7 +5,7 @@
         class="box box-objective nav-item-box-image pointer my-1 pull-left"
         :class="active === false ? 'not-allowed' : ''"
         style="min-width: 200px !important;"
-        :style="'border-bottom: 5px solid ' + item.color"
+        :style="{ 'border-color': item.color ?? color, 'background-color': item.color + ' !important' }"
     >
         <a v-if="create || subscribe"
             @click="openModal()"
@@ -15,8 +15,10 @@
                     <i class="fa fa-2x fa-plus text-muted"></i>
                 </slot>
             </div>
-            <span class="d-flex align-items-center align-items-lg-start justify-content-center text-center bg-gray-light p-1">
-                {{ label }}
+            <span>
+                <span class="nav-item-box d-flex justify-content-center align-items-center align-items-lg-start bg-gray-light p-1">
+                    {{ label }}
+                </span>
             </span>
         </a>
         <a v-else
@@ -25,7 +27,6 @@
         >
             <div v-if="item.medium_id"
                 class="nav-item-box-image-size"
-                :style="{ backgroundColor: item.color + ' !important' }"
                 @click="clickEvent(item)"
             >
                 <div
@@ -37,7 +38,6 @@
             </div>
             <div v-else
                 class="d-flex align-items-center justify-content-center"
-                :style="{backgroundColor: item.color + ' !important'}"
                 @click="clickEvent(item)"
             >
                 <slot name="itemIcon"/>
@@ -46,10 +46,10 @@
                 <slot name="content">
                     <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                         <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                            {{ item[this.titleField] }}
+                            {{ item[titleField] }}
                         </h1>
                         <p class="text-muted small">
-                            {{ htmlToText(item[this.descriptionField])}}
+                            {{ htmlToText(item[descriptionField])}}
                         </p>
                         <slot name="badges"></slot>
                     </span>
@@ -134,7 +134,7 @@ export default {
         storeTitle: String, //data store
         color: {
             type: String,
-            default: '#27AE60',
+            default: '#F2F4F5',
         },
         active: {
             type: Boolean,

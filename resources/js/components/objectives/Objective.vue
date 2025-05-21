@@ -389,6 +389,7 @@
                         >
                             <Lms
                                 ref="LmsPlugin"
+                                :editable="editable"
                                 :referenceable_type="model"
                                 :referenceable_id="objective.id"
                             />
@@ -568,19 +569,6 @@ export default {
         this.$eventHub.on('lms-updated', (lms) => {
             this.globalStore?.closeModal('lms-modal');
             this.loadLmsPlugin()
-        });
-
-        this.$eventHub.on('shareLms', (id) => {
-            //console.log(id);
-            this.globalStore?.showModal('subscribe-modal', {
-                modelId: id,
-                modelUrl: 'lmsReference',
-                shareWithUsers: true,
-                shareWithGroups: true,
-                shareWithOrganizations: true,
-                shareWithToken: false,
-                canEditCheckbox: false,
-            });
         });
     },
     methods: {

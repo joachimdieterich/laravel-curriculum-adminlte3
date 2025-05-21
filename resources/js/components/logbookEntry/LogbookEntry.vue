@@ -256,8 +256,9 @@
                         :id="'lms_' + entry.id"
                         class="tab-pane"
                     >
-                        <lms
+                        <Lms
                             ref="LmsPlugin"
+                            :editable="entry.owner_id == $userId || logbook.owner_id == $userId"
                             :referenceable_id="entry.id"
                             :referenceable_type="'App\\LogbookEntry'"
                         />

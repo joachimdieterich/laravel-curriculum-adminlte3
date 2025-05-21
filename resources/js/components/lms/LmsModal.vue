@@ -33,10 +33,10 @@
                 >
                     <div class="card">
                         <div class="card-body">
-                            <Token v-if="!token"
+                            <Token v-if="!token && !loading"
                                 @newToken="onNewToken"
                             />
-                            <span v-if="token">
+                            <span v-if="token || loading">
                                 <div v-if="courses.length"
                                     class="form-group"
                                 >
@@ -165,7 +165,7 @@ export default {
                 course_item: null,
                 sharing_level: 2,
             }),
-            token: false, // don't actually store the token itself, only if it can be fetched
+            token: true, // don't actually store the token itself, only if it can be fetched
             lms_url: '',
             courses: [],
             course_contents: [],
@@ -200,6 +200,7 @@ export default {
                     this.courses = r.data.entries;
                     this.loading = false;
                 }).catch(e => {
+                    this.loading = false;
                     console.log(e);
                 });
         },
@@ -284,11 +285,13 @@ export default {
                         this.method = 'post';
                     }
                 }
+
+                if (this.courses.length === 0) {
+                    this.loader();
+                    this.loadCourses();
+                }
             }
         });
-
-        this.loader();
-        this.loadCourses();
     },
 }
 </script>

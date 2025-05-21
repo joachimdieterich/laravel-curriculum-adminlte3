@@ -68,6 +68,13 @@
                                     :deletable="entry.owner_id == $userId || plan.owner_id == $userId"
                                     :showTools="showTools"
                                 />
+
+                                <Lms
+                                    ref="LmsPlugin"
+                                    :editable="editable && showTools"
+                                    :referenceable_id="entry.id"
+                                    referenceable_type="App\\PlanEntry"
+                                />
                             </div>
                         </div>
                     </div>
@@ -93,6 +100,7 @@
 <script>
 import Objectives from "../objectives/Objectives.vue";
 import Trainings from '../training/Trainings.vue';
+import Lms from "../lms/Lms.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 
@@ -132,15 +140,7 @@ export default {
         }
     },
     mounted() {
-        // Set eventlistener for Media
-        this.$eventHub.on('addMedia', (e) => {
-            if (this.component_id == e.id) {
-                this.form.medium_id = e.selectedMediumId;
-                if (Array.isArray(this.form.medium_id))  {
-                    this.form.medium_id = this.form.medium_id[0]; //Hack to get existing files working.
-                }
-            }
-        });
+        this.$refs.LmsPlugin?.loaderEvent();
     },
     methods: {
         openModal(entry = {}) {
@@ -172,6 +172,7 @@ export default {
     components: {
         Objectives,
         Trainings,
+        Lms,
         ConfirmModal,
     },
 }

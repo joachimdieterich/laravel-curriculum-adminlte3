@@ -26,7 +26,6 @@
             :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected() ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
         >
             <div v-if="item.medium_id"
-                class="nav-item-box-image-size"
                 @click="clickEvent(item)"
             >
                 <div

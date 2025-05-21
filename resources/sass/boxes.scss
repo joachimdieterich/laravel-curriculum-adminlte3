@@ -521,7 +521,8 @@
     .nav-item-box-image-size {
         min-height: 150px !important;
         padding: 0;
-        border-top-left-radius: 0.2rem;
+        border-top-left-radius: 0.5rem;
+        border-bottom-left-radius: 0.5rem;
         background-size: cover !important;
     }
     .nav-item-box {
@@ -531,6 +532,7 @@
         height: 150px;
         top: 0px;
         width: 60%;
+        border-top-right-radius: 0.2rem;
         border-bottom-right-radius: 0.2rem;
     }
     .nav-item-text {
@@ -622,8 +624,8 @@
     }
     .nav-item-box-image-size {
         padding: 0;
-        border-top-left-radius: 0.2rem;
-        border-top-right-radius: 0.2rem;
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
         background-size: cover !important;
     }
     .nav-item-box {

@@ -15,7 +15,7 @@ class Authenticate extends Middleware
         // dump(session('cn'));
 
         // if (!is_null(session('cn'))) { // if SSO-session is given
-        //     $user = \App\User::where('cn', session('cn'))->first();
+        //     $user = \App\User::where('common_name', session('cn'))->first();
         //     if (!is_null($user)) {
         //         Auth::login($user); // try to authenticate user
         //     }

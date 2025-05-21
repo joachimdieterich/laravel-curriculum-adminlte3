@@ -11,11 +11,7 @@
                         <div v-html="qrCode"></div>
                     </span>
                 </span>
-                <div class="info-box-content">
-                    <span class="info-box-text flex-fill">
-                        {{ text }}
-                    </span>
-                </div>
+                <div class="info-box-content">{{ text }}</div>
             </a>
         </div>
     </div>

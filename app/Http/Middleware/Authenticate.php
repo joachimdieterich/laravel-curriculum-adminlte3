@@ -3,27 +3,15 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
+use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards) {
         Middleware::authenticate($request, $guards);
-        // dump(session('sessionIndex'));
-        // dump(session('nameId'));
-        // dump(session('cn'));
-
-        // if (!is_null(session('cn'))) { // if SSO-session is given
-        //     $user = \App\User::where('common_name', session('cn'))->first();
-        //     if (!is_null($user)) {
-        //         Auth::login($user); // try to authenticate user
-        //     }
-        // }
-        // else // if not, redirect to IDP-login page
-        // {
-        //     // code...
-        // }
+        // $saml2Auth = new Saml2Auth(Saml2Auth::loadOneLoginAuthFromIpdConfig('RLP'));
+        // return $saml2Auth->login($next($request));
 
         return $next($request);
     }

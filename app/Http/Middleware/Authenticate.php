@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
@@ -12,6 +13,17 @@ class Authenticate extends Middleware
         // dump(session('sessionIndex'));
         // dump(session('nameId'));
         // dump(session('cn'));
+
+        // if (!is_null(session('cn'))) { // if SSO-session is given
+        //     $user = \App\User::where('cn', session('cn'))->first();
+        //     if (!is_null($user)) {
+        //         Auth::login($user); // try to authenticate user
+        //     }
+        // }
+        // else // if not, redirect to IDP-login page
+        // {
+        //     // code...
+        // }
 
         return $next($request);
     }

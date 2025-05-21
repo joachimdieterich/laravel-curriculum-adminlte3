@@ -5,7 +5,7 @@
         class="box box-objective nav-item-box-image pointer my-1 pull-left"
         :class="active === false ? 'not-allowed' : ''"
         style="min-width: 200px !important;"
-        :style="{ 'border-color': item.color ?? color, 'background-color': item.color + ' !important' }"
+        :style="{ 'border-color': item.color ?? '#F2F4F5', 'background-color': item.color + ' !important' }"
     >
         <a v-if="create || subscribe"
             @click="openModal()"
@@ -134,7 +134,7 @@ export default {
         storeTitle: String, //data store
         color: {
             type: String,
-            default: '#F2F4F5',
+            default: '#27AE60',
         },
         active: {
             type: Boolean,

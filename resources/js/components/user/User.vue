@@ -6,13 +6,13 @@
                     <div class="card-title">
                         <h5 class="m-0">
                             <i class="fa fa-user mr-1"></i>
-                            {{ this.user.firstname }} {{ this.user.lastname }}
+                            {{ user.firstname }} {{ user.lastname }}
                         </h5>
                     </div>
                     <div
                         v-permission="'user_edit'"
                         class="card-tools pr-2">
-                        <a  @click="editUser(user)">
+                        <a @click="editUser(user)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
@@ -21,58 +21,62 @@
                 <div class="card-body box-profile">
                     <div class="text-center">
                         <avatar
-                            :medium_id="this.user.medium_id"
-                            :css="'clearfix'">
-                        </avatar>
+                            :medium_id="user.medium_id"
+                            :css="'clearfix'"
+                        />
                     </div>
 
                     <h3 class="profile-username text-center">
-                        {{ this.user.firstname }} {{ this.user.lastname }}
+                        {{ user.firstname }} {{ user.lastname }}
                     </h3>
 
                     <p class="text-muted text-center">
-                        {{ this.user.username }}
+                        {{ user.username }}
                     </p>
                 </div>
 
                 <div class="card-body">
-                    <strong><i class="fa fa-university mr-1"></i>
+                    <strong>
+                        <i class="fa fa-university mr-1"></i>
                         {{ trans('global.organization.title_singular') }}
                     </strong>
                     <ul class="pl-4">
                         <li v-for="organization in user.organizations"
-                           class="small">
+                           class="small"
+                        >
                             {{ organization.title}} @ {{ getRoleInOrganization(organization)[0].title }}
                         </li>
                     </ul>
                     <hr>
 
-                    <strong><i class="fa fa-users mr-1"></i>
+                    <strong>
+                        <i class="fa fa-users mr-1"></i>
                         {{ trans('global.group.title_singular') }}
                     </strong>
                     <ul class="pl-4">
                         <li v-for="group in user.groups"
-                            class="small">
+                            class="small"
+                        >
                             {{ group.title}} @ {{ getOrganizationOfGroup(group)[0].title }}
                         </li>
                     </ul>
                     <hr>
 
-                    <strong><i class="fas fa-user-tag mr-1"></i>
+                    <strong>
+                        <i class="fas fa-user-tag mr-1"></i>
                         {{ trans('global.roles') }}
                     </strong>
                     <ul class="pl-4">
                         <li v-for="role in user.roles"
-                            class="small">
+                            class="small"
+                        >
                             {{ role.title}} @ {{ getOrganizationForRole(role)[0].title }}
                         </li>
                     </ul>
                 </div>
 
                 <div class="card-footer">
-                    <small class="float-right">
-                        {{ user.updated_at }}
-                    </small>
+                    <small class="float-right">{{ user.updated_at }}</small>
                 </div>
             </div>
         </div>
@@ -82,16 +86,20 @@
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
                         <li class="nav-item">
-                            <a class="nav-link active show"
-                               href="#contact"
-                               data-toggle="tab">
+                            <a
+                                class="nav-link active show"
+                                href="#contact"
+                                data-toggle="tab"
+                            >
                                 {{ trans('global.contactDetail.title_singular') }}
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link show"
-                               href="#notes"
-                               data-toggle="tab">
+                            <a
+                                class="nav-link show"
+                                href="#notes"
+                                data-toggle="tab"
+                            >
                                 {{ trans('global.note.title') }}
                             </a>
                         </li>
@@ -99,20 +107,25 @@
                 </div>
                 <div class="card-body">
                     <div class="tab-content">
-                        <div class="tab-pane active show"
-                             id="contact">
+                        <div
+                            id="contact"
+                            class="tab-pane active show"
+                        >
                             <ContactDetail
                                 :user="user"
                                 :contactDetail="user.contact_detail"
                                 :organization="getCurrentOrganization()"
-                            >
-                            </ContactDetail>
+                            />
                         </div>
-                        <div class="tab-pane show"
-                             id="notes">
-                            <Notes notable_type="App\User"
-                                   :notable_id="user.id"
-                                   :show_tabs=false ></Notes>
+                        <div
+                            id="notes"
+                            class="tab-pane show"
+                        >
+                            <Notes
+                                notable_type="App\User"
+                                :notable_id="user.id"
+                                :show_tabs=false
+                            />
                         </div>
                     </div>
                 </div>

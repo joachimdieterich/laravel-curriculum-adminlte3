@@ -3,15 +3,15 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards) {
         Middleware::authenticate($request, $guards);
-        // dump(session('sessionIndex'));
-        // dump(session('nameId'));
-        // dump(session('cn'));
+        // $saml2Auth = new Saml2Auth(Saml2Auth::loadOneLoginAuthFromIpdConfig('RLP'));
+        // return $saml2Auth->login($next($request));
 
         return $next($request);
     }

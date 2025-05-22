@@ -86,6 +86,7 @@
                         <div class="card-body">
                             <div v-if="$userId == form.owner_id
                                     || $userId == kanban.owner_id
+                                    || checkPermission('is_admin')
                                     || method === 'post'"
                             >
                                 <span class="custom-control custom-switch custom-switch-on-green">

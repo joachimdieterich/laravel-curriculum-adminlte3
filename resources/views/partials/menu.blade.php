@@ -1,9 +1,13 @@
 <aside class="main-sidebar sidebar-light-primary">
     <!-- Brand Logo/menu -->
     @include('partials.topmenu')
-    <div id="menu_top_placeholder" class="clearfix" style="overflow:auto; max-height:500px;"></div>
+    <div id="menu_top_placeholder" class="clearfix" style="overflow: auto; max-height: 500px;"></div>
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+    <div
+        id="sidebar"
+        class="sidebar"
+        style="overflow-x: clip;"
+    >
         <!-- Sidebar Menu -->
         <span class="clearfix"></span>
         <nav class="mt-2">
@@ -15,8 +19,8 @@
                     class="nav-item w-100"
                     role="menuitem"
                 >
-                    @include ('forms.input.select',
-                        ["model" => "group",
+                    @include ('forms.input.select', [
+                        "model" => "group",
                         "field" => "current_curriculum_group_id",
                         "options"=> auth()->user()->currentCurriculaEnrolments(),
                         "option_id" => "course_id",
@@ -30,41 +34,40 @@
                         "allowClear" => false,
                         "aria_label" => trans('global.course.title'),
                         "value" =>  old('course_id', isset($course->id) ? $course->id : '')
-                        ])
-
+                    ])
                 </li>
                 <li
                     class="nav-item w-100"
                     role="menuitem"
                 >
-                    @if (auth()->user()->organizations->count() > 1)
-                        @include ('forms.input.select',
-                             ["model" => "organization",
-                             "field" => "current_organization_id",
-                             "options"=> auth()->user()->organizations,
-                             "option_id" => "id",
-                             "option_icon" => "fa fa-university",
-                             "placeholder" => trans('global.organization.title').'...',
-                             "onchange"=> "setCurrentOrganization(this)",
-                             "allowClear" => false,
-                             "value" => auth()->user()->current_organization_id
-                             ])
+                    @if(auth()->user()->organizations->count() > 1)
+                        @include ('forms.input.select', [
+                            "model" => "organization",
+                            "field" => "current_organization_id",
+                            "options"=> auth()->user()->organizations,
+                            "option_id" => "id",
+                            "option_icon" => "fa fa-university",
+                            "placeholder" => trans('global.organization.title').'...',
+                            "onchange"=> "setCurrentOrganization(this)",
+                            "allowClear" => false,
+                            "value" => auth()->user()->current_organization_id
+                        ])
                     @else
-                    <span class="nav-item px-3 py-2 text-bold w-100">
-                        {{ auth()->user()->organizations->first()->title }}
-                    </span>
+                        <span class="nav-item px-3 py-2 text-bold w-100">
+                            {{ auth()->user()->organizations->first()->title }}
+                        </span>
                     @endif
                     @if ((auth()->user()->currentPeriods()->count() > 1) /*OR (auth()->user()->currentGroupEnrolments()->count() == 0)*/)
-                        @include ('forms.input.select',
-                           ["model" => "period",
-                           "field" => "current_period_id",
-                           "options"=> auth()->user()->currentPeriods(),
-                           "option_id" => "id",
-                           "placeholder" => trans('global.period.title').'...',
-                           "onchange"=> "setCurrentOrganizationAndPeriod(this)",
-                           "allowClear" => false,
-                           "value" => auth()->user()->current_period_id
-                           ])
+                        @include ('forms.input.select', [
+                            "model" => "period",
+                            "field" => "current_period_id",
+                            "options"=> auth()->user()->currentPeriods(),
+                            "option_id" => "id",
+                            "placeholder" => trans('global.period.title').'...',
+                            "onchange"=> "setCurrentOrganizationAndPeriod(this)",
+                            "allowClear" => false,
+                            "value" => auth()->user()->current_period_id
+                        ])
                     @endif
                 </li>
             </ul>

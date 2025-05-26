@@ -31,7 +31,13 @@ class CertificateController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
-        $certificates = Certificate::where('owner_id', auth()->user()->id)->with(['organization', 'curriculum', 'owner']);
+        $certificates = null;
+
+        if (is_admin()) {
+            $certificates = Certificate::with(['organization', 'curriculum', 'owner']);
+        } else {
+            $certificates  = Certificate::where('owner_id', auth()->user()->id)->with(['organization', 'curriculum', 'owner']);
+        }
 
         return DataTables::of($certificates)
             ->addColumn('organization', function ($certificates) {

@@ -215,7 +215,7 @@
                         </li>
                     </ul>
 
-                    <div class="tab-content">
+                    <div class="tab-content my-1">
                         <!-- 1 Description -->
                         <div
                             id="description"
@@ -243,20 +243,25 @@
                         <!-- 2 Objectives -->
                         <div
                             id="objectives"
-                            class="tab-pane fade px-3 pt-2 mt-1"
+                            class="tab-pane fade px-3 pt-1"
                             role="tabpanel"
                             aria-labelledby="objectives-tab"
                         >
-                            <div v-if="type === 'enabling'">
+                            <div v-if="type === 'enabling'"
+                                class="objectives"
+                            >
                                 <ObjectiveBox
                                     type="terminal"
                                     :objective="objective.terminal_objective"
                                 />
                             </div>
-                            <div v-else>
+                            <div v-else
+                                class="objectives"
+                            >
                                 <ObjectiveBox v-for="enablingObjective in objective.enabling_objectives"
                                     type="enabling"
                                     :objective="enablingObjective"
+                                    :color="objective.color"
                                 />
                             </div>
                         </div>

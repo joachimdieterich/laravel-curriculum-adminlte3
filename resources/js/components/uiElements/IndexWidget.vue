@@ -16,7 +16,7 @@
                 </slot>
             </div>
             <span>
-                <span class="nav-item-box d-flex justify-content-center align-items-center align-items-lg-start bg-gray-light p-1">
+                <span class="nav-item-box d-flex justify-content-center align-items-center align-items-lg-start bg-gray-light text-center p-1">
                     {{ label }}
                 </span>
             </span>

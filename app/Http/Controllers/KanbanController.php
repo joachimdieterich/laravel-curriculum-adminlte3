@@ -424,7 +424,6 @@ class KanbanController extends Controller
         }
 
         return $this->show($kanban, $input['sharing_token']);
-
     }
 
     public function copyKanban(Kanban $kanban, Request $request)

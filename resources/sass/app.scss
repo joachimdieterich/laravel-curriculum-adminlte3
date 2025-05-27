@@ -273,8 +273,7 @@ tr:hover .vuehover {
     transition: opacity 0.3s ease;
 }
 .modal-container {
-    min-width: 50vh;
-    max-width: 90vw;
+    max-width: 95vw;
     margin: auto;
     padding: 0;
     background-color: #fff;
@@ -282,8 +281,8 @@ tr:hover .vuehover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     transition: all 0.3s ease;
 }
-.modal-default-button {
-    float: right;
+@media (min-width: 769px) {
+    .modal-container { min-width: 50vh; }
 }
 /*
  * The following styles are auto-applied to elements with

@@ -28,7 +28,7 @@
                 >
                     <div class="card">
                         <div class="card-body">
-                            <ul class="nav nav-pills">
+                            <ul class="nav nav-pills nav-fill">
                                 <!-- User -->
                                 <li v-if="shareWithUsers"
                                     class="nav-item"
@@ -65,6 +65,7 @@
                                         <i class="fa fa-university mr-2"></i>{{ trans('global.organization.title') }}
                                     </a>
                                 </li>
+                                <!-- Token -->
                                 <li v-if="shareWithToken"
                                     class="nav-item"
                                 >
@@ -76,12 +77,6 @@
                                         <i class="fa fa-key mr-2"></i>{{ trans('global.token') }}
                                     </a>
                                 </li>
-                                <!-- Global -->
-                                <!--                  <li class="nav-item" >
-                                                        <a class="nav-link" href="#global_subscription" data-toggle="tab" >
-                                                            <i class="sc-icon-dd icon-curriculum text-secondary mr-3"></i>{{ trans('global.all') }}
-                                                        </a>
-                                                    </li>-->
                             </ul>
     
                             <div class="tab-content pt-2">
@@ -266,8 +261,6 @@ export default {
             shareWithToken:  false,
             nameToken: '',
             canEditLabel: window.trans.global.can_edit,
-           // myValue: '',
-           // myOptions: ['op1', 'op2', 'op3'] // or [{id: key, text: value}, {id: key,
         };
     },
     methods: {

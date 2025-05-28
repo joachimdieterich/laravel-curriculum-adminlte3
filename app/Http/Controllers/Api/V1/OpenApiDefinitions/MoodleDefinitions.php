@@ -204,7 +204,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  * 
  * @OA\Post(
  *      path="/v1/moodle/groups/enrol",
- *      operattionId="enrolToGroup",
+ *      operationId="enrolGroup",
  *      tags={"Moodle v1"},
  *      summary="Enrol groups to different ressources",
  *      description="Creates or updates group-subscriptions to Kanbans/Logbooks and returns the subscriptions",
@@ -212,57 +212,37 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *           {"passport": {"*"}},
  *      },
  *      @OA\RequestBody(
- *          required="true",
+*           required=true,
  *          @OA\JsonContent(
- *              example={
- *                  "common_name": "user_common_name",
- *                  "groups": ["common_name_1", "common_name_2"],
- *                  "kanbans": [1, 28, 357],
- *                  "logbooks": [13, 73, 166],
- *                  "editable": true,
- *              },
- *              @OA\Schema(
- *                  type="object",
- *                  @OA\Property(
- *                      property="common_name",
- *                      description="user common_name"
- *                      required="true",
- *                      type="string"
- *                  ),
- *                  @OA\Property(
- *                      property="groups",
- *                      description="array of group common_names"
- *                      required="true",
- *                      @OA\Schema(
- *                          type="array",
- *                          @OA\Items(type="string")
- *                      )
- *                  ),
- *                  @OA\Property(
- *                      property="kanbans",
- *                      description="array of kanban IDs"
- *                      required="false",
- *                      @OA\Schema(
- *                          type="array",
- *                          @OA\Items(type="integer")
- *                      )
- *                  ),
- *                  @OA\Property(
- *                      property="logbooks",
- *                      description="array of logbook IDs"
- *                      required="false",
- *                      @OA\Schema(
- *                          type="array",
- *                          @OA\Items(type="integer")
- *                      )
- *                  ),
- *                  @OA\Property(
- *                      property="editable",
- *                      description="allow users to create/edit content inside the ressource, default => false"
- *                      required="false",
- *                      type="boolean"
- *                  ),
- *              )
+ *              required={"common_name", "groups"},
+ *              @OA\Property(
+ *                  property="common_name",
+ *                  description="user common_name",
+ *                  type="string"
+ *              ),
+ *              @OA\Property(
+ *                  property="groups",
+ *                  description="array of group common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="kanbans",
+ *                  description="array of kanban IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="logbooks",
+ *                  description="array of logbook IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="editable",
+ *                  description="allow users to create/edit content inside the ressource, default => false",
+ *                  type="boolean"
+ *              ),
  *          )
  *      ),
  *      @OA\Response(

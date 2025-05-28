@@ -17,7 +17,7 @@
             >
                 {{ item.title }}
                 <i class="fa fa-angle-up"></i>
-                <div style="font-size: .5rem">
+                <div style="font-size: 10px;">
                     {{ item.created_at }}
                 </div>
             </div>

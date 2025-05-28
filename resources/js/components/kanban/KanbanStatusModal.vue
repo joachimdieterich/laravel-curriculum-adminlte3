@@ -61,9 +61,11 @@
                         </div>
                         <div class="card-body">
                             <v-swatches
-                                :swatch-size="49"
-                                popover-to="right"
-                                v-model="this.form.color"
+                                class="d-flex"
+                                style="height: 42px;"
+                                :swatches="$swatches"
+                                row-length="5"
+                                v-model="form.color"
                                 show-fallback
                                 fallback-input-type="color"
                                 @input="(id) => {

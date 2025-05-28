@@ -323,6 +323,7 @@ export default {
                 item: {
                     kanban_id: this.currentKanban.id,
                     kanban_status_id: status_id,
+                    color: this.kanban.statuses.find(s => s.id === status_id).color,
                 },
                 method: 'post',
             });

@@ -70,8 +70,6 @@
   // All levels
   .nav-item {
     > .nav-link {
-      margin-bottom: .2rem;
-
       .right {
         @include transition(transform $transition-fn $transition-speed);
       }
@@ -108,7 +106,7 @@
 
   // First Level
   > .nav-item {
-    margin-bottom: 0;
+    margin-bottom: .2rem;
 
     .nav-icon {
       margin-left: .05rem;

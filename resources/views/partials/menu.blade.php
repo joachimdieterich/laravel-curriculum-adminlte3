@@ -226,7 +226,7 @@
 
                 @can('user_access')
                     <li
-                        class="nav-header"
+                        class="nav-header user-select-none"
                         role="menuitem"
                     >
                         {{ trans('global.user_management') }}
@@ -283,7 +283,7 @@
 
                 @canany(['organization_access', 'is_admin', 'group_access', 'grade_access', 'period_access', 'organization_type_access', 'certificate_edit'] )
                     <li
-                        class="nav-header"
+                        class="nav-header user-select-none"
                         role="menuitem"
                     >
                         @can('is_schooladmin')

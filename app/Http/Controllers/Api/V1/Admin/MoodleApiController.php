@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\KanbanController;
 use App\Http\Controllers\LogbookController;
+use App\Kanban;
 use App\KanbanSubscription;
 use App\LogbookSubscription;
 use Illuminate\Http\Request;
@@ -200,15 +201,47 @@ class MoodleApiController extends Controller
         return $response;
     }
 
+    public function enrolUsers(Request $request) {
+        $input = $this->validateRequest();
+
+        if (empty($input['users'])) abort(400, 'No users provided');
+        if (empty($input['kanbans'])) abort(400, 'No kanbans provided');
+        $users = User::whereIn('common_name', $input['users'])->pluck('id');
+
+        foreach ((array)$input['kanbans'] as $kanban_id) {
+            return Kanban::select('owner_id')->where('id', $kanban_id)->get(); // check if kanban exists
+            $kanbans = [];
+            foreach ($users as $user_id) {
+                // create subscription for kanban
+                $subscribe = KanbanSubscription::updateOrCreate([
+                    'kanban_id' => $kanban_id,
+                    'subscribable_type' => "App\User",
+                    'subscribable_id' => $user_id,
+                ], [
+                    'editable' => $input['editable'] ?? false,
+                    'owner_id' => $owner_id,
+                ]);
+                array_push($kanbans, $subscribe->save());
+            }
+            return ['kanbans' => $kanbans];
+        }
+
+        return true;
+    }
+
+    public function expelUsers(Request $request) {
+
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'common_name' => 'required|string',
-            'users' => 'sometimes',
+            'users' => 'sometimes|array',
             'groups' => 'sometimes|array',
             'curricula' => 'sometimes|array',
             'logbooks' => 'sometimes|array',
-            'kanbans' => 'sometimes|array',
+            'kanbans' => 'sometimes|array|integer',
             'editable' => 'sometimes|boolean'
         ]);
     }

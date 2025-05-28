@@ -92,6 +92,8 @@ Route::group([
     Route::get('moodle/kanbans', 'MoodleApiController@getKanbans');
     Route::get('moodle/groups', 'MoodleApiController@getGroups');
     Route::post('moodle/groups/enrol', 'MoodleApiController@enrolToGroup');
+    Route::post('moodle/users/enrol', 'MoodleApiController@enrolUsers');
+    Route::post('moodle/users/expel', 'MoodleApiController@expelUsers');
 
     Route::post('kanbans/{kanban}/enrol', 'KanbansApiController@enrolToKanban');
     Route::post('kanbans/{kanban}/expel', 'KanbansApiController@expelFromKanban');

@@ -206,13 +206,13 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      path="/v1/moodle/groups/enrol",
  *      operationId="enrolGroup",
  *      tags={"Moodle v1"},
- *      summary="Enrol groups to different ressources",
+ *      summary="Enrol groups to different resources",
  *      description="Creates or updates group-subscriptions to Kanbans/Logbooks and returns the subscriptions",
  *      security={
  *           {"passport": {"*"}},
  *      },
  *      @OA\RequestBody(
-*           required=true,
+ *          required=true,
  *          @OA\JsonContent(
  *              required={"common_name", "groups"},
  *              @OA\Property(
@@ -240,7 +240,8 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *              ),
  *              @OA\Property(
  *                  property="editable",
- *                  description="allow users to create/edit content inside the ressource, default => false",
+ *                  description="allow users to create/edit content inside the ressource",
+ *                  default=false,
  *                  type="boolean"
  *              ),
  *          )
@@ -249,6 +250,82 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *          response=200,
  *          description="successful operation",
  *          @OA\Schema(ref="#/components/schemas/SelectList"),
+ *      ),
+ *      @OA\Response(response=400, description="Bad request"),
+ * )
+ * 
+ * @OA\Post(
+ *      path="/v1/moodle/users/enrol",
+ *      operationId="enrolUsers",
+ *      tags={"Moodle v1"},
+ *      summary="Enrol users to different resources",
+ *      description="Creates or updates user-subscriptions to Kanbans and return the amount of created/updated subscriptions",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *      @OA\RequestBody(
+ *          required=true,
+ *          @OA\JsonContent(
+ *              required={"users", "kanbans"},
+ *              @OA\Property(
+ *                  property="users",
+ *                  description="array of user common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="kanbans",
+ *                  description="array of kanban IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="editable",
+ *                  description="allow users to create/edit content inside the ressource",
+ *                  default=false,
+ *                  type="boolean"
+ *              ),
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *          @OA\Schema(type="integer"),
+ *      ),
+ *      @OA\Response(response=400, description="Bad request"),
+ * )
+ * 
+ * @OA\Post(
+ *      path="/v1/moodle/users/expel",
+ *      operationId="expelUsers",
+ *      tags={"Moodle v1"},
+ *      summary="Expel users from different resources",
+ *      description="Deletes user-subscriptions to Kanbans and return the amount of deleted subscriptions",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *      @OA\RequestBody(
+ *          required=true,
+ *          @OA\JsonContent(
+ *              required={"users", "kanbans"},
+ *              @OA\Property(
+ *                  property="users",
+ *                  description="array of user common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="kanbans",
+ *                  description="array of kanban IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *          @OA\Schema(type="integer"),
  *      ),
  *      @OA\Response(response=400, description="Bad request"),
  * )

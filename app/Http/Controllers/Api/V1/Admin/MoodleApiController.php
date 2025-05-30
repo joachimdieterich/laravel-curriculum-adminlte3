@@ -204,44 +204,79 @@ class MoodleApiController extends Controller
     public function enrolUsers(Request $request) {
         $input = $this->validateRequest();
 
-        if (empty($input['users'])) abort(400, 'No users provided');
-        if (empty($input['kanbans'])) abort(400, 'No kanbans provided');
-        $users = User::whereIn('common_name', $input['users'])->pluck('id');
+        if (empty($input['users'])) abort(400, 'No users (common_name) provided');
+        if (empty($input['kanbans'])) abort(400, 'No kanbans (ID) provided');
+        $users = User::select('id', 'common_name')->whereIn('common_name', $input['users'])->get();
 
-        foreach ((array)$input['kanbans'] as $kanban_id) {
-            return Kanban::select('owner_id')->where('id', $kanban_id)->get(); // check if kanban exists
-            $kanbans = [];
-            foreach ($users as $user_id) {
+        if (count($users) != count($input['users'])) {
+            $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
+            abort(400, 'Users with common names ['.implode(', ', $missing).'] not found');
+        }
+
+        $create_count = 0;
+
+        foreach ($input['kanbans'] as $kanban_id) {
+            // check if kanban exists
+            $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
+            if (empty($owner_id)) abort(400, 'Kanban with ID '.$kanban_id.' not found');
+
+            foreach ($users as $user) {
                 // create subscription for kanban
-                $subscribe = KanbanSubscription::updateOrCreate([
+                KanbanSubscription::updateOrCreate([
                     'kanban_id' => $kanban_id,
                     'subscribable_type' => "App\User",
-                    'subscribable_id' => $user_id,
+                    'subscribable_id' => $user->id,
                 ], [
                     'editable' => $input['editable'] ?? false,
                     'owner_id' => $owner_id,
                 ]);
-                array_push($kanbans, $subscribe->save());
+
+                $create_count++;
             }
-            return ['kanbans' => $kanbans];
         }
 
-        return true;
+        return $create_count;
     }
 
     public function expelUsers(Request $request) {
+        $input = $this->validateRequest();
 
+        if (empty($input['users'])) abort(400, 'No users (common_name) provided');
+        if (empty($input['kanbans'])) abort(400, 'No kanbans (ID) provided');
+        $users = User::select('id', 'common_name')->whereIn('common_name', $input['users'])->get();
+
+        if (count($users) != count($input['users'])) {
+            $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
+            abort(400, 'Users with common names ['.implode(', ', $missing).'] not found');
+        }
+
+        $delete_count = 0;
+
+        foreach ($input['kanbans'] as $kanban_id) {
+            // check if kanban exists
+            $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
+            if (empty($owner_id)) abort(400, 'Kanban with ID '.$kanban_id.' not found');
+
+            $delete_count += KanbanSubscription::where([
+                'kanban_id' => $kanban_id,
+                'subscribable_type' => "App\User",
+            ])
+            ->whereIn('subscribable_id', $users->pluck('id')->toArray())
+            ->delete();
+        }
+
+        return $delete_count;
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'common_name' => 'required|string',
+            'common_name' => 'sometimes|string',
             'users' => 'sometimes|array',
             'groups' => 'sometimes|array',
             'curricula' => 'sometimes|array',
             'logbooks' => 'sometimes|array',
-            'kanbans' => 'sometimes|array|integer',
+            'kanbans' => 'sometimes|array',
             'editable' => 'sometimes|boolean'
         ]);
     }

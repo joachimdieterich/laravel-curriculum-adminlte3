@@ -265,8 +265,9 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      },
  *      @OA\RequestBody(
  *          required=true,
+ *          description="at least one model needs to be provided",
  *          @OA\JsonContent(
- *              required={"users", "kanbans"},
+ *              required={"users"},
  *              @OA\Property(
  *                  property="users",
  *                  description="array of user common_names",
@@ -276,6 +277,12 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *              @OA\Property(
  *                  property="kanbans",
  *                  description="array of kanban IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="curricula",
+ *                  description="array of curriculum IDs",
  *                  type="array",
  *                  @OA\Items(type="integer")
  *              ),
@@ -306,8 +313,9 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      },
  *      @OA\RequestBody(
  *          required=true,
+ *          description="at least one model needs to be provided",
  *          @OA\JsonContent(
- *              required={"users", "kanbans"},
+ *              required={"users"},
  *              @OA\Property(
  *                  property="users",
  *                  description="array of user common_names",
@@ -317,6 +325,12 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *              @OA\Property(
  *                  property="kanbans",
  *                  description="array of kanban IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="curricula",
+ *                  description="array of curriculum IDs",
  *                  type="array",
  *                  @OA\Items(type="integer")
  *              ),

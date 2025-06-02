@@ -70,6 +70,7 @@ class PlanSubscriptionController extends Controller
                     'curriculum_id' => $id,
                     'subscribable_type' => 'App\\Group',
                     'subscribable_id' => $input['subscribable_id'],
+                ], [
                     'owner_id' => auth()->user()->id,
                 ]);
             }

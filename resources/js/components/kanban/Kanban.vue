@@ -58,7 +58,7 @@
                             :key="status.id"
                             filter=".ignore"
                         />
-                        <div v-if="(editable && status.editable) || ($userId == status.owner_id)"
+                        <div v-if="editable"
                             :id="'kanbanItemCreateButton_' + index"
                             class="btn btn-flat p-1 my-1 mx-auto"
                             @click="openItemModal(status.id)"
@@ -82,7 +82,7 @@
                                             || ($userId == item.owner_id)
                                             || ($userId == kanban.owner_id)"
                                         :key="item.id"
-                                        :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
+                                        :editable="editable"
                                         :commentable="currentKanban.commentable"
                                         :only_edit_owned_items="kanban.only_edit_owned_items"
                                         :collapse_items="kanban.collapse_items"

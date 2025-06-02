@@ -65,7 +65,8 @@ class TerminalObjectiveSubscriptionsController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403, 'Model <' . $input['subscribable_type'] . ':' . $input['subscribable_id'] . '> not accessible!');
+        $model = $input['subscribable_type']::find($input['subscribable_id']);
+        abort_unless($model->isAccessible(), 403, 'Model <' . $input['subscribable_type'] . ':' . $input['subscribable_id'] . '> not accessible!');
 
         $new_subscriptions = [];
         $objectives = TerminalObjective::find($input['terminal_objective_id']);
@@ -85,6 +86,21 @@ class TerminalObjectiveSubscriptionsController extends Controller
         }
         // insertOrIgnore is used to prevent duplicates
         TerminalObjectiveSubscriptions::insertOrIgnore($new_subscriptions);
+        
+        // when adding objectives to a PlanEntry, check if all subscribed groups are subscribed to the curriculum
+        if ($model instanceof \App\PlanEntry) {
+            $groups = $model->plan->groupSubscriptions()->pluck('subscribable_id')->toArray();
+
+            foreach ($groups as $group_id) {
+                \App\CurriculumSubscription::firstOrCreate([
+                    'curriculum_id' => $objectives->first()->curriculum_id, // curriculum_id is the same for all objectives
+                    'subscribable_type' => 'App\\Group',
+                    'subscribable_id' => $group_id,
+                ],[
+                    'owner_id' => auth()->user()->id,
+                ]);
+            }
+        }
 
         if (request()->wantsJson()) {
             return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id', 'visibility')

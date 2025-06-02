@@ -160,12 +160,12 @@ tr:hover .vuehover {
 .custom-control-input:hover, .custom-control-label:hover { cursor: pointer; }
 /* Vuedatepicker uses another font-family as default */
 .dp__input { font-family: "Open Sans", Arial, sans-serif !important; }
-.kanban-header{
+.kanban-header {
     background-color: white;
     padding: 0.8rem !important;
     border-radius: 6px !important;
 }
-.comment-count{
+.comment-count {
     position: absolute;
     font-size: 8px !important;
     border-radius: 100%;
@@ -179,14 +179,15 @@ tr:hover .vuehover {
     top: 0px;
     right: 0px;
 }
-.with-comment-count{
+.with-comment-count {
     padding-top: 5px;
     padding-right: 10px;
 }
+.dropdown-menu.show:hover { cursor: default; }
 .dropdown-item {
     padding: 0.25rem 1rem !important;
 }
-.overlay{
+.overlay {
     background-color: rgba(255, 255, 255, 0.9) !important;
 }
 .error-block {

@@ -13,7 +13,7 @@
                 :id="'subscription_' + subscription.id"
                 :value="subscription.id"
                 style="clear: right;"
-                class="item d-flex"
+                class="item d-flex align-items-center"
             >
                 <div class="flex-fill">
                     <span v-if="subscribing_model == 'App\\User'">
@@ -24,12 +24,12 @@
                     </span>
                 </div>
 
-                <button
-                    class="btn btn-flat px-2 py-0 ml-auto mr-2"
+                <a
+                    class="text-danger px-2 py-0 ml-auto mr-2 vuehover"
                     @click="unsubscribe(subscription)"
                 >
-                    <i class="fa fa-trash text-danger vuehover"></i>
-                </button>
+                    <i class="fa fa-trash"></i>
+                </a>
 
                 <span v-if="canEditCheckbox"
                     class="custom-control custom-switch custom-switch-on-green"

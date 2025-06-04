@@ -22,12 +22,12 @@
                         {{ item.token.title }} |
                         <small>{{ diffForHumans(item.token.due_date) }}</small>
                     </span>
-                    <button
-                        class="btn btn-flat px-2 py-0 mr-2"
+                    <a
+                        class="text-danger px-2 py-0 mr-2 vuehover"
                         @click="unsubscribe(item.token.id)"
                     >
-                        <i class="fa fa-trash text-danger vuehover"></i>
-                    </button>
+                        <i class="fa fa-trash"></i>
+                    </a>
                     <span v-if="canEditCheckbox"
                         class="pull-right custom-control custom-switch custom-switch-on-green"
                     >

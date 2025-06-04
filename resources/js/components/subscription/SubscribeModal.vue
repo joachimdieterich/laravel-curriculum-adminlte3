@@ -99,7 +99,7 @@
                                     />
                                     <Subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
-                                        :subscriptions="subscribers.subscriptions"
+                                        :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\User')"
                                         :subscribing_model="'App\\User'"
                                         :canEditLabel="canEditLabel"
                                         :canEditCheckbox="canEditCheckbox"
@@ -122,7 +122,7 @@
                                     />
                                     <Subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
-                                        :subscriptions="subscribers.subscriptions"
+                                        :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\Group')"
                                         :subscribing_model="'App\\Group'"
                                         :canEditLabel="canEditLabel"
                                         :canEditCheckbox="canEditCheckbox"
@@ -145,7 +145,7 @@
                                     />
                                     <Subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
-                                        :subscriptions="subscribers.subscriptions"
+                                        :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\Organization')"
                                         :subscribing_model="'App\\Organization'"
                                         :canEditLabel="canEditLabel"
                                         :canEditCheckbox="canEditCheckbox"
@@ -197,14 +197,12 @@
     
                                     <hr class="pt-1 clearfix">
     
-                                    <div>
-                                        <Tokens v-if="subscribers.tokens != undefined"
-                                            :modelUrl="modelUrl"
-                                            :canEditLabel="canEditLabel"
-                                            :canEditCheckbox="canEditCheckbox"
-                                            :subscriptions="subscribers.tokens"
-                                        />
-                                    </div>
+                                    <Tokens v-if="subscribers.tokens != undefined"
+                                        :modelUrl="modelUrl"
+                                        :canEditLabel="canEditLabel"
+                                        :canEditCheckbox="canEditCheckbox"
+                                        :subscriptions="subscribers.tokens"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -240,7 +238,8 @@ export default {
     props: {
         params: {
             type: Object,
-        }
+            default: null,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();

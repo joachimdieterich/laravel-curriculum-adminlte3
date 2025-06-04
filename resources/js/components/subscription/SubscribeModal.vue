@@ -24,10 +24,13 @@
 
                 <div
                     class="modal-body"
-                    style="overflow-y: visible;"
+                    style="overflow-y: unset;"
                 >
-                    <div class="card">
-                        <div class="card-body">
+                    <div
+                        class="card"
+                        style="max-height: inherit;"
+                    >
+                        <div class="card-body overflow-auto">
                             <ul class="nav nav-pills nav-fill">
                                 <!-- User -->
                                 <li v-if="shareWithUsers"

@@ -178,6 +178,7 @@ export default {
                     }
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
         },
@@ -190,9 +191,10 @@ export default {
         reloadEnablingObjectives(ids) {
             axios.post('/curricula/' + this.curriculum.id + '/achievements', { 'user_ids' : ids })
                 .then(response => {
-                    this.processObjectives(response);
+                    Object.assign(this.objective_types, response.data);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
         },

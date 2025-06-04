@@ -17,36 +17,28 @@
                         <i v-else class="fa fa-graduation-cap link-muted"></i>
                         {{ entry.value.course_item?.name }}
                     </a>
-                    <span v-if="entry.owner_id == $userId">
-                        <button
-                            v-permission="'lms_delete'"
-                            class="btn btn-flat py-0 px-2 pull-right"
-                            @click.prevent="del(entry.id)"
-                        >
-                            <i class="fa fa-trash text-danger vuehover"></i>
-                        </button>
-                        <button
-                            v-permission="'lms_create'"
-                            class="btn btn-flat py-0 px-3 pull-right"
-                            @click.prevent="share(entry.id)"
-                        >
-                            <i class="fa fa-share-alt text-muted vuehover"></i>
-                        </button>
-                    </span>
+                    <a v-if="editable"
+                        v-permission="'lms_delete'"
+                        class="text-danger pull-right pointer"
+                        @click.prevent="del(entry.id)"
+                    >
+                        <i class="fa fa-trash"></i>
+                    </a>
                 </td>
             </tr>
         </table>
-        <table>
-            <tr>
-                <td
-                    v-permission="'lms_create'"
-                    class="py-2 link-muted text-sm pointer"
-                    @click.prevent="create()"
-                >
-                    <i class="fa fa-plus px-2 "></i> {{ trans('global.lms.add') }}
-                </td>
-            </tr>
-        </table>
+        <div v-if="editable"
+            v-permission="'lms_create'"
+            @click="create()"
+        >
+            <button
+                class="btn btn-default btn-flat text-left border-0 rounded-pill mt-2"
+                style="padding: 0.75rem 1.25rem;"
+            >
+                <i class="fas fa-plus pr-1"></i>
+                {{ trans('global.lms.add') }}
+            </button>
+        </div>
     </div>
 </template>
 <script>
@@ -61,6 +53,10 @@ export default {
         referenceable_id: {
             type: Number,
             default: null,
+        },
+        editable: {
+            type: Boolean,
+            default: false,
         },
     },
     setup () {
@@ -106,9 +102,6 @@ export default {
                 .catch(err => {
                     console.log(err.response);
                 });
-        },
-        share(id) {
-            this.$eventHub.emit('shareLms', id);
         },
     },
     mounted() {

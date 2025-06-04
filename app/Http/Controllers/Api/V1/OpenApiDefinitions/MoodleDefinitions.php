@@ -204,71 +204,142 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  * 
  * @OA\Post(
  *      path="/v1/moodle/groups/enrol",
- *      operattionId="enrolToGroup",
+ *      operationId="enrolGroup",
  *      tags={"Moodle v1"},
- *      summary="Enrol groups to different ressources",
+ *      summary="Enrol groups to different resources",
  *      description="Creates or updates group-subscriptions to Kanbans/Logbooks and returns the subscriptions",
  *      security={
  *           {"passport": {"*"}},
  *      },
  *      @OA\RequestBody(
- *          required="true",
+ *          required=true,
  *          @OA\JsonContent(
- *              example={
- *                  "common_name": "user_common_name",
- *                  "groups": ["common_name_1", "common_name_2"],
- *                  "kanbans": [1, 28, 357],
- *                  "logbooks": [13, 73, 166],
- *                  "editable": true,
- *              },
- *              @OA\Schema(
- *                  type="object",
- *                  @OA\Property(
- *                      property="common_name",
- *                      description="user common_name"
- *                      required="true",
- *                      type="string"
- *                  ),
- *                  @OA\Property(
- *                      property="groups",
- *                      description="array of group common_names"
- *                      required="true",
- *                      @OA\Schema(
- *                          type="array",
- *                          @OA\Items(type="string")
- *                      )
- *                  ),
- *                  @OA\Property(
- *                      property="kanbans",
- *                      description="array of kanban IDs"
- *                      required="false",
- *                      @OA\Schema(
- *                          type="array",
- *                          @OA\Items(type="integer")
- *                      )
- *                  ),
- *                  @OA\Property(
- *                      property="logbooks",
- *                      description="array of logbook IDs"
- *                      required="false",
- *                      @OA\Schema(
- *                          type="array",
- *                          @OA\Items(type="integer")
- *                      )
- *                  ),
- *                  @OA\Property(
- *                      property="editable",
- *                      description="allow users to create/edit content inside the ressource, default => false"
- *                      required="false",
- *                      type="boolean"
- *                  ),
- *              )
+ *              required={"common_name", "groups"},
+ *              @OA\Property(
+ *                  property="common_name",
+ *                  description="user common_name",
+ *                  type="string"
+ *              ),
+ *              @OA\Property(
+ *                  property="groups",
+ *                  description="array of group common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="kanbans",
+ *                  description="array of kanban IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="logbooks",
+ *                  description="array of logbook IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="editable",
+ *                  description="allow users to create/edit content inside the ressource",
+ *                  default=false,
+ *                  type="boolean"
+ *              ),
  *          )
  *      ),
  *      @OA\Response(
  *          response=200,
  *          description="successful operation",
  *          @OA\Schema(ref="#/components/schemas/SelectList"),
+ *      ),
+ *      @OA\Response(response=400, description="Bad request"),
+ * )
+ * 
+ * @OA\Post(
+ *      path="/v1/moodle/users/enrol",
+ *      operationId="enrolUsers",
+ *      tags={"Moodle v1"},
+ *      summary="Enrol users to different resources",
+ *      description="Creates or updates user-subscriptions to Kanbans and return the amount of created/updated subscriptions",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *      @OA\RequestBody(
+ *          required=true,
+ *          description="at least one model needs to be provided",
+ *          @OA\JsonContent(
+ *              required={"users"},
+ *              @OA\Property(
+ *                  property="users",
+ *                  description="array of user common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="kanbans",
+ *                  description="array of kanban IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="curricula",
+ *                  description="array of curriculum IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="editable",
+ *                  description="allow users to create/edit content inside the ressource",
+ *                  default=false,
+ *                  type="boolean"
+ *              ),
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *          @OA\Schema(type="integer"),
+ *      ),
+ *      @OA\Response(response=400, description="Bad request"),
+ * )
+ * 
+ * @OA\Post(
+ *      path="/v1/moodle/users/expel",
+ *      operationId="expelUsers",
+ *      tags={"Moodle v1"},
+ *      summary="Expel users from different resources",
+ *      description="Deletes user-subscriptions to Kanbans and return the amount of deleted subscriptions",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *      @OA\RequestBody(
+ *          required=true,
+ *          description="at least one model needs to be provided",
+ *          @OA\JsonContent(
+ *              required={"users"},
+ *              @OA\Property(
+ *                  property="users",
+ *                  description="array of user common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="kanbans",
+ *                  description="array of kanban IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *              @OA\Property(
+ *                  property="curricula",
+ *                  description="array of curriculum IDs",
+ *                  type="array",
+ *                  @OA\Items(type="integer")
+ *              ),
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *          @OA\Schema(type="integer"),
  *      ),
  *      @OA\Response(response=400, description="Bad request"),
  * )

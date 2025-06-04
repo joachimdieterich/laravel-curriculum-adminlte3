@@ -77,7 +77,8 @@ class EnablingObjectiveSubscriptionsController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless($input['subscribable_type']::find($input['subscribable_id'])->isAccessible(), 403, 'Model <' . $input['subscribable_type'] . ':' . $input['subscribable_id'] . '> not accessible!');
+        $model = $input['subscribable_type']::find($input['subscribable_id']);
+        abort_unless($model->isAccessible(), 403, 'Model <' . $input['subscribable_type'] . ':' . $input['subscribable_id'] . '> not accessible!');
 
         $new_subscriptions = [];
         $objectives = EnablingObjective::find($input['enabling_objective_id']);
@@ -98,12 +99,27 @@ class EnablingObjectiveSubscriptionsController extends Controller
         // insertOrIgnore is used to prevent duplicates
         EnablingObjectiveSubscriptions::insertOrIgnore($new_subscriptions);
 
+        // when adding objectives to a PlanEntry, check if all subscribed groups are subscribed to the curriculum
+        if ($model instanceof \App\PlanEntry) {
+            $groups = $model->plan->groupSubscriptions()->pluck('subscribable_id')->toArray();
+
+            foreach ($groups as $group_id) {
+                \App\CurriculumSubscription::firstOrCreate([
+                    'curriculum_id' => $objectives->first()->curriculum_id, // curriculum_id is the same for all objectives
+                    'subscribable_type' => 'App\\Group',
+                    'subscribable_id' => $group_id,
+                ],[
+                    'owner_id' => auth()->user()->id,
+                ]);
+            }
+        }
+
         if (request()->wantsJson()) {
             return TerminalObjective::select('id', 'title', 'description', 'color', 'curriculum_id', 'visibility')
                 ->whereIn('id', $input['terminal_objective_id'])
                 ->with(['enablingObjectives' => function ($query) use ($input) {
                     // inside 'with' the 'select'-statement needs to include the foreign key, or else it'll return '0'
-                    $query->select('id', 'title', 'description', 'terminal_objective_id')
+                    $query->select('id', 'title', 'description', 'terminal_objective_id', 'enabling_objectives.visibility')
                         ->without(['terminalObjective', 'level'])
                         // only get enabling-objectives that are subscribed to the current model
                         ->join('enabling_objective_subscriptions', 'enabling_objectives.id', '=', 'enabling_objective_subscriptions.enabling_objective_id')

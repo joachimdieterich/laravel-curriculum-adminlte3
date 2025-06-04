@@ -38,8 +38,8 @@
                 v-bind="columnDragOptions"
                 item-key="id"
                 handle=".handle"
-                class="d-flex m-0 pr-0 h-100"
-                style="width: max-content; gap: 16px; padding-right: 2rem"
+                class="d-flex m-0 h-100"
+                style="width: max-content; gap: 16px;"
                 :move="isLocked"
                 @end="syncStatusMoved"
             >
@@ -58,7 +58,7 @@
                             :key="status.id"
                             filter=".ignore"
                         />
-                        <div v-if="(editable && status.editable) || ($userId == status.owner_id)"
+                        <div v-if="editable"
                             :id="'kanbanItemCreateButton_' + index"
                             class="btn btn-flat p-1 my-1 mx-auto"
                             @click="openItemModal(status.id)"
@@ -82,7 +82,7 @@
                                             || ($userId == item.owner_id)
                                             || ($userId == kanban.owner_id)"
                                         :key="item.id"
-                                        :editable="(status.editable == false && $userId != kanban.owner_id) ? false : editable"
+                                        :editable="editable"
                                         :commentable="currentKanban.commentable"
                                         :only_edit_owned_items="kanban.only_edit_owned_items"
                                         :collapse_items="kanban.collapse_items"
@@ -323,6 +323,7 @@ export default {
                 item: {
                     kanban_id: this.currentKanban.id,
                     kanban_status_id: status_id,
+                    color: this.kanban.statuses.find(s => s.id === status_id).color,
                 },
                 method: 'post',
             });
@@ -632,7 +633,7 @@ export default {
     height: 100%;
     width: 100%;
     padding: 2rem;
-    overflow-x: overlay;
+    overflow-x: auto;
     overflow-y: clip;
 }
 .kanban-items-container { scroll-behavior: smooth; }

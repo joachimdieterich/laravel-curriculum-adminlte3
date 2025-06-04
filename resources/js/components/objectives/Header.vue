@@ -41,7 +41,9 @@
             </a>
         </span>
 
-        <span v-if="(type == 'enabling' && objective.level != null)">
+        <span v-if="(type == 'enabling' && objective.level != null)"
+            class="mx-auto"
+        >
             <button
                 type="button"
                 class="btn btn-block btn-xs"

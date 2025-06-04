@@ -95,6 +95,7 @@
             <MediumModal/>
             <SubscribeModal/>
             <TrainingModal/>
+            <LmsModal/>
             <PlanEntryModal :plan="plan"/>
             <SelectUsersModal :users="users" :multiple="true"/>
             <SetAchievementsModal :users="users"/>
@@ -126,6 +127,7 @@ import MediumModal from "../media/MediumModal.vue";
 import SelectUsersModal from "../user/SelectUsersModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import TrainingModal from "../training/TrainingModal.vue";
+import LmsModal from "../lms/LmsModal.vue";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global";
@@ -275,6 +277,7 @@ export default {
         SelectUsersModal,
         SubscribeObjectiveModal,
         TrainingModal,
+        LmsModal,
         SetAchievementsModal,
         SubscribeModal,
         draggable,

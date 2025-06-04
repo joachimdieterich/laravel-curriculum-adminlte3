@@ -17,7 +17,7 @@
             >
                 {{ item.title }}
                 <i class="fa fa-angle-up"></i>
-                <div style="font-size: .5rem">
+                <div style="font-size: 10px;">
                     {{ item.created_at }}
                 </div>
             </div>
@@ -391,9 +391,9 @@ export default {
     mounted() {
         this.edit_rights =
             this.$userId == this.kanban_owner_id
-                || this.checkPermission('is_admin')
-                // (edit = true and item-owner) or (edit = true and item-edit = true and everyone can edit)
-                || (this.editable && (this.$userId == this.item.owner_id || (this.item.editable && !this.only_edit_owned_items)));
+            || this.checkPermission('is_admin')
+            // (edit = true and item-owner) or (edit = true and item-edit = true and everyone can edit)
+            || (this.editable && (this.$userId == this.item.owner_id || (this.item.editable && !this.only_edit_owned_items)));
 
         this.copy_rights = this.allow_copy && this.editable;
 

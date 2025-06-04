@@ -50,6 +50,7 @@ body {
     right:0;
     padding-right: 10px;
 }
+.nav-pills > .nav-item > .nav-link { border-radius: 10px; }
 .col-centered {
     float: none;
     margin: 0 auto;
@@ -159,12 +160,12 @@ tr:hover .vuehover {
 .custom-control-input:hover, .custom-control-label:hover { cursor: pointer; }
 /* Vuedatepicker uses another font-family as default */
 .dp__input { font-family: "Open Sans", Arial, sans-serif !important; }
-.kanban-header{
+.kanban-header {
     background-color: white;
     padding: 0.8rem !important;
     border-radius: 6px !important;
 }
-.comment-count{
+.comment-count {
     position: absolute;
     font-size: 8px !important;
     border-radius: 100%;
@@ -178,14 +179,15 @@ tr:hover .vuehover {
     top: 0px;
     right: 0px;
 }
-.with-comment-count{
+.with-comment-count {
     padding-top: 5px;
     padding-right: 10px;
 }
+.dropdown-menu.show:hover { cursor: default; }
 .dropdown-item {
     padding: 0.25rem 1rem !important;
 }
-.overlay{
+.overlay {
     background-color: rgba(255, 255, 255, 0.9) !important;
 }
 .error-block {
@@ -273,8 +275,7 @@ tr:hover .vuehover {
     transition: opacity 0.3s ease;
 }
 .modal-container {
-    min-width: 50vh;
-    max-width: 90vw;
+    max-width: 95vw;
     margin: auto;
     padding: 0;
     background-color: #fff;
@@ -282,8 +283,8 @@ tr:hover .vuehover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     transition: all 0.3s ease;
 }
-.modal-default-button {
-    float: right;
+@media (min-width: 769px) {
+    .modal-container { min-width: 50vh; }
 }
 /*
  * The following styles are auto-applied to elements with

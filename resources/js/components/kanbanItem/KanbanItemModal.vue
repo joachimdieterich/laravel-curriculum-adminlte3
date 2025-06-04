@@ -64,19 +64,19 @@
                         </div>
                         <div class="card-body">
                             <v-swatches
-                                :swatch-size="49"
                                 class="d-flex"
                                 style="height: 42px;"
-                                popover-to="right"
-                                v-model="this.form.color"
+                                :swatches="$swatches"
+                                row-length="5"
+                                popover-y="top"
+                                v-model="form.color"
                                 show-fallback
                                 fallback-input-type="color"
                                 @input="(id) => {
-                                    if(id.isInteger) {
+                                    if (id.isInteger) {
                                         this.form.color = id;
                                     }
                                 }"
-                                :max-height="300"
                             />
                         </div>
                     </div>

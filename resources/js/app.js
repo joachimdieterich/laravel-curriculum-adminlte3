@@ -89,7 +89,7 @@ app.config.globalProperties.$swatches = [
     ['#1e40af', '#2563eb', '#0ea5e9', '#60a5fa', '#a5b4fc'], // blue
     ['#581c87', '#a21caf', '#7c3aed', '#a855f7', '#e879f9'], // purple -> pink
     ['#991b1b', '#dc2626', '#f97316', '#f59e0b', '#facc15'], // red -> orange -> yellow
-    ['#111827', '#78350f', '#78716c', '#9ca3af', '#d1d5db'], // black -> brown -> grey
+    ['#111827', '#78350f', '#9ca3af', '#d1d5db', '#f4f4f4'], // black -> brown -> grey
 ];
 
 app.config.globalProperties.$textcolor = (color, dark = '#000', light = '#fff') => {

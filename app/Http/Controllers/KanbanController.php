@@ -190,14 +190,7 @@ class KanbanController extends Controller
 
         $kanban = $this->getKanbanWithRelations($kanban);
 
-        if ($token == null)
-        {
-            $may_edit = $kanban->isEditable();
-        }
-        else
-        {
-            $may_edit = $kanban->isEditable(auth()->user()->id, $token);
-        }
+        $may_edit = $kanban->isEditable(auth()->user()->id, $token);
 
         $is_shared = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
         $is_pusher_active = env('PUSHER_APP_ACTIVE');
@@ -424,7 +417,6 @@ class KanbanController extends Controller
         }
 
         return $this->show($kanban, $input['sharing_token']);
-
     }
 
     public function copyKanban(Kanban $kanban, Request $request)

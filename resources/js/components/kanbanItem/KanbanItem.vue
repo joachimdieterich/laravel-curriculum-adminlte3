@@ -2,6 +2,7 @@
     <div
         :id="'item-' + item.id"
         class="card"
+        :style="!item.visibility ? 'opacity: 0.7;' : ''"
     >
         <div
             class="card-header p-0"

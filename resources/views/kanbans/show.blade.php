@@ -22,7 +22,7 @@
 @endsection
 
 @section('content')
-    <div class="d-flex flex-fill" style="height: calc(100vh - 217px)">
+    <div class="d-flex flex-fill" style="height: calc(100vh - 218px)">
         <kanban
             :editable="{{ $may_edit ? 'true' : 'false' }}"
             :pusher="{{ $is_pusher_active ? 'true' : 'false' }}"

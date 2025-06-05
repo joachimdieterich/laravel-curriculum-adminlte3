@@ -27,7 +27,7 @@
                     <li class="small">lastname: {{ $usr->lastname }};</li>
                     <li class="small">email: {{ $usr->email }};</li>
                     <li class="small">status: {{ $usr->status }};</li>
-                    <li class="small">current_organization_id: {{ $usr->current_organization_id }} => {{ $usr->organizations->find($usr->current_organization_id)->title }};</li>
+                    <li class="small">current_organization_id: {{ $usr->current_organization_id }} => {{ $usr->organizations->find($usr->current_organization_id)?->title }};</li>
                     <li class="small">current_period_id: {{ $usr->current_period_id }};</li>
                 @endforeach
                 <br/>

@@ -249,29 +249,8 @@ class CurriculumController extends Controller
 
     public function getObjectives(Curriculum $curriculum)
     {
-        $terminal = \App\ObjectiveType::select('id', 'title', 'uuid')
-            ->whereHas('terminalObjectives', function ($query) use ($curriculum) {
-                $query->where('curriculum_id', $curriculum->id);
-            })
-            ->with(['terminalObjectives' => function ($query) use ($curriculum) {
-                $query->select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
-                    ->where('curriculum_id', $curriculum->id)
-                    ->with([
-                        'enablingObjectives' => function($query) {
-                            $query->without('terminalObjective')
-                                ->with(['achievements' => function($query) {
-                                    $query->select('id', 'status', 'updated_at')
-                                        ->where('user_id', auth()->user()->id);
-                                }])
-                                ->orderBy('order_id');
-                        },
-                    ])
-                    ->orderBy('order_id');
-            }])
-            ->get();
-
         if (request()->wantsJson()) {
-            return $terminal;
+            return $this->getObjectivesByType($curriculum);
         }
     }
 
@@ -285,20 +264,37 @@ class CurriculumController extends Controller
     {
         abort_unless(Gate::allows('curriculum_show') and $curriculum->isAccessible(), 403, "No access to this curriculum");
 
-        $terminal = \App\TerminalObjective::select( 'id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
-            ->where('curriculum_id', $curriculum->id)
-            ->with([
-                'enablingObjectives',
-                'enablingObjectives.achievements' => function ($query) {
-                    $query->whereIn('user_id', request()->user_ids);
-                }
-            ])
-            ->orderBy('order_id')
-            ->get();
-
         if (request()->wantsJson()) {
-            return $terminal;
+            return $this->getObjectivesByType($curriculum, request()->user_ids);
         }
+    }
+
+    private function getObjectivesByType(Curriculum $curriculum, $user_ids = null)
+    {
+        if ($user_ids == null) {
+            $user_ids = [auth()->user()->id];
+        }
+
+        return \App\ObjectiveType::select('id', 'title', 'uuid')
+            ->whereHas('terminalObjectives', function ($query) use ($curriculum) {
+                $query->where('curriculum_id', $curriculum->id);
+            })
+            ->with(['terminalObjectives' => function ($query) use ($curriculum, $user_ids) {
+                $query->select('id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
+                    ->where('curriculum_id', $curriculum->id)
+                    ->with([
+                        'enablingObjectives' => function($query) use ($user_ids) {
+                            $query->without('terminalObjective')
+                                ->with(['achievements' => function($query) use ($user_ids) {
+                                    $query->select('id', 'status', 'referenceable_id', 'referenceable_type', 'updated_at')
+                                        ->whereIn('user_id', $user_ids);
+                                }])
+                                ->orderBy('order_id');
+                        },
+                    ])
+                    ->orderBy('order_id');
+            }])
+            ->get();
     }
 
     /**

@@ -1,12 +1,12 @@
 <template>
     <ul class="products-list product-list-in-card pl-2 pr-2">
-        <li v-if="subscriptions.length > 0">
-            <span class="pull-right">
-                <small>{{ canEditLabel }}</small>
-            </span>
+        <li v-if="subscriptions.length > 0"
+            class="d-flex flex-row-reverse border-bottom"    
+        >
+            <small>{{ canEditLabel }}</small>
         </li>
         <li v-for="item in subscriptions"
-            :id="'subscription_'+item.token.id"
+            :id="'subscription_' + item.token.id"
             class="item"
             style="clear: right;"
             :value="item.token.id"
@@ -18,21 +18,21 @@
                         class="fa fa-qrcode mr-2 pointer"
                         @click="setQRCodeId(item.token.id)"
                     ></i>
-                    <span>
+                    <span class="flex-fill">
                         {{ item.token.title }} |
                         <small>{{ diffForHumans(item.token.due_date) }}</small>
                     </span>
-                    <button
-                        class="btn btn-flat ml-auto py-0 mr-1"
+                    <a
+                        class="text-danger px-2 py-0 mr-2 vuehover"
                         @click="unsubscribe(item.token.id)"
                     >
-                        <i class="fa fa-trash text-danger vuehover"></i>
-                    </button>
+                        <i class="fa fa-trash"></i>
+                    </a>
                     <span v-if="canEditCheckbox"
                         class="pull-right custom-control custom-switch custom-switch-on-green"
                     >
                         <input
-                            :id="'subscription_input'+item.token.id"
+                            :id="'subscription_input' + item.token.id"
                             type="checkbox"
                             class="custom-control-input pt-1"
                             v-model="item.token.editable"
@@ -44,7 +44,7 @@
                 <div>
                     <span
                         :id="'subscription_link_'+item.token.id"
-                        class="pointer text-muted text-xs"
+                        class="pointer text-muted text-xs line-clamp"
                         v-dompurify-html="generateShareURL(item.token)"
                         @click="copyToClipboard"
                     ></span>

@@ -150,13 +150,6 @@ textarea {
 
     & p { margin: 0; } // if Editor was used, text is wrapped in <p> tags
 }
-.vuehover {
-    display: none;
-}
-li:hover .vuehover,
-tr:hover .vuehover {
-    display: block;
-}
 .custom-control-input:hover, .custom-control-label:hover { cursor: pointer; }
 /* Vuedatepicker uses another font-family as default */
 .dp__input { font-family: "Open Sans", Arial, sans-serif !important; }
@@ -258,6 +251,17 @@ tr:hover .vuehover {
             width: auto;
             aspect-ratio: 1/1;
         }
+    }
+}
+// desktop-view
+@media (min-width: 991px) {
+    .vuehover {
+        display: none;
+    }
+    li:hover .vuehover,
+    tr:hover .vuehover {
+        display: block;
+        cursor: pointer;
     }
 }
 /*

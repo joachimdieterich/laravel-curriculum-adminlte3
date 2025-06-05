@@ -81,7 +81,9 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div v-if="ownerOrAdmin"
+                        class="card"
+                    >
                         <div
                             class="card-header border-bottom"
                             data-card-widget="collapse"
@@ -224,6 +226,7 @@ export default {
                 kanban_id: '',
                 kanban_status_id: '',
                 order_id: 0,
+                owner_id: null,
                 color: '#f4f4f4',
                 due_date: '',
                 locked: false,
@@ -301,6 +304,13 @@ export default {
                     this.toast.error(this.trans('global.error'));
                     console.log(e);
                 });
+        },
+    },
+    computed: {
+        ownerOrAdmin() {
+            return this.form.owner_id == this.$userId
+                || this.$parent.kanban.owner_id == this.$userId
+                || this.checkPermission('is_admin');
         },
     },
     components: {

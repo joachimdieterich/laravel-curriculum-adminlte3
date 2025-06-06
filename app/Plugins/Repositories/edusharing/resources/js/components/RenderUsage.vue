@@ -7,7 +7,7 @@
         <div v-else
             @click="show()"
             class="nav-item-box-image-size h-100 w-100"
-            :style="{'background': 'url() center no-repeat'}"
+            :style="{'background': 'url(/media/' + medium.id + '?preview=true) center no-repeat'}"
             :alt="medium.title"
         ></div>
 

@@ -1,16 +1,19 @@
 <template>
     <div class="position-relative">
-        <div
+        <img v-if="isCarousel"
+            :src="'/media/' + medium.id + '?preview=true'"
+            width="100%"
+        >
+        <div v-else
             @click="show()"
             class="nav-item-box-image-size h-100 w-100"
-            :style="{'background': 'url(/media/' + medium.id + '?preview=true) center no-repeat'}"
+            :style="{'background': 'url() center no-repeat'}"
             :alt="medium.title"
         ></div>
 
         <div
             :id="'loading_' + medium.id"
-            class="overlay text-center"
-            style="width:100% !important;"
+            class="overlay text-center w-100"
         >
             <i class="fa fa-spinner fa-pulse fa-fw"></i>
             <span class="sr-only">Loading...</span>
@@ -27,6 +30,10 @@ export default {
         downloadable: {
             type: Boolean,
             default: true,
+        },
+        isCarousel: {
+            type: Boolean,
+            default: false,
         },
     },
     methods: {

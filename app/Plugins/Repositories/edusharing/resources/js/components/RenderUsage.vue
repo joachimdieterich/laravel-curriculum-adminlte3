@@ -1,12 +1,11 @@
 <template>
-    <div>
-        <div @click="show()">
-            <img
-                :src="'/media/' + medium.id + '?preview=true'"
-                :alt="medium.title"
-                class="p-0 w-100"
-            />
-        </div>
+    <div class="position-relative">
+        <div
+            @click="show()"
+            class="nav-item-box-image-size h-100 w-100"
+            :style="{'background': 'url(/media/' + medium.id + '?preview=true) center no-repeat'}"
+            :alt="medium.title"
+        ></div>
 
         <div
             :id="'loading_' + medium.id"

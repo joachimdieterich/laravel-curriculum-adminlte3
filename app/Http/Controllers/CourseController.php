@@ -103,6 +103,7 @@ class CourseController extends Controller
             or (auth()->user()->currentRole()->first()->id == 1)), 403); // or admin
 
         $course = CurriculumSubscription::where('id', $request['course_id'])->get()->first();
+        $organization_id = \App\Group::select('organization_id')->find($course->subscribable_id)->organization_id;
 
         $users = User::select([
             'users.id',
@@ -116,7 +117,7 @@ class CourseController extends Controller
             ->join('group_user', 'users.id', '=', 'group_user.user_id')
             ->join('organization_role_users', 'organization_role_users.user_id', '=', 'group_user.user_id')
             ->where('group_user.group_id', '=', $course->subscribable_id)
-            ->where('organization_role_users.organization_id', '=', auth()->user()->current_organization_id)
+            ->where('organization_role_users.organization_id', '=', $organization_id)
             ->where('organization_role_users.role_id', '=', 6)
             ->with(['progresses' => function ($query) use ($course) {
             $query->where('referenceable_type', 'App\Curriculum')

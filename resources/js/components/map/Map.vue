@@ -54,12 +54,12 @@
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
-                        <li v-for="marker in this.markers">
-                            <i class="fa fa-location-dot pr-2"></i>
+                        <li v-for="marker in markers">
                             <a
                                 class="text-decoration-none pointer"
                                 @click="setCurrentMarker(marker)"
                             >
+                                <i class="fa fa-location-dot link-muted pr-2"></i>
                                 {{ marker.title }}
                             </a>
                             <div class="tools">

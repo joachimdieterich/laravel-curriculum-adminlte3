@@ -47,82 +47,83 @@
             <div v-if="model.curriculum.type_id !== 1"
                 v-permission="'external_medium_create, is_teacher'"
                 :id="'media-add'"
-                class="box box-objective nav-item-box-image pointer my-1"
+                class="box box-objective nav-item-box-image pointer my-1 pull-left"
                 style="min-width: 200px !important; border-style: solid !important;"
                 @click="addMedia()"
             >
-                <div class="nav-item-box-image-size text-center">
-                    <i class="fa fa-2x p-5 fa-plus nav-item-text text-muted"></i>
-                </div>
-    
-                <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
-                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                        {{ trans('global.media.create') }}
-                    </h1>
-                </span>
+                <a>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="fa fa-2x fa-plus text-muted"></i>
+                    </div>
+                    <span>
+                        <span class="nav-item-box d-flex justify-content-center align-items-center align-items-lg-start bg-gray-light text-center p-1">
+                            {{ trans('global.media.link') }}
+                        </span>
+                    </span>
+                </a>
             </div>
     
             <!-- Media uploaded from Curriculum -->
             <div v-for="subscription in filteredMedia"
-                class="box box-objective nav-item-box-image pointer my-1"
-                style="min-width: 200px !important; border-style: solid !important; overflow: auto"
+                class="box box-objective nav-item-box-image pointer my-1 pull-left"
+                style="min-width: 200px !important;"
             >
-                <render-usage
-                    class="d-flex align-items-center nav-item-box-image-size user-select-none"
-                    :medium="subscription.medium"
-                />
-                <span class="text-center p-1 overflow-auto nav-item-box bg-gray-light">
-                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                        {{ subscription.medium.title ?? subscription.medium.name }}
-                    </h1>
-                </span>
-                <span v-if="subscription.medium.owner_id == $userId"
-                    v-permission="'medium_delete'"
-                    class="position-absolute w-100 p-1 pointer"
-                    accesskey=""
-                    style="top:0; height: 30px;"
-                >
-                    <button
-                        id="delete-navigator-item"
-                        class="btn btn-danger btn-sm pull-right"
-                        type="submit"
-                        @click.stop="unlinkMedium(subscription);"
+                <a class="text-decoration-none">
+                    <RenderUsage :medium="subscription.medium"/>
+                    <span>
+                        <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
+                            {{ subscription.medium.title ?? subscription.medium.name }}
+                        </span>
+                    </span>
+                    <span v-if="subscription.medium.owner_id == $userId"
+                        v-permission="'medium_delete'"
+                        class="position-absolute w-100 p-1 pointer"
+                        style="top: 0;"
                     >
-                        <small><i class="fa fa-unlink"></i></small>
-                    </button>
-                </span>
+                        <button
+                            id="delete-navigator-item"
+                            class="btn btn-danger btn-sm pull-right"
+                            type="submit"
+                            @click.stop="unlinkMedium(subscription);"
+                        >
+                            <small><i class="fa fa-unlink"></i></small>
+                        </button>
+                    </span>
+                </a>
             </div>
     
             <!-- Media linked from Edusharing -->
             <div v-for="medium in filteredExternalMedia"
                 :id="medium.node_id"
-                style="border: 1px solid #d2d6de;"
-                class="box box-objective edusharing-box pointer my-1"
+                class="box box-objective nav-item-box-image pointer my-1 pull-left"
                 @click="show(medium)"
             >
-                <div
-                    class="bg-white text-center edusharing-box-bg p-1 overflow-auto"
-                    :style="{ 'background-image': 'url(' + href(medium) + ')' }"
-                >
-                    <div
-                        class="symbol"
-                        :style="{ 'background': 'white url(' + iconUrl(medium) + ') no-repeat center', 'background-size': '24px' }"
-                    ></div>
-                </div>
-    
-                <span
-                    class="position-absolute bg-white text-center w-100 p-1 overflow-auto"
-                    style="bottom: 0; height: 150px;"
-                >
-                    <h6 class="events-heading pt-1 hyphens" v-dompurify-html="medium.title"></h6>
-                    <p class="text-muted small" v-dompurify-html="medium.description"></p>
-                </span>
-                <span style="position: absolute; bottom: 5px; left: 5px;">
-                    <img
-                        style="height: 16px;"
-                        :src="medium.license.icon"
-                    />
-                </span>
+                <a class="text-decoration-none">
+                    <div>
+                        <div
+                            class="nav-item-box-image-size h-100 w-100"
+                            :style="{ 'background-image': 'url(' + href(medium) + ')' }"
+                        ></div>
+                        <div
+                            class="symbol"
+                            style="height: 24px;"
+                            :style="{ 'background': 'white url(' + iconUrl(medium) + ') no-repeat center', 'background-size': '24px' }"
+                        ></div>
+                    </div>
+        
+                    <span>
+                        <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
+                            <h6 class="pt-1 hyphens" v-dompurify-html="medium.title"></h6>
+                            <p class="text-muted small" v-dompurify-html="medium.description"></p>
+                        </span>
+                    </span>
+                    <span style="position: absolute; bottom: 5px; left: 5px;">
+                        <img
+                            style="height: 16px;"
+                            :src="medium.license.icon"
+                        />
+                    </span>
+                </a>
             </div>
     
             <div v-if="media !== null"
@@ -157,7 +158,7 @@
 </template>
 <script>
 import {useGlobalStore} from "../../../../../../../resources/js/store/global.js";
-import renderUsage from "./RenderUsage.vue";
+import RenderUsage from "./RenderUsage.vue";
 
 export default {
     props: {
@@ -308,7 +309,7 @@ export default {
         },
     },
     components: {
-        renderUsage,
+        RenderUsage,
     },
 }
 </script>

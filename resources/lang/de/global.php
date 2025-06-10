@@ -185,6 +185,12 @@ return [
             'version_helper' => '',
         ],
     ],
+    'media' => [
+        'title' => 'Medien',
+        'title_singular' => 'Medium',
+        'create' => 'Medium erstellen',
+        'link' => 'Medium verknüpfen',
+    ],
     'date' => 'Datum',
     'region' => 'Region',
     'place' => 'Ort',

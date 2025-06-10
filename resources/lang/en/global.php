@@ -170,6 +170,12 @@ return [
             'version_helper' => '',
         ],
     ],
+    'media' => [
+        'title' => 'Media',
+        'title_singular' => 'Medium',
+        'create' => 'Create medium',
+        'link' => 'Link medium',
+    ],
     'date' => 'Date',
     'region' => 'Region',
     'place' => 'Place',

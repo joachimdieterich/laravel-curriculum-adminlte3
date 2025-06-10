@@ -208,6 +208,11 @@ class MoodleApiController extends Controller
         if (empty($input['users'])) abort(400, 'No users (common_name) provided');
         if (empty($input['kanbans']) and empty($input['curricula'])) abort(400, 'At least one model needs to be provided (kanbans or curricula)');
 
+        // parse fields to arrays if they are strings
+        if (gettype($input['users']) == 'string') $input['users'] = json_decode($input['users'], true);
+        if (!empty($input['kanbans']) and gettype($input['kanbans']) == 'string') $input['kanbans'] = json_decode($input['kanbans'], true);
+        if (!empty($input['curricula']) and gettype($input['curricula']) == 'string') $input['curricula'] = json_decode($input['curricula'], true);
+
         $users = User::select('id', 'common_name')->whereIn('common_name', $input['users'])->get();
         // if not every common_name has a corresponding user, return those
         if (count($users) != count($input['users'])) {
@@ -216,42 +221,47 @@ class MoodleApiController extends Controller
         }
 
         $create_count = 0;
-        // create subscriptions for kanbans
-        foreach ($input['kanbans'] as $kanban_id) {
-            // check if kanban exists
-            $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
-            if (empty($owner_id)) abort(400, 'Kanban with ID '.$kanban_id.' not found');
 
-            foreach ($users as $user) {
-                KanbanSubscription::updateOrCreate([
-                    'kanban_id' => $kanban_id,
-                    'subscribable_type' => "App\User",
-                    'subscribable_id' => $user->id,
-                ], [
-                    'editable' => $input['editable'] ?? false,
-                    'owner_id' => $owner_id,
-                ]);
-
-                $create_count++;
+        if (!empty($input['kanbans'])) {
+            // create subscriptions for kanbans
+            foreach ($input['kanbans'] as $kanban_id) {
+                // check if kanban exists
+                $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
+                if (empty($owner_id)) abort(400, 'Kanban with ID '.$kanban_id.' not found');
+    
+                foreach ($users as $user) {
+                    KanbanSubscription::updateOrCreate([
+                        'kanban_id' => $kanban_id,
+                        'subscribable_type' => "App\User",
+                        'subscribable_id' => $user->id,
+                    ], [
+                        'editable' => $input['editable'] ?? false,
+                        'owner_id' => $owner_id,
+                    ]);
+    
+                    $create_count++;
+                }
             }
         }
 
-        // create subscriptions for curricula
-        foreach ($input['curricula'] as $curriculum_id) {
-            // check if curricula exists
-            $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
-            if (empty($owner_id)) abort(400, 'Curriculum with ID '.$curriculum_id.' not found');
-
-            foreach ($users as $user) {
-                CurriculumSubscription::updateOrCreate([
-                    'curriculum_id' => $curriculum_id,
-                    'subscribable_type' => "App\User",
-                    'subscribable_id' => $user->id,
-                ], [
-                    'owner_id' => $owner_id,
-                ]);
-
-                $create_count++;
+        if (!empty($input['curricula'])) {
+            // create subscriptions for curricula
+            foreach ($input['curricula'] as $curriculum_id) {
+                // check if curricula exists
+                $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
+                if (empty($owner_id)) abort(400, 'Curriculum with ID '.$curriculum_id.' not found');
+    
+                foreach ($users as $user) {
+                    CurriculumSubscription::updateOrCreate([
+                        'curriculum_id' => $curriculum_id,
+                        'subscribable_type' => "App\User",
+                        'subscribable_id' => $user->id,
+                    ], [
+                        'owner_id' => $owner_id,
+                    ]);
+    
+                    $create_count++;
+                }
             }
         }
 
@@ -264,6 +274,11 @@ class MoodleApiController extends Controller
         if (empty($input['users'])) abort(400, 'No users (common_name) provided');
         if (empty($input['kanbans']) and empty($input['curricula'])) abort(400, 'At least one model needs to be provided (kanbans or curricula)');
 
+        // parse fields to arrays if they are strings
+        if (gettype($input['users']) == 'string') $input['users'] = json_decode($input['users'], true);
+        if (!empty($input['kanbans']) and gettype($input['kanbans']) == 'string') $input['kanbans'] = json_decode($input['kanbans'], true);
+        if (!empty($input['curricula']) and gettype($input['curricula']) == 'string') $input['curricula'] = json_decode($input['curricula'], true);
+
         $users = User::select('id', 'common_name')->whereIn('common_name', $input['users'])->get();
         // if not every common_name has a corresponding user, return those
         if (count($users) != count($input['users'])) {
@@ -273,30 +288,34 @@ class MoodleApiController extends Controller
 
         $delete_count = 0;
 
-        foreach ($input['kanbans'] as $kanban_id) {
-            // check if kanban exists
-            $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
-            if (empty($owner_id)) abort(400, 'Kanban with ID '.$kanban_id.' not found');
-
-            $delete_count += KanbanSubscription::where([
-                'kanban_id' => $kanban_id,
-                'subscribable_type' => "App\User",
-            ])
-            ->whereIn('subscribable_id', $users->pluck('id')->toArray())
-            ->delete();
+        if (!empty($input['kanbans'])) {
+            foreach ($input['kanbans'] as $kanban_id) {
+                // check if kanban exists
+                $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
+                if (empty($owner_id)) abort(400, 'Kanban with ID '.$kanban_id.' not found');
+    
+                $delete_count += KanbanSubscription::where([
+                    'kanban_id' => $kanban_id,
+                    'subscribable_type' => "App\User",
+                ])
+                ->whereIn('subscribable_id', $users->pluck('id')->toArray())
+                ->delete();
+            }
         }
 
-        foreach ($input['curricula'] as $curriculum_id) {
-            // check if curriculum exists
-            $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
-            if (empty($owner_id)) abort(400, 'Curriculum with ID '.$curriculum_id.' not found');
-
-            $delete_count += CurriculumSubscription::where([
-                'curriculum_id' => $curriculum_id,
-                'subscribable_type' => "App\User",
-            ])
-            ->whereIn('subscribable_id', $users->pluck('id')->toArray())
-            ->delete();
+        if (!empty($input['curricula'])) {
+            foreach ($input['curricula'] as $curriculum_id) {
+                // check if curriculum exists
+                $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
+                if (empty($owner_id)) abort(400, 'Curriculum with ID '.$curriculum_id.' not found');
+    
+                $delete_count += CurriculumSubscription::where([
+                    'curriculum_id' => $curriculum_id,
+                    'subscribable_type' => "App\User",
+                ])
+                ->whereIn('subscribable_id', $users->pluck('id')->toArray())
+                ->delete();
+            }
         }
 
         return $delete_count;
@@ -306,12 +325,12 @@ class MoodleApiController extends Controller
     {
         return request()->validate([
             'common_name' => 'sometimes|string',
-            'users' => 'sometimes|array',
+            'users' => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
             'groups' => 'sometimes|array',
-            'curricula' => 'sometimes|array',
+            'curricula' => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',
             'logbooks' => 'sometimes|array',
-            'kanbans' => 'sometimes|array',
-            'editable' => 'sometimes|boolean'
+            'kanbans' => is_array(request()->input('kanbans')) ? 'sometimes|array' : 'sometimes|string',
+            'editable' => 'sometimes|boolean',
         ]);
     }
 }

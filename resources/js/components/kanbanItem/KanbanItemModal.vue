@@ -96,7 +96,7 @@
                                     id="due_date"
                                     name="due_date"
                                     v-model="form.due_date"
-                                    format="dd.MM.yyyy"
+                                    format="dd.MM.yyyy HH:mm"
                                     :teleport="true"
                                     locale="de"
                                     @cleared="form.due_date = ''"
@@ -168,14 +168,14 @@
                                 name="visible_date"
                                 class="mt-2"
                                 v-model="form.visible_date"
-                                :range="{ partialRange: false }"
+                                range
                                 format="dd.MM.yyyy HH:mm"
                                 :teleport="true"
                                 locale="de"
                                 @cleared="form.visible_date = ['', '']"
                                 :select-text="trans('global.ok')"
                                 :cancel-text="trans('global.close')"
-                                :placeholder="trans('global.kanbanItem.fields.visible_from_to')"
+                                :placeholder="trans('global.visible_until_or_from_to')"
                             />
                         </div>
                     </div>
@@ -274,8 +274,14 @@ export default {
     },
     methods: {
         submit() {
-            this.form.visible_from = this.form.visible_date[0];
-            this.form.visible_until = this.form.visible_date[1];
+            // parse dates to local time, so the server won't have to deal with timezones
+            this.form.due_date = this.form.due_date?.toLocaleString() ?? null; // undefined will remove the field from the request
+            if (this.form.visible_date[1] === null) {
+                this.form.visible_until = this.form.visible_date[0].toLocaleString();
+            } else {
+                this.form.visible_from = this.form.visible_date[0].toLocaleString();
+                this.form.visible_until = this.form.visible_date[1].toLocaleString();
+            }
 
             if (this.method == 'patch') {
                 this.update();

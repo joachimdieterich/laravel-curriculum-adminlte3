@@ -27,7 +27,7 @@ class KanbanItemController extends Controller
             ->where('kanban_status_id', $input['kanban_status_id'])
             ->max('order_id');
 
-        $kanbanItem = KanbanItem::firstOrCreate([
+        $kanbanItem = KanbanItem::create([
             'title'             => $input['title'],
             'description'       => $input['description'],
             'order_id'          => ($order_id === NULL) ? 0 : $order_id + 1,

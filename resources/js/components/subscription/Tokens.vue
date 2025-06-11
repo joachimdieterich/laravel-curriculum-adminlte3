@@ -1,8 +1,9 @@
 <template>
     <ul class="products-list product-list-in-card pl-2 pr-2">
         <li v-if="subscriptions.length > 0"
-            class="d-flex flex-row-reverse border-bottom"    
+            class="d-flex border-bottom"    
         >
+            <small class="flex-fill">{{ trans('global.title') }}</small>
             <small>{{ canEditLabel }}</small>
         </li>
         <li v-for="item in subscriptions"
@@ -12,7 +13,6 @@
             :value="item.token.id"
         >
             <div class="d-flex flex-column">
-                <div>{{ item.token.title }}</div>
                 <div class="d-flex align-items-center">
                     <i
                         class="fa fa-qrcode mr-2 pointer"

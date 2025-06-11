@@ -48,7 +48,7 @@ const pinia = createPinia();
 app.use(pinia);
 const globalStore = useGlobalStore();
 
-window.moment = require('moment');
+window.moment = require('moment/min/moment-with-locales');
 
 //broadcasting
 /*import VueEcho from 'vue-echo';

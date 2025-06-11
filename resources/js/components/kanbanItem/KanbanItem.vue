@@ -228,7 +228,6 @@ import MediaCarousel from '../media/MediaCarousel.vue';
 import Avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
 import Comments from '../kanban/Comments.vue';
-import moment from 'moment';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
 import {useGlobalStore} from "../../store/global";

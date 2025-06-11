@@ -189,8 +189,6 @@
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
 
-import moment from 'moment';
-
 export default {
     components:{
         Editor,

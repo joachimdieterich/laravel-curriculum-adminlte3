@@ -83,7 +83,6 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import moment from "moment/moment";
 import {useGlobalStore} from "../../store/global";
 import '@vuepic/vue-datepicker/dist/main.css';
 import axios from "axios";

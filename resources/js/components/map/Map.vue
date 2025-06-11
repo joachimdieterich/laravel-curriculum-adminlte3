@@ -230,7 +230,6 @@ import "sidebar-v2/js/leaflet-sidebar.js";
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import Form from "form-backend-validation";
 import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
-import moment from "moment/moment";
 import MarkerView from "./MarkerView.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";

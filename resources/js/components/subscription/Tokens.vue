@@ -61,7 +61,6 @@
     </ul>
 </template>
 <script>
-import moment from 'moment';
 import {useToast} from "vue-toastification";
 
 export default {

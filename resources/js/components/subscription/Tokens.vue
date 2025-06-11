@@ -24,7 +24,7 @@
                     </span>
                     <a
                         class="text-danger px-2 py-0 mr-2 vuehover"
-                        @click="unsubscribe(item.token.id)"
+                        @click="unsubscribe(item)"
                     >
                         <i class="fa fa-trash"></i>
                     </a>
@@ -108,13 +108,10 @@ export default {
             navigator.clipboard.writeText(event.target.innerText);
             this.successNotification(window.trans.global.token_copied);
         },
-        async unsubscribe(id) { //id of external reference and value in db
-            try {
-                await axios.delete('/' + this.modelUrl + 'Subscriptions/' + id).data;
-            } catch (error) {
-                console.log(error);
-            }
-            $("#subscription_" + id).hide();
+        unsubscribe(item) { //id of external reference and value in db
+            axios.delete('/' + this.modelUrl + 'Subscriptions/' + item.token.id)
+                .then(() => this.$emit('tokenDeleted', item))
+                .catch(error => console.log(error));
         },
         async setPermission(id, status) { //id of external reference and value in db
             try {

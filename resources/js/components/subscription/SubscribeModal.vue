@@ -202,6 +202,10 @@
                                         :canEditLabel="canEditLabel"
                                         :canEditCheckbox="canEditCheckbox"
                                         :subscriptions="subscribers.tokens"
+                                        @tokenDeleted="(item) => {
+                                            let index = this.subscribers.tokens.indexOf(item);
+                                            this.subscribers.tokens.splice(index, 1);
+                                        }"
                                     />
                                 </div>
                             </div>

@@ -20,10 +20,11 @@ class Authenticate extends Middleware
         Middleware::authenticate($request, $guards);
 
         // rough scetch of SSO login handling
+        // dump($this->saml2->isAuthenticated());
         // check sso login
         // if (!$this->saml2->isAuthenticated()) {
         //     // check if link contains a sharing token
-        //     if ($request->has('sharing_token')) { // Routes need to be changed to go through middleware
+        //     if ($request->has('sharing_token')) { // INFO: Routes need to be changed to go through middleware
         //         return $next($request); // don't redirect to SSO login and continue as guest
         //     } else { // if not authenticated, redirect to SSO login
         //         return $this->saml2->login(URL::full());

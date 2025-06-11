@@ -30,7 +30,7 @@ return [
     'end'              => 'End',
     'notes'            => 'Notes',
     'select_icon'      => 'select icon',
-    'visibility' => 'Visibel',
+    'visibility' => 'Visible',
     'my_files' => 'My media',
     'shared_files' => 'shared media',
     'public_files' => 'public media',

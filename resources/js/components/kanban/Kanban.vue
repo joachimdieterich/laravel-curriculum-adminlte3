@@ -645,6 +645,10 @@ export default {
         margin-left: -1rem;
     }
 }
+div[id^="item"] {
+    transition: opacity 0.25s linear;
+    &:hover { opacity: 1 !important; }
+}
 .fa-angle-up { transition: 0.4s transform; }
 .collapsed .fa-angle-up { transform: rotate(-180deg) !important; }
 </style>

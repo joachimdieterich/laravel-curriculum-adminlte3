@@ -273,8 +273,9 @@ export default {
                     this.method = params.method;
 
                     if (this.form.visible_from == null && this.form.visible_until != null) {
-                        this.form.visible_date = [this.form.visible_until, ''];
+                        this.form.visible_date = [this.form.visible_until, null]; // second date needs to be null
                     } else {
+                        // unset dates need to be set to empty strings, becuase null will show 1970-01-01T00:00:00.000Z
                         this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
                     }
                 }

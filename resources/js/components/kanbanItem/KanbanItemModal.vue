@@ -99,6 +99,8 @@
                                     format="dd.MM.yyyy HH:mm"
                                     :teleport="true"
                                     locale="de"
+                                    time-picker-inline
+                                    :start-time="{ hours: 23, minutes: 59 }"
                                     @cleared="form.due_date = ''"
                                     :select-text="trans('global.ok')"
                                     :cancel-text="trans('global.close')"
@@ -172,6 +174,8 @@
                                 format="dd.MM.yyyy HH:mm"
                                 :teleport="true"
                                 locale="de"
+                                time-picker-inline
+                                :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
                                 @cleared="form.visible_date = ['', '']"
                                 :select-text="trans('global.ok')"
                                 :cancel-text="trans('global.close')"
@@ -266,8 +270,13 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params.item);
-                    this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
                     this.method = params.method;
+
+                    if (this.form.visible_from == null && this.form.visible_until != null) {
+                        this.form.visible_date = [this.form.visible_until, ''];
+                    } else {
+                        this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
+                    }
                 }
             }
         });

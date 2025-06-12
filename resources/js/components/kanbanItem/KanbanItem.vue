@@ -2,7 +2,7 @@
     <div
         :id="'item-' + item.id"
         class="card"
-        :style="!item.visibility ? 'opacity: 0.7;' : ''"
+        :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
     >
         <div
             class="card-header p-0"
@@ -122,7 +122,7 @@
             />
         </div>
 
-        <div v-if="item.due_date || (item.visible_from || item.visible_until)"
+        <div v-if="item.due_date || (item.visibility && (item.visible_from || item.visible_until))"
             class="card-footer px-3 py-2"
             :class="{ 'border-top-0': item.description === null }"
         >
@@ -135,13 +135,13 @@
                         {{ trans('global.kanbanItem.expired') }}
                     </span>
                 </div>
-                <div v-if="item.visible_from || item.visible_until">
+                <div v-if="item.visibility && (item.visible_from || item.visible_until)">
                     <div class="due-date pull-left">
                         {{ trans('global.visibility') }}
                         <span v-if="item.visible_from && new Date() < new Date(item.visible_from)">{{ diffForHumans(item.visible_from) }}</span>
                         <span v-if="new Date() > new Date(item.visible_from)">{{ trans('global.timeTo') }} {{ diffForHumans(item.visible_until) }}</span>
                     </div>
-                    <span v-if="new Date() > new Date(item.visible_until) || new Date() < new Date(item.visible_from)"
+                    <span v-if="hidden"
                         class="pull-right badge badge-secondary"
                     >
                         {{ trans('global.hidden') }}
@@ -299,7 +299,7 @@ export default {
             delete_rights: false,
             new_media: null,
             show_comments: false,
-            expired: false,
+            expired: false, // due date expired
             editors: null,
         };
     },
@@ -308,6 +308,10 @@ export default {
             if (this.item.color == "" || this.item.color == null) return;
             return this.$textcolor(this.item.color, '#333333');
         },
+        hidden: function() { // check if item is hidden based on visible-from/to dates
+            return (this.item.visible_from != null && this.item.visible_until != null)
+                && (new Date() < new Date(this.item.visible_from) || new Date() > new Date(this.item.visible_until));
+        }
     },
     methods: {
         diffForHumans(date) {

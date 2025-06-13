@@ -381,6 +381,9 @@
         margin-bottom: 2px;
         border-left: 2px solid #e6e7e8;
         color: #444;
+        transition: border 0.2s linear;
+
+        &:hover { border-left: 0.5rem solid #e6e7e8; }
         &:last-of-type {
             margin-bottom: 0;
         }

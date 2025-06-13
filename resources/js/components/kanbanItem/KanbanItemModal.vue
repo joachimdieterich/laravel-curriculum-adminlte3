@@ -96,9 +96,11 @@
                                     id="due_date"
                                     name="due_date"
                                     v-model="form.due_date"
-                                    format="dd.MM.yyyy"
+                                    format="dd.MM.yyyy HH:mm"
                                     :teleport="true"
                                     locale="de"
+                                    time-picker-inline
+                                    :start-time="{ hours: 23, minutes: 59 }"
                                     @cleared="form.due_date = ''"
                                     :select-text="trans('global.ok')"
                                     :cancel-text="trans('global.close')"
@@ -168,14 +170,16 @@
                                 name="visible_date"
                                 class="mt-2"
                                 v-model="form.visible_date"
-                                :range="{ partialRange: false }"
+                                range
                                 format="dd.MM.yyyy HH:mm"
                                 :teleport="true"
                                 locale="de"
+                                time-picker-inline
+                                :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
                                 @cleared="form.visible_date = ['', '']"
                                 :select-text="trans('global.ok')"
                                 :cancel-text="trans('global.close')"
-                                :placeholder="trans('global.kanbanItem.fields.visible_from_to')"
+                                :placeholder="trans('global.visible_until_or_from_to')"
                             />
                         </div>
                     </div>
@@ -266,16 +270,28 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params.item);
-                    this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
                     this.method = params.method;
+
+                    if (this.form.visible_from == null && this.form.visible_until != null) {
+                        this.form.visible_date = [this.form.visible_until, null]; // second date needs to be null
+                    } else {
+                        // unset dates need to be set to empty strings, becuase null will show 1970-01-01T00:00:00.000Z
+                        this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
+                    }
                 }
             }
         });
     },
     methods: {
         submit() {
-            this.form.visible_from = this.form.visible_date[0];
-            this.form.visible_until = this.form.visible_date[1];
+            // parse dates to local time, so the server won't have to deal with timezones
+            this.form.due_date = this.form.due_date?.toLocaleString() ?? null; // undefined will remove the field from the request
+            if (this.form.visible_date[1] === null) {
+                this.form.visible_until = this.form.visible_date[0].toLocaleString();
+            } else {
+                this.form.visible_from = this.form.visible_date[0].toLocaleString();
+                this.form.visible_until = this.form.visible_date[1].toLocaleString();
+            }
 
             if (this.method == 'patch') {
                 this.update();

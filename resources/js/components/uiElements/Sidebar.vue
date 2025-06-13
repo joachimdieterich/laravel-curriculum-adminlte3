@@ -260,7 +260,6 @@
 
 <script>
 import Form from 'form-backend-validation';
-import moment from 'moment';
 import Avatar from "../uiElements/Avatar.vue";
 
     export default {

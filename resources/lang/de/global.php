@@ -120,6 +120,8 @@ return [
     'currentPeriod' => 'Aktueller Lernzeitraum',
     'selectDateRange' => 'Zeitraum auswählen',
     'visible_from_to' => 'sichtbar von/bis (Datum/Uhrzeit)',
+    'visible_until_or_from_to' => 'sichtbar bis oder von/bis (Datum/Uhrzeit)',
+    'hidden' => 'ausgeblendet',
     'invalid_form' => 'Bitte füllen Sie dieses Feld aus.',
     'dashboard' => [
         'title' => 'Dashboard',
@@ -184,6 +186,12 @@ return [
             'version' => 'Version',
             'version_helper' => '',
         ],
+    ],
+    'media' => [
+        'title' => 'Medien',
+        'title_singular' => 'Medium',
+        'create' => 'Medium erstellen',
+        'link' => 'Medium verknüpfen',
     ],
     'date' => 'Datum',
     'region' => 'Region',
@@ -318,6 +326,7 @@ return [
     'statuses' => 'Status',
     'attachment' => 'Anhang',
     'due_date' => 'Fälligkeitsdatum',
+    'due_at' => 'Fällig am',
     'assigned_to' => 'Zugewiesen an',
     'location' => 'Standort',
     'locations' => 'Standorte',
@@ -1044,7 +1053,7 @@ return [
         'delete' => 'Karte löschen',
         'delete_helper' => 'Soll die Karte sowie die zugehörigen Daten gelöscht werden?',
         'due_date' => 'Fälligkeitsdatum',
-        'expired' => 'Abgelaufen',
+        'expired' => 'abgelaufen',
         'fields' => [
             'order_id' => 'Order ID',
             'kanban_status_id' => 'Status ID',

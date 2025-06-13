@@ -2,7 +2,7 @@
     <div
         :id="'item-' + item.id"
         class="card"
-        :style="!item.visibility ? 'opacity: 0.7;' : ''"
+        :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
     >
         <div
             class="card-header p-0"
@@ -122,27 +122,35 @@
             />
         </div>
 
-        <div v-if="item.due_date != null
-                && (item.visible_from != null || item.visible_until != null)"
+        <div v-if="item.due_date || (item.visibility && (item.visible_from || item.visible_until))"
             class="card-footer px-3 py-2"
             :class="{ 'border-top-0': item.description === null }"
         >
             <div class="w-100">
-                <div class="due-date pull-left">{{ postDate() }}</div>
-                <span v-if="expired"
-                    class="pull-right badge badge-secondary"
-                >
-                    {{ trans('global.kanbanItem.expired') }}
-                </span>
-                <div class="due-date pull-left">
-                    {{ trans('global.visibility')}} {{ trans('global.timeFrom')}}:  {{ diffForHumans(item.visible_from)}} {{ trans('global.timeTo')}}: {{ diffForHumans(item.visible_until) }}
+                <div v-if="item.due_date">
+                    <div class="due-date pull-left">{{ trans('global.due_at') }}: {{ postDate() }}</div>
+                    <span v-if="expired"
+                        class="pull-right badge badge-secondary"
+                    >
+                        {{ trans('global.kanbanItem.expired') }}
+                    </span>
+                </div>
+                <div v-if="item.visibility && (item.visible_from || item.visible_until)">
+                    <div class="due-date pull-left">
+                        {{ trans('global.visibility') }}
+                        <span v-if="item.visible_from && new Date() < new Date(item.visible_from)">{{ diffForHumans(item.visible_from) }}</span>
+                        <span v-if="new Date() > new Date(item.visible_from)">{{ trans('global.timeTo') }} {{ diffForHumans(item.visible_until) }}</span>
+                    </div>
+                    <span v-if="hidden"
+                        class="pull-right badge badge-secondary"
+                    >
+                        {{ trans('global.hidden') }}
+                    </span>
                 </div>
             </div>
         </div>
 
-        <div
-            class="card-footer d-flex align-items-center px-3 py-2"
-        >
+        <div class="card-footer d-flex align-items-center px-3 py-2">
             <Avatar
                 :key="item.id + '_editor_' + item.owner.id"
                 :title="item.owner.firstname + ' ' + item.owner.lastname"
@@ -228,7 +236,6 @@ import MediaCarousel from '../media/MediaCarousel.vue';
 import Avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
 import Comments from '../kanban/Comments.vue';
-import moment from 'moment';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
 import {useGlobalStore} from "../../store/global";
@@ -292,7 +299,7 @@ export default {
             delete_rights: false,
             new_media: null,
             show_comments: false,
-            expired: false,
+            expired: false, // due date expired
             editors: null,
         };
     },
@@ -301,15 +308,19 @@ export default {
             if (this.item.color == "" || this.item.color == null) return;
             return this.$textcolor(this.item.color, '#333333');
         },
-        diffForHumans: function(date) {
+        hidden: function() { // check if item is hidden based on visible-from/to dates
+            return (this.item.visible_from != null && this.item.visible_until != null)
+                && (new Date() < new Date(this.item.visible_from) || new Date() > new Date(this.item.visible_until));
+        }
+    },
+    methods: {
+        diffForHumans(date) {
             if (date == null) {
                 return '\u221E';
             } else {
                 return moment(date).locale('de').fromNow();
             }
         },
-    },
-    methods: {
         confirmCopy() {
             this.$eventHub.emit('kanban-show-copy', {
                 id: this.item.id,
@@ -400,8 +411,8 @@ export default {
 
         this.delete_rights =
             this.$userId == this.kanban_owner_id
-                || this.checkPermission('is_admin')
-                || this.$userId == this.item.owner_id;
+            || this.checkPermission('is_admin')
+            || this.$userId == this.item.owner_id;
 
         this.getEditors();
         //this.due_date = this.item.due_date;

@@ -92,14 +92,13 @@ class LocalMediaAdapter implements MediaInterface
         /* id link */
         if (($medium->mime_type != 'url')) {
             $path = storage_path('app'.$medium->path.$medium->medium_name);
-            //dd($path);
             if (! file_exists($path)) {
                 abort(404, "File doesn't exist");
             }
         }
 
         // Medium is public (sharing_level_id == 1) or user is owner
-        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
+        if (($medium->public) or ($medium->owner_id == auth()->user()->id) or is_admin()) {
             return ($medium->mime_type != 'url') ? response()->file($path, ['Content-Disposition' => 'filename="'.$medium->medium_name.'"']) : redirect($medium->path); //return file or url
         }
 
@@ -111,7 +110,6 @@ class LocalMediaAdapter implements MediaInterface
                 }
             }
         }
-        /* end checkIfUserHasSubscription and visibility */
 
         /* check if User has access to model->medium_id*/
         $params = $this->validateRequest();
@@ -124,7 +122,6 @@ class LocalMediaAdapter implements MediaInterface
             }
         }
 
-        /* user has permission to access this file ! */
         abort(403, "No permission to view local media");
     }
 

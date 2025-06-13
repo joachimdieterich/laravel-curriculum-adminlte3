@@ -55,54 +55,25 @@ class ShareTokenController extends Controller
                 abort(422, "Model doesn't accept sharing-tokens");
         }
 
-        $subscribe = $subscriptionClass->where(
-            [
-                $field_model_id => $input['model_id'],
-                'subscribable_type' => "App\User",
-                'subscribable_id' => $user->id,
-                'editable' => $input['editable'] ?? false, // needed so there can be 2 token links
-            ])->get()->first();
+        // Create random hash token
+        $token = Str::uuid();
 
-        if (isset($subscribe->sharing_token))
-        {
-            $subscribe = $subscriptionClass->updateOrCreate([
-                $field_model_id => $input['model_id'],
-                'subscribable_type' => "App\User",
-                'subscribable_id' => $user->id,
-                'editable' => $input['editable'] ?? false, // needed so there can be 2 token links
-            ], [
-                'due_date' => $date,
-                'title' => $input['title'] ?? false,
-                'editable' => $input['editable'] ?? false,
-                'owner_id' => auth()->user()->id,
-                'sharing_token' => $subscribe->sharing_token,
-            ]);
-            $subscribe->save();
-        }
-        else
-        {
-            // Create random hash token
-            $token = Str::uuid();
-
-            $subscribe =  $subscriptionClass->updateOrCreate([
-                $field_model_id => $input['model_id'],
-                'subscribable_type' => "App\User",
-                'subscribable_id' => $user->id,
-                'sharing_token' => $token,
-            ], [
-                'due_date' => $date,
-                'title' => $input['title'] ?? false,
-                'editable' => $input['editable'] ?? false,
-                'owner_id' => auth()->user()->id,
-            ]);
-            $subscribe->save();
-        }
+        $subscribe =  $subscriptionClass->create([
+            $field_model_id => $input['model_id'],
+            'subscribable_type' => "App\User",
+            'subscribable_id' => $user->id,
+            'sharing_token' => $token,
+            'due_date' => $date,
+            'title' => $input['title'] ?? false,
+            'editable' => $input['editable'] ?? false,
+            'owner_id' => auth()->user()->id,
+        ]);
 
         return [
             "token" => $subscribe,
             "qr"    => (new QRCodeHelper())
                 ->generateQRCodeByString(
-                    env("APP_URL") . "/".$model_url."/" . $input['model_id'] . "/token?sharing_token=".$subscribe->sharing_token
+                    env("APP_URL") . "/" . $model_url . "/" . $input['model_id'] . "/token?sharing_token=" . $subscribe->sharing_token
                 ),
         ];
     }

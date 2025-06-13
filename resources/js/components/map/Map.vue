@@ -54,12 +54,12 @@
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
-                        <li v-for="marker in this.markers">
-                            <i class="fa fa-location-dot pr-2"></i>
+                        <li v-for="marker in markers">
                             <a
                                 class="text-decoration-none pointer"
                                 @click="setCurrentMarker(marker)"
                             >
+                                <i class="fa fa-location-dot link-muted pr-2"></i>
                                 {{ marker.title }}
                             </a>
                             <div class="tools">
@@ -230,7 +230,6 @@ import "sidebar-v2/js/leaflet-sidebar.js";
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import Form from "form-backend-validation";
 import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
-import moment from "moment/moment";
 import MarkerView from "./MarkerView.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";

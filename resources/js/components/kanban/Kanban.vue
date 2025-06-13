@@ -78,7 +78,7 @@
                         >
                             <template #item="{ element: item }">
                                 <span :key="'drag_item_' + item.id">
-                                    <KanbanItem v-if="(item.visibility && visiblefrom_to(item.visible_from, item.visible_until) == true)
+                                    <KanbanItem v-if="(item.visibility && visibleFromTo(item.visible_from, item.visible_until))
                                             || ($userId == item.owner_id)
                                             || ($userId == kanban.owner_id)"
                                         :key="item.id"
@@ -250,13 +250,14 @@ export default {
                 canEditCheckbox: true,
             });
         },
-        visiblefrom_to(visible_from, visible_until) {
-            const now = moment().format("YYYY-MM-DD HH:mm:ss");
+        visibleFromTo(visible_from, visible_until) {
+            if (visible_from == null && visible_until == null) return true; // no restrictions
 
-            return (now >= visible_from && now <= visible_until) ||
-                (now >= visible_from && visible_until == null) ||
-                (visible_from == null && now <= visible_until) ||
-                (visible_from == null && visible_until == null);
+            const now = new Date();
+            const from = new Date(visible_from); // null => 1970-01-01T00:00:00.000Z
+            const until = new Date(visible_until);
+
+            return now > from && now < until;
         },
         sync() {
             axios.get("/kanbanStatuses/" + this.currentKanban.id + "/checkSync")
@@ -643,6 +644,10 @@ export default {
         width: 100vw;
         margin-left: -1rem;
     }
+}
+div[id^="item"] {
+    transition: opacity 0.25s linear;
+    &:hover { opacity: 1 !important; }
 }
 .fa-angle-up { transition: 0.4s transform; }
 .collapsed .fa-angle-up { transform: rotate(-180deg) !important; }

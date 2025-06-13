@@ -23,6 +23,7 @@ class KanbanItem extends Model
         'visibility' => 'boolean',
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
+        'due_date' => 'datetime',
         'visible_from'  => 'datetime',
         'visible_until'  => 'datetime',
     ];

@@ -24,10 +24,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
-                >
+                <div class="modal-body">
                     <div class="card">
                         <div class="card-body">
                             <div
@@ -117,10 +114,8 @@
 
                             <Switch
                                 id="global"
-                                name="global"
                                 :label="trans('global.global.title_singular')"
-                                v-model:checked="this.form.global"
-                                @update:checked="this.form.global = $event"
+                                v-model:checked="form.global"
                             />
                         </div>
                     </div>
@@ -182,7 +177,7 @@ export default {
                 curriculum_id: '',
                 organization_id: '',
                 type: '',
-                global: '',
+                global: false,
             }),
             tinyMCE: this.$initTinyMCE(
                 [

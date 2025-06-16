@@ -96,6 +96,7 @@
             <SubscribeModal/>
             <TrainingModal/>
             <LmsModal/>
+            <GenerateCertificateModal/>
             <PlanEntryModal :plan="plan"/>
             <SelectUsersModal :users="users" :multiple="true"/>
             <SetAchievementsModal :users="users"/>
@@ -124,6 +125,7 @@ import PlanModal from "./PlanModal.vue";
 import PlanEntry from './PlanEntry.vue';
 import PlanEntryModal from "./PlanEntryModal.vue";
 import MediumModal from "../media/MediumModal.vue";
+import GenerateCertificateModal from "../certificate/GenerateCertificateModal.vue";
 import SelectUsersModal from "../user/SelectUsersModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 import TrainingModal from "../training/TrainingModal.vue";
@@ -173,14 +175,20 @@ export default {
                 .then(response => {
                     if (this.plan.entry_order != null) {
                         this.entry_order = this.plan.entry_order;
-                        // rearrange entries to the specified order by their ID
-                        // since this is O[n^2], it could become a performance issue in the future
+                        // rearrange entries (by their ID) to the specified order
                         this.entries = this.entry_order.map(
                             id => response.data.entries.find(entry => entry.id === id)
                         );
                     } else {
                         this.entries = response.data.entries;
                     }
+                    // assign each certificate to its associated entry
+                    // TODO: needs rework, because of different response structure
+                    // response.data.certificates.forEach(cert => {
+                    //     let entry = this.entries.find(e => e.id === cert.entry_id);
+                    //     if (entry.certificates === undefined) entry.certificates = [];
+                    //     entry.certificates.push(cert);
+                    // });
                 })
                 .catch(e => {
                     console.log(e);
@@ -274,6 +282,7 @@ export default {
         PlanEntry,
         PlanEntryModal,
         MediumModal,
+        GenerateCertificateModal,
         SelectUsersModal,
         SubscribeObjectiveModal,
         TrainingModal,

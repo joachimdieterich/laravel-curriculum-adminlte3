@@ -336,12 +336,13 @@ class CertificateController extends Controller
 
         $html = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;" border="0"><tbody>'
                 .'<thead><tr><td style="border-bottom: 1px solid silver;"><strong>Ziele / Namen</strong></td>';
-        foreach ($user_ids as $id) {
 
+        foreach ($user_ids as $id) {
             abort_unless(auth()->user()->mayAccessUser(User::find($id)), 403);
-            $user = User::where('id', $id)->get()->first();
+            $user = User::find($id);
             $html .= '<td '.$td_style.'><strong>'.$user->firstname.' '.$user->lastname.'</strong></td>';
         }
+
         $html .= '</tr></thead>';
 
         $curriculum = Curriculum::with([
@@ -502,8 +503,9 @@ class CertificateController extends Controller
             'body'                  => 'sometimes',
             'curriculum_id'         => 'sometimes',
             'organization_id'       => 'sometimes',
+            'user_ids'              => 'sometimes|array',
             'global'                => 'sometimes',
-            'oneFile'                => 'sometimes',
+            'oneFile'               => 'sometimes',
         ]);
     }
 }

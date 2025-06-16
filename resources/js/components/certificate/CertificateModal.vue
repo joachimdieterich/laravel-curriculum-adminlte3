@@ -170,7 +170,7 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             form: new Form({
-                id:' ',
+                id: null,
                 title: '',
                 description: '',
                 body: '',
@@ -198,7 +198,7 @@ export default {
     },
     methods: {
         submit() {
-            if (this.form.body == ''){ //body can be empty for group certificates
+            if (this.form.body == '') { //body can be empty for group certificates
                 this.form.body = '<p></p>';
             }
 
@@ -235,13 +235,14 @@ export default {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
-                if (typeof (params) !== 'undefined') {
+                if (params !== undefined) {
                     this.form.populate(params);
-                    if (this.form.id !== ''){
+                    console.log(this.form.id);
+                    if (this.form.id == null) {
+                        this.method = 'post';
+                    } else {
                         this.form.body = this.$decodeHtml(this.form.body)
                         this.method = 'patch';
-                    } else {
-                        this.method = 'post';
                     }
                 }
             }

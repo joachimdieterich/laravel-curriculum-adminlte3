@@ -2,6 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -88,7 +89,7 @@
                             class="btn btn-primary hidden ml-3"
                             :href="download_url"
                             target="_blank"
-                            @click="$modal.hide('certificate-generate-modal')"
+                            @click="download_url = null; globalStore.closeModal($options.name)"
                         >
                             <i class="fa fa-download"></i>
                             {{ trans('global.downloadFile') }}

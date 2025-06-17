@@ -183,12 +183,10 @@ export default {
                         this.entries = response.data.entries;
                     }
                     // assign each certificate to its associated entry
-                    // TODO: needs rework, because of different response structure
-                    // response.data.certificates.forEach(cert => {
-                    //     let entry = this.entries.find(e => e.id === cert.entry_id);
-                    //     if (entry.certificates === undefined) entry.certificates = [];
-                    //     entry.certificates.push(cert);
-                    // });
+                    for (const entry_id in response.data.certificates) {
+                        let entry = this.entries.find(e => e.id == entry_id);
+                        entry.certificates = response.data.certificates[entry_id];
+                    }
                 })
                 .catch(e => {
                     console.log(e);

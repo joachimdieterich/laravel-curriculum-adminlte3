@@ -20,6 +20,7 @@ class PlanEntryController extends Controller
         if (request()->wantsJson()) {
             return [
                 'entries' => PlanEntry::where('plan_id', $input['plan_id'])->get(),
+                'certificates' => app('App\Http\Controllers\PlanController')->getCertificates(\App\Plan::find($input['plan_id'])),
             ];
         }
     }

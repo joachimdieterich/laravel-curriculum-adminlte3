@@ -28,24 +28,28 @@
                             ></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
-                            <div v-if="editable && showTools"
-                                class="card-tools mr-0"
-                            >
-                                <i
-                                    class="fa fa-pencil-alt link-muted pointer p-1"
-                                    @click.stop="openModal(entry)"
+                            <div class="card-tools mr-0">
+                                <i v-if="entry.certificates"
+                                    class="fa fa-certificate link-muted pointer p-1"
+                                    @click.stop="openCertificateModal()"
                                 ></i>
-                                <a v-if="entry.owner_id == $userId
-                                        || plan.owner_id == $userId
-                                        || checkPermission('is_admin')
-                                    "
-                                    class="text-danger ml-2"
-                                >
+                                <span v-if="editable && showTools">
                                     <i
-                                        class="fas fa-trash pointer p-1"
-                                        @click.stop="openConfirm()"
+                                        class="fa fa-pencil-alt link-muted pointer p-1 ml-2"
+                                        @click.stop="openModal(entry)"
                                     ></i>
-                                </a>
+                                    <a v-if="entry.owner_id == $userId
+                                            || plan.owner_id == $userId
+                                            || checkPermission('is_admin')
+                                        "
+                                        class="text-danger ml-2"
+                                    >
+                                        <i
+                                            class="fas fa-trash pointer p-1"
+                                            @click.stop="openConfirm()"
+                                        ></i>
+                                    </a>
+                                </span>
                             </div>
                         </div>
 
@@ -145,6 +149,12 @@ export default {
     methods: {
         openModal(entry = {}) {
             this.globalStore.showModal('plan-entry-modal', entry);
+        },
+        openCertificateModal() {
+            this.globalStore.showModal('generate-certificate-modal', {
+                certificates: this.entry.certificates,
+                user_ids: this.$parent.$parent.users.map(user => user.id), // TODO: give user an option to select students
+            });
         },
         openConfirm() {
             this.showConfirm = true;

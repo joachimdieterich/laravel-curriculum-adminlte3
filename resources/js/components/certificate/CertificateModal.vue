@@ -24,10 +24,7 @@
                     </div>
                 </div>
 
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
-                >
+                <div class="modal-body">
                     <div class="card">
                         <div class="card-body">
                             <div
@@ -117,10 +114,8 @@
 
                             <Switch
                                 id="global"
-                                name="global"
                                 :label="trans('global.global.title_singular')"
-                                v-model:checked="this.form.global"
-                                @update:checked="this.form.global = $event"
+                                v-model:checked="form.global"
                             />
                         </div>
                     </div>
@@ -175,14 +170,14 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             form: new Form({
-                id:' ',
+                id: null,
                 title: '',
                 description: '',
                 body: '',
                 curriculum_id: '',
                 organization_id: '',
                 type: '',
-                global: '',
+                global: false,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
@@ -203,7 +198,7 @@ export default {
     },
     methods: {
         submit() {
-            if (this.form.body == ''){ //body can be empty for group certificates
+            if (this.form.body == '') { //body can be empty for group certificates
                 this.form.body = '<p></p>';
             }
 
@@ -240,13 +235,14 @@ export default {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
-                if (typeof (params) !== 'undefined') {
+                if (params !== undefined) {
                     this.form.populate(params);
-                    if (this.form.id !== ''){
+                    console.log(this.form.id);
+                    if (this.form.id == null) {
+                        this.method = 'post';
+                    } else {
                         this.form.body = this.$decodeHtml(this.form.body)
                         this.method = 'patch';
-                    } else {
-                        this.method = 'post';
                     }
                 }
             }

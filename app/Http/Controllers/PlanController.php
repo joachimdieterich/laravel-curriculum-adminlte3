@@ -439,6 +439,36 @@ class PlanController extends Controller
             ->with(compact('users'));
     }
 
+    /**
+     * Get all certificates that are related to the entries of a plan
+     *
+     * @param  \App\Plan $plan
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getCertificates(Plan $plan)
+    {
+        $planEntries = $plan->entries()->pluck('id');
+        if (request()->wantsJson()) {
+            $builder = \App\Certificate::join('curricula', 'certificates.curriculum_id', '=', 'curricula.id')
+                ->join('terminal_objectives', 'curricula.id', '=', 'terminal_objectives.curriculum_id');
+                
+            $terminal = $builder->select('certificates.id', 'certificates.title', 'terminal_objective_subscriptions.subscribable_id AS entry_id')
+                ->join('terminal_objective_subscriptions', 'terminal_objectives.id', '=', 'terminal_objective_subscriptions.terminal_objective_id')
+                ->where('terminal_objective_subscriptions.subscribable_type', '=', 'App\PlanEntry')
+                ->whereIn('terminal_objective_subscriptions.subscribable_id', $planEntries)
+                ->distinct()->get();
+                
+            $enabling = $builder->select('certificates.id', 'certificates.title', 'enabling_objective_subscriptions.subscribable_id AS entry_id')
+                ->join('enabling_objectives', 'terminal_objectives.id', '=', 'enabling_objectives.terminal_objective_id')
+                ->join('enabling_objective_subscriptions', 'enabling_objectives.id', '=', 'enabling_objective_subscriptions.enabling_objective_id')
+                ->where('enabling_objective_subscriptions.subscribable_type', '=', 'App\PlanEntry')
+                ->whereIn('enabling_objective_subscriptions.subscribable_id', $planEntries)
+                ->distinct()->get();
+
+            return $terminal->concat($enabling)->groupBy('entry_id');
+        }
+    }
+
     protected function validateRequest()
     {
         return request()->validate([

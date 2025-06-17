@@ -202,14 +202,15 @@ class CertificateController extends Controller
         }
         $html_to_print = '';
         foreach ($user_ids as $key => $id) {
-            $user = User::where('id', $id)->get()->first();
+            $user = User::find($id);
             abort_unless(auth()->user()->mayAccessUser($user), 403);
             //replace placeholder
             $html = $this->replaceFields(
-                    $certificate->body,
-                    $user,
-                    Organization::where('id', auth()->user()->current_organization_id)->get()->first(),
-                    request()->date);
+                $certificate->body,
+                $user,
+                Organization::find(auth()->user()->current_organization_id),
+                request()->date
+            );
 
             if(str_contains($certificate->body, '[accomplished_objectives]'))
             {
@@ -256,13 +257,13 @@ class CertificateController extends Controller
 
             $path = 'users/'.auth()->user()->id.'/';
 
-            if(!Storage::exists($path)){
+            if (!Storage::exists($path)) {
                 Storage::makeDirectory($path);
             }
 
             $input = $this->validateRequest();
             // if oneFile == true
-            if ($input['oneFile'] === true){
+            if ($input['oneFile'] === true) {
                 if ($key === array_key_first($user_ids)) {
                     $html_to_print = $html;
                 } else {
@@ -285,7 +286,6 @@ class CertificateController extends Controller
             }
         }
     }
-
 
     protected function generateAccomplishedObjectiveList($html, $user_id, $curriculum, $replace = "[accomplished_objectives]", $with_terminal_objectives = true)
     {
@@ -336,12 +336,13 @@ class CertificateController extends Controller
 
         $html = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;" border="0"><tbody>'
                 .'<thead><tr><td style="border-bottom: 1px solid silver;"><strong>Ziele / Namen</strong></td>';
-        foreach ($user_ids as $id) {
 
+        foreach ($user_ids as $id) {
             abort_unless(auth()->user()->mayAccessUser(User::find($id)), 403);
-            $user = User::where('id', $id)->get()->first();
+            $user = User::find($id);
             $html .= '<td '.$td_style.'><strong>'.$user->firstname.' '.$user->lastname.'</strong></td>';
         }
+
         $html .= '</tr></thead>';
 
         $curriculum = Curriculum::with([
@@ -502,8 +503,9 @@ class CertificateController extends Controller
             'body'                  => 'sometimes',
             'curriculum_id'         => 'sometimes',
             'organization_id'       => 'sometimes',
+            'user_ids'              => 'sometimes',
             'global'                => 'sometimes',
-            'oneFile'                => 'sometimes',
+            'oneFile'               => 'sometimes',
         ]);
     }
 }

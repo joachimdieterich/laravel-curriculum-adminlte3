@@ -78,26 +78,6 @@ class ShareTokenController extends Controller
         ];
     }
 
-    public function auth($token)
-    {
-        //only used by old kanban urls
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
-
-        $subscription = KanbanSubscription::where('sharing_token',$token)->get()->first();
-        if ($subscription->due_date) {
-            $now = Carbon::now();
-            $due_date = Carbon::parse($subscription->due_date);
-            if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
-            }
-        }
-
-        return redirect('/kanbans/'.$subscription->kanban_id.'/token?sharing_token='.$token);
-    }
     protected function validateRequest()
     {
         return request()->validate([

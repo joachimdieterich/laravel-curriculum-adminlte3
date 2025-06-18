@@ -275,46 +275,6 @@ class KanbanController extends Controller
         return $kanban->delete();
     }
 
-    public function updateKanbansColor(Request $request)
-    {
-        $kanban = Kanban::where('id', $request->id)->first();
-        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
-
-        if (! $kanban) {
-            return;
-        }
-        $kanban->color = $request->color;
-        if ($kanban->color == '#DDE6E8') {
-            $kanban->color = '#F4F4F4';
-        }
-        $kanban->save();
-
-        if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanColorUpdatedEvent($kanban)))
-            {
-                return [
-                    'message' => $kanban->color
-                ];
-            }
-        }
-    }
-
-    public function getKanbansColor($id)
-    {
-        $kanban = Kanban::where('id', $id)->first();
-        if ($kanban->color != null && $kanban->color != '#F4F4F4') {
-            return [
-                'hex' => $kanban->color,
-                'rgba' => $this->transformHexColorToRgba($kanban->color),
-            ];
-        }
-
-        return [
-            'hex' => '#DDE6E8',
-            'rgba' => $this->transformHexColorToRgba('#F4F4F4'),
-        ];
-    }
-
     public function exportKanbanCsv(Kanban $kanban)
     {
         $h[] = [

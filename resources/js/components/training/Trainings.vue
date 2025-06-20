@@ -215,7 +215,7 @@ export default {
                 });
         },
         diffForHumans: function (date) {
-            return moment(date).locale('de').fromNow();
+            return moment(date).locale(window.navigator.language).fromNow();
         },
     },
 }

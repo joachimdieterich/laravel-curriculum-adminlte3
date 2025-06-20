@@ -318,7 +318,7 @@ export default {
             if (date == null) {
                 return '\u221E';
             } else {
-                return moment(date).locale('de').fromNow();
+                return moment(date).locale(window.navigator.language).fromNow();
             }
         },
         confirmCopy() {

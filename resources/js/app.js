@@ -48,7 +48,8 @@ const pinia = createPinia();
 app.use(pinia);
 const globalStore = useGlobalStore();
 
-window.moment = require('moment/min/moment-with-locales');
+window.moment = require('moment/src/moment');
+import de from 'moment/src/locale/de'; // import german locale for moment.js
 
 //broadcasting
 /*import VueEcho from 'vue-echo';

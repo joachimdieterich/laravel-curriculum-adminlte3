@@ -51,15 +51,6 @@ class UsersController extends Controller
         {
             return view('users.index');
         }
-
-      /*  abort_unless(\Gate::allows('user_access'), 403);
-        // todo check: is the following condition used anymore (-> used only by user-tab on group/{id}?) --> change to top condition
-        if (request()->wantsJson()) {
-            return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
-                ->get()->first()->users()->get())];
-        }*/
-
-
     }
 
     public function list()
@@ -90,9 +81,7 @@ class UsersController extends Controller
 
     public function create()
     {
-        abort_unless(\Gate::allows('user_create'), 403);
-
-        return view('users.create');
+        abort(405);
     }
 
     public function store(StoreUserRequest $request)
@@ -129,14 +118,7 @@ class UsersController extends Controller
 
     public function edit(User $user)
     {
-        abort_unless(\Gate::allows('user_edit'), 403);
-        abort_unless(auth()->user()->mayAccessUser($user), 403);
-
-        $roles = Role::all()->pluck('title', 'id');
-
-        $user->load('roles');
-
-        return view('users.edit', compact('roles', 'user'));
+        abort(405);
     }
 
     public function update(UpdateUserRequest $request, User $user)
@@ -188,8 +170,8 @@ class UsersController extends Controller
         $user->load('contactDetail.owner');
 
         return view('users.show')
-                ->with(compact('user'))
-                ->with(compact('status_definitions'));
+            ->with(compact('user'))
+            ->with(compact('status_definitions'));
     }
 
     public function destroy(User $user)
@@ -233,7 +215,7 @@ class UsersController extends Controller
 
     public function setCurrentOrganization()
     {
-        abort_if( auth()->user()->id == 8 , 403); // only official guest user should not change current Organization
+        abort_if(auth()->user()->id == 8 , 403); // only official guest user should not change current Organization
 
         User::where('id', auth()->user()->id)->update([
             'current_period_id' => (request('current_period_id')) ? request('current_period_id') : 1,
@@ -310,7 +292,7 @@ class UsersController extends Controller
         abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         abort_unless(\Gate::allows('user_access'), 403);
 
-        return User::where('id', auth()->user() - id())->with(['contactDetail', 'groups', 'roles', 'organizations', 'achievements'])->get()->first();
+        return User::with(['contactDetail', 'groups', 'roles', 'organizations', 'achievements'])->find(auth()->user()->id);
     }
 
     protected function validateImportRequest()

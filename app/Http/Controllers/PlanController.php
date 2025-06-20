@@ -199,8 +199,7 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        abort( 403);
-
+        abort(403);
     }
 
     /**

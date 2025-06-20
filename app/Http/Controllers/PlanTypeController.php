@@ -8,13 +8,11 @@ class PlanTypeController extends Controller
     {
 
         if (request()->wantsJson()) {
-
             return getEntriesForSelect2ByModel(
                 "App\PlanType"
             );
-        }/* else {
-            abort_unless(\Gate::allows('plan_access'), 403);
-            return view('plantypes.index');
-        }*/
+        } else {
+            abort(405);
+        }
     }
 }

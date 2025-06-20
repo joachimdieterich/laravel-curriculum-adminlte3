@@ -19,8 +19,8 @@ class Authenticate extends Middleware
                 // authenticate user by common name
                 \Illuminate\Support\Facades\Auth::login(\App\User::where('common_name', $common_name)->firstOrFail());
             } else {
-                // only redirect to SSO login if request isn't a sharing-token link
-                if ($request->has('sharing_token')) {
+                // only redirect to SSO login if request isn't available to guests
+                if ($request->has('sharing_token') or str_starts_with($request->getRequestUri(), '/navigator')) {
                     // set statistics for guest-authentication
                     LogController::set('guestLogin');
                     LogController::setStatistics();

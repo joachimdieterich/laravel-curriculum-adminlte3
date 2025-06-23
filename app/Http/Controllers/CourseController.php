@@ -102,7 +102,7 @@ class CourseController extends Controller
             }])
             or (auth()->user()->currentRole()->first()->id == 1)), 403); // or admin
 
-        $course = CurriculumSubscription::where('id', $request['course_id'])->get()->first();
+        $course = CurriculumSubscription::find($request['course_id']);
         $organization_id = \App\Group::select('organization_id')->find($course->subscribable_id)->organization_id;
 
         $users = User::select([
@@ -125,8 +125,8 @@ class CourseController extends Controller
         }]);
 
         return empty($users) ? null : DataTables::of($users)
-            ->addColumn('role', function ($users) {
-                return $users->roles()->where('organization_id', auth()->user()->current_organization_id)->first()->title;
+            ->addColumn('role', function($users) use ($organization_id) {
+                return $users->roles()->where('organization_id', $organization_id)->first()->title;
             })
      //    ->addColumn('progress', isset($users->progresses) ? $users->progresses->first()->value : 0)
             ->addColumn('progress',

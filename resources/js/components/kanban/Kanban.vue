@@ -71,6 +71,7 @@
                             v-bind="itemDragOptions"
                             item-key="id"
                             handle=".handle"
+                            :data-status-id="status.id"
                             class="kanban-items-container d-flex flex-column hide-scrollbars"
                             style="overflow-y: scroll;"
                             :move="isLocked"
@@ -281,40 +282,74 @@ export default {
                 }
             }, this.refreshRate)
         },
-        syncStatusMoved() {
-            console.log('syncStatusMoved');
-            this.sendChange("/kanbanStatuses/sync");
-        },
-        syncItemMoved() {
-            this.sendChange("/kanbanItems/sync");
-        },
-        sendChange(url) {
-            const cols = this.statuses
-                .map((status) => {      //only send required data
-                    return {
-                        id: status.id,
-                        kanban_id: status.kanban_id,
-                        order_id: status.order_id,
-                        items: status.items.map((item) => {
-                            return {
-                                id: item.id,
-                                kanban_status_id: item.kanban_status_id,
-                                order_id: item.order_id,
-                            }
-                        }),
-                    }
-                });
+        syncStatusMoved(e) {
+            if (e.oldIndex === e.newIndex) return; // no change
 
-            axios.put(url, {columns: cols})
-                .then(res => { // Tell the parent component we've added a new task and include it
-                    if (this.pusher === false) {
-                        if (url == '/kanbanStatuses/sync') {
-                            this.handleStatusMoved(res.data.message.statuses);
-                        } else {
-                            this.handleItemMoved(res.data.message);
-                        }
-                    }
-                })
+            const statusChanges = [];
+            const start = e.oldIndex < e.newIndex ? e.oldIndex : e.newIndex;
+            const end = e.oldIndex < e.newIndex ? e.newIndex : e.oldIndex;
+            
+            for (let i = start; i <= end; i++) {
+                const status = this.statuses[i];
+                status.order_id = i;
+                statusChanges.push({
+                    id: status.id,
+                    order_id: status.order_id,
+                });
+            }
+
+            this.sendChange("/kanbanStatuses/sync", statusChanges);
+        },
+        syncItemMoved(e) {
+            if (e.from === e.to && e.oldIndex === e.newIndex) return; // no change
+
+            // get status from 'moved to'-position (data-attribtue)
+            const status = this.statuses.find(status => status.id == e.to.dataset.statusId);
+            // find moved item based on newIndex
+            const movedItem = status.items[e.newIndex];
+            movedItem.order_id = e.newIndex;
+            movedItem.kanban_status_id = status.id;
+
+            let itemChanges = [{
+                id: movedItem.id,
+                order_id: movedItem.order_id,
+                kanban_status_id: status.id,
+            }];
+            // if the item was moved within the same status, we only need to update the order_ids of its items
+            if (e.from === e.to) {
+                // define start/end index without the moved item
+                const start = e.oldIndex < e.newIndex ? e.oldIndex : e.newIndex + 1;
+                const end = e.oldIndex < e.newIndex ? e.newIndex - 1 : e.oldIndex;
+                // update order_id for all items in the range
+                for (let i = start; i <= end; i++) {
+                    const item = status.items[i];
+                    item.order_id = i;
+                    // save the new order_id so it can be updated on the server
+                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: status.id });
+                }
+            } else {
+                // on 'moved to'-status, increase order_id of all items after the moved item
+                for (let i = e.newIndex + 1; i < status.items.length; i++) {
+                    const item = status.items[i];
+                    item.order_id = i;
+                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: status.id });
+                }
+
+                // on 'moved from'-status, decrease order_id of all items after the original position
+                const oldStatus = this.statuses.find(status => status.id == e.from.dataset.statusId);
+                for (let i = e.oldIndex; i < oldStatus.items.length; i++) {
+                    const item = oldStatus.items[i];
+                    item.order_id = i;
+                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: oldStatus.id });
+                }
+            }
+
+            this.sendChange("/kanbanItems/sync", itemChanges);
+        },
+        sendChange(url, changes) {
+            const data = url == '/kanbanItems/sync' ? { items: changes } : { statuses: changes };
+
+            axios.put(url, data)
                 .catch(err => {
                     console.log(err);
                 });
@@ -351,6 +386,7 @@ export default {
             let index = this.statuses.indexOf(status);
             this.statuses.splice(index, 1);
         },
+        /** unused | needed if websockets are active to update statuses
         handleStatusMoved(newStatusOrder) {
             let newStatusesOrderTemp = [];
 
@@ -361,7 +397,7 @@ export default {
                 newStatusesOrderTemp.push(this.statuses[statusIndex]);
             });
             this.statuses = newStatusesOrderTemp;
-        },
+        }, */
         handleItemAdded(newItem) {
             // add an item to the correct column in our list
             const statusIndex = this.statuses.findIndex(
@@ -370,6 +406,7 @@ export default {
             // Add newly created item to our column
             this.statuses[statusIndex].items.push(newItem);
         },
+        /** unused | needed if websockets are active to update items
         handleItemMoved(columns) {
             let newStatusOrder = [];
 
@@ -385,7 +422,7 @@ export default {
 
                 let tempStatus = [];
                 for (const [key, value] of Object.entries(this.statuses[statusIndex])) {
-                    if (key !== 'items'){
+                    if (key !== 'items') {
                         tempStatus[key] = value;
                     } else {
                         tempStatus['items'] = newItemsOrder;
@@ -394,14 +431,14 @@ export default {
                 newStatusOrder.push(tempStatus);
             })
             this.statuses = newStatusOrder;
-        },
+        }, */
         findItem(item) {
             let foundItem = []
             this.statuses.forEach((status) => {
                 status.items.forEach((i) => {
                     if (i.id === item.id) {
                         foundItem = i;
-                        return; //break early;
+                        return; // break early;
                     }
                 })
             });
@@ -493,38 +530,6 @@ export default {
                     });
             }
         },
-        successNotification(message) {
-            this.$toast.success(message, {
-                position: "top-right",
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
-            });
-        },
-        infoNotification(message) {
-            this.$toast.info(message, {
-                position: "top-right",
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
-            });
-        },
         isLocked(value) {
             if (value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id) { //locked and not owner
                 return false;
@@ -606,9 +611,6 @@ export default {
                 group: "items",
                 disabled: !this.editable,
             };
-        },
-        kanbanWidth() {
-            return "width: "+ ((this.statuses.length) * this.itemWidth +this.itemWidth) +"px";
         },
     },
     components: {

@@ -110,34 +110,18 @@ class KanbanStatusController extends Controller
     public function sync(Request $request)
     {
         $this->validate(request(), [
-            'columns' => ['required', 'array'],
+            'statuses' => ['required', 'array'],
         ]);
-        $kanban_id = $request->columns[0]['kanban_id'];
+        $kanban_id = KanbanStatus::select('kanban_id')->find($request->statuses[0]['id'])->kanban_id;
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
-        foreach ($request->columns as $order_id => $status) {
-            if ($status['order_id'] !== $order_id) {
-                KanbanStatus::where('kanban_id', '=', $status['kanban_id'])
-                    ->where('order_id', '>=', $order_id)->increment('order_id');
-            }
-            KanbanStatus::find($status['id'])
-                ->update(['order_id' => $order_id]);
+        foreach ($request->statuses as $status) {
+            KanbanStatus::whereId($status['id'])->update([
+                'order_id' => $status['order_id'],
+            ]);
         }
 
-        $kanban_id = $request->columns[0]['kanban_id'];
-        if (request()->wantsJson()) {
-            $kanban = Kanban::find($kanban_id);
-            if (!pusher_event(new \App\Events\Kanbans\KanbanStatusMovedEvent($kanban)))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' => $kanban
-                        ->where('id', $kanban->id)
-                        ->with(['statuses'])
-                        ->get()->first()
-                ];
-            }
-        }
+        LogController::set(get_class($this).'@'.__FUNCTION__);
     }
 
     /**

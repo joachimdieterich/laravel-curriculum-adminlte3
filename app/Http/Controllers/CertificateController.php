@@ -169,14 +169,12 @@ class CertificateController extends Controller
         $certificate = Certificate::find(format_select_input(request()->certificate_id));
 
         switch ($certificate->type) {
-            case 'user':
-                                    return $this->generateForUsers($certificate);
+            case 'user':            return $this->generateForUsers($certificate);
                 break;
             case 'group':           return $this->generateForGroup($certificate);
                 break;
             case 'organization':    return $this->generateForOrganization($certificate);
                 break;
-
             default:
                 break;
         }
@@ -193,6 +191,7 @@ class CertificateController extends Controller
         $user_ids =  request()->user_ids;
         LogController::set(get_class($this).'@'.__FUNCTION__, $certificate->id, (is_array($user_ids)) ? count($user_ids) : 1);
         $generated_files = [];
+        $curriculum = null;
         if(str_contains($certificate->body, '[accomplished_objectives]') || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]') )
         {
             $curriculum = Curriculum::with([

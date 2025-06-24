@@ -123,7 +123,7 @@ export default {
             if (date == null) {
                 return window.trans.global.valid;
             }
-            return window.trans.global.valid_to + ' ' + moment(date).locale('de').fromNow();
+            return window.trans.global.valid_to + ' ' + moment(date).locale(window.navigator.language).fromNow();
         },
         successNotification(message) {
             this.toast.success(message, {

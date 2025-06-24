@@ -69,38 +69,19 @@ class KanbanItemController extends Controller
     public function sync(Request $request)
     {
         $this->validate(request(), [
-            'columns' => ['required', 'array'],
+            'items' => ['required', 'array'],
         ]);
-        $kanban_id = $request->columns[0]['kanban_id'];
+        $kanban_id = KanbanItem::select('kanban_id')->find($request->items[0]['id'])->kanban_id;
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
-        foreach ($request->columns as $kanban_status) {
-            foreach ($kanban_status['items'] as $order_id => $item) {
-                if ($item['kanban_status_id'] !== $kanban_status['id'] || $item['order_id'] !== $order_id) {
-                    if ($item['kanban_status_id'] !== $kanban_status['id']) {
-                        KanbanItem::where('kanban_status_id', '=', $item['kanban_status_id'])
-                            ->where('order_id', '>', $item['order_id'])->decrement('order_id');
-                    }
-                    KanbanItem::where('kanban_status_id', '=', $kanban_status['id'])
-                        ->where('order_id', '>=', $order_id)->increment('order_id');
-
-                    //update  set order_id +1 where $kanban_status['id'] and order_id >= $order_id
-                    KanbanItem::find($item['id'])
-                        ->update(['kanban_status_id' => $kanban_status['id'], 'order_id' => $order_id]);
-                }
-            }
+        foreach ($request->items as $item) {
+            KanbanItem::whereId($item['id'])->update([
+                'order_id'          => $item['order_id'],
+                'kanban_status_id'  => $item['kanban_status_id'],
+            ]);
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
-
-        if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemMovedEvent($request->columns)))
-            {
-                return [
-                    'message' => $request->columns
-                ];
-            }
-        }
     }
 
     /**
@@ -152,7 +133,6 @@ class KanbanItemController extends Controller
         $kanbanItem->update([
             'title'             => $input['title'],
             'description'       => $input['description'],
-            'order_id'          => $input['order_id'],
             'kanban_id'         => $input['kanban_id'],
             'kanban_status_id'  => $input['kanban_status_id'],
             'color'             => $input['color'],
@@ -177,7 +157,7 @@ class KanbanItemController extends Controller
                         'comments.likes',
                         'likes',
                         'mediaSubscriptions.medium',
-                        'owner',
+                        'owner:id,username,firstname,lastname',
                     ])
                     ->get()->first();
             }

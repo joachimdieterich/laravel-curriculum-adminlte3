@@ -265,11 +265,6 @@ class VideoconferenceController extends Controller
      */
     public function show(Videoconference $videoconference, $editable = false)
     {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
         $input = $this->validateRequest();
 
         abort_unless((
@@ -561,12 +556,6 @@ class VideoconferenceController extends Controller
 
     public function getVideoconferenceByToken(Videoconference $videoconference, Request $request)
     {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
-
         $input = $this->validateRequest();
 
         $subscription = VideoconferenceSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();

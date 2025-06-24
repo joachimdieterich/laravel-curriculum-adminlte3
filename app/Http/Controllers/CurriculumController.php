@@ -619,12 +619,6 @@ class CurriculumController extends Controller
 
     public function getCurriculumByToken(Curriculum $curriculum, Request $request)
     {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
-
         $input = $this->validateRequest();
 
         $subscription = CurriculumSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();

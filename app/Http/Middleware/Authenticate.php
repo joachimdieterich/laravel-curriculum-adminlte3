@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\LogController;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
@@ -17,7 +18,7 @@ class Authenticate extends Middleware
             if ($saml2Auth->isAuthenticated()) {
                 $common_name = $saml2Auth->getSaml2User()->getAttribute('cn')[0];
                 // authenticate user by common name
-                \Illuminate\Support\Facades\Auth::login(\App\User::where('common_name', $common_name)->firstOrFail());
+                Auth::login(\App\User::where('common_name', $common_name)->firstOrFail());
             } else {
                 // only redirect to SSO login if request isn't available to guests
                 if ($request->has('sharing_token') or str_starts_with($request->getRequestUri(), '/navigator')) {
@@ -25,13 +26,12 @@ class Authenticate extends Middleware
                     LogController::set('guestLogin');
                     LogController::setStatistics();
                 } else {
-                    return $saml2Auth->login(URL::full()); // redirect to SSO login page
+                    return $saml2Auth->login(URL::full()); // after successful login, redirect to the current URL
                 }
             }
         }
-
-        // authenticate as guest if no user is logged in (only on sharing-token links)
-        Middleware::authenticate($request, $guards);
+        // if user is still not authenticated, login as guest
+        if (auth()->user() === null) Auth::loginUsingId((env('GUEST_USER')), true);
 
         return $next($request);
     }

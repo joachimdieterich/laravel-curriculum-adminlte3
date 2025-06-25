@@ -20,36 +20,44 @@
             <div class="card-header p-2">Debug</div>
             <div class="card-body">
                 User
-                @foreach([App\User::find($user->id)] as $usr)
-                    <li class="small">id: {{ $usr->id }};</li>
-                    <li class="small">common_name: {{ $usr->common_name }};</li>
-                    <li class="small">firstname: {{ $usr->firstname }};</li>
-                    <li class="small">lastname: {{ $usr->lastname }};</li>
-                    <li class="small">email: {{ $usr->email }};</li>
-                    <li class="small">status: {{ $usr->status }};</li>
-                    <li class="small">current_organization_id: {{ $usr->current_organization_id }} => {{ $usr->organizations->find($usr->current_organization_id)?->title }};</li>
-                    <li class="small">current_period_id: {{ $usr->current_period_id }};</li>
-                @endforeach
+                <li class="small">id: {{ $user->id }};</li>
+                <li class="small">common_name: {{ $user->common_name }};</li>
+                <li class="small">firstname: {{ $user->firstname }};</li>
+                <li class="small">lastname: {{ $user->lastname }};</li>
+                <li class="small">email: {{ $user->email }};</li>
+                <li class="small">created_at: {{ $user->created_at }};</li>
+                <li class="small">status: {{ $user->status }};</li>
+                <li class="small">current_organization_id: {{ $user->current_organization_id }} => {{ $user->organizations->find($user->current_organization_id)?->title }};</li>
+                <li class="small">current_period_id: {{ $user->current_period_id }};</li>
+
                 <br/>
+
                 currentCurriculaEnrolments:
                 @foreach(App\User::find($user->id)->currentCurriculaEnrolments() as $cur_enr)
                     <li class="small">id: {{ $cur_enr->id }} => {{ $cur_enr->title }};  course_id: {{ $cur_enr->course_id }};  group_id: {{ $cur_enr->group_id }};</li>
                 @endforeach
+
                 <br/>
+
                 currentGroupEnrolments:
                 @foreach(App\User::find($user->id)->currentGroupEnrolments as $grp_enr)
                     <li class="small">id: {{ $grp_enr->id }} => {{ $grp_enr->title }};  period_id: {{ $grp_enr->period_id }};  course_id: {{ $grp_enr->course_id }};</li>
                 @endforeach
+
                 <br/>
+
                 Groups:
                 @foreach(App\User::find($user->id)->groups as $groups)
                     <li class="small">id: {{ $groups->id }} => {{ $groups->title }};  period_id: {{ $groups->period_id }};  organization_id: {{ $groups->organization_id }};</li>
                 @endforeach
+
                 <br/>
+
                 currentCurriculaPeriods:
                 @foreach(App\User::find($user->id)->currentPeriods() as $cur_period)
                     <li class="small">id: {{ $cur_period->id }} => {{ $cur_period->title }}; organization_id: {{ $cur_period->organization_id }};</li>
                 @endforeach
+
                 <br/>
 
                 organizations:
@@ -57,7 +65,6 @@
                     <li class="small">id: {{ $org->id }} => {{ $org->title }};</li>
                 @endforeach
                 <br/>
-
             </div>
         </div>
         @endif

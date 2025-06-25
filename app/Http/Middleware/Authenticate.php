@@ -25,13 +25,14 @@ class Authenticate extends Middleware
                     // set statistics for guest-authentication
                     LogController::set('guestLogin');
                     LogController::setStatistics();
+                    Auth::loginUsingId((env('GUEST_USER')), true);
                 } else {
                     return $saml2Auth->login(URL::full()); // after successful login, redirect to the current URL
                 }
             }
         }
-        // if user is still not authenticated, login as guest
-        if (auth()->user() === null) Auth::loginUsingId((env('GUEST_USER')), true);
+        // needed to redirect to login-page in local environment
+        Middleware::authenticate($request, $guards);
 
         return $next($request);
     }

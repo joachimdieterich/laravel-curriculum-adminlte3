@@ -25,32 +25,53 @@ class CurriculaApiController extends Controller
             return response()->json(['error' => 'config (metadata_password) missing'], 420);
         }
 
+        request()->validate([
+            'timestamp' => 'sometimes|string',
+        ]);
+
+        $timestamp = 0;
+        if ($request->has('timestamp')) {
+            $timestamp = strtotime($request->query('timestamp'));
+
+            if ($timestamp === false) {
+                return response()->json(['error' => 'Invalid timestamp format.'], 422);
+            }
+        }
+        $timestamp = date('Y-m-d H:i:s', $timestamp);
+
         LogController::set(get_class($this).'@'.__FUNCTION__);
         // might need to be broken down in chunks, since there's a lot of data
         $curricula = Curriculum::select(
-                'curricula.id', 'curricula.title', 'description',
+                'curricula.id', 'curricula.title', 'curricula.description',
                 'grades.title as grade',
                 'subjects.title as subject',
                 'organization_types.title as organization_type'
             )
-            ->where('type_id', 1)
             ->join('grades', 'grades.id', '=', 'curricula.grade_id')
             ->join('subjects', 'subjects.id', '=', 'curricula.subject_id')
             ->join('organization_types', 'organization_types.id', '=', 'curricula.organization_type_id')
+            ->join('terminal_objectives', 'terminal_objectives.curriculum_id', '=', 'curricula.id')
+            ->join('enabling_objectives', 'enabling_objectives.terminal_objective_id', '=', 'terminal_objectives.id')
+            ->where('type_id', 1)
+            ->where(function($query) use ($timestamp) {
+                $query->whereDate('curricula.updated_at', '>=', $timestamp)
+                    ->orWhereDate('terminal_objectives.updated_at', '>=', $timestamp)
+                    ->orWhereDate('enabling_objectives.updated_at', '>=', $timestamp);
+            })
             ->with([
                 'terminalObjectives' => function ($query) {
                     $query->select('id', 'title', 'description', 'curriculum_id')
                         ->with([
                             'enablingObjectives' => function ($query) {
                                 $query->select('enabling_objectives.id', 'enabling_objectives.title', 'enabling_objectives.description', 'levels.title as level', 'terminal_objective_id')
-                                ->leftjoin('levels', 'levels.id', '=', 'enabling_objectives.level_id')
-                                ->without('terminalObjective', 'level')
-                                ->orderBy('order_id', 'asc');
+                                    ->leftjoin('levels', 'levels.id', '=', 'enabling_objectives.level_id')
+                                    ->without('terminalObjective', 'level');
                             }
                         ]);
                 },
             ])
             ->without('owner')
+            ->distinct()
             ->get();
 
         $max = Config::where('key', 'api_description_length')->first()?->value ?: 75;

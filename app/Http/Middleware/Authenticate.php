@@ -21,7 +21,11 @@ class Authenticate extends Middleware
                 Auth::login(\App\User::where('common_name', $common_name)->firstOrFail());
             } else {
                 // only redirect to SSO login if request isn't available to guests
-                if ($request->has('sharing_token') or str_starts_with($request->getRequestUri(), '/navigator')) {
+                if (
+                    $request->has('sharing_token')
+                    or str_starts_with($request->getRequestUri(), '/navigator')
+                    or str_ends_with($request->getPathInfo(), 'startWithPw') // videoconference-link
+                ) {
                     // set statistics for guest-authentication
                     LogController::set('guestLogin');
                     LogController::setStatistics();

@@ -372,6 +372,7 @@ import Select2 from "../forms/Select2.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import axios from "axios";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'curriculum-modal',
@@ -384,8 +385,10 @@ export default {
     props: {},
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -436,15 +439,15 @@ export default {
             } else {
                 this.add();
             }
-
-            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post('/curricula', this.form)
                 .then(r => {
                     this.$eventHub.emit('curriculum-added', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(e.response);
                 });
         },
@@ -452,14 +455,16 @@ export default {
             axios.patch('/curricula/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('curriculum-updated', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(error => {
+                    this.toast.error(this.trans('global.error'));
                     console.log(error);
                 });
         },
         onChange($events) {
             this.files = $events.target.files;
-            console.log(this.files);
+
             axios.post('curricula/import/store', this.files)
                 .then(r => {
                     this.$eventHub.emit('curriculum-imported', r.data);

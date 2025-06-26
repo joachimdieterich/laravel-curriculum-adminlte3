@@ -144,7 +144,7 @@ class KanbanItemController extends Controller
             'visible_from'      => $input['visible_from'] ?? NULL,
             'visible_until'     => $input['visible_until'] ?? NULL,
             'owner_id'          => $kanbanItem->owner_id, //owner should not be updated
-            'editors_ids'       => array_merge($kanbanItem->editors_ids, [auth()->user()->id] )
+            'editors_ids'       => array_unique(array_merge($kanbanItem->editors_ids, [auth()->user()->id])),
         ]);
 
         if (request()->wantsJson()) {

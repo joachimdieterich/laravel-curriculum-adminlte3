@@ -356,12 +356,6 @@ class KanbanController extends Controller
 
     public function getKanbanByToken(Kanban $kanban, Request $request)
     {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
-
         $input = $this->validateRequest();
 
         $subscription = KanbanSubscription::where('sharing_token', $input['sharing_token'] )->get()->first();

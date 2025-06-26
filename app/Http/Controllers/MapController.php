@@ -177,12 +177,6 @@ class MapController extends Controller
 
     public function getMapByToken(Map $map, Request $request)
     {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
-
         $input = $this->validateRequest();
 
         $subscription = MapSubscription::where('sharing_token', $input['sharing_token'] )->get()->first();

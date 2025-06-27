@@ -5,7 +5,7 @@
             class="col-md-12 m-0"
         >
             <ul v-if="subscribable"
-                v-permission="'exam_edit'"
+                v-permission="'is_teacher'"
                 class="nav nav-pills py-2"
                 role="tablist"
             >
@@ -83,7 +83,6 @@
 
                 <template v-if="subscribable"
                     v-slot:dropdown
-                    v-permission="'exam_edit, exam_delete'"
                 >
                     <div
                         class="dropdown-menu dropdown-menu-right"
@@ -91,6 +90,13 @@
                         x-placement="left-start"
                     >
                         <button
+                            class="dropdown-item text-secondary"
+                            @click="openExam(exam)"
+                        >
+                            <i class="fa fa-ranking-star mr-2"></i>
+                            <span>Zur &Uuml;bersicht</span>
+                        </button>
+                        <!-- <button
                             v-permission="'exam_edit'"
                             :name="'edit-exam-' + exam.id"
                             class="dropdown-item text-secondary"
@@ -98,9 +104,8 @@
                         >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.exam.edit') }}
-                        </button>
+                        </button> -->
                         <button v-if="exam.status !== 0"
-                            v-permission="'exam_edit'"
                             :name="'edit-exam-' + exam.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="getReport(exam)"
@@ -108,7 +113,7 @@
                             <i class="fa fa-download mr-2"></i>
                             {{ trans('global.exam.download_report') }}
                         </button>
-                        <hr class="my-1">
+                        <hr v-permission="'exam_delete'" class="my-1">
                         <button
                             v-permission="'exam_delete'"
                             :id="'delete-exam-' + exam.id"
@@ -272,6 +277,9 @@ export default {
     methods: {
         getLoginUrl(exam) {
             return exam.login_url ?? '/exams/' +  exam.exam_id + '/edit';
+        },
+        openExam(exam) {
+            window.open('/exams/' + exam.exam_id + '/edit', '_blank');
         },
         editExam(exam) {
             this.currentExam = exam;

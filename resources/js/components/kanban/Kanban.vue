@@ -122,7 +122,7 @@
             <ConfirmModal
                 :showConfirm="show_item_copy"
                 :title="trans('global.kanbanItem.copy')"
-                :description="trans('global.kanbanStatus.copy_helper')"
+                :description="trans('global.kanbanItem.copy_helper')"
                 css="primary"
                 @close="show_item_copy = false"
                 @confirm="() => {

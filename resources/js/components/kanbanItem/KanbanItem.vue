@@ -433,17 +433,13 @@ export default {
         });
 
         this.$nextTick(() => {
-            this.$el.getElementsByClassName('math-tex').forEach(elem => {
-                elem.innerHTML = MathJax.tex2mml(elem.innerText.slice(2, -2));
-            });
+            MathJax.typeset();
         });
     },
     watch: {
         'item.description': function() {
             this.$nextTick(() => {
-                this.$el.getElementsByClassName('math-tex').forEach(elem => {
-                    elem.innerHTML = MathJax.tex2mml(elem.innerText.slice(2, -2));
-                });
+                MathJax.typeset();
             });
         },
     },

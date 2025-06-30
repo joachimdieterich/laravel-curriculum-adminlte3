@@ -8,6 +8,7 @@
                 id="loading-overlay"
                 class="overlay position-absolute"
                 style="inset: 0; background-color: #fff8 !important; display: none;"
+                @click.stop
             >
                 <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             </div>

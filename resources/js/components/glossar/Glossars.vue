@@ -32,7 +32,7 @@
                     <i class="fa fa-trash "></i>
                 </button>
                 <button
-                    v-permission="'content_create, ' + subscribable_type + '_content_create'"
+                    v-permission="subscribable_type + '_content_create'"
                     type="button"
                     class="btn btn-tool "
                     role="button"

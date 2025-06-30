@@ -37,7 +37,7 @@
 
             <div class="card-tools">
                 <button
-                    v-permission="'content_create,' + subscribable_type + '_content_create'"
+                    v-permission="subscribable_type + '_content_create'"
                     class="btn btn-tool"
                     type="button"
                     role="button"
@@ -47,7 +47,7 @@
                     <i class="fa fa-plus"></i>
                 </button>
                 <button v-if="subscribable_type === 'App\\Curriculum'"
-                    v-permission="'content_create,' + subscribable_type + '_content_create'"
+                    v-permission="subscribable_type + '_content_create'"
                     class="btn btn-tool "
                     type="button"
                     role="button"
@@ -57,7 +57,7 @@
                     <i class="fa fa-paste"></i>
                 </button>
                 <button
-                    v-permission="'content_create,' + subscribable_type + '_content_create'"
+                    v-permission="subscribable_type + '_content_create'"
                     class="btn btn-tool "
                     type="button"
                     role="button"
@@ -130,7 +130,7 @@
                                         {{ item.content.title }}
                                     </span>
                                     <span
-                                        v-permission="'content_delete,' + subscribable_type + '_content_delete'"
+                                        v-permission="subscribable_type + '_content_delete'"
                                         class="pull-right vuehover"
                                         :aria-label="trans('global.delete')"
                                     >
@@ -142,7 +142,7 @@
                                         </a>
                                     </span>
                                     <span
-                                        v-permission="'content_edit,' + subscribable_type + '_content_edit'"
+                                        v-permission="subscribable_type + '_content_edit'"
                                         class="pull-right vuehover"
                                         :aria-label="trans('global.edit')"
                                     >
@@ -152,7 +152,7 @@
                                         ></span>
                                     </span>
                                     <span
-                                        v-permission="'content_create,' + subscribable_type + '_content_create'"
+                                        v-permission="subscribable_type + '_content_create'"
                                         class="pull-right vuehover"
                                     >
                                         <span v-if="(item.order_id !== 0)"

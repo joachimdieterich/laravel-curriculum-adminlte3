@@ -157,6 +157,8 @@ Route::withoutMiddleware('auth')->group(function() {
     /*** Navigators ***/
     Route::get('navigators/list', 'NavigatorController@list');
     Route::get('navigators/{navigator}/list', 'NavigatorController@listViews')->name('navigator.views');
+    Route::resource('navigators', 'NavigatorController');
+    Route::resource('navigatorItems', 'NavigatorItemController');
     Route::get('navigatorViews/{navigator_view}/list', 'NavigatorViewController@list');
 // O
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');

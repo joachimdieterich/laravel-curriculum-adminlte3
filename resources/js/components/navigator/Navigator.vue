@@ -50,6 +50,20 @@
                         <i class="fa fa-history pt-2"></i>
                     </template>
 
+                    <template v-if="navigatorItem.referenceable?.archived"
+                        v-slot:badges
+                    >
+                        <p class="text-muted small">
+                            <span
+                                class="btn btn-info btn-xs position-absolute select-all pull-right mr-1"
+                                style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
+                            >
+                                <i class="fa fa-archive" aria-hidden="true"></i>
+                                {{ trans('global.curriculum.fields.archived') }}
+                            </span>
+                        </p>
+                    </template>
+
                     <template v-slot:dropdown
                         v-permission="'navigator_edit, navigator_delete'"
                     >

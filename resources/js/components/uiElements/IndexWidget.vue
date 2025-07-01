@@ -96,9 +96,18 @@ import {useToast} from "vue-toastification";
 
 export default {
     props: {
-        model: {},
-        modelName: String,
-        url: String,
+        model: {
+            type: Object,
+            default: null,
+        },
+        modelName: {
+            type: String,
+            default: null,
+        },
+        url: {
+            type: String,
+            default: null,
+        },
         titleField: {
             type: String,
             default: 'title',

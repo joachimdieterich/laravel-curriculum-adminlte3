@@ -34,8 +34,8 @@
             <IndexWidget
                 v-permission="'navigator_create'"
                 key="'navigatorItemCreate'"
-                modelName="NavigatorItem"
-                :url="'/navigators/' + navigator.id "
+                modelName="Navigator-Item"
+                :url="'/navigators/' + navigator.id"
                 :create=true
                 :label="trans('global.NavigatorItem.create')"
             />

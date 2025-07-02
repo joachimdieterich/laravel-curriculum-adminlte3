@@ -1,5 +1,14 @@
 <template>
-    <div>
+    <div class="position-relative">
+        <div
+            id="objective-tabs-overlay"
+            class="overlay position-absolute flex-column justify-content-center align-items-center"
+            style="inset: 0; background-color: #fff8 !important; display: flex; z-index: 150;"
+            @click.stop
+        >
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            {{ trans('global.loading') }}
+        </div>
         <ul
             id="terminalObjectivesTopNav"
             class="nav bg-gray-light position-sticky"
@@ -282,6 +291,8 @@ export default {
             $('#' + firstTab + '-tab')[0].classList.add('active');
             $('#Type-' + firstTab).tab('show'); // doing a click() would also work, but the transition seems to be smoother this way
         }
+
+        $('#objective-tabs-overlay').hide();
 
         // terminal objectives
         this.$eventHub.on('terminal-objective-added', (terminal) => {

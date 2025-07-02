@@ -206,7 +206,7 @@ export default {
                     }
                 } else {
                     if (this.urlOnly) {
-                        window.open(this.url /*+ '/' + item.id*/, this.urlTarget);
+                        window.open(this.url, this.urlTarget);
                     } else {
                         window.location = this.url + '/' + (item.DT_RowId ?? item.id); // ? item.DT_RowId -> will not work for new entries
                     }

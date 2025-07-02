@@ -47,6 +47,7 @@
 </template>
 <script>
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'MediumForm',
@@ -70,8 +71,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -125,6 +128,7 @@ export default {
                 this.$emit("selectedValue", null);
             })
             .catch(error => {
+                this.toast.error(this.trans('global.error'));
                 $('#loading-overlay').hide();
                 console.error(error);
             });

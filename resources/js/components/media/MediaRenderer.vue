@@ -31,6 +31,7 @@
 </template>
 <script>
 import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage.vue"
+
 export default {
     props: {
         medium: {

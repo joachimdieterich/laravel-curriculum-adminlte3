@@ -2,7 +2,9 @@
     <div class="position-relative">
         <img v-if="isCarousel"
             :src="'/media/' + medium.id + '?preview=true'"
+            class="pointer"
             width="100%"
+            @click="openPath()"
         >
         <div v-else
             @click="show()"
@@ -37,6 +39,9 @@ export default {
         },
     },
     methods: {
+        openPath() {
+            window.open(this.medium.path, '_blank');
+        },
         show() {
             $("#loading_" + this.medium.id).show();
             if (this.medium.adapter == 'local') {

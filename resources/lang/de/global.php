@@ -122,6 +122,7 @@ return [
     'visible_from_to' => 'sichtbar von/bis (Datum/Uhrzeit)',
     'visible_until_or_from_to' => 'sichtbar bis oder von/bis (Datum/Uhrzeit)',
     'hidden' => 'ausgeblendet',
+    'expired' => 'abgelaufen',
     'invalid_form' => 'Bitte füllen Sie dieses Feld aus.',
     'dashboard' => [
         'title' => 'Dashboard',

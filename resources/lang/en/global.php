@@ -112,6 +112,7 @@ return [
     'visible_from_to' => 'visible from/to (date/time)',
     'visible_until_or_from_to' => 'visible until or from/to (date/time)',
     'hidden' => 'hidden',
+    'expired' => 'expired',
     'invalid_form' => 'Please fill out this field.',
     'dashboard' => [
         'title' => 'Dashboard',

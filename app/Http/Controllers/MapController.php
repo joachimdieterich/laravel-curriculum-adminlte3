@@ -109,8 +109,10 @@ class MapController extends Controller
      * @param  \App\Map  $map
      * @return \Illuminate\Http\Response
      */
-    public function show(Map $map)
+    public function show(Map $map, $token = null)
     {
+        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
+
         $map = Map::where('id', $map->id)
             ->with(['type', 'category'])
             ->get()

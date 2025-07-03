@@ -195,6 +195,7 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false, $token = null)
     {
+        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 

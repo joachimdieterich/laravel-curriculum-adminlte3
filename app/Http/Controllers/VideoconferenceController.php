@@ -263,10 +263,11 @@ class VideoconferenceController extends Controller
      * @param  \App\Videoconference  $videoconference
      * @return \Illuminate\Http\Response
      */
-    public function show(Videoconference $videoconference, $editable = false)
+    public function show(Videoconference $videoconference, $editable = false, $token = null)
     {
         $input = $this->validateRequest();
 
+        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
         abort_unless((
             $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
             OR
@@ -570,7 +571,7 @@ class VideoconferenceController extends Controller
             }
         }
 
-        return $this->show($videoconference, $subscription->editable);
+        return $this->show($videoconference, $subscription->editable, $input['sharing_token']);
     }
 
     public function endCallback(Request $request)

@@ -228,6 +228,30 @@ app.use(Toast, {
     maxToasts: 20,
     newestOnTop: true,
 });
+/**
+ * checks which error message is appropriate for the given error
+ * @param {Error} error 
+ * @returns @String key to translate error message
+ */
+app.config.globalProperties.errorMessage = (error) => {
+    let translation_key = 'global.error'; // default error message
+
+    if (error.response.data.message) { // if translation key is given in response
+        translation_key =  error.response.data.message;
+    } else {
+        switch (error.status) {
+            case 403:
+            case 404:
+                translation_key = 'global.errors.' + error.status;
+                break;
+            default: // default is already set to 'global.error'
+                break;
+        }
+    }
+
+    // trans()-function is not available here, so we return a key instead
+    return translation_key;
+};
 
 /**
  * The following block of code may be used to automatically register your
@@ -237,6 +261,7 @@ app.use(Toast, {
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce payload for users
+import { error } from 'jquery';
 
 app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
 app.component('admin-view',  defineAsyncComponent(() => import('./components/admin/AdminView.vue')));

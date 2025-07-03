@@ -52,6 +52,11 @@ return [
     'forceDelete' => 'Delete dataset permanently',
     'error' => 'An error occurred',
     'error_too_long' => 'The given text is too long',
+    'error_model_no_tokens' => 'This resource does not support sharing-tokens.',
+    'errors' => [
+        '403' => 'You do not have the necessary permissions to perform this action.',
+        '404' => 'The requested resource could not be found.',
+    ],
     'save' => 'Save',
     'open' => 'open',
     'cancel' => 'Cancel',
@@ -113,6 +118,8 @@ return [
     'visible_until_or_from_to' => 'visible until or from/to (date/time)',
     'hidden' => 'hidden',
     'expired' => 'expired',
+    'token_expired' => 'This link is no longer valid',
+    'token_deleted' => 'This link no longer exists',
     'invalid_form' => 'Please fill out this field.',
     'dashboard' => [
         'title' => 'Dashboard',

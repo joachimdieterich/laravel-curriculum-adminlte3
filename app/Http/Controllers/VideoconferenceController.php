@@ -560,13 +560,13 @@ class VideoconferenceController extends Controller
 
         $subscription = VideoconferenceSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
 
-        if (!isset($subscription)) abort(410, 'Dieser Link existiert nicht mehr');
+        if (!isset($subscription)) abort(410, 'global.token_deleted');
 
         if (isset($subscription->due_date)) {
             $now = Carbon::now();
             $due_date = Carbon::parse($subscription->due_date);
             if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
+                abort(410, 'global.token_expired');
             }
         }
 

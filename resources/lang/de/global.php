@@ -58,6 +58,11 @@ return [
     'forceDelete' => 'Datensatz endgültig löschen',
     'error' => 'Ein Fehler ist aufgetreten',
     'error_too_long' => 'Der eingegebene Text ist zu lang',
+    'error_model_no_tokens' => 'Diese Ressource unterstützt keine Freigabelinks.',
+    'errors' => [
+        '403' => 'Sie haben nicht die notwendigen Berechtigungen, um diese Aktion auszuführen.',
+        '404' => 'Die angeforderte Ressource konnte nicht gefunden werden.',
+    ],
     'save' => 'Speichern',
     'open' => 'Öffnen',
     'cancel' => 'Abbrechen',
@@ -123,6 +128,8 @@ return [
     'visible_until_or_from_to' => 'sichtbar bis oder von/bis (Datum/Uhrzeit)',
     'hidden' => 'ausgeblendet',
     'expired' => 'abgelaufen',
+    'token_expired' => 'Dieser Link ist nicht mehr gültig',
+    'token_deleted' => 'Dieser Link existiert nicht mehr',
     'invalid_form' => 'Bitte füllen Sie dieses Feld aus.',
     'dashboard' => [
         'title' => 'Dashboard',

@@ -186,6 +186,7 @@ class KanbanController extends Controller
     public function show(Kanban $kanban, $token = null)
     {
         // don't use kanban_show -> bugfix for 403 problem on tokens.
+        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
         abort_unless($kanban->isAccessible(), 403);
 
         $kanban = $this->getKanbanWithRelations($kanban);

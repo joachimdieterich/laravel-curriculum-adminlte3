@@ -288,6 +288,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans(this.errorMessage(e)));
                     console.log(e.response);
                 });
         },
@@ -298,6 +299,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.trans(this.errorMessage(e)));
                     console.log(e.response);
                 });
         },

@@ -1,15 +1,17 @@
 <template >
     <div class="row">
-        <div id="navigatorView-content"
-             class="col-md-12 m-0">
+        <div
+            id="navigatorView-content"
+            class="col-md-12 m-0"
+        >
             <div v-for="navigatorItem in navigatorItems">
                 <div v-if="navigatorItem.position == 'header'">
-                    <Content
-                        v-if="navigatorItem.referenceable_type == 'App\\Content'"
-                        :content="navigatorItem">
-                    </Content>
+                    <Content v-if="navigatorItem.referenceable_type == 'App\\Content'"
+                        :content="navigatorItem"
+                    />
                     <div v-if="navigatorItem.referenceable_type != 'App\\Content'"
-                         class="col-12" >
+                        class="col-12"
+                    >
                         <div class="card">
                             <div class="card-body">
                                 {{ navigatorItem.title }}
@@ -18,7 +20,8 @@
                                     :id="'delete-navigatorView-' + navigatorItem.id"
                                     type="submit"
                                     class="dropdown-item py-1 text-red"
-                                    @click.prevent="confirmItemDelete(navigatorItem)">
+                                    @click.prevent="confirmItemDelete(navigatorItem)"
+                                >
                                     <i class="fa fa-trash mr-2"></i>
                                     {{ trans('global.navigatorItem.delete') }}
                                 </button>
@@ -31,73 +34,92 @@
             <IndexWidget
                 v-permission="'navigator_create'"
                 key="'navigatorItemCreate'"
-                modelName="NavigatorItem"
-                :url="'/navigators/' + navigator.id "
+                modelName="Navigator-Item"
+                :url="'/navigators/' + navigator.id"
                 :create=true
-                :label="trans('global.NavigatorItem.create')">
-            </IndexWidget>
+                :label="trans('global.NavigatorItem.create')"
+            />
             <span v-for="navigatorItem in navigatorItems">
-                <IndexWidget
-                    v-if="navigatorItem.position == 'content'"
+                <IndexWidget v-if="navigatorItem.position == 'content'"
                     :key="'navigatorItemIndex' + navigatorItem.id"
                     :model="navigatorItem"
                     modelName="NavigatorItem"
                     :url="navigatorItem.url"
                 >
-                <template v-slot:icon>
-                    <i class="fa fa-history pt-2"></i>
-                </template>
+                    <template v-slot:icon>
+                        <i class="fa fa-history pt-2"></i>
+                    </template>
 
-                <template
-                    v-permission="'navigator_edit, navigator_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
-                        <button
-                            v-permission="'navigator_edit'"
-                            :name="'edit-navigatorItem-' + navigatorItem.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editNavigatorItem(navigatorItem)">
-                            <i class="fa fa-pencil-alt mr-2"></i>
-                            {{ trans('global.navigatorView.edit') }}
-                        </button>
-                        <hr class="my-1">
-                        <button
-                            v-permission="'navigator_delete'"
-                            :id="'delete-navigatorView-' + navigatorItem.id"
-                            type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(navigatorItem)">
-                            <i class="fa fa-trash mr-2"></i>
-                            {{ trans('global.navigatorItem.delete') }}
-                        </button>
-                    </div>
-                </template>
-            </IndexWidget>
+                    <template v-if="navigatorItem.referenceable?.archived"
+                        v-slot:badges
+                    >
+                        <p class="text-muted small">
+                            <span
+                                class="btn btn-info btn-xs position-absolute select-all pull-right mr-1"
+                                style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
+                            >
+                                <i class="fa fa-archive" aria-hidden="true"></i>
+                                {{ trans('global.curriculum.fields.archived') }}
+                            </span>
+                        </p>
+                    </template>
+
+                    <template v-slot:dropdown
+                        v-permission="'navigator_edit, navigator_delete'"
+                    >
+                        <div
+                            class="dropdown-menu dropdown-menu-right"
+                            style="z-index: 1050;"
+                            x-placement="left-start"
+                        >
+                            <button
+                                v-permission="'navigator_edit'"
+                                :name="'edit-navigatorItem-' + navigatorItem.id"
+                                class="dropdown-item text-secondary"
+                                @click.prevent="editNavigatorItem(navigatorItem)"
+                            >
+                                <i class="fa fa-pencil-alt mr-2"></i>
+                                {{ trans('global.navigatorView.edit') }}
+                            </button>
+                            <hr class="my-1">
+                            <button
+                                v-permission="'navigator_delete'"
+                                :id="'delete-navigatorView-' + navigatorItem.id"
+                                type="submit"
+                                class="dropdown-item py-1 text-red"
+                                @click.prevent="confirmItemDelete(navigatorItem)"
+                            >
+                                <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.navigatorItem.delete') }}
+                            </button>
+                        </div>
+                    </template>
+                </IndexWidget>
             </span>
         </div>
-        <div id="navigatorView-datatable-wrapper"
-             class="w-100 dataTablesWrapper">
+        <div
+            id="navigatorView-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
             <DataTable
                 id="navigatorItem-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="'/navigatorViews/' + this.view.id + '/list'"
+                :ajax="'/navigatorViews/' + view.id + '/list'"
                 :search="search"
                 width="100%"
-                style="display:none; "
-            ></DataTable>
+                style="display: none;"
+            />
         </div>
 
         <div v-for="navigatorItem in navigatorItems">
             <div v-if="navigatorItem.position == 'footer'">
-                <Content
-                    v-if="navigatorItem.referenceable_type == 'App\\Content'"
-                    :content="navigatorItem">
-                </Content>
+                <Content v-if="navigatorItem.referenceable_type == 'App\\Content'"
+                    :content="navigatorItem"
+                />
                 <div v-if="navigatorItem.referenceable_type != 'App\\Content'"
-                     class="col-12" >
+                    class="col-12"
+                >
                     <div class="card">
                         <div class="card-body">
                             {{ navigatorItem.title }}
@@ -105,7 +127,8 @@
                                 v-permission="'navigator_edit'"
                                 :name="'edit-navigatorItem-' + navigatorItem.id"
                                 class="dropdown-item text-secondary"
-                                @click.prevent="editNavigatorItem(navigatorItem)">
+                                @click.prevent="editNavigatorItem(navigatorItem)"
+                            >
                                 <i class="fa fa-pencil-alt mr-2"></i>
                                 {{ trans('global.navigatorView.edit') }}
                             </button>
@@ -114,7 +137,8 @@
                                 :id="'delete-navigatorView-' + navigatorItem.id"
                                 type="submit"
                                 class="dropdown-item py-1 text-red"
-                                @click.prevent="confirmItemDelete(navigatorItem)">
+                                @click.prevent="confirmItemDelete(navigatorItem)"
+                            >
                                 <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.navigatorItem.delete') }}
                             </button>
@@ -128,9 +152,9 @@
             <NavigatorItemModal
                 :navigator="navigator"
                 :view="view"
-            ></NavigatorItemModal>
+            />
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.navigatorItem.delete')"
                 :description="trans('global.navigatorItem.delete_helper')"
                 @close="() => {
@@ -140,12 +164,10 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
-
 <script>
 import NavigatorItemModal from "../navigator/NavigatorItemModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -159,13 +181,15 @@ DataTable.use(DataTablesCore);
 export default {
     props: {
         navigator: {
-            default: null
+            type: Object,
+            default: null,
         },
         view: {
-            default: null
+            type: Object,
+            default: null,
         },
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -214,10 +238,10 @@ export default {
         });
     },
     methods: {
-        editNavigatorItem(navigatorItem){
+        editNavigatorItem(navigatorItem) {
             this.globalStore?.showModal('navigator-item-modal', navigatorItem);
         },
-        loaderEvent(){
+        loaderEvent() {
             const dt = $('#navigatorItem-datatable').DataTable();
             dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
                 this.navigatorItems = dt.rows({page: 'current'}).data().toArray();
@@ -228,7 +252,7 @@ export default {
                 dt.search(filter).draw();
             });
         },
-        confirmItemDelete(navigatorItem){
+        confirmItemDelete(navigatorItem) {
             this.currentNavigatorItem = navigatorItem;
             this.showConfirm = true;
         },

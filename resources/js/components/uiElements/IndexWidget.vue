@@ -96,9 +96,18 @@ import {useToast} from "vue-toastification";
 
 export default {
     props: {
-        model: {},
-        modelName: String,
-        url: String,
+        model: {
+            type: Object,
+            default: null,
+        },
+        modelName: {
+            type: String,
+            default: null,
+        },
+        url: {
+            type: String,
+            default: null,
+        },
         titleField: {
             type: String,
             default: 'title',
@@ -197,7 +206,7 @@ export default {
                     }
                 } else {
                     if (this.urlOnly) {
-                        window.open(this.url /*+ '/' + item.id*/, this.urlTarget);
+                        window.open(this.url, this.urlTarget);
                     } else {
                         window.location = this.url + '/' + (item.DT_RowId ?? item.id); // ? item.DT_RowId -> will not work for new entries
                     }

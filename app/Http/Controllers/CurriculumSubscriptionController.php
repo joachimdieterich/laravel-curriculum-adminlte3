@@ -73,7 +73,7 @@ class CurriculumSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
         $curriculum = Curriculum::find($input['model_id']);
-        abort_unless((\Gate::allows('curriculum_create') and $curriculum->isAccessible()), 403);
+        abort_unless(($curriculum->isEditable()), 403);
 
         $subscribe = CurriculumSubscription::updateOrCreate([
             'curriculum_id' => $input['model_id'],

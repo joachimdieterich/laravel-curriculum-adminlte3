@@ -4,6 +4,14 @@
             class="btn-group"
             @click="loadModal()"
         >
+            <div
+                id="loading-overlay"
+                class="overlay position-absolute"
+                style="inset: 0; background-color: #fff8 !important; display: none;"
+                @click.stop
+            >
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            </div>
             <span v-if="medium_id !== null"
                 class="d-flex align-items-center"
             >
@@ -39,6 +47,7 @@
 </template>
 <script>
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'MediumForm',
@@ -62,8 +71,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -103,6 +114,7 @@ export default {
             });
         },
         removeSubscription() {
+            $('#loading-overlay').show();
             axios.post('/mediumSubscriptions/destroy', {
                 medium_id: this.medium_id,
                 subscribable_id: this.subscribable_id,
@@ -111,9 +123,21 @@ export default {
                 sharing_level_id: 1,
                 visibility: 1,
             })
-            .then(response => this.$emit("selectedValue", null))
-            .catch(error => console.error(error));
+            .then(response => {
+                $('#loading-overlay').hide();
+                this.$emit("selectedValue", null);
+            })
+            .catch(error => {
+                this.toast.error(this.trans('global.error'));
+                $('#loading-overlay').hide();
+                console.error(error);
+            });
         },
     },
 }
 </script>
+<style scoped>
+.loading.show {
+    opacity: 0.5;
+}
+</style>

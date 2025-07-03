@@ -36,7 +36,7 @@ export default {
     },
     data() {
         return {
-            likes: []
+            likes: [],
         };
     },
     methods: {
@@ -52,7 +52,7 @@ export default {
                 });
         },
         userHasReaction() {
-            if (this.likes.findIndex(l => l.user_id == this.$userId) != -1){
+            if (this.likes.findIndex(l => l.user_id == this.$userId) != -1) {
                return true;
             }  else {
                return false;
@@ -60,12 +60,17 @@ export default {
         },
     },
     mounted() {
-      this.likes = this.model.likes;
+        this.likes = this.model.likes;
     },
     computed: {
         likes_count() {
             return this.likes.length;
         }
+    },
+    watch: {
+        'model.likes': function(newLikes) {
+            this.likes = newLikes;
+        },
     },
 }
 </script>

@@ -236,6 +236,7 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'subscribe-modal',
@@ -247,8 +248,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -299,6 +302,7 @@ export default {
                 this.subscribers.subscriptions.push(res.data);
             })
             .catch(err => {
+                this.toast.error(this.trans('global.error'));
                 console.log(err);
             });
         },

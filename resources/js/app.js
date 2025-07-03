@@ -369,7 +369,7 @@ app.config.globalProperties.$initTinyMCE = function(
         default_link_target:"_blank",
         relative_urls: false,
         entity_encoding: "raw",
-        language: 'de',
+        language: window.navigator.language ?? 'de',
         height: height,
         table_default_attributes: {
             border: '1',

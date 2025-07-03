@@ -85,18 +85,24 @@ class KanbanStatusController extends Controller
     public function checkSync(Kanban $kanban)
     {
         $date = new DateTime;
-        $date->modify('-10 seconds');
+        $date->modify('-10 seconds'); // refresh of max 10 seconds
         $formatted_date = $date->format('Y-m-d H:i:s');
 
-        $update_kanban = Kanban::where('id', $kanban->id)
-            ->where('updated_at','>=',$formatted_date)->get();
-        $new_statuses = KanbanStatus::where('kanban_id', $kanban->id)
-            ->where('created_at','>=',$formatted_date)
-            ->orWhere('updated_at','>=',$formatted_date)->get();
-        $new_items = KanbanItem::where('kanban_id', $kanban->id)
-            ->where('created_at','>=',$formatted_date)
-            ->orWhere('updated_at','>=',$formatted_date)->get();
-
+        // check models for updated_at value (no need for created_at)
+        $update_kanban = Kanban::select('id')
+            ->where('id', $kanban->id)
+            ->where('updated_at', '>=', $formatted_date)->get();
+        $new_statuses = KanbanStatus::select('id')
+            ->where('kanban_id', $kanban->id)
+            ->where('updated_at', '>=', $formatted_date)->get();
+        $new_items = KanbanItem::select('kanban_items.id')
+            ->where('kanban_id', $kanban->id)
+            ->leftJoin('kanban_item_comments', 'kanban_items.id', '=', 'kanban_item_comments.kanban_item_id')
+            ->where(function ($query) use ($formatted_date) {
+                $query->where('kanban_items.updated_at', '>=', $formatted_date)
+                    ->orWhere('kanban_item_comments.updated_at', '>=', $formatted_date);
+            })
+            ->get();
 
         if (request()->wantsJson()) {
             if ($update_kanban->count() !== 0 OR $new_statuses->count() !== 0 OR $new_items->count() !== 0) {

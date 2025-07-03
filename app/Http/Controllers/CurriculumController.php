@@ -351,7 +351,6 @@ class CurriculumController extends Controller
         abort_unless(Gate::allows('curriculum_edit'), 403);
 
         $input = $this->validateRequest();
-        $this->checkPermissions($input['type_id']);
 
         $curriculum->update([
             'title'                 => $input['title'],

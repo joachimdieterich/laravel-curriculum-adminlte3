@@ -122,7 +122,7 @@
             <ConfirmModal
                 :showConfirm="show_item_copy"
                 :title="trans('global.kanbanItem.copy')"
-                :description="trans('global.kanbanStatus.copy_helper')"
+                :description="trans('global.kanbanItem.copy_helper')"
                 css="primary"
                 @close="show_item_copy = false"
                 @confirm="() => {
@@ -266,8 +266,9 @@ export default {
                     if (res.data.message !== 'uptodate') {
                         this.refreshRate = 5000;
                         this.statuses = res.data.message.statuses;
-                    } else {
-                        this.refreshRate += 1000; //slow down refreshing, if nothing happens
+                    } else if (this.refreshRate < 10000) { // max refresh rate of 10 seconds
+                        // slow down refresh rate if no changes
+                        this.refreshRate += 1000;
                     }
                 })
                 .catch(err => {

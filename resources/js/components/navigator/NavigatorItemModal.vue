@@ -1,7 +1,7 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
+            class="modal-mask"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -14,213 +14,212 @@
                     </span>
                     </h3>
                     <div class="card-tools">
-                        <button type="button"
-                                class="btn btn-tool"
-                                @click="globalStore?.closeModal($options.name)">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
                             <i class="fa fa-times"></i>
                         </button>
                     </div>
                 </div>
-                <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                    <ul v-if="this.method !=  'patch'"
-                        class="nav nav-pills">
-                        <!-- View -->
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               :class="
-                               {
-                                   show: (this.form.referenceable_type ==  'App\\NavigatorView'),
-                                   active: (this.form.referenceable_type ==  'App\\NavigatorView')
-                               }"
-                               @click="setCurrentTab('NavigatorView')"
-                               >
-                                <i class="fa fa-map-signs mr-2"></i>{{ trans('global.navigator_view.title_singular') }}
-                            </a>
-                        </li>
-                        <!-- Curriculum -->
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               :class="
-                               {
-                                   show: (this.form.referenceable_type ==  'App\\Curriculum'),
-                                   active: (this.form.referenceable_type ==  'App\\Curriculum')
-                               }"
-                               @click="setCurrentTab('Curriculum')"
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul v-if="method !=  'patch'"
+                                class="nav nav-pills nav-fill"
                             >
-                                <i class="fas fa-th mr-2"></i>{{ trans('global.curriculum.title') }}
-                            </a>
-                        </li>
-                        <!-- Content -->
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               :class="
-                               {
-                                   show: (this.form.referenceable_type ==  'App\\Content'),
-                                   active: (this.form.referenceable_type ==  'App\\Content')
-                               }"
-                               @click="setCurrentTab('Content')"
-                            >
-                                <i class="fa fa-align-justify mr-2"></i>{{ trans('global.content.title_singular') }}
-                            </a>
-                        </li>
-<!--                        <li v-if="this.form.referenceable_type = 'App\\Medium'"
-                            class="nav-item">
-                            <a class="nav-link" href="#token_subscription" data-toggle="tab">
-                                <i class="fa fa-photo-video mr-2"></i>{{ trans('global.medium.title_singular') }}
-                            </a>
-                        </li>-->
-                    </ul>
-
-                    <div class="tab-content pt-2">
-                        <div v-if="this.form.referenceable_type == 'App\\Curriculum'">
-                            <Select2
-                                id="referenceable_id"
-                                name="referenceable_id"
-                                url="/curricula"
-                                model="curriculum"
-                                :selected="this.form.referenceable_id"
-                                @selectedValue="(id) => {
-                                    this.form.referenceable_id = id;
-                                }"
-                            >
-                            </Select2>
-                        </div>
-
-                        <div id="tab_navigator_view">
-                            <div v-if="this.form.referenceable_type ==  'App\\NavigatorView'
-                                       || this.form.referenceable_type ==  'App\\Content'
-                                       || this.method ==  'patch'
-                                "
-                                 class="form-group">
-                                <label for="title">{{ trans('global.navigator.fields.title') }} *</label>
-                                <input
-                                    type="text" id="title"
-                                    name="title"
-                                    class="form-control"
-                                    v-model="form.title"
-                                    placeholder="Title"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                            </div>
-
-                            <div v-if="this.form.referenceable_type ==  'App\\NavigatorView'
-                                       || this.form.referenceable_type ==  'App\\Content'
-                                       || this.method ==  'patch'
-                                "
-                                 class="form-group">
-                                <label for="body">{{ trans('global.navigator.fields.description') }}</label>
-                                <Editor
-                                    id="description"
-                                    name="description"
-                                    class="form-control"
-                                    :init="tinyMCE"
-                                    :initial-value="form.description"
-                                />
-                                <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
-                            </div>
-                        </div>
-
-                        <Select2
-                            id="position"
-                            name="position"
-                            model=""
-                            :label="trans('global.navigator_item.fields.position')"
-                            :list="[
+                                <!-- View -->
+                                <li class="nav-item">
+                                    <a
+                                        class="nav-link"
+                                        :class="
                                         {
-                                            'id':'content',
-                                            'title': trans('global.content.title_singular')
+                                            show: (this.form.referenceable_type ==  'App\\NavigatorView'),
+                                            active: (this.form.referenceable_type ==  'App\\NavigatorView')
+                                        }"
+                                        @click="setCurrentTab('NavigatorView')"
+                                    >
+                                        <i class="fa fa-map-signs mr-2"></i>{{ trans('global.navigator_view.title_singular') }}
+                                    </a>
+                                </li>
+                                <!-- Curriculum -->
+                                <li class="nav-item">
+                                    <a
+                                        class="nav-link"
+                                        :class="
+                                        {
+                                            show: (this.form.referenceable_type ==  'App\\Curriculum'),
+                                            active: (this.form.referenceable_type ==  'App\\Curriculum')
+                                        }"
+                                        @click="setCurrentTab('Curriculum')"
+                                    >
+                                        <i class="fas fa-th mr-2"></i>{{ trans('global.curriculum.title') }}
+                                    </a>
+                                </li>
+                                <!-- Content -->
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link"
+                                    :class="
+                                    {
+                                        show: (this.form.referenceable_type ==  'App\\Content'),
+                                        active: (this.form.referenceable_type ==  'App\\Content')
+                                    }"
+                                    @click="setCurrentTab('Content')"
+                                    >
+                                        <i class="fa fa-align-justify mr-2"></i>{{ trans('global.content.title_singular') }}
+                                    </a>
+                                </li> -->
+                            </ul>
+        
+                            <div class="tab-content pt-2">
+                                <div v-if="form.referenceable_type == 'App\\Curriculum'">
+                                    <Select2
+                                        id="referenceable_id"
+                                        name="referenceable_id"
+                                        url="/curricula"
+                                        model="curriculum"
+                                        :selected="form.referenceable_id"
+                                        @selectedValue="(id) => {
+                                            this.form.referenceable_id = id;
+                                        }"
+                                    />
+                                </div>
+        
+                                <div id="tab_navigator_view">
+                                    <div v-if="form.referenceable_type ==  'App\\NavigatorView'
+                                            || method == 'patch'
+                                        "
+                                        class="form-group"
+                                    >
+                                        <input
+                                            id="title"
+                                            type="text"
+                                            name="title"
+                                            class="form-control"
+                                            v-model="form.title"
+                                            :placeholder="trans('global.title') + ' *'"
+                                            required
+                                        />
+                                    </div>
+        
+                                    <div v-if="form.referenceable_type ==  'App\\NavigatorView'
+                                            || method == 'patch'
+                                        "
+                                        class="form-group"
+                                    >
+                                        <Editor
+                                            id="description"
+                                            name="description"
+                                            class="form-control"
+                                            :init="tinyMCE"
+                                            v-model="form.description"
+                                        />
+                                    </div>
+                                </div>
+        
+                                <Select2
+                                    id="position"
+                                    name="position"
+                                    model=""
+                                    :label="trans('global.navigator_item.fields.position')"
+                                    :list="[
+                                        {
+                                            id: 'content',
+                                            title: trans('global.content.title_singular'),
                                         },
                                         {
-                                            'id':'footer',
-                                            'title': trans('global.footer')
+                                            id: 'footer',
+                                            title: trans('global.footer'),
                                         },
                                         {
-                                            'id':'header',
-                                            'title': trans('global.header')
+                                            id: 'header',
+                                            title: trans('global.header'),
                                         }
                                     ]"
-                            :selected="this.form.position"
-                            @selectedValue="(id) => {
-                                this.form.position = id;
-                            }"
-                        >
-                        </Select2>
-                        <Select2
-                            id="css_class"
-                            name="css_class"
-                            model=""
-                            :label="trans('global.navigator_item.fields.css_class')"
-                            :list="[
+                                    :selected="form.position"
+                                    @selectedValue="(id) => {
+                                        this.form.position = id;
+                                    }"
+                                />
+                                <Select2
+                                    id="css_class"
+                                    name="css_class"
+                                    model=""
+                                    :label="trans('global.navigator_item.fields.css_class')"
+                                    :list="[
                                         {
-                                            'id':'col-xs-12',
-                                            'title': 'col-xs-12'
+                                            id: 'col-xs-12',
+                                            title: 'col-xs-12',
                                         },
                                         {
-                                            'id':'col-12',
-                                            'title': 'col-12'
-                                        },
-                                    ]"
-                            :selected="this.form.css_class"
-                            @selectedValue="(id) => {
-                                this.form.css_class = id;
-                            }"
-                        >
-                        </Select2>
-                        <Select2
-                            id="visibility"
-                            name="visibility"
-                            model=""
-                            :label="trans('global.visibility')"
-                            :list="[
-                                        {
-                                            'id':'1',
-                                            'title': trans('global.navigator_item.fields.visibility_show')
-                                        },
-                                        {
-                                            'id':'2',
-                                            'title': trans('global.navigator_item.fields.visibility_hide')
+                                            id: 'col-12',
+                                            title: 'col-12',
                                         },
                                     ]"
-                            :selected="this.form.visibility"
-                            @selectedValue="(id) => {
-                                this.form.visibility = id;
-                            }"
-                        >
-                        </Select2>
-                    </div>
-
-                    <div v-if="this.form.referenceable_type == 'App\\Curriculum' || 'App\\NavigatorView'"
-                         class="tab-pane" id="tab_curriculum_view">
-                        <MediumForm
-                            class="pull-right"
-                            id='navigator_item_medium'
-                            :medium_id="form.medium_id"
-                            accept="image/*"
-                            :selected="this.form.medium_id"
-                            @selectedValue="(id) => {
-                                    this.form.medium_id = id;
-                                }"
-                        >
-                        </MediumForm>
+                                    :selected="form.css_class"
+                                    @selectedValue="(id) => {
+                                        this.form.css_class = id;
+                                    }"
+                                />
+                                <Select2
+                                    id="visibility"
+                                    name="visibility"
+                                    model=""
+                                    :label="trans('global.visibility')"
+                                    :list="[
+                                        {
+                                            id: '1',
+                                            title: trans('global.navigator_item.fields.visibility_show'),
+                                        },
+                                        {
+                                            id: '2',
+                                            title: trans('global.navigator_item.fields.visibility_hide'),
+                                        },
+                                    ]"
+                                    :selected="form.visibility"
+                                    @selectedValue="(id) => {
+                                        this.form.visibility = id;
+                                    }"
+                                />
+                            </div>
+        
+                            <div v-if="form.referenceable_type == 'App\\NavigatorView'"
+                                id="tab_curriculum_view"
+                                class="tab-pane"
+                            >
+                                <MediumForm
+                                    class="pull-right"
+                                    id='navigator_item_medium'
+                                    :medium_id="form.medium_id"
+                                    accept="image/*"
+                                    :selected="form.medium_id"
+                                    @selectedValue="(id) => {
+                                        this.form.medium_id = id;
+                                    }"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="navigator-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="globalStore?.closeModal($options.name)">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="navigator-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
+                    <span class="pull-right">
+                        <button
+                            id="navigator-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="navigator-save"
+                            class="btn btn-primary ml-3"
+                            @click="submit(method)"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -242,10 +241,12 @@ export default {
     },
     props: {
         navigator: {
-            type: Object
+            type: Object,
+            default: null,
         },
         view: {
-            type: Object
+            type: Object,
+            default: null,
         },
     },
     setup() { //use database store
@@ -260,23 +261,22 @@ export default {
             method: 'post',
             url: '/navigatorItems',
             form: new Form({
-                'id':'',
-                'title': '',
-                'description':  '',
-                'organization_id': '',
-                'referenceable_type': 'App\\NavigatorView',
-                'referenceable_id': '',
-                'navigator_id': '',
-                'position': 'content',
-                'css_class': 'col-12',
-                'visibility': '1',
-                'medium_id': '',
-                'view_id': null
+                id: '',
+                title: '',
+                description:  '',
+                organization_id: '',
+                referenceable_type: 'App\\NavigatorView',
+                referenceable_id: '',
+                navigator_id: '',
+                position: 'content',
+                css_class: 'col-12',
+                visibility: '1',
+                medium_id: null,
+                view_id: null,
             }),
-            search: '',
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia autoresize"
+                    "autolink link autoresize"
                 ],
                 {
                     'callback': 'insertContent',
@@ -300,7 +300,7 @@ export default {
                 this.add();
             }
         },
-        add(){
+        add() {
             axios.post(this.url, this.form)
                 .then(r => {
                     this.$eventHub.emit('navigatorItem-added', r.data);
@@ -309,7 +309,7 @@ export default {
                     console.log(e.response);
                 });
         },
-        update(){
+        update() {
             axios.patch(this.url + '/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('navigatorItem-updated', r.data);
@@ -318,10 +318,8 @@ export default {
                     console.log(e.response);
                 });
         },
-        setCurrentTab(type){
+        setCurrentTab(type) {
             this.form.referenceable_type = 'App\\' + type;
-            console.log(this.form.referenceable_type);
-
         },
     },
     mounted() {

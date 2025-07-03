@@ -112,6 +112,12 @@ class MediumSubscriptionController extends Controller
         abort_unless(\Gate::allows('medium_delete'), 403);
         $input = $this->validateRequest();
 
+        // if request didn't send additional_data (on models where only 1 medium can be attached)
+        if (!isset($input['additional_data'])) {
+            // remove the medium_id from the model, so deleting the medium doesn't cause a foreign key constraint error
+            $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
+        }
+
         // technically there could be more than 1 result, but in practice a model can only have 1 attached medium
         // also, for each edusharing-subscription a new medium is created, so these should always be unique (1:1)
         $query = MediumSubscription::where([
@@ -141,12 +147,6 @@ class MediumSubscriptionController extends Controller
                 // and then delete the medium-entry
                 Medium::find($input['medium_id'])->delete();
             }
-        }
-
-        // if request didn't send additional_data (only needed on curriculum-media)
-        if (!isset($input['additional_data'])) {
-            // since there is no subscription, we should just remove the attached medium-id from the resource
-            $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
         }
 
         return true;

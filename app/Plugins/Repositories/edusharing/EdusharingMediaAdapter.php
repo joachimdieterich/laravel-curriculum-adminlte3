@@ -350,7 +350,7 @@ class EdusharingMediaAdapter implements MediaInterface
             'repository' => 'sometimes',
             'artefact' => 'sometimes',
             'file.*' => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
-            'medium_name' => 'sometimes|string',
+            'medium_name' => 'sometimes|string|nullable',
             'model' => 'sometimes',
             'model_id' => 'sometimes',
 

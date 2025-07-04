@@ -251,6 +251,9 @@ app.config.globalProperties.errorMessage = (error) => {
     let msg = window.trans;
     // since trans()-function is not available here, we traverse the translation object to get the message
     translation_key.split('.').forEach(key => msg = msg[key]);
+    // add information why the request was aborted (no translation)
+    if (error.response.headers.has('abort-info')) msg += ' (' + error.response.headers.get('abort-info') + ')';
+
     return msg;
 };
 

@@ -56,12 +56,14 @@ return [
     'editable' => 'editierbar',
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen',
-    'error' => 'Ein Fehler ist aufgetreten',
-    'error_too_long' => 'Der eingegebene Text ist zu lang',
-    'error_model_no_tokens' => 'Diese Ressource unterstützt keine Freigabelinks.',
-    'errors' => [
+    'error' => [
+        'default' => 'Ein Fehler ist aufgetreten',
+        'too_long' => 'Der eingegebene Text ist zu lang',
+        'no_token_support' => 'Diese Ressource unterstützt keine Freigabelinks.',
+        'no_access_to_user' => 'Sie haben keine Berechtigung, auf diesen Benutzer zuzugreifen.',
         '403' => 'Sie haben nicht die notwendigen Berechtigungen, um diese Aktion auszuführen.',
         '404' => 'Die angeforderte Ressource konnte nicht gefunden werden.',
+        '419' => 'Die Sitzung ist abgelaufen - bitte laden Sie die Seite neu.',
     ],
     'save' => 'Speichern',
     'open' => 'Öffnen',

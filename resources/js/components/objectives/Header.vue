@@ -128,9 +128,9 @@ export default {
                         higher: higher ? 1 : -1, // only used for terminal-objectives
                     });
                 })
-                .catch(error => {
-                    this.toast.error(this.trans('global.error'));
-                    console.log(error);
+                .catch(e => {
+                    this.toast.error(this.errorMessage(e));
+                    console.log(e);
                 });
         },
     },

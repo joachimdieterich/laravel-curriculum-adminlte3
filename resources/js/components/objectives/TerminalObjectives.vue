@@ -187,7 +187,7 @@ export default {
                     }
                 })
                 .catch(e => {
-                    this.toast.error(this.trans('global.error'));
+                    this.toast.error(this.errorMessage(e));
                     console.log(e);
                 });
         },
@@ -203,7 +203,7 @@ export default {
                     Object.assign(this.objective_types, response.data);
                 })
                 .catch(e => {
-                    this.toast.error(this.trans('global.error'));
+                    this.toast.error(this.errorMessage(e));
                     console.log(e);
                 });
         },
@@ -215,13 +215,9 @@ export default {
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", {
                 objective_type_order: this.type_order.map(index => this.objective_types[index].id),
             })
-                .catch(error => {
-                    if (error.status === 403) {
-                        this.toast.error(error.response.data.message);
-                    } else {
-                        this.toast.error(this.trans('global.error'));
-                    }
-                    console.log(error);
+                .catch(e => {
+                    this.toast.error(this.errorMessage(e));
+                    console.log(e);
                 });
         },
         addNewType(type) {

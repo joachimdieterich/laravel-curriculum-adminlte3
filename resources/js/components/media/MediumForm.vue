@@ -127,10 +127,10 @@ export default {
                 $('#loading-overlay').hide();
                 this.$emit("selectedValue", null);
             })
-            .catch(error => {
-                this.toast.error(this.trans('global.error'));
+            .catch(e => {
+                this.toast.error(this.errorMessage(e));
                 $('#loading-overlay').hide();
-                console.error(error);
+                console.log(e);
             });
         },
     },

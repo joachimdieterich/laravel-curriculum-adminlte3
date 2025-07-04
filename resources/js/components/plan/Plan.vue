@@ -218,9 +218,9 @@ export default {
         updateEntryOrder() {
             // Send the current order of entries to the server
             axios.put("/plans/" + this.plan.id + "/syncEntriesOrder", {entry_order: this.entry_order})
-                .catch(err => {
-                    console.log(err);
-                    this.toast.error(err.response?.data.message ?? this.trans('global.error'));
+                .catch(e => {
+                    this.toast.error(this.errorMessage(e));
+                    console.log(e);
                 });
         },
     },

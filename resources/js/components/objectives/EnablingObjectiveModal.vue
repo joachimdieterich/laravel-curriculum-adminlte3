@@ -224,7 +224,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    this.toast.error(this.form.description.length > 65535 ? this.trans('global.error_too_long') : this.trans('global.error'));
+                    this.toast.error(this.form.description.length > 65535 ? this.trans('global.error.too_long') : this.trans('global.error.default'));
                     console.log(e);
                 });
         },
@@ -235,7 +235,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    this.toast.error(this.form.description.length > 65535 ? this.trans('global.error_too_long') : this.trans('global.error'));
+                    this.toast.error(this.form.description.length > 65535 ? this.trans('global.error.too_long') : this.trans('global.error.default'));
                     console.log(e);
                 });
         },

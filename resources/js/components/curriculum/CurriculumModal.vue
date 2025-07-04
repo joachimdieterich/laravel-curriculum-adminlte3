@@ -447,7 +447,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    this.toast.error(this.trans('global.error'));
+                    this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
         },
@@ -458,7 +458,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(error => {
-                    this.toast.error(this.trans('global.error'));
+                    this.toast.error(this.errorMessage(e));
                     console.log(error);
                 });
         },

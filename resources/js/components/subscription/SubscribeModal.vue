@@ -301,9 +301,9 @@ export default {
             .then(res => {
                 this.subscribers.subscriptions.push(res.data);
             })
-            .catch(err => {
-                this.toast.error(this.trans('global.error'));
-                console.log(err);
+            .catch(e => {
+                this.toast.error(this.errorMessage(e));
+                console.log(e);
             });
         },
         changeCanEditTokenValue(value) {

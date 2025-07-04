@@ -192,7 +192,11 @@ class CertificateController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, $certificate->id, $users->count());
         // first check if all given users are accessible by current user
         foreach ($users as $user) {
-            abort_unless(auth()->user()->mayAccessUser($user), 403, 'global.error.no_access_to_user', ['abort-info' => 'ID: ' . $user->id]);
+            abort_unless(auth()->user()->mayAccessUser($user),
+                403,
+                'global.error.no_access_to_user',
+                ['abort-info' => 'ID: ' . $user->id . ' => ' . $user->fullName()]
+            );
         }
 
         $generated_files = [];

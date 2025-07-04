@@ -148,7 +148,7 @@ export default {
                     this.download_url = r.data.message;
                 })
                 .catch(e => {
-                    this.toast.error(this.trans(this.errorMessage(e)));
+                    this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
         },

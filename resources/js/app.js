@@ -248,9 +248,10 @@ app.config.globalProperties.errorMessage = (error) => {
                 break;
         }
     }
-
-    // trans()-function is not available here, so we return a key instead
-    return translation_key;
+    let msg = window.trans;
+    // since trans()-function is not available here, we traverse the translation object to get the message
+    translation_key.split('.').forEach(key => msg = msg[key]);
+    return msg;
 };
 
 /**

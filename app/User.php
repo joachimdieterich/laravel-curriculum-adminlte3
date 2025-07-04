@@ -438,6 +438,7 @@ class User extends Authenticatable
 
     public function mayAccessUser(User $user, $context = 'organization')
     {
+        if (is_admin()) return true;
         switch ($context) {
             case 'organization':
                 return $user->organizations()->pluck('organizations.id')->contains($this->current_organization_id);

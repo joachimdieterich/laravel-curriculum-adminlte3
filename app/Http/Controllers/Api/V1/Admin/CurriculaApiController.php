@@ -75,12 +75,14 @@ class CurriculaApiController extends Controller
             ->get();
 
         $max = Config::where('key', 'api_description_length')->first()?->value ?: 75;
+        mb_substitute_character('none'); // remove non UTF-8 chars, instead of replacing them
 
         // strip each HTML-field of its tags
         foreach ($curricula as $curriculum) {
             // since these attributes are casted as 'CleanHTML' they will always be wrapped with a 'p'-tag
             $curriculum->mergeCasts(['description' => 'string']);
             $curriculum->description = strip_tags($curriculum->description);
+
             // terminal-objectives
             foreach ($curriculum->terminalObjectives as $terminal) {
                 // same casting problem
@@ -92,8 +94,10 @@ class CurriculaApiController extends Controller
                 $terminal->description = strip_tags($terminal->description);
                 // truncate the description if it's too long and add ellipsis
                 if (strlen($terminal->description) > $max) {
-                    $terminal->description = substr($terminal->description, 0, $max).'...';
+                    // non UTF-8 chars will only cause problems, if the text gets truncated
+                    $terminal->description = mb_convert_encoding(substr($terminal->description, 0, $max), 'UTF-8').'...';
                 }
+
                 // enabling-objectives
                 foreach ($terminal->enablingObjectives as $enabling) {
                     // same casting problem
@@ -104,7 +108,7 @@ class CurriculaApiController extends Controller
                     $enabling->title = strip_tags($enabling->title);
                     $enabling->description = strip_tags($enabling->description);
                     if (strlen($enabling->description) > $max) {
-                        $enabling->description = substr($enabling->description, 0, $max).'...';
+                        $enabling->description = mb_convert_encoding(substr($enabling->description, 0, $max), 'UTF-8').'...';
                     }
                 }
             }

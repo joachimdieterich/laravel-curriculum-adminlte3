@@ -25,7 +25,10 @@
                     </div>
                 </div>
 
-                <div class="modal-body">
+                <div
+                    class="modal-body"
+                    style="overflow-y: visible;"
+                >
                     <div class="card">
                         <div class="card-body">
                             <Select2

@@ -67,21 +67,19 @@ export const useGlobalStore = defineStore('global', {
         setItem(key, value) {
             this.global[key] = value;
         },
-        registerModal(title){
+        registerModal(title) {
             this.modals[title] = {
                 show: false,
                 lock: false, // used to not reset modal-params, when more than 1 modal is showing
                 params: [],
             };
-            //console.log(this.modals);
         },
-        showModal(name, params = null){
+        showModal(name, params = null) {
             this.modals[name] = {
                 show: true,
                 lock: false,
                 params: params,
             };
-            //console.log(this.modals[title]);
         },
         closeModal(name) {
             this.modals[name].show = false;
@@ -103,19 +101,17 @@ export const useGlobalStore = defineStore('global', {
             } else {
                 this.media.push(item);
             }
-            //console.log(this.media);
         },
         removeFromMedia(item) {
             let index = this.media.findIndex(
                 i => i.media === item.media
             );
 
-            if (index !== -1){
+            if (index !== -1) {
                 // nothing to do
             } else {
                 this.media.splice(index, 1);
             }
-            //console.log(this.media);
         },
         setSelectedMedia(selection) {
             Object.assign(this.selectedMedia, selection);

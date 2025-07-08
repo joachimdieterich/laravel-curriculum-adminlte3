@@ -228,6 +228,7 @@ app.use(Toast, {
     maxToasts: 20,
     newestOnTop: true,
 });
+
 /**
  * checks which error message is appropriate for the given error
  * @param {Error} error 

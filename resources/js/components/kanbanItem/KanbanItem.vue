@@ -3,6 +3,7 @@
         :id="'item-' + item.id"
         class="card"
         :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
+        tabindex="-1"
     >
         <div
             class="card-header p-0"

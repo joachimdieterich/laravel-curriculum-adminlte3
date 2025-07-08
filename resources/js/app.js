@@ -265,7 +265,6 @@ app.config.globalProperties.errorMessage = (error) => {
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce payload for users
-import { error } from 'jquery';
 
 app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
 app.component('admin-view',  defineAsyncComponent(() => import('./components/admin/AdminView.vue')));

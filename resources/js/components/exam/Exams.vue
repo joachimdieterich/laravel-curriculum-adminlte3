@@ -81,9 +81,7 @@
                     </div>
                 </template>
 
-                <template v-if="subscribable"
-                    v-slot:dropdown
-                >
+                <template v-slot:dropdown>
                     <div
                         class="dropdown-menu dropdown-menu-right"
                         style="z-index: 1050;"
@@ -96,15 +94,6 @@
                             <i class="fa fa-ranking-star mr-2"></i>
                             <span>Zur &Uuml;bersicht</span>
                         </button>
-                        <!-- <button
-                            v-permission="'exam_edit'"
-                            :name="'edit-exam-' + exam.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editExam(exam)"
-                        >
-                            <i class="fa fa-pencil-alt mr-2"></i>
-                            {{ trans('global.exam.edit') }}
-                        </button> -->
                         <button v-if="exam.status !== 0"
                             :name="'edit-exam-' + exam.id"
                             class="dropdown-item text-secondary"
@@ -121,13 +110,8 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(exam)"
                         >
-                            <span v-if="create_label_field == 'enrol'">
-                                <i class="fa fa-unlink mr-2"></i>
-                                {{ trans('global.kanban.expel') }}
-                            </span>
-                            <span v-else>
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.kanban.delete') }}
+                            <span>
+                                <i class="fa fa-unlink mr-2"></i>{{ trans('global.expel') }}
                             </span>
                         </button>
                     </div>
@@ -309,28 +293,17 @@ export default {
             this.showConfirm = true;
         },
         destroy() {
-            if (this.subscribable) {
-                axios.delete('/exams/' + this.currentExam.exam_id + '?tool=' + this.currentExam.tool)
-                    .then(response => {
-                        if (response.status === 200) {
-                            this.exams.splice(this.exams.indexOf(this.currentExam), 1);
-                            this.toast.success(this.trans('global.exam.success_messages.exam_removed'));
-                        }
-                    })
-                    .catch(errors => {
-                        console.log(errors);
-                        this.toast.error(this.trans('global.exam.error_messages.remove_exam'));
-                    })
-            } else {
-                axios.delete('/exams/' + this.currentExam.id)
-                    .then(res => {
-                        let index = this.exams.indexOf(this.currentExam);
-                        this.exams.splice(index, 1);
-                    })
-                    .catch(err => {
-                        console.log(err.response);
-                    });
-            }
+            axios.delete('/exams/' + this.currentExam.exam_id + '?tool=' + this.currentExam.tool)
+                .then(response => {
+                    if (response.status === 200) {
+                        this.exams.splice(this.exams.indexOf(this.currentExam), 1);
+                        this.toast.success(this.trans('global.exam.success_messages.exam_removed'));
+                    }
+                })
+                .catch(e => {
+                    this.toast.error(this.errorMessage(e, 'global.exam.error_messages.remove_exam'));
+                    console.log(e);
+                })
         },
         isActive(completed) {
             return !completed.pivot?.exam_completed_at;

@@ -117,7 +117,7 @@ class ExamController extends Controller
 
     public function show(Exam $exam)
     {
-        abort_unless(\Gate::allows('test_access'), 403);
+        abort_unless(\Gate::allows('exam_access'), 403);
 
         return view('exams.show')
             ->with(compact('exam'));

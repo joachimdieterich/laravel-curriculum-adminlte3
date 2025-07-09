@@ -138,7 +138,8 @@
                             {{ exam.test_name }}
                         </h1>
                         <p class="text-muted small">
-                            {{ exam.group?.title }}
+                            {{ exam.group?.title }}<br/>
+                            {{ exam.group?.organization?.title }}
                         </p>
                         <progress
                             id="status"

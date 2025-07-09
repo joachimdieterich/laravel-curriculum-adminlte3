@@ -25,7 +25,7 @@ class ExamController extends Controller
             $this->getToolExamStatus($exam);
         }
 
-        $exams = auth()->user()->fresh()->exams;
+        // $exams = auth()->user()->fresh()->exams;
 
         foreach($exams as $exam){
             $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
@@ -56,17 +56,15 @@ class ExamController extends Controller
         {
             return getExamsJob::getFilteredExams($examListRequest);
         }
-
     }
 
     public function list()
     {
         abort_unless(\Gate::allows('exam_access'), 403);
-        //$exams = Exam::whereIn('group_id', auth()->user()->groups->pluck('id'));
 
         $exams = auth()->user()->exams;
 
-        if (request()->has(['group_id']))
+        if (request()->has(['group_id'])) // request came from /groups/{id}-page
         {
             $request = request()->validate([
                 'group_id' => 'required',
@@ -77,34 +75,24 @@ class ExamController extends Controller
             switch ($request['filter'])
             {
                 case 'student':
-                    $exams = auth()->user()->fresh()->exams->where('group_id', $group_id);
+                    $exams = $exams->where('group_id', $group_id);
                     break;
                 case 'all':
                 default:
                     $exams = Exam::where('group_id', $group_id)
-                        ->with(['group', 'users']);
+                        ->with(['group:id,title', 'users']);
                     break;
             }
-           // dump($exams);
-            foreach($exams as $exam) {
-                $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
-            }
-        }
-        else
-        {
-            foreach ($exams as $exam) {
-                $this->getToolExamStatus($exam);
-            }
-
-            $exams = auth()->user()->fresh()->exams;
-
-            foreach($exams as $exam){
-                $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
-            }
-            $exams->load('group');
+        } else if (!is_student()) {
+            $exams = Exam::whereIn('group_id', auth()->user()->groups()->pluck('groups.id'))
+                ->with(['group:id,title,organization_id', 'group.organization:id,title', 'users']);
+        } else {
+            $exams->load('group:id,title');
         }
 
-      //  $exams = $exams->groupBy('exams.test_name');
+        foreach($exams as $exam) {
+            $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
+        }
 
         return DataTables::of($exams)
             ->addColumn('check', '')

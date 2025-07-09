@@ -167,7 +167,7 @@
         </div>
 
         <Teleport to="body">
-            <SubscribeExamModal v-if="subscribable"/>
+            <SubscribeExamModal v-if="subscribable && this.checkPermission('is_teacher')"/>
             <ExamModal v-if="!subscribable"
                 :show="showExamModal"
                 @close="this.showExamModal = false"
@@ -246,9 +246,9 @@ export default {
                 { title: 'subject', data: 'subject', searchable: true },
             ],
             options : this.$dtOptions,
-            filter: 'student', // only returns entries if user has student-role
+            filter: this.checkPermission('is_teacher') ? 'all' : 'student', // 'student' => only returns entries if user has student-role
             dt: null,
-            url: (this.subscribable_id) ? '/exams/list?group_id=' + this.subscribable_id + '&filter=student' : '/exams/list',
+            url: this.urlOnLoad(),
         }
     },
     mounted() {
@@ -275,6 +275,16 @@ export default {
         });
     },
     methods: {
+        urlOnLoad() {
+            let url = '/exams/list';
+            
+            if (this.subscribable_id) {
+                let filter = this.checkPermission('is_teacher') ? 'all' : 'student'; // this.filter isn't defined at this point
+                url += '?group_id=' + this.subscribable_id + '&filter=' + filter;
+            }
+    
+            return url;
+        },
         getLoginUrl(exam) {
             return exam.login_url ?? '/exams/' +  exam.exam_id + '/edit';
         },

@@ -58,6 +58,7 @@ return [
         '403' => 'You do not have the necessary permissions to perform this action.',
         '404' => 'The requested resource could not be found.',
         '419' => 'The session has expired - please reload the page.',
+        '500' => 'Server error. Please notify the administrators if this error keeps occuring.',
     ],
     'save' => 'Save',
     'open' => 'open',

@@ -232,13 +232,14 @@ app.use(Toast, {
 /**
  * checks which error message is appropriate for the given error
  * @param {Error} error 
+ * @param {String} fallback fallback translation-key, if given error doesn't have a specified error-message
  * @returns @String key to translate error message
  */
-app.config.globalProperties.errorMessage = (error) => {
-    let translation_key = 'global.error.default'; // default error message
+app.config.globalProperties.errorMessage = (error, fallback = 'global.error.default') => {
+    let translation_key = fallback; // default error message
 
-    if (error.response.data.message) { // if translation key is given in response
-        translation_key =  error.response.data.message;
+    if (error.response.data.message?.startsWith('global.')) { // if translation key is given in response
+        translation_key = error.response.data.message;
     } else {
         switch (error.status) {
             case 403:
@@ -247,7 +248,7 @@ app.config.globalProperties.errorMessage = (error) => {
             case 500:
                 translation_key = 'global.error.' + error.status;
                 break;
-            default: // default is already set to 'global.error.default'
+            default:
                 break;
         }
     }

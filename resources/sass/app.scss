@@ -176,7 +176,11 @@ textarea {
     padding-top: 5px;
     padding-right: 10px;
 }
-.dropdown-menu.show:hover { cursor: default; }
+.dropdown-menu {
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
+
+    &.show:hover { cursor: default; }
+}
 .dropdown-item {
     padding: 0.25rem 1rem !important;
 }

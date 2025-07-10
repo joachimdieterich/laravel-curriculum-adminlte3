@@ -267,14 +267,11 @@ class VideoconferenceController extends Controller
     {
         $input = $this->validateRequest();
 
-        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
         abort_unless((
             $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
-            OR
-            $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
+            OR $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
         )
-        OR
-        $videoconference->isAccessible(),
+        OR $videoconference->isAccessible(),
         403);
 
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);

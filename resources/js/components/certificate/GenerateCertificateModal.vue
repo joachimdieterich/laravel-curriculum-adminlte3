@@ -2,7 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
-            @click.self="globalStore.closeModal($options.name)"
+            @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -105,6 +105,7 @@ import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from 'vue-toastification';
 import Switch from "../forms/Switch.vue";
 
 export default {
@@ -116,9 +117,11 @@ export default {
     setup() {
         const store = useDatatableStore();
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             store,
             globalStore,
+            toast,
         }
     },
     data() {
@@ -145,6 +148,7 @@ export default {
                     this.download_url = r.data.message;
                 })
                 .catch(e => {
+                    this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
         },

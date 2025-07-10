@@ -188,8 +188,17 @@ class CertificateController extends Controller
      */
     protected function generateForUsers($certificate)
     {
-        $user_ids =  request()->user_ids;
-        LogController::set(get_class($this).'@'.__FUNCTION__, $certificate->id, (is_array($user_ids)) ? count($user_ids) : 1);
+        $users = User::find(request()->user_ids);
+        LogController::set(get_class($this).'@'.__FUNCTION__, $certificate->id, $users->count());
+        // first check if all given users are accessible by current user
+        foreach ($users as $user) {
+            abort_unless(auth()->user()->mayAccessUser($user),
+                403,
+                'global.error.no_access_to_user',
+                ['abort-info' => 'ID: ' . $user->id . ' => ' . $user->fullName()]
+            );
+        }
+
         $generated_files = [];
         $curriculum = null;
         if(str_contains($certificate->body, '[accomplished_objectives]') || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]') )
@@ -200,9 +209,7 @@ class CertificateController extends Controller
                 ->find((request()->curriculum_id != null) ? request()->curriculum_id : $certificate->curriculum_id);
         }
         $html_to_print = '';
-        foreach ($user_ids as $key => $id) {
-            $user = User::find($id);
-            abort_unless(auth()->user()->mayAccessUser($user), 403);
+        foreach ($users as $user) {
             //replace placeholder
             $html = $this->replaceFields(
                 $certificate->body,
@@ -263,7 +270,7 @@ class CertificateController extends Controller
             $input = $this->validateRequest();
             // if oneFile == true
             if ($input['oneFile'] === true) {
-                if ($key === array_key_first($user_ids)) {
+                if ($user->id === $users->first()->id) {
                     $html_to_print = $html;
                 } else {
                     $html_to_print = $html_to_print.'<p style="page-break-before: always;"></p>'.$html;

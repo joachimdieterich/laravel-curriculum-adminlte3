@@ -52,7 +52,7 @@ class ShareTokenController extends Controller
                 $model_url = 'maps';
                 break;
             default:
-                abort(422, "Model doesn't accept sharing-tokens");
+                abort(422, 'global.error.no_token_support');
         }
 
         // Create random hash token

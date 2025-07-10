@@ -3,7 +3,7 @@
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
             style="z-index: 10000000 !important;"
-            @click.self="globalStore.closeModal($options.name)"
+            @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">

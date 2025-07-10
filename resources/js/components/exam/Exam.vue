@@ -3,8 +3,9 @@
         <div class="col-sm-12 py-4">
             <div
                 id="exam-enrolled-user-datatable-wrapper"
-                class="w-100 dataTablesWrapper">
-                <h5>{{ trans('global.exam.add_remove_users.students_exam_title') }} {{  exam.test_name }}</h5>
+                class="w-100 dataTablesWrapper"
+            >
+                <h5>{{ trans('global.exam.add_remove_users.students_exam_title') }} {{ exam.test_name }}</h5>
                 <DataTable
                     id="exam-enrolled-user-datatable"
                     class="p-0"
@@ -27,7 +28,6 @@
                 {{ trans('global.exam.expel_user') }}
             </button>
             <button v-if="exam.status !== 0"
-                v-permission="'exam_edit'"
                 :id="'edit-exam-' + exam.id"
                 type="button"
                 :name="'edit-exam-' + exam.id"
@@ -46,7 +46,7 @@
                 id="exam-expelled-user-datatable-wrapper"
                 class="w-100 dataTablesWrapper"
             >
-                <h5> {{ trans('global.exam.add_remove_users.users_group_title')}} </h5>
+                <h5>{{ trans('global.exam.add_remove_users.users_group_title')}}</h5>
                 <DataTable
                     id="exam-expelled-user-datatable"
                     class="p-0"
@@ -104,7 +104,7 @@ DataTable.use(DataTablesCore);
 
 export default {
     name: "exam",
-    components:{
+    components: {
         ConfirmModal,
         ExamModal,
         DataTable,
@@ -122,40 +122,41 @@ export default {
             currentExam: {},
             search: '',
             columns: [
-                {title: window.trans.global.firstname, data: 'firstname'},
-                {title: window.trans.global.lastname, data: 'lastname'},
+                { title: window.trans.global.firstname, data: 'firstname' },
+                { title: window.trans.global.lastname, data: 'lastname' },
                 {
                     title: window.trans.global.exam.fields.status,
                     data: 'pivot.exam_started',
                     render: function (data, type, row) {
                         if (type === 'display') {
-                            return row.pivot.exam_started && row.pivot.exam_completed_at ?
-                                '<i class="fa-solid fa-circle" style="color: limegreen"></i>' :
-                                row.pivot.exam_started ?
-                                    '<i class="fa-solid fa-circle" style="color: orange"></i>' :
-                                    '<i class="fa-solid fa-circle" style="color: red"></i>'
+                            return row.pivot.exam_started && row.pivot.exam_completed_at
+                                ? '<i class="fa-solid fa-circle" style="color: limegreen"></i>'
+                                : row.pivot.exam_started
+                                    ? '<i class="fa-solid fa-circle" style="color: orange"></i>'
+                                    : '<i class="fa-solid fa-circle" style="color: red"></i>';
                         }
-                        return data
-                    }
+                        return data;
+                    },
                 },
                 {
                     title: window.trans.global.exam.fields.completed_at,
                     data: 'pivot.exam_completed_at',
                     render: function (data, type, row) {
                         if (type === 'display') {
-                            if(row.pivot.exam_completed_at) {
+                            if (row.pivot.exam_completed_at) {
                                 var myDate = new Date(row.pivot.exam_completed_at)
                                 return myDate.toLocaleDateString('de');
                             }
                         }
-                        return data
-                    }},
+                        return data;
+                    }
+                },
             ],
             columns2: [
-                {title: window.trans.global.user.fields.username, data: 'username'},
-                {title: window.trans.global.firstname, data: 'firstname'},
-                {title: window.trans.global.lastname, data: 'lastname'},
-                {title: window.trans.global.user.fields.email, data: 'email'},
+                { title: window.trans.global.user.fields.username, data: 'username' },
+                { title: window.trans.global.firstname, data: 'firstname' },
+                { title: window.trans.global.lastname, data: 'lastname' },
+                { title: window.trans.global.user.fields.email, data: 'email' },
             ],
             options : this.$dtOptions,
             dt: null,
@@ -194,18 +195,18 @@ export default {
         resetExamEnrolledUserDatatable() {
             this.store.addToDatatables(
                 {
-                    'datatable': 'exam-enrolled-user-datatable',
-                    'select': (this.store.getDatatable('exam-enrolled-user-datatable')?.select) ? false : true,
-                    'selectedItems': []
+                    datatable: 'exam-enrolled-user-datatable',
+                    select: (this.store.getDatatable('exam-enrolled-user-datatable')?.select) ? false : true,
+                    selectedItems: [],
                 }
             );
         },
         resetExamExpelledUserDatatable() {
             this.store.addToDatatables(
                 {
-                    'datatable': 'exam-expelled-user-datatable',
-                    'select': (this.store.getDatatable('exam-expelled-user-datatable')?.select) ? false : true,
-                    'selectedItems': []
+                    datatable: 'exam-expelled-user-datatable',
+                    select: (this.store.getDatatable('exam-expelled-user-datatable')?.select) ? false : true,
+                    selectedItems: [],
                 }
             );
         },
@@ -252,14 +253,11 @@ export default {
             if (ids.length == 0) {
                 this.toast.error(window.trans.global.datatables.zero_selected);
             } else {
-                axios.post(
-                    '/exams/' + this.exam.exam_id + '/users/enrol',
-                    {
-                        'tool': this.exam.tool,
-                        'enrollment_list': ids,
-                        _method: 'POST'
-                    }
-                )
+                axios.post('/exams/' + this.exam.exam_id + '/users/enrol', {
+                    tool: this.exam.tool,
+                    enrollment_list: ids,
+                    _method: 'POST',
+                })
                 .then(r => { location.reload(); })
                 .catch(e => { console.log(e.response); });
             }
@@ -270,15 +268,12 @@ export default {
             if (ids.length == 0) {
                 this.toast.error(window.trans.global.datatables.zero_selected);
             } else {
-                axios.delete(
-                    '/exams/' + this.exam.exam_id + '/users/expel',
-                    {
-                        data: {
-                            'tool': this.exam.tool,
-                            'expel_list': ids,
-                        }
-                    }
-                )
+                axios.delete('/exams/' + this.exam.exam_id + '/users/expel', {
+                    data: {
+                        tool: this.exam.tool,
+                        expel_list: ids,
+                    },
+                })
                 .then(r => { location.reload(); })
                 .catch(e => { console.log(e.response); });
             }
@@ -294,7 +289,7 @@ export default {
                 })
                 .catch(errors => {
                     console.log(errors)
-                })
+                });
         },
     },
 }

@@ -2,7 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
-            @click.self="globalStore.closeModal($options.name)"
+            @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -31,7 +31,7 @@
                                 name="kanbans_subscription"
                                 url="/kanbans"
                                 model="kanban"
-                                :selected="this.form.kanban_id"
+                                :selected="form.kanban_id"
                                 @selectedValue="(id) => {
                                     this.form.kanban_id = id;
                                 }"

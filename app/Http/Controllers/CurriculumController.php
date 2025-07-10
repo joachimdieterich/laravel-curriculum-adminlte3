@@ -195,6 +195,7 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum, $achievements = false, $token = null)
     {
+        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
@@ -621,12 +622,12 @@ class CurriculumController extends Controller
         $input = $this->validateRequest();
 
         $subscription = CurriculumSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
-        if (!$subscription?->due_date) abort(403, "Token doesn't exist or isn't valid anymore");
+        if (!$subscription?->due_date) abort(403, 'global.token_deleted');
 
         $now = Carbon::now();
         $due_date = Carbon::parse($subscription->due_date);
         if ($due_date < $now) {
-            abort(410, 'Dieser Link ist nicht mehr gültig');
+            abort(410, 'global.token_expired');
         }
 
         return $this->show($curriculum, false, $input['sharing_token']);

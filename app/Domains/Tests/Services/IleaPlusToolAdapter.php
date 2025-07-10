@@ -114,7 +114,7 @@ class IleaPlusToolAdapter implements TestToolkitInterface
 
         $this->addUsers($exam, $users_ids);
 
-        return $exam;
+        return $exam->load(['group:id,title']);
     }
 
     public function deleteExam(Exam $exam): Response

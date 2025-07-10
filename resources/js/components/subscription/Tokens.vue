@@ -18,9 +18,17 @@
                         class="fa fa-qrcode mr-2 pointer"
                         @click="setQRCodeId(item.token.id)"
                     ></i>
-                    <span class="flex-fill">
+                    <span
+                        class="flex-fill"
+                        :style="isExpired(item.token) ? 'text-decoration: line-through;' : ''"
+                    >
                         {{ item.token.title }} |
                         <small>{{ diffForHumans(item.token.due_date) }}</small>
+                        <span v-if="isExpired(item.token)"
+                            class="badge badge-danger ml-2"
+                        >
+                            {{ trans('global.expired') }}
+                        </span>
                     </span>
                     <a
                         class="text-danger px-2 py-0 mr-2 vuehover"
@@ -67,12 +75,15 @@ export default {
     props: {
         modelUrl: {
             type: String,
+            default: null,
         },
         subscriptions: {
             type: Object,
+            default: null,
         },
         subscribing_model: {
             type: String,
+            default: null,
         },
         canEditLabel: {
             type: String,
@@ -96,7 +107,7 @@ export default {
     },
     methods: {
         generateShareURL(item) {
-            if(this.modelUrl == 'curriculum'){
+            if(this.modelUrl == 'curriculum') {
                 return window.location.origin + "/curricula/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
             } else {
                 return window.location.origin + "/" + this.modelUrl + "s/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
@@ -124,6 +135,9 @@ export default {
                 return window.trans.global.valid;
             }
             return window.trans.global.valid_to + ' ' + moment(date).locale(window.navigator.language).fromNow();
+        },
+        isExpired(token) {
+            return token.due_date && new Date(token.due_date) < Date.now();
         },
         successNotification(message) {
             this.toast.success(message, {

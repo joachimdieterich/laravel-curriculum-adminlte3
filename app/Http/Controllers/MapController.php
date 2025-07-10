@@ -109,8 +109,10 @@ class MapController extends Controller
      * @param  \App\Map  $map
      * @return \Illuminate\Http\Response
      */
-    public function show(Map $map)
+    public function show(Map $map, $token = null)
     {
+        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
+
         $map = Map::where('id', $map->id)
             ->with(['type', 'category'])
             ->get()
@@ -181,13 +183,13 @@ class MapController extends Controller
 
         $subscription = MapSubscription::where('sharing_token', $input['sharing_token'] )->get()->first();
 
-        if (!isset($subscription)) abort(410, 'Dieser Link existiert nicht mehr');
+        if (!isset($subscription)) abort(410, 'global.token_deleted');
 
         if (isset($subscription->due_date)) {
             $now = Carbon::now();
             $due_date = Carbon::parse($subscription->due_date);
             if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
+                abort(410, 'global.token_expired');
             }
         }
 

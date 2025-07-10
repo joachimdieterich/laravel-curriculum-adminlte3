@@ -2,7 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
-            @click.self="globalStore.closeModal($options.name)"
+            @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -301,9 +301,9 @@ export default {
             .then(res => {
                 this.subscribers.subscriptions.push(res.data);
             })
-            .catch(err => {
-                this.toast.error(this.trans('global.error'));
-                console.log(err);
+            .catch(e => {
+                this.toast.error(this.errorMessage(e));
+                console.log(e);
             });
         },
         changeCanEditTokenValue(value) {

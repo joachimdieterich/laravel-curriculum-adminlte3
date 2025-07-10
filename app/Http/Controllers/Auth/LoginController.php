@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Aacotroneo\Saml2\Saml2Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -102,21 +103,27 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        if (
-            (env('SAML2_RLP_IDP_SSO_URL') !== null)
-            and (! empty(env('SAML2_RLP_IDP_SSO_URL')))
-            and (auth()->user()->id !== env('GUEST_USER'))
-        )
+        // in production environment, redirect to SSO logout
+        if (env('SAML2_RLP_IDP_SSO_URL') !== null and !empty(env('SAML2_RLP_IDP_SSO_URL')))
         {
-            return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout",
-                [
-                    'idpName'       => 'rlp', //todo: add use dynamic value (env?)
-                    'returnTo'      => $request->query('returnTo'),
-                    'sessionIndex'  => $request->session()->get('sessionIndex'),
-                    'nameId'        => $request->session()->get('nameId'),
-                ]);
+            // except if authenticated as guest user, then redirect to SSO login
+            if (auth()->user()->id == env('GUEST_USER'))
+            {
+                $saml2 = new Saml2Auth(Saml2Auth::loadOneLoginAuthFromIpdConfig('rlp'));
+                return $saml2->login($request->headers->get('referer'));
+            }
+            else
+            {
+                return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout",
+                    [
+                        'idpName'       => 'rlp', //todo: add use dynamic value (env?)
+                        'returnTo'      => $request->query('returnTo'),
+                        'sessionIndex'  => $request->session()->get('sessionIndex'),
+                        'nameId'        => $request->session()->get('nameId'),
+                    ]);
+            }
         }
-        else
+        else // in local environment, logout user and redirect to login-page
         {
             $this->guard()->logout();
 

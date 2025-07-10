@@ -175,7 +175,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('test_access')
+                @can('exam_access')
                     <li
                         class="nav-item"
                         role="menuitem"

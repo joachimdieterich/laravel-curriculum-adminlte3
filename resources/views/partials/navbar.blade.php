@@ -1,47 +1,47 @@
 <ul class="navbar-nav ml-auto">
-       <!--Messages Dropdown Menu-->
-<!--      <li class="nav-item dropdown">
+    <!--Messages Dropdown Menu-->
+    <!-- <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">0</span>
+            <i class="far fa-comments"></i>
+            <span class="badge badge-danger navbar-badge">0</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <a href="#" class="dropdown-item">
-             Message Start
-            <div class="media">
-              <img src="/media/1" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-             Message End
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-             Message Start
-            <div class="media">
-              <img src="/media/1" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  John Pierce
-                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">I got your message bro</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-             Message End
-          </a>
+            <a href="#" class="dropdown-item">
+                Message Start
+                <div class="media">
+                    <img src="/media/1" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                    <div class="media-body">
+                        <h3 class="dropdown-item-title">
+                            Brad Diesel
+                            <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                        </h3>
+                        <p class="text-sm">Call me whenever you can...</p>
+                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                    </div>
+                </div>
+                Message End
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+                Message Start
+                <div class="media">
+                    <img src="/media/1" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                    <div class="media-body">
+                        <h3 class="dropdown-item-title">
+                            John Pierce
+                            <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                        </h3>
+                        <p class="text-sm">I got your message bro</p>
+                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                    </div>
+                </div>
+                Message End
+            </a>
 
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
         </div>
-      </li>-->
+    </li>-->
     @can('message_access')
         <li class="nav-item pr-4">
             <a
@@ -60,46 +60,57 @@
             </a>
         </li>
 	@endcan
-	<!--Notifications Dropdown Menu-->
-    <li class="dropdown">
-        <span class="user-menu dropdown-toggle" data-toggle="dropdown" role="button">
-          	<img
-				src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
-				alt="User profile picture"
-				class="img-circle color-white"
-				style="height: 40px; width: 40px;"
-			/>
-          	<b class="ml-1">{{ auth()->user()->fullName() }}</b>
-        </span>
-        <div class="user-menu dropdown-menu bg-lime dropdown-menu-lg dropdown-menu-right">
-            <span class="dropdown-header text-black">{{ optional(Auth::user()->role())->title }}</span>
-            <div class="dropdown-divider"></div>
-            @can('user_show')
-                <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
-                    <i class="fas fa-id-card mr-2 fa-fw text-white"></i>{{ trans('global.myProfile') }}
-                </a>
-            @endcan
-            @can('note_access')
-                <a href="{{ route("notes.index") }}" class="dropdown-item">
-                    <i class="fa fa-sticky-note fa-fw mr-2 text-white"></i>{{ trans('global.note.title') }}
-                </a>
-            @endcan
-            @if(auth()->user()->role()->id == 1)
-                <a href="{{ route("admin.index") }}" class="dropdown-item">
-                    <i class="fa fa-cogs fa-fw mr-2 text-white"></i>{{ trans('global.config.title') }}
-                </a>
-            @endif
-			<a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
-				<i class="fas fa-power-off fa-fw mr-2 text-white"></i>{{ trans('global.logout') }}
-			</a>
+    @if (auth()->user()->id == env('GUEST_USER'))
+        <div class="user-menu">
+            <button
+                class="dropdown-item btn d-flex align-items-center t-18"
+                onclick="document.getElementById('logoutform').submit();"
+            >
+                <i class="fa fa-right-to-bracket"></i>
+                <span class="font-weight-bold py-1 ml-2">{{ trans('global.login') }}</span>
+            </button>
         </div>
-	</li>
+    @else
+        <li class="dropdown">
+            <span class="user-menu dropdown-toggle" data-toggle="dropdown" role="button">
+                <img
+                    src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
+                    alt="User profile picture"
+                    class="img-circle color-white"
+                    style="height: 40px; width: 40px;"
+                />
+                <b class="ml-1">{{ auth()->user()->fullName() }}</b>
+            </span>
+            <div class="user-menu dropdown-menu bg-lime dropdown-menu-lg dropdown-menu-right">
+                <span class="dropdown-header text-black">{{ optional(Auth::user()->role())->title }}</span>
+                <div class="dropdown-divider"></div>
+                @can('user_show')
+                    <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
+                        <i class="fas fa-id-card mr-2 fa-fw text-white"></i>{{ trans('global.myProfile') }}
+                    </a>
+                @endcan
+                @can('note_access')
+                    <a href="{{ route("notes.index") }}" class="dropdown-item">
+                        <i class="fa fa-sticky-note fa-fw mr-2 text-white"></i>{{ trans('global.note.title') }}
+                    </a>
+                @endcan
+                @if(auth()->user()->role()->id == 1)
+                    <a href="{{ route("admin.index") }}" class="dropdown-item">
+                        <i class="fa fa-cogs fa-fw mr-2 text-white"></i>{{ trans('global.config.title') }}
+                    </a>
+                @endif
+                <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
+                    <i class="fas fa-power-off fa-fw mr-2 text-white"></i>{{ trans('global.logout') }}
+                </a>
+            </div>
+        </li>
+    @endif
 </ul>
 @section('scripts')
 @parent
 <script>
 function triggerVueMessageLoaderEvent(){
-        app.__vue__.$refs.messageSidebar.externalLoadMessagesEvent()
+    app.__vue__.$refs.messageSidebar.externalLoadMessagesEvent()
 }
 </script>
 @endsection

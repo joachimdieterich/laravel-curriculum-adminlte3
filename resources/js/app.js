@@ -230,6 +230,38 @@ app.use(Toast, {
 });
 
 /**
+ * checks which error message is appropriate for the given error
+ * @param {Error} error 
+ * @param {String} fallback fallback translation-key, if given error doesn't have a specified error-message
+ * @returns @String key to translate error message
+ */
+app.config.globalProperties.errorMessage = (error, fallback = 'global.error.default') => {
+    let translation_key = fallback; // default error message
+
+    if (error.response.data.message?.startsWith('global.')) { // if translation key is given in response
+        translation_key = error.response.data.message;
+    } else {
+        switch (error.status) {
+            case 403:
+            case 404:
+            case 419:
+            case 500:
+                translation_key = 'global.error.' + error.status;
+                break;
+            default:
+                break;
+        }
+    }
+    let msg = window.trans;
+    // since trans()-function is not available here, we traverse the translation object to get the message
+    translation_key.split('.').forEach(key => msg = msg[key]);
+    // add information why the request was aborted (no translation)
+    if (error.response.headers.has('abort-info')) msg += ' (' + error.response.headers.get('abort-info') + ')';
+
+    return msg;
+};
+
+/**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
  * components and automatically register them with their "basename".
@@ -369,7 +401,7 @@ app.config.globalProperties.$initTinyMCE = function(
         default_link_target:"_blank",
         relative_urls: false,
         entity_encoding: "raw",
-        language: window.navigator.language ?? 'de',
+        language: window.navigator.language.substring(0, 2), // use browser language
         height: height,
         table_default_attributes: {
             border: '1',

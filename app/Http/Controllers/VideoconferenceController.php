@@ -263,10 +263,11 @@ class VideoconferenceController extends Controller
      * @param  \App\Videoconference  $videoconference
      * @return \Illuminate\Http\Response
      */
-    public function show(Videoconference $videoconference, $editable = false)
+    public function show(Videoconference $videoconference, $editable = false, $token = null)
     {
         $input = $this->validateRequest();
 
+        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
         abort_unless((
             $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
             OR
@@ -560,17 +561,17 @@ class VideoconferenceController extends Controller
 
         $subscription = VideoconferenceSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
 
-        if (!isset($subscription)) abort(410, 'Dieser Link existiert nicht mehr');
+        if (!isset($subscription)) abort(410, 'global.token_deleted');
 
         if (isset($subscription->due_date)) {
             $now = Carbon::now();
             $due_date = Carbon::parse($subscription->due_date);
             if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
+                abort(410, 'global.token_expired');
             }
         }
 
-        return $this->show($videoconference, $subscription->editable);
+        return $this->show($videoconference, $subscription->editable, $input['sharing_token']);
     }
 
     public function endCallback(Request $request)

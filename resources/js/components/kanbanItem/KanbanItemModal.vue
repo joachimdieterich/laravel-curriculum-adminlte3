@@ -2,7 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
-            @click.self="globalStore.closeModal($options.name)"
+            @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="card-header">
@@ -306,7 +306,7 @@ export default {
                     this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    this.toast.error(this.trans('global.error'));
+                    this.toast.error(this.errorMessage(e));
                     console.log(e);
                 });
         },
@@ -317,7 +317,7 @@ export default {
                     this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    this.toast.error(this.trans('global.error'));
+                    this.toast.error(this.errorMessage(e));
                     console.log(e);
                 });
         },

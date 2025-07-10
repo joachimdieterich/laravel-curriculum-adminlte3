@@ -3,6 +3,7 @@
         :id="'item-' + item.id"
         class="card"
         :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
+        tabindex="-1"
     >
         <div
             class="card-header p-0"
@@ -161,7 +162,7 @@
                 class="contacts-list-img"
                 data-toggle="tooltip"
             />
-            <Avatar v-if="editors != null && $userId != 8"
+            <Avatar v-if="editors != null"
                 v-for="(editor_user, index) in editors"
                 :key="item.id + '_editor_' + index"
                 :title="editor_user.firstname + ' ' + editor_user.lastname"
@@ -374,6 +375,9 @@ export default {
                 });
         },
         getEditors() { //after media upload
+            // I don't know why the editors shouldn't be shown to guests
+            if (this.$userId == 8) return;
+ 
             axios.get("/kanbanItems/" + this.item.id + "/editors")
                 .then(res => {
                     this.editors = res.data.editors;

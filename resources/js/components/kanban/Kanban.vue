@@ -44,10 +44,15 @@
                 @end="syncStatusMoved"
             >
                 <template #item="{ element: status, index }">
-                    <span v-if="(status.visibility) || ($userId == status.owner_id)"
+                    <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
+                        :id="'status-' + status.id"
                         :key="'drag_status_' + status.id"
                         class="d-flex flex-column h-100"
-                        :style="'width:' + itemWidth + 'px;'"
+                        :style="{
+                            width:  itemWidth + 'px',
+                            opacity: !status.visibility ? '0.7' : '1'
+                        }"
+                        tabindex="-1"
                     >
                         <KanbanStatus
                             :status="status"
@@ -648,9 +653,9 @@ export default {
         margin-left: -1rem;
     }
 }
-div[id^="item"] {
+div[id^="item"], span[id^="status"] {
     transition: opacity 0.25s linear;
-    &:hover { opacity: 1 !important; }
+    &:hover, &:focus { opacity: 1 !important; }
 }
 .fa-angle-up { transition: 0.4s transform; }
 .collapsed .fa-angle-up { transform: rotate(-180deg) !important; }

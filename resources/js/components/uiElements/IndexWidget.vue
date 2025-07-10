@@ -70,8 +70,8 @@
             </div>
 
             <div v-if="(item.owner_id == $userId && !showSubscribable)
-                    || (item.allow_copy && (!item.type_id || checkPermission('is_teacher')))
-                    || (checkPermission('is_teacher') && showSubscribable)
+                    || (item.allow_copy && (modelName != 'Plan' || checkPermission('is_teacher')))
+                    || (checkPermission('is_teacher') && (showSubscribable || modelName == 'Exam'))
                     || checkPermission('is_admin')
                 "
                 :id="model + 'Dropdown_' + item.DT_RowId"

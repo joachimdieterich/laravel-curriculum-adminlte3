@@ -271,7 +271,8 @@ class VideoconferenceController extends Controller
             $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
             OR $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
         )
-        OR $videoconference->isAccessible(),
+        OR $videoconference->isAccessible()
+        OR $token != null,
         403);
 
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);

@@ -12,6 +12,9 @@ use Illuminate\Auth\Middleware\Authenticate as Middleware;
 class Authenticate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards) {
+        // dump(auth()->user());
+        // dump(auth()->user);
+        // dump(auth()->user === null);
         if ((auth()->user() === null or auth()->user()->id == env('GUEST_USER')) and env('APP_ENV') != 'local') {
             $saml2Auth = new Saml2Auth(Saml2Auth::loadOneLoginAuthFromIpdConfig('rlp'));
             // check if user is already authenticated at IDP

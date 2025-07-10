@@ -45,6 +45,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/references', 'CurriculumController@references');
+    Route::get('curricula/{curriculum}', 'CurriculumController@show');
     Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::get('curricula/{curriculum}/certificates', 'CurriculumController@getCertificates')->name('curricula.getCertificates');
@@ -148,6 +149,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::resource('mapMarkerCategories', 'MapMarkerCategoryController');
 
     /*** Media ***/
+    Route::get('media/{medium}', 'MediumController@show');
     Route::get('media/list', 'MediumController@list')->name('media.list');
     Route::post('media/{medium}/destroy', 'MediumController@destroy'); // has to be post (has parameters)
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
@@ -282,7 +284,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('countries', 'CountryController');
 
     Route::get('curricula', 'CurriculumController@index')->name('curricula.index');
-    Route::get('curricula/{curriculum}', 'CurriculumController@show');
     Route::get('curricula/{curriculum}/token', 'CurriculumController@getCurriculumByToken');
 
     Route::get('enablingObjectives/{enablingObjective}', 'EnablingObjectiveController@show');

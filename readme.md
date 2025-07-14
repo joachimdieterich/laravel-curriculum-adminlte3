@@ -5,10 +5,9 @@
 curriculum is a learning platform where teachers can create topic-based learning objectives. The resulting curricula can be linked with learning groups and be viewed by learning group members. This will give students, teachers (and parents) a good overview of the objectives to be achieved. Not yet reached objectives are shown in red - if a objective is achieved, it will be shown in green or orange (if achieved with help). So curriculum provides a good overview of the current learning status. More information at https://rlp.curriculumonline.de/features 
 
 ## Installation
-**Currently there's a problem with the tinyMCE-Editor not working on a new install!**
 
 ### Laravel
-- laravel Ver. 9
+- laravel Ver. 11
 
 ### Prerequisites
 - PHP 8.1 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, tokenizer, openssl, fileinfo, ctype, cli, common, opcache, readline
@@ -17,7 +16,6 @@ curriculum is a learning platform where teachers can create topic-based learning
 - git
 - composer
 - npm
-
 
 ### Step 1.
 
@@ -31,20 +29,19 @@ sudo apt-get update
 git clone https://github.com/joachimdieterich/laravel-curriculum-adminlte3.git
 cd laravel-curriculum-adminlte3 
 ```
-For production
+For production:
 ```bash
 composer install --no-dev
 npm install
 npm update
 npm run production
 ```
-For development
+For development:
 ```bash
-composer install 
-composer dump-autoload
-
+composer install
 npm install
 npm update
+npm run build # needed to copy some files into /public
 npm run dev
 ```
 
@@ -337,31 +334,11 @@ Install a little helper called 'n'
 Install latest stable Node.js version
 ```sudo n stable```
 
-### Update to Laravel 9 from older version
-
-If table ```oauth_clients``` exists change ```database/migrations/2022_06_06_184704_add_provider_column_to_oauth_clients_table.php``` to 
-
-```php
-public function up()
-{
-    Schema::table('oauth_clients', function (Blueprint $table) {
-        $table->string('provider')->after('secret')->nullable();
-    });
-}
-
-public function down()
-{   
-    Schema::table('oauth_clients', function (Blueprint $table) {
-        $table->dropColumn('provider');
-    });/
-}
-```
-
-### Set statusfilter for telescope
+### Set status-filter for telescope
 ```
 TELESCOPE_STATUS_FILTER="200,302"
 ```
-If no status is set, 200 and 302 events are filtered.
+Given HTTP-Codes will NOT be shown inside telescope
 
 ### json-fields in MariaDB
 

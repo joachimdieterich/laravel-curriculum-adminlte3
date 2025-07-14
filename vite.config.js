@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import commonjs from 'vite-plugin-commonjs';
+import copy from 'rollup-plugin-copy';
 
 export default defineConfig({
     plugins: [
@@ -27,6 +28,14 @@ export default defineConfig({
             },
         }),
         commonjs(),
+        copy({
+            targets: [
+                { src: 'node_modules/tinymce', dest: 'public/node_modules' },
+                { src: 'node_modules/mathjax/es5', dest: 'public/node_modules/mathjax' },
+                { src: 'node_modules/@dimakorotkov', dest: 'public/node_modules' },
+            ],
+            verbose: true,
+        }),
     ],
     resolve: {
         alias: {

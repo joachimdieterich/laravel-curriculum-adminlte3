@@ -31,6 +31,7 @@ export default defineConfig({
         copy({
             targets: [
                 { src: 'node_modules/tinymce', dest: 'public/node_modules' },
+                { src: 'resources/js/langs', dest: 'public/node_modules/tinymce' },
                 { src: 'node_modules/mathjax/es5', dest: 'public/node_modules/mathjax' },
                 { src: 'node_modules/@dimakorotkov', dest: 'public/node_modules' },
             ],

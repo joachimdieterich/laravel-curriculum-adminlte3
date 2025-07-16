@@ -201,8 +201,11 @@ class CertificateController extends Controller
 
         $generated_files = [];
         $curriculum = null;
-        if(str_contains($certificate->body, '[accomplished_objectives]') || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]') )
-        {
+        if (
+            str_contains($certificate->body, '[accomplished_objectives]')
+            || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]')
+            || str_contains($certificate->body, '[accomplished_objectives_with_indicator]')
+        ) {
             $curriculum = Curriculum::with([
                 'terminalObjectives',
                 'terminalObjectives.enablingObjectives',])
@@ -218,13 +221,17 @@ class CertificateController extends Controller
                 request()->date
             );
 
-            if(str_contains($certificate->body, '[accomplished_objectives]'))
+            if (str_contains($certificate->body, '[accomplished_objectives]'))
             {
-                $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
+                $html = $this->generateAccomplishedObjectiveList($html, $user->id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
             }
-            if(str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]'))
+            if (str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]'))
             {
-                $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum, '[accomplished_objectives_without_terminal_objectives]', false); //generate list if "[accomplished_objectives]" is in certificate
+                $html = $this->generateAccomplishedObjectiveList($html, $user->id, $curriculum, '[accomplished_objectives_without_terminal_objectives]', false); //generate list if "[accomplished_objectives]" is in certificate
+            }
+            if (str_contains($certificate->body, '[accomplished_objectives_with_indicator]'))
+            {
+                $html = $this->generateAccomplishedObjectiveListWithIndicator($html, $user->id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
             }
 
             $html = preg_replace_callback(
@@ -327,6 +334,57 @@ class CertificateController extends Controller
             }
         }
         return str_replace($replace, $accomplished_list,$html);
+    }
+
+    protected function generateAccomplishedObjectiveListWithIndicator($html, $user_id, $curriculum, $replace = "[accomplished_objectives_with_indicator]", $with_terminal_objectives = true)
+    {
+        abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);
+        $td_style = 'style="padding-top:15px; border-bottom: 1px solid silver;border-right: 0;"';
+
+        $accomplished_list = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;"><tbody>'
+            .'<thead><tr><td style="border-bottom: 1px solid silver;" colspan="3"><strong>'.$curriculum->terminalObjectives[0]->type->title.'</strong></td>'
+            .'</tr></thead>';
+
+        $current_ter_value = '';
+        foreach ($curriculum->terminalObjectives as $ter_value) {
+
+            foreach ($ter_value->enablingObjectives as $ena) {
+                $status = optional(\App\Achievement::where(
+                    [
+                        'referenceable_type' => 'App\EnablingObjective',
+                        'referenceable_id'   => $ena->id,
+                        'user_id'            => $user_id,
+                    ])->get()->first())->status;
+
+                switch ($status) {
+                    case '01':
+                    case '11':
+                    case '21':
+                    case '31':
+                    case '02':
+                    case '12':
+                    case '22':
+                    case '32':
+                        if ($current_ter_value != $ter_value->id)
+                        {
+                            $accomplished_list .= '<tr><td '.$td_style.' colspan="3"><strong>'.strip_tags($ter_value->title).'</strong></td></tr>';
+                            $current_ter_value = $ter_value->id;
+                        }
+                        $accomplished_list .= '<tr><td style="width: 75%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->title).'</td>';
+                        $accomplished_list .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->level?->title).'</td>';
+
+                        $accomplished_list .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 0;">';
+                        $accomplished_list .= $this->achievementIndicator($status);//.'<'.$status;
+                        $accomplished_list .= '</td></tr>';
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+        }
+        $html .= '</tbody></table>';
+        return str_replace($replace, $accomplished_list, $html);
     }
 
     /**

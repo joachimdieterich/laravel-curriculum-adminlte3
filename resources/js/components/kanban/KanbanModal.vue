@@ -230,6 +230,7 @@ import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'kanban-modal',
@@ -245,8 +246,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -299,6 +302,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    console.log(this.$toast);
                     this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });

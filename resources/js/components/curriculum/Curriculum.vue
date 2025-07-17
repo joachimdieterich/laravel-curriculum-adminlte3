@@ -406,6 +406,10 @@ export default {
                 canEditCheckbox: false,
             });
         },
+        resetOrderIds() {
+            axios.patch('/curricula/' + this.curriculum.id + '/resetOrderIds')
+            .then(r => window.location.reload());
+        },
         updateAchievements() {
             let selection = this.dt.rows('.selected').data().toArray();
             this.store.setSelectedIds('curriculum-user-datatable', selection);

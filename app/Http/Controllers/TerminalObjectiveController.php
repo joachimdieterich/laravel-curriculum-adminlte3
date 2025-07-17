@@ -75,20 +75,17 @@ class TerminalObjectiveController extends Controller
     {
         abort_unless($terminalObjective->isAccessible(), 403);
 
-        //first get existing data to later adjust order_id
-        $old_objective = TerminalObjective::find(request('id'));
-
         // update objective type
         if ($request->has('objective_type_id')) {
             // if moved to another curriculum
-            if ($old_objective->curriculum_id != request('curriculum_id')) {
+            if ($terminalObjective->curriculum_id != request('curriculum_id')) {
                 $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
                 if ($terminalObjective->update(['curriculum_id' => request('curriculum_id'), 'order_id' => $order_id]) == true) {
-                    $this->moveToCurriculum($old_objective, $request);
+                    $this->moveToCurriculum($terminalObjective, $request);
                 }
             } else {
                 // if objective type got changed
-                if ($old_objective->objective_type_id != $request['objective_type_id']) {
+                if ($terminalObjective->objective_type_id != $request['objective_type_id']) {
                     $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
                     $request->request->add(['order_id' => $order_id]);
                 }
@@ -102,7 +99,7 @@ class TerminalObjectiveController extends Controller
         // update order_id
         if ($request->has('order_id')) {
             if (request()->wantsJson()) {
-                return $this->toggleOrderId($old_objective, request('order_id'));
+                return $this->toggleOrderId($terminalObjective, request('order_id'));
             }
         }
 

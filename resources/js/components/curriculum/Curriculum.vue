@@ -121,7 +121,7 @@
                     >
                         <a
                             id="certificate-nav-tab"
-                            class="nav-link link-muted"
+                            class="nav-link link-muted pointer"
                             @click.prevent="createCertificate()"
                         >
                             <i class="fa fa-certificate pr-2"></i>
@@ -134,7 +134,7 @@
                     >
                         <a
                             id="config-nav-tab"
-                            class="nav-link link-muted"
+                            class="nav-link link-muted pointer"
                             data-toggle="tooltip"
                             :title="trans('global.curriculum.print')"
                             @click="printCurriculum()"
@@ -161,10 +161,10 @@
                     >
                         <a
                             id="fix-order-nav-tab"
-                            class="nav-link link-muted"
+                            class="nav-link link-muted pointer"
                             data-toggle="tooltip"
-                            title="Fix order_ids"
-                            @click="resetOrderIds('/curricula/' + curriculum.id + '/resetOrderIds')"
+                            :title="trans('global.resetOrder')"
+                            @click="resetOrderIds()"
                         >
                             <i class="fa fa-wrench"></i>
                         </a>
@@ -177,7 +177,7 @@
                     >
                         <a
                             id="export-curriculum-nav-tab"
-                            class="nav-link link-muted"
+                            class="nav-link link-muted pointer"
                             @click="exportCurriculum()"
                         >
                             <i class="fas fa-cloud-download-alt"></i>

@@ -310,7 +310,7 @@ export default {
             return this.$textcolor(this.item.color, '#333333');
         },
         hidden: function() { // check if item is hidden based on visible-from/to dates
-            return (this.item.visible_from != null && this.item.visible_until != null)
+            return (this.item.visible_from != null || this.item.visible_until != null)
                 && (new Date() < new Date(this.item.visible_from) || new Date() > new Date(this.item.visible_until));
         }
     },

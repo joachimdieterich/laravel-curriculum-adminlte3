@@ -259,8 +259,7 @@
                     />
                 </div>
                 <!-- 2 Users -->
-                <div
-                    v-permission="'group_enrolment'"
+                <div v-if="checkPermission('group_enrolment')"
                     id="users"
                     class="tab-pane fade"
                     role="tabpanel"
@@ -277,8 +276,7 @@
                     />
                 </div>
                 <!-- 3 Logbooks -->
-                <div
-                    v-permission="'logbook_access'"
+                <div v-if="checkPermission('logbook_access')"
                     id="logbooks"
                     class="tab-pane fade"
                     role="tabpanel"
@@ -294,8 +292,7 @@
                     />
                 </div>
                 <!-- 4 Kanbans -->
-                <div
-                    v-permission="'kanban_access'"
+                <div v-if="checkPermission('kanban_access')"
                     id="kanbans"
                     class="tab-pane fade"
                     role="tabpanel"
@@ -325,8 +322,7 @@
                     />
                 </div> -->
                 <!-- 6 Plans -->
-                <div
-                    v-permission="'plan_access'"
+                <div v-if="checkPermission('plan_access')"
                     id="plans"
                     class="tab-pane fade"
                     role="tabpanel"
@@ -342,8 +338,7 @@
                     />
                 </div>
                 <!-- 7 Exams -->
-                <div
-                    v-permission="'exam_access'"
+                <div v-if="checkPermission('exam_access')"
                     id="exams"
                     class="tab-pane fade"
                     role="tabpanel"
@@ -359,8 +354,7 @@
                     />
                 </div>
                 <!-- 8 Videoconferences -->
-                <div
-                    v-permission="'videoconference_access'"
+                <div v-if="checkPermission('videoconference_access')"
                     id="videoconferences"
                     class="tab-pane fade"
                     role="tabpanel"

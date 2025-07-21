@@ -62,7 +62,7 @@ class ExamController extends Controller
     {
         abort_unless(\Gate::allows('exam_access'), 403);
 
-        $exams = auth()->user()->exams;
+        $exams = auth()->user()->exams();
 
         if (request()->has(['group_id'])) // request came from /groups/{id}-page
         {
@@ -75,7 +75,11 @@ class ExamController extends Controller
             switch ($request['filter'])
             {
                 case 'student':
-                    $exams = $exams->where('group_id', $group_id);
+                    $exams = $exams->where('group_id', $group_id)->get();
+
+                    foreach($exams as $exam) {
+                        $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
+                    }
                     break;
                 case 'all':
                 default:
@@ -87,11 +91,11 @@ class ExamController extends Controller
             $exams = Exam::whereIn('group_id', auth()->user()->groups()->pluck('groups.id'))
                 ->with(['group:id,title,organization_id', 'group.organization:id,title', 'users']);
         } else {
-            $exams->load('group:id,title');
-        }
+            $exams = $exams->with('group:id,title')->get();
 
-        foreach($exams as $exam) {
-            $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
+            foreach($exams as $exam) {
+                $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
+            }
         }
 
         return DataTables::of($exams)

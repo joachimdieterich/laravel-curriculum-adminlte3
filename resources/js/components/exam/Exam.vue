@@ -122,8 +122,8 @@ export default {
             currentExam: {},
             search: '',
             columns: [
-                { title: window.trans.global.firstname, data: 'firstname' },
-                { title: window.trans.global.lastname, data: 'lastname' },
+                { title: window.trans.global.firstname, name: 'firstname', data: 'firstname' },
+                { title: window.trans.global.lastname, name: 'lastname', data: 'lastname' },
                 {
                     title: window.trans.global.exam.fields.status,
                     data: 'pivot.exam_started',
@@ -154,8 +154,8 @@ export default {
             ],
             columns2: [
                 { title: window.trans.global.user.fields.username, data: 'username' },
-                { title: window.trans.global.firstname, data: 'firstname' },
-                { title: window.trans.global.lastname, data: 'lastname' },
+                { title: window.trans.global.firstname, name: 'firstname', data: 'firstname' },
+                { title: window.trans.global.lastname, name: 'lastname', data: 'lastname' },
                 { title: window.trans.global.user.fields.email, data: 'email' },
             ],
             options : this.$dtOptions,
@@ -212,6 +212,10 @@ export default {
         },
         loaderEvent() {
             this.dt = $('#exam-enrolled-user-datatable').DataTable();
+            this.dt.order([ // name-attribute needs to be the same as in the columns-array
+                { name: 'lastname', dir: 'asc' },
+                { name: 'firstname', dir: 'asc' },
+            ]);
 
             this.dt.on('select', (e, dt, type, indexes) => {
                 let selection = this.dt.rows('.selected').data().toArray()
@@ -232,6 +236,11 @@ export default {
             });
 
             this.dt2 = $('#exam-expelled-user-datatable').DataTable();
+            this.dt2.order([ // name-attribute needs to be the same as in the columns-array
+                { name: 'lastname', dir: 'asc' },
+                { name: 'firstname', dir: 'asc' },
+            ]);
+
             this.dt2.on('select', () => {
                 let selection = this.dt2.rows('.selected').data().toArray()
 

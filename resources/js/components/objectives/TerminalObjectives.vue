@@ -310,6 +310,7 @@ export default {
                 this.addNewType(updatedTerminal.type);
                 type = this.objective_types[this.objective_types.length - 1];
                 // don't add the updated objective to the new type yet
+                type.terminal_objectives = [];
             }
 
             let terminal = type.terminal_objectives.find(terminal => terminal.id === updatedTerminal.id);

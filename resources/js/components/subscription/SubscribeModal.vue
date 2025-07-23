@@ -315,8 +315,11 @@ export default {
                 title: this.nameToken,
                 date: this.endDateToken,
                 editable: this.canEditToken,
-                model_url: this.modelUrl
-            }).then((response) => this.subscribers.tokens.push(response.data));
+                model_url: this.modelUrl,
+            }).then(response => {
+                this.subscribers.tokens.push(response.data);
+                this.nameToken = '';
+            });
         },
     },
     mounted() {

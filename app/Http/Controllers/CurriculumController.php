@@ -496,33 +496,24 @@ class CurriculumController extends Controller
 
     public function resetOrderIds(Curriculum $curriculum)
     {
-        $curriculum = Curriculum::with(
-            [
-                'terminalObjectives',
-                'terminalObjectives.enablingObjectives',
-            ])
-            ->find($curriculum->id);
         $t = 0;
-        $currentObjectiveType = $curriculum->terminalObjectives->first()->objective_type_id;
-        foreach ($curriculum->terminalObjectives as $terminalObjective) {
+        $terminalObjectives = $curriculum->terminalObjectives()->reorder()->orderBy('objective_type_id')->get();
+        $currentObjectiveType = $terminalObjectives->first()->objective_type_id;
+        foreach ($terminalObjectives as $terminalObjective) {
             if ($currentObjectiveType != $terminalObjective->objective_type_id) {
                 $currentObjectiveType = $terminalObjective->objective_type_id;
                 $t = 0;
             }
 
-            $e = 0;
-            $terminalObjective->order_id = $t;
-            $terminalObjective->save();
+            $terminalObjective->update(['order_id' => $t]);
             $t++;
-
+            
+            $e = 0;
             foreach ($terminalObjective->enablingObjectives as $enablingObjective) {
-                $enablingObjective->order_id = $e;
-                $enablingObjective->save();
+                $enablingObjective->update(['order_id' => $e]);
                 $e++;
             }
         }
-
-        $this->show($curriculum);
     }
 
     public function print(Curriculum $curriculum)

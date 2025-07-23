@@ -39,7 +39,7 @@ return [
     'create' => 'Create',
     'paste' => 'paste',
     'list' => 'List',
-    'resetOrder' => 'reset Order',
+    'resetOrder' => 'Reset order',
     'show' => 'Show',
     'entries' => 'Entries',
     'perPage' => 'Entries per page',

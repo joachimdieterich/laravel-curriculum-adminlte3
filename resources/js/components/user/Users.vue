@@ -292,8 +292,8 @@ export default {
         loaderEvent() {
             this.dt = $('#user-datatable').DataTable();
             this.dt.order([ // name-attribute needs to be the same as in the columns-array
-                { name: 'firstname', dir: 'asc' },
                 { name: 'lastname', dir: 'asc' },
+                { name: 'firstname', dir: 'asc' },
             ]);
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data

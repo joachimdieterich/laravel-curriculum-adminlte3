@@ -1,5 +1,4 @@
-**Changelog**
-## 2025-07-16
+## 2025-07-23
 - Kanban: fixed bug where authenticated users didn't have access through a token-link
 - KanbanItem: fixed visible-from/-to logic
 - Exams: fixed exams not loading

@@ -83,6 +83,7 @@ return [
     'toggleNavigation' => 'Navigation umschalten',
     'toggle' => 'auf-/zuklappen',
     'home' => 'Startseite',
+    'skip_navigation' => 'Navigation überspringen',
     'youAreLoggedIn' => 'Sie sind eingeloggt!',
     'user_name' => 'Benutzername',
     'reset_password' => 'Passwort zurücksetzen',

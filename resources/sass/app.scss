@@ -43,6 +43,18 @@ html { scroll-behavior: smooth; }
 body {
     font-family: 'Open Sans', Arial, sans-serif !important;
     color: #333;
+    // positioning of the main header and sidebar
+    & .main-header, &.sidebar-mini.sidebar-collapse .main-header {
+        margin-left: 0px !important;
+        padding: 0px;
+    }
+    & .main-sidebar { margin-top: 3.5rem; }
+}
+.skip {
+    bottom: 1000px;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    &:focus { bottom: unset; }
 }
 .nav-sidebar .nav-link > .right:nth-child(2),
 .nav-sidebar .nav-link > p > .right:nth-child(2),

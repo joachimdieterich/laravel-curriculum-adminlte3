@@ -75,6 +75,7 @@ return [
     'toggleNavigation' => 'Toggle navigation',
     'toggle' => 'toggle',
     'home' => 'Home',
+    'skip_navigation' => 'Skip navigation',
     'youAreLoggedIn' => 'You are logged in!',
     'user_name' => 'Name',
     'reset_password' => 'Reset Password',

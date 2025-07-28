@@ -80,7 +80,7 @@
                 @endcan
 
 
-                @if(auth()->user()->currentRole()->first()->id == 1)
+                @if(is_admin())
                     @include('partials.infobox', [
                         "infoBoxId" =>  'usersBox',
                         "infoBoxRoute" =>  route("users.index"),
@@ -121,7 +121,7 @@
                     .'<br>'.trans('global.dashboard.statistic_achievements_total').': '.count(auth()->user()->achievements->where('status', '>=', 10)->where('status', '<', 30)),
                 ])
 
-                @if(auth()->user()->currentRole()->first()->id == 1)
+                @if(is_admin())
                     @include('partials.infobox', [
                         "infoBoxId" =>  'onlineBox',
                         "infoBoxRoute" =>  '',
@@ -133,12 +133,9 @@
                     ])
                 @endcan
             </section>
-
         </div>
     </div>
-
 @endsection
 @section('scripts')
     @parent
-
 @endsection

@@ -1,7 +1,7 @@
 <template>
     <div
         id="kanban-container"
-        class="kanban-container"
+        class="kanban-container w-print-auto"
     >
         <img v-if="currentKanban.medium_id"
             class="position-absolute p-0 h-100 w-100"
@@ -10,7 +10,7 @@
             alt="background image"
         />
         <div
-            class="position-absolute pointer"
+            class="d-print-none position-absolute pointer"
             style="top: 10px; left: 10px; line-height: 1; z-index: 10;"
             :style="{ color: textColor }"
             @click="toggleFullscreen"
@@ -18,7 +18,7 @@
             <i class="fa fa-expand"></i>
         </div>
         <div
-            class="position-absolute pointer"
+            class="d-print-none position-absolute pointer"
             :class="kanban.collapse_items && 'collapsed'"
             style="top: 10px; right: 10px; line-height: 1; z-index: 10;"
             :style="{ color: textColor }"
@@ -68,7 +68,7 @@
                             class="btn btn-flat p-1 my-1 mx-auto"
                             @click="openItemModal(status.id)"
                         >
-                            <i class="text-white fa fa-2x fa-plus-circle"></i>
+                            <i class="d-print-none text-white fa fa-2x fa-plus-circle"></i>
                         </div>
                         <div v-else class="py-2"></div>
                         <draggable
@@ -109,7 +109,7 @@
                 </template>
                 <template #footer>
                     <div v-if="editable"
-                        class="no-border float-left pr-2"
+                        class="d-print-none no-border float-left pr-2"
                         :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus :newStatus="true"/>

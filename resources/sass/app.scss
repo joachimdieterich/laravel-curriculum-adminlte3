@@ -233,6 +233,12 @@ textarea {
         }
     }
 }
+// print-styles
+@media print {
+    .collapse:not(.show) { display: initial !important; }
+    .h-print-auto { height: auto !important; }
+    .w-print-auto { width: auto !important; }
+}
 // mobile-view
 @media (max-width: 576px) {
     .objectives {
@@ -280,9 +286,7 @@ textarea {
         cursor: pointer;
     }
 }
-/*
- * Modal
- */
+// Modal
 .modal-mask {
     position: fixed;
     z-index: 9998;
@@ -329,9 +333,7 @@ textarea {
     width: 100%;
     padding: 0px 15px;
 }
-/*
-TinyMCE
- */
+// TinyMCE
 .tox.tox-tinymce-aux,
 .tox-fullscreen .tox.tox-tinymce-aux {
     z-index: 10000 !important;

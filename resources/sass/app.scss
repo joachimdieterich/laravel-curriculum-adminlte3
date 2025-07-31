@@ -19,6 +19,10 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 .dt-bootstrap5 .select-info {
     padding-left: 10px !important;
 }
+.dataTablesWrapper {
+    width: 100%;
+    padding: 0px 15px;
+}
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
 
@@ -29,11 +33,13 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 
 // to update adminLTE copy "~admin-lte/build/scss" to "adminLTE";
 @import "rlp/AdminLTE-raw";
-// Boxes
+
 @import 'boxes.scss';
-// Cards
 @import 'cards.scss';
-// Text
+@import 'media.scss';
+@import 'modal.scss';
+@import 'objectives.scss';
+@import 'print.scss';
 @import 'text.scss';
 // Fonts - Open Sans
 $OpenSansFontPath: 'open-sans-all/fonts';
@@ -67,11 +73,6 @@ body {
     float: none;
     margin: 0 auto;
 }
-.text-cut {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 // highlight-animation
 p[id]:target, p[id].target { animation: yellowfade 1.5s; }
 @keyframes yellowfade {
@@ -80,9 +81,7 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
 }
 
 .p-margin-0 p { margin-bottom: 0px !important; }
-.pointer {
-    cursor: pointer;
-}
+.pointer { cursor: pointer; }
 .btn.btn-icon {
     position: relative;
     border: 0;
@@ -98,57 +97,40 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
         box-shadow: none !important;
     }
 }
-.btn.no-focus:focus {
-    box-shadow: none !important;
-}
-.pull-right {
-    float: right !important;
-}
-.pull-left{
-    float: left !important;
-}
+.btn.no-focus:focus { box-shadow: none !important; }
+.pull-right { float: right !important; }
+.pull-left { float: left !important; }
 // FontAwesome Badges without layers
-.fabadge[data-count]{
+.fabadge[data-count] {
     position:relative;
-}
-.fabadge[data-count]:after{
-    position: absolute;
-    right: -0.75em;
-    top: -.75em;
-    content: attr(data-count);
-    border-radius: 10em;
-    line-height: .9em;
-    color: white;
-    background: rgba(0, 0, 0, 0.40);
-    text-align: center;
-    min-width: 2em;
-    font: bold .4em sans-serif;
-}
-.hide-scrollbars::-webkit-scrollbar {
-    width: 0 !important
+
+    &:after {
+        content: attr(data-count);
+        font: bold .4em sans-serif;
+        background: rgba(0, 0, 0, 0.40);
+        color: white;
+        position: absolute;
+        right: -0.75em;
+        top: -.75em;
+        border-radius: 10em;
+        line-height: .9em;
+        text-align: center;
+        min-width: 2em;
+    }
 }
 .hide-scrollbars {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none; /* IE */
     scrollbar-width: none; /* Firefox */
-}
-textarea {
-    min-height: 150px;
-}
-.modal-body {
-    max-height: 80svh;
-    overflow-y: auto;
-    padding: 0;
 
-    .card { margin-bottom: 0; }
+    &::-webkit-scrollbar { width: 0 !important }
 }
+textarea { min-height: 150px; }
 .select2 {
     max-width: 100%;
     width: 100%;
 }
-.dt-length {
-    float: right !important;
-}
+.dt-length { float: right !important; }
 // truncates text to one line and adds ellipsis
 .line-clamp {
     display: -webkit-box;
@@ -162,11 +144,6 @@ textarea {
 .custom-control-input:hover, .custom-control-label:hover { cursor: pointer; }
 /* Vuedatepicker uses another font-family as default */
 .dp__input { font-family: "Open Sans", Arial, sans-serif !important; }
-.kanban-header {
-    background-color: white;
-    padding: 0.8rem !important;
-    border-radius: 6px !important;
-}
 .comment-count {
     position: absolute;
     font-size: 8px !important;
@@ -190,145 +167,12 @@ textarea {
 
     &.show:hover { cursor: default; }
 }
-.dropdown-item {
-    padding: 0.25rem 1rem !important;
-}
-.overlay {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-}
+.dropdown-item { padding: 0.25rem 1rem !important; }
+.overlay { background-color: rgba(255, 255, 255, 0.9) !important; }
 .error-block {
     color: #dc3545;
     font-size: 0.8rem;
     width: min-content;
-}
-/*
- * Objectives
- */
-.objectives {
-    display: flex;
-    flex: 1 1 auto;
-    flex-wrap: wrap;
-    flex-direction: row;
-    gap: 10px;
-
-    > .objective {
-        height: 200px;
-        width: 200px;
-        border: 1px solid #d2d6de;
-        border-radius: 10px;
-
-        .add-objective {
-            padding: 25px;
-            text-align: center;
-
-            > span {
-                display: block;
-                height: 0px;
-                font-size: 1.25rem;
-            }
-            > div { font-size: 100px; }
-        }
-    }
-}
-// print-styles
-@media print {
-    .collapse:not(.show) { display: initial !important; }
-    .h-print-auto { height: auto !important; }
-    .w-print-auto { width: auto !important; }
-}
-// mobile-view
-@media (max-width: 576px) {
-    .objectives {
-        flex-direction: column;
-        gap: 0px;
-
-        > .objective {
-            width: 100%;
-            border-top: 0px;
-        }
-    }
-}
-// tablet-view small
-@media (min-width: 577px) and (max-width: 768px) {
-    .objectives {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        > .objective {
-            height: auto;
-            width: auto;
-            aspect-ratio: 1/1;
-        }
-    }
-}
-// tablet-view large
-@media (min-width: 769px) and (max-width: 990px) {
-    .objectives {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        > .objective {
-            height: auto;
-            width: auto;
-            aspect-ratio: 1/1;
-        }
-    }
-}
-// desktop-view
-@media (min-width: 991px) {
-    .vuehover {
-        display: none;
-    }
-    li:hover .vuehover,
-    tr:hover .vuehover {
-        display: block;
-        cursor: pointer;
-    }
-}
-// Modal
-.modal-mask {
-    position: fixed;
-    z-index: 9998;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    transition: opacity 0.3s ease;
-}
-.modal-container {
-    max-width: 95vw;
-    margin: auto;
-    padding: 0;
-    background-color: #fff;
-    border-radius: 2px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-    transition: all 0.3s ease;
-}
-@media (min-width: 769px) {
-    .modal-container { min-width: 50vh; }
-}
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
-.modal-enter-from {
-    opacity: 0;
-}
-.modal-leave-to {
-    opacity: 0;
-}
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-    -webkit-transform: scale(1.1);
-    transform: scale(1.1);
-}
-.dataTablesWrapper {
-    width: 100%;
-    padding: 0px 15px;
 }
 // TinyMCE
 .tox.tox-tinymce-aux,

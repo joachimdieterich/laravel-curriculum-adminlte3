@@ -74,10 +74,10 @@
         </div>
         <div class="tab-content card-footer card-comments">
             <div class="tab-pane show active">
-                <div :class="[edit ? 'note_editor_selector': 'hide']">
+                <div :class="[edit ? 'note_editor_selector': 'd-none']">
                     <div v-if="notables.length > 0"
                          class="form-group "
-                         :class="[(method == 'patch') ? 'hide': '']">
+                         :class="[(method == 'patch') ? 'd-none': '']">
                         <label for="title">{{ trans('global.'+ form.notable_type) }}</label>
                         <select
                             name="notable"

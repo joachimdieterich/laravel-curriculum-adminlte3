@@ -149,19 +149,21 @@
         </Teleport>
         <Teleport to="#customTitle">
             <small>{{ kanban.title }}</small>
-            <a v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2 mx-1"
+            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                type="button"
+                class="btn text-secondary px-2 mx-1"
                 @click="editKanban(kanban)"
             >
                 <i class="fa fa-pencil-alt"></i>
-            </a>
+            </button>
     
-            <a v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2 mx-1"
+            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                type="button"
+                class="btn text-secondary px-2 mx-1"
                 @click="share()"
             >
                 <i class="fa fa-share-alt"></i>
-            </a>
+            </button>
     
             <a
                 :href="'/export_csv/' + kanban.id"

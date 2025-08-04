@@ -47,7 +47,7 @@
                         </span>
                     </span>
 
-                    <p v-if="map.description != ''"
+                    <p v-if="map.description"
                         class="pt-2"
                         v-dompurify-html="map.description"
                     ></p>
@@ -299,7 +299,7 @@ export default {
         loader() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
-                    this.markers = res.data.markers;
+                    this.markers = res.data;
                     this.currentMarker = this.markers[0];
                     this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
 
@@ -371,7 +371,7 @@ export default {
                 const data = event[1];
                 let address = data.termine.key_0.VO_ADRESSE;
  
-                if (address.includes("online")||address.includes("Online")) {
+                if (address.includes("online") || address.includes("Online")) {
                     address = 'Rheinland-Pfalz';
                 }
                 const url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURI(address) + '&format=jsonv2';

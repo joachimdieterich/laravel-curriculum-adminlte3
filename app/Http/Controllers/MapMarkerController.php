@@ -14,20 +14,21 @@ class MapMarkerController extends Controller
      */
     public function index()
     {
-        //abort_unless(\Gate::allows('map_access'), 403);
-
         if (request()->wantsJson() AND request()->has(['type_id', 'category_id'])) {
-            $input = $this->validateRequest();
-            return [
-                'markers' => MapMarker::where('type_id',  $input['type_id'])
-                                ->where('category_id', $input['category_id'])
-                    ->with(['type', 'category'])
-                                ->orderBy('type_id')
-                                ->get()];
+            $input = request()->validate([
+                'type_id' => 'required|integer',
+                'category_id' => 'required|integer',
+            ]);
+            return MapMarker::where([
+                    'type_id' => $input['type_id'],
+                    'category_id' => $input['category_id'],
+                ])
+                ->with(['type', 'category'])
+                ->orderBy('type_id')
+                ->get();
         } else {
-            return ['markers' => MapMarker::orderBy('type_id')->get()];
+            return MapMarker::orderBy('type_id')->get();
         }
-
     }
 
     /**
@@ -137,7 +138,6 @@ class MapMarkerController extends Controller
             'url' => 'sometimes|string|nullable',
             'url_title' => 'sometimes|string|nullable',
             'owner_id' => 'sometimes|integer|nullable',
-
         ]);
     }
 }

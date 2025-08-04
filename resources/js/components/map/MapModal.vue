@@ -261,19 +261,21 @@ import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'map-modal',
-    components:{
+    components: {
         Editor,
         MediumForm,
         Select2,
     },
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
-            globalStore
+            globalStore,
+            toast,
         }
     },
     data() {
@@ -296,7 +298,6 @@ export default {
                 color: '#F2C511',
                 medium_id: '',
             }),
-            search: '',
             tinyMCE: this.$initTinyMCE(
                 [
                     "autolink link autoresize"
@@ -322,15 +323,15 @@ export default {
             } else {
                 this.add();
             }
-
-            this.globalStore?.closeModal(this.$options.name);
         },
         add() {
             axios.post('/maps', this.form)
                 .then(r => {
                     this.$eventHub.emit('map-added', r.data);
+                    this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
         },
@@ -338,8 +339,10 @@ export default {
             axios.patch('/maps/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('map-updated', r.data);
+                    this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
         },

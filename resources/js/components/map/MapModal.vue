@@ -102,9 +102,9 @@
                                 name="map_marker_type"
                                 url="/mapMarkerTypes"
                                 model="mapMarkerType"
-                                :selected="this.form.type_id"
+                                :selected="form.type_id"
                                 @selectedValue="(id) => {
-                                    this.form.type_id = id;
+                                    this.form.type_id = id[0];
                                 }"
                             />
 
@@ -113,9 +113,9 @@
                                 name="map_marker_category"
                                 url="/mapMarkerCategories"
                                 model="mapMarkerCategory"
-                                :selected="this.form.category_id"
+                                :selected="form.category_id"
                                 @selectedValue="(id) => {
-                                    this.form.category_id = id;
+                                    this.form.category_id = id[0];
                                 }"
                             />
 

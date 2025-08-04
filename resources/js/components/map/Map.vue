@@ -107,11 +107,11 @@
                     </button>
                 </div>
 
-                <div v-if="typeof this.currentMarker.ARTIKEL == 'undefined'"
+                <div v-if="currentMarker?.ARTIKEL == undefined"
                     id="ll-marker"
                     class="sidebar-pane"
                 >
-                    <MarkerView :marker="currentMarker"/>
+                    <MarkerView v-if="currentMarker" :marker="currentMarker"/>
                 </div>
                 <div v-else
                     id="ll-marker"
@@ -121,19 +121,19 @@
                         {{ currentMarker.ARTIKEL }}
                     </h1>
 
-                    <div v-if="this.currentMarker.BEZ_1_2.length > 2"
+                    <div v-if="currentMarker.BEZ_1_2.length > 2"
                         class="py-0 pt-2"
                     >
                         <strong>Untertitel</strong>
                     </div>
 
-                    <div v-if="this.currentMarker.BEZ_1_2.length > 2"
+                    <div v-if="currentMarker.BEZ_1_2.length > 2"
                         class="py-0 pre-formatted"
                         v-dompurify-html="currentMarker.BEZ_1_2"
                     ></div>
 
                     <div class="py-0 pt-2">
-                        <strong>Beschreibung</strong>
+                        <strong>{{ trans('global.description') }}</strong>
                     </div>
 
                     <div
@@ -177,7 +177,7 @@
 
                 <div class="sidebar-pane" id="ll-search">
                     <h1 class="sidebar-header mb-3">
-                        {{ currentMarker.title }}
+                        {{ currentMarker?.title }}
                     </h1>
 
                     <div
@@ -294,7 +294,7 @@ export default {
     },
     methods: {
         createMarker() {
-            this.globalStore?.showModal('map-marker-modal', {});
+            this.globalStore?.showModal('map-marker-modal', { map_id: this.map.id });
         },
         loader() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
@@ -310,7 +310,7 @@ export default {
                                 marker.longitude,
                                 marker,
                                 marker.title,
-                                marker.teaser_text,
+                                marker.teaser_text ?? '',
                                 'll-marker',
                                 marker.type.css_icon,
                                 marker.type.color,
@@ -410,7 +410,7 @@ export default {
                 'icon': svgMarker,
                 'title': title // accessibility
             })
-                .bindPopup('<b>'+ title + '</b></br>' + description +'<br/>')
+                .bindPopup('<b>'+ title + '</b></br>' + description)
                 .addTo(this.mapCanvas).on('click', function(e) {
                 this.currentMarker = entry;
                 this.sidebar.open(sidebar_target);

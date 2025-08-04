@@ -214,7 +214,6 @@ class MapController extends Controller
             'medium_id'=> 'sometimes',
             'owner_id' => 'sometimes',
             'sharing_token' => 'sometimes',
-
         ]);
     }
 }

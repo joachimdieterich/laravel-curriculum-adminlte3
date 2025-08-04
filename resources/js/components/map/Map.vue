@@ -474,9 +474,8 @@ export default {
         edit(marker) {
             this.globalStore?.showModal('map-marker-modal', marker);
         },
-
-        processClick(lat,lon){
-            console.log("You clicked the map at LAT: "+ lat+" and LONG: "+lon );
+        processClick(lat,lon) {
+            console.log("You clicked the map at LAT: " + lat + " and LONG: " + lon );
 
             //Clear existing marker, circle, and selected points if selecting new points
             if (this.searchCircle != null) {
@@ -493,8 +492,8 @@ export default {
             this.currentPositionMarker = L.marker([lat,lon]).addTo(this.mapCanvas);
             this.selectPoints(lat,lon);
         },
-        selectPoints(lat,lon){
-            this.foundMarkers.length = 0;  //Reset the array if selecting new points
+        selectPoints(lat,lon) {
+            this.foundMarkers.length = 0; //Reset the array if selecting new points
 
             this.clusterGroup.eachLayer(function (layer) {
                 // Lat, long of current point as it loops through.
@@ -509,7 +508,7 @@ export default {
             }.bind(this));
 
             // draw circle to see the selection area
-            this.searchCircle = L.circle([lat,lon], this.searchDistance , {   /// Number is in Meters
+            this.searchCircle = L.circle([lat,lon], this.searchDistance , { // Number is in Meters
                 color: 'orange',
                 fillOpacity: 0,
                 opacity: 1
@@ -575,7 +574,6 @@ export default {
 
 
         }
-
     },
     mounted() {
         this.$eventHub.on('marker-added', (marker) => {
@@ -626,8 +624,8 @@ export default {
 
         // default icon-url throws an error (apparently a common problem)
         // so we need to rebind the file-locations
-       // delete Icon.Default.prototype._getIconUrl;
-       /* Icon.Default.mergeOptions({
+        // delete Icon.Default.prototype._getIconUrl;
+        /* Icon.Default.mergeOptions({
             iconRetinaUrl: '/leaflet/dist/images/marker-icon-2x.png',
             iconUrl: '/leaflet/dist/images/marker-icon.png',
             shadowUrl: '/leaflet/dist/images/marker-shadow.png',
@@ -648,23 +646,15 @@ export default {
 
         this.bordersGroup = L.geoJSON().addTo(this.mapCanvas);
 
-        /*var overlays = {
-            'Landesgrenze anzeigen': this.bordersGroup
-        };
-
-        L.control.layers(null, overlays, {
-            collapsed: false
-        }).addTo(this.map);*/
-
         this.getBorder();
 
         this.loader();
 
-       /* //  click to set position > wip on distance search
+        /* //  click to set position > wip on distance search
         this.mapCanvas.on('click', function(e){
             this.processClick(e.latlng.lat, e.latlng.lng);
         }.bind(this));
-*/
+        */
     },
 }
 </script>

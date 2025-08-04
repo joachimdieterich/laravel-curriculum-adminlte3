@@ -136,9 +136,9 @@ class MapController extends Controller
 
         $map->update([
             'title'         => $input['title'] ?? $map->title,
-            'subtitle'      => $input['subtitle'] ?? $map->subtitle,
+            'subtitle'      => $input['subtitle'],
             'description'   => $input['description'],
-            'tags'          => $input['tags'] ?? $map->tags,
+            'tags'          => $input['tags'],
             'type_id'       => $input['type_id'] ?? $map->type_id,
             'category_id'   => $input['category_id'] ?? $map->category_id,
             'border_url'    => $input['border_url'] ?? $map->border_url,

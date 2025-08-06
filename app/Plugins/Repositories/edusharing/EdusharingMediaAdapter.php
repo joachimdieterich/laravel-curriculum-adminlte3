@@ -155,7 +155,7 @@ class EdusharingMediaAdapter implements MediaInterface
                             'url' => $url,
                         ];
                     } else {
-                        return redirect($url->info['downloadUrl']['url']);
+                        return redirect($url);
                     }
                 }
                 else if (request('content'))
@@ -166,7 +166,7 @@ class EdusharingMediaAdapter implements MediaInterface
                             'url' => $url,
                         ];
                     } else {
-                        return redirect($url->content);
+                        return redirect($url);
                     }
                 }
                 else if (request('preview'))

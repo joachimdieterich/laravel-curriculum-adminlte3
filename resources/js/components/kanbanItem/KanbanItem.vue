@@ -376,7 +376,7 @@ export default {
         },
         getEditors() { //after media upload
             // I don't know why the editors shouldn't be shown to guests
-            if (this.$userId == 8) return;
+            if (this.$userId == null || this.$userId == 8) return;
  
             axios.get("/kanbanItems/" + this.item.id + "/editors")
                 .then(res => {

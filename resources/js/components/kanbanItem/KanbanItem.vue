@@ -175,30 +175,22 @@
             />
 
             <div class="d-flex ml-auto">
-                <div v-if="commentable"
-                    class="btn-group-toggle mr-2"
-                    data-toggle="buttons"
+                <button v-if="commentable"
+                    class="btn btn-icon px-2 py-1 mr-2"
+                    role="button"
+                    :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
+                    data-toggle="collapse"
+                    :data-target="'#comments_' + item.id"
+                    aria-expanded="false"
+                    @click="show_comments = !show_comments"
                 >
-                    <label
-                        class="btn btn-icon px-2 py-1"
-                        role="button"
-                        data-toggle="collapse"
-                        :data-target="'#comments_' + item.id"
-                        aria-expanded="false"
+                    <i class="far fa-comments"></i>
+                    <span v-if="item.comments.length > 0"
+                        class="comment-count bg-success"
                     >
-                        <input
-                            type="checkbox"
-                            autocomplete="off"
-                            v-model="show_comments"
-                        />
-                        <i class="far fa-comments"></i>
-                        <span v-if="item.comments.length > 0"
-                            class="comment-count bg-success"
-                        >
-                            {{ item.comments.length }}
-                        </span>
-                    </label>
-                </div>
+                        {{ item.comments.length }}
+                    </span>
+                </button>
                 <Reaction
                     :model="item"
                     reaction="like"

@@ -71,6 +71,19 @@
                                 />
                             </div>
 
+                            <div v-if="checkPermission('is_admin')" class="form-group">
+                                <label for="map_id">Map ID</label>
+                                <input
+                                    id="map_id"
+                                    name="map_id"
+                                    type="number"
+                                    min="1"
+                                    class="form-control"
+                                    v-model="form.map_id"
+                                    placeholder="Map ID"
+                                />
+                            </div>
+
                             <div class="form-group">
                                 <label for="author">
                                     {{ trans('global.marker.fields.author') }}

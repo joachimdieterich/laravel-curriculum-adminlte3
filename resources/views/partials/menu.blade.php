@@ -1,7 +1,4 @@
 <aside class="main-sidebar sidebar-light-primary">
-    <!-- Brand Logo/menu -->
-    @include('partials.topmenu')
-    <div id="menu_top_placeholder" class="clearfix" style="overflow: auto; max-height: 500px;"></div>
     <!-- Sidebar -->
     <div
         id="sidebar"

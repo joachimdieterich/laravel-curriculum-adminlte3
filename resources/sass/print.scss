@@ -1,0 +1,5 @@
+@media print {
+    .collapse:not(.show) { display: initial !important; }
+    .h-print-auto { height: auto !important; }
+    .w-print-auto { width: auto !important; }
+}

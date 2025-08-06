@@ -1,5 +1,17 @@
-**Changelog**
-## 2025-07-16
+## 2025-08-06
+- Home: admins now only get their subscribed logbooks instead of all
+- added 'skip navigation'-button in Header for accessibility
+- restructured scss-files
+- Kanban: fixed accessibility for title-component
+- Kanban: fixed not being able to remove description
+- KanbanItem: fixed comments/reactions structure and added accessibility
+- KanbanItem: fixed sending /editors-request if user is not given
+- Map: fixed problem when no marker exists
+- MapModal: fixed problem with type_id/category_id fields and added toast-notification
+- MarkerModal: fixed some logic and form-field-types in controller
+- added seeder for MapMarkerCategory/-Type
+
+## 2025-07-23
 - Kanban: fixed bug where authenticated users didn't have access through a token-link
 - KanbanItem: fixed visible-from/-to logic
 - Exams: fixed exams not loading

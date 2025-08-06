@@ -1,10 +1,11 @@
 <template>
-    <div
+    <button
         class="btn btn-icon px-2 py-1"
         role="button"
+        :title="userHasReaction() ? trans('global.remove_like') : trans('global.add_like')"
         @click="toggle()"
     >
-        <i  v-if="userHasReaction()"
+        <i v-if="userHasReaction()"
            class="fa fa-heart"
         ></i>
         <i v-else
@@ -15,7 +16,7 @@
         >
             {{ likes_count }}
         </span>
-    </div>
+    </button>
 </template>
 <script>
 export default {
@@ -52,11 +53,7 @@ export default {
                 });
         },
         userHasReaction() {
-            if (this.likes.findIndex(l => l.user_id == this.$userId) != -1) {
-               return true;
-            }  else {
-               return false;
-            }
+            return this.likes.findIndex(l => l.user_id == this.$userId) != -1;
         },
     },
     mounted() {

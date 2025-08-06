@@ -47,7 +47,7 @@
                         </span>
                     </span>
 
-                    <p v-if="map.description != ''"
+                    <p v-if="map.description"
                         class="pt-2"
                         v-dompurify-html="map.description"
                     ></p>
@@ -107,11 +107,11 @@
                     </button>
                 </div>
 
-                <div v-if="typeof this.currentMarker.ARTIKEL == 'undefined'"
+                <div v-if="currentMarker?.ARTIKEL == undefined"
                     id="ll-marker"
                     class="sidebar-pane"
                 >
-                    <MarkerView :marker="currentMarker"/>
+                    <MarkerView v-if="currentMarker" :marker="currentMarker"/>
                 </div>
                 <div v-else
                     id="ll-marker"
@@ -121,19 +121,19 @@
                         {{ currentMarker.ARTIKEL }}
                     </h1>
 
-                    <div v-if="this.currentMarker.BEZ_1_2.length > 2"
+                    <div v-if="currentMarker.BEZ_1_2.length > 2"
                         class="py-0 pt-2"
                     >
                         <strong>Untertitel</strong>
                     </div>
 
-                    <div v-if="this.currentMarker.BEZ_1_2.length > 2"
+                    <div v-if="currentMarker.BEZ_1_2.length > 2"
                         class="py-0 pre-formatted"
                         v-dompurify-html="currentMarker.BEZ_1_2"
                     ></div>
 
                     <div class="py-0 pt-2">
-                        <strong>Beschreibung</strong>
+                        <strong>{{ trans('global.description') }}</strong>
                     </div>
 
                     <div
@@ -177,7 +177,7 @@
 
                 <div class="sidebar-pane" id="ll-search">
                     <h1 class="sidebar-header mb-3">
-                        {{ currentMarker.title }}
+                        {{ currentMarker?.title }}
                     </h1>
 
                     <div
@@ -294,12 +294,12 @@ export default {
     },
     methods: {
         createMarker() {
-            this.globalStore?.showModal('map-marker-modal', {});
+            this.globalStore?.showModal('map-marker-modal', { map_id: this.map.id });
         },
         loader() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
-                    this.markers = res.data.markers;
+                    this.markers = res.data;
                     this.currentMarker = this.markers[0];
                     this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
 
@@ -310,7 +310,7 @@ export default {
                                 marker.longitude,
                                 marker,
                                 marker.title,
-                                marker.teaser_text,
+                                marker.teaser_text ?? '',
                                 'll-marker',
                                 marker.type.css_icon,
                                 marker.type.color,
@@ -371,7 +371,7 @@ export default {
                 const data = event[1];
                 let address = data.termine.key_0.VO_ADRESSE;
  
-                if (address.includes("online")||address.includes("Online")) {
+                if (address.includes("online") || address.includes("Online")) {
                     address = 'Rheinland-Pfalz';
                 }
                 const url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURI(address) + '&format=jsonv2';
@@ -410,7 +410,7 @@ export default {
                 'icon': svgMarker,
                 'title': title // accessibility
             })
-                .bindPopup('<b>'+ title + '</b></br>' + description +'<br/>')
+                .bindPopup('<b>'+ title + '</b></br>' + description)
                 .addTo(this.mapCanvas).on('click', function(e) {
                 this.currentMarker = entry;
                 this.sidebar.open(sidebar_target);
@@ -474,9 +474,8 @@ export default {
         edit(marker) {
             this.globalStore?.showModal('map-marker-modal', marker);
         },
-
-        processClick(lat,lon){
-            console.log("You clicked the map at LAT: "+ lat+" and LONG: "+lon );
+        processClick(lat,lon) {
+            console.log("You clicked the map at LAT: " + lat + " and LONG: " + lon );
 
             //Clear existing marker, circle, and selected points if selecting new points
             if (this.searchCircle != null) {
@@ -493,8 +492,8 @@ export default {
             this.currentPositionMarker = L.marker([lat,lon]).addTo(this.mapCanvas);
             this.selectPoints(lat,lon);
         },
-        selectPoints(lat,lon){
-            this.foundMarkers.length = 0;  //Reset the array if selecting new points
+        selectPoints(lat,lon) {
+            this.foundMarkers.length = 0; //Reset the array if selecting new points
 
             this.clusterGroup.eachLayer(function (layer) {
                 // Lat, long of current point as it loops through.
@@ -509,7 +508,7 @@ export default {
             }.bind(this));
 
             // draw circle to see the selection area
-            this.searchCircle = L.circle([lat,lon], this.searchDistance , {   /// Number is in Meters
+            this.searchCircle = L.circle([lat,lon], this.searchDistance , { // Number is in Meters
                 color: 'orange',
                 fillOpacity: 0,
                 opacity: 1
@@ -575,7 +574,6 @@ export default {
 
 
         }
-
     },
     mounted() {
         this.$eventHub.on('marker-added', (marker) => {
@@ -626,8 +624,8 @@ export default {
 
         // default icon-url throws an error (apparently a common problem)
         // so we need to rebind the file-locations
-       // delete Icon.Default.prototype._getIconUrl;
-       /* Icon.Default.mergeOptions({
+        // delete Icon.Default.prototype._getIconUrl;
+        /* Icon.Default.mergeOptions({
             iconRetinaUrl: '/leaflet/dist/images/marker-icon-2x.png',
             iconUrl: '/leaflet/dist/images/marker-icon.png',
             shadowUrl: '/leaflet/dist/images/marker-shadow.png',
@@ -648,23 +646,15 @@ export default {
 
         this.bordersGroup = L.geoJSON().addTo(this.mapCanvas);
 
-        /*var overlays = {
-            'Landesgrenze anzeigen': this.bordersGroup
-        };
-
-        L.control.layers(null, overlays, {
-            collapsed: false
-        }).addTo(this.map);*/
-
         this.getBorder();
 
         this.loader();
 
-       /* //  click to set position > wip on distance search
+        /* //  click to set position > wip on distance search
         this.mapCanvas.on('click', function(e){
             this.processClick(e.latlng.lat, e.latlng.lng);
         }.bind(this));
-*/
+        */
     },
 }
 </script>

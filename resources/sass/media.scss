@@ -1,0 +1,47 @@
+// mobile-view
+@media (max-width: 576px) {
+    .objectives {
+        flex-direction: column;
+        gap: 0px;
+
+        > .objective {
+            width: 100%;
+            border-top: 0px;
+        }
+    }
+}
+// tablet-view small
+@media (min-width: 577px) and (max-width: 768px) {
+    .objectives {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        > .objective {
+            height: auto;
+            width: auto;
+            aspect-ratio: 1/1;
+        }
+    }
+}
+// tablet-view large
+@media (min-width: 769px) and (max-width: 990px) {
+    .objectives {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        > .objective {
+            height: auto;
+            width: auto;
+            aspect-ratio: 1/1;
+        }
+    }
+}
+// desktop-view
+@media (min-width: 991px) {
+    .vuehover {
+        display: none;
+    }
+    li:hover .vuehover,
+    tr:hover .vuehover {
+        display: block;
+        cursor: pointer;
+    }
+}

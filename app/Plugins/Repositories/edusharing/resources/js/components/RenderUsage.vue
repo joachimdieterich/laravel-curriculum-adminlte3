@@ -15,7 +15,8 @@
 
         <div
             :id="'loading_' + medium.id"
-            class="overlay text-center w-100"
+            class="overlay position-absolute text-center w-100"
+            style="inset: 0;"
         >
             <i class="fa fa-spinner fa-pulse fa-fw"></i>
             <span class="sr-only">Loading...</span>
@@ -60,7 +61,7 @@ export default {
         },
     },
     mounted() {
-        $("#loading_"+this.medium.id).hide();
+        $("#loading_" + this.medium.id).hide();
 
         this.$eventHub.on('download', (medium) => {
             if (this.medium.id == medium.id) {
@@ -74,8 +75,6 @@ export default {
                         console.log(error);
                         $("#loading_" + this.medium.id).hide();
                     });
-            } else {
-                console.log('no downloadURL');
             }
         });
     },

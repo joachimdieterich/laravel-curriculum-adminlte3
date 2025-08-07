@@ -162,9 +162,7 @@ class EdusharingMediaAdapter implements MediaInterface
                 {
                     $url = $edusharing->getRedirectUrl($subscription->additional_data, 'content', $subscription->owner_id);
                     if (request()->wantsJson()) {
-                        return [
-                            'url' => $url,
-                        ];
+                        return $url;
                     } else {
                         return redirect($url);
                     }

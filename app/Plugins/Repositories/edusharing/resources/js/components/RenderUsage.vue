@@ -4,13 +4,14 @@
             :src="'/media/' + medium.id + '?preview=true'"
             class="pointer"
             width="100%"
-            @click="openPath()"
+            :alt="medium.title ?? medium.medium_name"
+            @click="show()"
         >
         <div v-else
-            @click="show()"
             class="nav-item-box-image-size h-100 w-100"
             :style="{'background': 'url(/media/' + medium.id + '?preview=true) center no-repeat'}"
             :alt="medium.title"
+            @click="show()"
         ></div>
 
         <div
@@ -40,9 +41,6 @@ export default {
         },
     },
     methods: {
-        openPath() {
-            window.open(this.medium.path, '_blank');
-        },
         show() {
             $("#loading_" + this.medium.id).show();
             if (this.medium.adapter == 'local') {
@@ -50,7 +48,7 @@ export default {
             } else {
                 axios.get('/media/' + this.medium.id + '?content=true')
                     .then((response) => {
-                        window.location.assign(response.data.url);
+                        window.open(response.data, '_blank');
                         $("#loading_" + this.medium.id).hide();
                     })
                     .catch((error) => {

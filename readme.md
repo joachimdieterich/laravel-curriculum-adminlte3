@@ -111,6 +111,7 @@ header
 Content-Type: 'application/json' 
 
 form-data
+grant_type: "client_credentials",
 client_id: [id]
 client_secret: [secret]
 ```

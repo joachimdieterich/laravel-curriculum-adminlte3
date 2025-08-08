@@ -372,7 +372,7 @@ export default {
  
             axios.get("/kanbanItems/" + this.item.id + "/editors")
                 .then(res => {
-                    this.editors = res.data.editors;
+                    this.editors = res.data;
                 })
                 .catch(err => {
                     console.log(err.response);

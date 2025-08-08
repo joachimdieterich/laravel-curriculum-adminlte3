@@ -1,3 +1,12 @@
+## 2025-08-08
+- Kanban: fixed 'collapse-all'-toggle not working
+- KanbanItem: removed isAccessible-check on /editors-request (which was causing a 403 for guests)
+- fixed media not always being accessible on KanbanItems
+- EdusharingMediaAdapter: fixed redirect paramter
+- RenderUsage: now sends /content-request for Edusharing-media on click
+- RenderUsage: fixed overlay position
+- fixed topnav dropdown-menu positioning
+
 ## 2025-08-06
 - Home: admins now only get their subscribed logbooks instead of all
 - added 'skip navigation'-button in Header for accessibility

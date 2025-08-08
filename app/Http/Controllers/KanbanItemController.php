@@ -275,12 +275,10 @@ class KanbanItemController extends Controller
      */
     public function editors(KanbanItem $kanbanItem)
     {
-        abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
+        abort_unless(\Gate::allows('kanban_show'), 403);
 
         if (request()->wantsJson()) {
-            return [
-                'editors' =>  $kanbanItem->editors(['id', 'username', 'firstname', 'lastname'])
-            ];
+            return $kanbanItem->editors(['id', 'username', 'firstname', 'lastname']);
         }
     }
 

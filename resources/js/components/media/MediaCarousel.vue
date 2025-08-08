@@ -4,9 +4,10 @@
         class="carousel slide ignore"
         data-interval="false"
     >
-        <div class="carousel-indicators">
-            <li v-if="subscriptions.length > 1"
-                v-for="(item, index) in subscriptions"
+        <div v-if="subscriptions.length > 1"
+            class="carousel-indicators"
+        >
+            <li v-for="(item, index) in subscriptions"
                 :class="{ 'active': index === 0 }"
                 :data-target="'#' + id"
                 :data-slide-to="index"

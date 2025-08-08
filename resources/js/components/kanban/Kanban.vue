@@ -244,7 +244,7 @@ export default {
             }
         },
         toggleCollapseAll(e) {
-            const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'd-none' : 'show';
+            const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'hide' : 'show';
             $('#kanban-wrapper .card-body').collapse(collapse);
         },
         share() {

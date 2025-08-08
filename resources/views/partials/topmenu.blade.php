@@ -61,7 +61,7 @@
             @endif
         </div>
     </button>
-    <div class="dropdown-menu bg-lime dropdown-menu-lime elevation-2">
+    <div class="dropdown-menu bg-lime dropdown-menu-lime elevation-2" style="z-index: 1039; top: unset;">
         @php ($brand_iterator = 1)
         @while (env('BRAND_MENU_TITLE_'.$brand_iterator))
             <a href="{{ env('BRAND_MENU_HREF_'.$brand_iterator) }}" class="dropdown-item">

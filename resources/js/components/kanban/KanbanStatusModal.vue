@@ -6,14 +6,14 @@
         >
             <div class="modal-container">
                 <div class="card-header">
-                    <h3 class="card-title">
+                    <span class="card-title">
                         <span v-if="method === 'post'">
                             {{ trans('global.kanbanStatus.create') }}
                         </span>
                         <span v-if="method === 'patch'">
                             {{ trans('global.kanbanStatus.edit') }}
                         </span>
-                    </h3>
+                    </span>
                     <div class="card-tools">
                         <button
                             type="button"

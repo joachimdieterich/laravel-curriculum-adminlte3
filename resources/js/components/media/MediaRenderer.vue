@@ -4,7 +4,7 @@
             style="height: 500px"
         >
             <iframe
-                :src="src"
+                :src="'/media/' + medium.id"
                 :height="height"
                 :width="width"
                 frameborder="0"
@@ -19,7 +19,7 @@
         </span>
         <span v-else-if="mime(medium.mime_type) === 'img'">
             <img
-                :src="src"
+                :src="'/media/' + medium.id"
                 width="100%"
             />
         </span>
@@ -76,11 +76,6 @@ export default {
                     return 'embed';
                     break;
             }
-        },
-    },
-    computed: {
-        src: function () {
-            return '/media/' + this.medium.id;
         },
     },
     components: {

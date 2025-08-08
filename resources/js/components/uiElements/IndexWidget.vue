@@ -76,12 +76,12 @@
                     || (item.allow_copy && (modelName != 'Plan' || checkPermission('is_teacher')))
                     || (checkPermission('is_teacher') && (showSubscribable || modelName == 'Exam'))
                     || checkPermission('is_admin')
-                "
-                :id="model + 'Dropdown_' + item.DT_RowId"
-                class="btn btn-flat position-absolute pull-right"
-                style="top: 0; right: 0; background-color: transparent;"
-                data-toggle="dropdown"
-                aria-expanded="false"
+                 "
+                 :id="modelName + 'Dropdown_' + item.DT_RowId"
+                 class="btn btn-flat position-absolute pull-right"
+                 style="top: 0; right: 0; background-color: transparent;"
+                 data-toggle="dropdown"
+                 aria-expanded="false"
             >
                 <i tabindex="0"
                    class="fa fa-ellipsis-v"

@@ -66,7 +66,7 @@ export default {
                 $("#loading_" + this.medium.id).show();
                 axios.get('/media/' + this.medium.id + '?download=true')
                     .then((response) => {
-                        window.location.assign(response.data.url);
+                        window.open(response.data, '_blank');
                         $("#loading_" + this.medium.id).hide();
                     })
                     .catch((error) => {

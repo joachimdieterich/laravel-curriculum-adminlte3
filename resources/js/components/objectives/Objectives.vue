@@ -85,9 +85,9 @@ export default {
         return {
             settings: {
                 last: null,
-                course : false,
-                edit : false,
-                achievements : true,
+                course: false,
+                edit: false,
+                achievements: true,
             },
             terminal_objectives: [],
             enablingCall: null,

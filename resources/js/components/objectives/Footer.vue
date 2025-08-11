@@ -1,4 +1,4 @@
-<template >
+<template>
     <div
         class="d-flex my-1"
         :style="{ 'color': textcolor }"

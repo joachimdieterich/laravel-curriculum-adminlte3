@@ -149,11 +149,10 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::resource('mapMarkerCategories', 'MapMarkerCategoryController');
 
     /*** Media ***/
-    Route::get('media/create', 'MediumController@create');
     Route::get('media/list', 'MediumController@list')->name('media.list');
-    Route::get('media/{medium}', 'MediumController@show');
     Route::post('media/{medium}/destroy', 'MediumController@destroy'); // has to be post (has parameters)
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
+    Route::resource('media', 'MediumController');
     Route::post('mediumSubscriptions/destroy', 'MediumSubscriptionController@destroySubscription');
     Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
 // N
@@ -319,7 +318,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('maps/{map}', 'MapController@show');
     Route::get('maps/{map}/token', 'MapController@getMapByToken');
 
-    Route::resource('media', 'MediumController');
+    Route::get('media', 'MediumController@index')->name('media.index');
 
     /* Metadataset */
     Route::get('metadatasets/list', 'MetadatasetController@list');

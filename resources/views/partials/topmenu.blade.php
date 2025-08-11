@@ -1,6 +1,6 @@
 
 <!-- Brand Logo/menu -->
-@if(  env('BRAND_MENU_TITLE_1') )
+@if(env('BRAND_MENU_TITLE_1'))
 <div id="topnav" class="bg-lime">
     <button
         type="button"
@@ -12,19 +12,23 @@
             class="logo d-flex align-items-center h-100"
         >
             @if (Request::is('videoconferences') || Request::is('videoconferences/*'))
-                <i class="fa fa-chalkboard-teacher text-white p-2"
-                style="font-size: 24px !important"></i>
+                <i
+                    class="fa fa-chalkboard-teacher text-white p-2"
+                    style="font-size: 24px !important"
+                ></i>
                 {{ trans('global.videoconference.title') }}
                 <i class="fa fa-chevron-down pl-2"></i>
             @elseif (Request::is('maps') || Request::is('maps/*'))
-                <i class="fa fa-map-location-dot text-white p-2"
-                   style="font-size: 24px !important"></i>
+                <i
+                    class="fa fa-map-location-dot text-white p-2"
+                    style="font-size: 24px !important"
+                ></i>
                 {{ trans('global.map.header_title') }}
                 <i class="fa fa-chevron-down pl-2"></i>
             @else
                 <svg
                     class="p-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
-                    height="32.000000pt" viewBox="0 0 400.000000 460.000000"
+                    height="32pt" viewBox="0 0 400.000000 460.000000"
                     preserveAspectRatio="xMidYMid meet"
                 >
                     <g transform="translate(0.000000,460.000000) scale(0.100000,-0.100000)" fill="#fff" stroke="none">
@@ -57,7 +61,7 @@
             @endif
         </div>
     </button>
-    <div class="dropdown-menu bg-lime dropdown-menu-lime elevation-2">
+    <div class="dropdown-menu bg-lime dropdown-menu-lime elevation-2" style="z-index: 1039; top: unset;">
         @php ($brand_iterator = 1)
         @while (env('BRAND_MENU_TITLE_'.$brand_iterator))
             <a href="{{ env('BRAND_MENU_HREF_'.$brand_iterator) }}" class="dropdown-item">
@@ -70,11 +74,12 @@
 </div>
 @else
     <a href="{{ route("home") }}" class="brand-link p-1">
-        <svg class="ml-2 pl-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
-             width="29.000000pt" viewBox="0 0 400.000000 460.000000"
-             preserveAspectRatio="xMidYMid meet">
-            <g transform="translate(0.000000,460.000000) scale(0.100000,-0.100000)"
-               fill="#fff" stroke="none">
+        <svg
+            class="ml-2 pl-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
+            width="29pt" viewBox="0 0 400.000000 460.000000"
+            preserveAspectRatio="xMidYMid meet"
+        >
+            <g transform="translate(0.000000,460.000000) scale(0.100000,-0.100000)" fill="#fff" stroke="none">
                 <path d="M2231 4531 c-8 -5 -48 -74 -90 -153 l-76 -143 -60 -13 c-153 -32
                       -325 -76 -380 -96 l-60 -21 -135 87 c-156 102 -173 105 -259 57 -201 -114
                       -482 -343 -498 -407 -3 -14 11 -78 36 -161 23 -75 43 -146 43 -157 1 -11 -28
@@ -98,7 +103,7 @@
         </svg>
 
         <span class="pl-1 brand-text d-inline-block">
-            @if(Request::is('videoconferences'))
+            @if (Request::is('videoconferences'))
                 {{ trans('global.videoconference.title') }}
             @else
                 {{ env('APP_NAME') }}

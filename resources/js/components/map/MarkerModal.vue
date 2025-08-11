@@ -71,6 +71,19 @@
                                 />
                             </div>
 
+                            <div v-if="checkPermission('is_admin')" class="form-group">
+                                <label for="map_id">Map ID</label>
+                                <input
+                                    id="map_id"
+                                    name="map_id"
+                                    type="number"
+                                    min="1"
+                                    class="form-control"
+                                    v-model="form.map_id"
+                                    placeholder="Map ID"
+                                />
+                            </div>
+
                             <div class="form-group">
                                 <label for="author">
                                     {{ trans('global.marker.fields.author') }}
@@ -279,11 +292,10 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
-            url: '/mapMarkers',
             form: new Form({
-                id: '',
+                id: null,
                 title: '',
-                teaser_tesxt: '',
+                teaser_text: '',
                 description: '',
                 author: '',
                 type_id: 1,
@@ -294,7 +306,7 @@ export default {
                 address: '',
                 url: '',
                 url_title: '',
-                map_id: '',
+                map_id: null,
             }),
             tinyMCE: this.$initTinyMCE(
                 [
@@ -316,7 +328,7 @@ export default {
             }
         },
         add() {
-            axios.post(this.url, this.form)
+            axios.post('/mapMarkers', this.form)
                 .then(r => {
                     this.$eventHub.emit('marker-added', r.data);
                     this.globalStore?.closeModal(this.$options.name)
@@ -326,7 +338,7 @@ export default {
                 });
         },
         update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
+            axios.patch('/mapMarkers/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('marker-updated', r.data);
                     this.globalStore?.closeModal(this.$options.name)
@@ -345,7 +357,7 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     this.form.url = this.$decodeHTMLEntities(params.url);
-                    if (this.form.id !== '') {
+                    if (this.form.id) {
                         this.method = 'patch';
                     } else {
                         this.method = 'post';

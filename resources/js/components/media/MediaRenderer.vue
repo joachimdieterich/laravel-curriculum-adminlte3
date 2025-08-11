@@ -4,7 +4,7 @@
             style="height: 500px"
         >
             <iframe
-                :src="src"
+                :src="'/media/' + medium.id"
                 :height="height"
                 :width="width"
                 frameborder="0"
@@ -19,9 +19,8 @@
         </span>
         <span v-else-if="mime(medium.mime_type) === 'img'">
             <img
-                :src="src"
+                :src="'/media/' + medium.id"
                 width="100%"
-                @click="show()"
             />
         </span>
         <span v-else>
@@ -77,23 +76,6 @@ export default {
                     return 'embed';
                     break;
             }
-        },
-        show() {
-            this.$modal.show('medium-modal', {
-                'content': this.medium,
-            });
-        },
-    },
-    mounted() {
-        this.$eventHub.on('download', (medium) => {
-            if (this.medium.id == medium.id && this.mime(medium.mime_type) !== 'external') {
-                this.show();
-            }
-        });
-    },
-    computed: {
-        src: function () {
-            return '/media/' + this.medium.id;
         },
     },
     components: {

@@ -127,7 +127,6 @@ class LocalMediaAdapter implements MediaInterface
 
     public function thumb(Medium $medium, $size)
     {
-
         /* id link */
         if (($medium->mime_type != 'url')) {
             $path = storage_path('app'.$medium->path.$medium->medium_name);
@@ -222,7 +221,6 @@ class LocalMediaAdapter implements MediaInterface
 
     public function checkIfUserHasSubscription($subscription)
     {
-
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())
@@ -243,13 +241,13 @@ class LocalMediaAdapter implements MediaInterface
                 }
                 break;
             case "App\KanbanItem":
-                if ($subscription->subscribable->kanban->isAccessible()) {
-                    return true;
-                }
+                return true;
                 break;
             default:
-                $subscription->subscribable->isAccessible();
-                return true;
+                if ($subscription->subscribable->isAccessible())
+                {
+                    return true;
+                }
                 break;
         }
         return false;

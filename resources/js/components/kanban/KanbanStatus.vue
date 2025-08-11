@@ -199,3 +199,10 @@ export default {
     },
 }
 </script>
+<style scoped>
+.kanban-header {
+    background-color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+</style>

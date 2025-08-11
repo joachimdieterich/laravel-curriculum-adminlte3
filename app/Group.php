@@ -85,6 +85,11 @@ class Group extends Model
         return $this->hasOne('App\Period', 'id', 'period_id');
     }
 
+    public function scopeDefaultPeriod($query)
+    {
+        $query->where('period_id', Config::where('key', 'default_period')->first()?->value ?? 1);
+    }
+
     public function organization()
     {
         return $this->hasOne('App\Organization', 'id', 'organization_id');

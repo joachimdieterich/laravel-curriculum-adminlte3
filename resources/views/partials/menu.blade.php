@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-light-primary">
+<aside class="main-sidebar sidebar-light-primary" style="z-index: unset;">
     <!-- Sidebar -->
     <div
         id="sidebar"
@@ -9,7 +9,7 @@
         <span class="clearfix"></span>
         <nav class="mt-2">
             <ul
-                class="nav nav-pills nav-sidebar"
+                class="nav nav-pills"
                 role="menu"
             >
                 <li

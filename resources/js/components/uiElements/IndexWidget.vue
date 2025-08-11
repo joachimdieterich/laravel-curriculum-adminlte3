@@ -1,16 +1,17 @@
 <template>
-    <div 
+    <div
         :id="item.DT_RowId"
         :value="item.DT_RowId"
         class="box box-objective nav-item-box-image pointer my-1 pull-left"
         :class="active === false ? 'not-allowed' : ''"
         style="min-width: 200px !important;"
         :style="{ 'border-color': item.color ?? '#F2F4F5', 'background-color': item.color + ' !important' }"
+        v-on:keyup.enter="simulateClick()"
     >
         <a v-if="create || subscribe"
             @click="openModal()"
         >
-            <div class="d-flex align-items-center justify-content-center">
+            <div class="d-flex align-items-center justify-content-center" tabindex="0">
                 <slot name="itemIcon">
                     <i class="fa fa-2x fa-plus text-muted"></i>
                 </slot>
@@ -26,7 +27,8 @@
             :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected() ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
         >
             <div v-if="item.medium_id"
-                @click="clickEvent(item)"
+                 @click="clickEvent(item)"
+                 tabindex="0"
             >
                 <div
                     class="nav-item-box-image-size h-100 w-100"
@@ -36,8 +38,9 @@
                 </div>
             </div>
             <div v-else
-                class="d-flex align-items-center justify-content-center"
-                @click="clickEvent(item)"
+                 class="d-flex align-items-center justify-content-center"
+                 @click="clickEvent(item)"
+                 tabindex="0"
             >
                 <slot name="itemIcon"/>
             </div>
@@ -73,15 +76,16 @@
                     || (item.allow_copy && (modelName != 'Plan' || checkPermission('is_teacher')))
                     || (checkPermission('is_teacher') && (showSubscribable || modelName == 'Exam'))
                     || checkPermission('is_admin')
-                "
-                :id="model + 'Dropdown_' + item.DT_RowId"
-                class="btn btn-flat position-absolute pull-right"
-                style="top: 0; right: 0; background-color: transparent;"
-                data-toggle="dropdown"
-                aria-expanded="false"
+                 "
+                 :id="modelName + 'Dropdown_' + item.DT_RowId"
+                 class="btn btn-flat position-absolute pull-right"
+                 style="top: 0; right: 0; background-color: transparent;"
+                 data-toggle="dropdown"
+                 aria-expanded="false"
             >
-                <i class="fa fa-ellipsis-v"
-                    :style="'color:' + (screenWidth > 990 ? $textcolor(item.color) : '#000')"
+                <i tabindex="0"
+                   class="fa fa-ellipsis-v"
+                   :style="'color:' + (screenWidth > 990 ? $textcolor(item.color) : '#000')"
                 ></i>
                 <slot name="dropdown"></slot>
             </div>
@@ -181,6 +185,10 @@ export default {
         }
     },
     methods: {
+        simulateClick() {
+            // "clicks" the current active items, that the user reached via tab
+            document.activeElement.click();
+        },
         isSelected() {
             return (this.store.isSelected(this.storeTitle, this.model));
         },

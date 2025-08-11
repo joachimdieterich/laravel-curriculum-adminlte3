@@ -51,7 +51,7 @@
                 ></div>
             </div>
     
-            <Footer v-if="objective.achievements !== undefined"
+            <Footer v-if="settings.achievements && objective.achievements !== undefined"
                 :objective="objective"
                 :textcolor="textcolor"
                 :type="type"

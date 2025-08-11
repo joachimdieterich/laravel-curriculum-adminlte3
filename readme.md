@@ -10,7 +10,7 @@ curriculum is a learning platform where teachers can create topic-based learning
 - laravel Ver. 11
 
 ### Prerequisites
-- PHP 8.1 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, tokenizer, openssl, fileinfo, ctype, cli, common, opcache, readline
+- PHP 8.2 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, tokenizer, openssl, fileinfo, ctype, cli, common, opcache, readline
 - ghostscript
 - imagemagick
 - git
@@ -111,6 +111,7 @@ header
 Content-Type: 'application/json' 
 
 form-data
+grant_type: "client_credentials",
 client_id: [id]
 client_secret: [secret]
 ```

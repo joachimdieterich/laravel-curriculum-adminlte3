@@ -6,7 +6,7 @@
         :class="active === false ? 'not-allowed' : ''"
         style="min-width: 200px !important;"
         :style="{ 'border-color': item.color ?? '#F2F4F5', 'background-color': item.color + ' !important' }"
-        v-on:keyup.enter="simulateClick()"
+        @keyup.enter="simulateClick()"
     >
         <a v-if="create || subscribe"
             @click="openModal()"

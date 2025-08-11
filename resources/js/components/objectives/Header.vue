@@ -1,12 +1,11 @@
 <template>
     <div
         class="d-flex align-items-center mt-1"
-        style="min-height: 20px;"
         :style="{ 'color': textcolor }"
     >
         <span v-if="edit_settings"
             v-permission="'curriculum_edit'"
-            class="mr-auto"
+            class="d-flex mr-auto"
         >
             <a v-if="(type == 'terminal' && objective.order_id != 0)"
                 class="pointer mr-2"
@@ -25,20 +24,22 @@
                 <i class="fa fa-arrow-down"></i>
             </a>
 
-            <a v-if="(type == 'enabling' && objective.order_id != 0)"
-                class="btn btn-icon btn-sm px-1 py-0 text-secondary mr-2"
+            <button v-if="(type == 'enabling' && objective.order_id != 0)"
+                class="btn btn-icon btn-sm px-1 py-0 text-secondary mr-1"
                 role="button"
+                :title="trans('global.enablingObjective.move_left')"
                 @click="changeOrder(false)"
             >
                 <i class="fa fa-arrow-left"></i>
-            </a>
-            <a v-if="(type == 'enabling' && max_id != objective.id)"
+            </button>
+            <button v-if="(type == 'enabling' && max_id != objective.id)"
                 class="btn btn-icon btn-sm px-1 py-0 text-secondary"
                 role="button"
+                :title="trans('global.enablingObjective.move_right')"
                 @click="changeOrder(true)"
             >
                 <i class="fa fa-arrow-right"></i>
-            </a>
+            </button>
         </span>
 
         <span v-if="(type == 'enabling' && objective.level != null)"

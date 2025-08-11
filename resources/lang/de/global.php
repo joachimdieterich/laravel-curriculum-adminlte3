@@ -658,6 +658,8 @@ return [
         'edit' => 'Baustein bearbeiten',
         'delete' => 'Baustein löschen',
         'delete_helper' => 'Soll der Baustein sowie die dazugehörigen Daten gelöscht werden?',
+        'move_left' => 'Baustein nach links verschieben',
+        'move_right' => 'Baustein nach rechts verschieben',
         'fields' => [
             'time_approach' => 'Zeitansatz',
         ],

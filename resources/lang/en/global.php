@@ -632,6 +632,8 @@ return [
         'edit' => 'Edit enabling objective',
         'delete' => 'Delete enabling objective',
         'delete_helper' => 'Should this enabling objective and all its corresponding data be deleted?',
+        'move_left' => 'Move objective left',
+        'move_right' => 'Move objective right',
         'fields' => [
             'time_approach' => 'Time approach',
         ],

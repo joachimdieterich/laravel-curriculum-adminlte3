@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-light-primary" style="z-index: unset;">
+<aside class="main-sidebar sidebar-light-primary">
     <!-- Sidebar -->
     <div
         id="sidebar"

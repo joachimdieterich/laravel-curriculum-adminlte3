@@ -610,6 +610,7 @@ return [
         'move_to_curriculum' => 'Move to other curriculum',
         'delete' => 'Delete terminal objective',
         'delete_helper' => 'Should this terminal objective and all its corresponding data be deleted?',
+        'remove' => 'Remove objective',
         'fields' => [
             'time_approach' => 'Time approach',
         ],
@@ -920,6 +921,7 @@ return [
         'create' => 'Create plan',
         'search' => 'Search plan',
         'edit' => 'Edit plan',
+        'print' => 'Print plan',
         'enrol' => 'Connect plan',
         'expel_helper' => 'Disconnect group from plan',
         'copy' => 'Copy plan',

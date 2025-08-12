@@ -12,41 +12,46 @@
                     style="gap: 5px;"
                 >
                     <button
-                        class="btn btn-flat link-muted mr-2 px-1 py-0"
+                        class="btn btn-icon link-muted mr-2 px-1 py-0"
+                        role="button"
+                        :title="trans('global.plan.evaluate_user')"
                         :disabled="users.length === 0"
                         @click="openUserModal()"
                     >
                         <i class="fa fa-chart-simple"></i>
                     </button>
-                    <a onclick="window.print()" class="link-muted px-1 pointer">
+                    <button
+                        class="btn btn-icon link-muted px-1"
+                        role="button"
+                        :title="trans('global.plan.print')"
+                        @click="window.print()"
+                    >
                         <i class="fa fa-print"></i>
-                    </a>
+                    </button>
 
                     <span class="pr-2 mr-2" style="border-right: 1px solid black;"></span>
 
                     <span
-                        class="link-muted pointer"
-                        @click.prevent="showTools = !showTools"
+                        class="custom-switch custom-switch-on-green d-flex align-items-center link-muted pointer"
+                        @click.self.prevent="showTools = !showTools"
                     >
-                        <span class="pr-2">{{ trans('global.edit') }}</span>
-                        <span class="custom-switch custom-switch-on-green">
-                            <input
-                                id="edit_toggle"
-                                type="checkbox"
-                                class="custom-control-input"
-                                v-model="showTools"
-                            />
-                            <label
-                                for="edit_toggle"
-                                class="custom-control-label"
-                            ></label>
-                        </span>
+                        <input
+                            id="edit_toggle"
+                            type="checkbox"
+                            class="custom-control-input"
+                            v-model="showTools"
+                        />
+                        <label
+                            for="edit_toggle"
+                            class="custom-control-label"
+                        >
+                            {{ trans('global.edit') }}
+                        </label>
                     </span>
                 </div>
             </div>
         </div>
         <div class="card rounded-0">
-            <!-- /.card-header -->
             <div class="card-body">
                 <div class="overflow-auto" v-html="description"></div>
             </div>
@@ -103,19 +108,21 @@
             <SubscribeObjectiveModal :users="users"/>
         </Teleport>
         <Teleport to="#customTitle">
-            <small>{{ currentPlan.title }}</small>
-            <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2 mx-1"
-                @click="editPlan()"
-            >
-                <i class="fa fa-pencil-alt"></i>
-            </a>
-            <a v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2"
-                @click="share()"
-            >
-                <i class="fa fa-share-alt"></i>
-            </a>
+            <div class="d-flex">
+                <small>{{ currentPlan.title }}</small>
+                <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                    class="btn btn-icon link-muted px-2 mx-1"
+                    @click="editPlan()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+                <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                    class="btn btn-icon link-muted px-2"
+                    @click="share()"
+                >
+                    <i class="fa fa-share-alt"></i>
+                </button>
+            </div>
         </Teleport>
     </div>
 </template>

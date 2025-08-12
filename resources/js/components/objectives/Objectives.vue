@@ -24,12 +24,14 @@
             </div>
             <div class="card-tools">
                 <span v-if="editable && showTools">
-                    <a
-                        class="text-danger"
+                    <button
+                        class="btn btn-icon text-danger"
+                        role="button"
+                        :title="trans('global.terminalObjective.remove')"
                         @click="destroy(terminal)"
                     >
                         <i class="fas fa-trash pointer p-1"></i>
-                    </a>
+                    </button>
                 </span>
             </div>
         </div>

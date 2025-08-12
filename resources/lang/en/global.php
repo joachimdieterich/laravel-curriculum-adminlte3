@@ -146,6 +146,7 @@ return [
     'curricula_cross_references_description' => 'Suggestions for lesson planning',
     'myProfile' => 'Userprofile',
     'settings' => 'Settings',
+    'open_settings' => 'Open settings',
     'options' => 'Options',
     'minutes' => 'Minutes',
     'sum' => 'Sum',

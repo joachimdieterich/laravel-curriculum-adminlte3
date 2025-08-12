@@ -4,11 +4,13 @@
             <div id="fixed-header" class="d-flex position-fixed w-100 px-3">    
                 <span class="d-flex align-items-center">
                     Ziele / Namen
-                    <i
-                        class="fa fa-gear text-secondary ml-1 p-1 pointer"
-                        style="font-size: 1rem;"
+                    <button
+                        class="btn btn-icon link-muted ml-1"
+                        :title="trans('global.open_settings')"
                         @click="globalStore.showModal('plan-achievements-options-modal');"
-                    ></i>
+                    >
+                        <i class="fa fa-gear"></i>
+                    </button>
                 </span>
                 <span v-for="user in users"
                     class="text-center"

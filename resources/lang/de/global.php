@@ -157,6 +157,7 @@ return [
     'curricula_cross_references_description' => 'Anregung zur Unterrichtsgestaltung',
     'myProfile' => 'Nutzerprofil',
     'settings' => 'Einstellungen',
+    'open_settings' => 'Einstellungen öffnen',
     'options' => 'Optionen',
     'minutes' => 'Minuten',
     'sum' => 'Summe',

@@ -4,7 +4,6 @@
             <div class="card">
                 <button v-if="create"
                     class="btn text-left p-0"
-                    role="button"
                     @click="openModal()"
                 >
                     <div class="plan-entry card-header border-0">
@@ -36,7 +35,6 @@
                             >
                                 <button v-if="entry.certificates"
                                     class="btn btn-icon"
-                                    role="button"
                                     :title="trans('global.certificate.generate')"
                                     @click.stop="openCertificateModal()"
                                 >
@@ -45,7 +43,6 @@
                                 <span v-if="editable && showTools" class="d-flex">
                                     <button
                                         class="btn btn-icon ml-2"
-                                        role="button"
                                         :title="trans('global.planEntry.edit')"
                                         @click.stop="openModal(entry)"
                                     >
@@ -56,7 +53,6 @@
                                             || checkPermission('is_admin')
                                         "
                                         class="btn btn-icon text-danger ml-2"
-                                        role="button"
                                         :title="trans('global.planEntry.delete')"
                                         @click.stop="openConfirm()"
                                     >

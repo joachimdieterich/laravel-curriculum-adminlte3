@@ -39,8 +39,6 @@
                 <button
                     v-permission="subscribable_type + '_content_create'"
                     class="btn btn-tool"
-                    type="button"
-                    role="button"
                     :aria-label="trans('global.add')"
                     @click="create()"
                 >
@@ -48,9 +46,7 @@
                 </button>
                 <button v-if="subscribable_type === 'App\\Curriculum'"
                     v-permission="subscribable_type + '_content_create'"
-                    class="btn btn-tool "
-                    type="button"
-                    role="button"
+                    class="btn btn-tool"
                     :aria-label="trans('global.paste')"
                     @click="this.showContentSubscriptionModal = true"
                 >
@@ -58,9 +54,7 @@
                 </button>
                 <button
                     v-permission="subscribable_type + '_content_create'"
-                    class="btn btn-tool "
-                    type="button"
-                    role="button"
+                    class="btn btn-tool"
                     :aria-label="trans('global.resetOrder')"
                     data-toggle="tooltip"
                     data-container="body"
@@ -71,8 +65,6 @@
                 </button>
                 <button v-if="subscriptions.length > 0"
                     class="btn btn-tool"
-                    type="button"
-                    role="button"
                     :href="'#contentCarousel_' + uid"
                     :aria-label="trans('pagination.previous')"
                     @click="prev()"
@@ -80,9 +72,7 @@
                     <i class="fa fa-arrow-left"></i>
                 </button>
                 <button v-if="subscriptions.length > 0"
-                    class="btn btn-tool "
-                    type="button"
-                    role="button"
+                    class="btn btn-tool"
                     :href="'#contentCarousel_' + uid"
                     :aria-label="trans('pagination.next')"
                     @click="next()"

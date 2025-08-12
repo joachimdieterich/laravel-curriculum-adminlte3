@@ -26,7 +26,6 @@
                 <span v-if="editable && showTools">
                     <button
                         class="btn btn-icon text-danger"
-                        role="button"
                         :title="trans('global.terminalObjective.remove')"
                         @click="destroy(terminal)"
                     >

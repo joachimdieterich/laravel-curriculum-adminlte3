@@ -13,7 +13,6 @@
                 >
                     <button
                         class="btn btn-icon link-muted mr-2 px-1 py-0"
-                        role="button"
                         :title="trans('global.plan.evaluate_user')"
                         :disabled="users.length === 0"
                         @click="openUserModal()"
@@ -22,7 +21,6 @@
                     </button>
                     <button
                         class="btn btn-icon link-muted px-1"
-                        role="button"
                         :title="trans('global.plan.print')"
                         @click="window.print()"
                     >

@@ -177,7 +177,6 @@
             <div class="d-flex ml-auto">
                 <button v-if="commentable"
                     class="btn btn-icon px-2 py-1 mr-2"
-                    role="button"
                     :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
                     data-toggle="collapse"
                     :data-target="'#comments_' + item.id"

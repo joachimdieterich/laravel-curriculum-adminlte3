@@ -26,7 +26,6 @@
 
             <button v-if="(type == 'enabling' && objective.order_id != 0)"
                 class="btn btn-icon btn-sm px-1 py-0 text-secondary mr-1"
-                role="button"
                 :title="trans('global.enablingObjective.move_left')"
                 @click="changeOrder(false)"
             >
@@ -34,7 +33,6 @@
             </button>
             <button v-if="(type == 'enabling' && max_id != objective.id)"
                 class="btn btn-icon btn-sm px-1 py-0 text-secondary"
-                role="button"
                 :title="trans('global.enablingObjective.move_right')"
                 @click="changeOrder(true)"
             >

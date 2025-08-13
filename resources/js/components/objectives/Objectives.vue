@@ -7,20 +7,37 @@
             class="d-flex"
         >
             <div class="objectives">
-                <ObjectiveBox
-                    type="terminal"
-                    :objective="terminal"
-                    :settings="settings"
-                />
+                <div class="d-flex flex-column">
+                    <ObjectiveBox
+                        type="terminal"
+                        :objective="terminal"
+                        :settings="settings"
+                    />
+                    <div class="d-flex d-sm-none align-items-center justify-content-center">
+                        <button
+                            class="btn collapse-objectives pt-0 w-100"
+                            data-toggle="collapse"
+                            :data-target="'#enabling-objectives-' + terminal.id"
+                            aria-expanded="false"
+                        >
+                            <i class="fa fa-angles-down"></i>
+                        </button>
+                    </div>
+                </div>
 
-                <EnablingObjectives
-                    :terminalobjective="terminal"
-                    :objectives="terminal.enabling_objectives"
-                    :referenceable_id="referenceable_id"
-                    :referenceable_type="referenceable_type"
-                    :settings="settings"
-                    :editable="editable"
-                />
+                <div
+                    :id="'enabling-objectives-' + terminal.id"
+                    class="d-sm-contents w-100 collapse"
+                >
+                    <EnablingObjectives
+                        :terminalobjective="terminal"
+                        :objectives="terminal.enabling_objectives"
+                        :referenceable_id="referenceable_id"
+                        :referenceable_type="referenceable_type"
+                        :settings="settings"
+                        :editable="editable"
+                    />
+                </div>
             </div>
             <div class="card-tools">
                 <span v-if="editable && showTools">

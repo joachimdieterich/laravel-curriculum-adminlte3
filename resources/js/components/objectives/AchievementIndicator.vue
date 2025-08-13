@@ -28,9 +28,10 @@
             @click.prevent="achieve('0')"
         ></i>
         <span v-if="objective.achievements?.length === 1"
+            class="ml-1"
             style="line-height: 1; white-space: nowrap;"
         >
-            {{ objective.achievements[0].updated_at.substring(0, 10) }}
+            {{ new Date(objective.achievements[0].updated_at).toLocaleDateString() }}
         </span>
     </span>
 </template>

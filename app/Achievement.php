@@ -9,24 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 class Achievement extends Model
 {
     use HasFactory;
-
-    protected $guarded = [''];
-
-    protected $cast = [
+    
+    protected $casts = [
         'status' => 'string',
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
-    ]; //important to get id as unique string
-
-    protected $casts = [
-        'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
     ];
-
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

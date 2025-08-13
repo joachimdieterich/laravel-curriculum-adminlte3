@@ -123,6 +123,10 @@ textarea { min-height: 150px; }
     line-clamp: 1; // compatibility
     overflow: hidden;
 
+    &.line-clamp-3 {
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
     & p { margin: 0; } // if Editor was used, text is wrapped in <p> tags
 }
 .custom-control-input:hover, .custom-control-label:hover { cursor: pointer; }

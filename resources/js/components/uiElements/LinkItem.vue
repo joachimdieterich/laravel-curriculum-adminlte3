@@ -2,16 +2,21 @@
     <div class="link-preview">
         <div class="info-box bg-info">
             <a
-                :href="href"
+                :href="htmlToText(href)"
                 :target="target"
                 class="d-flex w-100"
             >
-                <span>
-                    <span v-if="qrCode">
-                        <div v-html="qrCode"></div>
+                <div v-if="qrCode"
+                    v-html="qrCode"
+                ></div>
+                <div class="info-box-content pr-0">
+                    <span
+                        class="line-clamp line-clamp-3"
+                        style="word-break: break-word;"
+                    >
+                        {{ text }}
                     </span>
-                </span>
-                <div class="info-box-content">{{ text }}</div>
+                </div>
             </a>
         </div>
     </div>

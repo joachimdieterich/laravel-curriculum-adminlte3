@@ -11,9 +11,7 @@
         padding: 0px !important;
 
         &:hover { background-color: #dcdcdc; }
-        &.active, &:active, &[aria-expanded="true"] {
-            background-color: #cbcbcb;
-        }
+        &:active, &[aria-expanded="true"] { background-color: #c0c0c0; }
         &.text-danger:hover { color: #a71d2a !important; }
     }
 

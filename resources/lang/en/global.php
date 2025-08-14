@@ -636,6 +636,7 @@ return [
         'delete_helper' => 'Should this enabling objective and all its corresponding data be deleted?',
         'move_left' => 'Move objective left',
         'move_right' => 'Move objective right',
+        'toggle_objectives' => 'Collapse/Show objectives',
         'fields' => [
             'time_approach' => 'Time approach',
         ],

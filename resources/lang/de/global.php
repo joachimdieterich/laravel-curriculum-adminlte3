@@ -662,6 +662,7 @@ return [
         'delete_helper' => 'Soll der Baustein sowie die dazugehörigen Daten gelöscht werden?',
         'move_left' => 'Baustein nach links verschieben',
         'move_right' => 'Baustein nach rechts verschieben',
+        'toggle_objectives' => 'Bausteine ein-/ausklappen',
         'fields' => [
             'time_approach' => 'Zeitansatz',
         ],

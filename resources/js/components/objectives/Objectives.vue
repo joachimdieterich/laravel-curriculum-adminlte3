@@ -13,11 +13,13 @@
                         :objective="terminal"
                         :settings="settings"
                     />
-                    <div class="d-flex d-sm-none align-items-center justify-content-center">
+                    <div class="d-flex d-sm-none align-items-center justify-content-center pb-1">
                         <button
-                            class="btn collapse-objectives pt-0 w-100"
+                            class="btn collapse-objectives collapsed py-0 w-100"
+                            :title="trans('global.enablingObjective.toggle_objectives')"
                             data-toggle="collapse"
                             :data-target="'#enabling-objectives-' + terminal.id"
+                            :aria-controls="'enabling-objectives-' + terminal.id"
                             aria-expanded="false"
                         >
                             <i class="fa fa-angles-down"></i>
@@ -231,3 +233,10 @@ export default {
     }
 }
 </script>
+<style scoped>
+.collapse-objectives {
+    transition: transform 0.4s ease;
+
+    &:not(.collapsed) { transform: rotate3d(1, 0, 0, 180deg); }
+}
+</style>

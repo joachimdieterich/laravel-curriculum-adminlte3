@@ -51,23 +51,9 @@ const globalStore = useGlobalStore();
 window.moment = require('moment/src/moment');
 import 'moment/src/locale/de'; // import german locale for moment.js
 
-//broadcasting
-/*import VueEcho from 'vue-echo';
-if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
-    Vue.use(VueEcho, {
-        broadcaster: 'pusher',
-        key: process.env.MIX_PUSHER_APP_KEY,
-        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-        useTLS: process.env.MIX_PUSHER_APP_USE_TLS === 'true',
-        forceTLS: process.env.MIX_PUSHER_APP_FORCE_TLS === 'true',
-        encrypted: process.env.MIX_PUSHER_APP_ENCRYPTED === 'true',
-        wsHost: window.location.hostname,
-        wssHost: window.location.hostname,
-        wsPort: process.env.MIX_PUSHER_APP_WSPORT,
-        wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
-        enableTransports: ['ws', 'wss']
-    });
-}*/
+// Broadcasting
+import echo from './echo.js';
+app.config.globalProperties.$echo = echo;
 
 // use trans function like in blade
 import _ from 'lodash'; //needed to get
@@ -147,7 +133,7 @@ app.config.globalProperties.checkPermission = (permission) => {
 
 /**
  * removes HTML-tags of given String via parsing it through a <textarea>
- * @param {String} text 
+ * @param {String} text
  * @returns raw text without HTML-tags
  */
 app.config.globalProperties.$decodeHTMLEntities = (text) => {
@@ -177,8 +163,8 @@ app.config.globalProperties.$decodeHtml = (str) =>  {
 
 /**
  * selected special chars are replaced with their actual char (e.g. '&amp;' => '&')
- * @param {String} html 
- * @returns 
+ * @param {String} html
+ * @returns
  */
 app.config.globalProperties.htmlToText = (html) => {
     var txt = document.createElement("textarea");
@@ -231,7 +217,7 @@ app.use(Toast, {
 
 /**
  * checks which error message is appropriate for the given error
- * @param {Error} error 
+ * @param {Error} error
  * @param {String} fallback fallback translation-key, if given error doesn't have a specified error-message
  * @returns @String key to translate error message
  */
@@ -521,7 +507,7 @@ app.directive('hide-if-permission', function (el, binding) {
  * Custom Vue directive "permission" to check against permissions.
  * csv with permissions.
  * If permission(s) is/are not given element gets removed from dom
- * 
+ *
  * ! IMPORTANT: even if element gets removed, Vue will act like its still there.
  * This can cause weird bugs that seem like a logic-error, but the actual problem is this behaviour.
  * To solve this issue use v-if="checkPermission('permission_name')"

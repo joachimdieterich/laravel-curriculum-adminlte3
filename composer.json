@@ -28,7 +28,6 @@
         "joisarjignesh/bigbluebutton": "^2.6",
         "laravel/framework": "^11.0",
         "laravel/passport": "^12.0",
-        "laravel/reverb": "@beta",
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^4.0",
@@ -37,7 +36,6 @@
         "maize-tech/laravel-markable": "^2.0",
         "mews/purifier": "^3.4",
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
-        "pusher/pusher-php-server": "^7.0",
         "select2/select2": "^4.0",
         "yajra/laravel-datatables-oracle": "~11.0"
     },

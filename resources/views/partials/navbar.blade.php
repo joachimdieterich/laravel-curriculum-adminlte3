@@ -49,7 +49,7 @@
 				class="nav-link"
 				data-widget="control-sidebar"
 				data-slide="true"
-				aria-label="{{ trans('global.messages') }}"  
+				aria-label="{{ trans('global.messages') }}"
 				onclick="triggerVueMessageLoaderEvent()"
 			>
                 <i class="far fa-comments"></i>
@@ -71,7 +71,7 @@
             </button>
         </div>
     @else
-        <li class="dropdown">
+        <li class="dropdown mr-2">
             <span class="user-menu dropdown-toggle" data-toggle="dropdown" role="button">
                 <img
                     src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"

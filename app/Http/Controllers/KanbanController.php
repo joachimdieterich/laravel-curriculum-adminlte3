@@ -195,12 +195,12 @@ class KanbanController extends Controller
         $may_edit = $kanban->isEditable(auth()->user()->id, $token);
 
         $is_shared = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
-        $is_pusher_active = env('PUSHER_APP_ACTIVE');
+        $is_websocket_active = env('WEBSOCKET_APP_ACTIVE');
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $kanban->id);
 
         return view('kanbans.show')
-            ->with(compact('kanban', 'may_edit', 'is_shared', 'is_pusher_active'));
+            ->with(compact('kanban', 'may_edit', 'is_shared', 'is_websocket_active'));
     }
 
     /**

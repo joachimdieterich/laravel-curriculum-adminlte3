@@ -27,7 +27,7 @@ class KanbanItemDeletedEvent implements ShouldBroadcast
 
     public function broadcastWhen()
     {
-        return env('PUSHER_APP_ACTIVE', false);
+        return env('WEBSOCKET_APP_ACTIVE', false);
     }
 
 

@@ -659,6 +659,4 @@ div[id^="item"], span[id^="status"] {
     transition: opacity 0.25s linear;
     &:hover, &:focus { opacity: 1 !important; }
 }
-.fa-angle-up { transition: 0.4s transform; }
-.collapsed .fa-angle-up { transform: rotate(-180deg) !important; }
 </style>

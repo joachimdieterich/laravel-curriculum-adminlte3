@@ -248,8 +248,6 @@ export default {
                 border-bottom: 3px solid #dee2e6;
     
                 &:hover { background-color: #e9ecef; }
-                .fa-angle-up { transition: 0.3s transform; }
-                &:not(.collapsed) .fa-angle-up { transform: rotate(-180deg); }
             }
             &:first-child > .terminal { border-top: none !important; }
         }

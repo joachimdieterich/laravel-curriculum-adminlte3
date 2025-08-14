@@ -201,12 +201,6 @@ export default {
     background-color: #e9ecef;
     cursor: pointer;
 }
-.card-header .fa-angle-up {
-    transition: 0.3s transform;
-}
-.card-header.collapsed .fa-angle-up {
-    transform: rotate(-180deg);
-}
 .plan-entry {
     border-radius: 0.25rem;
     border-left-style: solid;

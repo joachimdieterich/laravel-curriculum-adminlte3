@@ -470,6 +470,4 @@ export default {
     border-top-right-radius: 0.25rem;
 }
 .card-header-title:hover { filter: brightness(90%); }
-.fa-angle-up { transition: 0.4s transform; }
-.collapsed .fa-angle-up { transform: rotate(-180deg); }
 </style>

@@ -5,16 +5,16 @@
             @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card-header">
+                <div class="modal-header">
                     <span class="card-title">{{ trans('global.options') }}</span>
-                    <div class="card-tools">
-                        <button
-                            class="btn btn-tool"
-                            @click="globalStore.closeModal($options.name)"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        class="btn btn-icon text-secondary"
+                        :title="trans('global.close')"
+                        @click="globalStore.closeModal($options.name)"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
 
                 <div

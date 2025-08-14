@@ -17,6 +17,16 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     transition: all 0.3s ease;
 }
+.modal-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+
+    > button { margin-right: -0.625rem; }
+}
 .modal-body {
     max-height: 80svh;
     overflow-y: auto;

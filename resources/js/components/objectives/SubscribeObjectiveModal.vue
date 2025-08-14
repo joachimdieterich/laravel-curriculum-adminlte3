@@ -5,22 +5,18 @@
             @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card-header">
-                    <h3 class="card-title">
+                <div class="modal-header">
+                    <span class="card-title">
                         {{ trans('global.referenceable_types.link') }}
-                    </h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool draggable">
-                            <i class="fa fa-arrows-alt"></i>
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+                    </span>
+                    <button
+                        type="button"
+                        class="btn btn-icon text-secondary"
+                        :title="trans('global.close')"
+                        @click="globalStore?.closeModal($options.name)"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
 
                 <div

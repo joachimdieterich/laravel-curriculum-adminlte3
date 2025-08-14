@@ -5,24 +5,18 @@
             @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card-header">
+                <div class="modal-header">
                     <span class="card-title">
-                        <span v-if="method === 'post'">
-                            {{ trans('global.kanbanStatus.create') }}
-                        </span>
-                        <span v-if="method === 'patch'">
-                            {{ trans('global.kanbanStatus.edit') }}
-                        </span>
+                        {{ method == 'post' ? trans('global.kanbanStatus.create') : trans('global.kanbanStatus.edit') }}
                     </span>
-                    <div class="card-tools">
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        class="btn btn-icon text-secondary"
+                        :title="trans('global.close')"
+                        @click="globalStore?.closeModal($options.name)"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
 
                 <div
@@ -56,7 +50,7 @@
                             class="card-header border-bottom"
                             data-card-widget="collapse"
                         >
-                            <div class="card-title">{{ trans('global.display') }}</div>
+                            <span class="card-title">{{ trans('global.display') }}</span>
                         </div>
                         <div class="card-body">
                             <v-swatches
@@ -82,7 +76,7 @@
                             class="card-header border-bottom"
                             data-card-widget="collapse"
                         >
-                            <div class="card-title">{{ trans('global.permissions') }}</div>
+                            <span class="card-title">{{ trans('global.permissions') }}</span>
                         </div>
                         <div class="card-body">
                             <div v-if="$userId == form.owner_id

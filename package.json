@@ -63,7 +63,7 @@
         "moment": "^2.29.4",
         "pinia": "^2.1.7",
         "sidebar-v2": "^0.4.0",
-        "tinymce": "<6",
+        "tinymce": "<8",
         "vite-plugin-commonjs": "^0.10.3",
         "vue": "^3.4.33",
         "vue-chartjs": "^5.3.1",

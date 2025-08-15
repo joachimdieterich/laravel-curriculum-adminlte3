@@ -376,11 +376,10 @@ app.config.globalProperties.$initTinyMCE = function(
 ) {
 
     const defaultPlugins = [
-        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-        "searchreplace wordcount visualblocks visualchars code fullscreen",
-        "insertdatetime media nonbreaking save table directionality",
-        "emoticons template paste textpattern",
-        "autoresize"
+        "advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "hr", "anchor", "pagebreak",
+        "searchreplace", "wordcount", "visualblocks", "visualchars", "code", "fullscreen",
+        "insertdatetime", "media", "nonbreaking", "save", "table", "directionality",
+        "emoticons", "template", "paste", "textpattern", "autoresize",
     ];
 
     return {
@@ -389,6 +388,7 @@ app.config.globalProperties.$initTinyMCE = function(
         ...attr,
         path_absolute : "/",
         selector: "textarea.my-editor",
+        promotion: false,
         branding: false,
         placeholder: attr?.placeholder ?? this.trans('global.description'),
         plugins: tinyMcePlugins ?? defaultPlugins,

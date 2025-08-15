@@ -63,6 +63,7 @@
                                     id="body"
                                     name="body"
                                     class="form-control"
+                                    licenseKey="gpl"
                                     :init="tinyMCE"
                                     v-model="form.body"
                                 />
@@ -180,12 +181,7 @@ export default {
                 global: false,
             }),
             tinyMCE: this.$initTinyMCE(
-                [
-                    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-                    "searchreplace wordcount visualblocks visualchars code fullscreen",
-                    "insertdatetime media nonbreaking save table directionality",
-                    "emoticons template paste textpattern autoresize"
-                ],
+                null,
                 {
                     callback: 'insertContent',
                     callbackId: this.component_id,

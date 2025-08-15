@@ -58,8 +58,8 @@
                                 <Editor
                                     id="description"
                                     name="description"
-                                    :placeholder="trans('global.marker.fields.description')"
                                     class="form-control"
+                                    licenseKey="gpl"
                                     :init="tinyMCE"
                                     v-model="form.description"
                                 />
@@ -304,7 +304,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link autoresize"
+                    "autolink", "link", "autoresize",
                 ],
                 {
                     'callback': 'insertContent',

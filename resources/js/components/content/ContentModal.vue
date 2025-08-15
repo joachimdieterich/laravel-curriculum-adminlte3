@@ -48,6 +48,7 @@
                                 id="content"
                                 name="content"
                                 class="form-control"
+                                licenseKey="gpl"
                                 :init="tinyMCE"
                                 v-model="form.content"
                             />
@@ -160,7 +161,7 @@ export default {
                     // Editor needs to be re-initialized when the modal is opened again...
                     this.tinyMCE = this.$initTinyMCE(
                         [
-                            "autolink link table lists code autoresize"
+                            "autolink", "link", "table", "lists", "code", "autoresize",
                         ],
                         {
                             callback: 'insertContent',

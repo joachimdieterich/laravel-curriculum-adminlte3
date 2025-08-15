@@ -109,6 +109,7 @@
                             id="note_content"
                             name="note_content"
                             class="form-control"
+                            licenseKey="gpl"
                             :init="tinyMCE"
                             :initial-value="form.content"
                         />
@@ -216,7 +217,7 @@ export default {
             help: false,
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link"
+                    "autolink", "link", "autoresize",
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',

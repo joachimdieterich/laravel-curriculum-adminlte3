@@ -43,6 +43,7 @@
                                 :id="'description_' + component_id"
                                 :name="'description_' + component_id"
                                 class="form-control"
+                                licenseKey="gpl"
                                 :init="tinyMCE"
                                 v-model="form.description"
                             />
@@ -237,7 +238,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists code autoresize table"
+                    "autolink", "link", "lists", "table", "code", "autoresize",
                 ],
                 {
                     'callback': 'insertContent',

@@ -35,6 +35,7 @@
                                     id="title"
                                     name="title"
                                     class="form-control"
+                                    licenseKey="gpl"
                                     :init="tinyMCE_title"
                                     v-model="form.title"
                                 />
@@ -48,6 +49,7 @@
                                     id="description"
                                     name="description"
                                     class="form-control"
+                                    licenseKey="gpl"
                                     :init="tinyMCE_description"
                                     v-model="form.description"
                                 />
@@ -169,7 +171,7 @@ export default {
             }),
             tinyMCE_title: this.$initTinyMCE(
                 [
-                    "autolink link table lists autoresize"
+                    "autolink", "link", "table", "lists", "autoresize",
                 ],
                 {
                     public: 1,
@@ -184,7 +186,7 @@ export default {
             ),
             tinyMCE_description: this.$initTinyMCE(
                 [
-                    "autolink link table lists autoresize code fullscreen"
+                    "autolink", "link", "table", "lists", "autoresize", "code", "fullscreen",
                 ],
                 {
                     public: 1,

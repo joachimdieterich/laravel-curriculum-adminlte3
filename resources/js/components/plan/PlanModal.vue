@@ -68,6 +68,7 @@
                             <Editor
                                 :id="'description' + component_id"
                                 :name="'description' + component_id"
+                                licenseKey="gpl"
                                 :init="tinyMCE"
                                 v-model="form.description"
                             />
@@ -253,7 +254,7 @@ export default {
             search: '',
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists code autoresize"
+                    "autolink", "link", "lists", "code", "autoresize",
                 ],
                 {
                     'callback': 'insertContent',

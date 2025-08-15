@@ -104,6 +104,7 @@
                                     id="description"
                                     name="description"
                                     class="form-control"
+                                    licenseKey="gpl"
                                     :init="tinyMCE"
                                     :initial-value="form.description"
                                 />
@@ -121,6 +122,7 @@
                                     id="info"
                                     name="info"
                                     class="form-control"
+                                    licenseKey="gpl"
                                     :init="tinyMCE"
                                     :initial-value="form.info"
                                 />
@@ -139,6 +141,7 @@
                                     name="speakers"
                                     class="form-control"
                                     :init="tinyMCE"
+                                    licenseKey="gpl"
                                     :initial-value="form.speakers"
                                 />
                                 <p v-if="form.errors.speakers"
@@ -155,6 +158,7 @@
                                     id="livestream"
                                     name="livestream"
                                     class="form-control"
+                                    licenseKey="gpl"
                                     :init="tinyMCE"
                                     :initial-value="form.livestream"
                                 />
@@ -310,7 +314,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link table lists autoresize"
+                    "autolink", "link", "table", "lists", "autoresize",
                 ],
                 {
                     callback: 'insertContent',

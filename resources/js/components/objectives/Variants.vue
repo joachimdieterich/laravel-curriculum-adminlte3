@@ -53,33 +53,38 @@
         </div>
 
         <div v-if="edit"
-             class="row pt-2 ">
+            class="row pt-2"
+        >
             <div class="col-12">
-                <div >
-                    <div class="form-group "
-                         :class="form.errors.title ? 'has-error' : ''">
+                <div>
+                    <div
+                        class="form-group"
+                        :class="form.errors.title ? 'has-error' : ''"
+                    >
                         <label for="title">{{ trans('global.terminalObjective.fields.title') }} *</label>
                         <Editor
                             id="title"
                             name="title"
-                            :placeholder="trans('global.terminalObjective.fields.title')"
                             class="form-control"
+                            licenseKey="gpl"
                             :init="tinyMCE"
-                            :initial-value="form.title"
-                        ></Editor>
+                            v-model="form.title"
+                        />
                         <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                     </div>
-                    <div class="form-group "
-                         :class="form.errors.description ? 'has-error' : ''">
+                    <div
+                        class="form-group"
+                        :class="form.errors.description ? 'has-error' : ''"
+                    >
                         <label for="description">{{ trans('global.terminalObjective.fields.description') }}</label>
                         <Editor
                             id="description"
                             name="description"
-                            :placeholder="trans('global.terminalObjective.fields.description')"
                             class="form-control"
+                            licenseKey="gpl"
                             :init="tinyMCE"
-                            :initial-value="form.description"
-                        ></Editor>
+                            v-model="form.description"
+                        />
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                     </div>
                     <span class="">
@@ -145,7 +150,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link table lists"
+                    "autolink", "link", "table", "lists", "autoresize",
                 ],
                 {
                     'public': 1,

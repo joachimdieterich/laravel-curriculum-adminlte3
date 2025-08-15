@@ -79,6 +79,7 @@
                         id="notes"
                         name="notes"
                         class="form-control"
+                        licenseKey="gpl"
                         :init="tinyMCE"
                         :initial-value="form.notes"
                     />
@@ -139,12 +140,7 @@ export default {
             countries: [],
             states: [],
             tinyMCE: this.$initTinyMCE(
-                [
-                    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-                    "searchreplace wordcount visualblocks visualchars code fullscreen",
-                    "insertdatetime media nonbreaking save table directionality",
-                    "emoticons template paste textpattern autoresize"
-                ],
+                null,
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id

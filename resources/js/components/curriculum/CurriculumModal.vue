@@ -81,8 +81,8 @@
                                         <Editor
                                             id="description"
                                             name="description"
-                                            :placeholder="trans('global.curriculum.fields.description')"
                                             class="form-control"
+                                            licenseKey="gpl"
                                             :init="tinyMCE"
                                             v-model="form.description"
                                         />
@@ -411,7 +411,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists autoresize"
+                    "autolink", "link", "lists", "autoresize",
                 ],
                 {
                     callbackId: this.component_id,

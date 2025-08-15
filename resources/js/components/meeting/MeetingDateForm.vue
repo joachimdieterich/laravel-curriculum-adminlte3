@@ -100,8 +100,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-const DatePicker =
-    () => import('vue3-datepicker');
 
 export default {
     name: 'MeetingDateForm',
@@ -169,13 +167,6 @@ export default {
         async destroy() {
             this.error = (await axios.delete('/meetingDates/' + this.form.id)).data;
         },
-    },
-    mounted() {
-
-
-    },
-    components: {
-        DatePicker
     },
 }
 </script>

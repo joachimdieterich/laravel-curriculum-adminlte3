@@ -102,20 +102,7 @@
     </div>
 
 </template>
-<style>
-.mx-datepicker-sidebar {
-    width: 160px !important;
-}
-
-.mx-datepicker-sidebar + .mx-datepicker-content {
-    margin-left: 160px;
-}
-
-</style>
 <script>
-const DatePicker =
-    () => import('vue3-datepicker');
-
 export default {
     props: {
         'logbook': Object,
@@ -174,7 +161,6 @@ export default {
         };
     },
     methods: {
-
         print() {
             location.href = '/logbooks/'
                 + this.logbook.id
@@ -193,10 +179,5 @@ export default {
     mounted() {
         this.time = [moment(this.period.begin).format("YYYY-MM-DD"), moment(this.period.end).format("YYYY-MM-DD")];
     },
-    components: {
-        DatePicker
-    },
 }
 </script>
-
-

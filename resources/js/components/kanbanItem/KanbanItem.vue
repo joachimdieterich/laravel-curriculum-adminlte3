@@ -223,7 +223,6 @@
     </div>
 </template>
 <script>
-import DatePicker from 'vue3-datepicker';
 import MediaCarousel from '../media/MediaCarousel.vue';
 import Avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
@@ -444,7 +443,6 @@ export default {
         Reaction,
         MediaCarousel,
         Avatar,
-        DatePicker,
         ConfirmModal,
     },
 }

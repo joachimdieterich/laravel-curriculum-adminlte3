@@ -173,7 +173,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists curriculummedia code autoresize"
+                    "autolink link lists code autoresize"
                 ],
                 {
                     callback: 'insertContent',

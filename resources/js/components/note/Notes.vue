@@ -216,7 +216,7 @@ export default {
             help: false,
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia"
+                    "autolink link"
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',

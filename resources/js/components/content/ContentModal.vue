@@ -160,7 +160,7 @@ export default {
                     // Editor needs to be re-initialized when the modal is opened again...
                     this.tinyMCE = this.$initTinyMCE(
                         [
-                            "autolink link curriculummedia table lists code autoresize"
+                            "autolink link table lists code autoresize"
                         ],
                         {
                             callback: 'insertContent',

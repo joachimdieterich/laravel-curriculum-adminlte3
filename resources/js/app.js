@@ -380,7 +380,7 @@ app.config.globalProperties.$initTinyMCE = function(
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",
         "insertdatetime media nonbreaking save table directionality",
-        "emoticons template paste textpattern curriculummedia",
+        "emoticons template paste textpattern",
         "autoresize"
     ];
 

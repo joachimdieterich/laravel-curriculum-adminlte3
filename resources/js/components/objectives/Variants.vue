@@ -145,7 +145,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia table lists"
+                    "autolink link table lists"
                 ],
                 {
                     'public': 1,

@@ -3,7 +3,7 @@
     {{ trans('global.period.title_singular') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
     <li class="breadcrumb-item active"> {{ trans('global.period.title_singular') }}</li>
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
@@ -21,18 +21,18 @@
                 <div class="card-tools pr-2">
                     <a href="{{ route('periods.edit', $period->id) }}" >
                         <i class="far fa-edit"></i>
-                    </a>        
+                    </a>
                 </div>
-                @endcan 
+                @endcan
             </div>
             <!-- /.card-header -->
-            <div class="card-body"> 
+            <div class="card-body">
 
                 <strong><i class="fa fa-calendar mr-1"></i> {{ trans('global.period.title_singular') }}</strong>
 
                 <p class="text-muted">
                     {{ $period->begin }} - {{ $period->end }}
-                </p>                
+                </p>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
@@ -41,11 +41,11 @@
                 </div>
                 <small class="float-right">
                     {{ $period->updated_at }}
-                </small> 
+                </small>
             </div>
         </div>
     </div>
-    
+
     <div class="col-lg-8 col-sm-12">
         <div class="card">
             <div class="card-header p-2">
@@ -78,7 +78,7 @@
             </div><!-- /.card-body -->
         </div>
         <!-- /.nav-tabs-custom -->
-    </div>  
-    
+    </div>
+
 </div>
 @endsection

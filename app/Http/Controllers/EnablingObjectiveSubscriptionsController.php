@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\EnablingObjective;
 use App\EnablingObjectiveSubscriptions;
+use App\Plan;
 use Illuminate\Http\Request;
 
 class EnablingObjectiveSubscriptionsController extends Controller
@@ -15,7 +16,36 @@ class EnablingObjectiveSubscriptionsController extends Controller
      */
     public function index()
     {
-        //
+        $input = $this->validateRequest();
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
+            $modal = $input['subscribable_type']::find($input['subscribable_id']);
+            abort_unless((\Gate::allows('curriculum_show') and $modal->isAccessible()), 403);
+
+            $user_ids = [];
+            
+            if ($input['subscribable_type'] == 'App\PlanEntry' and $modal->plan->isEditable()) {
+                $user_ids = app(PlanController::class)->getUsers(Plan::find($modal->plan->id));
+                $user_ids = array_column($user_ids, 'id');
+            } else {
+                $user_ids = [auth()->user()->id];
+            }
+
+            if (request()->wantsJson()) {
+                return [
+                    'subscriptions' =>
+                        EnablingObjectiveSubscriptions::where('subscribable_type', $input['subscribable_type'])
+                            ->where('subscribable_id', $input['subscribable_id'])
+                            ->with(
+                                [
+                                    'enablingObjective',
+                                    'enablingObjective.achievements'=> function ($query) use ($user_ids) {
+                                        $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
+                                    },
+                                ])
+                            ->get()
+                ];
+            }
+        }
     }
 
     /**

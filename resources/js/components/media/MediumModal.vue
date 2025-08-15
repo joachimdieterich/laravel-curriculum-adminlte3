@@ -64,18 +64,11 @@
                              v-model="medium.description"/>
                 </div>
                 <div v-else-if="medium.description != ''"
-                    v-html="medium.description"
+                    v-dompurify-html="medium.description"
                     class="text-muted text-sm p-2"></div>
-                <div v-if="mime(medium.mime_type) === 'embed'"
-                     style="height:500px">
-                    <iframe :src="scr" height="500" width="600" frameborder="0"></iframe>
-                </div>
-                <div v-else-if="mime(medium.mime_type) === 'img'">
-                    <img :src="scr" width="600"/>
-                </div>
-                <div v-else>
-                    - Please download file -
-                </div>
+                <mediumRenderer
+                    :medium="medium"
+                ></mediumRenderer>
             </div>
 
             <div class="card-footer">
@@ -95,8 +88,8 @@
                          v-else
                          class="btn btn-primary"
                          data-widget="remove"
-                         @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr" class="text-white text-decoration-none" target="_blank">{{ trans('global.downloadFile') }}</a>
+                         @click="close(true)">
+                         <a class="text-white text-decoration-none" target="_self">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
                      </button>
                 </span>
             </div>
@@ -106,9 +99,12 @@
 </template>
 
 <script>
-import License from '../uiElements/License'
+const License =
+    () => import('../uiElements/License');
+const mediumRenderer =
+    () => import('../media/MediaRenderer');
+//import License from '../uiElements/License'
     export default {
-
         data() {
             return {
                 medium: [],
@@ -146,6 +142,7 @@ import License from '../uiElements/License'
                     case 'image/tiff':
                     case 'image/ico':
                     case 'image/svg':
+                    case 'edusharing':
                         return 'img';
                         break;
                     // default use <embed>
@@ -181,18 +178,33 @@ import License from '../uiElements/License'
             beforeClose() {
 
             },
-            close() {
+            async close(image = false) {
+                if (image) {
+                    $("#loading_" + this.medium.id).show();
+                    await axios.get(this.scr + '?content=true')
+                        .then((response) => {
+                            window.location.assign(response.data.url);
+                            $("#loading_" + this.medium.id).hide();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            $("#loading_"+this.medium.id).hide();
+                        });
+                }
+
+
                 this.$modal.hide('medium-modal');
             }
 
         },
         computed: {
             scr: function () {
-                return '/media/'+ this.medium.id;
+                return '/media/' + this.medium.id ;
             },
         },
         components: {
-            License
+            License,
+            mediumRenderer
         }
 
     }

@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Organization;
 use App\OrganizationRoleUser;
+use App\Period;
 use App\Role;
 use App\User;
-use App\Organization;
-use App\Period;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -82,8 +82,8 @@ class ManageUserTest extends TestCase
         $user_to_enrol = User::factory()->create();
         OrganizationRoleUser::firstOrCreate([
             'organization_id' => $organization->id,
-            'user_id'         => $user_to_enrol->id,
-            'role_id'         => $role_id,
+            'user_id' => $user_to_enrol->id,
+            'role_id' => $role_id,
         ]);
 
         $this->assertDatabaseHas('organization_role_users', [
@@ -106,8 +106,8 @@ class ManageUserTest extends TestCase
         $user_expel = User::factory()->create();
         OrganizationRoleUser::firstOrCreate([
             'organization_id' => $organization->id,
-            'user_id'         => $user_expel->id,
-            'role_id'         => $role_id,
+            'user_id' => $user_expel->id,
+            'role_id' => $role_id,
         ]);
 
         $this->assertDatabaseHas('organization_role_users', [
@@ -135,7 +135,7 @@ class ManageUserTest extends TestCase
 
         $new_password = Hash::make('new_password');
         $this->patch('/users/massUpdate', $attributes = [
-            'ids' =>  $ids,
+            'ids' => $ids,
             'password' => $new_password,
         ])->assertStatus(204);
 
@@ -151,7 +151,7 @@ class ManageUserTest extends TestCase
         $ids = $users->pluck('id')->toArray();
 
         $this->patch('/users/massUpdate', $attributes = [
-            'ids' =>  $ids,
+            'ids' => $ids,
             'status_id' => 2,
         ])->assertStatus(204);
 

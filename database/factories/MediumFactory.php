@@ -24,7 +24,7 @@ class MediumFactory extends Factory
         return [
 
             'path' => $this->faker->file('/tmp', '/tmp/'),
-            'medium_name' => $this->faker->word . $this->faker->fileExtension,
+            'medium_name' => $this->faker->word.$this->faker->fileExtension,
             'title' => $this->faker->word,
             'description' => $this->faker->sentence,
 
@@ -33,7 +33,7 @@ class MediumFactory extends Factory
             'city' => $this->faker->city,
             'date' => $this->faker->dateTime,
 
-            'size' => $this->faker->numberBetween(1, 3000000) . 'kb',
+            'size' => $this->faker->numberBetween(1, 3000000).'kb',
             'mime_type' => $this->faker->mimeType,
 
             'license_id' => 1,

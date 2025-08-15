@@ -3,7 +3,7 @@
     {{ trans('global.subject.title') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
     <li class="breadcrumb-item active">{{ trans('global.subject.title') }}</li>
     <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
 @endsection
@@ -53,7 +53,7 @@
                 targets: - 1
             }
         ],
-        bStateSave: true,
+        bStateSave: false,
         fnStateSave: function (oSettings, oData) {
             localStorage.setItem( 'DataTables', JSON.stringify(oData) );
         },

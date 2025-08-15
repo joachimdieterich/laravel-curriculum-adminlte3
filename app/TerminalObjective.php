@@ -3,8 +3,8 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class TerminalObjective extends Model
 {
@@ -19,6 +19,7 @@ class TerminalObjective extends Model
         'objective_type_id',
         'visibility',
     ];
+
     protected $dates = [
         'updated_at',
         'created_at',
@@ -144,6 +145,11 @@ class TerminalObjective extends Model
     public function successors()
     {
         return $this->morphMany('App\Prerequisites', 'predecessor');
+    }
+
+    public function variants()
+    {
+        return $this->morphMany('App\Variant', 'referenceable');
     }
 
     public function isAccessible()

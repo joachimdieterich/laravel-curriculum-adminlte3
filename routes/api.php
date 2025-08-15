@@ -20,9 +20,9 @@ Route::group([
     Route::group([
         'middleware' => 'client_credentials',
     ], function () {
-            Route::get('logout', 'AuthController@logout');
-            Route::get('user', 'AuthController@user');
-        });
+        Route::get('logout', 'AuthController@logout');
+        Route::get('user', 'AuthController@user');
+    });
 });
 
 /**
@@ -34,7 +34,6 @@ Route::group([
     'prefix' => 'v1',
     'as' => 'admin.',
     'namespace' => 'Api\V1\Admin',
-    'middleware' => 'throttle:10,10', // an IP can call endpoint 10 times in 10 minutes
 ], function () {
     Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
     Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
@@ -85,7 +84,15 @@ Route::group([
     Route::get('moodle/getModelTypes', 'MoodleApiController@getModelTypes');
     Route::get('moodle/curricula', 'MoodleApiController@getCurricula');
     Route::get('moodle/curricula/{curriculum}/terminalObjectives', 'MoodleApiController@getTerminalObjectives');
+    Route::get('moodle/curricula/terminalObjectives/{terminalObjective}/enablingObjectives', 'MoodleApiController@getEnablingObjectivesByTerminalObjectiveId');
     Route::get('moodle/curricula/{curriculum}/enablingObjectives', 'MoodleApiController@getEnablingObjectives');
     Route::get('moodle/logbooks', 'MoodleApiController@getLogbooks');
     Route::get('moodle/kanbans', 'MoodleApiController@getKanbans');
+    Route::get('moodle/groups', 'MoodleApiController@getGroups');
+    Route::post('moodle/groups/enrol', 'MoodleApiController@enrolToGroup');
+
+    Route::post('kanbans/{kanban}/enrol', 'KanbansApiController@enrolToKanban');
+    Route::post('kanbans/{kanban}/expel', 'KanbansApiController@expelFromKanban');
+    Route::get('kanbans/{kanban}/subscriptions', 'KanbansApiController@subscriptions');
+    Route::apiResource('kanbans', 'KanbansApiController');
 });

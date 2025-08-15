@@ -3,60 +3,50 @@
 
 @include('layouts.partials.head')
 
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed" >
-    <div id="app" class="wrapper">
-        <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-lime navbar-light">
-            <!-- Left navbar links -->
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed content-only" >
 
+    <div id="app" class="d-flex flex-column flex-fill wrapper" style="height: 100vh">
+        <!-- Navbar -->
+
+        <nav class="main-header navbar navbar-expand navbar-lime navbar-light user-select-none py-0"
+        style="margin-left:0">
+
+            <!-- Left navbar links -->
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu"
-                       onclick="toggleMenu()"><i class="fas fa-bars"></i></a>
-                </li>
-                <!--                    <li class="nav-item d-none d-sm-inline-block">
-                                        <a href="#" class="nav-link">Contact</a>
-                                    </li>-->
+                @include('partials.topmenu')
             </ul>
 
-            <!-- SEARCH FORM -->
-            <!--                <form class="form-inline ml-3">
-                                <div class="input-group input-group-sm">
-                                    <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-navbar" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>-->
-
             <!-- Right navbar links -->
+            <ul class="navbar-nav pl-2 mr-auto">
+                <searchbar></searchbar>
+            </ul>
             @include('partials.navbar')
+
         </nav>
-    @include('partials.topmenu')
         <!-- /.navbar -->
-    <!-- Content Header (Page header) -->
-        <section class="content-header p-2">
+
+        <!-- Content Header (Page header) -->
+        <section class="content-header p-2"
+            style="padding-top:60px !important">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-8 pl-0">
+                    <div class="col-sm-6 pl-0">
                         <h1> @yield('title')</h1>
                     </div>
-                    <div class="col-sm-4 pr-0">
+                    <div class="col-sm-6 pr-0">
                         <ol class="breadcrumb float-sm-right">
                             @yield('breadcrumb')
                         </ol>
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
-        <div class="pl-2 pr-2" style="padding-bottom:50px">
+        <div class="d-flex flex-column flex-fill px-3">
             @yield('content')
+            <input id="medium_id" class="d-none"> <!-- DONT REMOVE - used by TINYMCE -->
         </div>
-            <!-- Footer -->
-            @include('partials.footer', ['contentonly' => true])
-
+        <!-- Footer -->
+        @include('partials.footer', ['contentonly' => true])
     </div>
 
     <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -64,7 +54,12 @@
     </form>
     <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
     <script src="{{ mix('js/app.js') }}"></script>
-
+    <script src="{{ asset('node_modules/mathjax/es5/tex-svg.js') }}"></script>
+    <script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('node_modules/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
+    <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
+    <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
     @yield('scripts')
 
 </body>

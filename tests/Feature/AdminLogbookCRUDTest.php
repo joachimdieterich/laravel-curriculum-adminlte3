@@ -29,9 +29,10 @@ class AdminLogbookCRUDTest extends TestCase
         $list = $this->get('logbooks/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($logbooks as $logbook)
-        {
-            if ($i === 49) { break; } //test max 50 entries (default page limit on datatables
+        foreach ($logbooks as $logbook) {
+            if ($i === 49) {
+                break;
+            } //test max 50 entries (default page limit on datatables
             $list->assertJsonFragment($logbook->toArray());
             $i++;
         }
@@ -54,7 +55,7 @@ class AdminLogbookCRUDTest extends TestCase
     public function an_administrator_get_create_view_for_logbooks()
     {
         $this->get('logbooks/create')
-            ->assertStatus(200);
+            ->assertStatus(405);
     }
 
     /** @test
@@ -105,7 +106,6 @@ class AdminLogbookCRUDTest extends TestCase
         $logbook = Logbook::factory()->create();
 
         $this->get("logbooks/{$logbook->id}/edit")
-            ->assertStatus(200)
-            ->assertSee($logbook->toArray());
+            ->assertStatus(405);
     }
 }

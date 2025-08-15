@@ -30,16 +30,16 @@ class GuestNavigatorTest extends DuskTestCase
     {
         parent::setUp();
         $this->navigator = Navigator::create([
-            'title'             => 'DuskNavigator',
-            'organization_id'   => 1,
+            'title' => 'DuskNavigator',
+            'organization_id' => 1,
         ]);
         $this->navigatorView = NavigatorView::create([
-            'title'             => 'First View',
-            'description'       => 'First View Description',
-            'navigator_id'      => $this->navigator->id,
+            'title' => 'First View',
+            'description' => 'First View Description',
+            'navigator_id' => $this->navigator->id,
         ]);
         $curriculum = Curriculum::find(1);
-        $this->navigator_item['view'] = ['title' => 'Second View', 'description' =>'Second View description'];
+        $this->navigator_item['view'] = ['title' => 'Second View', 'description' => 'Second View description'];
         $this->navigator_item['curriculum'] = ['title' => $curriculum->title];
         $this->navigator_item['content'] = ['title' => 'Navigator text title', 'description' => 'Navigator text description'];
         $this->navigator_item['medium'] = ['title' => 'Medium medium', 'description' => 'Medium medium description'];

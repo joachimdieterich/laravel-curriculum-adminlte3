@@ -99,7 +99,7 @@ class NavigatorItemController extends Controller
                 break;
             case 'App\Medium':          $title = $new_navigator_item['title'];
                                         $description = $new_navigator_item['description'];
-                                        $referenceable_id = $new_navigator_item['medium_id']; //$medium->getByFilemanagerPath($new_navigator_item['filepath'])->id;
+                                        $referenceable_id = $new_navigator_item['medium_id'];
                 break;
 
             default:
@@ -179,18 +179,18 @@ class NavigatorItemController extends Controller
         abort_unless(\Gate::allows('navigator_edit'), 403);
 
         $model = $navigatorItem->update([
-            'title'       => $request['title'],
+            'title' => $request['title'],
             'description' => Str::limit($request['description'], 200),
-            'position'    => format_select_input($request['position']),
-            'css_class'   => format_select_input($request['css_class']),
-            'visibility'  => format_select_input($request['visibility']),
+            'position' => format_select_input($request['position']),
+            'css_class' => format_select_input($request['css_class']),
+            'visibility' => format_select_input($request['visibility']),
         ]);
 
         if ($request['medium_id'] != null) {
             //first delete old subscriptions
             MediumSubscription::where([
-                'subscribable_type'=> get_class($navigatorItem),
-                'subscribable_id'=> $navigatorItem->id,
+                'subscribable_type' => get_class($navigatorItem),
+                'subscribable_id' => $navigatorItem->id,
             ])->delete();
             $medium = Medium::find(format_select_input($request['medium_id']));
             $medium->public = 1; //navigator items should be visible for all users

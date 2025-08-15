@@ -4,18 +4,90 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
 require('./bootstrap');
+require('tinymce/tinymce');
+//require('leaflet/dist/leaflet.js');
+require('@activix/bootstrap-datetimepicker');
 
 //vue
 window.Vue = require('vue').default;
 
+window.moment = require('moment');
+
+//security
+import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
+import DOMPurify from 'dompurify';
+const createWrapper = (inner) => {
+    return (el, binding) => {
+        if (binding.value === undefined || binding.value === null) {
+            return;
+        }
+        inner(el, binding);
+    };
+};
+const directive = buildVueDompurifyHTMLDirective({}, () => DOMPurify);
+Vue.directive(
+    'dompurify-html',
+    {
+        inserted: createWrapper(directive.inserted),
+        update: createWrapper(directive.update),
+        unbind(el) {
+            el.innerHTML = '';
+        },
+    }
+);
+
+//broadcasting
+import VueEcho from 'vue-echo';
+if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
+    Vue.use(VueEcho, {
+        broadcaster: 'pusher',
+        key: process.env.MIX_PUSHER_APP_KEY,
+        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+        useTLS: process.env.MIX_PUSHER_APP_USE_TLS === 'true',
+        forceTLS: process.env.MIX_PUSHER_APP_FORCE_TLS === 'true',
+        encrypted: process.env.MIX_PUSHER_APP_ENCRYPTED === 'true',
+        wsHost: window.location.hostname,
+        wssHost: window.location.hostname,
+        wsPort: process.env.MIX_PUSHER_APP_WSPORT,
+        wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
+        enableTransports: ['ws', 'wss']
+    });
+}
+
 // use trans function like in blade
 import _ from 'lodash'; //needed to get
 
+//todo: explain function
 Vue.prototype.trans = (key) => {
-    return _.get(window.trans, key, key);
+    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key) );
 };
+
+import "vue-swatches/dist/vue-swatches.css";
+
+
+Vue.prototype.$textcolor = (color, dark = '#000', light = '#fff') => {
+    if (typeof(color) != 'string'){
+        color = 'ffffff';
+    }
+
+    color = (color.charAt(0) === '#') ? color.substring(1, 7) : color;
+    //console.log(color);
+    var r = parseInt(color.substring(0, 2), 16); // hexToR
+    var g = parseInt(color.substring(2, 4), 16); // hexToG
+    var b = parseInt(color.substring(4, 6), 16); // hexToB
+    //console.log(r + ' ' + g + ' ' + b);
+    if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 140)
+    {
+        //console.log('black');
+        return dark;
+
+    } else {
+        //console.log('white');
+        return light;
+    }
+};
+
 
 /**
  * Store current ab in browser storage
@@ -26,6 +98,7 @@ Vue.prototype.trans = (key) => {
 Vue.prototype.setLocalStorage = (key, value) => {
     localStorage.setItem(key, value);
 };
+
 /**
  * check if current value is set in browser storage
  * example: :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
@@ -43,20 +116,75 @@ Vue.prototype.checkLocalStorage = (key, value, class_string = "active", is_defau
         return class_string;
     }
 };
+
+Vue.prototype.checkPermission = (permission) => {
+    return window.Laravel.permissions.indexOf(permission) !== -1;
+};
+
+/**
+ * Gets the text content of the HTML
+ * No HTML tags are included, but any text, including the text inside the tags, is included.
+ *
+ * @param {string} html Input HTML
+ * @returns The text content of the HTML
+ */
+Vue.prototype.htmlToText = (html) => {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html ?? '';
+    let map =
+        {
+            '&amp;': '&',
+            '&lt;': '<',
+            '&gt;': '>',
+            '&quot;': '"',
+            '&#039;': "'",
+            '&nbsp;': " ",
+            '&szlig;': "ß",
+            '&Auml;': 'Ä',
+            '&auml;': 'ä',
+            '&Uuml;': 'Ü',
+            '&uuml;': 'ü',
+            '&Ouml;': 'Ö',
+            '&ouml;': 'ö',
+            '&copy;': '©',
+        };
+
+    txt =  txt.value.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&nbsp;|&szlig;|&Auml;|&auml;|&Uuml;|&uuml;|&Ouml;|&ouml;|&copy;/g, function(m) {return map[m];})
+        .replace(/(?:\r\n|\r|\n)/g, '<br>')
+        .replace('<br>', ' ');
+
+    return txt.replace(/(&lt;|<)script.*?(&lt;|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, ' ');
+
+}
+
 /**
  * make userId accessible for vue
  * @type {string}
  */
-Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
-
+if (document.querySelector("meta[name='user-id']")){
+    Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
+}
 
 import VModal from 'vue-js-modal';
 
 Vue.use(VModal, {dynamic: true});
 
+import DataTable from 'laravel-vue-datatable';
+Vue.use(DataTable);
+
 import Sticky from 'vue-sticky-directive';
 
 Vue.use(Sticky);
+
+import Toast from 'vue-toastification';
+
+import 'vue-toastification/dist/index.css';
+
+Vue.use(Toast, {
+    transition: "Vue-Toastification__bounce",
+    maxToasts: 20,
+    newestOnTop: true
+});
 
 var filter = function (text, length, clamp) {
     clamp = clamp || '...';
@@ -75,62 +203,97 @@ Vue.filter('truncate', filter);
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
-Vue.component('organization-modal', require('./components/organization/OrganizationModal.vue').default);
-Vue.component('group-modal', require('./components/group/GroupModal.vue').default);
+Vue.component('organization-modal', () => import('./components/organization/OrganizationModal.vue'));
+Vue.component('group-modal', () => import('./components/group/GroupModal.vue'));
 
-Vue.component('admin-view', require('./components/admin/AdminView.vue').default);
-Vue.component('absence-modal', require('./components/absence/AbsenceModal.vue').default);
-Vue.component('curriculum-view', require('./components/curriculum/CurriculumView.vue').default);
-Vue.component('group-view', require('./components/group/GroupView.vue').default);
-Vue.component('terminal-objective-modal', require('./components/objectives/TerminalObjectiveModal.vue').default);
-Vue.component('data-table-widgets', require('./components/uiElements/DataTableWidgets.vue').default);
-Vue.component('enabling-objective-modal', require('./components/objectives/EnablingObjectiveModal.vue').default);
-Vue.component('events', require('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents').default);
-Vue.component('objective-view', require('./components/objectives/ObjectiveView.vue').default);
-Vue.component('objective-box', require('./components/objectives/ObjectiveBox.vue').default);
-Vue.component('dropdown-button', require('./components/uiElements/DropdownButton.vue').default);
-Vue.component('model-limiter', require('./components/config/ModelLimiter.vue').default);
-Vue.component('content-modal', require('./components/content/ContentModal.vue').default);
-Vue.component('content-create-modal', require('./components/content/ContentCreateModal.vue').default);
-Vue.component('content-subscription-modal', require('./components/content/ContentSubscriptionModal.vue').default);
-Vue.component('reference-objective-modal', require('./components/reference/ReferenceObjectiveModal.vue').default);
-Vue.component('medium-modal', require('./components/media/MediumModal.vue').default);
-Vue.component('medium-create-modal', require('./components/media/MediumCreateModal.vue').default);
-Vue.component('medium-export-modal', require('./components/media/MediumExportModal.vue').default);
-Vue.component('note-modal', require('./components/note/NoteModal.vue').default);
-Vue.component('notes', require('./components/note/Notes.vue').default);
-/*Vue.component('objective-medium-modal', require('./components/objectives/ObjectiveMediumModal.vue').default);*/
-Vue.component('certificate-generate-modal', require('./components/certificate/GenerateCertificateModal.vue').default);
-Vue.component('logbook', require('./components/logbooks/Logbook.vue').default);
-Vue.component('logbook-entry-modal', require('./components/logbooks/LogbookEntryModal.vue').default);
-Vue.component('subscribe-objective-modal', require('./components/objectives/SubscribeObjectiveModal.vue').default);
-Vue.component('objective-progress-subscription-modal', require('./components/objectives/ObjectiveProgressSubscriptionModal.vue').default);
-Vue.component('task-modal', require('./components/tasks/TaskModal.vue').default);
-Vue.component('task', require('./components/tasks/Task.vue').default);
-Vue.component('task-timeline', require('./components/tasks/Timeline.vue').default);
-Vue.component('kanban-board', require('./components/kanban/KanbanBoard.vue').default);
-Vue.component('subscribe-modal', require('./components/subscription/SubscribeModal.vue').default);
-Vue.component('sidebar', require('./components/uiElements/Sidebar.vue').default);
-Vue.component('move-terminal-objective-modal', require('./components/objectives/MoveTerminalObjectiveModal.vue').default);
-Vue.component('prerequisite-modal', require('./components/prerequisites/PrerequisiteObjectiveModal.vue').default);
-Vue.component('lms-modal', require('./../../app/Plugins/Lms/resources/js/components/Create.vue').default);
+Vue.component('admin-view', () => import('./components/admin/AdminView.vue'));
+Vue.component('absence-modal', () => import('./components/absence/AbsenceModal.vue'));
+Vue.component('curriculum-view', () => import('./components/curriculum/CurriculumView.vue'));
+Vue.component('group-view', () => import('./components/group/GroupView.vue'));
+Vue.component('terminal-objective-modal', () => import('./components/objectives/TerminalObjectiveModal.vue'));
+Vue.component('data-table-widgets', () => import('./components/uiElements/DataTableWidgets.vue'));
+Vue.component('enabling-objective-modal', () => import('./components/objectives/EnablingObjectiveModal.vue'));
+Vue.component('events', () => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents'));
+Vue.component('objective-view', () => import('./components/objectives/ObjectiveView.vue'));
+Vue.component('objective-box', () => import('./components/objectives/ObjectiveBox.vue'));
+Vue.component('dropdown-button', () => import('./components/uiElements/DropdownButton.vue'));
+Vue.component('model-limiter', () => import('./components/config/ModelLimiter.vue'));
+Vue.component('content-modal', () => import('./components/content/ContentModal.vue'));
+Vue.component('content-create-modal', () => import('./components/content/ContentCreateModal.vue'));
+Vue.component('content-subscription-modal', () => import('./components/content/ContentSubscriptionModal.vue'));
+Vue.component('curricula', () => import('./components/curriculum/Curricula.vue'));
+Vue.component('reference-objective-modal', () => import('./components/reference/ReferenceObjectiveModal.vue'));
+Vue.component('maps', () => import('./components/map/Maps.vue'));
+Vue.component('media-renderer', () => import('./components/media/MediaRenderer.vue'));
+Vue.component('medium-modal', () => import('./components/media/MediumModal.vue'));
+Vue.component('medium-create-modal', () => import('./components/media/MediumCreateModal.vue'));
+Vue.component('medium-export-modal', () => import('./components/media/MediumExportModal.vue'));
+Vue.component('meeting', () => import('./components/meeting/Meeting.vue'));
+Vue.component('note-modal', () => import('./components/note/NoteModal.vue'));
+Vue.component('notes', () => import('./components/note/Notes.vue'));
+/*Vue.component('objective-medium-modal', () => import('./components/objectives/ObjectiveMediumModal.vue'));*/
+Vue.component('certificate-generate-modal', () => import('./components/certificate/GenerateCertificateModal.vue'));
+Vue.component('logbook', () => import('./components/logbooks/Logbook.vue'));
+Vue.component('logbooks', () => import('./components/logbooks/Logbooks.vue'));
+Vue.component('logbook-entry-modal', () => import('./components/logbooks/LogbookEntryModal.vue'));
+Vue.component('logbook-entry-subject-modal', () => import('./components/logbooks/LogbookEntrySubjectModal.vue'));
+Vue.component('plan', () => import('./components/plan/Plan.vue'));
+Vue.component('plans', () => import('./components/plan/Plans.vue'));
+Vue.component('plan-achievements', () => import('./components/plan/PlanAchievements.vue'));
+Vue.component('subscribe-objective-modal', () => import('./components/objectives/SubscribeObjectiveModal.vue'));
+Vue.component('set-achievements-modal', () => import('./components/plan/SetAchievementsModal.vue'));
+Vue.component('plan-achievements-options-modal', () => import('./components/plan/PlanAchievementsOptionsModal.vue'));
+Vue.component('select-users-modal', () => import('./components/users/SelectUsersModal.vue'));
+Vue.component('objective-progress-subscription-modal', () => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue'));
+Vue.component('task-modal', () => import('./components/tasks/TaskModal.vue'));
+Vue.component('task', () => import('./components/tasks/Task.vue'));
+Vue.component('task-timeline', () => import('./components/tasks/Timeline.vue'));
+Vue.component('training', () => import('./components/training/Training'));
+Vue.component('kanbans', () => import('./components/kanban/Kanbans.vue'));
+Vue.component('kanban-board', () => import('./components/kanban/KanbanBoard.vue'));
+Vue.component('subscribe-modal', () => import('./components/subscription/SubscribeModal.vue'));
+Vue.component('sidebar', () => import('./components/uiElements/Sidebar.vue'));
+Vue.component('move-terminal-objective-modal', () => import('./components/objectives/MoveTerminalObjectiveModal.vue'));
+Vue.component('prerequisite-modal', () => import('./components/prerequisites/PrerequisiteObjectiveModal.vue'));
+Vue.component('lms-modal', () => import('./../../app/Plugins/Lms/resources/js/components/Create.vue'));
+Vue.component('color-picker-component', () => import('./components/kanban/ColorPickerComponent.vue'));
+Vue.component('color-picker-input', () => import('./components/kanban/ColorPickerInput.vue'));
+Vue.component('leaflet-map', () => import('./components/map/Map.vue'));
+Vue.component('searchbar', () => import('./components/uiElements/Searchbar.vue'));
+Vue.component('date-picker-wrapper', () => import('./components/uiElements/DatePickerWrapper.vue'));
+Vue.component('videoconference', () => import('./components/videoconference/Videoconference.vue'));
+Vue.component('videoconferences', () => import('./components/videoconference/Videoconferences.vue'));
 
-Vue.prototype.$initTinyMCE = function (options) {
+Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
+
+Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null, customToolbar1 = null, customToolbar2 = null, extended_valid_elements = null) {
+
+    const defaultPlugins = [
+        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+        "searchreplace wordcount visualblocks visualchars code fullscreen",
+        "insertdatetime media nonbreaking save table directionality",
+        "emoticons template paste textpattern example"
+    ];
+
     tinymce.remove();
     tinymce.init({
+        // allows adding additional attributes for specific cases
+        // attributes can be overwritten if they are set BEFORE this line
+        ...attr,
+
         path_absolute : "/",
         selector: "textarea.my-editor",
-        branding:false,
-        plugins: [
-            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-            "searchreplace wordcount visualblocks visualchars code fullscreen",
-            "insertdatetime media nonbreaking save table directionality",
-            "emoticons template paste textpattern example"
-        ],
+        branding: false,
+        plugins: tinyMcePlugins ?? defaultPlugins,
         external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
-        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | mathjax link image media example ",
+        menubar: "edit format",
+        toolbar1: customToolbar1 ?? "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify",
+        toolbar2: customToolbar2 ?? "bullist numlist outdent indent | example mathjax link image media code",
+        extended_valid_elements: extended_valid_elements ?? '',
+        font_size_input_default_unit: "pt",
         relative_urls: false,
         entity_encoding : "raw",
+        language: 'de',
 
         mathjax: {
             lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax
@@ -148,11 +311,17 @@ Vue.prototype.$initTinyMCE = function (options) {
 
     tinymce.PluginManager.add('example', function(editor, url) {
         var openDialog = function () {
-            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', {'public': 1 });
-            $('#medium_id').on('change', function() {
-                //reload thumbs
-                editor.insertContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
-            });
+            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', attr);
+
+            if (!document.querySelector("#app").__vue__.$eventHub._events.insertContent){
+                document.querySelector("#app").__vue__.$eventHub.$on('insertContent', (event) => {
+                    console.log(event);
+                    if (attr.eventHubCallbackFunctionParams == event.id) {
+                        editor.insertContent('<img src="/media/'+ event.selectedMediumId +'?preview=true" width="500">', {format: 'raw'});
+                    }
+                    document.querySelector("#app").__vue__.$eventHub._events.insertContent = undefined; //destroy listener to prevent multiple inserts on 2nd, 3rd.. time
+                });
+            }
         };
 
         // Add a button that opens a window
@@ -248,6 +417,22 @@ Vue.directive('permission', function (el, binding, vnode) {
 
 });
 
+/**
+ *
+ * global eventHub
+ *
+ * How to add a receiver:
+ * created() {
+ *     this.$eventHub.$on('reload_agenda', (params) => {
+ *         // do something
+ *     });
+ * },
+ *
+ * how to add a sender
+ * this.$eventHub.$emit('reload_agenda', params);
+ * @type {Vue}
+ */
+Vue.prototype.$eventHub = new Vue();
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -255,7 +440,7 @@ Vue.directive('permission', function (el, binding, vnode) {
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 var app = new Vue({
-    el: '#app',
+    el: '#app'
 
 });
 

@@ -37,12 +37,12 @@
                     class="badge  p-1 mt-1"
                     :class="[absence.done === 1 ? 'badge-success' : 'badge-danger']">
                     <i class="far fa-clock"></i>
-                    <span v-html="absence.created_at"></span>
+                    <span v-dompurify-html="absence.created_at"></span>
                 </small><br>
                 <small class="badge badge-success  p-1 mt-1"
                        v-if="(absence.updated_at !== absence.created_at) && (absence.done === 1)">
                     <i class="fa fa-check"></i>
-                    <span v-html="absence.updated_at"></span>
+                    <span v-dompurify-html="absence.updated_at"></span>
                 </small>
             </span>
         </li>

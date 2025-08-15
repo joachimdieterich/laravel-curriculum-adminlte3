@@ -7,9 +7,11 @@
                 class="text-decoration-none text-black">
                     <div class="info-box elevation-1" :style="styles">
                         <div class="info-box-content">
-                            <span class="pull-right bg-gray-light" v-html="entry.action"></span>
+                            <span class="pull-right bg-gray-light" v-dompurify-html="entry.action"></span>
                             <span class="text-white">{{ entry.title }}</span><br>
-                            <span class="pt-2 text-white small" v-html="decodeHtml(entry.description)"></span>
+                            <span class="pt-2 text-white small">
+                                {{ htmlToText(entry.description) }}
+                            </span>
                         </div>
                     </div>
                 </a>
@@ -17,18 +19,20 @@
             <span v-else>
                 <a :href="modelUrl+'/'+entry.id"
                     class="text-decoration-none text-black">
-                    <div class="info-box elevation-1">
-                        <span  class="info-box-icon bg-info elevation-1">
+                    <div class="info-box elevation-1" :style="'border-bottom: 5px solid ' + entry.color">
+                        <span  class="info-box-icon bg-info elevation-1" :style="{backgroundColor: entry.color + ' !important'}">
                             <i v-if="modelUrl == 'logbooks'" class="fa fa-book"></i>
                             <i v-if="modelUrl == 'kanbans'" class="fa fa-columns"></i>
-<!--                            <img :src="'media/'+entry.medium_id" class="img-rounded"/>-->
+    <!--                            <img :src="'media/'+entry.medium_id" class="img-rounded"/>-->
                         </span>
 
 
                         <div class="info-box-content">
                             <span class="pull-right" v-html="entry.action"></span>
-                            <span class="info-box-text"><strong>{{ entry.title }}</strong></span>
-                            <span class="pt-2 " v-html="decodeHtml(entry.description)"></span>
+                            <span class="info-box-text"><strong v-dompurify-html="entry.title"></strong></span>
+                            <span class="pt-2 ">
+                                {{ htmlToText(entry.description) }}
+                            </span>
                         </div>
                     </div>
                 </a>
@@ -55,14 +59,7 @@
                // console.log(error);
                 });
         },
-         methods: {
-            decodeHtml(html) {
-                var txt = document.createElement("textarea");
-                txt.innerHTML = html;
-                return txt.value.replace(/<[^>]+>/g, '');
-            },
-
-         },
+         methods: {},
          computed: {
                 styles() {
                     return {

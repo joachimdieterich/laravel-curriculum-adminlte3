@@ -14,20 +14,20 @@
                  x-placement="top-start"
                  style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -2px, 0px);">
                 <span v-for="entry in Entries">
-                    <hr v-if="entry.hr === true ">
-                    <button v-else-if="entry.action === 'update' "
+                    <hr v-if="entry.hr === true" style="margin: 0.4rem 0;">
+                    <button v-else-if="entry.action === 'edit' "
                             class="dropdown-item"
                             @click="editObjective(entry)">
                         <i class="mr-4"
                            v-bind:class="entry.icon"></i>
-                        {{ entry.title }}
+                        {{ trans('global.terminalObjective.edit') }}
                     </button>
                     <button v-else-if="entry.action === 'move' "
                             class="dropdown-item"
                             @click="moveObjective(entry)">
                         <i class="mr-4"
                            v-bind:class="entry.icon"></i>
-                        {{ entry.title }}
+                        {{ trans('global.terminalObjective.move') }}
                     </button>
                     <button v-else-if="entry.action === 'resetOrderIds' "
                             class="dropdown-item"
@@ -37,10 +37,10 @@
                         {{ entry.title }}
                     </button>
                     <button v-else-if="entry.action === 'delete' "
-                            class="dropdown-item"
+                            class="dropdown-item text-danger"
                             @click="emitDeleteEvent()">
                         <i class="mr-4" v-bind:class="entry.icon"></i>
-                        {{ entry.title }}
+                        {{ trans('global.terminalObjective.delete') }}
                     </button>
                     <button v-else
                             class="dropdown-item"
@@ -81,7 +81,8 @@
                 this.$modal.show(entry.value, {'objective': this.objective, 'method': 'PATCH' });
             },
             emitDeleteEvent() {
-                this.$parent.$emit('eventDelete', this.objective)
+                this.$eventHub.$emit('deleteObjective', this.objective);
+                //this.$parent.$emit('eventDelete', this.objective)
             },
             action(entry) {
                 this.$modal.show(entry.value);

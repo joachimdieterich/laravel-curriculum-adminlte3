@@ -244,11 +244,10 @@ html.maximized-card {
     margin: 0;
     white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;
     max-width: 80%;
 }
 
-.card-text {
+.card-text, .clearfix {
   clear: both;
 }
 
@@ -336,10 +335,6 @@ html.maximized-card {
 
     &:last-of-type {
       border-bottom: 0;
-    }
-
-    &:first-of-type {
-      padding-top: 0;
     }
 
     img {

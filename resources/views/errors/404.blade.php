@@ -2,4 +2,4 @@
 
 @section('title', __('Not Found'))
 @section('code', '404')
-@section('message', __('global.code_404'))
+@section('message', trans('global.code_404'))

@@ -48,9 +48,9 @@ class CurriculumEnrollmentTest extends TestCase
         ]);
 
         foreach ($enrollment_list as $entry) {
-            $this->assertDatabaseHas('curriculum_group', [
+            $this->assertDatabaseHas('curriculum_subscriptions', [
                 'curriculum_id' => $entry['curriculum_id'],
-                'group_id' => $entry['group_id'],
+                'subscribable_id' => $entry['group_id'],
             ]);
         }
     }
@@ -83,9 +83,9 @@ class CurriculumEnrollmentTest extends TestCase
         ]);
 
         foreach ($enrollment_list as $entry) {
-            $this->assertDatabaseHas('curriculum_group', [
+            $this->assertDatabaseHas('curriculum_subscriptions', [
                 'curriculum_id' => $entry['curriculum_id'],
-                'group_id' => $entry['group_id'],
+                'subscribable_id' => $entry['group_id'],
             ]);
         }
 
@@ -93,9 +93,9 @@ class CurriculumEnrollmentTest extends TestCase
         $this->delete('curricula/expel', ['expel_list' => $enrollment_list]);
 
         foreach ($enrollment_list as $entry) {
-            $this->assertDatabaseMissing('curriculum_group', [
+            $this->assertDatabaseMissing('curriculum_subscriptions', [
                 'curriculum_id' => $entry['curriculum_id'],
-                'group_id' => $entry['group_id'],
+                'subscribable_id' => $entry['group_id'],
             ]);
         }
     }

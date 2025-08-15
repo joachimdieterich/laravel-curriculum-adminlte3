@@ -54,14 +54,14 @@ class OrganizationTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $organization = Organization::create([
-                'title'         => 'DuskTest',
-                'description'   => 'DuskTest Description',
-                'street'        => 'Dusk Street',
-                'postcode'      => '12345',
-                'city'          => 'Dusk City',
-                'phone'         => '0123 456789',
-                'email'         => 'dusk@curriculumonline.de',
-                'status_id'     => 1,
+                'title' => 'DuskTest',
+                'description' => 'DuskTest Description',
+                'street' => 'Dusk Street',
+                'postcode' => '12345',
+                'city' => 'Dusk City',
+                'phone' => '0123 456789',
+                'email' => 'dusk@curriculumonline.de',
+                'status_id' => 1,
             ]);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\OrganizationPage)
@@ -87,14 +87,14 @@ class OrganizationTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $organization = Organization::create([
-                'title'         => 'DuskTest',
-                'description'   => 'DuskTest Description',
-                'street'        => 'Dusk Street',
-                'postcode'      => '12345',
-                'city'          => 'Dusk City',
-                'phone'         => '0123 456789',
-                'email'         => 'dusk@curriculumonline.de',
-                'status_id'        => 1,
+                'title' => 'DuskTest',
+                'description' => 'DuskTest Description',
+                'street' => 'Dusk Street',
+                'postcode' => '12345',
+                'city' => 'Dusk City',
+                'phone' => '0123 456789',
+                'email' => 'dusk@curriculumonline.de',
+                'status_id' => 1,
             ]);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\OrganizationPage)
@@ -117,14 +117,14 @@ class OrganizationTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $organization = Organization::create([
-                'title'         => 'DuskTest',
-                'description'   => 'DuskTest Description',
-                'street'        => 'Dusk Street',
-                'postcode'      => '12345',
-                'city'          => 'Dusk City',
-                'phone'         => '0123 456789',
-                'email'         => 'dusk@curriculumonline.de',
-                'status_id'        => 1,
+                'title' => 'DuskTest',
+                'description' => 'DuskTest Description',
+                'street' => 'Dusk Street',
+                'postcode' => '12345',
+                'city' => 'Dusk City',
+                'phone' => '0123 456789',
+                'email' => 'dusk@curriculumonline.de',
+                'status_id' => 1,
             ]);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\OrganizationPage)

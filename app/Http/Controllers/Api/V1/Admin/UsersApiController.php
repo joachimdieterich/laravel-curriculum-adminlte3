@@ -3,16 +3,27 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\VideoconferenceController;
 use App\Notifications\Welcome;
+use App\Organization;
 use App\User;
+use App\Videoconference;
 
 class UsersApiController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        if (request()->common_name)
+        {
+            return  User::where('common_name', request()->common_name)->get();
+        }
+        else
+        {
+            $users = User::all();
 
-        return $users;
+            return $users;
+        }
+
     }
 
     public function store()
@@ -91,16 +102,20 @@ class UsersApiController extends Controller
     public function dashboard(User $user)
     {
         //Dummy fullcalendar event
-        $event = [
+       /* $event = [
             'Event from curriculum', //event title
             false, //full day event?
             '2019-08-02 10:00:00 UTC+2', //start time, must be a DateTime object or valid DateTime format (http://bit.ly/1z7QWbg)
             '2019-08-02 12:00:00 UTC+2', //end time, must be a DateTime object or valid DateTime format (http://bit.ly/1z7QWbg),
             1, //optional event ID
-        ];
+        ];*/
 
-        return ['enrollments' => $user->currentGroups()->with(['curricula'])->get(), //todo: select only used fields of curricula
-            'notifications' => $user->notifications,
+        return ['enrollments' => $user->currentGroups()
+                                      ->select('groups.id', 'groups.title')
+                                      ->with(['curricula'=> function ($query) {
+                                            $query->select('curricula.id', 'curricula.title');
+                                       }])->get(),
+            'notifications' => [/*$user->notifications*/],
             'events' => [/*$event*/],
         ];
     }

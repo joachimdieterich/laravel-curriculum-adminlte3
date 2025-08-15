@@ -1,11 +1,13 @@
 <template >
 
     <ul class="products-list product-list-in-card pl-2 pr-2">
-        <li v-if="filterSubscriptions().length != 0">&nbsp;
-            <span class="btn btn-flat pull-right py-0"><small>{{ trans('global.can_edit') }}</small></span>
+        <li v-if="filterSubscriptions.length != 0">&nbsp;
+            <span class="btn btn-flat pull-right py-0">
+                <small>{{ canEditLabel }}</small>
+            </span>
         </li>
         <li style="clear:right;"
-            v-for="(item,index) in filterSubscriptions()"
+            v-for="(item,index) in filterSubscriptions"
             :id="'subscription_'+item.id"
             v-bind:value="item.id"
             v-if="item.subscribable_type === subscribing_model"
@@ -17,7 +19,8 @@
             {{ item.subscribable.title }}
             </span>
 
-            <span class="pull-right custom-control custom-switch custom-switch-on-green">
+            <span v-if="canEditCheckbox"
+                  class="pull-right custom-control custom-switch custom-switch-on-green">
                 <input  v-model="item.editable"
                         type="checkbox"
                         class="custom-control-input pt-1 "
@@ -27,7 +30,6 @@
             </span>
 
             <span class="pull-right pr-2" ></span>
-
 
             <button class="btn btn-flat py-0 pull-right"
                 @click="unsubscribe(item.id)">
@@ -43,14 +45,27 @@
 
     export default {
         props: {
-                modelUrl: String,
-                subscriptions: {},
-                subscribing_model: String,
-              },
+            modelUrl: String,
+            subscriptions: {},
+            subscribing_model: String,
+            canEditLabel: String,
+            canEditCheckbox: {
+                type: Boolean,
+                default: true
+            }
+        },
         data() {
             return {
                 errors: {}
             }
+        },
+        computed: {
+            filterSubscriptions() {
+                    return this.subscriptions.filter(
+                        s => s.subscribable_type === this.subscribing_model
+                    );
+                }
+
         },
         methods: {
 
@@ -70,11 +85,7 @@
                 }
 
             },
-            filterSubscriptions() {
-                return  this.subscriptions.filter(
-                    s => s.subscribable_type === this.subscribing_model
-                );
-            }
+
 
         },
 

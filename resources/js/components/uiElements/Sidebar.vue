@@ -261,9 +261,13 @@
 </template>
 
 <script>
-    import moment from 'moment';
-    import Form from 'form-backend-validation';
-    import Avatar from "../uiElements/Avatar";
+const moment =
+    () => import('moment');
+import Form from 'form-backend-validation';
+const Avatar =
+    () => import('../uiElements/Avatar');
+ /*   import moment from 'moment';
+    import Avatar from "../uiElements/Avatar";*/
 
     export default {
         props: ['user'],

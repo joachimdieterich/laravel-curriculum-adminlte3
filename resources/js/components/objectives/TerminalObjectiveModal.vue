@@ -106,12 +106,15 @@
 </template>
 
 <script>
-    import Form from 'form-backend-validation';
-    import ColorPicker from '../uiElements/ColorPicker';
+import Form from 'form-backend-validation';
+const ColorPicker =
+    () => import('../uiElements/ColorPicker');
+    /*  import ColorPicker from '../uiElements/ColorPicker';*/
 
     export default {
         data() {
             return {
+                component_id: this._uid,
                 value: null,
                 objectiveTypes: [],
                 method: 'post',
@@ -168,7 +171,15 @@
                 }
             },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ], {
+                    'public': 1,
+                    'referenceable_type': 'App\\\Curriculum',
+                    'referenceable_id': this.form.curriculum_id,
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id
+                });
                 this.initSelect2();
             },
             initSelect2(){
@@ -204,10 +215,10 @@
 
                 if (method === 'patch') {
                     this.form.patch( this.requestUrl + '/' + this.form.id)
-                        .then(response => this.$parent.$emit('addTerminalObjective', response.message));
+                        .then(response => this.$eventHub.$emit('addTerminalObjective', response.message));
                 } else {
                     this.form.post(this.requestUrl)
-                        .then(response =>  this.$parent.$emit('addTerminalObjective', response.message));
+                        .then(response =>  this.$eventHub.$emit('addTerminalObjective', response.message));
                 }
                 this.close();
 

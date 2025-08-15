@@ -77,7 +77,12 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        if ((env('SAML2_RLP_IDP_SSO_URL') !== null) and (! empty(env('SAML2_RLP_IDP_SSO_URL')))) {
+        if (
+            (env('SAML2_RLP_IDP_SSO_URL') !== null)
+            and (! empty(env('SAML2_RLP_IDP_SSO_URL')))
+            and (auth()->user()->id !== env('GUEST_USER'))
+        )
+        {
             return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout",
                 [
                     'idpName'       => 'rlp', //todo: add use dynamic value (env?)
@@ -85,14 +90,23 @@ class LoginController extends Controller
                     'sessionIndex'  => $request->session()->get('sessionIndex'),
                     'nameId'        => $request->session()->get('nameId'),
                 ]);
-        } else {
+        }
+        else
+        {
             $this->guard()->logout();
 
             $request->session()->invalidate();
 
             $request->session()->regenerateToken();
 
-            return $this->loggedOut($request) ?: redirect('/');
+            if (env('BRAND_MENU_HREF_1'))
+            {
+                return $this->loggedOut($request) ?: redirect(env('BRAND_MENU_HREF_1'));
+            }
+            else
+            {
+                return $this->loggedOut($request) ?: redirect('/');
+            }
         }
     }
 }

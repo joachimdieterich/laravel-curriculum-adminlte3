@@ -104,6 +104,14 @@
                         </pie-chart>
                     </span>
                     <span class="col-6 mt-1">
+                        <pie-chart id="kanbans_chart"
+                                   :title=" trans('global.kanban.title')"
+                                   chart="kanbans"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
+                    </span>
+                    <span class="col-6 mt-1">
                         <pie-chart id="curricula_chart"
                                    :title="trans('global.active')+ ' ' + trans('global.curriculum.title')"
                                    chart="curricula"
@@ -135,8 +143,26 @@
                                    :date_end="date_end">
                         </pie-chart>
                     </span>
+                    <span class="col-6 mt-1">
+                        <pie-chart id="bbbPlugin_chart"
+                                   :title="trans('global.videoconference.title')"
+                                   chart="bbbPlugin"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
+                    </span>
+                    <span class="col-6 mt-1">
+                        <pie-chart id="bbbPlugin_chart"
+                                   :title="trans('global.videoconference.title')"
+                                   chart="bbbPluginParticipants"
+                                   :date_begin="date_begin"
+                                   :date_end="date_end">
+                        </pie-chart>
+                    </span>
                     <span class="col-12 mt-1">
-                        <logins :date_begin="date_begin" :date_end="date_end"></logins>
+                        <logins id="login_chart"
+                                :date_begin="date_begin"
+                                :date_end="date_end"></logins>
                     </span>
 
                 </div>
@@ -160,8 +186,12 @@
 </template>
 
 <script>
-    import Logins from '../statistic/Logins';
-    import PieChart from "../statistic/PieChart";
+const Logins =
+    () => import('../statistic/Logins');
+const PieChart =
+    () => import('../statistic/PieChart');
+    //import Logins from '../statistic/Logins';
+    //import PieChart from "../statistic/PieChart";
 
     export default {
         props: {

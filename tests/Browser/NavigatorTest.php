@@ -41,8 +41,8 @@ class NavigatorTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\NavigatorPage)
@@ -63,8 +63,8 @@ class NavigatorTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\NavigatorPage)
@@ -87,12 +87,12 @@ class NavigatorTest extends DuskTestCase
     {
         $this->browse(function (Browser $admin) {
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator',
+                'organization_id' => 1,
             ]);
             $navigator = Navigator::create([
-                'title'             => 'DuskNavigator2',
-                'organization_id'   => 1,
+                'title' => 'DuskNavigator2',
+                'organization_id' => 1,
             ]);
             $admin->loginAs(User::find(1))
                     ->visit(new Pages\NavigatorPage)

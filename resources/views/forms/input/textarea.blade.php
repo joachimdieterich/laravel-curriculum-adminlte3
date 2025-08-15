@@ -1,23 +1,25 @@
 <div id="{{ $field }}_form_group" class="form-group {{ $errors->has( $field ) ? 'has-error' : '' }}">
     <label for="{{ $field }}">
         {{ trans('global.'.$model.'.fields.'.$field) }}
-        @if(isset($required)) 
-            * 
+        @if(isset($required))
+            *
         @endif
     </label>
     <textarea
-        id="{{ $field }}" 
-        name="{{ $field }}" 
+        id="{{ $field }}"
+        name="{{ $field }}"
         class="form-control description my-editor "
         rows="{{ $rows }}"
-        placeholder="{{ __( $placeholder ?? '') }}" 
-        @if(isset($required)) 
-         required 
+        @if(isset($placeholder))
+            placeholder="{{ __($placeholder) }}"
+        @endif
+        @if(isset($required))
+         required
         @endif
         >
         {{ $value }}
     </textarea>
-    
+
     @if($errors->has($field))
         <p class="help-block">
             {{ $errors->first($field) }}
@@ -30,45 +32,68 @@
 
 @section('styles')
 @parent
-    <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
+    <!--script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script-->
 @endsection
 @section('scripts')
 @parent
 <script>
+    var editor_config_plugins =
+        @if(isset($editor_config_plugins))
+            @json($editor_config_plugins)
+    @else
+            [
+                "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                "searchreplace wordcount visualblocks visualchars code fullscreen",
+                "insertdatetime media nonbreaking save table directionality",
+                "emoticons template paste textpattern"
+            ]
+    @endif
+    ;
+    var editor_config_toolbar =
+      @if(isset($editor_config_toolbar))
+          "{{ $editor_config_toolbar }}"
+      @else
+          "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media"
+      @endif
+    ;
+
   var editor_config = {
     path_absolute : "/",
     selector: "textarea.my-editor",
     branding:false,
-    plugins: [
-      "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-      "searchreplace wordcount visualblocks visualchars code fullscreen",
-      "insertdatetime media nonbreaking save table directionality",
-      "emoticons template paste textpattern"
-    ],
-    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+    language: 'de',
+    plugins: editor_config_plugins,
+    toolbar: editor_config_toolbar,
     relative_urls: false,
-    file_browser_callback : function(field_name, url, type, win) {
-      var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-      var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
-
-      var cmsURL = editor_config.path_absolute + 'laravel-filemanager?field_name=' + field_name;
-//      if (type == 'image') {
-//        cmsURL = cmsURL + "&type=Images";
-//      } else {
-        cmsURL = cmsURL + "&type=Files";
-      //}
-
-      tinyMCE.activeEditor.windowManager.open({
-        file : cmsURL,
-        title : 'Filemanager',
-        width : x * 0.8,
-        height : y * 0.8,
-        resizable : "yes",
-        close_previous : "no"
-      });
-    }
   };
 
   tinymce.init(editor_config);
+    tinymce.PluginManager.add('example', function(editor, url) {
+        var openDialog = function () {
+            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', {'public': 1 });
+            $('#medium_id').on('change', function() {
+                //reload thumbs
+                editor.insertContent('<img src="/media/'+ document.getElementById('medium_id').value +'" width="500">', {format: 'raw'});
+            });
+        };
+
+        // Add a button that opens a window
+        editor.ui.registry.addButton('example', {
+            text: 'Medien',
+            onAction: function ()  {
+                // Open window
+                openDialog();
+            }
+        });
+
+        return {
+            getMetadata: function () {
+                return  {
+                    name: 'Curriculum Media Plugin',
+                    url: 'http://curriculumonline.de'
+                };
+            }
+        };
+    });
 </script>
 @endsection

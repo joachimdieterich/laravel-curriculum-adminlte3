@@ -5,7 +5,7 @@
         <div class="col-lg-12 p4">
             <h2>{{ $terms->title }}</h2>
             <div>{{ $terms->content }}</div>
-            
+
         </div>
     </div>
 </div>
@@ -15,3 +15,5 @@
 @parent
 
 @endsection
+
+

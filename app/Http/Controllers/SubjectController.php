@@ -4,11 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Subject;
 use Yajra\DataTables\DataTables;
+use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
     public function index()
     {
+        // select2 request
+        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+            if (is_admin()) {
+                abort_unless(\Gate::allows('subject_access'), 403);
+
+                return getEntriesForSelect2ByModel(
+                    "App\Subject"
+                );
+            } else { // TODO: only get subjects in reference with teacher(?)
+                return getEntriesForSelect2ByModel(
+                    "App\Subject"
+                );
+            }
+        } else {
+            if (request()->wantsJson()) {
+                return Subject::all();
+            }
+        }
         abort_unless(\Gate::allows('subject_access'), 403);
 
         return view('subjects.index');
@@ -39,7 +58,7 @@ class SubjectController extends Controller
                 if ($delete_gate) {
                     $actions .= '<button type="button" '
                         .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.')">'
+                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.');">'
                         .'<i class="fa fa-trash"></i></button>';
                 }
 
@@ -49,6 +68,12 @@ class SubjectController extends Controller
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
+    }
+
+    public function getSubject(Request $request)
+    {
+        abort_unless(\Gate::allows('subject_access'), 403);
+        return Subject::select('title')->where('id', $request->id)->get();
     }
 
     public function create()
@@ -64,9 +89,9 @@ class SubjectController extends Controller
         $new_subject = $this->validateRequest();
 
         Subject::create([
-            'title'         => $new_subject['title'],
-            'title_short'   => $new_subject['title_short'],
-            'external_id'   => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
+            'title' => $new_subject['title'],
+            'title_short' => $new_subject['title_short'],
+            'external_id' => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
             'organization_type_id' => 1, // todo: is this used?
 
         ]);
@@ -88,9 +113,9 @@ class SubjectController extends Controller
 
         $new_subject = $this->validateRequest();
         $subject->update([
-            'title'         => $new_subject['title'],
-            'title_short'   => $new_subject['title_short'],
-            'external_id'   => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
+            'title' => $new_subject['title'],
+            'title_short' => $new_subject['title_short'],
+            'external_id' => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
             'organization_type_id' => 1, // todo: is this used?
         ]);
 
@@ -116,9 +141,9 @@ class SubjectController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'title'                => 'sometimes|required',
-            'title_short'          => 'sometimes|required',
-            'external_id'          => 'sometimes',
+            'title' => 'sometimes|required',
+            'title_short' => 'sometimes|required',
+            'external_id' => 'sometimes',
             'organization_type_id' => 'sometimes',
 
         ]);

@@ -99,10 +99,10 @@ class TaskController extends Controller
 
         $input = $this->validateRequest();
         $task->update([
-            'title'             => $input['title'],
-            'description'       => $input['description'],
-            'start_date'        => $input['start_date'],
-            'due_date'          => $input['due_date'],
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'start_date' => $input['start_date'],
+            'due_date' => $input['due_date'],
         ]);
 
         if (request()->wantsJson()) {

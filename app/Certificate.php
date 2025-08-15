@@ -17,6 +17,10 @@ class Certificate extends Model
         'created_at',
     ];
 
+    protected $casts = [
+        'global' => 'boolean',
+    ];
+
     /**
      * Prepare a date for array / JSON serialization.
      *

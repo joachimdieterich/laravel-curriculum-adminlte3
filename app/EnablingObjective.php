@@ -3,8 +3,8 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class EnablingObjective extends Model
 {
@@ -147,6 +147,11 @@ class EnablingObjective extends Model
     public function successors()
     {
         return $this->morphMany('App\Prerequisites', 'predecessor');
+    }
+
+    public function variants()
+    {
+        return $this->morphMany('App\Variant', 'referenceable');
     }
 
     public function isAccessible()

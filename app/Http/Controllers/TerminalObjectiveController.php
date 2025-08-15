@@ -46,12 +46,12 @@ class TerminalObjectiveController extends Controller
         abort_unless($terminalObjective->isAccessible(), 403);
 
         $objective = TerminalObjective::where('id', $terminalObjective->id)
-            ->with(['curriculum', 'curriculum.subject',
+            ->with(['curriculum', 'curriculum.subject', 'variants',
                 'enablingObjectives',
                 'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable', ])
             ->get()->first();
 
-        $repository = Config::where('key', 'repository')->get()->first();
+        $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
 
         return view('objectives.show')
             ->with(compact('objective'))
@@ -128,7 +128,7 @@ class TerminalObjectiveController extends Controller
         abort_unless((\Gate::allows('objective_delete') and $terminalObjective->isAccessible()), 403);
 
         //set temp vars
-        $curriculum_id = $terminalObjective->curiculum_id;
+        $curriculum_id = $terminalObjective->curriculum_id;
         $objective_type_id = $terminalObjective->objective_type_id;
         $order_id = $terminalObjective->order_id;
 
@@ -221,7 +221,7 @@ class TerminalObjectiveController extends Controller
         }
 
         if (count($siblings) == 0) { //end early
-            return ['message'=> 'no subscriptions'];
+            return ['message' => 'no subscriptions'];
         }
 
         foreach ($siblings as $sibling) {

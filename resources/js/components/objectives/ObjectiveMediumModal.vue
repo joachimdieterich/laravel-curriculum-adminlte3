@@ -1,8 +1,8 @@
 <template>
-    <modal 
-        id="objective-medium-modal" 
-        name="objective-medium-modal" 
-        height="auto" 
+    <modal
+        id="objective-medium-modal"
+        name="objective-medium-modal"
+        height="auto"
         width="100%"
         :maxWidth=900
         :adaptive=true
@@ -29,38 +29,38 @@
             <div class="card-body pt-2" style="max-height: 80vh; overflow-y: auto;">
                 <ul class="nav nav-pills pb-2">
                     <li v-for="typetab in typetabs" class="nav-item pl-0">
-                        <a class="nav-link " :href="'#tab_' + typetab.id" 
+                        <a class="nav-link " :href="'#tab_' + typetab.id"
                             :class="(activetab == typetab.id) ? 'active' : ''"
                             @click="setActiveTab(typetab)"
                             data-toggle="tab">
                             {{ typetab.title }}
                         </a>
                     </li>
-                </ul> 
+                </ul>
 
-                <div class="tab-content"> 
+                <div class="tab-content">
                 <!--                    1 Files -->
-                <div class="tab-pane" id="'tab_1'"  
+                <div class="tab-pane" id="'tab_1'"
                      :class="(activetab == 1) ? 'active show' : ''">
                      <div class="row">
                         <div class="px-2" v-for="subscription in media_subscriptions" >
                              <medium :subscription="subscription" :medium="match(subscription.medium_id)" ></medium>
-                       </div>     
+                       </div>
                     </div>
                 </div><!-- /.tab-pane -->
                 <!--                  2  References -->
-                <div class="tab-pane" id="'tab_2'"  
+                <div class="tab-pane" id="'tab_2'"
                      :class="(activetab == 2) ? 'active show' : ''">
                      <references
-                        :reference_subscriptions="reference_subscriptions" 
-                        :curricula_list="curricula_list" 
+                        :reference_subscriptions="reference_subscriptions"
+                        :curricula_list="curricula_list"
                         ></references>
                 </div><!-- /.tab-pane -->
                 <!--                  3  Quotes -->
-                <div class="tab-pane" id="'tab_3'"  
+                <div class="tab-pane" id="'tab_3'"
                      :class="(activetab == 3) ? 'active show' : ''">
-                     <quotes 
-                        :quote_subscriptions="quote_subscriptions" 
+                     <quotes
+                        :quote_subscriptions="quote_subscriptions"
                         :quote_curricula_list="quote_curricula_list"
                         ></quotes>
                 </div><!-- /.tab-pane -->
@@ -70,9 +70,9 @@
         </div>
         <div class="card-footer">
             <span class="pull-right">
-                <button type="button" 
-                        class="btn btn-info" 
-                        data-widget="remove" 
+                <button type="button"
+                        class="btn btn-info"
+                        data-widget="remove"
                         @click="close()">
                     {{ trans('global.close') }}
                 </button>
@@ -84,9 +84,15 @@
 </template>
 
 <script>
-    import Medium from '../media/Medium';
+const Medium =
+    () => import('../media/Medium');
+const References =
+    () => import('../reference/References');
+const Quotes =
+    () => import('../quote/Quotes');
+/*    import Medium from '../media/Medium';
     import References from '../reference/References';
-    import Quotes from '../quote/Quotes';
+    import Quotes from '../quote/Quotes';*/
 
 
     export default {
@@ -170,7 +176,7 @@
                     }).catch(e => {
                         this.errors = response.data.errors;
                     });
-                    
+
                     axios.get('/'+this.type+'Objectives/' + this.objective.id + '/quoteSubscriptions').then(response => {
                         if (response.data.quotes_subscriptions.length !== 0) {
                             this.quote_subscriptions = response.data.quotes_subscriptions;
@@ -178,14 +184,14 @@
                              this.typetabs = this.typetabs.concat([{'id': 3, 'title': 'Quotes'}]);
                              this.activetab = this.typetabs[0].id;
                          }
-                        
+
                     }).catch(e => {
                         this.errors = response.data.errors;
                     });
                     if (typeof this.typetabs[0] != 'undefined'){
-                      this.activetab = this.typetabs[0].id;  
+                      this.activetab = this.typetabs[0].id;
                     }
-                    
+
                 }
             },
             close() {

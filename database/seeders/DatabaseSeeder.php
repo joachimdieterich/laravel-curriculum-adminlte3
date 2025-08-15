@@ -37,6 +37,8 @@ class DatabaseSeeder extends Seeder
             MediaTableSeeder::class,
             LevelsTableSeeder::class,
             CategoriesTableSeeder::class,
+            ExtendPermissionTableSeeder::class,
+            ExtendPermissionRoleTableSeeder::class,
         ]);
     }
 }

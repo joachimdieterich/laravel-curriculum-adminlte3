@@ -8,10 +8,21 @@
                 :width="width"
                 frameborder="0"></iframe>
         </span>
+        <span v-else-if="mime(medium.mime_type) === 'external'">
+            <render-usage
+                :medium="medium"
+                :downloadable="downloadable"
+                ></render-usage>
+<!--            <img
+                :src="scr"
+                :width="width"
+                @click="show()"/>-->
+        </span>
         <span v-else-if="mime(medium.mime_type) === 'img'">
             <img
                 :src="scr"
-                :width="width" />
+                :width="width"
+                @click="show()"/>
         </span>
         <span v-else>
             - Please download file -
@@ -21,6 +32,9 @@
 </template>
 
 <script>
+const renderUsage =
+    () => import('../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage');
+//import renderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage";
     export default {
         props: {
             medium: {
@@ -38,6 +52,10 @@
             edit: {
                 type: Boolean,
                 default: false
+            },
+            downloadable: {
+                type: Boolean,
+                default: true
             }
         },
         data() {
@@ -59,17 +77,35 @@
                     case 'image/svg':
                         return 'img';
                         break;
+                    case 'edusharing':
+                        return 'external';
+                        break;
                     // default use <embed>
                     default:
                         return 'embed';
                         break;
                 }
             },
+            show() {
+                this.$modal.show('medium-modal', {
+                    'content': this.medium,
+                });
+            },
+        },
+        mounted() {
+            this.$eventHub.$on('download', (medium) => {
+                if (this.medium.id == medium.id && this.mime(medium.mime_type) !== 'external') {
+                    this.show();
+                }
+            });
         },
         computed: {
             scr: function () {
                 return '/media/'+ this.medium.id;
             },
+        },
+        components: {
+            renderUsage
         },
 
     }

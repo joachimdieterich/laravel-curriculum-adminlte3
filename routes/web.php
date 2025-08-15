@@ -1,18 +1,22 @@
 <?php
 
 use App\Http\Controllers\LogController;
+use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/home');
+//Route::get('/wip', 'OpenController@wip')->name('wip');
 Route::get('/features', 'OpenController@features')->name('features');
 
 Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
+Route::get('/localLogin', 'Auth\LoginController@localLogin');
+Route::get('/localLogout', 'Auth\LoginController@localLogout');
 Auth::routes(['register' => false]);
 
-//embeddable routes
-Route::get('eventSubscriptions/embed', 'EventSubscriptionController@embed')->name('eventSubscriptions.embed');
+Route::get('eventSubscriptions/embed', 'EventSubscriptionController@embed')->name('eventSubscriptions.embed'); //embeddable routes
+Route::get('videoconferences/endCallback', 'VideoconferenceController@endCallback'); // called via bbb server (with meeting id)
 
 Route::group(['middleware' => 'auth'], function () {
     //LogController::setStatistics(); //to slow -> use queue instead
@@ -20,9 +24,21 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
 
+    Route::resource('calendarEvents', 'CalendarEventController');
+
+    Route::post('kanbanItemComments/{kanbanItemComment}/react', 'KanbanItemCommentController@reaction')->name('kanbanItemCommentController.react');
+    Route::resource('kanbanItemComment', 'KanbanItemCommentController');
+
+    Route::resource('agendas', 'AgendaController');
+    Route::resource('agendaItems', 'AgendaItemController');
+    Route::resource('agendaItemTypes', 'AgendaItemTypeController');
+    Route::resource('agendaItemSubscriptions', 'AgendaItemSubscriptionController');
+    Route::resource('agendaItemSpeakers', 'AgendaItemSpeakerController');
+
     Route::resource('absences', 'AbsenceController');
 
     Route::post('achievements', 'AchievementController@store');
+    Route::get('achievements/enabling', 'AchievementController@getEnablingAchievements');
 
     Route::post('artefacts/destroy', 'ArtefactController@destroySubscription');
     Route::resource('artefacts', 'ArtefactController');
@@ -52,11 +68,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* country */
     Route::get('countries/{country}/states', 'CountryController@getStates')->name('countries.states');
+    Route::resource('countries', 'CountryController');
 
     /* curricula */
+    Route::get('curricula/{curriculum}/variantDefinitions', 'CurriculumController@getVariantDefinitions');
+    Route::put('curricula/{curriculum}/variantDefinitions', 'CurriculumController@setVariantDefinitions');
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::get('curricula/list', 'CurriculumController@list');
+    Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/import', 'CurriculumImportController@import')->name('curricula.import');
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::get('curricula/{curriculum}/export', 'CurriculumExportController@export')->name('curricula.export');
@@ -70,6 +90,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('curricula/{curriculum}/print', 'CurriculumController@print')->name('curricula.print');
     Route::put('curricula/{curriculum}/syncObjectiveTypesOrder', 'CurriculumController@syncObjectiveTypesOrder')->name('curricula.syncObjectiveTypesOrder');
     Route::resource('curricula', 'CurriculumController');
+    Route::resource('curriculumSubscriptions', 'CurriculumSubscriptionController');
 
     /* enablingObjectives */
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
@@ -84,6 +105,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('eventSubscriptions/destroySubscription', 'EventSubscriptionController@destroySubscription')->name('eventSubscriptions.destroySubscription');
     Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
+
+    Route::resource('exercises', 'ExerciseController');
+    Route::resource('exerciseDones', 'ExerciseDoneController');
 
     Route::resource('eventSubscriptions', 'EventSubscriptionController');
 
@@ -105,11 +129,26 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('groups', 'GroupsController');
 
     Route::get('kanbans/list', 'KanbanController@list');
+    Route::get('kanbans/{kanban}/copy', 'KanbanController@copyKanban');
+    Route::get('export_csv/{kanban}', 'KanbanController@exportKanbanCsv');
+    Route::get('export_pdf/{kanban}', 'KanbanController@exportKanbanPdf');
     Route::resource('kanbans', 'KanbanController');
+
+    Route::post('kanbanItems/{kanbanItem}/react', 'KanbanItemController@reaction')->name('kanbanItems.react');
+    Route::get('kanbanItems/{kanbanItem}/editors', 'KanbanItemController@editors')->name('kanbanItems.editors');
+    Route::get('kanbanItems/{item}/copy', 'KanbanItemController@copyItem');
     Route::put('kanbanItems/sync', 'KanbanItemController@sync')->name('kanbanItems.sync');
     Route::resource('kanbanItems', 'KanbanItemController');
+
+    Route::get('kanbanStatuses/{kanban}/checkSync', 'KanbanStatusController@checkSync');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
+    Route::get('kanbanStatuses/{status}/copy', 'KanbanStatusController@copyStatus');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
+
+    Route::post('tokens', 'ShareTokenController@create');
+
+    Route::get('kanbans/getColor/{id}', 'KanbanController@getColor');
+    Route::post('kanbans/setColor', 'KanbanController@setColor');
 
     Route::resource('kanbanSubscriptions', 'KanbanSubscriptionController');
 
@@ -132,6 +171,16 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* logbook entries */
     Route::resource('logbookEntries', 'LogbookEntryController');
+    Route::post('logbookEntries/setSubject', 'LogbookEntryController@setSubject');
+
+    Route::get('maps/list', 'MapController@list');
+    Route::resource('mapSubscriptions', 'MapSubscriptionController');
+
+    Route::resource('maps', 'MapController');
+    Route::resource('mapMarkers', 'MapMarkerController');
+    Route::get('mapMarkerTypes/list', 'MapMarkerTypeController@list');
+    Route::resource('mapMarkerTypes', 'MapMarkerTypeController');
+    Route::resource('mapMarkerCategories', 'MapMarkerCategoryController');
 
     /* Metadataset */
     Route::get('metadatasets/list', 'MetadatasetController@list');
@@ -169,6 +218,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');
 
+    Route::get('meetings/list', 'MeetingController@list')->name('meetings.list');
+    Route::resource('meetings', 'MeetingController');
+
+    Route::resource('meetingDates', 'MeetingDateController');
+
     /* objectiveTypes */
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
     Route::resource('objectiveTypes', 'ObjectiveTypeController');
@@ -200,9 +254,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::delete('plans/massDestroy', 'PlanController@massDestroy')->name('plans.massDestroy');
     Route::get('plans/list', 'PlanController@list');
+    Route::get('plans/getTypes', 'PlanController@getTypes');
+    Route::get('plans/{plan}/copy', 'PlanController@copyPlan');
+    Route::get('plans/{plan}/getUsers', 'PlanController@getUsers');
+    Route::put('plans/{plan}/syncEntriesOrder', 'PlanController@syncEntriesOrder');
+    Route::get('plans/{plan}/getUserAchievements/{userIds}', 'PlanController@getUserAchievements');
     Route::resource('plans', 'PlanController');
 
     Route::resource('planSubscriptions', 'PlanSubscriptionController');
+    Route::resource('planEntries', 'PlanEntryController');
 
     Route::resource('prerequisites', 'PrerequisitesController');
 
@@ -216,7 +276,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('repositorySubscriptions/destroySubscription', 'RepositorySubscriptionController@destroySubscription')->name('repositorySubscriptions.destroySubscription');
     Route::post('repositorySubscriptions/searchRepository', 'RepositorySubscriptionController@searchRepository')->name('repositorySubscriptions.searchRepository');
-    Route::post('repositorySubscriptions/getMedia', 'RepositorySubscriptionController@getMedia')->name('repositorySubscriptions.getMedia');
+    Route::get('repositorySubscriptions/getMedia', 'RepositorySubscriptionController@getMedia')->name('repositorySubscriptions.getMedia');
     Route::resource('repositorySubscriptions', 'RepositorySubscriptionController');
     /* Roles */
     Route::get('roles/list', 'RolesController@list')->name('roles.list');
@@ -231,6 +291,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* subjects  */
     Route::get('subjects/list', 'SubjectController@list')->name('subjects.list');
+    Route::get('subjects/getSubject', 'SubjectController@getSubject');
     Route::resource('subjects', 'SubjectController');
 
     /* tasks */
@@ -246,6 +307,9 @@ Route::group(['middleware' => 'auth'], function () {
     /* terminalObjectiveSubscriptions */
     Route::post('terminalObjectiveSubscriptions/destroy', 'TerminalObjectiveSubscriptionsController@destroySubscription');
     Route::resource('terminalObjectiveSubscriptions', 'TerminalObjectiveSubscriptionsController');
+
+    Route::resource('trainings', 'TrainingController');
+    Route::resource('trainingSubscriptions', 'TrainingSubscriptionController');
 
     /* reference(Subscription)  */
     Route::resource('references', 'ReferenceController');
@@ -265,6 +329,34 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::resource('users', 'UsersController');
+
+    Route::get('variantDefinitions/list', 'VariantDefinitionController@list');
+    Route::resource('variantDefinitions', 'VariantDefinitionController');
+    Route::resource('variants', 'VariantController');
+
+    Route::get('videoconferences/list', 'VideoconferenceController@list');
+    Route::get('videoconferences/servers', 'VideoconferenceController@servers');
+    Route::resource('videoconferences', 'VideoconferenceController');
+    Route::get('videoconferences/{videoconference}/getStatus', 'VideoconferenceController@getStatus');
+    Route::get('videoconferences/{videoconference}/start', 'VideoconferenceController@start');
+
+
+    Route::resource('videoconferenceSubscriptions', 'VideoconferenceSubscriptionController');
+
+    /* Tests */
+    Route::get('tests', 'Tests\TestController@index');
+    /* Exams */
+    Route::get('exams_subscribed', 'Tests\ExamController@authUserIndexExams')->name('exams.index');
+    Route::get('exams', 'Tests\ExamController@index');
+    Route::post('exams', 'Tests\ExamController@create');
+    Route::delete('exams/{exam}', 'Tests\ExamController@delete')->middleware('can:test_delete');
+    Route::get('exam/{exam}/edit', 'Tests\ExamController@show');
+    Route::get('exam/{exam}/list', 'Tests\ExamController@listExamUsers');
+    Route::get('exam/{exam}/users/list', 'Tests\ExamController@listAllUsers');
+    Route::post('exam/{exam}/status', 'Tests\ExamController@getExamStatus');
+    Route::post('exam/{exam}/users/enrol', 'Tests\ExamController@addUsers');
+    Route::delete('exam/{exam}/users/expel', 'Tests\ExamController@removeUsers');
+    Route::post('exam/{exam}/report', 'Tests\ExamController@getReport');
 });
 
 //if ((env('APP_ENV') == 'local')){
@@ -272,6 +364,12 @@ Route::group(['middleware' => 'auth'], function () {
 //}
 
 if (env('GUEST_USER') !== null) {
+    Route::get('videoconferences/{videoconference}/token', 'VideoconferenceController@getVideoconferenceByToken');
+    Route::get('videoconferences/{videoconference}/startWithPw', 'VideoconferenceController@show');
+    Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
+    Route::get('maps/{map}/token', 'MapController@getMapByToken');
+    Route::get('kanban/share/{token}', 'ShareTokenController@auth');
+
     Route::get('/guest', function () {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
@@ -279,7 +377,7 @@ if (env('GUEST_USER') !== null) {
             Auth::loginUsingId((env('GUEST_USER')), true);
         }
         if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
-            return redirect('/navigators/'.\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
+            return redirect('/navigators/' . \App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
         } else {
             return redirect('/');
         }

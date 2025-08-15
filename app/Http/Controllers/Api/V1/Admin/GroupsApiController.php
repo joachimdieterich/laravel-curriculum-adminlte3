@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\CurriculumSubscription;
 use App\Group;
 use App\Http\Controllers\Controller;
 use App\OrganizationRoleUser;
@@ -58,7 +59,10 @@ class GroupsApiController extends Controller
     {
 
         // first delete all relations
-        $group->curricula()->detach();
+        CurriculumSubscription::where('subscribable_type', "App\Group")
+            ->where('subscribable_id', $group->id)
+            ->delete();
+        //$group->curricula()->detach();
         $group->users()->detach();
 
         //todo: delete subscriptions ( eg. kanban), yet no relation in Group.php
@@ -111,8 +115,8 @@ class GroupsApiController extends Controller
                     'title' => request()->input('period'),
                 ],
                 [
-                    'begin' => Carbon::createFromDate($dates[0])->format('Y-m-d h:m:s'),
-                    'end' => Carbon::createFromDate($dates[1])->format('Y-m-d h:m:s'),
+                    'begin' => Carbon::createFromDate(ltrim($dates[0], '('))->format('Y-m-d h:m:s'),
+                    'end' => Carbon::createFromDate(rtrim($dates[1], ')'))->format('Y-m-d h:m:s'),
                     'owner_id' => 1, //api call
                 ]);
         } elseif ((request()->input('period_id')) and strtolower(request()->input('period_id')) != 'null') {

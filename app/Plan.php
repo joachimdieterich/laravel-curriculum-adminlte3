@@ -8,6 +8,10 @@ class Plan extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'entry_order' => 'array',
+    ];
+
     protected $attributes = [
         'type_id' => 1,  //= Wochenplan
     ];
@@ -20,6 +24,11 @@ class Plan extends Model
     public function owner()
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
+    }
+
+    public function entries()
+    {
+        return $this->hasMany(PlanEntry::class);
     }
 
     public function taskSubscriptions()
@@ -49,6 +58,11 @@ class Plan extends Model
         return $this->hasMany(PlanSubscription::class);
     }
 
+    public function mediaSubscriptions()
+    {
+        return $this->morphMany('App\MediumSubscription', 'subscribable');
+    }
+
     public function userSubscriptions()
     {
         return $this->hasMany(PlanSubscription::class)
@@ -71,6 +85,8 @@ class Plan extends Model
     {
         if (
             auth()->user()->plans->contains('id', $this->id) // user enrolled
+            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
+            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in organization
             or ($this->owner_id == auth()->user()->id)            // or owner
             or is_admin() // or admin
         ) {
@@ -78,5 +94,16 @@ class Plan extends Model
         } else {
             return false;
         }
+    }
+
+    public function isEditable() {
+        $user = auth()->user();
+        
+        return
+            is_admin() ||
+            $this->owner_id == $user->id ||
+            $this->userSubscriptions()->where('subscribable_id', $user->id)->where('editable', 1)->first() ||
+            $this->groupSubscriptions()->whereIn('subscribable_id', $user->groups->pluck('id'))->where('editable', 1)->first() ||
+            $this->organizationSubscriptions()->whereIn('subscribable_id', $user->organizations->pluck('id'))->where('editable', 1)->first();
     }
 }

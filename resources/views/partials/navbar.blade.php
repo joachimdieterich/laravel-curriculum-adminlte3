@@ -55,7 +55,7 @@
 @endcan
 <!--Notifications Dropdown Menu-->
     <li class="dropdown">
-        <span class="user-menu dropdown-toggle" data-toggle="dropdown">
+        <span class="user-menu dropdown-toggle" data-toggle="dropdown" role="button">
           <img class="img-circle color-white"
                src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
                alt="User profile picture"
@@ -63,18 +63,18 @@
           <b>{{ auth()->user()->fullName() }}</b>
         </span>
         <div class="user-menu dropdown-menu bg-lime dropdown-menu-lg dropdown-menu-right">
-            <span class="dropdown-item dropdown-header text-black">{{ optional(Auth::user()->role())->title}}</span>
+            <span class="dropdown-header text-black">{{ optional(Auth::user()->role())->title}}</span>
             <div class="dropdown-divider"></div>
             @can('user_show')
                 <a href="{{route('users.show', auth()->user()->id)}}" class="dropdown-item">
                     <i class="fas fa-id-card mr-2 fa-fw text-white"></i>{{ trans('global.myProfile') }}
                 </a>
             @endcan
-            @can('note_access')
+          {{--  @can('note_access')
                 <a href="{{ route("notes.index") }}" class="dropdown-item">
                     <i class="fa fa-sticky-note fa-fw mr-2 text-white"></i>{{ trans('global.note.title') }}
                 </a>
-            @endcan
+            @endcan--}}
             @if(auth()->user()->role()->id == 1)
                 <a href="{{ route("admin.index") }}" class="dropdown-item">
                     <i class="fa fa-cogs fa-fw mr-2 text-white"></i>{{ trans('global.config.title') }}

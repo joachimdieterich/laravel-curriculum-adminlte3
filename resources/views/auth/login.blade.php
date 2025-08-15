@@ -75,20 +75,25 @@
             </form>
             @if ( ( env('SAML2_RLP_IDP_SSO_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SSO_URL')) ) )
                 <div class="social-auth-links text-center mb-3">
-                    <p>- OR -</p>
+                    <p>- {{ trans('auth.or') }} -</p>
                     <a href="{{ route('saml2_login', ['idpName' => config('saml2_settings.idpNames')[0]]) }}" class="btn btn-block btn-primary">
                         <i class=" mr-2"></i> {{ trans('global.login_SSO') }}
                     </a>
                 </div>
             @endif
-
-            <p class="mb-1">
-                <a class="" href="{{ route('password.request') }}">
-                    {{ trans('global.forgot_password') }}
-                </a>
-            </p>
+            @if (env('ALLOW_PASSWORD_RESET') === true)
+                <p class="mb-1">
+                    <a class="" href="{{ route('password.request') }}">
+                        {{ trans('global.forgot_password') }}
+                    </a>
+                </p>
+            @endif
             <p class="mb-0">
-
+                @if ( ( env('SHOW_IMRESSUM') !== null ))
+                    <a class="" href="{{ route('impressum') }}">
+                        Impressum
+                    </a>
+                @endif
             </p>
             <p class="mb-1">
 

@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Organization;
-use Facades\Tests\Setup\OrganizationFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,9 +29,10 @@ class OrganizationCRUDTest extends TestCase
         $list = $this->get('organizations/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($organizations as $organization)
-        {
-            if ($i === 49) { break; } //test max 50 user (default page limit on datatables
+        foreach ($organizations as $organization) {
+            if ($i === 49) {
+                break;
+            } //test max 50 user (default page limit on datatables
             $list->assertJsonFragment($organization->toArray());
             $i++;
         }
@@ -67,7 +67,7 @@ class OrganizationCRUDTest extends TestCase
         $ids = $orgs->pluck('id')->toArray();
 
         $this->delete('/organizations/massDestroy', $attributes = [
-            'ids' =>  $ids,
+            'ids' => $ids,
         ])->assertStatus(204);
 
         foreach ($ids as $id) {
@@ -137,12 +137,12 @@ class OrganizationCRUDTest extends TestCase
         $this->get("organizations/{$org->id}/edit")
              ->assertStatus(200)
              ->assertSee([
-                'title' => $org->title,
-                'street' => $org->street,
-                'postcode' => $org->postcode,
-                'city' => $org->city,
-                'phone' => $org->phone,
-                'email' => $org->email,
+                 'title' => $org->title,
+                 'street' => $org->street,
+                 'postcode' => $org->postcode,
+                 'city' => $org->city,
+                 'phone' => $org->phone,
+                 'email' => $org->email,
              ]);
     }
 }

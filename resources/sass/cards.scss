@@ -2,6 +2,10 @@
  * Component: Box
  * --------------
  */
+
+.card{
+    border-width: 0;
+}
 .box-group {
     .box {
         margin-bottom: 0px;
@@ -13,4 +17,8 @@
         padding-left: 20px !important;
         padding-right: 5px !important;
     }
+}
+
+[data-card-widget]:hover {
+    cursor: pointer;
 }

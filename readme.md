@@ -10,7 +10,7 @@ curriculum is a learning platform where teachers can create topic-based learning
 - laravel Ver. 9
 
 ### Prerequisites
-- PHP 8.0.2 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, json, tokenizer, openssl, fileinfo, ctype
+- PHP 8.1 Extensions: xml, dom, zip, curl, mbstring, bcmath, gd, mysqli, PDO, tokenizer, openssl, fileinfo, ctype, cli, common, opcache, readline
 - ghostscript
 - imagemagick
 - git
@@ -115,7 +115,6 @@ Content-Type: 'application/json'
 form-data
 client_id: [id]
 client_secret: [secret]
-grant_type: 'client_credentials'
 ```
 ### Use access token to access API
 ```
@@ -220,7 +219,7 @@ return SnappyPdf::loadFile('http://curriculumonline.de')->inline('cur.pdf');
 ```
 
 ### Browser Tests (Dusk)
-Important! Start server in dusk environment.
+Important: Start server in dusk environment.
 
 ```
 php artisan config:clear
@@ -232,6 +231,58 @@ Run browser tests
 ```
 php artisan dusk
 ```
+
+### Browser Tests (Cypress)
+add `.env.cypress` to use alternative config (eg. DB)
+
+
+Run browser tests (see package.json)
+```
+npm run test:cypress
+```
+
+### Websockets
+Add/Edit the following lines to .env
+
+```
+BROADCAST_DRIVER=pusher
+
+PUSHER_APP_ID=curriculumlive
+PUSHER_APP_KEY=curriculumlive_key
+PUSHER_APP_SECRET=curriculumlive_secret
+PUSHER_APP_CLUSTER=eu
+
+#LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT="[path_to]/certificate.pem"
+#LARAVEL_WEBSOCKETS_SSL_LOCAL_PK="[path_to]/privateKey.pem"
+
+PUSHER_APP_ACTIVE=true
+PUSHER_APP_HOST=localhost
+PUSHER_APP_SCHEME=http
+PUSHER_APP_USE_TLS=true
+PUSHER_APP_FORCE_TLS=false
+PUSHER_APP_ENCRYPTED=true
+PUSHER_APP_DISABLE_STATS=true
+PUSHER_APP_WSPORT=6001
+PUSHER_APP_WSSPORT=6001
+
+MIX_PUSHER_APP_ACTIVE="${PUSHER_APP_ACTIVE}"
+MIX_PUSHER_APP_HOST="${PUSHER_APP_HOST}"
+MIX_PUSHER_APP_SCHEME="${PUSHER_APP_SCHEME}"
+MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+MIX_PUSHER_APP_USE_TLS="${PUSHER_APP_USE_TLS}"
+MIX_PUSHER_APP_FORCE_TLS="${PUSHER_APP_FORCE_TLS}"
+MIX_PUSHER_APP_ENCRYPTED="${PUSHER_APP_ENCRYPTED}"
+MIX_PUSHER_APP_DISABLE_STATS="${PUSHER_APP_DISABLE_STATS}"
+MIX_PUSHER_APP_WSPORT="${PUSHER_APP_WSPORT}"
+MIX_PUSHER_APP_WSSPORT="${PUSHER_APP_WSSPORT}"
+```
+
+If SSL certificate path `LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT` and `LARAVEL_WEBSOCKETS_SSL_LOCAL_PK` are only readable by root start websocket with sudo.
+
+Start Websocket with `sudo php artisan websocket:serve`
+
+Further information [laravel-websockets](https://beyondco.de/docs/laravel-websockets/getting-started/introduction)
 
 ### Documentation
 Curriculum uses [saleem-hadad/larecipe](https://github.com/saleem-hadad/larecipe) to provide integrated project documentation. 
@@ -304,3 +355,35 @@ public function down()
     });/
 }
 ```
+
+### Set statusfilte/users for telescope/ show status filter type
+```
+TELESCOPE_STATUS_FILTER="200,302"
+TELESCOPE_USERS="admin@curriculumonline.de"
+TELESCOPE_STATUS_FILTER_TYPE="dump,query"
+```
+If no status is set, 200 and 302 events are filtered. 
+Both settings are comma-separated 
+
+Don't use whitespaces!
+
+### json-fields in MariaDB
+
+If migrations failing with the following message (MariaDB Version < 10.2.7): 
+
+
+```
+SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'json null' at ...
+```
+Then change all ```json-fields``` in migrations to ```text``` 
+
+```php
+$table->json('variants')->nullable(); // e.g. in 2022_10_01_154624_add_variant_column_to_curricula_table.php 
+
+to 
+
+$table->text('variants')->nullable(); 
+```
+
+### Logo for embededEvent.vue
+Put ```logo.png``` in the following path: ```public/favicons/logo.png```

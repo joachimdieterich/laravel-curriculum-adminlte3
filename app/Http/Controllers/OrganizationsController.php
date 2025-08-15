@@ -22,18 +22,13 @@ class OrganizationsController extends Controller
     public function index()
     {
 
-
         // select2 request
-        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
-            if (is_admin())
-            {
-                abort_unless(\Gate::allows('organization_access'), 403);
+        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+            if (is_admin()) {
                 return  getEntriesForSelect2ByModel(
                     "App\Organization"
                 );
-            }
-            else
-            {
+            } else {
                 return  getEntriesForSelect2ByCollection(
                     auth()->user()->organizations(),
                     'organizations.'
@@ -41,13 +36,21 @@ class OrganizationsController extends Controller
             }
         }
         abort_unless(\Gate::allows('organization_access'), 403);
+
         return view('organizations.index');
     }
 
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organizations = (auth()->user()->role()->id == 1) ? Organization::with(['status'])->get() : User::where('id', auth()->user()->id)->get()->first()->organizations()->with(['status'])->get();
+        $organization_id_field = 'id'; // if auth()->user()->organizations() is used query uses organization_role_user table therefore organization_id field = organization_id
+
+        if (auth()->user()->role()->id == 1) {
+            $organizations = Organization::with(['status']);
+        } else  {
+            $organizations = auth()->user()->organizations()->with(['status']);
+            $organization_id_field = 'organization_id';
+        }
 
         $edit_gate = \Gate::allows('organization_edit');
         $delete_gate = \Gate::allows('organization_delete');
@@ -56,27 +59,29 @@ class OrganizationsController extends Controller
             ->addColumn('status', function ($organizations) {
                 return $organizations->status->lang_de;
             })
-            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate) {
+            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate, $organization_id_field) {
                 $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
-                                    .'id="edit-organization-'.$organizations->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
+                if ($organizations->role_id == 4 || is_admin()) { // only show edit/delete in orgs where the user is a schooladmin
+                    if ($edit_gate) {
+                        $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
+                        .'id="edit-organization-'.$organizations->$organization_id_field.'" '
+                        .'class="btn p-1">'
+                        .'<i class="fa fa-pencil-alt"></i>'
+                        .'</a>';
+                    }
+                    if ($delete_gate) {
+                        $actions .= '<button type="button" '
+                        .'class="btn text-danger" '
+                        .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->$organization_id_field.')">'
+                        .'<i class="fa fa-trash"></i></button>';
+                    }
                 }
 
                 return $actions;
             })
 
             ->addColumn('check', '')
-            ->setRowId('id')
+            ->setRowId($organization_id_field)
             ->setRowAttr([
                 'color' => 'primary',
             ])
@@ -272,11 +277,11 @@ class OrganizationsController extends Controller
                     abort_unless((auth()->user()->organizations->contains($enrolment['organization_id']) or is_admin()), 403);
                     $return[] = OrganizationRoleUser::updateOrCreate(
                         [
-                            'user_id'         => $enrolment['user_id'],
+                            'user_id' => $enrolment['user_id'],
                             'organization_id' => $enrolment['organization_id'],
                         ],
                         [
-                            'role_id'         => $enrolment['role_id'],
+                            'role_id' => $enrolment['role_id'],
                         ]
                     );
                 }
@@ -293,7 +298,7 @@ class OrganizationsController extends Controller
         foreach ((request()->expel_list) as $expel) {
             abort_unless((auth()->user()->organizations->contains($expel['organization_id']) or is_admin()), 403);
             $return[] = OrganizationRoleUser::where([
-                'user_id'         => $expel['user_id'],
+                'user_id' => $expel['user_id'],
                 'organization_id' => $expel['organization_id'],
             ])->delete();
 
@@ -312,7 +317,7 @@ class OrganizationsController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'title'         => 'sometimes|required',
+            'title' => 'sometimes|required',
             'description' => 'sometimes',
             'street' => 'sometimes',
             'postcode' => 'sometimes',

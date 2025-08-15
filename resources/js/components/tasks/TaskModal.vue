@@ -87,12 +87,16 @@
 </template>
 
 <script>
-    import Form from 'form-backend-validation';
-    import DatePicker from 'vue2-datepicker';
+import Form from 'form-backend-validation';
+const DatePicker =
+    () => import('vue2-datepicker');
+    /*
+    import DatePicker from 'vue2-datepicker';*/
     import 'vue2-datepicker/index.css';
     export default {
         data() {
             return {
+                component_id: this._uid,
                 method: 'post',
                 requestUrl: '/tasks',
 
@@ -150,7 +154,15 @@
                 }
              },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE(
+                    [
+                        "autolink link example"
+                    ],
+                    {
+                        'eventHubCallbackFunction': 'insertContent',
+                        'eventHubCallbackFunctionParams': this.component_id,
+                    }
+                );
             },
             beforeClose(event) {
 

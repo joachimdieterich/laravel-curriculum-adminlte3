@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
 * @OA\Get(
-*      path="/v1/users",
+*      path="/v1/users?common_name={common_name}",
 *      operationId="getAllUsers",
 *      tags={"User v1"},
 *      summary="Get all users",
@@ -11,6 +11,15 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      security={
 *           {"passport": {"*"}},
 *      },
+ *     @OA\Parameter(
+ *          name="common_name",
+ *          description="common_name",
+ *          required=false,
+ *          in="path",
+ *          @OA\Schema(
+ *              type="string"
+ *          )
+ *      ),
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",

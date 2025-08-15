@@ -41,7 +41,16 @@
                     </button>
                 </span>
                 <span >{{ entry.title }}</span>
-                <span class="description ml-0 ">{{ postDate() }}</span>
+                <span class="description ml-0 ">
+                    {{ timePeriod }}
+                    <small
+                        style="vertical-align: middle;"
+                        class="badge badge-secondary"
+                        @click.stop="editSubject()">
+                        <i class="fa fa-book-open"></i>
+                        {{ entry.subject?.title ?? trans("global.logbookEntry.no_subject") }}
+                    </small>
+                </span>
             </span>
 
         </div>
@@ -141,7 +150,7 @@
                 </li>
 
                 <li class="nav-item ml-auto pull-right">
-                    <a class="nav-link small link-muted"
+                    <a class="nav-link small link-muted pointer"
                        @click="help = !help">
                         <i class="fa fa-question pr-1"></i>
                     </a>
@@ -157,7 +166,7 @@
                     <div class="tab-pane p-2"
                          :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id, 'active', true)"
                          v-bind:id="'logbook_description_'+entry.id">
-                        <span v-html="entry.description"></span>
+                        <span v-dompurify-html="entry.description"></span>
                     </div>
 
                     <!-- tab-pane -->
@@ -195,8 +204,9 @@
                          v-bind:id="'logbook_media_'+entry.id">
                         <media subscribable_type="App\LogbookEntry"
                                :subscribable_id="entry.id"
-                               format="list">
-                        </media>
+                               format="list"
+                               :can_add_media="$userId == logbook.owner_id"
+                        ></media>
                     </div>
                     <!-- /.tab-pane -->
                     <div class="tab-pane"
@@ -247,6 +257,7 @@
 </template>
 
 <script>
+
 import Absences from '../absence/Absences';
 import Contents from '../content/Contents';
 import TaskList from '../uiElements/TaskList';
@@ -265,131 +276,148 @@ export default {
     },
     data() {
         return {
+            component_id: this._uid,
             media: {},
-                active: true,
-                model: 'App\\LogbookEntry',
-                help: true,
-            };
+            active: true,
+            timePeriod: '',
+            model: 'App\\LogbookEntry',
+            help: true,
+        };
+    },
+    methods: {
+        edit() {
+            this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
         },
-        methods: {
-            /*
-                        open(modal, relationKey) {
-                            if (relationKey === 'referenceable'){
-                                this.$modal.show(modal, { 'referenceable_type': 'App\\LogbookEntry', 'referenceable_id': this.entry.id });
-                            } else {
-                                this.$modal.show(modal, { 'subscribable_type': 'App\\LogbookEntry', 'subscribable_id': this.entry.id });
-                            }
-                        },*/
-            edit() {
-                 this.$modal.show('logbook-entry-modal', { 'id': this.entry.id, 'method': 'patch'});
-            },
-            async destroy(){
-                try {
-                    this.location = (await axios.delete('/logbookEntries/' + this.entry.id)).data.message;
-                } catch (error) {
-                    alert(error);
-                }
-                this.$parent.$emit('deleteLogbookEntry', this.entry);
-                // location.reload(true);
-            },
+        editSubject() {
+            this.$modal.show('logbook-entry-subject-modal', { 'id': this.entry.id, 'subject': this.entry.subject?.title });
+        },
+        async destroy(){
+            try {
+                this.location = (await axios.delete('/logbookEntries/' + this.entry.id)).data.message;
+            } catch (error) {
+                console.log(error);
+            }
+            this.$parent.$emit('deleteLogbookEntry', this.entry);
+        },
+        postDate() {
+            const start = new Date(this.entry.begin.replace(/-/g, "/"));
+            const end = new Date(this.entry.end.replace(/-/g, "/"));
+            const dateFormat = {
+                weekday: 'short',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
 
-            postDate() {
-                var start = new Date(this.entry.begin.replace(/-/g, "/"));
-                var end = new Date(this.entry.end.replace(/-/g, "/"));
-                var dateFormat = {
-                    weekday: 'short',
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
+            if (start.toDateString() === end.toDateString()) {
+                this.timePeriod = start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit'
-                };
-
-                if (start.toDateString() === end.toDateString()) {
-                    return start.toLocaleString([], dateFormat) + " - " + end.toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                } else {
-                    return start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
-                }
-            },
-            isEditableForUser() {
-
-                const exists = this.logbook.subscriptions.findIndex(            // Is editable?
-                    subscription => subscription.subscribable_type === "App\\User" && subscription.subscribable_id == this.$userId && subscription.editable === 1
-                );
-                //console.log('isEditableForUser(): '+exists);
-                return (exists !== -1);
-            },
-            isEditableForGroup() {
-                const exists = this.logbook.subscriptions.findIndex(            // Is editable?
-                    subscription => subscription.subscribable_type === "App\\Group" && subscription.editable === 1
-                );
-                //console.log('isEditableForGroup(): '+exists);
-                return (exists !== -1);
-            },
-            isEditableForOrganization() {
-                const exists = this.logbook.subscriptions.findIndex(            // Is editable?
-                    subscription => subscription.subscribable_type === "App\\Organization" && subscription.editable === 1
-                );
-                //console.log('isEditableForOrganization(): '+exists);
-                return (exists !== -1);
-            },
-
-            displayAbsences() {
-                const exists = this.logbook.subscriptions.findIndex(            // Only Show absences on group and course subscriptions
-                    subscription => subscription.subscribable_type === "App\\Course" || subscription.subscribable_type === "App\\Group"
-                );
-
-                return (exists !== -1);
-            },
-
-            loaderEvent: function () {
-                this.$refs.Contents.loaderEvent();
-            },
-            loaderAbsences: function () {
-                this.$refs.Absences.loaderEvent();
-            },
-            loadLmsPlugin() {
-                this.$refs.LmsPlugin.loaderEvent();
-            },
-            print() {
-                location.href = '/print/LogbookEntry/' + this.entry.id
+                });
+            } else {
+                this.timePeriod = start.toLocaleString([], dateFormat) + " - " + end.toLocaleString([], dateFormat);
             }
         },
-        mounted() {
-            if (this.isEditableForUser() || this.isEditableForGroup() || this.isEditableForOrganization()) {
-                this.editable = true;
-            }
-            //load contents if tab is selected
-            if (this.checkLocalStorage('#logbook_' + this.entry.id, '#logbook_contents_' + this.entry.id) == 'active') {
-                this.$refs.Contents.loaderEvent();
-            }
+        isEditableForUser() {
 
-            //register events
-            this.$root.$on('lmsUpdate', () => {
-                this.$refs.LmsPlugin.loaderEvent();
-            });
+            const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+                subscription => subscription.subscribable_type === "App\\User" && subscription.subscribable_id == this.$userId && subscription.editable === 1
+            );
+            //console.log('isEditableForUser(): '+exists);
+            return (exists !== -1);
         },
-        computed: {
-            isActive: function () {
-                if (this.entry.title.toLowerCase().indexOf(this.search.toLowerCase()) === -1) {
-                    return "display:none";
-                } else {
-                    return "";
-                }
-            },
+        isEditableForGroup() {
+            const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+                subscription => subscription.subscribable_type === "App\\Group" && subscription.editable === 1
+            );
+            //console.log('isEditableForGroup(): '+exists);
+            return (exists !== -1);
+        },
+        isEditableForOrganization() {
+            const exists = this.logbook.subscriptions.findIndex(            // Is editable?
+                subscription => subscription.subscribable_type === "App\\Organization" && subscription.editable === 1
+            );
+            //console.log('isEditableForOrganization(): '+exists);
+            return (exists !== -1);
+        },
+        displayAbsences() {
+            const exists = this.logbook.subscriptions.findIndex(            // Only Show absences on group and course subscriptions
+                subscription => subscription.subscribable_type === "App\\Course" || subscription.subscribable_type === "App\\Group"
+            );
+
+            return (exists !== -1);
         },
 
-        components: {
-            ReferenceList,
-            Absences,
-            Avatar,
-            Media,
-            Contents,
-            TaskList,
-            Lms
+        loaderEvent: function () {
+            this.$refs.Contents.loaderEvent();
+        },
+        loaderAbsences: function () {
+            this.$refs.Absences.loaderEvent();
+        },
+        loadLmsPlugin() {
+            this.$refs.LmsPlugin.loaderEvent();
+        },
+        print() {
+            location.href = '/print/LogbookEntry/' + this.entry.id
         }
+    },
+    mounted() {
+        if (this.isEditableForUser() || this.isEditableForGroup() || this.isEditableForOrganization()) {
+            this.editable = true;
+        }
+        //load contents if tab is selected
+        if (this.checkLocalStorage('#logbook_' + this.entry.id, '#logbook_contents_' + this.entry.id) == 'active') {
+            this.$refs.Contents.loaderEvent();
+        }
+
+        //register events
+        this.$root.$on('lmsUpdate', () => {
+            this.$refs.LmsPlugin.loaderEvent();
+        });
+
+        this.$eventHub.$on('filter', (filter) => {
+            // always case insensitive
+            const content = (
+                this.$el.querySelector('.username').innerText + ' '
+                + this.$el.querySelector('[id^="logbook_description"]').innerText
+            ).toLowerCase();
+            const search = filter.toLowerCase();
+
+            this.$el.style.display = content.includes(search)
+                ? 'flex'
+                : 'none';
+        });
+
+        this.postDate();
+    },
+    computed: {
+        isActive: function () {
+            if (this.entry.title.toLowerCase().indexOf(this.search.toLowerCase()) === -1) {
+                return "display:none";
+            } else {
+                return "";
+            }
+        },
+    },
+    watch: {
+        'entry.begin': function() { this.postDate(); },
+        'entry.end': function() { this.postDate(); }
+    },
+    components: {
+        ReferenceList,
+        Absences,
+        Avatar,
+        Media,
+        Contents,
+        TaskList,
+        Lms
     }
+}
 </script>
+<style scoped>
+.badge-secondary:not(:hover) {
+    background-color: #adb5bd;
+}
+</style>

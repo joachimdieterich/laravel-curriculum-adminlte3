@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 class Group extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
 
     /**
@@ -31,11 +32,11 @@ class Group extends Model
      * @param  \DateTimeInterface  $date
      * @return string
      */
-
     protected $dates = [
         'updated_at',
         'created_at',
     ];
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
@@ -58,7 +59,15 @@ class Group extends Model
 
     public function curricula()
     {
-        return $this->belongsToMany(Curriculum::class, 'curriculum_group')->withTimestamps();
+        return  $this->hasManyThrough(
+            'App\Curriculum',
+            'App\CurriculumSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'curriculum_id'
+        )->where('subscribable_type', get_class($this));
+
     }
 
     public function grade()
@@ -95,6 +104,30 @@ class Group extends Model
             'id',
             'id',
             'kanban_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
+    public function videoconferences()
+    {
+        return $this->hasManyThrough(
+            'App\Videoconference',
+            'App\VideoconferenceSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'videoconference_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
+    public function maps()
+    {
+        return $this->hasManyThrough(
+            'App\Map',
+            'App\MapSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'map_id'
         )->where('subscribable_type', get_class($this));
     }
 

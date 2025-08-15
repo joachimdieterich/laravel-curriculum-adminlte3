@@ -106,6 +106,7 @@
     export default {
         data() {
             return {
+                component_id: this._uid,
                 value: null,
                 levels: [],
                 method: 'post',
@@ -144,14 +145,24 @@
                     this.method = event.params.method;
                     this.form.populate( event.params.objective );
                     //set selected
-                    this.value = {
-                        'id': this.form.level_id,
-                        'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
-                    };
+                    if (this.form.level_id != null){
+                        this.value = {
+                            'id': this.form.level_id,
+                            'title': this.findObjectByKey(this.levels, 'id', this.form.level_id).title
+                        };
+                    }
                 }
             },
             opened(){
-                this.$initTinyMCE();
+                this.$initTinyMCE([
+                    "autolink link example"
+                ], {
+                    'public': 1,
+                    'referenceable_type': 'App\\\Curriculum',
+                    'referenceable_id': this.form.curriculum_id,
+                    'eventHubCallbackFunction': 'insertContent',
+                    'eventHubCallbackFunctionParams': this.component_id
+                });
                 this.initSelect2();
             },
             initSelect2(){
@@ -171,7 +182,7 @@
                 axios.get('/levels').then(response => {
                     this.levels = response.data;
                 }).catch(e => {
-                    this.form.errors = error.response.data.errors;
+                    console.log(e);
                 });
             },
             submit() {
@@ -180,10 +191,12 @@
                 this.form.description = tinyMCE.get('description').getContent();
                 if (method === 'patch'){
                     this.form.patch(this.requestUrl + '/' + this.form.id)
-                             .then(response => this.$parent.$emit('addEnablingObjective', response.message));
+                             .then(response => {
+                                 this.$eventHub.$emit("addEnablingObjective", response.message);
+                             });
                 } else {
                     this.form.post(this.requestUrl)
-                             .then(response => this.$parent.$emit('addEnablingObjective', response.message));
+                             .then(response => this.$eventHub.$emit('addEnablingObjective', response.message));
                 }
 
                 this.close();

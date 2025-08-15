@@ -51,7 +51,7 @@ class EnablingObjectiveController extends Controller
         abort_unless($enablingObjective->isAccessible(), 403);
 
         $objective = EnablingObjective::where('id', $enablingObjective->id)
-            ->with(['curriculum', 'curriculum.subject', 'terminalObjective.type',
+            ->with(['curriculum', 'curriculum.subject', 'terminalObjective.type', 'variants', 'variants.definition',
                 'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
                 'achievements' => function ($query) {
                     $query->where('user_id', auth()->user()->id)->with(['owner', 'user']);
@@ -59,7 +59,7 @@ class EnablingObjectiveController extends Controller
             ])
             ->get()->first();
 
-        $repository = Config::where('key', 'repository')->get()->first();
+        $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
 
         return view('objectives.show')
             ->with(compact('objective'))
@@ -101,7 +101,7 @@ class EnablingObjectiveController extends Controller
         abort_unless((\Gate::allows('objective_delete') and $enablingObjective->isAccessible()), 403);
 
         //set temp vars
-        $curriculum_id = $enablingObjective->curiculum_id;
+        $curriculum_id = $enablingObjective->curriculum_id;
         $terminal_objective_id = $enablingObjective->terminal_objective_id;
         $order_id = $enablingObjective->order_id;
 

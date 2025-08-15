@@ -130,6 +130,32 @@
                         </a>
                     </li>
                 @endcan
+                @can('map_access')
+                    <li class="nav-item"
+                        role="menuitem">
+                        <a href="{{ route("maps.index") }}"
+                           class="nav-link {{ request()->is('maps') || request()->is('maps/*') ? 'active' : '' }}">
+                            <i class="fa fa-map-location-dot"></i>
+                            <p>
+                                <span>{{ trans('global.map.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcan
+
+
+{{--                @can('assignment_show')--}}
+                    <li class="nav-item"
+                        role="menuitem">
+                            <a href="{{ route("exams.index") }}"
+                               class="nav-link {{ request()->is('exams') || request()->is('exams/*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-ranking-star"></i>
+                            <p>
+                                <span>{{ trans('global.exam.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+{{--                @endcan--}}
 
                 @can('user_access')
                     <li class="nav-header"
@@ -174,8 +200,7 @@
                     @endcan
                 @endcan
 
-
-                @can('organization_access')
+                @canany(['organization_access', 'navigator_access', 'group_access', 'grade_access', 'period_access', 'organization_type_access', 'certificate_edit'] )
                     <li class="nav-header"
                         role="menuitem">
                         {{ trans('global.organization_management') }}
@@ -255,18 +280,20 @@
                             </a>
                         </li>
                     @endcan
-                    <li class="nav-item"
-                        role="menuitem">
-                        <a href="{{ route("organizations.index") }}"
-                           class="nav-link {{ request()->is('organizations') || request()->is('organizations/*') ? 'active' : '' }}">
-                            <i class="fas fa-university"
-                               aria-hidden="true"></i>
-                            <p>
-                                <span>{{ trans('global.organization.title') }}</span>
-                            </p>
-                        </a>
-                    </li>
-                @endcan
+                    @can('organization_access')
+                        <li class="nav-item"
+                            role="menuitem">
+                            <a href="{{ route("organizations.index") }}"
+                               class="nav-link {{ request()->is('organizations') || request()->is('organizations/*') ? 'active' : '' }}">
+                                <i class="fas fa-university"
+                                   aria-hidden="true"></i>
+                                <p>
+                                    <span>{{ trans('global.organization.title') }}</span>
+                                </p>
+                            </a>
+                        </li>
+                    @endcan
+                @endcanany
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

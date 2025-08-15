@@ -27,12 +27,12 @@ class CurriculumSyncObjectiveTypesOrderTest extends TestCase
         // Create Curriculum with three terminalObjectives (with different objectiveTypes)
         $curriculum = $this->create_terminal_Objectives_with_different_objective_types();
 
-        $this->put("/curricula/$curriculum->id/syncObjectiveTypesOrder", ['objective_type_order' => [3,2,1]])
+        $this->put("/curricula/$curriculum->id/syncObjectiveTypesOrder", ['objective_type_order' => [3, 2, 1]])
              ->assertStatus(200);
 
         $this->assertDatabaseHas('curricula', [
             'id' => $curriculum->id,
-            'objective_type_order' => "[3,2,1]",
+            'objective_type_order' => $this->castAsJson([3, 2, 1]),
         ]);
     }
 
@@ -52,7 +52,7 @@ class CurriculumSyncObjectiveTypesOrderTest extends TestCase
 
         $this->actingAs(User::find(4)); //Act as Schooladmin (who is not owner of curriculum)
 
-        $this->put("/curricula/$curriculum->id/syncObjectiveTypesOrder", ['objective_type_order' => [3,2,1]])
+        $this->put("/curricula/$curriculum->id/syncObjectiveTypesOrder", ['objective_type_order' => [3, 2, 1]])
             ->assertStatus(403);
 
         $this->assertDatabaseHas('curricula', [
@@ -60,8 +60,6 @@ class CurriculumSyncObjectiveTypesOrderTest extends TestCase
             'objective_type_order' => null,
         ]);
     }
-
-
 
     private function create_terminal_Objectives_with_different_objective_types()
     {

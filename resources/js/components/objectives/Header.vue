@@ -22,11 +22,12 @@
             </span>
         </span>
 
-        <span v-if="(type == 'enabling'  && objective.level != null)">
+        <span v-if="(type == 'enabling' && objective.level != null)">
             <button type="button"
-                    class="btn btn-block  btn-xs"
+                    class="btn btn-block btn-xs"
                     v-bind:class="objective.level.css_color"
-                    v-html="objective.level.title">
+                    >
+                {{ objective.level.title }}
             </button>
         </span>
 
@@ -35,12 +36,10 @@
             v-if="edit_settings === true"
             class="ml-auto">
             <DropdownButton v-if="type == 'terminal'"
-                            @eventDelete="emitDeleteEvent"
                             :menuEntries="menuEntries"
                             :objective.sync="objective"
                             :textcolor="textcolor"/>
             <DropdownButton v-else-if="type == 'enabling'"
-                            @eventDelete="emitDeleteEvent"
                             :menuEntries="menuEntries"
                             :objective.sync="objective"
                             :textcolor="textcolor"/>
@@ -49,14 +48,14 @@
 </template>
 
 <script>
-    import DropdownButton from './DropdownButton'
+const DropdownButton =
+    () => import('./DropdownButton');
+    //import DropdownButton from './DropdownButton'
     export default {
         props: ['objective', 'type', 'menuEntries', 'settings', 'textcolor', 'max_id'],
 
         methods: {
-            emitDeleteEvent() {
-                //this.$emit('eventtriggered')
-            },
+
         },
         computed: {
             edit_settings: function() {

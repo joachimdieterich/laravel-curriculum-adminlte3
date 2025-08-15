@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $table = 'curriculum_group';
+    protected $table = 'curriculum_subscriptions';
 
-    public function group()
+    /*public function group()
     {
         return $this->belongsTo('App\Group', 'group_id', 'id');
-    }
+    }*/
 
     public function curriculum()
     {
@@ -26,8 +26,7 @@ class Course extends Model
     public function isAccessible()
     {
         if (
-            auth()->user()->curricula()->contains('id', $this->curriculum_id) // user enrolled
-            or is_admin()
+            $this->curriculum->isAccessible()
         ) {
             return true;
         } else {

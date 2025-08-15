@@ -1,5 +1,7 @@
 <?php
+
 namespace Database\Seeders;
+
 use App\Permission;
 use App\Role;
 use Illuminate\Database\Seeder;
@@ -59,6 +61,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'logbook_entry_show',
                 'logbook_entry_edit',
                 'logbook_entry_delete',
+                'kanban_access',
+                'kanban_create',
+                'kanban_show',
+                'kanban_edit',
+                'kanban_delete',
                 'navigator_access',
                 'navigator_create',
                 'navigator_show',
@@ -182,6 +189,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'group_edit',
                 'group_delete',
                 'group_enrolment',
+                'kanban_access',
+                'kanban_create',
+                'kanban_show',
+                'kanban_edit',
+                'kanban_delete',
                 'logbook_access',
                 'logbook_create',
                 'logbook_show',
@@ -270,6 +282,11 @@ class PermissionRoleTableSeeder extends Seeder
                 'curriculum_print',
                 'group_access',
                 'group_show',
+                'kanban_access',
+                'kanban_create',
+                'kanban_show',
+                'kanban_edit',
+                'kanban_delete',
                 'logbook_access',
                 'logbook_create',
                 'logbook_show',
@@ -403,6 +420,21 @@ class PermissionRoleTableSeeder extends Seeder
 
             return in_array($permission->title, $guest_permission_list);
         });
+
         Role::findOrFail(8)->permissions()->sync($guest_permissions);
+
+        //set token permission
+        $token_permission = $admin_permissions->filter(function ($permission) {
+            $token_permission_list = [
+                'curriculum_show',
+                'kanban_show',
+                'kanban_access',
+                'kanban_create',
+            ];
+
+            return in_array($permission->title, $token_permission_list);
+        });
+
+        Role::findOrFail(9)->permissions()->sync($token_permission);
     }
 }

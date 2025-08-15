@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Database\Factories;
 
 use App\Period;
@@ -39,5 +38,4 @@ class PeriodFactory extends Factory
 
         ];
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
@@ -12,6 +11,7 @@ use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
 use App\Role;
+use App\Scopes\NoSharingUsers;
 use App\StatusDefinition;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -25,24 +25,32 @@ class UsersController extends Controller
 {
     public function index()
     {
-        abort_unless(\Gate::allows('user_access'), 403);
-
-        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
+        if (auth()->user()->role()->id > 6) {   //todo check: should students see all other user of current org?
+            abort(403);
+        }
+        //every user should share with users of current org.
+        if (request()->wantsJson() and request()->has(['term', 'page'])) {
             return  getEntriesForSelect2ByCollection(
-                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users(),
+                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
                 'users.',
                 ['username', 'firstname', 'lastname'],
                 'lastname',
                 "CONCAT(firstname, ' ' ,lastname)",
             );
         }
-        // todo check: is the following condition used anymore
+
+        abort_unless(\Gate::allows('user_access'), 403);
+        // todo check: is the following condition used anymore (-> used only by user-tab on group/{id}?) --> change to top condition
         if (request()->wantsJson()) {
-            if (auth()->user()->role()->id == 1) {
-                return ['users' => json_encode(DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get())];
-            } else {
-                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get())];
-            }
+            /*if (auth()->user()->role()->id == 1) {
+                $users = json_encode(User::withTrashed()
+                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get());
+
+                return ['users' => $users];
+            } else {*/
+                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
+                    ->get()->first()->users()->get())];
+          /*  }*/
         }
 
         return view('users.index');
@@ -51,8 +59,8 @@ class UsersController extends Controller
     public function list()
     {
         $users = (auth()->user()->role()->id == 1)
-            ? DB::table('users')->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
-            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users();
+            ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
+            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
 
         $show_gate = \Gate::allows('user_show');
         $edit_gate = \Gate::allows('user_edit');
@@ -115,11 +123,11 @@ class UsersController extends Controller
          */
         OrganizationRoleUser::firstOrCreate(
             [
-                'user_id'         => $user->id,
+                'user_id' => $user->id,
                 'organization_id' => auth()->user()->current_organization_id,
             ],
             [
-                'role_id'         => 6, //student
+                'role_id' => 6, //student
             ]
         );
         $user->current_organization_id = auth()->user()->current_organization_id; //set default org
@@ -177,6 +185,10 @@ class UsersController extends Controller
         abort_unless(\Gate::allows('user_show'), 403);
         abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403);
 
+        if (request()->wantsJson()) {
+            return ['user' => $user];
+        }
+
         $status_definitions = StatusDefinition::all();
         $user->load('roles');
         $user->load('organizations');
@@ -227,6 +239,8 @@ class UsersController extends Controller
 
     public function setCurrentOrganization()
     {
+        abort_if( auth()->user()->id == 8 , 403); // only official guest user should not change current Organization
+
         User::where('id', auth()->user()->id)->update([
             'current_period_id' => (request('current_period_id')) ? request('current_period_id') : 1,
             'current_organization_id' => request('current_organization_id'),
@@ -297,19 +311,28 @@ class UsersController extends Controller
         return view('users.import');
     }
 
-    public function dsgvoExport($id)
+    public function dsgvoExport(User $user)
     {
         abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         abort_unless(\Gate::allows('user_access'), 403);
 
-        return User::where('id', auth()->user() - id())->with(['contactDetail', 'groups', 'roles', 'organizations', 'achievements'])->get()->first();
+        return User::where('id', $user->id)
+            ->with([
+                'contactDetail',
+                'comments',
+                'contents',
+                'groups',
+                'roles',
+                'organizations',
+                'achievements'
+            ])->get()->first();
     }
 
     protected function validateImportRequest()
     {
         return request()->validate(
             [
-                'medium_id'            => 'required',
+                'medium_id' => 'required',
             ]
         );
     }
@@ -317,12 +340,12 @@ class UsersController extends Controller
     public function forceDestroy(User $user, $permission = false)
     {
         if ($permission == false) {
-            abort_unless(\Gate::allows('user_delete'), 403); //if permission != true (for API) check via Gate
+            abort_unless(\Gate::allows('user_delete'), 403); //if permission != true (for API ) check via Gate
             abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         }
 
         $fallback_user = User::firstOrCreate(
-            ['common_name' =>  'deleted_user'],
+            ['common_name' => 'deleted_user'],
             [
                 'username' => env('APP_FALLBACK_USER_USERNAME', 'Deleted User'),
                 'firstname' => env('APP_FALLBACK_USER_FIRSTNAME', 'Deleted'),

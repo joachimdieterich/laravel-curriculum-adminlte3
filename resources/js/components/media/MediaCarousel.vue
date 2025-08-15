@@ -3,21 +3,32 @@
          class="carousel slide ignore"
          data-interval="false">
 
-        <span class="carousel-indicators">
-            <li v-for="(item, index) in items"
-                v-if="items.length > 1"
+        <div class="carousel-indicators">
+            <li v-for="(item, index) in subscriptions"
+                v-if="subscriptions.length > 1"
                 :class="{ 'active': index === 0 }"
                 :data-target="'#'+id"
                 :data-slide-to="index"
                 @click="setSlide(index)">
             </li>
-            <a class="pl-2 text-muted text-danger"
-               @click="unlinkMedium()">
-                <i class="fa fa-trash"></i>
-            </a>
-        </span>
+        </div>
         <div class="carousel-inner">
-            <div v-for="(item, index) in items"
+            <div class="w-100">
+                <div class="carousel-indicators-tools">
+                    <a :id="'download_medium_'+subscriptions[currentSlide].medium_id"
+                        class="text-muted px-2"
+                       @click.prevent="downloadMedium(subscriptions[currentSlide])">
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a v-if="$userId == subscriptions[currentSlide].medium.owner_id"
+                       class="text-danger px-2 "
+                       @click.prevent="unlinkMedium(subscriptions[currentSlide])">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div v-for="(item, index) in subscriptions"
                  :class="{ 'active': index === 0 }"
                  class="carousel-item">
                 <medium-renderer
@@ -25,10 +36,10 @@
                     :width="width"
                 ></medium-renderer>
             </div>
-
         </div>
+
         <a class="carousel-control-prev "
-           v-if="items.length > 1"
+           v-if="subscriptions.length > 1"
            :href="'#'+id"
            @click="prev()"
            :aria-label="trans('pagination.previous')"
@@ -38,7 +49,7 @@
             <span class="sr-only ignore">Previous</span>
         </a>
         <a class="carousel-control-next"
-           v-if="items.length > 1"
+           v-if="subscriptions.length > 1"
            :href="'#'+id"
            role="button"
            data-slide="next"
@@ -51,24 +62,23 @@
 </template>
 
 <script>
-import mediumRenderer from '../media/MediaRenderer';
+const mediumRenderer =
+    () => import('../media/MediaRenderer');
 
 export default {
     props: {
         'subscriptions': Array,
-        'width': Number
+        'width': Number,
     },
     data() {
         return {
             id: null,
             currentSlide: 0,
-            items: {},
             errors: {},
         }
     },
     mounted() {
         this.id = 'carousel_' + this._uid
-        this.items = this.subscriptions;
     },
     methods: {
         setSlide(id) {
@@ -76,32 +86,50 @@ export default {
         },
         prev() {
             if (this.currentSlide === 0) {
-                this.currentSlide = this.items.length;
+                this.currentSlide = this.subscriptions.length;
             } else {
                 this.currentSlide--;
             }
         },
         next() {
-            if (this.currentSlide === this.items.length) {
+            if (this.currentSlide === this.subscriptions.length) {
                 this.currentSlide = 0;
             } else {
                 this.currentSlide++;
             }
         },
-        unlinkMedium() { //id of external reference and value in db
-            axios.post('/mediumSubscriptions/destroy', this.items[this.currentSlide])
-                .then(res => {
-                    this.items.splice(this.currentSlide, 1);
-                    if (this.items.length == this.currentSlide) {
-                        $('#' + this.id).carousel('prev');
-                    }
-                })
-                .catch(err => {
-                    console.log(err.response);
-                });
+        downloadMedium(item) {
+            this.$eventHub.$emit('download', item.medium);
+        },
+        unlinkMedium(item) { //id of external reference and value in db
+            axios.delete('/media/' + item.medium.id, {
+                data: {
+                    subscribable_type: item.subscribable_type,
+                    subscribable_id:   item.subscribable_id
+                }
+            })
+            .then(res => {
+                //console.log(res);
+                this.$eventHub.$emit('reload_kanban_item', { id: item.subscribable_id });
+                this.subscriptions.splice(item, 1);
+                if (this.currentSlide == 0) {
+                    $('#' + this.id).carousel('next');
+                } else {
+                    $('#' + this.id).carousel('prev');
+                }
+            })
+            .catch(err => {
+                console.log(err.response);
+            });
         },
     },
-
+    /*watch: {
+      subscriptions(newSubscriptions, oldSubscriptions){
+           if (newSubscriptions.length > oldSubscriptions.length){
+               this.setSlide(newSubscriptions.length -1)
+           }
+       }
+    },*/
     components: {
         mediumRenderer,
     }

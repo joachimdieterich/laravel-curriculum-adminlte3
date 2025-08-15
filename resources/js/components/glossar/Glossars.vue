@@ -89,7 +89,7 @@
                 <div v-for="(item,index) in subscriptions"
                      class="carousel-item" :title="item.content.title">
                     <div class="p-3"
-                         v-html="item.content.content"></div>
+                         v-dompurify-html="item.content.content"></div>
                 </div>
 
             </div>
@@ -102,6 +102,7 @@
 <script>
     export default {
         props: {
+            subscribable_type: String,
             subscription: {},
             glossar: {},
         },

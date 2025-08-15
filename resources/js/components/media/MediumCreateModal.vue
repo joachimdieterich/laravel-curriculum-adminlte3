@@ -12,7 +12,7 @@
         @before-close="beforeClose"
         style="z-index: 100000 !important; ">
         <div class="card"
-             style="margin-bottom: 0px !important; min-height: 400px">
+             style="margin-bottom: 0 !important; min-height: 400px">
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fa fa-photo-video"></i>
@@ -38,15 +38,15 @@
             <div class="d-md-flex">
                 <div class="card-pane-left p-0">
                     <ul class="nav flex-column">
-                        <li class="nav-link text-sm" v-can="'medium_create'">
-                            <a class="active show link-muted"
+                        <li class="nav-link text-sm" v-can="'medium_access'">
+                            <a class="link-muted"
                                href="#upload"
                                data-toggle="tab"
                                @click="setTab('upload')">
                                 {{ trans('global.media.upload') }}
                             </a>
                         </li>
-                        <li class="nav-link text-sm" v-can="'medium_create'">
+                        <li class="nav-link text-sm" v-can="'medium_access'">
                             <a class="link-muted"
                                href="#media"
                                data-toggle="tab"
@@ -63,7 +63,7 @@
                             </a>
                         </li>
                         <li class="nav-link text-sm" v-can="'external_medium_create'">
-                            <a class="link-muted"
+                            <a class="link-muted active show"
                                href="#external"
                                data-toggle="tab"
                                @click="setTab('external')">
@@ -76,7 +76,7 @@
                 <div class="p-1 flex-fill border-left"
                      style="min-height: 350px">
                     <div class="tab-content p-2">
-                        <div class="tab-pane active show"
+                        <div class="tab-pane"
                              id="upload"
                              v-can="'medium_create'">
 
@@ -121,6 +121,16 @@
                         </div><!-- /.tab-pane -->
 
                         <div class="tab-pane" id="media" v-can="'medium_create'">
+                            <div id="media_create_datatable_filter" class="dataTables_filter">
+                                <input
+                                    type="search"
+                                    class="form-control form-control-sm"
+                                    v-model="search"
+                                    @input="searchFiles()"
+                                    placeholder="Suchbegriff"
+                                    aria-controls="media_create_datatable"
+                                />
+                            </div>
                             <div class="form-group table-responsive" style="height: 300px;">
                                 <table id="media_create_datatable" class="table table-head-fixed">
                                     <thead>
@@ -139,6 +149,7 @@
                                         <td style="width: 60px" class="pointer"
                                             @click="edit(file)">
                                             <img v-if="file.mime_type.includes('image')"
+                                                 :alt="file.title"
                                                  :src="'/media/' + file.id + '/thumb'" height="50" /></td>
                                         <td class="pointer"
                                             @click="edit(file)">{{ file.title }}</td>
@@ -146,7 +157,7 @@
                                             v-model="selectedFiles"
                                             :value="file.id"
                                             type="checkbox"
-                                            id="medium"
+                                            :id="'medium_'+file.id"
                                         ></td>
                                         <!--   <th>{{ file.size }}</th>
                                            <th>{{ file.created_at }}</th>
@@ -205,7 +216,7 @@
                             </div>
                         </div><!-- /.tab-pane -->
 
-                        <div class="tab-pane" id="link" v-can="'link_create'">
+                        <div class="tab-pane  " id="link" v-can="'link_create'">
                             <div class="form-group " >
                                 <input
                                     type="text" id="link"
@@ -217,11 +228,19 @@
                             </div>
                         </div><!-- /.tab-pane -->
 
-                        <div class="tab-pane"
+                        <div class="tab-pane active show"
                              id="external"
                              v-can="'external_medium_create'">
                             <repository-plugin-create
+                                v-if="!postProcess"
                                 :model="form"></repository-plugin-create>
+                            <div v-if="postProcess"
+                                 :id="'loading_'+this.component_id"
+                                 class="overlay text-center"
+                                 style="width:100% !important; height: 100%;">
+                                <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                <span>Fertigstellen...</span>
+                            </div>
                         </div><!-- /.tab-pane -->
 
                     </div>
@@ -237,9 +256,11 @@
                              @click="close()">
                          {{ trans('global.close') }}
                      </button>
-                    <button type="button"
-                            class="btn btn-primary pull-right"
-                            @click="saveToForm()" >
+                    <button
+                        name="medium-create-modal-submit"
+                        type="button"
+                        class="btn btn-primary pull-right"
+                        @click="saveToForm()" >
                         {{ trans('global.save') }}
                     </button>
                 </span>
@@ -250,27 +271,41 @@
 </template>
 
 <script>
-import Form from 'form-backend-validation'
-import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/resources/js/components/Create';
-require('datatables.net/js/jquery.dataTables.min.js')
+import Form from 'form-backend-validation';
+const RepositoryPluginCreate =
+    () => import('../../../../app/Plugins/Repositories/resources/js/components/Create');
+
+//import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/resources/js/components/Create';
+//require('datatables.net/js/jquery.dataTables.min.js')
 
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 export default {
     data() {
         return {
+            component_id: this._uid,
             method: 'post',
             requestUrl: '/mediaSubscriptions',
-            tab: 'media',
+            tab: 'external',
             target: 'medium_id',
             callbackFunction: null,
             callbackParentComponent: null,
             callbackComponent: null,
-
+            eventHubCallbackFunction: null,
+            eventHubCallbackFunctionParams: null,
+            subscribeSelected: false,
             form: new Form({
                 'path': '',
+                'thumb_path': '',
+                'medium_name': '',
+                'title': '',
+                'author': '',
+                'size': '',
+                'mimetype': '',
+                'license_id': '',
+                'external_id': '',
                 'subscribable_type': null,
                 'subscribable_id': null,
-                'repository': null,
+                'repository': 'local',
                 'public': 0
             }),
             endpoints: {},
@@ -284,6 +319,8 @@ export default {
             file: '',
             files: [],
             selectedFiles: [],
+            search: '',
+            filteredFiles: [],
             accept: '',
             datatable: null,
             //pagination
@@ -297,12 +334,12 @@ export default {
             per_page: 10,
             prev_page_url: null,
             to: null,
-            total: null
+            total: null,
+
+            postProcess: false,
         }
     },
-    created() {
 
-    },
     methods: {
         uploadSubmit(formData) {
             this.currentStatus = STATUS_SAVING;
@@ -334,11 +371,28 @@ export default {
             this.currentStatus = STATUS_INITIAL;
             this.uploadError = null;
             this.progressBar = false;
+            this.form = new Form({
+                'path': '',
+                'thumb_path': '',
+                'medium_name': '',
+                'title': '',
+                'author': '',
+                'size': '',
+                'mimetype': '',
+                'license_id': '',
+                'external_id': '',
+                'subscribable_type': null,
+                'subscribable_id': null,
+                'repository': 'local',
+                'public': 0
+            });
         },
         beforeOpen(event) {
+            this.getFiles(); // move to beforeOpen from mounted to reduce unused requests
             this.selectedFiles = [];
-            this.message = '';
-
+            this.message = ''; // == no previous upload was made, if so message == OK
+            this.postProcess = false;
+            console.log(event.params);
             if (event.params.referenceable_type){
                 this.form.subscribable_type = event.params.referenceable_type;
             }
@@ -350,6 +404,9 @@ export default {
             }
             if (event.params.subscribable_id) {
                 this.form.subscribable_id = event.params.subscribable_id;
+            }
+            if (event.params.subscribeSelected) {
+                this.subscribeSelected = event.params.subscribeSelected;
             }
             if (event.params.target) {
                 this.form.target = event.params.target;
@@ -369,6 +426,13 @@ export default {
             if (event.params.callbackFunction) {
                 this.callbackFunction = event.params.callbackFunction;
             }
+            if (event.params.eventHubCallbackFunction) {
+                this.eventHubCallbackFunction = event.params.eventHubCallbackFunction;
+            }
+            if (event.params.eventHubCallbackFunctionParams) {
+                this.eventHubCallbackFunctionParams = event.params.eventHubCallbackFunctionParams;
+            }
+            //console.log(this.form);
         },
         setTab(tab){
             this.tab = tab;
@@ -378,23 +442,74 @@ export default {
         },
         beforeClose() {
         },
-        saveToForm() {
-            if (this.callbackComponent) {
+        saveToForm(selected = null) {
+            if (this.subscribeSelected){ //subscribe selected
+                //console.log('subscribeSelected');
+                this.subscribe();
+            }
+            if (this.eventHubCallbackFunction) {
+                //console.log('eventHubCallbackFunction');
+                this.$eventHub.$emit(
+                    this.eventHubCallbackFunction,
+                    {
+                        'id': this.eventHubCallbackFunctionParams,
+                        'selectedMediumId': this.selectedFiles.length == 0 ? selected : this.selectedFiles,
+                        'files': this.getMediaById(),
+                    }
+                );
+            } else if (this.callbackComponent) {
+                //console.log('callbackComponent');
                 if (this.callbackParentComponent) {
                     app.__vue__.$refs[this.callbackParentComponent].$refs[this.callbackComponent][0].reload();
                 } else {
                     app.__vue__.$refs[this.callbackComponent][0][this.callbackFunction]();
                 }
             } else {
-                $('#' + this.target).val(this.selectedFiles);
+                //console.log('set '+'#' + this.target);
+                $('#' + this.target).val(selected ? selected : this.selectedFiles);
                 $('#' + this.target).trigger("change");
             }
 
-
-            this.$modal.hide('medium-create-modal');
+            this.close();
         },
         close(){
             this.$modal.hide('medium-create-modal');
+        },
+        subscribe(){
+            let media = this.getMediaById();
+            media.forEach((medium) => {
+                axios.post('/mediumSubscriptions', {
+                    subscribable_type: this.form.subscribable_type,
+                    subscribable_id: this.form.subscribable_id,
+                    medium_id: medium.id
+                }).then((response) => {
+                    console.log(medium.id + 'subscribed');
+                });
+            });
+        },
+        getMediaById(){ //get full media entries for callbackfunctions
+            let selectedMediaList = [];
+            //console.log(this.selectedFiles);
+            if (Array.isArray(this.selectedFiles)){ // select from list
+                this.selectedFiles.forEach((medium_id) => {
+                    this.files.filter((file) => {
+                            if (file.id == medium_id) {
+                                selectedMediaList.push(file);
+                            }
+                        }
+                    );
+                });
+            } else { // fileupload
+                this.files.filter((file) => {
+                        if (file.id == this.selectedFiles) {
+                            selectedMediaList.push(file);
+                        }
+                    }
+                );
+            }
+            //console.log(selectedMediaList);
+
+            return selectedMediaList;
         },
         filesChange(fieldName, fileList) {
             const formData = new FormData();
@@ -412,21 +527,56 @@ export default {
 
             axios.get(path, { params: { per_page: this.per_page } })
                 .then((response)=>{
-                    this.files = response.data.data;
-                    this.current_page = response.data.current_page;
+                    this.files          = response.data.data;
+                    this.filteredFiles  = response.data.data;
+                    this.current_page   = response.data.current_page;
                     this.first_page_url = response.data.first_page_url;
-                    this.from = response.data.from;
-                    this.last_page = response.data.last_page;
-                    this.last_page_url = response.data.last_page_url;
-                    this.next_page_url = response.data.next_page_url;
-                    this.path = response.data.path;
-                    this.per_page = response.data.per_page;
-                    this.prev_page_url = response.data.prev_page_url;
-                    this.to = response.data.to;
-                    this.total = response.data.total;
+                    this.from           = response.data.from;
+                    this.last_page      = response.data.last_page;
+                    this.last_page_url  = response.data.last_page_url;
+                    this.next_page_url  = response.data.next_page_url;
+                    this.path           = response.data.path;
+                    this.per_page       = response.data.per_page;
+                    this.prev_page_url  = response.data.prev_page_url;
+                    this.to             = response.data.to;
+                    this.total          = response.data.total;
+                })
+                .catch((e) => {
+                    console.log(e);
                 });
         },
+        searchFiles() {
+            if (this.search.length < 3) {
+                this.files = this.filteredFiles;
+                return;
+            }
 
+            const allFiles = this.filteredFiles;
+            this.filteredFiles = [];
+
+            for (let i = 0; i < this.files.length; i++) {
+                const file = this.files[i];
+                if (file.title.includes(this.search)) {
+                    this.filteredFiles.push(file);
+                }
+            }
+
+            this.files = this.filteredFiles;
+            this.filteredFiles = allFiles;
+        },
+        externalAdd(form){
+            //console.log(form);
+            //this.form = form;
+            this.postProcess = true;
+            axios.post('/media?repository=edusharing', form)
+                .then((response) => {
+                    //console.log(response);
+                    this.saveToForm(response.data.id);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     },
     computed: {
         isInitial() {
@@ -444,7 +594,10 @@ export default {
     },
     mounted() {
         this.reset();
-        this.getFiles();
+
+        this.$eventHub.$on('external_add', (form) => {
+            this.externalAdd(form);
+        });
     },
     components: {
         RepositoryPluginCreate

@@ -19,7 +19,7 @@ class MediumSubscriptionController extends Controller
         //dump($input);
         $subscriptions = MediumSubscription::where([
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id'   => $input['subscribable_id'],
+            'subscribable_id' => $input['subscribable_id'],
         ]);
         //dump($subscriptions->get());
 
@@ -46,40 +46,21 @@ class MediumSubscriptionController extends Controller
      */
     public function store(Request $request)
     {
-        $new_subscription = $this->validateRequest();
+        abort_unless(\Gate::allows('medium_create'), 403);
+        $input = $this->validateRequest();
 
-        $sharing_level_id = isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1;
-        $visibility = isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true;
-
-        $controller = new MediumController();
-        $medium = $controller->getMediumByEventPath($new_subscription['path']);
-
-        if ($medium == null) { //link
-            $medium = Medium::create([
-                'path' => $new_subscription['path'],
-                'medium_name' => '',
-                'title' => $new_subscription['path'],
-                'description' => '',
-                'author' => auth()->user()->username,
-                'publisher' => '',
-                'city' => '',
-                'date' => '',
-                'license_id' => 1,
-                'mime_type' => 'url',
-                'size' => 0,
-                'owner_id' => auth()->user()->id,
-            ]);
-        }
-
-        $subscribe = MediumSubscription::firstOrCreate([
-            'medium_id' =>  $medium->id,
-            'subscribable_type'=> $new_subscription['subscribable_type'],
-            'subscribable_id'=> $new_subscription['subscribable_id'],
-            'sharing_level_id'=> $sharing_level_id,
-            'visibility'=> $visibility,
-            'owner_id'=> auth()->user()->id,
+        $subscribe = MediumSubscription::updateOrCreate([
+            'medium_id' => $input['medium_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ], [
+            'sharing_level_id' => $input['sharing_level_id'] ?? 1,
+            'visibility' => $input['visibility'] ?? 1,
+            'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
+
+        return $subscribe;
     }
 
     /**
@@ -127,14 +108,21 @@ class MediumSubscriptionController extends Controller
 
     public function destroySubscription(Request $request)
     {
+        abort_unless(\Gate::allows('medium_delete'), 403);
         $subscription = $this->validateRequest();
+        $model = $subscription['subscribable_type'];
+        //! CHANGE IN NEW VERSION
+        // temporary solution to remove mediaSubscriptions for Logbooks/Kanbans
+        if ($model == 'App\\Logbook' || $model == 'App\\Kanban') {
+            app($model)::find($subscription['subscribable_id'])->update(['medium_id' => null]);
+        }
 
         return MediumSubscription::where([
-            'medium_id' =>  $subscription['medium_id'],
-            'subscribable_type'=> $subscription['subscribable_type'],
-            'subscribable_id'=> $subscription['subscribable_id'],
-            'sharing_level_id'=>$subscription['sharing_level_id'],
-            'visibility'=> $subscription['visibility'],
+            'medium_id' => $subscription['medium_id'],
+            'subscribable_type' => $subscription['subscribable_type'],
+            'subscribable_id' => $subscription['subscribable_id'],
+            'sharing_level_id' => $subscription['sharing_level_id'],
+            'visibility' => $subscription['visibility'],
             //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
         ])->delete();
     }
@@ -142,12 +130,13 @@ class MediumSubscriptionController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'path'            => 'sometimes',
-            'medium_id'         => 'sometimes',
+            'path' => 'sometimes',
+            'medium_id' => 'sometimes',
             'subscribable_type' => 'required',
-            'subscribable_id'   => 'required',
-            'sharing_level_id'  => 'sometimes',
-            'visibility'        => 'sometimes',
+            'subscribable_id' => 'required',
+            'sharing_level_id' => 'sometimes',
+            'visibility' => 'sometimes',
+            'additional_data' => 'sometimes',
         ]);
     }
 }

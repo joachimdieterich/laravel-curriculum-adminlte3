@@ -10,6 +10,7 @@ use App\Glossar;
 use App\Grade;
 use App\Medium;
 use App\MediumSubscription;
+use App\ObjectiveType;
 use App\OrganizationType;
 use App\Quote;
 use App\QuoteSubscription;
@@ -25,6 +26,8 @@ class CurriculumImportController extends Controller
 {
     public function import()
     {
+        abort_unless(\Gate::allows('curriculum_create'), 403);
+
         return view('curricula.import');
     }
 
@@ -33,6 +36,8 @@ class CurriculumImportController extends Controller
      */
     public function store()
     {
+        abort_unless(\Gate::allows('curriculum_create'), 403);
+
         ini_set('max_file_uploads', 200);
         if (! request()->hasFile('imports')) {
             return redirect('/home');
@@ -504,14 +509,18 @@ class CurriculumImportController extends Controller
 
     private function importMediumV2($medium_id, $folder, $subfolder = '')
     {
-        $pathPrefix = '/users/'.auth()->user()->id.'/';
+        $pathPrefix = 'users/'.auth()->user()->id.'/';
+
+        if(!Storage::exists($pathPrefix)){
+            Storage::makeDirectory($pathPrefix);
+        }
 
         if (File::exists(storage_path("app/{$folder}/media/{$subfolder}{$medium_id}"))) {
             $file = File::files(storage_path("app/{$folder}/media/{$subfolder}{$medium_id}"));   // always only one file!
             File::copy($file[0]->getRealPath(), storage_path('app/'.$pathPrefix.$file[0]->getBasename()));
 
             return Medium::create([
-                'path'          => $pathPrefix,
+                'path'          => '/'.$pathPrefix,
                 'medium_name'   => $file[0]->getBasename(),
                 'title'         => $file[0]->getBasename(),
                 'description'   => '',
@@ -551,16 +560,19 @@ class CurriculumImportController extends Controller
     private function subscribeMediaToModel($model, $media)
     {
         foreach ($media as $medium) {
-            $subscribe = MediumSubscription::updateOrCreate([
-                'medium_id'         => $medium->id,
-                'subscribable_type' => get_class($model),
-                'subscribable_id'   => $model->id,
-            ], [
-                'sharing_level_id'  => 1, // has to be global = 1
-                'visibility'        => 1, // has to be public  = 1
-                'owner_id'          => auth()->user()->id,
-            ]);
-            $subscribe->save();
+            if ($medium != null)
+            {
+                $subscribe = MediumSubscription::updateOrCreate([
+                    'medium_id'         => $medium->id,
+                    'subscribable_type' => get_class($model),
+                    'subscribable_id'   => $model->id,
+                ], [
+                    'sharing_level_id'  => 1, // has to be global = 1
+                    'visibility'        => 1, // has to be public  = 1
+                    'owner_id'          => auth()->user()->id,
+                ]);
+                $subscribe->save();
+            }
         }
     }
 
@@ -687,7 +699,7 @@ class CurriculumImportController extends Controller
             'color' => $terminalObjective->color,
             'time_approach' => $terminalObjective->time_approach,
             'curriculum_id' => $cur->id,
-            'objective_type_id' => $terminalObjective->objective_type_id,
+            'objective_type_id' => optional(ObjectiveType::where('id',$terminalObjective->objective_type_id)->first())->id ?: 1, //Todo: add objective type title in Backup
             'visibility' => $terminalObjective->visibility,
             'order_id' => $terminalObjective->order_id,
         ]);

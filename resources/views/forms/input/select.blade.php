@@ -4,8 +4,10 @@
     @if(isset($show_label))
         <label for="{{ $field }}" class="{{ isset($class_left) ? $class_left : 'p-0 col-sm-12' }}">
 
-            {{ isset($label) ? $label :trans("global.{$model}.title_singular") }}
-
+            {{ isset($label) ? $label : trans("global.{$model}.title_singular") }}
+            @if(isset($required))
+                *
+            @endif
             @if(isset($multiple))
                 <span class="btn btn-info btn-xs deselect-all pull-right">{{trans("global.deselect_all")}}</span>
                 <span class="btn btn-info btn-xs select-all pull-right mr-1">{{trans("global.select_all")}}</span>
@@ -56,10 +58,16 @@
                             @endif
 
                             <option
-                                value="{{ $v->$o_id }}" {{ ( $v->$o_id == $value ) ? 'selected' : '' }}
-                            @if (isset($option_icon))
-                            data-icon="{{ $option_icon }}"
+                                value="{{ $v->$o_id }}"
+                                @if (isset($option_icon))
+                                    data-icon="{{ $option_icon }}"
                                 @endif
+                                @if(isset($multiple))
+                                    {{ in_array($v->$o_id, (array)$value) ? 'selected' : '' }}
+                                @else
+                                    {{ ( $v->$o_id == $value ) ? 'selected' : '' }}
+                                @endif
+
                             >
                                 {{ (isset($option_label)) ? $v->$option_label :$v->title }}
                                 @if (isset($combine_labels) ? $combine_labels : false)
@@ -93,7 +101,7 @@
                 return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
             }
             <!--hack to get select2 working z-index-->
-            $("#{{ $field }}").select2({
+             $("#{{ $field }}").select2({
                 placeholder: "{{ $placeholder }}",
                 dropdownParent: $("#{{ $field }}").parent(),
                 allowClear: "{{ $allowClear ?? true }}",
@@ -107,7 +115,20 @@
                             page: params.page || 1
                         }
                     },
-                    cache: true
+                    /*processResults: function(data) {
+                        let results = data.results;
+                        let options = {{json_encode($value)}}
+                        for (var i = 0; i < results.length; i++) {
+                            if (options.includes(results[i].id )) {
+                                results[i]["selected"] = "true";
+                            }
+                        }
+
+                        data.results = results;
+                        console.log(data);
+                        return { results: data.results  };
+                    },*/
+                    cache: true,
                 },
                 templateSelection: formatText,
                 templateResult: formatText,

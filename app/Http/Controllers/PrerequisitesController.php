@@ -86,11 +86,15 @@ class PrerequisitesController extends Controller
           ])->with(['predecessor'])->get();*/
 
         $data = [
-            'id'    => $successor->id,
-            'name'  => $this->resolveType($request['successor_type'], $successor),
-            'type'  => 'Root',
+            'id' => $successor->id,
+            'name' => $this->resolveType($request['successor_type'], $successor),
+            'type' => 'Root',
+            'model_type' => $request['successor_type'],
+            'model' => $successor,
             'description' => strip_tags($successor->title),
-            'children'    => $this->predecessor($successor->predecessors),
+            'children' => $this->predecessor($successor->predecessors),
+            'parents' => $this->successor($successor->successors),
+
         ];
 
         return $data;
@@ -102,12 +106,34 @@ class PrerequisitesController extends Controller
 
         foreach ($predecessors as $predecessor) {
             $data[] = [
-                'id'    => $predecessor->predecessor_id,
-                'name'  => $this->resolveType($predecessor->predecessor_type, $predecessor->predecessor),
-                'type'  => 'Level '.$level,
-                'prerequisite_id'  => $predecessor->id,
-                'description'   => strip_tags($predecessor->predecessor->title),
-                'children'      => $this->predecessor($predecessor->predecessor->predecessors, $level + 1),
+                'id' => $predecessor->predecessor_id,
+                'name' => $this->resolveType($predecessor->predecessor_type, $predecessor->predecessor),
+                'type' => 'Level '.$level,
+                'model' => $predecessor,
+                'model_type' => $predecessor->successor_type,
+                'prerequisite_id' => $predecessor->id,
+                'description' => strip_tags($predecessor->predecessor->title),
+                'children' => $this->predecessor($predecessor->predecessor->predecessors, $level + 1),
+            ];
+        }
+
+        return $data;
+    }
+
+    protected function successor($successors, $level = 0, $max_iterations = 5)
+    {
+        $data = [];
+
+        foreach ($successors as $successor) {
+            $data[] = [
+                'id' => $successor->successor_id,
+                'name' => $this->resolveType($successor->successor_type, $successor->successor),
+                'type' => 'Level '.$level,
+                'model' => $successor,
+                'model_type' => $successor->predecessor_type,
+                'prerequisite_id' => $successor->id,
+                'description' => strip_tags($successor->successor->title),
+                'children' => $this->predecessor($successor->successor->successors, $level + 1),
             ];
         }
 

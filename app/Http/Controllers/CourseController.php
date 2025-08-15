@@ -4,16 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Certificate;
 use App\Course;
+use App\CurriculumSubscription;
+use App\Group;
 use App\Curriculum;
 use App\ObjectiveType;
 use App\User;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('home');
+        abort_unless(\Gate::allows('curriculum_show'), 403);
+        $input = $this->validateRequest();
+
+        $courses= CurriculumSubscription::where('subscribable_type', "App\Group")
+            ->where('subscribable_id', $input['group_id'])
+            ->with(['curriculum'])->get();
+
+        return empty($courses) ? '' : DataTables::of($courses)
+            ->setRowId('id')
+            ->make(true);
     }
 
     public function show(Course $course)
@@ -54,7 +66,7 @@ class CourseController extends Controller
                             ['global', '=', 1],
                         ])
                         ->get();
-        $logbook = (null !== $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;
+        /*$logbook = (null !== $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;*/
 
         $settings = json_encode([
             'course' => true,
@@ -68,7 +80,7 @@ class CourseController extends Controller
                 ->with(compact('objectiveTypes'))
                 ->with(compact('course'))
                 ->with(compact('certificates'))
-                ->with(compact('logbook'))
+                /*->with(compact('logbook'))*/
                 ->with(compact('settings'));
     }
 
@@ -81,7 +93,8 @@ class CourseController extends Controller
                             }])
                             or (auth()->user()->currentRole()->first()->id == 1)), 403); // or admin
 
-        $course = Course::where('id', request()->course_id)->get()->first();
+        $course = CurriculumSubscription::where('id', request()->course_id)->get()->first();
+        //$course = Course::where('id', request()->course_id)->get()->first();
 
         $users = User::select([
             'users.id',
@@ -94,7 +107,7 @@ class CourseController extends Controller
         ])
             ->join('group_user', 'users.id', '=', 'group_user.user_id')
             ->join('organization_role_users', 'organization_role_users.user_id', '=', 'group_user.user_id')
-            ->where('group_user.group_id', '=', $course->group_id)
+            ->where('group_user.group_id', '=', $course->subscribable_id)
             ->where('organization_role_users.organization_id', '=', auth()->user()->current_organization_id)
             ->where('organization_role_users.role_id', '=', 6)
             ->with(['progresses' => function ($query) use ($course) {
@@ -121,5 +134,12 @@ class CourseController extends Controller
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'group_id' => 'sometimes|integer',
+        ]);
     }
 }

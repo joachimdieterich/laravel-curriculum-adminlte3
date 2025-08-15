@@ -1,7 +1,8 @@
 <template>
     <div>
-        <ul class="nav nav-pills"
-            id="terminalObjectivesTopNav">
+        <ul class="nav nav-pills bg-gray-light"
+            id="terminalObjectivesTopNav"
+            style="position:sticky; top:56px; z-index: 100">
             <draggable
                 class="nav nav-pills"
                 v-can="'curriculum_edit'"
@@ -61,7 +62,6 @@
 
                             <div class="ml-auto">
                                 <EnablingObjectives
-                                    :curriculum="curriculum"
                                     :terminalobjective="objective"
                                     :objectives="objective.enabling_objectives"
                                     :settings="settings">
@@ -92,137 +92,149 @@
 </template>
 
 <script>
-    import ObjectiveBox from './ObjectiveBox'
+const ObjectiveBox =
+    () => import('./ObjectiveBox');
+const EnablingObjectives =
+    () => import('./EnablingObjectives');
+const draggable =
+    () => import('vuedraggable');
+  /*  import ObjectiveBox from './ObjectiveBox'
     import EnablingObjectives from './EnablingObjectives'
-    import draggable from "vuedraggable"; // import the vuedraggable
+    import draggable from "vuedraggable"; // import the vuedraggable*/
 
-    export default {
-        props: {
-            'curriculum': Object,
-            'objectivetypes': Array,
-        },
-        data() {
-            return {
-                settings: {
-                    'last': null,
-                },
-                max_ids: {},
-                typetabs: {},
-                activetab: null,
-                currentCurriculaEnrolments: null,
-                errors: {},
-
-                terminal_objectives: Object
-            }
-        },
-        methods: {
-            filterTerminalObjectives(typetab) {
-                let filteredTerminalObjectives = this.terminal_objectives;
-                filteredTerminalObjectives = filteredTerminalObjectives.filter(
-                    t => t.objective_type_id === typetab
-                  );
-                this.max_ids[typetab] = filteredTerminalObjectives[filteredTerminalObjectives.length-1].id;
-                return filteredTerminalObjectives;
+export default {
+    props: {
+        'curriculum': Object,
+        'objectivetypes': Array,
+    },
+    data() {
+        return {
+            settings: {
+                'last': null,
             },
-            getTypeTitle(id){
-                return this.objectivetypes.filter(
-                    t => t.id === id
+            max_ids: {},
+            typetabs: {},
+            activetab: null,
+            currentCurriculaEnrolments: null,
+            errors: {},
+
+            terminal_objectives: Object
+        }
+    },
+    methods: {
+        filterTerminalObjectives(typetab) {
+            let filteredTerminalObjectives = this.terminal_objectives;
+            filteredTerminalObjectives = filteredTerminalObjectives.filter(
+                t => t.objective_type_id === typetab
                 );
-            },
-            setActiveTab(typetab){
-                this.activetab = typetab;
-            },
-            loadObjectives(objective_type_id = 0){
-                axios.get('/curricula/' + this.curriculum.id + '/objectives' )
-                    .then(response => {
-                        this.terminal_objectives = response.data.curriculum.terminal_objectives;
-                        if (this.terminal_objectives.length !== 0){
-                            this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
-                            if (!!this.curriculum.objective_type_order){
+            this.max_ids[typetab] = filteredTerminalObjectives[filteredTerminalObjectives.length-1].id;
+            return filteredTerminalObjectives;
+        },
+        getTypeTitle(id){
+            return this.objectivetypes.filter(
+                t => t.id === id
+            );
+        },
+        setActiveTab(typetab){
+            this.activetab = typetab;
+        },
+        loadObjectives(objective_type_id = 0){
+            axios.get('/curricula/' + this.curriculum.id + '/objectives' )
+                .then(response => {
+                    this.terminal_objectives = response.data.curriculum.terminal_objectives;
+                    if (this.terminal_objectives.length !== 0){
+                        this.settings.last = this.terminal_objectives[this.terminal_objectives.length-1].id;
+                        this.typetabs = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
+                        if (!!this.curriculum.objective_type_order){
+                            if (this.curriculum.objective_type_order.length ===  this.typetabs.length){
                                 this.typetabs = this.curriculum.objective_type_order;
-                            } else {
-                                this.typetabs = [ ... new Set(this.terminal_objectives.map(t => t.objective_type_id))];
-                            }
-
-                            if (objective_type_id === 0){
-                                this.activetab = this.typetabs[0];
                             }
                         }
-                    })
-                    .catch(e => {
-                        this.errors = e.data.errors;
-                    });
-            },
-            externalEvent: function(ids) {
-                this.reloadEnablingObjectives(ids);
-            },
-            async reloadEnablingObjectives(ids) {
-                try {
-                    this.terminal_objectives = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum.terminal_objectives;
-                } catch(error) {
-                    this.errors = error.response.data.errors;
-                }
-            },
 
-            checkCrossReferenceInLocalStorage(){
-                if (localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' ) !== null){
-                    $("#currentCurriculaEnrolmentSelector").val(localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' )).trigger('change');
-                    this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
-                } else {
-                    $("#currentCurriculaEnrolmentSelector").val(null).trigger('change');
-                }
-            },
-            handleTypeMoved() {
-                // Send the entire list of statuses to the server
-                axios.put("/curricula/"+this.curriculum.id+"/syncObjectiveTypesOrder", {objective_type_order: this.typetabs})
-                    .catch(err => {
-                        console.log(err.response);
-                        alert(err.response.statusText);
-                    });
-            },
-        },
-        mounted() {
-            this.settings = this.$attrs.settings;
-            this.loadObjectives();
-
-            //load users curricula for cross reference selector
-            axios.get('/curricula/references')
-                .then(response => {
-                    this.currentCurriculaEnrolments = response.data.message;
-                    this.$nextTick(() => {
-                        $("#currentCurriculaEnrolmentSelector").select2({
-                            value: null,
-                            placeholder: "Querverweise",
-                            allowClear: true
-                        }).on('select2:select', function () {
-                            localStorage.setItem( 'currentCurriculaEnrolmentSelectorValue', $("#currentCurriculaEnrolmentSelector").val() );
-                            this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
-                        }.bind(this))
-                        .on('select2:clear', function () {
-                            this.$parent.setCrossReferenceCurriculumId(false);
-                            localStorage.removeItem( 'currentCurriculaEnrolmentSelectorValue');
-                        }.bind(this));
-                       this.checkCrossReferenceInLocalStorage(); // load value from localStorage
-                    })
+                        if (objective_type_id === 0){
+                            this.activetab = this.typetabs[0];
+                        }
+                    }
                 })
                 .catch(e => {
                     this.errors = e.data.errors;
                 });
-
-            //eventlistener
-            this.$on('addTerminalObjective', function(newTerminalObjective) {
-                this.activetab = newTerminalObjective.objective_type_id;
-                this.loadObjectives(this.activetab);
-            });
-            this.$on('addEnablingObjective', function(newEnablingObjective) {
-                this.loadObjectives(this.activetab);
-            });
+        },
+        externalEvent: function(ids) {
+            this.reloadEnablingObjectives(ids);
+        },
+        async reloadEnablingObjectives(ids) {
+            try {
+                this.terminal_objectives = (await axios.post('/curricula/'+this.curriculum.id+'/achievements', {'user_ids' : ids})).data.curriculum.terminal_objectives;
+            } catch(error) {
+                consoloe.log(error);
+            }
         },
 
-        components: {
-            ObjectiveBox,
-            EnablingObjectives,
-            draggable
-        }
+        checkCrossReferenceInLocalStorage(){
+            if (localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' ) !== null){
+                $("#currentCurriculaEnrolmentSelector").val(localStorage.getItem( 'currentCurriculaEnrolmentSelectorValue' )).trigger('change');
+                this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
+            } else {
+                $("#currentCurriculaEnrolmentSelector").val(null).trigger('change');
+            }
+        },
+        handleTypeMoved() {
+            // Send the entire list of statuses to the server
+            axios.put("/curricula/"+this.curriculum.id+"/syncObjectiveTypesOrder", {objective_type_order: this.typetabs})
+                .catch(err => {
+                    console.log(err.response);
+                    alert(err.response.statusText);
+                });
+        },
+    },
+    mounted() {
+        this.settings = this.$attrs.settings;
+        this.loadObjectives();
+
+        //load users curricula for cross reference selector
+        axios.get('/curricula/references')
+            .then(response => {
+                this.currentCurriculaEnrolments = response.data.message;
+                this.$nextTick(() => {
+                    $("#currentCurriculaEnrolmentSelector").select2({
+                        value: null,
+                        placeholder: "Querverweise",
+                        allowClear: true
+                    }).on('select2:select', function () {
+                        localStorage.setItem( 'currentCurriculaEnrolmentSelectorValue', $("#currentCurriculaEnrolmentSelector").val() );
+                        this.$parent.setCrossReferenceCurriculumId($("#currentCurriculaEnrolmentSelector").val());
+                    }.bind(this))
+                    .on('select2:clear', function () {
+                        this.$parent.setCrossReferenceCurriculumId(false);
+                        localStorage.removeItem( 'currentCurriculaEnrolmentSelectorValue');
+                    }.bind(this));
+                    this.checkCrossReferenceInLocalStorage(); // load value from localStorage
+                })
+            })
+            .catch(e => {
+                this.errors = e.data.errors;
+            });
+
+        //eventlistener
+
+        this.$eventHub.$on('addTerminalObjective', function(newTerminalObjective) {
+            this.activetab = newTerminalObjective.objective_type_id;
+            this.loadObjectives(this.activetab);
+        }.bind(this));
+        this.$eventHub.$on('addEnablingObjective', function(newEnablingObjective) {
+            this.loadObjectives(this.activetab);
+        }.bind(this));
+        this.$eventHub.$on('deletedObjective', function(deletedObjective) {
+            this.activetab = (deletedObjective.type === 'terminal') ? deletedObjective.objective.objective_type_id : deletedObjective.objective.terminal_objective.objective_type_id;
+            this.loadObjectives(this.activetab);
+        }.bind(this));
+    },
+
+    components: {
+        ObjectiveBox,
+        EnablingObjectives,
+        draggable
     }
+}
 </script>

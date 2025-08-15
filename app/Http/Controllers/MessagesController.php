@@ -27,7 +27,7 @@ class MessagesController extends Controller
         //$threads = Thread::getAllLatest()->get();
 
         // All threads that user is participating in
-        $threads = Thread::forUser(Auth::id())->with(['messages'=> function ($q) {
+        $threads = Thread::forUser(Auth::id())->with(['messages' => function ($q) {
             $q->latest('created_at');
         }, 'messages.user'])->latest('updated_at')->get();
 
@@ -123,7 +123,7 @@ class MessagesController extends Controller
             }
         }
         if (request()->wantsJson()) {
-            $newEntry = Thread::where('id', $thread->id)->with(['messages'=> function ($q) {
+            $newEntry = Thread::where('id', $thread->id)->with(['messages' => function ($q) {
                 $q->latest('created_at');
             }, 'messages.user'])
                 ->latest('updated_at')->get();
@@ -176,7 +176,7 @@ class MessagesController extends Controller
 
         // axios call?
         if (request()->wantsJson()) {
-            $newEntry = Thread::where('id', $id)->with(['messages'=> function ($q) {
+            $newEntry = Thread::where('id', $id)->with(['messages' => function ($q) {
                 $q->latest('created_at');
             }, 'messages.user'])
                 ->latest('updated_at')->get();

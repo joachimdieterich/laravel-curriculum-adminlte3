@@ -29,9 +29,10 @@ class PeriodCRUDTest extends TestCase
         $list = $this->get('periods/list')
             ->assertStatus(200);
         $i = 0;
-        foreach ($periods as $period)
-        {
-            if ($i === 49) { break; } //test max 50 user (default page limit on datatables
+        foreach ($periods as $period) {
+            if ($i === 49) {
+                break;
+            } //test max 50 user (default page limit on datatables
             $list->assertJsonFragment($period->toArray());
             $i++;
         }
@@ -51,7 +52,6 @@ class PeriodCRUDTest extends TestCase
      */
     public function an_administrator_create_a_period()
     {
-
         $this->followingRedirects()
             ->post('periods', $attributes = Period::factory()->raw())
             ->assertStatus(200);

@@ -26,14 +26,14 @@
                     <div class="row pl-3">
                         <ObjectiveBox type="terminal"
                             :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
-                            :setting="setting">
+                            :settings="settings">
                         </ObjectiveBox>
 
                         <ObjectiveBox
                             v-if="filtered_reference.referenceable_type === 'App\\EnablingObjective'"
                             type="enabling"
                             :objective="filtered_reference.referenceable"
-                            :setting="setting">
+                            :settings="settings">
                         </ObjectiveBox>
 
                         <div>
@@ -43,7 +43,7 @@
                                    @click.prevent="open('reference-objective-modal', filtered_reference.reference)">
                                     <i class="fa fa-pencil-alt pl-2"></i></a>
                              </dt>
-                            <dd v-html="filtered_reference.reference.description"></dd>
+                            <dd v-dompurify-html="filtered_reference.reference.description"></dd>
                         </div>
                     </div>
                     <hr style="clear:both;">
@@ -55,13 +55,15 @@
 
 
 <script>
-    import ObjectiveBox from '../objectives/ObjectiveBox';
+const ObjectiveBox =
+    () => import('../objectives/ObjectiveBox');
+    //import ObjectiveBox from '../objectives/ObjectiveBox';
 
     export default {
         props: ['reference_subscriptions','curricula_list'],
         data: function() {
             return {
-              setting: {
+              settings: {
                     'last': null,
                 },
 

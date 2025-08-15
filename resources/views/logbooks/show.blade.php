@@ -3,9 +3,10 @@
 @section('title')
     <small>{{ $logbook->title }}</small>
     @can('logbook_create')
-        @if (Auth::user()->id ==  $logbook->owner_id)
+        @if (Auth::user()->id ==  $logbook->owner_id or is_admin())
             <a class="btn btn-flat"
-               href="/logbooks/{{ $logbook->id }}/edit">
+                onclick="app.__vue__.$eventHub.$emit('edit_logbook', {{$logbook->toJson()}})"
+            >
                 <i class="fa fa-pencil-alt text-secondary"></i>
             </a>
             <button class="btn btn-flat"
@@ -21,12 +22,11 @@
         @if (Auth::user()->id == env('GUEST_USER'))
             <a href="/navigators/{{Auth::user()->organizations()->where('organization_id', '=',  Auth::user()->current_organization_id)->first()->navigators()->first()->id}}">Home</a>
         @else
-            <a href="/">{{ trans('global.home') }}</a>
+            <a href="/"><i class="fa fa-home"></i></a>
         @endif
     </li>
     <li class="breadcrumb-item active">{{ trans('global.logbook.title_singular') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"
-                                    aria-label="{{ trans('global.documentation') }}"><i
+    <li class="breadcrumb-item "><a href="{{ env('DOCUMENTATION', '/documentation') }}" class="text-black-50"                                    aria-label="{{ trans('global.documentation') }}"><i
                 class="fas fa-question-circle"></i></a></li>
 @endsection
 
@@ -39,6 +39,7 @@
     <medium-modal></medium-modal>
     <medium-create-modal></medium-create-modal>
     <subscribe-objective-modal></subscribe-objective-modal>
+    <logbook-entry-subject-modal></logbook-entry-subject-modal>
     <task-modal></task-modal>
     <absence-modal></absence-modal>
     @can('logbook_create')

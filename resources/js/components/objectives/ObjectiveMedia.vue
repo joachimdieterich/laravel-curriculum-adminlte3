@@ -1,7 +1,7 @@
 <template>
     <div class="col-12 px-0">
 
-        <ul class="nav nav-tabs"
+        <!-- <ul class="nav nav-tabs"
             role="tablist">
             <li v-can="'medium_access'"
                 class="btn btn-sm btn-outline-secondary m-2"
@@ -40,12 +40,12 @@
                 <i class="fa fa-graduation-cap"></i> {{ trans('global.artefact.title') }}
             </li>
 
-        </ul>
+        </ul> -->
 
         <div class="tab-content"
              id="custom-content-below-tabContent">
 
-            <div v-can="'medium_access'"
+            <!-- <div v-can="'medium_access'"
                  class="tab-pane fade show "
                  v-bind:class="[(currentTab === 1) ? 'active' : '']"
                  id="objective-media-internal"
@@ -57,23 +57,25 @@
                     :subscribable_id="objective.id"
                     format="list">
                 </media>
-            </div>
-            <div v-can="'external_medium_access'"
+            </div> -->
+
+            <div v-permission="'external_medium_access'"
                  class="tab-pane fade show "
                  v-bind:class="[(currentTab === 2) ? 'active' : '']"
                  id="objective-media-external"
                  role="tabpanel"
-                 aria-labelledby="curriculum-nav-tab">
+                 aria-labelledby="curriculum-nav-tab"
+            >
                 <div class="row">
                     <repository
                         v-if="repository"
                         :repository="repository"
                         ref="repositoryPlugin"
-                        :model="objective">
-                    </repository>
+                        :model="objective"
+                    ></repository>
                 </div>
             </div>
-            <div v-can="'artefact_access'"
+            <!-- <div v-can="'artefact_access'"
                  class="tab-pane fade show "
                  v-bind:class="[(currentTab === 3) ? 'active' : '']"
                  id="objective-media-artefacts"
@@ -86,43 +88,44 @@
                     :subscribable_id="objective.id"
                     format="list">
                 </media>
-            </div>
+            </div> -->
         </div>
 
     </div>
 </template>
 <script>
-    import Media from '../media/Media'
-    import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media'
+//import Media from '../../../../app/Plugins/Repositories/resources/js/components/Media'
+//import Media from '../media/Media'
+import Repository from '../../../../app/Plugins/Repositories/resources/js/components/Media'
 
-    export default {
-        name: 'objectiveMedia',
-        components: {
-            Media,
-            Repository
-        },
-        props: {
-            objective: {},
-            repository: {},
-            type: {},
-            model: {}
-        },
-        data() {
-            return {
-                currentTab: 2,
-            }
-        },
-        methods:{
-            setCurrentTab(id){
-                this.currentTab = id;
-            },
-            loaderEvent() {
-                this.$refs.objectiveMedia.loader();
-                this.$refs.artefactsMedia.loader();
-            }
-        },
-        mounted() {
-            this.$refs.repositoryPlugin.loader();
+export default {
+    name: 'objectiveMedia',
+    components: {
+        // Media,
+        Repository,
+    },
+    props: {
+        objective: {},
+        repository: {},
+        type: {},
+        model: {},
+    },
+    data() {
+        return {
+            currentTab: 2,
         }
+    },
+    methods: {
+        setCurrentTab(id) {
+            this.currentTab = id;
+        },
+        loaderEvent() {
+            this.$refs.objectiveMedia.loader();
+            this.$refs.artefactsMedia.loader();
+        }
+    },
+    mounted() {
+        this.$refs.repositoryPlugin.loader();
     }
+}
 </script>

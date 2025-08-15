@@ -29,6 +29,22 @@ class LogbookEntryController extends Controller
     }
 
     /**
+     * Update the subject_id of a specific entry
+     */
+    public function setSubject(Request $request) {
+        $input = $this->validateRequest();
+
+        $update = LogbookEntry::updateOrCreate([
+            'id' => $request->id,
+        ], [
+            'subject_id' => $input['subject_id'],
+        ]);
+        $update->save();
+
+        return true;
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -46,12 +62,28 @@ class LogbookEntryController extends Controller
             'description' => $new_entry['description'],
             'begin' => $new_entry['begin'],
             'end' => $new_entry['end'],
+            'subject_id' => null, // TODO: there's no option to choose a subject on LogbookEntryModal
             'owner_id' => auth()->user()->id,
         ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
-        // axios call?
+        $entry = $entry->with([
+            'owner' => function ($query) {
+                $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
+            },
+            'absences.owner' => function ($query) {
+                $query->select('id', 'username', 'firstname', 'lastname', 'medium_id');
+            }, //todo: lazyload
+            'absences.absent_user',
+            'terminalObjectiveSubscriptions.terminalObjective',
+            'enablingObjectiveSubscriptions.enablingObjective.terminalObjective',
+            'taskSubscription.task.subscriptions' => function ($query) {
+                $query->where('subscribable_id', auth()->user()->id)
+                    ->where('subscribable_type', 'App\User');
+            },
+        ])->where('id', $entry->id)->get()->first();
+
         if (request()->wantsJson()) {
             return ['message' => $entry];
         }
@@ -91,11 +123,9 @@ class LogbookEntryController extends Controller
 
         $logbookEntry->update($this->validateRequest());
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => '/logbooks'.$logbookEntry->logbook_id];
+            return ['message' => $logbookEntry];
         }
-
     }
 
     /**
@@ -159,6 +189,7 @@ class LogbookEntryController extends Controller
             'begin'             => 'sometimes',
             'end'               => 'sometimes',
             'owner_id'          => 'sometimes',
+            'subject_id'        => 'sometimes',
         ]);
     }
 }

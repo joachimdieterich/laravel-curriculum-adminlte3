@@ -24,7 +24,7 @@ class StatisticController extends Controller
                 case 'login':
                 case 'ssoLogin':
                 case 'guestLogin':
-                    return ['message' => $this->getLogins(request('chart'))];
+                    return ['message' => $this->getLogins(request('chart'), request('date_begin'), request('date_end'))];
                     break;
                 case 'browsers':
                     return ['message' => $this->getEntriesByKey('browser', request('date_begin'), request('date_end'))];
@@ -44,6 +44,12 @@ class StatisticController extends Controller
                 case 'repositoryPlugin':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitleFromUuid('App\Http\Controllers\RepositorySubscriptionController@getMedia', 'enabling_objectives', request('date_begin'), request('date_end'), 'uuid')];
                     break;
+                case 'bbbPlugin':
+                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@start', request('date_begin'), request('date_end'))];
+                    break;
+                case 'bbbPluginParticipants':
+                    return ['message' => $this->getEntriesByKey('App\Http\Controllers\VideoconferenceController@endCallback->participantCount',  request('date_begin'), request('date_end'))];
+                    break;
                 case 'organizations':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitle('activeOrg', 'organizations', request('date_begin'), request('date_end'))];
                     break;
@@ -56,18 +62,55 @@ class StatisticController extends Controller
                 case 'certificates':
                     return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\CertificateController@generate', 'certificates', request('date_begin'), request('date_end'))];
                     break;
+                case 'kanbans':
+                    return ['message' => $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@show', 'kanbans', request('date_begin'), request('date_end'))];
+                    break;
                 default:
                    break;
             }
         }
     }
 
-    protected function getLogins($key = 'login')
+    protected function getLogins($key, $date_begin, $date_end )
     {
-        return Log::select('created_at', 'counter')->where('key', $key)
+        switch (request('chart')) {
+
+            case 'ssoLogin':  $background = '#325e04'; break;
+            case 'guestLogin': $background = '#0e1b01'; break;
+            default: //case 'login':
+                $key = 'login';
+                $background = '#7eab51';
+                break;
+        }
+        $labels = Log::select('created_at', 'counter')
+            ->where('key', $key)
+            ->whereBetween('created_at', [
+                Carbon::createFromDate($date_begin)->startOfDay()->format('Y-m-d H:i:s'),
+                Carbon::createFromDate($date_end)->endOfDay()->format('Y-m-d H:i:s'),
+            ])
+            ->get()->map(function ($item) {
+                return Carbon::parse($item['created_at'])->format('Y-m-d');
+            });
+
+        return [
+            'labels' => $labels,
+            'datasets' => [
+                'label' => $key,
+                'backgroundColor' => $background,
+                'data' => Log::select('created_at', 'counter')
+                    ->where('key', $key)
+                    ->get()
+                    ->map(
+                        function ($item) {
+                            return  $item['counter'];
+                        }
+                    ),
+            ],
+        ];
+        /*return Log::select('created_at', 'counter')->where('key', $key)
             ->get()->map(function ($item) {
                 return ['created_at' => Carbon::parse($item['created_at'])->format('Y-m-d'), 'counter' => $item['counter']];
-            });
+            });*/
     }
 
     protected function getEntriesByKey($key, $date_begin, $date_end)
@@ -96,7 +139,7 @@ class StatisticController extends Controller
             //->whereDate('logs.created_at', $date)
             ->join($table, "{$table}.{$field}", '=', 'logs.value')
             ->get()->map(function ($item) {
-                return ['value' =>  mb_strimwidth(strip_tags($item['title']), 0, 70, '...'), 'counter' => $item['counter']];
+                return ['value' => mb_strimwidth(strip_tags($item['title']), 0, 70, '...'), 'counter' => $item['counter']];
             });
     }
 

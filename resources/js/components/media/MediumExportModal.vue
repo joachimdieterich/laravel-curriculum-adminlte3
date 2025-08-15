@@ -12,7 +12,7 @@
         <div class="card"
              style="margin-bottom: 0px !important">
             <div class="card-header">
-                 <h3 class="card-title" v-html="this.header">
+                 <h3 class="card-title" v-dompurify-html="this.header">
 
 <!--                    {{ trans('global.curriculum.export') }}-->
                  </h3>

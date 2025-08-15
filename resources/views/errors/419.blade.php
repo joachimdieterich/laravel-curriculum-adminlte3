@@ -2,4 +2,4 @@
 
 @section('title', __('Page Expired'))
 @section('code', '419')
-@section('message', __('global.code_419'))
+@section('message', trans('global.code_419'))

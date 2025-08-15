@@ -11,7 +11,7 @@
         @opened="opened"
         @before-close="beforeClose"
         style="z-index: 1100">
-        <div class="card" style="margin-bottom: 0px !important">
+        <div class="card" style="margin-bottom: 0 !important">
             <div class="card-header">
                 <h3 class="card-title">
                     {{ trans('global.certificate.generate') }}
@@ -90,8 +90,7 @@
                 certificate: null,
                 certificate_id: null,
                 curriculum_id:null,
-                date: new Date().toLocaleDateString(),
-                curriculum_id: null,
+                date: new Date().toLocaleDateString("de-DE",{dateStyle :"medium"}),
                 requestUrl: '/certificates/generate',
                 download_url: null
             }
@@ -102,7 +101,7 @@
                 try {
                    this.download_url = (await axios.post('/certificates/generate', {
                        'certificate_id': this.certificate_id,
-                       'user_ids' : getDatatablesIds('#users-datatable'),
+                       'user_ids' : localStorage.getItem('user-datatable-selection'), //getDatatablesIds('#users-datatable'),
                        'date': this.date,
                        'curriculum_id': this.curriculum_id
                    })).data.message;
@@ -110,7 +109,6 @@
                 } catch(error) {
                     this.errors = error.response.data.errors;
                 }
-
             },
             onChange(value){
                 this.certificate_id = value.id;
@@ -136,10 +134,6 @@
             beforeClose() {
                 //console.log('close')
             },
-
-            submit() {
-                var method = this.method.toLowerCase();
-            }
         },
         created() {
 

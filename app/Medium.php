@@ -13,6 +13,10 @@ class Medium extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'additional_data' => 'array',
+    ];
+
     protected $dates = [
         'updated_at',
         'created_at',
@@ -31,7 +35,12 @@ class Medium extends Model
 
     public function path()
     {
-        return "/media/{$this->id}";
+        if ($this->mime_type == 'url'){
+            return $this->path;
+        } else {
+            return "/media/{$this->id}";
+        }
+
     }
 
     public function absolutePath()
@@ -61,12 +70,12 @@ class Medium extends Model
     public function subscribe($model, $sharing_level_id = 1, $visibility = true)
     {
         $subscribe = new MediumSubscription([
-            'medium_id' =>  $this->id,
-            'subscribable_type'=> get_class($model),
-            'subscribable_id'=> $model->id,
-            'sharing_level_id'=> $sharing_level_id,
-            'visibility'=> $visibility,
-            'owner_id'=> auth()->user()->id,
+            'medium_id' => $this->id,
+            'subscribable_type' => get_class($model),
+            'subscribable_id' => $model->id,
+            'sharing_level_id' => $sharing_level_id,
+            'visibility' => $visibility,
+            'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
     }
@@ -79,19 +88,4 @@ class Medium extends Model
                     ->first();
     }
 
-    /**
-     * @param  type  $eventPath
-     * @param  type  $cutBasename if true basename is cut off
-     * @param  type  $basePath
-     * @return type
-     */
-    public function convertFilemanagerEventPathToMediumPath($eventPath, $cutBasename = true, $basePath = 'app')
-    {
-        $filePath = str_replace(public_path(), '', $eventPath);
-        if ($cutBasename) {
-            return str_replace(basename($filePath), '', str_replace(storage_path()."/{$basePath}", '', $eventPath));
-        } else {
-            return str_replace(storage_path()."/{$basePath}", '', $eventPath);
-        }
-    }
 }

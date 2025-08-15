@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Curriculum;
+use App\CurriculumSubscription;
 use App\Grade;
 use App\Group;
 use App\Http\Requests\MassDestroyGroupRequest;
@@ -35,16 +36,19 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
+        $group_id_field = 'id'; // if auth()->user()->groups() is used query uses group_user table therefore group_id_field = group_id
+
         switch (auth()->user()->role()->id) {
-            case 1:  $groups = Group::with(['grade', 'period', 'organization'])->get();
+            case 1:  $groups = Group::with(['grade', 'period', 'organization']);
                 break;
-            case 4:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization'])->get();
+            case 4: // Schooladmins and Teachers should only see groups of current organization
+            case 5:  $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization']);
                 break;
 
-            default: $groups = auth()->user()->groups()->with(['grade', 'period', 'organization'])->get();
+            default: $groups = auth()->user()->groups()->with(['grade', 'period', 'organization']);
+                $group_id_field = 'group_id';
                 break;
         }
-        //$groups = (auth()->user()->role()->id == 1) ? Group::all() : auth()->user()->groups()->get();
 
         $show_gate = \Gate::allows('group_show');
         $edit_gate = \Gate::allows('group_edit');
@@ -60,34 +64,34 @@ class GroupsController extends Controller
             ->addColumn('organization', function ($groups) {
                 return $groups->organization->title;
             })
-            ->addColumn('action', function ($groups) use ($show_gate, $edit_gate, $delete_gate) {
+            ->addColumn('action', function ($groups) use ($show_gate, $edit_gate, $delete_gate, $group_id_field) {
                 $actions = '';
                 if ($show_gate) {
-                    $actions .= '<a href="'.route('groups.show', $groups->id).'" '
-                                    .'id="show-group-'.$groups->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-list-alt"></i>'
-                                    .'</a>';
+                    $actions .= '<a href="'.route('groups.show', $groups->$group_id_field).'" '
+                        .'id="show-group-'.$groups->$group_id_field.'" '
+                        .'class="btn p-1">'
+                        .'<i class="fa fa-list-alt"></i>'
+                        .'</a>';
                 }
                 if ($edit_gate) {
-                    $actions .= '<a href="'.route('groups.edit', $groups->id).'" '
-                                    .'id="edit-group-'.$groups->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i> '
-                                    .'</a>';
+                    $actions .= '<a href="'.route('groups.edit', $groups->$group_id_field).'" '
+                        .'id="edit-group-'.$groups->$group_id_field.'" '
+                        .'class="btn p-1">'
+                        .'<i class="fa fa-pencil-alt"></i> '
+                        .'</a>';
                 }
                 if ($delete_gate) {
                     $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'groups\','.$groups->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
+                        .'class="btn text-danger" '
+                        .'onclick="destroyDataTableEntry(\'groups\','.$groups->$group_id_field.')">'
+                        .'<i class="fa fa-trash"></i></button>';
                 }
 
                 return $actions;
             })
 
             ->addColumn('check', '')
-            ->setRowId('id')
+            ->setRowId($group_id_field)
             ->make(true);
     }
 
@@ -140,22 +144,16 @@ class GroupsController extends Controller
     {
         abort_unless((\Gate::allows('group_show') and $group->isAccessible()), 403);
 
-        /*  abort_unless((auth()->user()->groups->contains($group)
-              OR is_admin()
-              OR ($group->organization_id == auth()->user()->current_organization_id)), 403);*/
-
         LogController::set(get_class($this).'@'.__FUNCTION__, $group->id);
         // axios call?
         if (request()->wantsJson()) {
-            // dump(json_encode($group->users));
             return ['users' => json_encode($group->users)];
         }
-        $courses = $group->courses()->with('curriculum')->get();
+
         $group = Group::where('id', $group->id)->with('glossar')->get()->first();
 
         return view('groups.show')
-                ->with(compact('group'))
-                ->with(compact('courses'));
+                ->with(compact('group'));
     }
 
     public function edit(Group $group)
@@ -197,7 +195,12 @@ class GroupsController extends Controller
         abort_unless((\Gate::allows('group_delete') and $group->isAccessible()), 403);
 
         // first delete all relations
-        $group->curricula()->detach();
+        CurriculumSubscription::where([
+            'subscribable_type' => "App\Group",
+            'subscribable_id' => $group->id,
+        ])->delete();
+
+        //$group->curricula()->detach();
         $group->users()->detach();
 
         //todo: delete subscriptions ( eg. kanban), yet no relation in Group.php
@@ -282,41 +285,31 @@ class GroupsController extends Controller
             'term' => 'sometimes|string|max:255|nullable',
         ]);
         $page = $input['page'];
-        $resultCount = 25;
-
-        $offset = ($page - 1) * $resultCount;
-
         $term = $input['term'];
 
-        $count = Count($collection->has('groups')->where(
+        $resultCount = 25;
+        $offset = ($page - 1) * $resultCount;
+
+        $count = count($collection->where(
             function($query) use ($field, $term)
             {
-                foreach ((array) $field as $f) {
-                    $query->whereHas('groups', function ($query) use ($term) {
-                        $query->where('title', 'like', $term.'%'); }
-                    );
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
+                $query->whereHas('groups', function ($query) use ($term) {
+                    $query->where('title', 'like', '%' . $term . '%'); }
+                );
             })
-            ->orderBy('title')
-            ->select(['id', DB::raw('title as text')])
             ->get());
 
-
-        $entries = $collection->has('groups')->where(
+        $entries = $collection->where(
             function($query) use ($field, $term)
             {
-                foreach ((array) $field as $f) {
-                    $query->whereHas('groups', function ($query) use ($term) {
-                        $query->where('title', 'like', $term.'%'); }
-                    );
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
+                $query->whereHas('groups', function ($query) use ($term) {
+                    $query->where('title', 'like', '%' . $term . '%'); }
+                );
             })
             ->orderBy('title')
             ->skip($offset)
             ->take($resultCount)
-            ->select(['id', DB::raw('title as text')])
+            ->select(['organizations.id', DB::raw('title as text')])
             ->get();
 
         $endCount = $offset + $resultCount;
@@ -328,6 +321,7 @@ class GroupsController extends Controller
                 "text" => $entry['text'],
                 "children" => Group::where('organization_id', $entry['id'])
                     ->select(['id', DB::raw('title as text')])
+                    ->where('title', 'like', '%' . $term . '%')
                     ->get()
             );
         }
@@ -360,10 +354,11 @@ class GroupsController extends Controller
             return $this->select2RequestWithOptGroup(
                 Organization::select(['id', 'title'])
             );
-        } elseif (is_schooladmin()) {
+        } elseif (is_schooladmin() OR is_teacher()) {
             return $this->select2RequestWithOptGroup(
-                Organization::where('id', auth()->user()->current_organization_id)->select(['id', 'title'])
-            );
+                auth()->user()->organizations()->select(['organizations.id', 'organizations.title'])
+                //Organization::where('id', auth()->user()->current_organization_id)->select(['id', 'title'])
+            ); //todo: search/filter not working for schooladmins
         } else {
             return getEntriesForSelect2ByCollection(
                 auth()->user()->groups()->orderBy('organization_id', 'desc'),

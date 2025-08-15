@@ -31,16 +31,16 @@ class AchievementController extends Controller
                                       ->where('user_id', '=', $user_id)->first();
 
             $achievement = Achievement::updateOrCreate(
-                    [
-                        'referenceable_type' => $input['referenceable_type'],
-                        'referenceable_id'   => $input['referenceable_id'],
-                        'user_id'            => $user_id,
-                    ],
-                    [
-                        'status'             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
-                        'owner_id'           => auth()->user()->id,
-                    ]
-                );
+                [
+                    'referenceable_type' => $input['referenceable_type'],
+                    'referenceable_id'   => $input['referenceable_id'],
+                    'user_id'            => $user_id,
+                ],
+                [
+                    'status'             => $this->calculateStatus($user_id, $input, ($achievement === null) ? '00' : $achievement->status),
+                    'owner_id'           => auth()->user()->id,
+                ]
+            );
 
             $achievement->save();
 
@@ -51,14 +51,21 @@ class AchievementController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, (is_array($user_ids)) ? count($user_ids) : 1);
         // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $achievement->status];
+            return ['message' => $achievement->status, 'id' => $achievement->id];
         }
 
         return $achievement;
     }
 
+    public function getEnablingAchievements(Request $request) {
+        return Achievement::where('referenceable_type', '=', 'App\EnablingObjective')
+            ->where('referenceable_id', '=', $request->id)
+            ->whereIn('user_id', $request->users)
+            ->get();
+    }
+
     /* calculate proper status id */
-    protected function calculateStatus($user_id, $input, $status = '00')
+    protected function calculateStatus($user_id, $input, $status = '0')
     {
         if (\Gate::allows('achievement_create') and $user_id != auth()->user()->id) {
             abort_unless((auth()->user()->role()->id <= 5), 403); //only Teacher and roles above

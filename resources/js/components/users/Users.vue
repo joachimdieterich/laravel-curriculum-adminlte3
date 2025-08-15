@@ -1,16 +1,5 @@
 <template >
     <div class="row">
-        <div class="col-md-12 py-2">
-            <div id="users_filter" class="dataTables_filter">
-                <label >
-                    <input type="search"
-                           class="form-control form-control-sm"
-                           placeholder="Suchbegriff"
-                           v-model="search">
-                </label>
-            </div>
-        </div>
-
         <div style="clear:right;"
              v-for="(item,index) in users"
              v-if="(item.firstname.toLowerCase().indexOf(search.toLowerCase()) !== -1
@@ -75,7 +64,9 @@
 </template>
 
 <script>
-    import Avatar from "../uiElements/Avatar";
+const Avatar =
+    () => import('../uiElements/Avatar');
+    //import Avatar from "../uiElements/Avatar";
     export default {
         props: {
             group: Object,
@@ -95,7 +86,7 @@
                     .then(response => {
                         this.users = JSON.parse(response.data.users);
                     }).catch(e => {
-                    this.errors = e.response.data.errors;
+                        console.log(e);
                 });
             },
             showSelect() {
@@ -151,6 +142,9 @@
 
         mounted() {
             this.loaderEvent();
+            this.$eventHub.$on('filter', (filter) => {
+                this.search = filter;
+            })
         },
         components: {
             Avatar

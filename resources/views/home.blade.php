@@ -3,7 +3,7 @@
     {{ trans('global.home') }}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item active"><a href="/">{{ trans('global.home') }}</a></li>
+    <li class="breadcrumb-item active"><a href="/"><i class="fa fa-home"></i></a></li>
     <li class="breadcrumb-item ">
         <a href="/documentation"
            class="text-black-50"
@@ -38,6 +38,16 @@
                         "include" =>  'home.logbooksInfo',
                     ])
                 @endcan
+                @can('kanban_access')
+                    @include('partials.infobox', [
+                        "infoBoxId" =>  'kanbansBox',
+                        "infoBoxRoute" =>  route("kanbans.index"),
+                        "infoBoxClass" =>  'info-box-icon bg-orange elevation-1',
+                        "infoBoxIcon" =>  'fa fa-columns',
+                        "infoText" =>  trans('global.kanban.title'),
+                        "include" =>  'home.kanbansInfo',
+                    ])
+                @endcan
             </section>
 
             <section id="right" class="col-md-6 ">
@@ -52,14 +62,15 @@
                     "include" =>  'home.organizationsInfo',
                 ])
             @endcan
-            @can('curriculum_access')
+            @can('curriculum_show')
                 @include('partials.infobox', [
                     "infoBoxId" =>  'curriculaBox',
                     "infoBoxRoute" =>  route("curricula.index"),
                     "infoBoxClass" =>  'info-box-icon bg-info elevation-1',
                     "infoBoxIcon" =>  'fas fa-th',
                     "infoText" =>  "Curricula",
-                    "infoBoxNumber" =>  count(auth()->user()->curricula()->unique('id')) /*.'/'.App\Curriculum::count()*/,
+                   /* "infoBoxNumber" =>  count(auth()->user()->curricula()->unique('id')) .'/'.App\Curriculum::count(),*/
+                     "include" =>  'home.curriculaInfo',
                 ])
             @endcan
             @can('task_access')

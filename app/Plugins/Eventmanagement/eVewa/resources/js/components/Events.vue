@@ -45,20 +45,26 @@
             <div :id="'navigator-item-content-'+event.ARTIKEL_NR" class="card-body collapse">
                 <div class="row">
                     <div class="col-2"><strong>VA-Nummer</strong></div>
-                    <div class="col-10" v-html="event.ARTIKEL_NR"></div>
+                    <div class="col-10" v-dompurify-html="event.ARTIKEL_NR"></div>
 
+                    <div class="col-2"
+                         v-if="event.BEZ_1_2.length > 2">
+                        <strong>Untertitel</strong></div>
+                    <div class="col-10 pre-formatted"
+                         v-if="event.BEZ_1_2.length > 2"
+                         v-dompurify-html="event.BEZ_1_2"></div>
                     <div class="col-2"><strong>Beschreibung</strong></div>
-                    <div class="col-10" v-html="event.BEMERKUNG"></div>
+                    <div class="col-10 pre-formatted" v-dompurify-html="event.BEMERKUNG"></div>
 
                     <div class="col-2"><strong>Veranstalter</strong></div>
-                    <div class="col-10" v-html="event.MANDANT"></div>
+                    <div class="col-10" v-dompurify-html="event.MANDANT"></div>
 
 
                     <div class="col-12 mt-2">
                         <a :href="event.LINK_DETAIL"
                            class="btn bg-gray"
                            target="_blank">
-                            <i class="fa fa-info"></i> Details
+                            <i class="fa fa-info"></i> Details/Anmelden
                         </a>
 
                         <a :href="event.LINK_DETAIL+'&print=1'"
@@ -68,11 +74,11 @@
                             <i class="fa fa-print"></i> Drucken
                         </a>
 
-                        <a :href="event.LINK_ANMELDUNG"
+<!--                        <a :href="event.LINK_ANMELDUNG"
                            class="btn bg-info"
                            target="_blank">
                             <i class="fa fa-sign-in"></i> Anmelden
-                        </a>
+                        </a>-->
                     </div>
                 </div>
             </div>
@@ -144,7 +150,7 @@
                         search: (search ? search : this.search),
                         page: this.page,
                         plugin: 'evewa'
-                    })).data.message.lesePlrlpVeranstaltungen.data;
+                    })).data.events.data;
                     $("#loading-events").hide();
 
                 } catch(error) {
@@ -178,3 +184,8 @@
 
     }
 </script>
+<style>
+.pre-formatted {
+    white-space: pre-wrap;
+}
+</style>

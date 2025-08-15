@@ -1,10 +1,11 @@
 <?php
 
 namespace Tests\Feature;
+
 use App\Achievement;
 use App\Curriculum;
-use App\TerminalObjective;
 use App\EnablingObjective;
+use App\TerminalObjective;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;

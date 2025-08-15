@@ -45,6 +45,7 @@ class KanbanItemSubscriptionController extends Controller
             'subscribable_id' => $input['subscribable_id'],
         ], [
             'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'sharing_token' => isset($input['sharing_token']) ? $input['sharing_token'] : null,
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
@@ -67,8 +68,9 @@ class KanbanItemSubscriptionController extends Controller
         $input = $this->validateRequest();
 
         $kanbanItemSubscription->update([
-            'editable'=> isset($input['editable']) ? $input['editable'] : false,
-            'owner_id'=> auth()->user()->id,
+            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'sharing_token' => isset($input['sharing_token']) ? $input['sharing_token'] : null,
+            'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
@@ -98,6 +100,7 @@ class KanbanItemSubscriptionController extends Controller
             'subscribable_id'   => 'sometimes|integer',
             'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
+            'sharing_token'     => 'sometimes',
         ]);
     }
 }

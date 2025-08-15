@@ -22,22 +22,16 @@ class EventSubscriptionController extends Controller
     public function getEvents(Request $request)
     {
         $input = $this->validateRequest();
-//        $subscriptions = RepositorySubscription::where('subscribable_type', $input['subscribable_type'])
-//                ->where('subscribable_id', $input['subscribable_id'])
-//                ->where('repository', $input['repository'])->get();
-//        $result = collect([]);
-//        foreach($subscriptions as $subscription)
-//        {
-//            $result->push($this->callPlugin($input['repository'], $subscription));
-//        }
+
 
         $vm = new EventmanagementPlugin();
         $events = $vm->plugins[env('EVENTMANAGEMENTPLUGIN')]->lesePlrlpVeranstaltungen(['search'=> $input['search'], 'page' => $input['page']]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $input['search'], (int) $events->lesePlrlpVeranstaltungen->GESAMT);
 
+        //dump($events);
         if (request()->wantsJson()) {
-            return ['message' => $events];
+            return ['events' => $events->lesePlrlpVeranstaltungen];
         }
     }
 

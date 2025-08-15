@@ -11,11 +11,21 @@ class OrganizationTypesController extends Controller
 {
     public function index()
     {
-        abort_unless(\Gate::allows('organization_type_access'), 403);
 
-        $organization_types = OrganizationType::all();
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByModel(
+                "App\OrganizationType"
+            );
+        }
+        else
+        {
+            abort_unless(\Gate::allows('organization_type_access'), 403);
 
-        return view('organizationtypes.index', compact('organization_types'));
+            $organization_types = OrganizationType::all();
+
+            return view('organizationtypes.index', compact('organization_types'));
+        }
+
     }
 
     public function list()
@@ -107,10 +117,10 @@ class OrganizationTypesController extends Controller
         $input = $this->validateRequest();
         $input_state = State::where('code', format_select_input($input['state_id']))->get()->first();
         $organizationtype->update([
-            'title'         => $input['title'],
-            'external_id'   => $input['external_id'],
-            'state_id'      => $input_state->code,
-            'country_id'    =>  $input_state->country,
+            'title' => $input['title'],
+            'external_id' => $input['external_id'],
+            'state_id' => $input_state->code,
+            'country_id' => $input_state->country,
         ]);
 
         return redirect()->route('organizationtypes.index');

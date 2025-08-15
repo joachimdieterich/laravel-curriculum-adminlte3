@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 
 use App\Content;
-use App\Curriculum;
 use App\ContentSubscription;
+use App\Curriculum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

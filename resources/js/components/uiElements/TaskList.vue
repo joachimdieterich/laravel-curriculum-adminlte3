@@ -23,12 +23,12 @@
                 <span class="text">
                 <a class="link-muted text-decoration-none"
                    :href="'/tasks/'+task.task.id"
-                   v-html="task.task.title"></a>
+                   v-dompurify-html="task.task.title"></a>
             </span>
 
                 <small class="badge badge-secondary pull-right p-1 mt-1">
                     <i class="far fa-clock"></i>
-                    <span v-html="task.task.due_date"></span>
+                    <span v-dompurify-html="task.task.due_date"></span>
                 </small>
                 <!-- General tools such as edit or delete-->
                 <div class="tools">

@@ -180,7 +180,7 @@ class moodle extends LmsPlugin
 
         $exec = curl_exec($ch);
 
-        // Retudn headers seperatly from the Response Body
+        // Return headers seperatly from the Response Body
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $headers = substr($exec, 0, $header_size);
         $body = substr($exec, $header_size);

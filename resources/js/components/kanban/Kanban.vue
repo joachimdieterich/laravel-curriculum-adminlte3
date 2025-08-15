@@ -156,7 +156,7 @@
             >
                 <i class="fa fa-pencil-alt"></i>
             </button>
-    
+
             <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                 type="button"
                 class="btn text-secondary px-2 mx-1"
@@ -164,14 +164,14 @@
             >
                 <i class="fa fa-share-alt"></i>
             </button>
-    
+
             <a
                 :href="'/export_csv/' + kanban.id"
                 class="btn text-secondary px-1 ml-2"
             >
                 <i class="fa fa-file-csv"></i>
             </a>
-    
+
             <a
                 :href="'/export_pdf/' + kanban.id"
                 class="btn text-secondary px-1 ml-1"
@@ -296,7 +296,7 @@ export default {
             const statusChanges = [];
             const start = e.oldIndex < e.newIndex ? e.oldIndex : e.newIndex;
             const end = e.oldIndex < e.newIndex ? e.newIndex : e.oldIndex;
-            
+
             for (let i = start; i <= end; i++) {
                 const status = this.statuses[i];
                 status.order_id = i;
@@ -530,10 +530,10 @@ export default {
                     })
                     .joining((user) => {
                         this.usersOnline.push(user);
-                        //console.log({user}, 'joined');
+                        console.log({user}, 'joined');
                     })
                     .leaving((user) => {
-                        //console.log({user}, 'leaving');
+                        console.log({user}, 'leaving');
                         this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
                     });
             }

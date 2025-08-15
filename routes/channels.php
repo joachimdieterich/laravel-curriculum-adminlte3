@@ -11,11 +11,18 @@
 |
 */
 
+use App\User;
+use Illuminate\Support\Facades\Broadcast;
+
 Broadcast::channel('App.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+    return (int)$user->id === (int)$id;
 });
 
 
 Broadcast::channel('Presence.App.Kanban.{id}', function ($user, $id) {
     return $user->only(['id', 'firstname', 'lastname']);
+});
+
+Broadcast::channel('orders', function ($a, $b) {
+    return true;
 });

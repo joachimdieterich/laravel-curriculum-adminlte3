@@ -27,33 +27,32 @@ class TrainingController extends Controller
     public function store(Request $request)
     {
         abort_unless(\Gate::allows('plan_create'), 403);
-        $new_training = $this->validateRequest();
+        $input = $this->validateRequest();
 
-        $entry = Training::create([
-            'title' => $new_training['title'],
-            'description' => $new_training['description'],
-
-            'begin' => $new_training['begin'],
-            'end' => $new_training['end'],
-
+        $training = Training::create([
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'begin' => $input['begin'],
+            'end' => $input['end'],
             'owner_id' => auth()->user()->id,
         ]);
 
-        $subscription = TrainingSubscription::create([
-            'training_id' => $entry->id,
-            'subscribable_type' => $new_training['subscribable_type'],
-            'subscribable_id' => $new_training['subscribable_id'],
-            'order_id' => $new_training['order_id'] ?? 0,
+        $order_id = TrainingSubscription::where([
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ])->count();
+
+        $training['subscriptions'] = [TrainingSubscription::create([
+            'training_id' => $training->id,
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+            'order_id' => $order_id,
             'editable' => 1, //needed?
             'owner_id' => auth()->user()->id,
-        ]);
-
-        // subscribe embedded media
-        checkForEmbeddedMedia($entry, 'description');
-
+        ])];
 
         if (request()->wantsJson()) {
-            return ['entry' => $entry];
+            return $training;
         }
     }
 
@@ -80,19 +79,19 @@ class TrainingController extends Controller
     public function update(Request $request, Training $training)
     {
         abort_unless((\Gate::allows('plan_edit') and $training->isAccessible()), 403);
-        $clean_data = $this->validateRequest();
+        $input = $this->validateRequest();
 
         $training->update([
-            'title'       => $clean_data['title'] ?? $training->title,
-            'description' => $clean_data['description'] ?? $training->description,
-            'begin'       => $clean_data['begin'] ?? $training->begin,
-            'end'         => $clean_data['end'] ?? $training->end,
+            'title'       => $input['title'] ?? $training->title,
+            'description' => $input['description'] ?? $training->description,
+            'begin'       => $input['begin'],
+            'end'         => $input['end'],
         ]);
 
         // subscribe embedded media
         checkForEmbeddedMedia($training, 'description');
 
-        return $training;
+        return $training->without('subscriptions.subscribable')->find($training->id);
     }
 
     /**
@@ -105,12 +104,18 @@ class TrainingController extends Controller
     {
         abort_unless(\Gate::allows('plan_delete'), 403);
 
-        $training->delete(); //subscriptions will be deleted too see booted function in Training.php
+        // decrement order_id of all subscriptions with higher order_id
+        $subscription = $training->subscriptions->first();
+        TrainingSubscription::where([
+            'subscribable_type' => $subscription->subscribable_type,
+            'subscribable_id' => $subscription->subscribable_id,
+            ['order_id', '>', $subscription->order_id],
+        ])->decrement('order_id', 1);
+
+        $training->delete(); //subscriptions will be deleted too, see booted function in Training.php
 
         if (request()->wantsJson()) {
-            return [
-                'deleted' => true,
-            ];
+            return true;
         }
     }
 
@@ -118,13 +123,12 @@ class TrainingController extends Controller
     {
         return request()->validate([
             'id' => 'sometimes|integer|nullable',
-            'title' => 'sometimes|string|nullable',
+            'title' => 'required|string',
             'description' => 'sometimes|string|nullable',
             'begin' => 'sometimes',
             'end' => 'sometimes',
-            'subscribable_type' => 'sometimes|string',
-            'subscribable_id' => 'sometimes|integer',
-            'owner_id' => 'sometimes|integer'
+            'subscribable_type' => 'sometimes|string|nullable',
+            'subscribable_id' => 'sometimes|integer|nullable',
         ]);
     }
 }

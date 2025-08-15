@@ -21,9 +21,18 @@ class ReferenceSubscriptionController extends Controller
         abort_unless(\Gate::allows('objective_create'), 403);
         $new_subscription = $this->validateRequest();
 
-        if (($new_subscription['subscribable_type'] == "App\TerminalObjective" and $new_subscription['terminal_objective_id'] == $new_subscription['subscribable_id'])
+        if (
+            (
+                $new_subscription['subscribable_type'] == "App\TerminalObjective"
+                and
+                format_select_input($new_subscription['terminal_objective_id']) == $new_subscription['subscribable_id']
+            )
             or
-            ($new_subscription['subscribable_type'] == "App\EnablingObjective" and $new_subscription['enabling_objective_id'] == $new_subscription['subscribable_id'])
+            (
+                $new_subscription['subscribable_type'] == "App\EnablingObjective"
+                and
+                format_select_input($new_subscription['enabling_objective_id']) == $new_subscription['subscribable_id']
+            )
            ) {
             return false;
         }
@@ -31,7 +40,7 @@ class ReferenceSubscriptionController extends Controller
         $reference = Reference::Create([
             'id' => (string) Str::uuid(),
             'description' => $new_subscription['description'],
-            'grade_id' => isset($new_subscription['grade_id']) ? $new_subscription['grade_id'] : Curriculum::find($new_subscription['curriculum_id'])->grade_id,
+            'grade_id' => $new_subscription['grade_id'] ?? Curriculum::find(format_select_input($new_subscription['curriculum_id']))->grade_id,
             'owner_id' => auth()->user()->id,
         ]);
         $subscription = ReferenceSubscription::Create([
@@ -46,8 +55,8 @@ class ReferenceSubscriptionController extends Controller
         if ($subscription) { //generate sibling
             $sibling = ReferenceSubscription::Create([
                 'reference_id' => $reference->id,
-                'referenceable_type' => ($new_subscription['enabling_objective_id'] != null) ? "App\EnablingObjective" : "App\TerminalObjective",
-                'referenceable_id' => ($new_subscription['enabling_objective_id'] != null) ? $new_subscription['enabling_objective_id'] : $new_subscription['terminal_objective_id'],
+                'referenceable_type' => (format_select_input($new_subscription['enabling_objective_id']) != null) ? "App\EnablingObjective" : "App\TerminalObjective",
+                'referenceable_id' => (format_select_input($new_subscription['enabling_objective_id']) != null) ? format_select_input($new_subscription['enabling_objective_id']) : format_select_input($new_subscription['terminal_objective_id']),
                 'sharing_level_id' => isset($new_subscription['sharing_level_id']) ? $new_subscription['sharing_level_id'] : 1,
                 'visibility' => isset($new_subscription['visibility']) ? $new_subscription['visibility'] : true,
                 'owner_id' => auth()->user()->id,
@@ -56,8 +65,8 @@ class ReferenceSubscriptionController extends Controller
         //adding to $subscription->referenceable models referencing_curriculum_id
         $model = $subscription->referenceable;
         $curricula_ids = (array) $model->referencing_curriculum_id;
-        if (! in_array($new_subscription['curriculum_id'], $curricula_ids)) {
-            array_push($curricula_ids, $new_subscription['curriculum_id']);
+        if (! in_array(format_select_input($new_subscription['curriculum_id']), $curricula_ids)) {
+            array_push($curricula_ids, format_select_input($new_subscription['curriculum_id']));
         }
 
         $model->referencing_curriculum_id = $curricula_ids;

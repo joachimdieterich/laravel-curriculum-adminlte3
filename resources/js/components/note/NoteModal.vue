@@ -1,84 +1,96 @@
 <template>
-    <modal
-        id="note-modal"
-        name="note-modal"
-        height="auto"
-        :adaptive=true
-        draggable=".draggable"
-        @before-open="beforeOpen"
-        style="z-index: 1200"
-    >
-        <div class="card mb-0" style="max-height: 100svh;">
-            <div class="card-header">
-                <h3 class="card-title">
-                    {{ trans('global.notes') }}
-                </h3>
-
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool draggable">
-                        <i class="fa fa-arrows-alt"></i>
-                    </button>
-                    <button type="button"
+    <Transition name="modal">
+        <div v-if="globalStore.modals[$options.name]?.show"
+            class="modal-mask"
+            @mouseup.self="globalStore.closeModal($options.name)"
+        >
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.note.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.note.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
                             class="btn btn-tool"
-                            data-widget="remove"
-                            @click="close()"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <Notes
+                        :notable_type="form.notable_type"
+                        :notable_id="form.notable_id"
+                        :show_tabs="form.show_tabs"
+                    />
+                </div>
+
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="note-save"
+                            class="btn btn-primary"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.close') }}
+                        </button>
+                    </span>
                 </div>
             </div>
-            
-            <div class="card-body overflow-auto p-0">
-                <notes
-                    :notable_type="notable_type"
-                    :notable_id="notable_id"
-                    :show_tabs="show_tabs"
-                    :users="users"
-                ></notes>    
-            </div>
-
-            <div class="card-footer">
-                <span class="pull-right">
-                    <button type="button"
-                            class="btn btn-default"
-                            data-widget="remove"
-                            @click="close()"
-                    >
-                        {{ trans('global.close') }}
-                    </button>
-                </span>
-            </div>
         </div>
-    </modal>
+    </Transition>
 </template>
-
 <script>
-const Notes =
-    () => import('../note/Notes');
-    //import Notes from '../note/Notes'
+import Notes from "./Notes.vue";
+import Form from 'form-backend-validation';
+import {useGlobalStore} from "../../store/global";
 
 export default {
-    data() {
-        return {
-            notable_type: { type: String },
-            notable_id: { type: [Number, Array] },
-            show_tabs: { type: Boolean, default: true },
-            users: { type: Object, default: undefined },
-        }
-    },
-    methods: {
-        beforeOpen(event) {
-            this.notable_type = event.params.notable_type;
-            this.notable_id = event.params.notable_id;
-            this.show_tabs = event.params.show_tabs;
-            this.users = event.params.users;
-        },
-        close() {
-            this.$modal.hide('note-modal');
-        },
-    },
+    name: 'note-modal',
     components: {
         Notes,
-    }
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            form: new Form({
+                notable_type: false,
+                notable_id: false,
+                show_tabs: true,
+            }),
+        }
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            }
+        });
+    },
 }
 </script>

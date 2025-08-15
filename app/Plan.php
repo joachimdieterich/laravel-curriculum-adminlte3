@@ -3,13 +3,16 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Plan extends Model
 {
     protected $guarded = [];
 
     protected $casts = [
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
         'entry_order' => 'array',
+        'allow_copy' => 'boolean',
     ];
 
     protected $attributes = [
@@ -105,5 +108,13 @@ class Plan extends Model
             $this->userSubscriptions()->where('subscribable_id', $user->id)->where('editable', 1)->first() ||
             $this->groupSubscriptions()->whereIn('subscribable_id', $user->groups->pluck('id'))->where('editable', 1)->first() ||
             $this->organizationSubscriptions()->whereIn('subscribable_id', $user->organizations->pluck('id'))->where('editable', 1)->first();
+    }
+
+    protected static function booted() {
+        static::deleting(function(Plan $plan) { // before delete() method call this
+            $plan->subscriptions()->delete();
+            //? if media-subscriptions can be added in the future, they need to be deleted too
+            $plan->entries->each->delete();
+        });
     }
 }

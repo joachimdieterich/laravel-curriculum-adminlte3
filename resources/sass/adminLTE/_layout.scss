@@ -15,10 +15,6 @@ body,
 .wrapper {
   position: relative;
 
-  & .content-wrapper {
-    min-height: calc(100vh - #{$main-header-height} - #{$main-footer-height});
-  }
-
   .layout-boxed & {
     @include box-shadow(0 0 10 rgba($black, .3));
 

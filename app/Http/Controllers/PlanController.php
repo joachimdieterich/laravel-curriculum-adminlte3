@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Organization;
 use App\Plan;
-use App\PlanType;
-use App\PlanEntry;
 use App\User;
 use App\Group;
-use App\EnablingObjectiveSubscriptions;
+use App\PlanEntry;
 use App\TerminalObjectiveSubscriptions;
+use App\EnablingObjectiveSubscriptions;
 use App\Training;
 use App\TrainingSubscription;
 use App\Exercise;
@@ -26,8 +25,47 @@ class PlanController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('plan_access'), 403);
+        if (request()->wantsJson())
+        {
+            return getEntriesForSelect2ByCollection(
+                $this->getPlans(),
+                'plans.'
+            );
+        }
+        else
+        {
+            return view('plans.index');
+        }
+    }
 
-        return view('plans.index');
+    public function getPlans($withOwned = true)
+    {
+        $plans = Plan::with('subscriptions')
+            ->whereHas('subscriptions', function ($query) {
+                $query->where(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                    }
+                );
+            })->orWhere('owner_id', auth()->user()->id);
+
+        if ($withOwned) {
+            $plans = $plans->orWhere('owner_id', auth()->user()->id);
+        }
+
+        return $plans;
     }
 
     protected function userPlans($withOwned = true)
@@ -41,7 +79,8 @@ class PlanController extends Controller
         $organization = Organization::find(auth()->user()->current_organization_id)->plans;
         $userCanSee = $userCanSee->merge($organization);
 
-        if ($withOwned) {
+        if ($withOwned)
+        {
             $owned = Plan::where('owner_id', auth()->user()->id)->get();
             $userCanSee = $userCanSee->merge($owned);
         }
@@ -52,53 +91,35 @@ class PlanController extends Controller
     public function list(Request $request)
     {
         abort_unless(\Gate::allows('plan_access'), 403);
-        // $plans = (auth()->user()->role()->id == 1) ? Plan::all() : $this->userPlans();
-        $plans = Plan::with('subscriptions');
-
-
-        switch ($request->filter) {
-            case 'owner':
-                $plans = $plans->where('owner_id', auth()->user()->id);
-                break;
-            case 'shared_with_me':
-                $plans = $this->userPlans(false);
-                break;
-            case 'shared_by_me':
-                $plans = $plans->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
-                break;
-            case 'all':
-            default:
-                $plans = $this->userPlans();
-                break;
+        $plans = '';
+        if (request()->has(['group_id'])) {
+            $group_id = $request['group_id'];
+            $plans = Plan::with('subscriptions')
+                ->whereHas('subscriptions', function ($query) use ($group_id) {
+                    $query->where(
+                        function ($query) use ($group_id) {
+                            $query->where('subscribable_type', 'App\\Group')
+                                ->where('subscribable_id', $group_id);
+                        }
+                    );
+                });
+        } else {
+            switch ($request->filter)
+            {
+                case 'owner':           $plans = Plan::where('owner_id', auth()->user()->id)->get();
+                    break;
+                case 'shared_with_me':  $plans = $this->userPlans(false);
+                    break;
+                case 'shared_by_me':    $plans = Plan::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                    break;
+                case 'all':
+                default:                $plans = $this->userPlans();
+                    break;
+            }
         }
-
-        // $edit_gate = \Gate::allows('plan_edit');
-        // $delete_gate = \Gate::allows('plan_delete');
+        
 
         return DataTables::of($plans)
-            // ->addColumn('action', function ($plans) use ($edit_gate, $delete_gate) {
-            //     // actions should only be visible to owner. admin has all rights
-            //     if ($plans->owner_id != auth()->user()->id && !is_admin()) return '';
-
-            //     $actions = '';
-            //     if ($edit_gate) {
-            //         $actions .= '<a href="'.route('plans.edit', $plans->id).'"'
-            //                         .'id="edit-plan-'.$plans->id.'" '
-            //                         .'class="btn p-1">'
-            //                         .'<i class="fa fa-pencil-alt"></i>'
-            //                         .'</a>';
-            //     }
-            //     if ($delete_gate) {
-            //         $actions .= '<button type="button" '
-            //                     .'class="btn text-danger" '
-            //                     .'onclick="destroyDataTableEntry(\'plans\','.$plans->id.')">'
-            //                     .'<i class="fa fa-trash"></i></button>';
-            //     }
-
-            //     return $actions;
-            // })
-
-            // ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }
@@ -110,7 +131,7 @@ class PlanController extends Controller
      */
     public function create()
     {
-        abort(405);
+        abort( 403);
     }
 
     /**
@@ -132,19 +153,14 @@ class PlanController extends Controller
             'end'               => $input['end'],
             'duration'          => $input['duration'],
             'type_id'           => format_select_input($input['type_id']),
-            'allow_copy'          => $input['allow_copy'],
             'owner_id'          => auth()->user()->id,
         ]);
 
-        // subscribe embedded media
-        checkForEmbeddedMedia($plan, 'description');
+        // checkForEmbeddedMedia($plan, 'description'); // subscribe embedded media
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $plan->path()];
+            return $plan;
         }
-
-        return redirect('/plans');
     }
 
     /**
@@ -157,7 +173,11 @@ class PlanController extends Controller
     {
         abort_unless((\Gate::allows('plan_show') and $plan->isAccessible()), 403);
         $editable = $plan->isEditable();
-        $users = $editable ? $this->getUsers($plan) : [];
+        $users = [];
+
+        if ($editable) {
+            $users = $this->getUsers($plan);
+        }
 
         if (request()->wantsJson()) {
             return [
@@ -179,7 +199,7 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        abort(405);
+        abort(403);
     }
 
     /**
@@ -192,17 +212,23 @@ class PlanController extends Controller
     public function update(Request $request, Plan $plan)
     {
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
-        $clean_data = $this->validateRequest();
-        if (isset($clean_data['type_id'])) {
-            $clean_data['type_id'] = format_select_input($clean_data['type_id']); //hack to prevent array to string conversion
+        $input = $this->validateRequest();
+
+        if (isset($input['type_id'])) {
+            $input['type_id'] = format_select_input($input['type_id']); //hack to prevent array to string conversion
         }
 
-        $plan->update($clean_data);
+        if (!is_admin()) {
+            $input['owner_id'] = auth()->user()->id;
+        }
 
-        // subscribe embedded media
-        checkForEmbeddedMedia($plan, 'description');
+        $plan->update($input);
 
-        return ['plan' => $plan];
+        // checkForEmbeddedMedia($plan, 'description');// subscribe embedded media
+
+        if (request()->wantsJson()) {
+            return $plan;
+        }
     }
 
     /**
@@ -213,44 +239,29 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-        //TODO: only owner/admin should be able to delete a plan
-        // theoretically a user enroled in a plan can send a delete request
-        abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
+        abort_unless((
+            \Gate::allows('plan_delete') and
+            ($plan->owner->id == auth()->user()->id or is_admin())
+        ), 403);
 
-        // objectivesSubscriptions aren't automatically removed
-        foreach ($plan->entries as $entry) {
-            $entry->enablingObjectiveSubscriptions()->delete();
-            $entry->terminalObjectiveSubscriptions()->delete();
-            
-            // trainings need to be deleted separately
-            foreach ($entry->trainings as $training) {
-                $training->exercises()->delete();
-                (new TrainingController())->destroy($training);
-            }
-        }
-
-        $plan->entries()->delete();
-        $plan->subscriptions()->delete();
-        //? if media-subscriptions can be added in the future, they need to be deleted too
         $plan->delete();
     }
 
-    public function getTypes()
+    public function syncEntriesOrder(Plan $plan)
     {
-        $types = PlanType::whereIn('id',
-            explode(
-                ',',
-                \App\Config::where('key', 'availablePlanTypes')->get()->first()->value
-            )
-        );
+        abort_unless($plan->isEditable(), 403, "No permission to re-order entries of this plan");
 
-        return getEntriesForSelect2ByCollection($types); //only show planstypes defined in config
-        //return getEntriesForSelect2ByModel("App\PlanType");
+        $input = $this->validateRequest();
+
+        $plan->update([
+            'entry_order' => $input['entry_order']
+        ]);
+
+        return $plan->entry_order;
     }
 
-    public function copyPlan(Plan $plan)
-    {
-        $owner_id = auth()->user()->id;
+    public function copyPlan(Plan $plan) {
+        $ownerId = auth()->user()->id;
         $assocOrder = [];
 
         $planCopy = Plan::create([
@@ -264,7 +275,7 @@ class PlanController extends Controller
             // 'medium_id' => $plan->medium_id,
             'allow_copy' => $plan->allow_copy,
             'entry_order' => null, // entry_order needs to be set after creating new PlanEntries
-            'owner_id' => $owner_id,
+            'owner_id' => $ownerId,
         ]);
 
         foreach ($plan->entries as $entry) {
@@ -276,7 +287,7 @@ class PlanController extends Controller
                 'medium_id' => $entry->medium_id,
                 'order_id' => $entry->order_id,
                 'plan_id' => $planCopy->id,
-                'owner_id' => $owner_id,
+                'owner_id' => $ownerId,
             ]);
             // associative array, where old entry-id shows the copied entry-id
             $assocOrder[$entry->id] = $entryCopy->id;
@@ -288,7 +299,7 @@ class PlanController extends Controller
                     'subscribable_id' => $entryCopy->id,
                     'sharing_level_id' => $enabling->sharing_level_id,
                     'visibility' => $enabling->visibility,
-                    'owner_id' => $owner_id,
+                    'owner_id' => $ownerId,
                 ]);
             }
 
@@ -299,7 +310,7 @@ class PlanController extends Controller
                     'subscribable_id' => $entryCopy->id,
                     'sharing_level_id' => $terminal->sharing_level_id,
                     'visibility' => $terminal->visibility,
-                    'owner_id' => $owner_id,
+                    'owner_id' => $ownerId,
                 ]);
             }
 
@@ -309,7 +320,7 @@ class PlanController extends Controller
                     'description' => $training->description,
                     'begin' => $training->begin,
                     'end' => $training->end,
-                    'owner_id' => $owner_id,
+                    'owner_id' => $ownerId,
                 ]);
 
                 TrainingSubscription::Create([
@@ -318,7 +329,7 @@ class PlanController extends Controller
                     'subscribable_id' => $entryCopy->id,
                     'order_id' => 0,
                     'editable' => 1,
-                    'owner_id' => $owner_id,
+                    'owner_id' => $ownerId,
                 ]);
 
                 foreach ($training->exercises as $exercise) {
@@ -327,30 +338,39 @@ class PlanController extends Controller
                         'title' => $exercise->title,
                         'description' => $exercise->description,
                         'recommended_iterations' => $exercise->recommended_iterations,
-                        'owner_id' => $owner_id,
+                        'owner_id' => $ownerId,
                     ]);
                 }
             }
         }
 
-        // set new entry_order based of associative array
-        $newEntryOrder = array_map(function($entry_id) use (&$assocOrder) {
-            return $assocOrder[$entry_id];
-        }, $plan->entry_order);
+        if ($plan->entry_order != null) {
+            // set new entry_order based of associative array
+            $newEntryOrder = array_map(function($entry_id) use (&$assocOrder) {
+                return $assocOrder[$entry_id];
+            }, $plan->entry_order);
+        }
 
-        $planCopy->entry_order = $newEntryOrder;
+        $planCopy->entry_order = $newEntryOrder ?? null;
         $planCopy->save();
 
-        return redirect('/plans');
+        return $planCopy;
     }
-
+    /**
+     * Get all users with the student-role that are enroled in a plan
+     *
+     * @param  \App\Plan $plan
+     * @return Array Array of users
+     */
     public function getUsers(Plan $plan)
     {
         $users = [];
         $subscriptions = $plan->subscriptions()->get()->toArray();
         // get every user-id through all subscriptions
         foreach ($subscriptions as $subscription) {
+            // edit-rights are given to teachers or higher
             if ($subscription['editable']) continue;
+
             switch ($subscription['subscribable_type']) {
                 case 'App\User':
                     array_push($users, $subscription['subscribable_id']);
@@ -368,28 +388,17 @@ class PlanController extends Controller
             }
         }
 
-        // duplicates have to be removed, because SQL will return the same entry multiple times
-        $users = array_unique($users, SORT_NUMERIC);
+        $users = array_unique($users, SORT_NUMERIC); // remove duplicates
 
-        // only get users that are students
-        $users = User::select('users.id', 'users.firstname', 'users.lastname')->whereIn('users.id', $users)
-            ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')->where('organization_role_users.role_id', 6)
+        // query for the student role-id => 6
+        $users = User::select('users.id', 'users.firstname', 'users.lastname')
+            ->whereIn('users.id', $users)
+            ->join('organization_role_users', 'users.id', '=', 'organization_role_users.user_id')
+            ->where('organization_role_users.role_id', 6)
+            ->orderBy('users.firstname')
             ->distinct()->get()->toArray();
 
         return $users;
-    }
-
-    public function syncEntriesOrder(Plan $plan)
-    {
-        abort_unless(auth()->user()->id == $plan->owner_id, 403);
-
-        $input = $this->validateRequest();
-
-        $plan->update([
-            'entry_order' => $input['entry_order']
-        ]);
-
-        return ['entry_order' => $plan->entry_order];
     }
 
     public function getUserAchievements(Plan $plan, $userIds)
@@ -399,14 +408,13 @@ class PlanController extends Controller
 
         foreach ($ids as $id) {
             if (array_search($id, $accessibleUserIds) === false) {
-                abort(403);
+                abort(403, 'No access to user with id: ' . $id);
             }
         }
 
         $terminal = TerminalObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
             ->whereIn('subscribable_id', $plan->entry_order)
             ->with([
-                'terminalObjective.enablingObjectives',
                 'terminalObjective.enablingObjectives.achievements' => function ($query) use ($ids) {
                     $query->whereIn('user_id', $ids);
                 },
@@ -416,8 +424,7 @@ class PlanController extends Controller
         $enabling = EnablingObjectiveSubscriptions::where('subscribable_type', 'App\\PlanEntry')
             ->whereIn('subscribable_id', $plan->entry_order)
             ->with([
-                'enablingObjective',
-                'enablingObjective.achievements'=> function ($query) use ($ids) {
+                'enablingObjective.achievements' => function ($query) use ($ids) {
                     $query->whereIn('user_id', $ids);
                 },
             ])
@@ -425,10 +432,40 @@ class PlanController extends Controller
 
         $users = User::find($ids);
 
-        return view('plans.userAchievements')
+        return view('plans.achievements')
             ->with(compact('terminal'))
             ->with(compact('enabling'))
             ->with(compact('users'));
+    }
+
+    /**
+     * Get all certificates that are related to the entries of a plan
+     *
+     * @param  \App\Plan $plan
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getCertificates(Plan $plan)
+    {
+        $planEntries = $plan->entries()->pluck('id');
+        if (request()->wantsJson()) {
+            $builder = \App\Certificate::join('curricula', 'certificates.curriculum_id', '=', 'curricula.id')
+                ->join('terminal_objectives', 'curricula.id', '=', 'terminal_objectives.curriculum_id');
+                
+            $terminal = $builder->select('certificates.id', 'certificates.title', 'terminal_objective_subscriptions.subscribable_id AS entry_id')
+                ->join('terminal_objective_subscriptions', 'terminal_objectives.id', '=', 'terminal_objective_subscriptions.terminal_objective_id')
+                ->where('terminal_objective_subscriptions.subscribable_type', '=', 'App\PlanEntry')
+                ->whereIn('terminal_objective_subscriptions.subscribable_id', $planEntries)
+                ->distinct()->get();
+                
+            $enabling = $builder->select('certificates.id', 'certificates.title', 'enabling_objective_subscriptions.subscribable_id AS entry_id')
+                ->join('enabling_objectives', 'terminal_objectives.id', '=', 'enabling_objectives.terminal_objective_id')
+                ->join('enabling_objective_subscriptions', 'enabling_objectives.id', '=', 'enabling_objective_subscriptions.enabling_objective_id')
+                ->where('enabling_objective_subscriptions.subscribable_type', '=', 'App\PlanEntry')
+                ->whereIn('enabling_objective_subscriptions.subscribable_id', $planEntries)
+                ->distinct()->get();
+
+            return $terminal->concat($enabling)->groupBy('entry_id');
+        }
     }
 
     protected function validateRequest()
@@ -436,13 +473,15 @@ class PlanController extends Controller
         return request()->validate([
             'title'         => 'sometimes|required',
             'description'   => 'sometimes',
-            'color'         => 'sometimes',
             'begin'         => 'sometimes',
             'end'           => 'sometimes',
             'duration'      => 'sometimes',
             'type_id'       => 'sometimes',
-            'allow_copy'    => 'sometimes',
             'entry_order'   => 'sometimes',
+            'color'         => 'sometimes',
+            'medium_id'     => 'sometimes',
+            'allow_copy'    => 'sometimes',
+            'owner_id'      => 'sometimes',
         ]);
     }
 }

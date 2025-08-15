@@ -244,6 +244,7 @@ html.maximized-card {
     margin: 0;
     white-space: nowrap;
     text-overflow: ellipsis;
+    overflow: hidden;
     max-width: 80%;
 }
 
@@ -337,6 +338,10 @@ html.maximized-card {
       border-bottom: 0;
     }
 
+    &:first-of-type {
+      padding-top: 0;
+    }
+
     img {
       height: $card-img-size;
       width: $card-img-size;
@@ -364,14 +369,14 @@ html.maximized-card {
 // Widgets
 //-----------
 
-// Widget: TODO LIST
+// Widget: TO-DO LIST
 .todo-list {
   list-style: none;
   margin: 0;
   overflow: auto;
   padding: 0;
 
-  // Todo list element
+  // To-do list element
   > li {
       border-radius: 0.5rem;
     background: $gray-100;
@@ -456,7 +461,7 @@ html.maximized-card {
   }
 }
 
-// END TODO WIDGET
+// END TO-DO WIDGET
 
 // Input in box
 .card-input {

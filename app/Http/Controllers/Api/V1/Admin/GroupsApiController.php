@@ -14,9 +14,7 @@ class GroupsApiController extends Controller
 {
     public function index()
     {
-        $groups = Group::all();
-
-        return $groups;
+        return Group::all();
     }
 
     public function store()
@@ -26,6 +24,7 @@ class GroupsApiController extends Controller
             'grade_id'          => request()->input('grade_id'),
             'period_id'         => $this->getPeriod()->id,
             'organization_id'   => request()->input('organization_id'),
+            'common_name'   => request()->input('common_name'),
         ]);
 
         //return Group::create($this->filteredRequest());
@@ -39,6 +38,7 @@ class GroupsApiController extends Controller
                 'grade_id'          => (request()->input('grade_id')) ?: $group->grade_id,
                 'period_id'         => ($this->getPeriod()->id) ?: $group->period_id,
                 'organization_id'   => (request()->input('organization_id')) ?: $group->organization_id,
+                'common_name'       => (request()->input('common_name')) ?: $group->common_name,
             ])
         ) {
             return $group->fresh();

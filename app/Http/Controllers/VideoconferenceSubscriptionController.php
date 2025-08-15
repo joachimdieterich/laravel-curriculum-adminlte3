@@ -7,6 +7,7 @@ use App\Videoconference;
 use App\VideoconferenceSubscription;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use function Laravel\Prompts\form;
 
 class VideoconferenceSubscriptionController extends Controller
 {
@@ -17,53 +18,36 @@ class VideoconferenceSubscriptionController extends Controller
      */
     public function index()
     {
-        $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
-            $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('videoconference_access') and $model->isAccessible()), 403);
-
-            $videoconference = $model->videoconferences;
-
-            return empty($videoconference) ? '' : DataTables::of($videoconference)
-                ->setRowId('id')
-                ->make(true);
-        }
-        else
+        $tokens = null;
+        if (request()->wantsJson())
         {
-            if (request()->wantsJson())
+            $tokenscodes = VideoconferenceSubscription::where('videoconference_id', request('videoconference_id'))
+                ->where('sharing_token', "!=", null)
+                ->get();
+
+            foreach ($tokenscodes as $token)
             {
-
-                $tokenscodes = VideoconferenceSubscription::where('videoconference_id', request('videoconference_id'))
-                    ->where('sharing_token', "!=", null)
-                    ->get();
-
-                foreach ($tokenscodes as $token)
-                {
-                    $tokens[] = [
-                        "token" => $token,
-                        "qr"    => (new QRCodeHelper())
-                            ->generateQRCodeByString(
-                                env("APP_URL"). "/videoconferences/" . request('videoconference_id') ."/token?sharing_token=" .$token->sharing_token
-                            )
-                    ];
-                }
-                return [
-                    'subscribers' => [
-                        'tokens' => $tokens ?? [],
-                        'subscriptions' => optional(
-                            optional(
-                                Videoconference::find(request('videoconference_id'))
-                            )->subscriptions()
-                        )->with('subscribable')
-                            ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                                if ($type == 'App\\User') {
-                                    $q->whereNot('id', env('GUEST_USER'));
-                                }
-                            })->get(),
-                        //'subscriptions' => $videoconference->subscriptions()->with('subscribable')->get(),
-                    ],
+                $tokens[] = [
+                    "token" => $token,
+                    "qr"    => (new QRCodeHelper())
+                        ->generateQRCodeByString(
+                            env("APP_URL"). "/videoconferences/" . request('videoconference_id') ."/token?sharing_token=" .$token->sharing_token
+                        )
                 ];
             }
+            return [
+                'tokens' => $tokens ?? [],
+                'subscriptions' => optional(
+                        optional(
+                            Videoconference::find(request('videoconference_id'))
+                        )->subscriptions()
+                    )->with('subscribable')
+                    ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                        if ($type == 'App\\User') {
+                            $q->whereNot('id', env('GUEST_USER'));
+                        }
+                    })->get(),
+            ];
         }
     }
 
@@ -76,11 +60,11 @@ class VideoconferenceSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $videoconference = Videoconference::find($input['model_id']);
+        $videoconference = Videoconference::find(format_select_input($input['model_id']));
         abort_unless((\Gate::allows('videoconference_create') and $videoconference->isAccessible()), 403);
 
         $subscribe = VideoconferenceSubscription::updateOrCreate([
-            'videoconference_id' => $input['model_id'],
+            'videoconference_id' => $videoconference->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -90,7 +74,7 @@ class VideoconferenceSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => $videoconference->subscriptions()->with('subscribable')->get()];
+            return $subscribe->with(['subscribable', 'videoconference'])->find($subscribe->id);
         }
     }
 
@@ -131,12 +115,28 @@ class VideoconferenceSubscriptionController extends Controller
         }
     }
 
+    public function expel(Request $request) {
+        $input = $this->validateRequest();
+        $vc = Videoconference::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('videoconference_delete') and $vc->isAccessible()), 403);
+
+        $subscription = VideoconferenceSubscription::where([
+            'videoconference_id' => $vc->id,
+            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_type' => $input['subscribable_type'],
+        ]);
+
+        if ($subscription->delete()) {
+            return trans('global.expel_success');
+        }
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes|integer',
+            'model_id'          => 'sometimes',
             'editable'          => 'sometimes',
             'videoconference_id'=> 'sometimes',
         ]);

@@ -1,0 +1,93 @@
+<template>
+    <div class="row">
+        <div class="col-lg-4 col-sm-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h5 class="m-0">
+                            <i class="fas fa-layer-group mr-1"></i>
+                            {{ this.currentGrade.title }}
+                        </h5>
+                    </div>
+                    <div
+                        v-permission="'organization_edit'"
+                        class="card-tools pr-2">
+                        <a  @click="editGrade()">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+                    <p class="text-muted">
+                        {{ trans('global.grade.fields.external_begin') }}: {{ this.currentGrade.external_begin }}<br>
+                        {{ trans('global.grade.fields.external_end') }}: {{ this.currentGrade.external_end }}
+                    </p>
+                    <hr>
+
+                    <strong>
+                        <i class="fas fa-city mr-1"></i>
+                        {{ trans('global.organizationType.title_singular') }}
+                    </strong>
+                    <p class="text-muted">
+                        {{ this.currentGrade.organization_type?.title }}
+                    </p>
+                    <hr>
+                </div>
+
+                <div class="card-footer">
+                    <small class="float-right">
+                        {{ this.currentGrade.updated_at }}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <Teleport to="body">
+            <GradeModal></GradeModal>
+        </Teleport>
+    </div>
+</template>
+
+<script>
+import {useGlobalStore} from "../../store/global";
+import GradeModal from "../grade/GradeModal.vue";
+
+export default {
+    name: "grade",
+    components:{
+        GradeModal
+    },
+    props: {
+        grade: {
+            default: null
+        },
+    },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            componentId: this.$.uid,
+            currentGrade: {},
+        }
+    },
+    mounted() {
+        this.currentGrade = this.grade;
+        this.$eventHub.on('grade-updated', (grade) => {
+            this.currentGrade = grade;
+            this.globalStore?.closeModal('grade-modal');
+        });
+
+    },
+    methods: {
+        editGrade(){
+            this.globalStore?.showModal('grade-modal', this.currentGrade);
+        },
+    }
+}
+</script>

@@ -11,7 +11,6 @@ use App\OrganizationRoleUser;
 use App\Period;
 use App\User;
 use Carbon\Carbon;
-use FontLib\TrueType\Collection;
 use Illuminate\Support\Str;
 
 class KanbansApiController extends Controller

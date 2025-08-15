@@ -64,9 +64,7 @@
 .sidebar-collapse {
   .main-sidebar.sidebar-focused,
   .main-sidebar:hover {
-    .nav-header {
-      display: inline-block;
-    }
+    .nav-header { opacity: 1; }
   }
 
   .sidebar-no-expand.main-sidebar.sidebar-focused,

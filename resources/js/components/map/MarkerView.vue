@@ -1,95 +1,133 @@
 <template>
     <div>
-        <h1 class="sidebar-header  mb-3">
+        <h1 class="sidebar-header d-flex mb-3">
             {{ marker.title }}
-            <span v-if="$userId == marker.owner_id || $userId == map.owner_id"
-                  v-can="'map_edit'"
-                  class="card-tools pl-1"
+            <span v-if="marker.owner_id == $userId || checkPermission('is_admin')"
+                v-permission="'map_edit'"
+                class="card-tools ml-auto pl-2"
             >
-                <a @click="editMarker(marker)" type="button">
-                    <i class="fa fa-pencil-alt mx-1"></i>
+                <a @click="editMarker(marker)" >
+                    <i class="fa fa-pencil-alt"></i>
+                </a>
+                <a
+                    v-permission="'is_admin'"
+                    @click="shareMarker(marker)"
+                >
+                    <i class="ml-3 fa fa-share-alt"></i>
                 </a>
             </span>
         </h1>
         <div>
             <span v-for="tag in tag_array"
-                  class="right badge badge-primary mr-2"
+                class="right badge badge-primary mr-2"
             >
                 {{ tag }}
             </span>
         </div>
 
-        <h5 v-if="marker.author !== ''" class="pt-3">{{ trans('global.author') }}</h5>
-        <div>{{ marker.author }}</div>
+        <div v-if="marker.author">
+            <h5 class="pt-3">{{ trans('global.marker.fields.author') }}</h5>
+            <div>{{ marker.author }}</div>
+        </div>
 
-        <h5 v-if="marker.description !== ''" class="pt-3">{{ trans('global.description') }}</h5>
-        <div v-if="marker.description !== ''"
-            class="pb-2"
-            v-html="marker.description"
-        ></div>
+        <div v-if="marker.description">
+            <h5 class="pt-3">{{ trans('global.description') }}</h5>
+            <div v-html="marker.description"></div>
+        </div>
 
-        <h5 class="pt-3" :class="!show_media && 'd-none'">{{ trans('global.media.title') }}</h5>
-        <div v-if="marker.id != null && show_media"
-             v-bind:id="'map_marker_media_'+marker.id"
+        <h5 class="pt-3 clearfix">{{ trans('global.medium.title') }}</h5>
+        <div v-if="marker.id != null"
+            v-permission="'medium_access'"
+            :id="'map_marker_media_' + marker.id"
         >
             <media
                 subscribable_type="App\MapMarker"
                 :subscribable_id="marker.id"
-                :can_add_media="$userId == marker.owner_id || $userId == map.owner_id"
                 format="list"
             />
         </div>
 
-        <h5 v-if="marker.address !== ''" class="pt-3">{{ trans('global.marker.fields.address') }}</h5>
-        <div v-dompurify-html="marker.address"></div>
+        <div v-if="marker.address">
+            <h5 class="pt-3">{{ trans('global.address') }}</h5>
+            <div v-dompurify-html="marker.address"></div>
+        </div>
 
-        <h5 v-if="marker.url" class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
         <div v-if="marker.url">
-            <a :href="marker.url" target="_blank">
+            <h5 class="pt-3">{{ trans('global.marker.fields.link') }}</h5>
+            <a
+                :href="marker.url"
+                target="_blank"
+            >
                 <span v-if="marker.url_title">
-                    {{ this.marker.url_title }}
+                    {{ marker.url_title }}
                 </span>
-                <span v-else>Link zum Projekt</span>
+                <span v-else>{{ trans('global.marker.fields.link_helper') }}</span>
             </a>
         </div>
+
+<!--        <SubscribableList v-if="marker.id"
+            url="/mapMarkerSubscriptions?map_marker_id"
+            :model_id="marker.id"
+        />-->
+
+        <Teleport to="body">
+            <SubscribeModal/>
+        </Teleport>
     </div>
 </template>
 <script>
-import Media from '../media/Media';
+import Media from '../media/Media.vue';
+import SubscribableList from "../subscription/SubscribableList.vue";
+import tokens from "../subscription/Tokens.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
+import {useGlobalStore} from "../../store/global.js";
 
 export default {
     name: 'MarkerView',
     components: {
+        SubscribeModal,
+        tokens,
+        SubscribableList,
         Media,
     },
     props: {
         marker: {
-            default: null
+            type: Object,
+            default: null,
         },
-        map: {
-            default: null
-        }
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             tag_array: {},
-            show_media: true,
+            subscribers: {},
+        }
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
         }
     },
     watch: { // reload if context change
         marker: function(newVal, oldVal) {
             this.tag_array = newVal.tags?.split(",");
-            this.show_media = true;
         },
     },
     methods: {
-        editMarker(marker){
-            this.$eventHub.$emit('edit_marker', marker);
+        editMarker(marker) {
+            this.globalStore?.showModal('map-marker-modal', marker);
         },
-        hideMedia() {
-            if (this.$userId == this.marker.owner_id || this.$userId == this.map.owner_id) return;
-            this.show_media = false;
+        shareMarker(marker) {
+            this.globalStore?.showModal('subscribe-modal', {
+                modelId: this.marker.id,
+                modelUrl: 'mapMarker',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: false,
+                canEditCheckbox: false,
+            });
         },
     },
 }

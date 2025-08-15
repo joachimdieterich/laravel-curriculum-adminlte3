@@ -3,16 +3,20 @@
     <div>
         <h4>Tool: {{  isset($exam) ? $exam->tool : 'tool' }}</h4>
     </div>
-    <div>{{ trans('global.exam.add_remove_users.students_exam_title') }} {{  isset($exam) ? $exam->test_name : 'exam' }}</div>
+
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item active">{{ trans('global.user.title') }}</li>
-    <li class="breadcrumb-item "><a href="{{ env('DOCUMENTATION', '/documentation') }}" class="text-black-50"><i
-                class="fas fa-question-circle"></i></a></li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> true, 'title'=> trans('global.exam.title')],
+            ['active'=> true, 'title'=>  (isset($exam) ? $exam->test_name : 'exam') ]
+        ])}}"
+    ></breadcrumbs>
 @endsection
 @section('content')
-    <table id="exam-users-datatable"
+    <exam :exam="{{ $exam }}"></exam>
+
+    {{--<table id="exam-users-datatable"
            class="table table-hover datatable">
         <thead>
         <tr class="tr_selectAll_students">
@@ -23,15 +27,15 @@
             <th>{{ trans('global.exam.fields.completed_at') }}</th>
         </tr>
         </thead>
-    </table>
-    <div class="row ">
+    </table>--}}
+{{--    <div class="row ">
         <div class="col-sm-12">
             <div class="btn-group pull-right" role="group" aria-label="...">
                 @include ('forms.input.button', ["onclick" => "expelFromExam()", "field" => "expelFromExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Lernstandsanalyse ausschreiben"])
             </div>
         </div><!-- ./col-xs-12 -->
-    </div>
-
+    </div>--}}
+{{--
     <h3> {{ trans('global.exam.add_remove_users.users_group_title') }} </h3>
     <table id="users-datatable"
            class="table table-hover datatable">
@@ -44,14 +48,16 @@
             <th>{{ trans('global.user.fields.email') }}</th>
         </tr>
         </thead>
-    </table>
-    <div class="row ">
+    </table>--}}
+  {{--  <div class="row ">
         <div class="col-sm-12">
             <div class="btn-group pull-right" role="group" aria-label="...">
-                @include ('forms.input.button', ["onclick" => "enroleIntoExam()", "field" => "enroleIntoExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Lernstandsanalyse einschreiben"])
+                @include ('forms.input.button', ["onclick" => "enroleIntoExam()",
+"field" => "enroleIntoExam", "type" => "button", "class" =>
+ "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Lernstandsanalyse einschreiben"])
             </div>
         </div><!-- ./col-xs-12 -->
-    </div>
+    </div>--}}
 @endsection
 @section('scripts')
     @parent
@@ -74,7 +80,7 @@
             return $(selector).DataTable().rows({selected: true}).ids().toArray();
         }
 
-        function sendRequest(method, url, ids, data) {
+     /*   function sendRequest(method, url, ids, data) {
             if (ids.length === 0) {
                 alert('{{ trans('global.datatables.zero_selected') }}')
                 return
@@ -90,11 +96,11 @@
                         location.reload()
                     })
             }
-        }
-
+        }*/
+/*
         function enroleIntoExam() {
             var ids = getDatatablesIds('#users-datatable');
-            sendRequest('POST', '/exam/' + {{ $exam->exam_id }} + '/users/enrol', ids, {
+            sendRequest('POST', '/exams/' + {{ $exam->exam_id }} + '/users/enrol', ids, {
                 'tool': '{{ $exam->tool }}',
                 "enrollment_list": ids,
                 _method: 'POST'
@@ -103,20 +109,19 @@
 
         function expelFromExam() {
             var ids = getDatatablesIds('#exam-users-datatable');
-            sendRequest('POST', '/exam/' + {{ $exam->exam_id }} + '/users/expel', ids, {
+            sendRequest('POST', '/exams/' + {{ $exam->exam_id }} + '/users/expel', ids, {
                 'tool': '{{ $exam->tool }}',
                 'expel_list': ids,
                 _method: 'DELETE'
             });
-        }
+        }*/
 
         $(function () {
-
             let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
 
             let exam_users_table = $('#exam-users-datatable').DataTable({
-                ajax: "{{ url('exam/' . $exam->exam_id . '/list') }}",
-                columns: [
+                ajax: "{{ url('exams/' . $exam->exam_id . '/list') }}",
+                /*columns: [
                     {data: 'check'},
                     {data: 'firstname'},
                     {data: 'lastname'},
@@ -143,7 +148,7 @@
                             }
                             return data
                         }},
-                ],
+                ],*/
                 bStateSave: true,
                 fnStateSave: function (oSettings, oData) {
                     localStorage.setItem('DataTables', JSON.stringify(oData));
@@ -160,7 +165,7 @@
             });
 
             let users_table = $('#users-datatable').DataTable({
-                ajax: "{{ url('exam/' . $exam->exam_id . '/users/list') }}",
+                ajax: "{{ url('exams/' . $exam->exam_id . '/users/list') }}",
                 columns: [
                     {data: 'check'},
                     {data: 'username'},
@@ -195,10 +200,4 @@
             }
         }
     </script>
-
 @endsection
-
-
-
-
-

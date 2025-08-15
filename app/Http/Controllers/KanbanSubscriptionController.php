@@ -18,53 +18,37 @@ class KanbanSubscriptionController extends Controller
      */
     public function index()
     {
-        $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
-            //used by grous.view
-            $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless((\Gate::allows('kanban_access') and $model->isAccessible() or is_admin()), 403);
-            $kanbans = $model->kanbans;
-
-            return empty($kanbans) ? '' : DataTables::of($kanbans)
-                ->setRowId('id')
-                ->make(true);
-        }
-        else
+        $tokens = null;
+        if (request()->wantsJson())
         {
-            $tokens = null;
-            if (request()->wantsJson())
+            $tokenscodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
+                ->where('sharing_token', "!=", null)
+                ->get();
+
+            foreach ($tokenscodes as $token)
             {
-                $tokenscodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
-                    ->where('sharing_token', "!=", null)
-                    ->get();
-
-                foreach ($tokenscodes as $token)
-                {
-                    $tokens[] = [
-                        "token" => $token,
-                        "qr"    => (new QRCodeHelper())
-                            ->generateQRCodeByString(
-                                env("APP_URL"). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
-                            )
-                    ];
-                }
-
-                return [
-                    'subscribers' => [
-                        'tokens' => $tokens ?? [],
-                        'subscriptions' => optional(
-                                optional(
-                                    Kanban::find(request('kanban_id'))
-                                )->subscriptions()
-                            )->with('subscribable')
-                            ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                                if ($type == 'App\\User') {
-                                    $q->whereNot('id', env('GUEST_USER'));
-                                }
-                            })->get(),
-                    ],
+                $tokens[] = [
+                    "token" => $token,
+                    "qr"    => (new QRCodeHelper())
+                        ->generateQRCodeByString(
+                            env("APP_URL"). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
+                        )
                 ];
             }
+
+            return [
+                'tokens' => $tokens ?? [],
+                'subscriptions' => optional(
+                        optional(
+                            Kanban::find(request('kanban_id'))
+                        )->subscriptions()
+                    )->with('subscribable')
+                    ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                        if ($type == 'App\\User') {
+                            $q->whereNot('id', env('GUEST_USER'));
+                        }
+                    })->get(),
+            ];
         }
     }
 
@@ -77,11 +61,11 @@ class KanbanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $model = Kanban::find($input['model_id']);
-        abort_unless((\Gate::allows('kanban_create') and $model->isAccessible()), 403);
+        $kanban = Kanban::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
 
         $subscribe = KanbanSubscription::updateOrCreate([
-            'kanban_id' => $input['model_id'],
+            'kanban_id' => $kanban->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -91,16 +75,7 @@ class KanbanSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => Kanban::find($input['model_id'])
-                    ->subscriptions()
-                ->with('subscribable')
-                ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                    if ($type == 'App\\User') {
-                        $q->whereNot('id', env('GUEST_USER'));
-                    }
-                })->get(),
-            ];
-
+            return $subscribe->with('subscribable')->find($subscribe->id);
         }
     }
 
@@ -149,12 +124,35 @@ class KanbanSubscriptionController extends Controller
         }
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function expel(Request $request)
+    {
+        $input = $this->validateRequest();
+        $kanban = Kanban::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
+
+        $subscription = KanbanSubscription::where([
+            'kanban_id' => $kanban->id,
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ]);
+
+        if ($subscription->delete()) {
+            return trans('global.expel_success');
+        }
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes|integer',
+            'model_id'          => 'sometimes',
             'editable'          => 'sometimes',
         ]);
     }

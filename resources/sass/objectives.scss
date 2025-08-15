@@ -1,0 +1,26 @@
+.objectives {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 10px;
+
+    .objective {
+        height: 200px;
+        width: 200px;
+        border: 1px solid #d2d6de;
+        border-radius: 10px;
+
+        .add-objective {
+            padding: 25px;
+            text-align: center;
+
+            > span {
+                display: block;
+                height: 0px;
+                font-size: 1.25rem;
+            }
+            > div { font-size: 100px; }
+        }
+    }
+}

@@ -241,6 +241,146 @@
       "HEAD"
     ]
   },
+  "passport.token": {
+    "name": "passport.token",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\AccessTokenController@issueToken",
+    "uri": "oauth/token",
+    "method": [
+      "POST"
+    ]
+  },
+  "passport.authorizations.authorize": {
+    "name": "passport.authorizations.authorize",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\AuthorizationController@authorize",
+    "uri": "oauth/authorize",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "passport.token.refresh": {
+    "name": "passport.token.refresh",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\TransientTokenController@refresh",
+    "uri": "oauth/token/refresh",
+    "method": [
+      "POST"
+    ]
+  },
+  "passport.authorizations.approve": {
+    "name": "passport.authorizations.approve",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\ApproveAuthorizationController@approve",
+    "uri": "oauth/authorize",
+    "method": [
+      "POST"
+    ]
+  },
+  "passport.authorizations.deny": {
+    "name": "passport.authorizations.deny",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\DenyAuthorizationController@deny",
+    "uri": "oauth/authorize",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "passport.tokens.index": {
+    "name": "passport.tokens.index",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\AuthorizedAccessTokenController@forUser",
+    "uri": "oauth/tokens",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "passport.tokens.destroy": {
+    "name": "passport.tokens.destroy",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\AuthorizedAccessTokenController@destroy",
+    "uri": "oauth/tokens/{token_id}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "passport.clients.index": {
+    "name": "passport.clients.index",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\ClientController@forUser",
+    "uri": "oauth/clients",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "passport.clients.store": {
+    "name": "passport.clients.store",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\ClientController@store",
+    "uri": "oauth/clients",
+    "method": [
+      "POST"
+    ]
+  },
+  "passport.clients.update": {
+    "name": "passport.clients.update",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\ClientController@update",
+    "uri": "oauth/clients/{client_id}",
+    "method": [
+      "PUT"
+    ]
+  },
+  "passport.clients.destroy": {
+    "name": "passport.clients.destroy",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\ClientController@destroy",
+    "uri": "oauth/clients/{client_id}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "passport.scopes.index": {
+    "name": "passport.scopes.index",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\ScopeController@all",
+    "uri": "oauth/scopes",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "passport.personal.tokens.index": {
+    "name": "passport.personal.tokens.index",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\PersonalAccessTokenController@forUser",
+    "uri": "oauth/personal-access-tokens",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "passport.personal.tokens.store": {
+    "name": "passport.personal.tokens.store",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\PersonalAccessTokenController@store",
+    "uri": "oauth/personal-access-tokens",
+    "method": [
+      "POST"
+    ]
+  },
+  "passport.personal.tokens.destroy": {
+    "name": "passport.personal.tokens.destroy",
+    "domain": null,
+    "action": "Laravel\\Passport\\Http\\Controllers\\PersonalAccessTokenController@destroy",
+    "uri": "oauth/personal-access-tokens/{token_id}",
+    "method": [
+      "DELETE"
+    ]
+  },
   "": {
     "name": null,
     "domain": null,
@@ -261,146 +401,6 @@
       "HEAD"
     ]
   },
-  "passport.authorizations.authorize": {
-    "name": "passport.authorizations.authorize",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\AuthorizationController@authorize",
-    "uri": "oauth/authorize",
-    "method": [
-      "GET",
-      "HEAD"
-    ]
-  },
-  "passport.authorizations.approve": {
-    "name": "passport.authorizations.approve",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\ApproveAuthorizationController@approve",
-    "uri": "oauth/authorize",
-    "method": [
-      "POST"
-    ]
-  },
-  "passport.authorizations.deny": {
-    "name": "passport.authorizations.deny",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\DenyAuthorizationController@deny",
-    "uri": "oauth/authorize",
-    "method": [
-      "DELETE"
-    ]
-  },
-  "passport.token": {
-    "name": "passport.token",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\AccessTokenController@issueToken",
-    "uri": "oauth/token",
-    "method": [
-      "POST"
-    ]
-  },
-  "passport.tokens.index": {
-    "name": "passport.tokens.index",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\AuthorizedAccessTokenController@forUser",
-    "uri": "oauth/tokens",
-    "method": [
-      "GET",
-      "HEAD"
-    ]
-  },
-  "passport.tokens.destroy": {
-    "name": "passport.tokens.destroy",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\AuthorizedAccessTokenController@destroy",
-    "uri": "oauth/tokens/{token_id}",
-    "method": [
-      "DELETE"
-    ]
-  },
-  "passport.token.refresh": {
-    "name": "passport.token.refresh",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\TransientTokenController@refresh",
-    "uri": "oauth/token/refresh",
-    "method": [
-      "POST"
-    ]
-  },
-  "passport.clients.index": {
-    "name": "passport.clients.index",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\ClientController@forUser",
-    "uri": "oauth/clients",
-    "method": [
-      "GET",
-      "HEAD"
-    ]
-  },
-  "passport.clients.store": {
-    "name": "passport.clients.store",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\ClientController@store",
-    "uri": "oauth/clients",
-    "method": [
-      "POST"
-    ]
-  },
-  "passport.clients.update": {
-    "name": "passport.clients.update",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\ClientController@update",
-    "uri": "oauth/clients/{client_id}",
-    "method": [
-      "PUT"
-    ]
-  },
-  "passport.clients.destroy": {
-    "name": "passport.clients.destroy",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\ClientController@destroy",
-    "uri": "oauth/clients/{client_id}",
-    "method": [
-      "DELETE"
-    ]
-  },
-  "passport.scopes.index": {
-    "name": "passport.scopes.index",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\ScopeController@all",
-    "uri": "oauth/scopes",
-    "method": [
-      "GET",
-      "HEAD"
-    ]
-  },
-  "passport.personal.tokens.index": {
-    "name": "passport.personal.tokens.index",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\PersonalAccessTokenController@forUser",
-    "uri": "oauth/personal-access-tokens",
-    "method": [
-      "GET",
-      "HEAD"
-    ]
-  },
-  "passport.personal.tokens.store": {
-    "name": "passport.personal.tokens.store",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\PersonalAccessTokenController@store",
-    "uri": "oauth/personal-access-tokens",
-    "method": [
-      "POST"
-    ]
-  },
-  "passport.personal.tokens.destroy": {
-    "name": "passport.personal.tokens.destroy",
-    "domain": null,
-    "action": "\\Laravel\\Passport\\Http\\Controllers\\PersonalAccessTokenController@destroy",
-    "uri": "oauth/personal-access-tokens/{token_id}",
-    "method": [
-      "DELETE"
-    ]
-  },
   "auth.": {
     "name": "auth.",
     "domain": null,
@@ -414,8 +414,8 @@
   "admin.": {
     "name": "admin.",
     "domain": null,
-    "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\MoodleApiController@getKanbans",
-    "uri": "api/v1/moodle/kanbans",
+    "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\KanbansApiController@subscriptions",
+    "uri": "api/v1/kanbans/{kanban}/subscriptions",
     "method": [
       "GET",
       "HEAD"
@@ -997,6 +997,54 @@
       "DELETE"
     ]
   },
+  "admin.kanbans.index": {
+    "name": "admin.kanbans.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\KanbansApiController@index",
+    "uri": "api/v1/kanbans",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "admin.kanbans.store": {
+    "name": "admin.kanbans.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\KanbansApiController@store",
+    "uri": "api/v1/kanbans",
+    "method": [
+      "POST"
+    ]
+  },
+  "admin.kanbans.show": {
+    "name": "admin.kanbans.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\KanbansApiController@show",
+    "uri": "api/v1/kanbans/{kanban}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "admin.kanbans.update": {
+    "name": "admin.kanbans.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\KanbansApiController@update",
+    "uri": "api/v1/kanbans/{kanban}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "admin.kanbans.destroy": {
+    "name": "admin.kanbans.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\Api\\V1\\Admin\\KanbansApiController@destroy",
+    "uri": "api/v1/kanbans/{kanban}",
+    "method": [
+      "DELETE"
+    ]
+  },
   "features": {
     "name": "features",
     "domain": null,
@@ -1112,6 +1160,83 @@
     "method": [
       "GET",
       "HEAD"
+    ]
+  },
+  "calendarEvents.index": {
+    "name": "calendarEvents.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CalendarEventController@index",
+    "uri": "calendarEvents",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "calendarEvents.create": {
+    "name": "calendarEvents.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CalendarEventController@create",
+    "uri": "calendarEvents/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "calendarEvents.store": {
+    "name": "calendarEvents.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CalendarEventController@store",
+    "uri": "calendarEvents",
+    "method": [
+      "POST"
+    ]
+  },
+  "calendarEvents.show": {
+    "name": "calendarEvents.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CalendarEventController@show",
+    "uri": "calendarEvents/{calendarEvent}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "calendarEvents.edit": {
+    "name": "calendarEvents.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CalendarEventController@edit",
+    "uri": "calendarEvents/{calendarEvent}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "calendarEvents.update": {
+    "name": "calendarEvents.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CalendarEventController@update",
+    "uri": "calendarEvents/{calendarEvent}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "calendarEvents.destroy": {
+    "name": "calendarEvents.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CalendarEventController@destroy",
+    "uri": "calendarEvents/{calendarEvent}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "kanbanItemCommentController.react": {
+    "name": "kanbanItemCommentController.react",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\KanbanItemCommentController@reaction",
+    "uri": "kanbanItemComments/{kanbanItemComment}/react",
+    "method": [
+      "POST"
     ]
   },
   "kanbanItemComment.index": {
@@ -1862,70 +1987,70 @@
       "DELETE"
     ]
   },
-  "contactdetails.index": {
-    "name": "contactdetails.index",
+  "contactDetails.index": {
+    "name": "contactDetails.index",
     "domain": null,
     "action": "App\\Http\\Controllers\\ContactDetailController@index",
-    "uri": "contactdetails",
+    "uri": "contactDetails",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "contactdetails.create": {
-    "name": "contactdetails.create",
+  "contactDetails.create": {
+    "name": "contactDetails.create",
     "domain": null,
     "action": "App\\Http\\Controllers\\ContactDetailController@create",
-    "uri": "contactdetails/create",
+    "uri": "contactDetails/create",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "contactdetails.store": {
-    "name": "contactdetails.store",
+  "contactDetails.store": {
+    "name": "contactDetails.store",
     "domain": null,
     "action": "App\\Http\\Controllers\\ContactDetailController@store",
-    "uri": "contactdetails",
+    "uri": "contactDetails",
     "method": [
       "POST"
     ]
   },
-  "contactdetails.show": {
-    "name": "contactdetails.show",
+  "contactDetails.show": {
+    "name": "contactDetails.show",
     "domain": null,
     "action": "App\\Http\\Controllers\\ContactDetailController@show",
-    "uri": "contactdetails/{contactdetail}",
+    "uri": "contactDetails/{contactDetail}",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "contactdetails.edit": {
-    "name": "contactdetails.edit",
+  "contactDetails.edit": {
+    "name": "contactDetails.edit",
     "domain": null,
     "action": "App\\Http\\Controllers\\ContactDetailController@edit",
-    "uri": "contactdetails/{contactdetail}/edit",
+    "uri": "contactDetails/{contactDetail}/edit",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "contactdetails.update": {
-    "name": "contactdetails.update",
+  "contactDetails.update": {
+    "name": "contactDetails.update",
     "domain": null,
     "action": "App\\Http\\Controllers\\ContactDetailController@update",
-    "uri": "contactdetails/{contactdetail}",
+    "uri": "contactDetails/{contactDetail}",
     "method": [
       "PUT",
       "PATCH"
     ]
   },
-  "contactdetails.destroy": {
-    "name": "contactdetails.destroy",
+  "contactDetails.destroy": {
+    "name": "contactDetails.destroy",
     "domain": null,
     "action": "App\\Http\\Controllers\\ContactDetailController@destroy",
-    "uri": "contactdetails/{contactdetail}",
+    "uri": "contactDetails/{contactDetail}",
     "method": [
       "DELETE"
     ]
@@ -2144,6 +2269,74 @@
       "HEAD"
     ]
   },
+  "countries.index": {
+    "name": "countries.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CountryController@index",
+    "uri": "countries",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "countries.create": {
+    "name": "countries.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CountryController@create",
+    "uri": "countries/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "countries.store": {
+    "name": "countries.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CountryController@store",
+    "uri": "countries",
+    "method": [
+      "POST"
+    ]
+  },
+  "countries.show": {
+    "name": "countries.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CountryController@show",
+    "uri": "countries/{country}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "countries.edit": {
+    "name": "countries.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CountryController@edit",
+    "uri": "countries/{country}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "countries.update": {
+    "name": "countries.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CountryController@update",
+    "uri": "countries/{country}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "countries.destroy": {
+    "name": "countries.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CountryController@destroy",
+    "uri": "countries/{country}",
+    "method": [
+      "DELETE"
+    ]
+  },
   "curricula.enrol": {
     "name": "curricula.enrol",
     "domain": null,
@@ -2162,16 +2355,6 @@
       "DELETE"
     ]
   },
-  "curricula.import": {
-    "name": "curricula.import",
-    "domain": null,
-    "action": "App\\Http\\Controllers\\CurriculumImportController@import",
-    "uri": "curricula/import",
-    "method": [
-      "GET",
-      "HEAD"
-    ]
-  },
   "curricula.import.store": {
     "name": "curricula.import.store",
     "domain": null,
@@ -2179,16 +2362,6 @@
     "uri": "curricula/import/store",
     "method": [
       "POST"
-    ]
-  },
-  "curricula.export": {
-    "name": "curricula.export",
-    "domain": null,
-    "action": "App\\Http\\Controllers\\CurriculumExportController@export",
-    "uri": "curricula/{curriculum}/export",
-    "method": [
-      "GET",
-      "HEAD"
     ]
   },
   "curricula.showAchievements": {
@@ -2210,11 +2383,11 @@
       "POST"
     ]
   },
-  "curricula.getObjectives": {
-    "name": "curricula.getObjectives",
+  "curricula.getCertificates": {
+    "name": "curricula.getCertificates",
     "domain": null,
-    "action": "App\\Http\\Controllers\\CurriculumController@getObjectives",
-    "uri": "curricula/{curriculum}/objectives",
+    "action": "App\\Http\\Controllers\\CurriculumController@getCertificates",
+    "uri": "curricula/{curriculum}/certificates",
     "method": [
       "GET",
       "HEAD"
@@ -2239,13 +2412,24 @@
       "PATCH"
     ]
   },
-  "curricula.resetOrderIds": {
-    "name": "curricula.resetOrderIds",
+  "curricula.export": {
+    "name": "curricula.export",
     "domain": null,
-    "action": "App\\Http\\Controllers\\CurriculumController@resetOrderIds",
-    "uri": "curricula/{curriculum}/resetOrderIds",
+    "action": "App\\Http\\Controllers\\CurriculumExportController@export",
+    "uri": "curricula/{curriculum}/export",
     "method": [
-      "PATCH"
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curricula.getObjectives": {
+    "name": "curricula.getObjectives",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumController@getObjectives",
+    "uri": "curricula/{curriculum}/objectives",
+    "method": [
+      "GET",
+      "HEAD"
     ]
   },
   "curricula.print": {
@@ -2258,6 +2442,15 @@
       "HEAD"
     ]
   },
+  "curricula.resetOrderIds": {
+    "name": "curricula.resetOrderIds",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumController@resetOrderIds",
+    "uri": "curricula/{curriculum}/resetOrderIds",
+    "method": [
+      "PATCH"
+    ]
+  },
   "curricula.syncObjectiveTypesOrder": {
     "name": "curricula.syncObjectiveTypesOrder",
     "domain": null,
@@ -2265,6 +2458,16 @@
     "uri": "curricula/{curriculum}/syncObjectiveTypesOrder",
     "method": [
       "PUT"
+    ]
+  },
+  "curricula.getTerminalObjectives": {
+    "name": "curricula.getTerminalObjectives",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumController@getTerminalObjectives",
+    "uri": "curricula/{curriculum}/terminalObjectives",
+    "method": [
+      "GET",
+      "HEAD"
     ]
   },
   "curricula.index": {
@@ -2331,6 +2534,151 @@
     "domain": null,
     "action": "App\\Http\\Controllers\\CurriculumController@destroy",
     "uri": "curricula/{curriculum}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "curriculumSubscriptions.expel": {
+    "name": "curriculumSubscriptions.expel",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumSubscriptionController@expel",
+    "uri": "curriculumSubscriptions/expel",
+    "method": [
+      "POST"
+    ]
+  },
+  "curriculumSubscriptions.index": {
+    "name": "curriculumSubscriptions.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumSubscriptionController@index",
+    "uri": "curriculumSubscriptions",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curriculumSubscriptions.create": {
+    "name": "curriculumSubscriptions.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumSubscriptionController@create",
+    "uri": "curriculumSubscriptions/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curriculumSubscriptions.store": {
+    "name": "curriculumSubscriptions.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumSubscriptionController@store",
+    "uri": "curriculumSubscriptions",
+    "method": [
+      "POST"
+    ]
+  },
+  "curriculumSubscriptions.show": {
+    "name": "curriculumSubscriptions.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumSubscriptionController@show",
+    "uri": "curriculumSubscriptions/{curriculumSubscription}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curriculumSubscriptions.edit": {
+    "name": "curriculumSubscriptions.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumSubscriptionController@edit",
+    "uri": "curriculumSubscriptions/{curriculumSubscription}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curriculumSubscriptions.update": {
+    "name": "curriculumSubscriptions.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumSubscriptionController@update",
+    "uri": "curriculumSubscriptions/{curriculumSubscription}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "curriculumSubscriptions.destroy": {
+    "name": "curriculumSubscriptions.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumSubscriptionController@destroy",
+    "uri": "curriculumSubscriptions/{curriculumSubscription}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "curriculumTypes.index": {
+    "name": "curriculumTypes.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumTypeController@index",
+    "uri": "curriculumTypes",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curriculumTypes.create": {
+    "name": "curriculumTypes.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumTypeController@create",
+    "uri": "curriculumTypes/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curriculumTypes.store": {
+    "name": "curriculumTypes.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumTypeController@store",
+    "uri": "curriculumTypes",
+    "method": [
+      "POST"
+    ]
+  },
+  "curriculumTypes.show": {
+    "name": "curriculumTypes.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumTypeController@show",
+    "uri": "curriculumTypes/{curriculumType}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curriculumTypes.edit": {
+    "name": "curriculumTypes.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumTypeController@edit",
+    "uri": "curriculumTypes/{curriculumType}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "curriculumTypes.update": {
+    "name": "curriculumTypes.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumTypeController@update",
+    "uri": "curriculumTypes/{curriculumType}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "curriculumTypes.destroy": {
+    "name": "curriculumTypes.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\CurriculumTypeController@destroy",
+    "uri": "curriculumTypes/{curriculumType}",
     "method": [
       "DELETE"
     ]
@@ -2506,6 +2854,142 @@
     "uri": "eventSubscriptions/getEvents",
     "method": [
       "POST"
+    ]
+  },
+  "exercises.index": {
+    "name": "exercises.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseController@index",
+    "uri": "exercises",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "exercises.create": {
+    "name": "exercises.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseController@create",
+    "uri": "exercises/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "exercises.store": {
+    "name": "exercises.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseController@store",
+    "uri": "exercises",
+    "method": [
+      "POST"
+    ]
+  },
+  "exercises.show": {
+    "name": "exercises.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseController@show",
+    "uri": "exercises/{exercise}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "exercises.edit": {
+    "name": "exercises.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseController@edit",
+    "uri": "exercises/{exercise}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "exercises.update": {
+    "name": "exercises.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseController@update",
+    "uri": "exercises/{exercise}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "exercises.destroy": {
+    "name": "exercises.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseController@destroy",
+    "uri": "exercises/{exercise}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "exerciseDones.index": {
+    "name": "exerciseDones.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseDoneController@index",
+    "uri": "exerciseDones",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "exerciseDones.create": {
+    "name": "exerciseDones.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseDoneController@create",
+    "uri": "exerciseDones/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "exerciseDones.store": {
+    "name": "exerciseDones.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseDoneController@store",
+    "uri": "exerciseDones",
+    "method": [
+      "POST"
+    ]
+  },
+  "exerciseDones.show": {
+    "name": "exerciseDones.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseDoneController@show",
+    "uri": "exerciseDones/{exerciseDone}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "exerciseDones.edit": {
+    "name": "exerciseDones.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseDoneController@edit",
+    "uri": "exerciseDones/{exerciseDone}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "exerciseDones.update": {
+    "name": "exerciseDones.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseDoneController@update",
+    "uri": "exerciseDones/{exerciseDone}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "exerciseDones.destroy": {
+    "name": "exerciseDones.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\ExerciseDoneController@destroy",
+    "uri": "exerciseDones/{exerciseDone}",
+    "method": [
+      "DELETE"
     ]
   },
   "eventSubscriptions.index": {
@@ -2892,6 +3376,25 @@
     "uri": "kanbans/{kanban}",
     "method": [
       "DELETE"
+    ]
+  },
+  "kanbanItems.react": {
+    "name": "kanbanItems.react",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\KanbanItemController@reaction",
+    "uri": "kanbanItems/{kanbanItem}/react",
+    "method": [
+      "POST"
+    ]
+  },
+  "kanbanItems.editors": {
+    "name": "kanbanItems.editors",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\KanbanItemController@editors",
+    "uri": "kanbanItems/{kanbanItem}/editors",
+    "method": [
+      "GET",
+      "HEAD"
     ]
   },
   "kanbanItems.sync": {
@@ -3543,6 +4046,15 @@
       "DELETE"
     ]
   },
+  "logbookSubscriptions.expel": {
+    "name": "logbookSubscriptions.expel",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\LogbookSubscriptionController@expel",
+    "uri": "logbookSubscriptions/expel",
+    "method": [
+      "POST"
+    ]
+  },
   "logbookSubscriptions.index": {
     "name": "logbookSubscriptions.index",
     "domain": null,
@@ -3675,6 +4187,414 @@
     "domain": null,
     "action": "App\\Http\\Controllers\\LogbookEntryController@destroy",
     "uri": "logbookEntries/{logbookEntry}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "mapSubscriptions.index": {
+    "name": "mapSubscriptions.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapSubscriptionController@index",
+    "uri": "mapSubscriptions",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapSubscriptions.create": {
+    "name": "mapSubscriptions.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapSubscriptionController@create",
+    "uri": "mapSubscriptions/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapSubscriptions.store": {
+    "name": "mapSubscriptions.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapSubscriptionController@store",
+    "uri": "mapSubscriptions",
+    "method": [
+      "POST"
+    ]
+  },
+  "mapSubscriptions.show": {
+    "name": "mapSubscriptions.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapSubscriptionController@show",
+    "uri": "mapSubscriptions/{mapSubscription}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapSubscriptions.edit": {
+    "name": "mapSubscriptions.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapSubscriptionController@edit",
+    "uri": "mapSubscriptions/{mapSubscription}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapSubscriptions.update": {
+    "name": "mapSubscriptions.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapSubscriptionController@update",
+    "uri": "mapSubscriptions/{mapSubscription}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "mapSubscriptions.destroy": {
+    "name": "mapSubscriptions.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapSubscriptionController@destroy",
+    "uri": "mapSubscriptions/{mapSubscription}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "mapMarkerSubscriptions.index": {
+    "name": "mapMarkerSubscriptions.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerSubscriptionController@index",
+    "uri": "mapMarkerSubscriptions",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerSubscriptions.create": {
+    "name": "mapMarkerSubscriptions.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerSubscriptionController@create",
+    "uri": "mapMarkerSubscriptions/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerSubscriptions.store": {
+    "name": "mapMarkerSubscriptions.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerSubscriptionController@store",
+    "uri": "mapMarkerSubscriptions",
+    "method": [
+      "POST"
+    ]
+  },
+  "mapMarkerSubscriptions.show": {
+    "name": "mapMarkerSubscriptions.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerSubscriptionController@show",
+    "uri": "mapMarkerSubscriptions/{mapMarkerSubscription}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerSubscriptions.edit": {
+    "name": "mapMarkerSubscriptions.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerSubscriptionController@edit",
+    "uri": "mapMarkerSubscriptions/{mapMarkerSubscription}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerSubscriptions.update": {
+    "name": "mapMarkerSubscriptions.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerSubscriptionController@update",
+    "uri": "mapMarkerSubscriptions/{mapMarkerSubscription}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "mapMarkerSubscriptions.destroy": {
+    "name": "mapMarkerSubscriptions.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerSubscriptionController@destroy",
+    "uri": "mapMarkerSubscriptions/{mapMarkerSubscription}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "maps.index": {
+    "name": "maps.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapController@index",
+    "uri": "maps",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "maps.create": {
+    "name": "maps.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapController@create",
+    "uri": "maps/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "maps.store": {
+    "name": "maps.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapController@store",
+    "uri": "maps",
+    "method": [
+      "POST"
+    ]
+  },
+  "maps.show": {
+    "name": "maps.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapController@show",
+    "uri": "maps/{map}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "maps.edit": {
+    "name": "maps.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapController@edit",
+    "uri": "maps/{map}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "maps.update": {
+    "name": "maps.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapController@update",
+    "uri": "maps/{map}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "maps.destroy": {
+    "name": "maps.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapController@destroy",
+    "uri": "maps/{map}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "mapMarkers.index": {
+    "name": "mapMarkers.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerController@index",
+    "uri": "mapMarkers",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkers.create": {
+    "name": "mapMarkers.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerController@create",
+    "uri": "mapMarkers/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkers.store": {
+    "name": "mapMarkers.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerController@store",
+    "uri": "mapMarkers",
+    "method": [
+      "POST"
+    ]
+  },
+  "mapMarkers.show": {
+    "name": "mapMarkers.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerController@show",
+    "uri": "mapMarkers/{mapMarker}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkers.edit": {
+    "name": "mapMarkers.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerController@edit",
+    "uri": "mapMarkers/{mapMarker}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkers.update": {
+    "name": "mapMarkers.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerController@update",
+    "uri": "mapMarkers/{mapMarker}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "mapMarkers.destroy": {
+    "name": "mapMarkers.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerController@destroy",
+    "uri": "mapMarkers/{mapMarker}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "mapMarkerTypes.index": {
+    "name": "mapMarkerTypes.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerTypeController@index",
+    "uri": "mapMarkerTypes",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerTypes.create": {
+    "name": "mapMarkerTypes.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerTypeController@create",
+    "uri": "mapMarkerTypes/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerTypes.store": {
+    "name": "mapMarkerTypes.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerTypeController@store",
+    "uri": "mapMarkerTypes",
+    "method": [
+      "POST"
+    ]
+  },
+  "mapMarkerTypes.show": {
+    "name": "mapMarkerTypes.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerTypeController@show",
+    "uri": "mapMarkerTypes/{mapMarkerType}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerTypes.edit": {
+    "name": "mapMarkerTypes.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerTypeController@edit",
+    "uri": "mapMarkerTypes/{mapMarkerType}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerTypes.update": {
+    "name": "mapMarkerTypes.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerTypeController@update",
+    "uri": "mapMarkerTypes/{mapMarkerType}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "mapMarkerTypes.destroy": {
+    "name": "mapMarkerTypes.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerTypeController@destroy",
+    "uri": "mapMarkerTypes/{mapMarkerType}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "mapMarkerCategories.index": {
+    "name": "mapMarkerCategories.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerCategoryController@index",
+    "uri": "mapMarkerCategories",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerCategories.create": {
+    "name": "mapMarkerCategories.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerCategoryController@create",
+    "uri": "mapMarkerCategories/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerCategories.store": {
+    "name": "mapMarkerCategories.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerCategoryController@store",
+    "uri": "mapMarkerCategories",
+    "method": [
+      "POST"
+    ]
+  },
+  "mapMarkerCategories.show": {
+    "name": "mapMarkerCategories.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerCategoryController@show",
+    "uri": "mapMarkerCategories/{mapMarkerCategory}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerCategories.edit": {
+    "name": "mapMarkerCategories.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerCategoryController@edit",
+    "uri": "mapMarkerCategories/{mapMarkerCategory}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "mapMarkerCategories.update": {
+    "name": "mapMarkerCategories.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerCategoryController@update",
+    "uri": "mapMarkerCategories/{mapMarkerCategory}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "mapMarkerCategories.destroy": {
+    "name": "mapMarkerCategories.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MapMarkerCategoryController@destroy",
+    "uri": "mapMarkerCategories/{mapMarkerCategory}",
     "method": [
       "DELETE"
     ]
@@ -3872,11 +4792,21 @@
       "DELETE"
     ]
   },
-  "navigator.view": {
-    "name": "navigator.view",
+  "navigator.views": {
+    "name": "navigator.views",
     "domain": null,
-    "action": "App\\Http\\Controllers\\NavigatorViewController@show",
-    "uri": "navigators/{navigator}/{navigator_view}",
+    "action": "App\\Http\\Controllers\\NavigatorController@listViews",
+    "uri": "navigators/{navigator}/list",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "navigator.list": {
+    "name": "navigator.list",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\NavigatorViewController@list",
+    "uri": "navigatorViews/{navigator_view}/list",
     "method": [
       "GET",
       "HEAD"
@@ -4261,6 +5191,16 @@
       "HEAD"
     ]
   },
+  "meetings.getImportDataByUid": {
+    "name": "meetings.getImportDataByUid",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\MeetingController@getImportDataByUid",
+    "uri": "meetings/getImportDataByUid",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
   "meetings.index": {
     "name": "meetings.index",
     "domain": null,
@@ -4512,35 +5452,6 @@
       "HEAD"
     ]
   },
-  "organizations.editAddress": {
-    "name": "organizations.editAddress",
-    "domain": null,
-    "action": "App\\Http\\Controllers\\OrganizationsController@editAddress",
-    "uri": "organizations/{organization}/edit/address",
-    "method": [
-      "GET",
-      "HEAD"
-    ]
-  },
-  "organizations.editLmsUrl": {
-    "name": "organizations.editLmsUrl",
-    "domain": null,
-    "action": "App\\Http\\Controllers\\OrganizationsController@editLmsUrl",
-    "uri": "organizations/{organization}/edit/lmsUrl",
-    "method": [
-      "GET",
-      "HEAD"
-    ]
-  },
-  "organizations.updateAddress": {
-    "name": "organizations.updateAddress",
-    "domain": null,
-    "action": "App\\Http\\Controllers\\OrganizationsController@updateAddress",
-    "uri": "organizations/{organization}/address",
-    "method": [
-      "PATCH"
-    ]
-  },
   "organizations.index": {
     "name": "organizations.index",
     "domain": null,
@@ -4609,89 +5520,89 @@
       "DELETE"
     ]
   },
-  "organizationtypes.list": {
-    "name": "organizationtypes.list",
+  "organizationTypes.list": {
+    "name": "organizationTypes.list",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@list",
-    "uri": "organizationtypes/list",
+    "uri": "organizationTypes/list",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "organizationtypes.massDestroy": {
-    "name": "organizationtypes.massDestroy",
+  "organizationTypes.massDestroy": {
+    "name": "organizationTypes.massDestroy",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@massDestroy",
-    "uri": "organizationtypes/destroy",
+    "uri": "organizationTypes/destroy",
     "method": [
       "DELETE"
     ]
   },
-  "organizationtypes.index": {
-    "name": "organizationtypes.index",
+  "organizationTypes.index": {
+    "name": "organizationTypes.index",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@index",
-    "uri": "organizationtypes",
+    "uri": "organizationTypes",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "organizationtypes.create": {
-    "name": "organizationtypes.create",
+  "organizationTypes.create": {
+    "name": "organizationTypes.create",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@create",
-    "uri": "organizationtypes/create",
+    "uri": "organizationTypes/create",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "organizationtypes.store": {
-    "name": "organizationtypes.store",
+  "organizationTypes.store": {
+    "name": "organizationTypes.store",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@store",
-    "uri": "organizationtypes",
+    "uri": "organizationTypes",
     "method": [
       "POST"
     ]
   },
-  "organizationtypes.show": {
-    "name": "organizationtypes.show",
+  "organizationTypes.show": {
+    "name": "organizationTypes.show",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@show",
-    "uri": "organizationtypes/{organizationtype}",
+    "uri": "organizationTypes/{organizationType}",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "organizationtypes.edit": {
-    "name": "organizationtypes.edit",
+  "organizationTypes.edit": {
+    "name": "organizationTypes.edit",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@edit",
-    "uri": "organizationtypes/{organizationtype}/edit",
+    "uri": "organizationTypes/{organizationType}/edit",
     "method": [
       "GET",
       "HEAD"
     ]
   },
-  "organizationtypes.update": {
-    "name": "organizationtypes.update",
+  "organizationTypes.update": {
+    "name": "organizationTypes.update",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@update",
-    "uri": "organizationtypes/{organizationtype}",
+    "uri": "organizationTypes/{organizationType}",
     "method": [
       "PUT",
       "PATCH"
     ]
   },
-  "organizationtypes.destroy": {
-    "name": "organizationtypes.destroy",
+  "organizationTypes.destroy": {
+    "name": "organizationTypes.destroy",
     "domain": null,
     "action": "App\\Http\\Controllers\\OrganizationTypesController@destroy",
-    "uri": "organizationtypes/{organizationtype}",
+    "uri": "organizationTypes/{organizationType}",
     "method": [
       "DELETE"
     ]
@@ -4870,6 +5781,15 @@
       "DELETE"
     ]
   },
+  "plans.syncEntriesOrder": {
+    "name": "plans.syncEntriesOrder",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanController@syncEntriesOrder",
+    "uri": "plans/{plan}/syncEntriesOrder",
+    "method": [
+      "PUT"
+    ]
+  },
   "plans.index": {
     "name": "plans.index",
     "domain": null,
@@ -4938,6 +5858,74 @@
       "DELETE"
     ]
   },
+  "planTypes.index": {
+    "name": "planTypes.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanTypeController@index",
+    "uri": "planTypes",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "planTypes.create": {
+    "name": "planTypes.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanTypeController@create",
+    "uri": "planTypes/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "planTypes.store": {
+    "name": "planTypes.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanTypeController@store",
+    "uri": "planTypes",
+    "method": [
+      "POST"
+    ]
+  },
+  "planTypes.show": {
+    "name": "planTypes.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanTypeController@show",
+    "uri": "planTypes/{planType}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "planTypes.edit": {
+    "name": "planTypes.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanTypeController@edit",
+    "uri": "planTypes/{planType}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "planTypes.update": {
+    "name": "planTypes.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanTypeController@update",
+    "uri": "planTypes/{planType}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "planTypes.destroy": {
+    "name": "planTypes.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanTypeController@destroy",
+    "uri": "planTypes/{planType}",
+    "method": [
+      "DELETE"
+    ]
+  },
   "planSubscriptions.index": {
     "name": "planSubscriptions.index",
     "domain": null,
@@ -5002,6 +5990,74 @@
     "domain": null,
     "action": "App\\Http\\Controllers\\PlanSubscriptionController@destroy",
     "uri": "planSubscriptions/{planSubscription}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "planEntries.index": {
+    "name": "planEntries.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanEntryController@index",
+    "uri": "planEntries",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "planEntries.create": {
+    "name": "planEntries.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanEntryController@create",
+    "uri": "planEntries/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "planEntries.store": {
+    "name": "planEntries.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanEntryController@store",
+    "uri": "planEntries",
+    "method": [
+      "POST"
+    ]
+  },
+  "planEntries.show": {
+    "name": "planEntries.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanEntryController@show",
+    "uri": "planEntries/{planEntry}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "planEntries.edit": {
+    "name": "planEntries.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanEntryController@edit",
+    "uri": "planEntries/{planEntry}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "planEntries.update": {
+    "name": "planEntries.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanEntryController@update",
+    "uri": "planEntries/{planEntry}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "planEntries.destroy": {
+    "name": "planEntries.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\PlanEntryController@destroy",
+    "uri": "planEntries/{planEntry}",
     "method": [
       "DELETE"
     ]
@@ -5178,6 +6234,74 @@
     "domain": null,
     "action": "App\\Http\\Controllers\\ProgressController@destroy",
     "uri": "progresses/{progress}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "qrCodes.index": {
+    "name": "qrCodes.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\QRCodeController@index",
+    "uri": "qrCodes",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "qrCodes.create": {
+    "name": "qrCodes.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\QRCodeController@create",
+    "uri": "qrCodes/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "qrCodes.store": {
+    "name": "qrCodes.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\QRCodeController@store",
+    "uri": "qrCodes",
+    "method": [
+      "POST"
+    ]
+  },
+  "qrCodes.show": {
+    "name": "qrCodes.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\QRCodeController@show",
+    "uri": "qrCodes/{qrCode}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "qrCodes.edit": {
+    "name": "qrCodes.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\QRCodeController@edit",
+    "uri": "qrCodes/{qrCode}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "qrCodes.update": {
+    "name": "qrCodes.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\QRCodeController@update",
+    "uri": "qrCodes/{qrCode}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "qrCodes.destroy": {
+    "name": "qrCodes.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\QRCodeController@destroy",
+    "uri": "qrCodes/{qrCode}",
     "method": [
       "DELETE"
     ]
@@ -5637,6 +6761,16 @@
       "DELETE"
     ]
   },
+  "tasks.list": {
+    "name": "tasks.list",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TaskController@list",
+    "uri": "tasks/list",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
   "tasks.complete": {
     "name": "tasks.complete",
     "domain": null,
@@ -5928,6 +7062,142 @@
       "DELETE"
     ]
   },
+  "trainings.index": {
+    "name": "trainings.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingController@index",
+    "uri": "trainings",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "trainings.create": {
+    "name": "trainings.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingController@create",
+    "uri": "trainings/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "trainings.store": {
+    "name": "trainings.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingController@store",
+    "uri": "trainings",
+    "method": [
+      "POST"
+    ]
+  },
+  "trainings.show": {
+    "name": "trainings.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingController@show",
+    "uri": "trainings/{training}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "trainings.edit": {
+    "name": "trainings.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingController@edit",
+    "uri": "trainings/{training}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "trainings.update": {
+    "name": "trainings.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingController@update",
+    "uri": "trainings/{training}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "trainings.destroy": {
+    "name": "trainings.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingController@destroy",
+    "uri": "trainings/{training}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "trainingSubscriptions.index": {
+    "name": "trainingSubscriptions.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingSubscriptionController@index",
+    "uri": "trainingSubscriptions",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "trainingSubscriptions.create": {
+    "name": "trainingSubscriptions.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingSubscriptionController@create",
+    "uri": "trainingSubscriptions/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "trainingSubscriptions.store": {
+    "name": "trainingSubscriptions.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingSubscriptionController@store",
+    "uri": "trainingSubscriptions",
+    "method": [
+      "POST"
+    ]
+  },
+  "trainingSubscriptions.show": {
+    "name": "trainingSubscriptions.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingSubscriptionController@show",
+    "uri": "trainingSubscriptions/{trainingSubscription}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "trainingSubscriptions.edit": {
+    "name": "trainingSubscriptions.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingSubscriptionController@edit",
+    "uri": "trainingSubscriptions/{trainingSubscription}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "trainingSubscriptions.update": {
+    "name": "trainingSubscriptions.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingSubscriptionController@update",
+    "uri": "trainingSubscriptions/{trainingSubscription}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "trainingSubscriptions.destroy": {
+    "name": "trainingSubscriptions.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\TrainingSubscriptionController@destroy",
+    "uri": "trainingSubscriptions/{trainingSubscription}",
+    "method": [
+      "DELETE"
+    ]
+  },
   "references.index": {
     "name": "references.index",
     "domain": null,
@@ -6136,16 +7406,6 @@
     "uri": "users/import",
     "method": [
       "POST"
-    ]
-  },
-  "users.getCurrentUser": {
-    "name": "users.getCurrentUser",
-    "domain": null,
-    "action": "App\\Http\\Controllers\\UsersController@getCurrentUser",
-    "uri": "users/current",
-    "method": [
-      "GET",
-      "HEAD"
     ]
   },
   "users.forceDestroy": {
@@ -6425,6 +7685,74 @@
     "domain": null,
     "action": "App\\Http\\Controllers\\VideoconferenceController@destroy",
     "uri": "videoconferences/{videoconference}",
+    "method": [
+      "DELETE"
+    ]
+  },
+  "videoconferenceSubscriptions.index": {
+    "name": "videoconferenceSubscriptions.index",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceSubscriptionController@index",
+    "uri": "videoconferenceSubscriptions",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "videoconferenceSubscriptions.create": {
+    "name": "videoconferenceSubscriptions.create",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceSubscriptionController@create",
+    "uri": "videoconferenceSubscriptions/create",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "videoconferenceSubscriptions.store": {
+    "name": "videoconferenceSubscriptions.store",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceSubscriptionController@store",
+    "uri": "videoconferenceSubscriptions",
+    "method": [
+      "POST"
+    ]
+  },
+  "videoconferenceSubscriptions.show": {
+    "name": "videoconferenceSubscriptions.show",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceSubscriptionController@show",
+    "uri": "videoconferenceSubscriptions/{videoconferenceSubscription}",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "videoconferenceSubscriptions.edit": {
+    "name": "videoconferenceSubscriptions.edit",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceSubscriptionController@edit",
+    "uri": "videoconferenceSubscriptions/{videoconferenceSubscription}/edit",
+    "method": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  "videoconferenceSubscriptions.update": {
+    "name": "videoconferenceSubscriptions.update",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceSubscriptionController@update",
+    "uri": "videoconferenceSubscriptions/{videoconferenceSubscription}",
+    "method": [
+      "PUT",
+      "PATCH"
+    ]
+  },
+  "videoconferenceSubscriptions.destroy": {
+    "name": "videoconferenceSubscriptions.destroy",
+    "domain": null,
+    "action": "App\\Http\\Controllers\\VideoconferenceSubscriptionController@destroy",
+    "uri": "videoconferenceSubscriptions/{videoconferenceSubscription}",
     "method": [
       "DELETE"
     ]

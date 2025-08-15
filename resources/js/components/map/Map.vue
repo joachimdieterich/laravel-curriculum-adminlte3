@@ -1,30 +1,21 @@
 <template>
     <div id="outermap">
-        <div id="sidebar"
-             class="sidebar">
+        <div
+            id="sidebar"
+            class="sidebar"
+        >
             <!-- navigation tabs -->
             <div class="sidebar-tabs">
                 <ul role="tablist">
-                    <li><a href="#ll-home" role="tab">
-                        <i class="fa fa-home"></i></a></li>
-                    <li v-if="$userId == map.owner_id">
-                        <a href="#ll-layer" role="tab">
-                            <i class="fa fa-layer-group"></i>
-                        </a>
-                    </li>
-                    <li v-if="currentMarker">
-                        <a href="#ll-marker" role="tab">
-                            <i class="fa fa-location-dot"></i>
-                        </a>
-                    </li>
-                    <li v-if="$userId == map.owner_id">
-                        <a href="#ll-search" role="tab">
-                            <i class="fa fa-search"></i>
-                        </a>
-                    </li>
-                    <hr v-if="$userId == map.owner_id">
-                    <li v-if="$userId == map.owner_id">
-                        <a role="button"
+                    <li><a href="#ll-home" role="tab"><i class="fa fa-bars"></i></a></li>
+                    <li><a href="#ll-layer" role="tab"><i class="fa fa-layer-group"></i></a></li>
+                    <li><a href="#ll-marker" role="tab"><i class="fa fa-location-dot"></i></a></li>
+                    <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li>
+                    <hr>
+                    <li>
+                        <a
+                            role="tab"
+                            class="pointer"
                             @click="createMarker()"
                         >
                             <i class="fa fa-plus"></i>
@@ -35,39 +26,52 @@
 
             <!-- tab panes -->
             <div class="sidebar-content">
-                <div class="sidebar-pane active"
-                     id="ll-home"
+                <div
+                    id="ll-home"
+                    class="sidebar-pane active"
                 >
-                    <h1 class="sidebar-header mb-3">
-                        {{ this.map.title }}
+                    <h1 class="sidebar-header pr-2 mb-3">
+                        {{ map.title }}
+                        <a v-if="map.owner_id == $userId || checkPermission('is_admin')"
+                            v-permission="'map_edit'"
+                            class="pull-right link-muted text-light pointer"
+                            @click="editMap(map)"
+                        >
+                            <i class="fas fa-pencil-alt p-2"></i>
+                        </a>
                     </h1>
                     <span class="pb-2">
-                        <h5 >{{ this.map.subtitle }}</h5>
-                        <span class="right badge badge-primary">{{ this.map.type.title }}</span>
+                        <h5>{{ map.subtitle }}</h5>
+                        <span class="right badge badge-primary">
+                            {{ map.type.title }}
+                        </span>
                     </span>
 
-                    <p class="pt-2"
-                        v-dompurify-html="this.map.description"
+                    <p v-if="map.description"
+                        class="pt-2"
+                        v-dompurify-html="map.description"
                     ></p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
-                        <li v-for="marker in this.selectedMarkers">
-                            <i class="fa fa-location-dot pr-2"></i>
-                            <a @click="setCurrentMarker(marker)"
-                               class="text-decoration-none"
+                        <li v-for="marker in markers">
+                            <a
+                                class="text-decoration-none pointer"
+                                @click="setCurrentMarker(marker)"
                             >
+                                <i class="fa fa-location-dot link-muted pr-2"></i>
                                 {{ marker.title }}
                             </a>
-                            <div v-if="$userId == marker.owner_id || $userId == map.owner_id"
-                                 class="tools user-select-none"
-                            >
-                                <i class="text-secondary fa fa-pencil-alt" @click="edit(marker)"></i>
-                                <i class="text-danger fa fa-trash ml-2" @click="confirmItemDelete(marker)"></i>
+                            <div class="tools">
+                                <a class="link-muted text-secondary px-1 pointer">
+                                    <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
+                                </a>
+                                <a class="link-muted text-danger ml-2 px-1 pointer">
+                                    <i class="fa fa-trash" @click="confirmItemDelete(marker)"></i>
+                                </a>
                             </div>
                         </li>
                     </ul>
-
                 </div>
 
                 <div class="sidebar-pane" id="ll-layer">
@@ -75,85 +79,72 @@
                         Ebenen
                     </h1>
 
-                    <div v-if="mapMarkerTypes"
-                         class="form-group"
-                    >
-                        <label for="mapMarkerType">Typ</label>
-                        <select
-                            id="mapMarkerType"
-                            v-model="form.type_id"
-                            class="form-control select2"
-                            style="width:100%;"
-                        >
-                            <option v-for="markerType in mapMarkerTypes"
-                                    :value="markerType.id"
-                            >
-                                {{ markerType.title }}
-                            </option>
-                        </select>
-                    </div> <!-- mapMarkerTypes -->
-                    <div v-if="mapMarkerCategories"
-                         class="form-group"
-                    >
-                        <label for="mapMarkerCategory">Kategorie</label>
-                        <select
-                            id="mapMarkerCategory"
-                            v-model="form.category_id"
-                            class="form-control select2"
-                            style="width:100%;"
-                        >
-                            <option v-for="category in mapMarkerCategories"
-                                    :value="category.id"
-                            >
-                                {{ category.title }}
-                            </option>
-                        </select>
-                    </div> <!-- mapMarkerCategory -->
-                    <button class="btn btn-primary pull-right"
-                            @click="loadMarkers()"
+                    <Select2
+                        :id="'mapMarkerType' + component_id"
+                        :name="'mapMarkerType' + component_id"
+                        url="/mapMarkerTypes"
+                        model="mapMarkerType"
+                        :selected="form.type_id"
+                        @selectedValue="(id) => {
+                            this.form.type_id = id;
+                        }"
+                    />
+                    <Select2
+                        :id="'mapMarkerCategory' + component_id"
+                        :name="'mapMarkerCategory' + component_id"
+                        url="/mapMarkerCategories"
+                        model="mapMarkerCategory"
+                        :selected="form.category_id"
+                        @selectedValue="(id) => {
+                            this.form.category_id = id;
+                        }"
+                    />
+                    <button
+                        class="btn btn-primary pull-right"
+                        @click="loader()"
                     >
                         <i class="fa fa-check"></i>
                     </button>
                 </div>
 
-                <div v-if="typeof currentMarker?.ARTIKEL == 'undefined'"
-                     id="ll-marker"
-                     class="sidebar-pane"
-                     :class="currentMarker === undefined && 'd-none'"
+                <div v-if="currentMarker?.ARTIKEL == undefined"
+                    id="ll-marker"
+                    class="sidebar-pane"
                 >
-                    <MarkerView v-if="currentMarker !== undefined"
-                        :marker="this.currentMarker"
-                        :map="this.map"
-                    />
+                    <MarkerView v-if="currentMarker" :marker="currentMarker"/>
                 </div>
-                <div v-else-if="currentMarker?.ARTIKEL !== undefined"
-                     class="sidebar-pane" id="ll-marker"
+                <div v-else
+                    id="ll-marker"
+                    class="sidebar-pane"
                 >
                     <h1 class="sidebar-header  mb-3">
-                        {{ this.currentMarker.ARTIKEL }}
+                        {{ currentMarker.ARTIKEL }}
                     </h1>
 
-                    <div class="py-0 pt-2"
-                         v-if="this.currentMarker.BEZ_1_2.length > 2"
+                    <div v-if="currentMarker.BEZ_1_2.length > 2"
+                        class="py-0 pt-2"
                     >
                         <strong>Untertitel</strong>
                     </div>
-                    <div class="py-0 pre-formatted"
-                         v-if="this.currentMarker.BEZ_1_2.length > 2"
-                         v-dompurify-html="this.currentMarker.BEZ_1_2"
+
+                    <div v-if="currentMarker.BEZ_1_2.length > 2"
+                        class="py-0 pre-formatted"
+                        v-dompurify-html="currentMarker.BEZ_1_2"
                     ></div>
 
                     <div class="py-0 pt-2">
-                        <strong>Beschreibung</strong>
+                        <strong>{{ trans('global.description') }}</strong>
                     </div>
-                    <div class="py-0 pre-formatted"
-                         style="text-align:justify;"
-                         v-dompurify-html="this.currentMarker.BEMERKUNG"
+
+                    <div
+                        class="py-0 pre-formatted text-justify"
+                        v-dompurify-html="currentMarker.BEMERKUNG"
                     ></div>
 
                     <div class="py-0 pt-2"><strong>Termine</strong></div>
+
                     <div class="py-0 pre-formatted">
-                        <div v-for="termin in this.currentMarker.termine">
+                        <div v-for="termin in currentMarker.termine">
                             {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
                             <br/>
                             {{ termin.VO_ORT }}
@@ -161,20 +152,23 @@
                     </div>
 
                     <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-                    <div class="py-0 pre-formatted" v-dompurify-html="this.currentMarker.ARTIKEL_NR"></div>
+
+                    <div class="py-0 pre-formatted" v-dompurify-html="currentMarker.ARTIKEL_NR"></div>
 
                     <div class="py-0 pt-2">
-                        <a :href="this.currentMarker.LINK_DETAIL"
-                           class="btn btn-default"
-                           target="_blank"
+                        <a
+                            :href="currentMarker.LINK_DETAIL"
+                            class="btn btn-default"
+                            target="_blank"
                         >
                             <i class="fa fa-info"></i> Details/Anmeldung
                         </a>
 
-                        <a :href="this.currentMarker.LINK_DETAIL+'&print=1'"
-                           onclick="return !window.open(this.href, 'Drucken', 'width=800,scrollbars=1')"
-                           class="btn btn-default"
-                           target="_blank"
+                        <a
+                            :href="currentMarker.LINK_DETAIL + '&print=1'"
+                            class="btn btn-default"
+                            target="_blank"
+                            @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
                         >
                             <i class="fa fa-print"></i> Drucken
                         </a>
@@ -182,21 +176,23 @@
                 </div>
 
                 <div class="sidebar-pane" id="ll-search">
-                    <h1 class="sidebar-header  mb-3">
-                        {{ this.currentMarker?.title ?? '' }}
+                    <h1 class="sidebar-header mb-3">
+                        {{ currentMarker?.title }}
                     </h1>
 
-                    <div class="form-group"
-                         :class="form.errors.search ? 'has-error' : ''"
+                    <div
+                        class="form-group"
+                        :class="form.errors.search ? 'has-error' : ''"
                     >
                         <label for="ll-search">{{ trans('global.search') }}</label>
                         <input
-                            type="text" id="ll-search"
+                            id="ll-search"
+                            type="text"
                             name="ll-search"
                             class="form-control"
                             v-model="search"
-                            @keyup.enter="markerSearch"
                             placeholder="Suchbegriff..."
+                            @keyup.enter="markerSearch"
                         />
                         <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
                     </div>
@@ -206,26 +202,27 @@
 
         <div id="map" class="sidebar-map"></div>
 
-        <!-- Create Modal -->
-        <MarkerCreate
-            v-can="'marker_create'"
-            id="modal-marker-form"
-            :method="method"
-            :marker="marker"
-            :map="map"
-        />
-        <Modal
-            :id="'deleteMarkerModal'"
-            css="danger"
-            :title="trans('global.marker.delete')"
-            :text="trans('global.marker.delete_helper')"
-            :ok_label="trans('global.marker.delete')"
-            v-on:ok="deleteMarker"
-        />
+        <Teleport to="body">
+            <MapModal/>
+            <MediumModal/>
+            <MediumPreviewModal/>
+            <MarkerModal :map="map"/>
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.marker.delete')"
+                :description="trans('global.marker.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            />
+        </Teleport>
     </div>
 </template>
 <script>
-
 import axios from 'axios';
 import "leaflet/dist/leaflet.js";
 import {Icon} from 'leaflet';
@@ -233,108 +230,102 @@ import "sidebar-v2/js/leaflet-sidebar.js";
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
 import Form from "form-backend-validation";
 import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
-import MarkerCreate from "./MarkerCreate";
-import moment from "moment/moment";
-import MarkerView from "./MarkerView";
-const Modal =
-    () => import('./../uiElements/Modal');
+import MarkerView from "./MarkerView.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import MediumModal from "../media/MediumModal.vue";
+import MarkerModal from "./MarkerModal.vue";
+import {useGlobalStore} from "../../store/global";
+import MapModal from "./MapModal.vue";
+import Select2 from "../forms/Select2.vue";
+import markerIconUrl from "leaflet/dist/images/marker-icon.png";
+import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 
 export default {
     components: {
+        MediumPreviewModal,
+        Select2,
+        MapModal,
+        MarkerModal,
         MarkerView,
-        MarkerCreate,
-        Modal,
+        ConfirmModal,
+        MediumModal,
     },
     props: {
         map: {
             type: Object,
-            default: {},
+            default: null,
         },
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
-            component_id: this._uid,
+            component_id: this.$.uid,
             mapCanvas: [],
             events: {},
             sidebar: {},
             search: 'digiWerkzeug',
+            searchCircle: null,
+            searchDistance: 20000,
+            foundMarkers: [],
             bordersGroup: {},
             namesGroup: {},
+            currentPositionMarker: null,
             markers: {},
-            selectedMarkers: {},
-            currentMarker: undefined,
+            leafletMarkers:[],
+            currentMarker:{},
             clusterGroup: {},
-            mapMarkerTypes: {},
-            mapMarkerCategories: {},
             form: new Form({
-                'type_id': '',
-                'category_id': '',
+                type_id: '',
+                category_id: '',
             }),
             initialLatitude: '49.314908280766346',
             initialLongitude: '8.413913138283617',
             zoom: 10,
             marker: null,
-            method: 'post',
+            showConfirm: false,
         }
     },
     methods: {
+        createMarker() {
+            this.globalStore?.showModal('map-marker-modal', { map_id: this.map.id });
+        },
         loader() {
-            axios.get('/mapMarkerTypes')
-                .then(res => {
-                    this.mapMarkerTypes = res.data.mapMarkerTypes;axios.get('/mapMarkerCategories')
-                        .then(res => {
-                            this.mapMarkerCategories = res.data.mapMarkerCategories;
-
-                            this.initMap(); //! after makerTypes and Categories are loaded
-                            this.syncSelect2();
-                            this.loadMarkers();
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        });
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-        },
-        createMarker(method = 'post') {
-            this.method = method;
-            $('#modal-marker-form').modal('show');
-        },
-        loadMarkers() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
                 .then(res => {
-                    this.markers = res.data.markers;
-                    this.selectedMarkers = this.markers;
-                    //console.log(this.markers);
-                    this.refreshMarker();
+                    this.markers = res.data;
+                    this.currentMarker = this.markers[0];
+                    this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
+
+                    this.markers.forEach((marker) => {
+                        this.clusterGroup.addLayer(
+                            this.generateMarker(
+                                marker.latitude,
+                                marker.longitude,
+                                marker,
+                                marker.title,
+                                marker.teaser_text ?? '',
+                                'll-marker',
+                                marker.type.css_icon,
+                                marker.type.color,
+                                marker.category.shape,
+                                'fa'
+                            )
+                        ); // add marker to the clustergroup
+                    });
+                    this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
                 })
                 .catch(err => {
                     console.log(err);
                 });
-        },
-        refreshMarker(){
-            this.mapCanvas.removeLayer(this.clusterGroup);
-            this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
-
-            this.selectedMarkers.forEach((marker) => {
-                this.clusterGroup.addLayer(
-                    this.generateMarker(
-                        marker.latitude,
-                        marker.longitude,
-                        marker,
-                        marker.title,
-                        marker.teaser_text,
-                        'll-marker',
-                        this.getCss('type', marker.type_id)['css_icon'],
-                        this.getCss('category', marker.category_id)['color'],
-                        this.getCss('category', marker.category_id)['shape'],
-                        'fa'
-                    )
-                ); // add marker to the clustergroup
-            });
-            this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
-            this.currentMarker = this.markers[0];
+            console.log('Clustergroup');
+            console.log(this.clusterGroup);
         },
         async markerSearch() {
             $("#loading-events").show();
@@ -368,25 +359,23 @@ export default {
             var bottomRight = L.latLng(bbox[3], bbox[2]);
             var countryBounds = L.latLngBounds(topLeft, bottomRight);
 
-
             this.mapCanvas.flyToBounds(countryBounds);
         },
         refreshMap() {
             // parse property from Observer to JSON
             const eventsData = JSON.parse(JSON.stringify(this.events));
-            //console.log(eventsData);
 
             this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
             // add all event-locations
             Object.entries(eventsData).forEach(event => {
                 const data = event[1];
                 let address = data.termine.key_0.VO_ADRESSE;
-                //console.log(address);
-                if(address.includes("online")||address.includes("Online")){
+ 
+                if (address.includes("online") || address.includes("Online")) {
                     address = 'Rheinland-Pfalz';
                 }
                 const url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURI(address) + '&format=jsonv2';
-                //console.log(url);
+
                 axios.get(url)
                     .then(res => {
                         this.clusterGroup.addLayer(
@@ -407,26 +396,6 @@ export default {
             });
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
-        getCss(type, id) {
-            switch(type) {
-                case 'type':
-                    let type_index = this.mapMarkerTypes.findIndex(type => type.id === id);
-                    return {
-                        'color' : this.mapMarkerTypes[type_index].color,
-                        'css_icon' : this.mapMarkerTypes[type_index].css_icon,
-                    }
-                    break;
-                case 'category':
-                    let category_index = this.mapMarkerCategories.findIndex(category => category.id === id);
-                    return {
-                        'color' : this.mapMarkerCategories[category_index].color,
-                        'shape' : this.mapMarkerCategories[category_index].shape
-                    }
-                    break;
-                default: return '#000';
-                // code block
-            }
-        },
         generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix) {
             var svgMarker = L.ExtraMarkers.icon({
                 icon: icon,
@@ -435,15 +404,21 @@ export default {
                 prefix: 'fa',
                 svg: true
             });
-            return L.marker([lat, lon], {
-                    'icon': svgMarker,
-                    'title': title // accessibility
-                })
-                .bindPopup('<b>'+ title + '</b></br>' + description +'<br/>')
+
+            let leafletMarker = L.marker([lat, lon], {
+                'id': entry.id,
+                'icon': svgMarker,
+                'title': title // accessibility
+            })
+                .bindPopup('<b>'+ title + '</b></br>' + description)
                 .addTo(this.mapCanvas).on('click', function(e) {
-                    this.currentMarker = entry;
-                    this.sidebar.open(sidebar_target);
-                }.bind(this, sidebar_target));
+                this.currentMarker = entry;
+                this.sidebar.open(sidebar_target);
+            }.bind(this, sidebar_target));
+
+            this.leafletMarkers.push(leafletMarker);
+
+            return leafletMarker;
         },
         dateforHumans(begin, end = null) {
             if (end === begin || end === null){
@@ -457,134 +432,238 @@ export default {
             this.sidebar.open('ll-marker');
         },
         syncSelect2() {
-            $("#mapMarkerType").select2({
-                dropdownParent: $("#mapMarkerType").parent(),
-                allowClear: false,
+            $("#type_id").select2({
+                dropdownParent: $("#type_id").parent(),
+                allowClear: false
             }).on('select2:select', function (e) {
-                this.form.type_id = e.params.data.element.value;
+                this.form.type_id = e.params.data.element.value
             }.bind(this))
                 .val(this.form.type_id)
                 .trigger('change');
-            $("#mapMarkerCategory").select2({
-                dropdownParent: $("#mapMarkerCategory").parent(),
-                allowClear: false,
+            $("#category_id").select2({
+                dropdownParent: $("#category_id").parent(),
+                allowClear: false
             }).on('select2:select', function (e) {
-                this.form.category_id = e.params.data.element.value;
+                this.form.category_id = e.params.data.element.value
             }.bind(this))
                 .val(this.form.category_id)
                 .trigger('change');
         },
         confirmItemDelete(marker) {
             this.currentMarker = marker;
-            $('#deleteMarkerModal').modal('show');
+            this.showConfirm = true;
         },
-        deleteMarker() {
+        destroy() {
             axios.delete("/mapMarkers/" + this.currentMarker.id)
                 .then(() => {
                     let index = this.markers.findIndex(
                         i => i.id === this.currentMarker.id
                     );
                     this.markers.splice(index, 1);
-                    this.loadMarkers();
+
+                    this.clusterGroup.clearLayers(); // clear layers, then reload
+                    this.loader();
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
-        edit(marker) {
-            this.marker = marker;
-            this.method = 'patch';
-            $('#modal-marker-form').modal('show');
+        editMap(currentMap) {
+            this.globalStore?.showModal('map-modal', currentMap);
         },
-        initMap() {
-            this.mapCanvas = L.map('map').setView([this.initialLatitude, this.initialLongitude], this.zoom);
+        edit(marker) {
+            this.globalStore?.showModal('map-marker-modal', marker);
+        },
+        processClick(lat,lon) {
+            console.log("You clicked the map at LAT: " + lat + " and LONG: " + lon );
 
-            // default icon-url throws an error (apparently a common problem)
-            // so we need to rebind the file-locations
-            delete Icon.Default.prototype._getIconUrl;
-            Icon.Default.mergeOptions({
-                iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-                iconUrl: require('leaflet/dist/images/marker-icon.png'),
-                shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
-            });
+            //Clear existing marker, circle, and selected points if selecting new points
+            if (this.searchCircle != null) {
+                this.mapCanvas.removeLayer(this.searchCircle);
+            };
+            if (this.currentPositionMarker != null) {
+                this.mapCanvas.removeLayer(this.currentPositionMarker);
+            };
+            /*if (geojsonLayer != undefined) {
+                this.mapCanvas.removeLayer(geojsonLayer);
+            };*/
 
-            // set OpenStreetMaps as tile-distributor
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            //Add a marker to show where you clicked.
+            this.currentPositionMarker = L.marker([lat,lon]).addTo(this.mapCanvas);
+            this.selectPoints(lat,lon);
+        },
+        selectPoints(lat,lon) {
+            this.foundMarkers.length = 0; //Reset the array if selecting new points
+
+            this.clusterGroup.eachLayer(function (layer) {
+                // Lat, long of current point as it loops through.
+                let layer_lat_long = layer.getLatLng();
+
+                // See if meters is within radius, add the to array
+                console.log(this.searchDistance)
+                if (layer_lat_long.distanceTo([lat,lon]) <= this.searchDistance) {
+                    console.log(layer.options);
+                    this.foundMarkers.push(layer.feature);
+                }
+            }.bind(this));
+
+            // draw circle to see the selection area
+            this.searchCircle = L.circle([lat,lon], this.searchDistance , { // Number is in Meters
+                color: 'orange',
+                fillOpacity: 0,
+                opacity: 1
             }).addTo(this.mapCanvas);
 
+            /*//Symbolize the Selected Points
+            geojsonLayer = L.geoJson(this.foundMarkers, {
 
-            this.sidebar = L.control.sidebar('sidebar').addTo(this.mapCanvas);
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        radius: 4, //expressed in pixels circle size
+                        color: "green",
+                        stroke: true,
+                        weight: 7,		//outline width  increased width to look like a filled circle.
+                        fillOpcaity: 1
+                    });
+                }
+            });
+            //Add selected points back into map as green circles.
+            this.mapCanvas.addLayer(geojsonLayer); */
 
-            this.bordersGroup = L.geoJSON().addTo(this.mapCanvas);
+            //Take array of features and make a GeoJSON feature collection
+            var GeoJS = { type: "FeatureCollection",  features: this.foundMarkers   };
 
-            /*var overlays = {
-                'Landesgrenze anzeigen': this.bordersGroup
-            };
+            //Show number of selected features.
+            console.log(GeoJS.features.length +" Selected features");
 
-            L.control.layers(null, overlays, {
-                collapsed: false
-            }).addTo(this.map);*/
+            // show selected GEOJSON data in console
+            console.log(JSON.stringify(GeoJS));
 
-            this.getBorder();
+            //////////////////////////////////////////
+
+            /// Putting the selected team name in the table
+
+            //Clean up prior records
+           /* $("#myTable tr").remove();
+
+            var table = document.getElementById("myTable");
+            //Add the header row.
+            var row = table.insertRow(-1);
+            var headerCell = document.createElement("th");
+            headerCell.innerHTML = "Team";  //Fieldname
+            row.appendChild(headerCell);*/
+
+            //Add the data rows.
+            //console.log(this.foundMarkers);
+           /* for (var i = 0; i < this.foundMarkers.length; i++) {
+                //console.log(this.foundMarkers[i].properties.Team);
+                row = table.insertRow(-1);
+
+                var cell = row.insertCell(-1);
+                cell.innerHTML = this.foundMarkers[i].properties.Team;
+            }
+            //Get the Team name in the cell.
+            $('#myTable tr').click(function(x) {
+                theTeam = (this.getElementsByTagName("td").item(0)).innerHTML;
+                console.log(theTeam);
+                map._layers[theTeam].fire('click');
+                var coords = map._layers[theTeam]._latlng;
+                console.log(coords);
+                map.setView(coords, 12);
+            });*/
+
+
         }
     },
     mounted() {
-        this.$eventHub.$emit('showSearchbar');
-        this.$eventHub.$on('filter', (filter) => {
-            //console.log(this.markers.filter(m => m.title.toLowerCase().indexOf(filter) > -1));
-            this.selectedMarkers = this.markers.filter(m => m.title.toLowerCase().indexOf(filter.toLowerCase()) > -1);
-            this.refreshMarker();
-        });
-
-        this.$eventHub.$on('edit_marker', (marker) => {
-            this.edit(marker);
-        });
-
-        this.$eventHub.$on('marker-added', (marker) => {
+        this.$eventHub.on('marker-added', (marker) => {
             this.markers.push(marker);
-            this.loadMarkers();
-        });
-
-        this.$eventHub.$on('marker-updated', (marker) => {
-            let index = this.markers.findIndex(
-                i => i.id === marker.id
+            this.clusterGroup.addLayer(
+                this.generateMarker(
+                    marker.latitude,
+                    marker.longitude,
+                    marker,
+                    marker.title,
+                    marker.teaser_text,
+                    'll-marker',
+                    marker.type.css_icon,
+                    marker.type.color,
+                    marker.category.shape,
+                    'fa'
+                )
             );
-
-            this.markers.splice(index, 1);
-            this.markers.push(marker);
-            //this.markers[index] = marker; //doesn't trigger change
-            this.loadMarkers();
         });
 
+        this.$eventHub.on('marker-updated', (updatedMarker) => {
+            let marker = this.markers.find(m => m.id === this.currentMarker.id);
+            Object.assign(marker, updatedMarker);
+        });
 
-        if (this.map.initialLatitude){
+        this.$eventHub.on('map-updated', (map) => {
+            this.globalStore?.closeModal('map-modal');
+            window.location.reload();
+        });
+
+        if (this.map.initialLatitude) {
             this.initialLatitude = this.map.initialLatitude;
         }
-        if (this.map.initialLongitude){
+        if (this.map.initialLongitude) {
             this.initialLongitude = this.map.initialLongitude;
         }
-        if (this.map.zoom){
+        if (this.map.zoom) {
             this.zoom = this.map.zoom;
         }
-        if (this.map.type_id){
+        if (this.map.type_id) {
             this.form.type_id = this.map.type_id;
         }
-        if (this.map.category_id){
+        if (this.map.category_id) {
             this.form.category_id = this.map.category_id;
         }
 
-        this.loader();
-    }
-}
+        this.mapCanvas = L.map('map').setView([this.initialLatitude, this.initialLongitude], this.zoom);
 
+        // default icon-url throws an error (apparently a common problem)
+        // so we need to rebind the file-locations
+        // delete Icon.Default.prototype._getIconUrl;
+        /* Icon.Default.mergeOptions({
+            iconRetinaUrl: '/leaflet/dist/images/marker-icon-2x.png',
+            iconUrl: '/leaflet/dist/images/marker-icon.png',
+            shadowUrl: '/leaflet/dist/images/marker-shadow.png',
+        });*/
+        L.Icon.Default.prototype.options.iconUrl = markerIconUrl;
+        L.Icon.Default.prototype.options.iconRetinaUrl = markerIconRetinaUrl;
+        L.Icon.Default.prototype.options.shadowUrl = markerShadowUrl;
+        L.Icon.Default.imagePath = ""; // necessary to avoid Leaflet adds some prefix to image path.
+
+
+        // set OpenStreetMaps as tile-distributor
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(this.mapCanvas);
+
+
+        this.sidebar = L.control.sidebar('sidebar').addTo(this.mapCanvas);
+
+        this.bordersGroup = L.geoJSON().addTo(this.mapCanvas);
+
+        this.getBorder();
+
+        this.loader();
+
+        /* //  click to set position > wip on distance search
+        this.mapCanvas.on('click', function(e){
+            this.processClick(e.latlng.lat, e.latlng.lng);
+        }.bind(this));
+        */
+    },
+}
 </script>
-<style scoped>
-@import "~leaflet/dist/leaflet.css";
-@import "~sidebar-v2/css/leaflet-sidebar.css";
-@import "~leaflet.markercluster/dist/MarkerCluster.css";
-@import "~leaflet.markercluster/dist/MarkerCluster.Default.css";
-@import "~leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
+<style >
+@import "leaflet/dist/leaflet.css";
+@import "sidebar-v2/css/leaflet-sidebar.css";
+@import "leaflet.markercluster/dist/MarkerCluster.css";
+@import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+@import "leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
 #map, #outermap {
     height: 100%;
 }

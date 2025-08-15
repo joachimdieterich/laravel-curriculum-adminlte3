@@ -48,24 +48,23 @@ class MapSubscriptionController extends Controller
                     ];
                 }
                 return [
-                    'subscribers' => [
-                        'tokens' => $tokens ?? [],
-                        'subscriptions' => optional(
-                            optional(
-                                Map::find(request('map_id'))
-                            )->subscriptions()
-                        )->with('subscribable')
-                            ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                                if ($type == 'App\\User') {
-                                    $q->whereNot('id', env('GUEST_USER'));
-                                }
-                            })->get(),
-                        //'subscriptions' => $map->subscriptions()->with('subscribable')->get(),
-                    ],
+                    'tokens' => $tokens ?? [],
+                    'subscriptions' => optional(
+                        optional(
+                            Map::find(request('map_id'))
+                        )->subscriptions()
+                    )->with('subscribable')
+                        ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                            if ($type == 'App\\User') {
+                                $q->whereNot('id', env('GUEST_USER'));
+                            }
+                        })->get(),
                 ];
             }
         }
     }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -90,9 +89,10 @@ class MapSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => $map->subscriptions()->with('subscribable')->get()];
+            return $subscribe->with('subscribable')->find($subscribe->id);
         }
     }
+
 
     /**
      * Update the specified resource in storage.

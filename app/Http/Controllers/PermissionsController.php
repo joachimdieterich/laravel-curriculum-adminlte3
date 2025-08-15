@@ -13,7 +13,11 @@ class PermissionsController extends Controller
     public function index()
     {
         abort_unless(\Gate::allows('permission_access'), 403);
-
+        if (request()->wantsJson()) {
+            return  getEntriesForSelect2ByModel(
+                "App\Permission"
+            );
+        }
         return view('permissions.index');
     }
 
@@ -23,40 +27,10 @@ class PermissionsController extends Controller
 
         $permissions = Permission::all();
 
-        $edit_gate = \Gate::allows('permission_edit');
-        $delete_gate = \Gate::allows('permission_delete');
-
         return DataTables::of($permissions)
-
-            ->addColumn('action', function ($permissions) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('permissions.edit', $permissions->id).'" '
-                                    .'id="permission-user-'.$permissions->id.'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'permissions\','.$permissions->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
-    }
-
-    public function create()
-    {
-        abort_unless(\Gate::allows('permission_create'), 403);
-
-        return view('permissions.create');
     }
 
     public function store(StorePermissionRequest $request)
@@ -65,14 +39,9 @@ class PermissionsController extends Controller
 
         $permission = Permission::create($request->all());
 
-        return redirect()->route('permissions.index');
-    }
-
-    public function edit(Permission $permission)
-    {
-        abort_unless(\Gate::allows('permission_edit'), 403);
-
-        return view('permissions.edit', compact('permission'));
+        if (request()->wantsJson()) {
+            return $permission;
+        }
     }
 
     public function update(UpdatePermissionRequest $request, Permission $permission)
@@ -81,23 +50,28 @@ class PermissionsController extends Controller
 
         $permission->update($request->all());
 
-        return redirect()->route('permissions.index');
+        if (request()->wantsJson()) {
+            return $permission;
+        }
     }
 
     public function show(Permission $permission)
     {
         abort_unless(\Gate::allows('permission_show'), 403);
 
-        return view('permissions.show', compact('permission'));
+        return view('permissions.show')
+            ->with(compact('permission'));
     }
 
     public function destroy(Permission $permission)
     {
         abort_unless(\Gate::allows('permission_delete'), 403);
 
-        $permission->delete();
+        $return = $permission->delete();
 
-        return back();
+        if (request()->wantsJson()) {
+            return ['message' => $return];
+        }
     }
 
     public function massDestroy(MassDestroyPermissionRequest $request)

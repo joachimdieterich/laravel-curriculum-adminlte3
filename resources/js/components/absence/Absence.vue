@@ -24,9 +24,9 @@
                 <!-- General tools such as edit or delete-->
 
                 <div class="tools">
-                    <!--<a @click="edit()" >
+                    <a @click="edit()" >
                         <i class="pl-2 fa fa-pencil-alt text-muted"></i>
-                    </a>-->
+                    </a>
                     <a @click="destroy()">
                         <i class="pl-2 fas fa-trash"></i>
                     </a>
@@ -50,14 +50,21 @@
 </template>
 
 <script>
+    import {useGlobalStore} from "../../store/global";
+
     export default {
         props: {
             'absence': '',
         },
-        data() {
-            return {
+        setup () {
+            const globalStore = useGlobalStore();
 
+            return {
+                globalStore,
             }
+        },
+        data() {
+            return {}
         },
 
         methods: {
@@ -65,17 +72,17 @@
                 try {
                     this.absence.done = (await axios.patch('/absences/'+absence_id, {'done': (1 - this.absence.done)})).data.done;
                 } catch(error) {
-                    this.errors = error.response.data.errors;
+                    console.log(error);
                 }
            },
-            /*edit(){
-                this.$modal.show('absence-modal', JSON.stringify(_.merge({ 'method': 'patch'}, this.absence)));
-            },*/
+            edit(){
+                this.globalStore?.showModal('absence-modal',this.absence)
+            },
            async destroy() {
                 try {
                     this.location = (await axios.delete('/absences/'+this.absence.id)).data.message;
                 } catch(error) {
-                    this.errors = error.response.data.errors;
+                    console.log(error);
                 }
                 location.reload(true);
             },

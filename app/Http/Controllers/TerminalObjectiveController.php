@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Config;
 use App\Curriculum;
-use App\Http\Requests\StoreTerminalObjectiveRequest;
-use App\Http\Requests\UpdateTerminalObjectiveRequest;
+use Illuminate\Http\Request;
 use App\QuoteSubscription;
 use App\ReferenceSubscription;
 use App\TerminalObjective;
@@ -14,13 +13,19 @@ use Illuminate\Support\Facades\DB;
 
 class TerminalObjectiveController extends Controller
 {
+
+    public function getEnablingObjectives(TerminalObjective $terminalObjective) {
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByCollectionAlternative($terminalObjective->enablingObjectives, '', 'title', 'order_id');
+        }
+    }
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreTerminalObjectiveRequest $request)
+    public function store(Request $request)
     {
         abort_unless(Curriculum::find(request('curriculum_id'))->isAccessible(), 403);
 
@@ -30,8 +35,7 @@ class TerminalObjectiveController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['message' => $terminalObjective];
-            //return ['message' => $terminalObjective->path()];
+            return TerminalObjective::with(['enablingObjectives', 'type'])->find($terminalObjective->id);
         }
     }
 
@@ -52,10 +56,12 @@ class TerminalObjectiveController extends Controller
             ->get()->first();
 
         $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
+        $editable = $objective->curriculum->isEditable();
 
         return view('objectives.show')
             ->with(compact('objective'))
-            ->with(compact('repository'));
+            ->with(compact('repository'))
+            ->with(compact('editable'));
     }
 
     /**
@@ -65,39 +71,39 @@ class TerminalObjectiveController extends Controller
      * @param  \App\TerminalObjective  $terminalObjective
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateTerminalObjectiveRequest $request, TerminalObjective $terminalObjective)
+    public function update(Request $request, TerminalObjective $terminalObjective)
     {
         abort_unless($terminalObjective->isAccessible(), 403);
 
-        //first get existing data to later adjust order_id
-        $old_objective = TerminalObjective::find(request('id'));
-
         // update objective type
         if ($request->has('objective_type_id')) {
-            $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
-            $request->request->add(['order_id' => $order_id]);
             // if moved to another curriculum
-            if ($old_objective->curriculum_id != request('curriculum_id')) {
+            if ($terminalObjective->curriculum_id != request('curriculum_id')) {
+                $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
                 if ($terminalObjective->update(['curriculum_id' => request('curriculum_id'), 'order_id' => $order_id]) == true) {
-                    $this->moveToCurriculum($old_objective, $request);
+                    $this->moveToCurriculum($terminalObjective, $request);
                 }
-            } elseif (($terminalObjective->update($request->all()) == true) and ($old_objective->order_id != request('order_id'))) {
-                $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
+            } else {
+                // if objective type got changed
+                if ($terminalObjective->objective_type_id != $request['objective_type_id']) {
+                    $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
+                    $request->request->add(['order_id' => $order_id]);
+                }
+                $terminalObjective->update($request->all());
             }
             if (request()->wantsJson()) {
-                return ['message' => $terminalObjective];
+                return $terminalObjective->without('curriculum')->with('type')->find($terminalObjective->id);
             }
         }
 
         // update order_id
         if ($request->has('order_id')) {
             if (request()->wantsJson()) {
-                return ['message' => $this->toggleOrderId($old_objective, request('order_id'))];
+                return $this->toggleOrderId($terminalObjective, request('order_id'));
             }
         }
 
         // default
-
         return $terminalObjective->update($request->all());
     }
 
@@ -107,13 +113,13 @@ class TerminalObjectiveController extends Controller
      * @param  \App\TerminalObjective  $old_objective
      * @param $request
      */
-    public function moveToCurriculum($old_objective, $request)
+    public function moveToCurriculum($objective, $request)
     {
-        abort_unless(Curriculum::find($old_objective->curriculum_id)->isAccessible(), 403);
+        abort_unless(Curriculum::find($objective->curriculum_id)->isAccessible(), 403);
 
-        $this->resetOrderIds($old_objective->curriculum_id, $old_objective->objective_type_id, $old_objective->order_id);
+        $this->resetOrderIds($objective->curriculum_id, $objective->objective_type_id, $objective->order_id);
         DB::table('enabling_objectives')
-            ->where('terminal_objective_id', $old_objective->id)
+            ->where('terminal_objective_id', $objective->id)
             ->update(['curriculum_id' => request('curriculum_id')]);
     }
 
@@ -132,63 +138,10 @@ class TerminalObjectiveController extends Controller
         $objective_type_id = $terminalObjective->objective_type_id;
         $order_id = $terminalObjective->order_id;
 
-        $terminalObjective->enablingObjectives()->delete();
-
         // delete contents
         foreach ($terminalObjective->contents as $content) {
             (new ContentController)->destroy($content, 'App\TerminalObjective', $terminalObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-
-        //delete all achievements
-        $terminalObjective->achievements()
-                ->where('referenceable_type', '=', 'App\TerminalObjective')
-                ->where('referenceable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete subscriptions
-        $terminalObjective->subscriptions()
-                ->where('terminal_objective_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete mediaSubscriptions -> media will not be deleted
-        $terminalObjective->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\TerminalObjective')
-                ->where('subscribable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete progresses
-        $terminalObjective->progresses()
-                ->where('referenceable_type', '=', 'App\TerminalObjective')
-                ->where('referenceable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete quoteSubscriptions
-        $terminalObjective->quoteSubscriptions()
-                ->where('quotable_type', '=', 'App\TerminalObjective')
-                ->where('quotable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete referenceSubscriptions
-        $terminalObjective->referenceSubscriptions()
-                ->where('referenceable_type', '=', 'App\TerminalObjective')
-                ->where('referenceable_id', '=', $terminalObjective->id)
-                ->delete();
-
-        // delete repositorySubscriptions
-        $terminalObjective->repositorySubscriptions()
-                ->where('subscribable_type', '=', 'App\TerminalObjective')
-                ->where('subscribable_id', '=', $terminalObjective->id)
-                ->delete();
-        // delete prerequisites entries (predecessors)
-        $terminalObjective->predecessors()
-            ->where('successor_type', '=', 'App\TerminalObjective')
-            ->where('successor_id', '=', $terminalObjective->id)
-            ->delete();
-        // delete prerequisites entries (successors)
-        $terminalObjective->successors()
-            ->where('predecessor_type', '=', 'App\TerminalObjective')
-            ->where('predecessor_id', '=', $terminalObjective->id)
-            ->delete();
 
         //delete objective
         $return = $terminalObjective->delete();
@@ -197,9 +150,8 @@ class TerminalObjectiveController extends Controller
         $this->resetOrderIds($curriculum_id, $objective_type_id, $order_id);
 
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $return;
         }
-        //return $return;
     }
 
     public function referenceSubscriptionSiblings(TerminalObjective $terminalObjective)
@@ -244,16 +196,55 @@ class TerminalObjectiveController extends Controller
             return ['message' => 'no subscriptions'];
         }
 
-        foreach ($collection as $quote_subscriptions) {
-            $arr[$quote_subscriptions->quote_id] = ! is_null($quote_subscriptions->quote);
+        foreach ($collection as $quote_subscriptions)
+        {
+            //$arr[$quote_subscriptions->quote_id] = ! is_null($quote_subscriptions->quote);
 
-            if (! is_null($quote_subscriptions->quote)) {
-                $curricula_list[$quote_subscriptions->quote->content->subscriptions[0]->subscribable->id] = $quote_subscriptions->quote->content->subscriptions[0]->subscribable;
+            if (! is_null($quote_subscriptions->quote))
+            {
+                if (! is_null($quote_subscriptions->quote->content))
+                {
+                    $curricula_list[$quote_subscriptions->quote->content?->subscriptions[0]->subscribable->id] = $quote_subscriptions->quote->content?->subscriptions[0]->subscribable;
+                }
                 $quotes_subscriptions[] = $quote_subscriptions;
             }
         }
 
         return ['quotes_subscriptions' => $quotes_subscriptions, 'curricula_list' => $curricula_list];
+    }
+
+    public function higher(TerminalObjective $terminalObjective)
+    {
+        abort_unless($terminalObjective->isAccessible(), 403);
+
+        // decrease order_id of the objective with the next highest order_id
+        TerminalObjective::where([
+            'curriculum_id' => $terminalObjective->curriculum_id,
+            'objective_type_id' => $terminalObjective->objective_type_id,
+            'order_id' => $terminalObjective->order_id + 1,
+        ])->decrement('order_id', 1);
+
+        $terminalObjective->order_id++;
+        $terminalObjective->save();
+
+        return $terminalObjective;
+    }
+
+    public function lower(TerminalObjective $terminalObjective)
+    {
+        abort_unless($terminalObjective->isAccessible(), 403);
+
+        // increase order_id of the objective with the next lowest order_id
+        TerminalObjective::where([
+            'curriculum_id' => $terminalObjective->curriculum_id,
+            'objective_type_id' => $terminalObjective->objective_type_id,
+            'order_id' => $terminalObjective->order_id - 1,
+        ])->increment('order_id', 1);
+
+        $terminalObjective->order_id--;
+        $terminalObjective->save();
+
+        return $terminalObjective;
     }
 
     protected function getMaxOrderId($curriculum_id, $objective_type_id)

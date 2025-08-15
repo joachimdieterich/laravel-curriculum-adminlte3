@@ -11,11 +11,18 @@ class Permission extends Model
 {
     use SoftDeletes, HasFactory;
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'deleted_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+         'deleted_at',
+     ];*/
+
 
     protected $fillable = [
         'title',

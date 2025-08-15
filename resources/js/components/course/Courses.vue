@@ -1,147 +1,198 @@
-<template>
+<template >
     <div class="row">
-        <table id="course-datatable" style="display: none;"></table>
-        <div id="course-content">
-            <div class="py-2">
-                <CourseIndexWidget
-                    v-for="(course,index) in courses"
-                    :key="index+'_course_'+course.id"
-                    :course="course"
-                    :search="search.toLowerCase()"/>
-                <CourseIndexAddWidget
-                    :group="group"
-                    v-if="checkPermission('group_enrolment')"/>
-            </div>
-            <Modal
-                :id="'courseModal'"
-                css="danger"
-                :title="trans('global.expel')"
-                :text="trans('global.expel_helper')"
-                :ok_label="trans('global.expel')"
-                v-on:ok="destroy()"
+        <div
+            id="course-content"
+            class="col-md-12 m-0"
+        >
+            <IndexWidget
+                v-permission="'group_enrolment'"
+                key="courseCreate"
+                modelName="Course"
+                url="/courses"
+                :subscribe="true"
+                :subscribable_id="group.id"
+                :subscribable_type="'App\\Group'"
+                :label="trans('global.course.' + create_label_field)"
+            >
+                <template v-slot:itemIcon>
+                    <i v-if="create_label_field == 'enrol'"
+                        class="fa fa-2x fa-link text-muted"
+                    ></i>
+                </template>
+            </IndexWidget>
+            <IndexWidget v-for="course in courses"
+                :key="'courseIndex' + course.id"
+                :model="course"
+                modelName="Course"
+                url="/courses"
+                :showSubscribable="true"
+            >
+                <template v-slot:icon>
+                    <i v-if="course.type_id === 1"
+                        class="fas fa-globe pt-2"
+                    ></i>
+                    <i v-else-if="course.type_id === 2"
+                        class="fas fa-university pt-2"
+                    ></i>
+                    <i v-else-if="course.type_id === 3"
+                        class="fa fa-users pt-2"
+                    ></i>
+                    <i v-else
+                        class="fa fa-user pt-2"
+                    ></i>
+                </template>
+
+                <template v-slot:dropdown
+                    v-permission="'course_delete'"
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
+                        <button
+                            v-permission="'course_delete'"
+                            :id="'delete-course-' + course.id"
+                            type="submit"
+                            class="dropdown-item py-1 text-red"
+                            @click.prevent="confirmItemDelete(course)"
+                        >
+                            <span>
+                                <i class="fa fa-unlink mr-2"></i>
+                                {{ trans('global.course.expel') }}
+                            </span>
+                        </button>
+                    </div>
+                </template>
+            </IndexWidget>
+        </div>
+        <div
+            id="course-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
+            <DataTable
+                id="course-datatable"
+                :columns="columns"
+                :options="options"
+                :ajax="'/courses/?group_id=' + group.id"
+                :search="search"
+                width="100%"
+                style="display: none;"
             />
         </div>
+
+        <Teleport to="body">
+            <SubscribeCourseModal/>
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.course.expel')"
+                :description="trans('global.course.expel_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            />
+        </Teleport>
     </div>
 </template>
-
 <script>
-import CourseIndexWidget from "./CourseIndexWidget";
-import CourseIndexAddWidget from "./CourseIndexAddWidget";
-
-const Modal = () => import('./../uiElements/Modal');
+import IndexWidget from "../uiElements/IndexWidget.vue";
+import SubscribeCourseModal from "./SubscribeCourseModal.vue";
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net-bs5';
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
+DataTable.use(DataTablesCore);
 
 export default {
     props: {
         group: Object,
+        create_label_field: {
+            type: String,
+            default: 'create',
+        },
+        delete_label_field: {
+            type: String,
+            default: 'delete',
+        },
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
-            courses: [],
-            subscriptions: {},
+            component_id: this.$.uid,
+            courses: null,
             search: '',
-            url: '/courses',
+            showConfirm: false,
             errors: {},
-            tempId: Number,
-            currentCourse: {}
+            currentCourse: {},
+            columns: [
+                { title: 'id', data: 'id' },
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'description', data: 'description', searchable: true },
+            ],
+            options : this.$dtOptions,
+            dt: null,
         }
     },
-    methods: {
-        loaderEvent(){
-            if ($.fn.dataTable.isDataTable( '#course-datatable' )){
-                $('#course-datatable').DataTable().ajax.url(this.url + '?group_id=' + this.group.id).load();
-            } else {
-                const dtObject = $('#course-datatable').DataTable({
-                    ajax: this.url + '?group_id=' + this.group.id,
-                    dom: 'tilpr',
-                    pageLength: 50,
-                    language: {
-                        url: '/datatables/i18n/German.json',
-                        paginate: {
-                            "first":      '<i class="fa fa-angle-double-left"></id>',
-                            "last":       '<i class="fa fa-angle-double-right"></id>',
-                            "next":       '<i class="fa fa-angle-right"></id>',
-                            "previous":   '<i class="fa fa-angle-left"></id>',
-                        },
-                    },
-                    columns: [ // only gets attributes used in this component
-                        { title: 'id', 'data': "curriculum.id", searchable: false },
-                        { title: 'title', 'data': "curriculum.title", searchable: true },
-                        { title: 'description', 'data': "curriculum.description", searchable: true },
-                    ],
-                }).on('draw.dt', () => { // checks if the datatable-data changes, to update the videoconference-data
-                    this.courses = dtObject.rows({ page: 'current' }).data().toArray();
-                    $('#course-content').insertBefore('#course-datatable');
-                });
-            }
-        },
-        confirmItemDelete(course){
-            $('#courseModal').modal('show');
-            this.currentCourse = course;
-        },
-        destroy() {
-            axios.delete(
-                '/curricula/expel', {
-                    data :{
-                        'expel_list' : {
-                            0: {
-                                'group_id' : this.group.id,
-                                'curriculum_id': {
-                                    0 : this.currentCourse.curriculum.id
-                                }
-                            }
-                        }
-                    }
-                }
-            )
-                .then(res => {
-                    this.$eventHub.$emit("course-updated", res.data.message);
-                })
-                .catch(error => { // Handle the error returned from our request
-                    console.log(error)
-                });
-        },
-
-    },
     mounted() {
+        this.$eventHub.emit('showSearchbar', true);
+
         this.loaderEvent();
 
-        this.$eventHub.$on('filter', (filter) => {
-            $('#course-datatable').DataTable().search(filter).draw();
-        });
-        this.$eventHub.$emit('showSearchbar');
-
-        const parent = this;
-        // checks if the datatable-data changes, to update the course-data
-        $('#course-datatable').on('draw.dt', () => {
-            parent.courses = $('#course-datatable').DataTable().rows({ page: 'current' }).data().toArray();
+        this.$eventHub.on('course-added', (courses) => {
+            Object.assign(this.courses, courses);
         });
 
-        // place the content where the table would normally be
-        setTimeout(() => {
-            $('#course-content').insertBefore('#course-datatable');
-        }, 250); // needs delay, because the wrapper only appears after receiving first ajax-response
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
+        });
+    },
+    methods: {
+        loaderEvent() {
+            this.dt = $('#course-datatable').DataTable();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.courses = this.dt.rows({page: 'current'}).data().toArray();
+
+                $('#course-content').insertBefore('#course-datatable-wrapper');
+            });
+        },
+        confirmItemDelete(course){
+            this.currentCourse = course;
+            this.showConfirm = true;
+        },
+        destroy() {
+            axios.delete('/curricula/expel', {
+                data: {
+                    expel_list: [
+                        {
+                            group_id : this.group.id,
+                            curriculum_id: [this.currentCourse.curriculum_id],
+                        },
+                    ],
+                },
+            })
+            .then(res => {
+                let index = this.courses.indexOf(this.currentCourse);
+                this.courses.splice(index, 1);
+            })
+            .catch(err => {
+                console.log(err.response);
+            });
+        },
     },
     components: {
-        CourseIndexWidget,
-        CourseIndexAddWidget,
-        Modal
+        ConfirmModal,
+        SubscribeCourseModal,
+        DataTable,
+        IndexWidget,
     },
 }
 </script>
-<style>
-#course-datatable_wrapper { width: 100%; }
-@media only screen and (min-width: 992px) {
-    #course-datatable_wrapper { padding: 0px 15px; }
-}
-</style>
-<style scoped>
-.nav-link:hover {
-    cursor: default;
-    user-select: none;
-}
-
-.nav-item:hover .nav-link:not(.active) {
-    background-color: rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-}
-</style>

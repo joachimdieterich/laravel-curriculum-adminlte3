@@ -12,13 +12,10 @@ class Certificate extends Model
 
     protected $guarded = [];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
-    ];
-
     protected $casts = [
         'global' => 'boolean',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
 
     /**

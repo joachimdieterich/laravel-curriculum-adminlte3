@@ -1,14 +1,15 @@
 @extends('layouts.master')
 @section('title')
     {{ trans('global.config.title') }}
-
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item "><a href="/configs">{{ trans('global.config.title') }}</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.config.model_limiter_title') }}</li>
-    <li class="breadcrumb-item "><a href="{{ env('DOCUMENTATION', '/documentation') }}" class="text-black-50"                                    aria-label="{{ trans('global.documentation') }}"><i
-                class="fas fa-question-circle"></i></a></li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> false, 'title'=> trans('global.config.title'), 'url' => "/configs"],
+            ['active'=> true, 'title'=> trans('global.config.model_limiter_title')],
+            ])}}"
+    ></breadcrumbs>
+
 @endsection
 
 @section('content')
@@ -20,5 +21,3 @@
         referenceable_type="App\Role"
     ></model-limiter>
 @endsection
-
-

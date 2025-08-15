@@ -1,11 +1,11 @@
 <template :id="this.id">
     <div class="card">
-
-        <div class="w-full flex-1 p-2">
-            <LineChartGenerator
-                :chart-options="chartOptions"
-                :chart-data="chartDataLogin"
-                :chart-id="chartId"
+        <div v-if="show"
+             class="w-full flex-1 p-2">
+            <Line
+                :options="chartOptions"
+                :data="chartDataLogin"
+                id="loginChart"
                 :dataset-id-key="datasetIdKey"
                 :plugins="plugins"
                 :css-classes="cssClasses"
@@ -13,10 +13,13 @@
                 :width="width"
                 :height="height"
             />
-            <LineChartGenerator
-                :chart-options="chartOptions"
-                :chart-data="chartDataSso"
-                :chart-id="chartId"
+        </div>
+        <div v-if="show"
+             class="w-full flex-1 p-2">
+            <Line
+                :options="chartOptions"
+                :data="chartDataSso"
+                id="ssoChart"
                 :dataset-id-key="datasetIdKey"
                 :plugins="plugins"
                 :css-classes="cssClasses"
@@ -24,10 +27,13 @@
                 :width="width"
                 :height="height"
             />
-            <LineChartGenerator
-                :chart-options="chartOptions"
-                :chart-data="chartDataGuest"
-                :chart-id="chartId"
+        </div>
+        <div v-if="show"
+             class="w-full flex-1 p-2">
+            <Line
+                :options="chartOptions"
+                :data="chartDataGuest"
+                id="guestChart"
                 :dataset-id-key="datasetIdKey"
                 :plugins="plugins"
                 :css-classes="cssClasses"
@@ -39,7 +45,6 @@
     </div>
 </template>
 <script>
-import { Line as LineChartGenerator } from 'vue-chartjs/legacy'
 import {
     Chart as ChartJS,
     Title,
@@ -50,6 +55,7 @@ import {
     CategoryScale,
     PointElement
 } from 'chart.js'
+import { Line } from 'vue-chartjs';
 
 ChartJS.register(
     Title,
@@ -98,20 +104,50 @@ export default {
     },
     data() {
         return {
-            chartDataSso: {},
-            chartDataLogin: {},
-            chartDataGuest: {},
+            chartDataSso:  {
+                labels: [],
+                datasets: [
+                    {
+                        label: '',
+                        backgroundColor: '#001219',
+                        data: []
+                    }
+                ]
+            },
+            chartDataLogin: {
+                labels: [],
+                datasets: [
+                    {
+                        label: '',
+                        backgroundColor: '#005f73',
+                        data: []
+                    }
+                ]
+            },
+            chartDataGuest:  {
+                labels: [],
+                datasets: [
+                    {
+                        label: '',
+                        backgroundColor: '#0a9396',
+                        data: []
+                    }
+                ]
+            },
             chartOptions: {
                 responsive: true,
                 maintainAspectRatio: false
-            }
+            },
+            show: false
         };
     },
     methods: {
         loadAll(){
+            this.show = false;
             this.loaderEvent('login');
             this.loaderEvent('guestLogin');
             this.loaderEvent('ssoLogin');
+            this.show = true;
         },
         loaderEvent(chart) {
             axios.get('/statistics?chart=' + chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
@@ -158,8 +194,7 @@ export default {
         this.loadAll();
     },
     components: {
-        LineChartGenerator
+        Line
     },
-
 };
 </script>

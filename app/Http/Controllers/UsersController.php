@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
@@ -11,7 +12,6 @@ use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
 use App\Role;
-use App\Scopes\NoSharingUsers;
 use App\StatusDefinition;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -28,88 +28,66 @@ class UsersController extends Controller
         if (auth()->user()->role()->id > 6) {   //todo check: should students see all other user of current org?
             abort(403);
         }
-        //every user should share with users of current org.
-        if (request()->wantsJson() and request()->has(['term', 'page'])) {
-            return  getEntriesForSelect2ByCollection(
-                Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing(),
+        // every user should share with users of current organization except admins
+        if (request()->wantsJson()) {
+            $users = is_admin()
+                ? User::noSharing()
+                : Organization::find(auth()->user()->current_organization_id)->users();
+
+            // only get users with teacher-role or higher
+            if (request()->has('no_students') && !is_admin()) { // skip this step for admins
+                $users = $users->whereNotIn('organization_role_users.role_id', [6, 7, 8, 9]); // student-, parent-, guest-, token-role
+            }
+
+            return getEntriesForSelect2ByCollection(
+                $users,
                 'users.',
-                ['username', 'firstname', 'lastname'],
+                ['username', DB::raw("CONCAT(firstname, ' ', lastname)")],
                 'lastname',
-                "CONCAT(firstname, ' ' ,lastname)",
+                "CONCAT(firstname, ' ', lastname)",
             );
         }
-
-        abort_unless(\Gate::allows('user_access'), 403);
-        // todo check: is the following condition used anymore (-> used only by user-tab on group/{id}?) --> change to top condition
-        if (request()->wantsJson()) {
-            /*if (auth()->user()->role()->id == 1) {
-                $users = json_encode(User::withTrashed()
-                    ->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')->get());
-
-                return ['users' => $users];
-            } else {*/
-                return ['users' => json_encode(Organization::where('id', auth()->user()->current_organization_id)
-                    ->get()->first()->users()->get())];
-          /*  }*/
+        else
+        {
+            return view('users.index');
         }
-
-        return view('users.index');
     }
 
     public function list()
     {
-        $users = (auth()->user()->role()->id == 1)
-            ? User::noSharing()->select('id', 'username', 'firstname', 'lastname', 'email', 'deleted_at')
-            : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->noSharing();
+        $rowID = 'id';
 
-        $show_gate = \Gate::allows('user_show');
-        $edit_gate = \Gate::allows('user_edit');
-        $delete_gate = \Gate::allows('user_delete');
+        if (request()->has(['group_id']))
+        {
+            $request = request()->validate(
+                [
+                    'group_id' => 'required',
+                ]
+            );
+            $users = Group::where('id',$request['group_id'])->first()->users();
+            $rowID = 'user_id';
+        }
+        else
+        {
+            $users = (auth()->user()->role()->id == 1)
+                ? User::select('id', 'username', 'firstname', 'lastname', 'common_name', 'email', 'medium_id', 'deleted_at')->noSharing()
+                : Organization::find(auth()->user()->current_organization_id)->users()->noSharing();
+        }
 
         return DataTables::of($users)
-            ->addColumn('action', function ($users) use ($show_gate, $edit_gate, $delete_gate) {
-                $actions = '';
-                if ($show_gate) {
-                    $actions .= '<a href="'.route('users.show', $users->id).'" '
-                                    .'id="show-user-'.$users->id.'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-list-alt"></i>'
-                                    .'</a>';
-                }
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('users.edit', $users->id).'" '
-                                    .'id="edit-user-'.$users->id.'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'users\','.$users->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
-            ->setRowId('id')
+            ->setRowId($rowID)
             ->make(true);
     }
 
     public function create()
     {
-        abort_unless(\Gate::allows('user_create'), 403);
-
-        return view('users.create');
+        abort(405);
     }
 
     public function store(StoreUserRequest $request)
     {
         abort_unless(\Gate::allows('user_create'), 403);
         //todo: users should only be created in accessible organizations/roles
-        //
         if (User::withTrashed()->where('email', request()->email)->exists()) {
             User::withTrashed()->where('email', request()->email)->restore();
             $user = User::where('email', request()->email)->get()->first();
@@ -133,20 +111,14 @@ class UsersController extends Controller
         $user->current_organization_id = auth()->user()->current_organization_id; //set default org
         $user->save();
 
-        //$user->roles()->sync($request->input('roles', []));
-        return redirect($user->path());
+        if (request()->wantsJson()) {
+            return $user;
+        }
     }
 
     public function edit(User $user)
     {
-        abort_unless(\Gate::allows('user_edit'), 403);
-        abort_unless(auth()->user()->mayAccessUser($user), 403);
-
-        $roles = Role::all()->pluck('title', 'id');
-
-        $user->load('roles');
-
-        return view('users.edit', compact('roles', 'user'));
+        abort(405);
     }
 
     public function update(UpdateUserRequest $request, User $user)
@@ -157,7 +129,9 @@ class UsersController extends Controller
         $user->update($request->all());
         //$user->roles()->sync($request->input('roles', []));
 
-        return redirect()->route('users.index');
+        if (request()->wantsJson()) {
+            return $user;
+        }
     }
 
     public function massUpdate(MassUpdateUserRequest $request)
@@ -182,8 +156,8 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        abort_unless(\Gate::allows('user_show'), 403);
-        abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403);
+        abort_unless(\Gate::allows('user_show'), 403, "Missing permission to view user");
+        abort_unless(auth()->user()->mayAccessUser($user), 403, "No access to view user");
 
         if (request()->wantsJson()) {
             return ['user' => $user];
@@ -191,17 +165,19 @@ class UsersController extends Controller
 
         $status_definitions = StatusDefinition::all();
         $user->load('roles');
-        $user->load('organizations');
+        $user->load(['organizations.state', 'organizations.country']);
+        $user->load('groups');
+        $user->load('contactDetail.owner');
 
         return view('users.show')
-                ->with(compact('user'))
-                ->with(compact('status_definitions'));
+            ->with(compact('user'))
+            ->with(compact('status_definitions'));
     }
 
     public function destroy(User $user)
     {
         abort_unless(\Gate::allows('user_delete'), 403);
-        abort_unless(((auth()->user()->role()->id == 1) or (auth()->user()->mayAccessUser($user))), 403);
+        abort_unless(auth()->user()->mayAccessUser($user), 403);
 
         $return = $user->delete();
         //todo: concept to hard-delete users
@@ -213,12 +189,12 @@ class UsersController extends Controller
         }
     }
 
-    public function getCurrentUser()
+   /* public function getCurrentUser()
     {
         if (request()->wantsJson()) {
             return ['user' => auth()->user()];
         }
-    }
+    }*/
 
     /**
      * ! No soft delete !
@@ -239,7 +215,7 @@ class UsersController extends Controller
 
     public function setCurrentOrganization()
     {
-        abort_if( auth()->user()->id == 8 , 403); // only official guest user should not change current Organization
+        abort_if(auth()->user()->id == 8 , 403); // only official guest user should not change current Organization
 
         User::where('id', auth()->user()->id)->update([
             'current_period_id' => (request('current_period_id')) ? request('current_period_id') : 1,
@@ -311,21 +287,12 @@ class UsersController extends Controller
         return view('users.import');
     }
 
-    public function dsgvoExport(User $user)
+    public function dsgvoExport($id)
     {
         abort_unless(auth()->user()->role()->id == 1, 403); //only admins!
         abort_unless(\Gate::allows('user_access'), 403);
 
-        return User::where('id', $user->id)
-            ->with([
-                'contactDetail',
-                'comments',
-                'contents',
-                'groups',
-                'roles',
-                'organizations',
-                'achievements'
-            ])->get()->first();
+        return User::with(['contactDetail', 'groups', 'roles', 'organizations', 'achievements'])->find(auth()->user()->id);
     }
 
     protected function validateImportRequest()

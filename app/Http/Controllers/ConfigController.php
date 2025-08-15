@@ -29,23 +29,6 @@ class ConfigController extends Controller
         $configs = Config::all();
 
         return DataTables::of($configs)
-            ->addColumn('action', function ($configs) use ($users_current_role) {
-                $actions = '';
-                if ($users_current_role == 1) {
-                    $actions .= '<a href="'.route('configs.edit', $configs->id).'"'
-                                    .'id="edit-config-'.$configs->id.'" '
-                                    .'class="btn p-1">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>'
-                                .'<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'configs\','.$configs->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -61,9 +44,7 @@ class ConfigController extends Controller
      */
     public function create()
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
-
-        return view('configs.create');
+        abort(403);
     }
 
     /**
@@ -88,9 +69,7 @@ class ConfigController extends Controller
         );
 
         if (request()->wantsJson()) {
-            return ['config' => $config];
-        } else {
-            return redirect(route('configs.index'));
+            return $config;
         }
     }
 
@@ -103,6 +82,8 @@ class ConfigController extends Controller
     public function show(Config $config)
     {
         abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+        return view('configs.show')
+            ->with(compact('config'));
     }
 
     /**
@@ -113,10 +94,7 @@ class ConfigController extends Controller
      */
     public function edit(Config $config)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
-
-        return view('configs.edit')
-                ->with(compact('config'));
+       abort(403);
     }
 
     /**
@@ -132,9 +110,7 @@ class ConfigController extends Controller
         $config->update($this->validateRequest());
 
         if (request()->wantsJson()) {
-            return ['config' => $config];
-        } else {
-            return redirect(route('configs.index'));
+            return $config;
         }
     }
 
@@ -147,9 +123,10 @@ class ConfigController extends Controller
     public function destroy(Config $config)
     {
         abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
-        $config->delete();
 
-        return back();
+        if (request()->wantsJson()) {
+            return $config->delete();
+        }
     }
 
     /**

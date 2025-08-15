@@ -1,235 +1,198 @@
-<template >
-    <div class="row ">
+<template>
+    <div class="row">
         <div class="col-12 pt-2">
             <div class="card">
-                <div v-if="create">
-                    <div class="card-header pointer"
-                         @click="edit()"
-                    >
+                <button v-if="create"
+                    class="btn text-left p-0"
+                    @click="openModal()"
+                >
+                    <div class="plan-entry card-header border-0">
                         <i class="fas fa-add pr-1"></i>
                         {{ trans('global.planEntry.create') }}
                     </div>
-                </div>
+                </button>
                 <div v-else>
-                    <div :id="'plan-entry-' + entry.id"
-                         v-if="!editor"
-                         :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }">
-                        <div class="card-header collapsed" data-toggle="collapse" :data-target="'#plan-entry-' + entry.id + ' > .card-body'" aria-expanded="false">
-                            <i class="mr-1"
-                            :class="entry.css_icon"></i>
+                    <div
+                        :id="'plan-entry-' + entry.id"
+                        class="plan-entry"
+                        :style="{ 'border-color': entry.color }"
+                    >
+                        <div
+                            class="card-header collapsed"
+                            data-toggle="collapse"
+                            :data-target="'#plan-entry-' + entry.id + ' > .card-body'"
+                            aria-expanded="false"
+                        >
+                            <i
+                                class="mr-1"
+                                :class="entry.css_icon"
+                            ></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
-                            <div v-if="showTools"
-                                class="card-tools">
-                                <i class="fa fa-pencil-alt mr-2 pointer link-muted"
-                                   @click="edit()"></i>
-                                <i class="fas fa-trash pointer text-danger"
-                                   @click.stop="$parent.$parent.confirmEntryDelete(entry.id)"></i>
+                            <div
+                                class="card-tools d-flex align-items-center mr-0"
+                                style="height: 24px;"
+                            >
+                                <button v-if="entry.certificates"
+                                    class="btn btn-icon"
+                                    :title="trans('global.certificate.generate')"
+                                    @click.stop="openCertificateModal()"
+                                >
+                                    <i class="fa fa-certificate link-muted"></i>
+                                </button>
+                                <span v-if="editable && showTools" class="d-flex">
+                                    <button
+                                        class="btn btn-icon ml-2"
+                                        :title="trans('global.planEntry.edit')"
+                                        @click.stop="openModal(entry)"
+                                    >
+                                        <i class="fa fa-pencil-alt link-muted"></i>
+                                    </button>
+                                    <button v-if="entry.owner_id == $userId
+                                            || plan.owner_id == $userId
+                                            || checkPermission('is_admin')
+                                        "
+                                        class="btn btn-icon text-danger ml-2"
+                                        :title="trans('global.planEntry.delete')"
+                                        @click.stop="openConfirm()"
+                                    >
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </span>
                             </div>
                         </div>
-                        <div class="card-body py-2 collapse">
-                            <img v-if="Number.isInteger(entry.medium_id)"
-                                 class="pull-right"
-                                 :src="'/media/' + entry.medium_id + '/thumb'"/>
-                            <span v-dompurify-html="entry.description ?? ''"></span>
 
-                            <objectives
-                                referenceable_type="App\PlanEntry"
-                                :referenceable_id="entry.id"
-                                :owner_id="entry.owner_id"
-                                :editable="editable"
-                                :showTools="showTools"
-                            ></objectives>
+                        <div class="card-body py-0 collapse">
+                            <div class="py-2">
+                                <div class="overflow-auto" v-html="description"></div>
+    
+                                <Objectives
+                                    referenceable_type="App\PlanEntry"
+                                    :referenceable_id="entry.id"
+                                    :owner_id="entry.owner_id"
+                                    :editable="editable"
+                                    :showTools="showTools"
+                                />
 
-                            <Trainings
-                                :plan="plan"
-                                subscribable_type="App\PlanEntry"
-                                :subscribable_id="entry.id"
-                            ></Trainings>
+                                <Trainings
+                                    :subscribable_id="entry.id"
+                                    subscribable_type="App\PlanEntry"
+                                    :editable="editable"
+                                    :deletable="entry.owner_id == $userId || plan.owner_id == $userId"
+                                    :showTools="showTools"
+                                />
+
+                                <Lms
+                                    ref="LmsPlugin"
+                                    :editable="editable && showTools"
+                                    :referenceable_id="entry.id"
+                                    referenceable_type="App\\PlanEntry"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div v-if="editor"
-                     class="card-body"
-                >
-                    <color-picker-input
-                        v-model="form.color"
-                    ></color-picker-input>
-
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            class="form-control"
-                            v-model.trim="form.title"
-                            :placeholder="trans('global.planEntry.fields.title')"
-                            required
-                        />
-                        <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                    </div>
-
-                    <div class="form-group">
-                        <textarea
-                            id="description"
-                            name="description"
-                            :placeholder="trans('global.planEntry.fields.description')"
-                            class="form-control description my-editor"
-                            v-model.trim="form.description"
-                        ></textarea>
-                        <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
-                    </div>
-                    <div class="form-group">
-                        <font-awesome-picker
-                            :searchbox="trans('global.select_icon')"
-                            v-on:selectIcon="setIcon"
-                        ></font-awesome-picker>
-                    </div>
-
-                    <div v-if="form.id !== null"
-                         v-can="'is_admin'"
-                         class="form-group">
-                        <MediumForm :form="form"
-                                    :id="component_id"
-                                    :medium_id="form.medium_id"
-                                    :referenceable_type="'App\\PlanEntry'"
-                                    :referenceable_id="form.id"
-                                    accept="image/*"/>
-                    </div>
-                    <button :name="'planEntrySave'"
-                            class="btn btn-primary p-2 m-2"
-                            @click="submit()"
-                    >
-                        {{ trans('global.save') }}
-                    </button>
-                </div>
-
             </div>
         </div>
+        <Teleport to="body">
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.planEntry.delete')"
+                :description="trans('global.planEntry.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.delete(this.entry);
+                }"
+            />
+        </Teleport>
     </div>
 </template>
-
 <script>
-/*const Calendar =
-    () => import('../calendar/Calendar');*/
-
-import Form from "form-backend-validation";
-import MediumForm from "../media/MediumForm";
-import Objectives from "../objectives/Objectives";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker";
-
-const Trainings =
-    () => import('../training/Trainings');
+import Objectives from "../objectives/Objectives.vue";
+import Trainings from '../training/Trainings.vue';
+import Lms from "../lms/Lms.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
         entry: {
-            default: null
+            type: Object,
+            default: null,
         },
         create: {
-            default: false
+            type: Boolean,
+            default: false,
         },
-        plan: [],
+        plan: {
+            type: Object,
+            default: null,
+        },
         editable: {
-            default: false
+            type: Boolean,
+            default: false,
         },
         showTools: {
-            default: false
-        },
+            type: Boolean,
+            default: false,
+        }
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
-            component_id: this._uid,
-            method: 'post',
-            requestUrl: '/planEntries',
-            form: new Form({
-                'id': null,
-                'title':'',
-                'description': '',
-                'plan_id': '',
-                'css_icon': 'fas fa-calendar-day',
-                'order_id': 0,
-                'color': '#27AF60',
-                'medium_id': null,
-
-            }),
-            editor: false,
-            errors: {},
-            owner_id: ''
+            component_id: this.$.uid,
+            showConfirm: false,
         }
     },
     mounted() {
-        this.owner_id = this.plan.owner_id;
-
-        if ( this.entry !== null ) {
-            this.form.id = this.entry.id;
-            this.form.title = this.entry.title;
-            this.form.description = this.entry.description;
-            this.form.medium_id = this.entry.medium_id;
-            this.form.css_icon = this.entry.css_icon;
-            this.form.order_id = this.entry.order_id;
-
-            this.method = 'patch';
-        }
-        this.form.plan_id = this.plan.id;
-
-        // Set eventlistener for Media
-        this.$eventHub.$on('addMedia', (e) => {
-            if (this.component_id == e.id) {
-                this.form.medium_id = e.selectedMediumId;
-                if ( Array.isArray(this.form.medium_id))  {
-                    this.form.medium_id = this.form.medium_id[0]; //Hack to get existing files working.
-                }
-            }
-        });
+        this.$refs.LmsPlugin?.loaderEvent();
     },
     methods: {
-        setIcon(selectedIcon) {
-            this.form.css_icon = 'fa fa-'+  selectedIcon.className;
+        openModal(entry = {}) {
+            this.globalStore.showModal('plan-entry-modal', entry);
         },
-        edit() {
-            this.editor = !this.editor;
-            if (this.entry !== null) {
-                this.form.color = this.entry.color;
-                this.form.css_icon = this.entry.css_icon;
-                this.form.order_id = this.plan.entries?.length ;
-            }
-
-            this.$nextTick(() => {
-                this.$initTinyMCE("autolink link");
+        openCertificateModal() {
+            this.globalStore.showModal('generate-certificate-modal', {
+                certificates: this.entry.certificates,
+                user_ids: this.$parent.$parent.users.map(user => user.id), // TODO: give user an option to select students
             });
         },
-        submit() {
-            let method = this.method.toLowerCase();
-            this.form.description = tinyMCE.get('description').getContent();
-            if (method === 'patch') {
-                axios.patch(this.requestUrl + '/' + this.form.id, this.form)
-                    .then(res => { // Tell the parent component we've updated a task
-                        this.$eventHub.$emit("plan_entry_updated", res.data.entry);
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-            } else {
-                axios.post(this.requestUrl, this.form)
-                    .then(res => { // Tell the parent component we've added a new task and include it
-                        this.$eventHub.$emit("plan_entry_added", res.data.entry);
-                        this.form.reset(); // clear input-fields
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-            }
-            this.editor = false;
-
+        openConfirm() {
+            this.showConfirm = true;
+        },
+        delete(entry) {
+            axios.delete('/planEntries/' + entry.id)
+                .then(response => {
+                    this.$eventHub.emit("plan-entry-deleted", entry);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         },
     },
-
+    computed: {
+        // add an img-tag, so the medium can be placed within the text
+        description() {
+            let img = '';
+            if (this.entry.medium_id) {
+                img = '<img class="pull-right" style="max-width: 25%;" src="/media/' + this.entry.medium_id + '?preview=true"/>';
+            }
+            return img + this.entry.description;
+        },
+    },
     components: {
-        FontAwesomePicker,
         Objectives,
-        MediumForm,
         Trainings,
+        Lms,
+        ConfirmModal,
     },
 }
 </script>
@@ -238,10 +201,8 @@ export default {
     background-color: #e9ecef;
     cursor: pointer;
 }
-.card-header .fa-angle-up {
-    transition: 0.3s transform;
-}
-.card-header.collapsed .fa-angle-up {
-    transform: rotate(-180deg);
+.plan-entry {
+    border-radius: 0.25rem;
+    border-left-style: solid;
 }
 </style>

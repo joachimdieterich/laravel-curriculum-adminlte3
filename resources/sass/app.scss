@@ -1,126 +1,140 @@
 // Font Awesome
-@import '~@fortawesome/fontawesome-free/scss/fontawesome';
-@import '~@fortawesome/fontawesome-free/scss/regular';
-@import '~@fortawesome/fontawesome-free/scss/solid';
-@import '~@fortawesome/fontawesome-free/scss/brands';
+$fa-font-path: '@fortawesome/fontawesome-free/webfonts';
+@import '@fortawesome/fontawesome-free/scss/fontawesome.scss';
+@import '@fortawesome/fontawesome-free/scss/regular.scss';
+@import '@fortawesome/fontawesome-free/scss/solid.scss';
+@import '@fortawesome/fontawesome-free/scss/brands.scss';
 
 // DataTables
-@import '~datatables.net-bs4/css/dataTables.bootstrap4.css';
-@import '~datatables.net-buttons-bs4/css/buttons.bootstrap4.css';
-@import '~datatables.net-select-bs4/css/select.bootstrap4.css';
+@import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
+//@import '~datatables.net-buttons-bs5/css/buttons.bootstrap5.css';
+//@import '~datatables.net-select-bs5/css/select.bootstrap5.css';
 
+.dataTable td, .dataTable th {
+    padding: 5px;
+} 
+.dataTable tbody tr {
+    border-bottom: 1px solid lightgray;
+}
+.dt-bootstrap5 .select-info {
+    padding-left: 10px !important;
+}
+.dataTablesWrapper {
+    width: 100%;
+    padding: 0px 15px;
+}
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import 'bootstrap/scss/bootstrap';
 
-@import '~@activix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
+@import '@activix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
 
 // Select2
-@import '~select2/dist/css/select2.min.css';
+@import 'select2/dist/css/select2.min.css';
 
 // to update adminLTE copy "~admin-lte/build/scss" to "adminLTE";
 @import "rlp/AdminLTE-raw";
-// Boxes
+
 @import 'boxes.scss';
-// Cards
+@import 'buttons.scss';
 @import 'cards.scss';
-// Text
+@import 'media.scss';
+@import 'modal.scss';
+@import 'objectives.scss';
+@import 'print.scss';
 @import 'text.scss';
 // Fonts - Open Sans
-@import "~open-sans-all/scss/open-sans";
+$OpenSansFontPath: 'open-sans-all/fonts';
+@import "open-sans-all/scss/open-sans.scss";
 
-
+html { scroll-behavior: smooth; }
 body {
     font-family: 'Open Sans', Arial, sans-serif !important;
     color: #333;
+    // positioning of the main header and sidebar
+    & .main-header, &.sidebar-mini.sidebar-collapse .main-header {
+        margin-left: 0px !important;
+        padding: 0px;
+    }
+    & .main-sidebar { margin-top: 3.5rem; }
 }
-
-.nav-sidebar .nav-link > .right:nth-child(2), .nav-sidebar .nav-link > p > .right:nth-child(2){
+.skip {
+    bottom: 1000px;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    &:focus { bottom: unset; }
+}
+.nav-sidebar .nav-link > .right:nth-child(2),
+.nav-sidebar .nav-link > p > .right:nth-child(2),
+.nav-link > i {
     right:0;
     padding-right: 10px;
 }
-
+.nav-pills > .nav-item > .nav-link { border-radius: 10px; }
 .col-centered {
     float: none;
     margin: 0 auto;
 }
-
-.text-cut{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+// highlight-animation
+p[id]:target, p[id].target { animation: yellowfade 1.5s; }
+@keyframes yellowfade {
+    from { background: yellow; }
+    to { background: transparent; }
 }
 
-.pointer {
-    cursor: pointer;
-}
-
-.pull-right {
-    float: right !important;
-}
-
-.pull-left{
-    float: left !important;
-}
-
+.p-margin-0 p { margin-bottom: 0px !important; }
+.pointer { cursor: pointer; }
+.pull-right { float: right !important; }
+.pull-left { float: left !important; }
 // FontAwesome Badges without layers
-.fabadge[data-count]{
+.fabadge[data-count] {
     position:relative;
-}
-.fabadge[data-count]:after{
-    position: absolute;
-    right: -0.75em;
-    top: -.75em;
-    content: attr(data-count);
-    border-radius: 10em;
-    line-height: .9em;
-    color: white;
-    background: rgba(0, 0, 0, 0.40);
-    text-align: center;
-    min-width: 2em;
-    font: bold .4em sans-serif;
-}
 
-.hide-scrollbars::-webkit-scrollbar {
-    width: 0 !important
+    &:after {
+        content: attr(data-count);
+        font: bold .4em sans-serif;
+        background: rgba(0, 0, 0, 0.40);
+        color: white;
+        position: absolute;
+        right: -0.75em;
+        top: -.75em;
+        border-radius: 10em;
+        text-align: center;
+        min-width: 2em;
+    }
 }
-
+.fa-angle-up { transition: 0.4s transform ease; }
+.collapsed .fa-angle-up { transform: rotate3d(1, 0, 0, -180deg) !important; }
 .hide-scrollbars {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none; /* IE */
     scrollbar-width: none; /* Firefox */
+
+    &::-webkit-scrollbar { width: 0 !important }
 }
-
-.hide {
-    display: none;
-}
-
-textarea {
-    min-height: 200px;
-}
-
-
+textarea { min-height: 150px; }
 .select2 {
     max-width: 100%;
     width: 100%;
 }
+.dt-length { float: right !important; }
+// truncates text to one line and adds ellipsis
+.line-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1; // compatibility
+    overflow: hidden;
 
-
-.vuehover {
-    display: none;
+    &.line-clamp-3 {
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
+    & p { margin: 0; } // if Editor was used, text is wrapped in <p> tags
 }
-
-li:hover .vuehover,
-tr:hover .vuehover {
-    display: block;
-}
-
-.kanban-header{
-    background-color: white;
-    padding: 0.8rem !important;
-    border-radius: 6px !important;
-}
-
-.comment-count{
+.custom-control-input:hover, .custom-control-label:hover { cursor: pointer; }
+/* Vuedatepicker uses another font-family as default */
+.dp__input { font-family: "Open Sans", Arial, sans-serif !important; }
+.comment-count {
     position: absolute;
     font-size: 8px !important;
     border-radius: 100%;
@@ -131,66 +145,27 @@ tr:hover .vuehover {
     background-color: red;
     line-height: 15px;
     color: white;
-    top: -5px;
-    left: 10px;
+    top: 0px;
+    right: 0px;
 }
-.with-comment-count{
+.with-comment-count {
     padding-top: 5px;
     padding-right: 10px;
 }
+.dropdown-menu {
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
 
-.dropdown-item {
-    padding: 0.25rem 1rem !important;
+    &.show:hover { cursor: default; }
 }
-
-.overlay{
-    background-color: rgba(255, 255, 255, 0.9) !important;
-}
-
-.help-block {
-    display: block;
-    width: 100%;
-    margin-top: .25rem;
-    font-size: 80%;
-    color: #6c757d;
-}
-
+.dropdown-item { padding: 0.25rem 1rem !important; }
+.overlay { background-color: rgba(255, 255, 255, 0.9) !important; }
 .error-block {
-    display: block;
-    width: 100%;
-    margin-top: .25rem;
-    font-size: 80%;
     color: #dc3545;
+    font-size: 0.8rem;
+    width: min-content;
 }
-
-@media only screen and (max-width: 400px) {
-    div#searchbar > input {
-        transition: .5s width, .5s padding !important;
-
-        &:not(:focus-within) {
-            padding: 0 41px 0 0 !important;
-
-            & + div > #searchButton::before { content: none; }
-        }
-    }
-}
-
-@media only screen and (max-width: 576px) {
-    #searchbar {
-        > input {
-            width: calc(100vw - 183px);
-            max-width: 248px;
-            transition: .5s width, .4s padding;
-        }
-        &:not(:focus-within) > input {
-            width: 0;
-            padding: 0 96px 0 0 !important;
-            transition: .5s width .1s, .4s padding;
-
-            & + div {
-                > #clearSearch { display: none !important; }
-                > #searchButton::before { width: 55px; }
-            }
-        }
-    }
+// TinyMCE
+.tox.tox-tinymce-aux,
+.tox-fullscreen .tox.tox-tinymce-aux {
+    z-index: 10000 !important;
 }

@@ -11,9 +11,7 @@ class PermissionsApiController extends Controller
 {
     public function index()
     {
-        $permissions = Permission::all();
-
-        return $permissions;
+        return Permission::all();
     }
 
     public function store(StorePermissionRequest $request)

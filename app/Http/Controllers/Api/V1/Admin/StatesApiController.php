@@ -9,9 +9,7 @@ class StatesApiController extends Controller
 {
     public function index()
     {
-        $states = State::all();
-
-        return $states;
+        return State::all();
     }
 
     public function show(State $state)

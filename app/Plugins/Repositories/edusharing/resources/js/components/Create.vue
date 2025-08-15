@@ -1,82 +1,90 @@
 <template>
-    <div>
-        <ul class="nav nav-pills row pb-2">
-            <li class="nav-item small col-6">
-                <a class="nav-link show active"
-                   href="#edusharing_new"
-                   data-toggle="tab">
-                <i class="fa fa-upload pr-1"></i>
+    <div class="d-flex flex-wrap justify-content-center">
+        <ul
+            class="nav nav-pills row text-center pb-2"
+            style="flex-basis: 100%;"
+        >
+            <li class="nav-item small col-6 p-0">
+                <a
+                    href="#edusharing_new"
+                    class="nav-link show active"
+                    data-toggle="tab"
+                >
+                    <i class="fa fa-upload pr-1"></i>
                     Medien (in die Cloud) hochladen
                 </a>
             </li>
 
-            <li class="nav-item small col-6">
-                <a class="nav-link show"
-                   href="#edusharing_link"
-                   data-toggle="tab">
-                <i class="fa fa-add pr-1"></i>
+            <li class="nav-item small col-6 p-0">
+                <a
+                    href="#edusharing_link"
+                    class="nav-link show"
+                    data-toggle="tab"
+                >
+                    <i class="fa fa-add pr-1"></i>
                     Medien aus der Cloud verknüpfen
                 </a>
             </li>
         </ul>
 
-        <div class="tab-content row">
-            <div id="edusharing_new"
-                 class="tab-pane col-12 active">
+        <div
+            class="tab-content"
+            style="flex-basis: 100%;"
+        >
+            <div
+                id="edusharing_new"
+                class="tab-pane col-12 active p-0"
+            >
                 <iframe
                     id="eduSharingNewFrame"
                     :src="this.uploadIframeUrl"
                     :width="this.width"
                     :height="this.height"
-                    style="height: 80vh;"
+                    style="height: 60vh;"
                     frameborder="0"
-                >
-                </iframe>
+                ></iframe>
             </div>
-            <div id="edusharing_link"
-                 class="tab-pane col-12">
+            <div
+                id="edusharing_link"
+                class="tab-pane col-12 p-0"
+            >
                 <iframe
                     id="eduSharingLinkFrame"
                     :src="this.cloudIframeUrl"
                     :width="this.width"
                     :height="this.height"
-                    style="height: 80vh;"
                     frameborder="0"
-                >
-                </iframe>
+                ></iframe>
             </div>
         </div>
     </div>
 </template>
-
 <script>
 export default {
     props: {
-        'model': {}
+        model: {},
     },
     data() {
         return {
             component_id: this._uid,
-            width:          "100%",
-            height:         "650",
+            width: "100%",
+            height: "650",
             uploadIframeUrl: '',
-            cloudIframeUrl:  '',
+            cloudIframeUrl: '',
         };
     },
     methods: {
         receiveMessage(event) {
             let data = event.data.data;
 
-            if(event.data.event === 'APPLY_NODE') {
-                //console.log(data);
-                setTimeout(() => {  this.emitEvent(data); }, 250); //
+            if (event.data.event === 'APPLY_NODE') {
+                setTimeout(() => { this.emitEvent(data); }, 250);
 
                 window.removeEventListener("message", this.receiveMessage);
             }
-
         },
-        emitEvent(data){
-            this.$eventHub.$emit('external_add', {
+        emitEvent(data) {
+            this.$eventHub.emit('external_add', {
                 path:               data.content.url,
                 thumb_path:         data.preview.url,
                 medium_name:        data.name,
@@ -91,40 +99,38 @@ export default {
                 repository:         'edusharing',
                 public:             1,
             });
-
         },
-        getAuthor(owner){
-          let author = '';
-          if (typeof owner !== 'undefined'){
-              author = owner?.firstName + ' ' + owner?.lastName;
-          }
-          return author;
+        getAuthor(owner) {
+            let author = '';
+            if (typeof owner !== 'undefined') {
+                author = owner?.firstName + ' ' + owner?.lastName;
+            }
+            return author;
         },
         getLicenseID(licenseURL) {
-            if (licenseURL.search(/none.svg/i) !== -1){
+            if (licenseURL.search(/none.svg/i) !== -1) {
                 return 1;
-            } else if (licenseURL.search(/copyright-license.svg/i) !== -1){
+            } else if (licenseURL.search(/copyright-license.svg/i) !== -1) {
                 return 2;
-            } else if ((licenseURL.search(/cc-0.svg/i) !== -1) && (licenseURL.search(/pdm.svg/i) !== -1)){
+            } else if ((licenseURL.search(/cc-0.svg/i) !== -1) && (licenseURL.search(/pdm.svg/i) !== -1)) {
                 return 3;
-            } else if (licenseURL.search(/cc-by.svg/i) !== -1){
+            } else if (licenseURL.search(/cc-by.svg/i) !== -1) {
                 return 4;
-            } else if (licenseURL.search(/cc-by-nd.svg/i) !== -1){
+            } else if (licenseURL.search(/cc-by-nd.svg/i) !== -1) {
                 return 5;
-            } else if (licenseURL.search(/cc-by-nc-nd.svg/i) !== -1){
+            } else if (licenseURL.search(/cc-by-nc-nd.svg/i) !== -1) {
                 return 6;
-            } else if (licenseURL.search(/cc-by-nc.svg/i) !== -1){
+            } else if (licenseURL.search(/cc-by-nc.svg/i) !== -1) {
                 return 7;
-            } else if (licenseURL.search(/cc-by-nc-sa.svg/i) !== -1){
+            } else if (licenseURL.search(/cc-by-nc-sa.svg/i) !== -1) {
                 return 8;
-            } else if (licenseURL.search(/cc-by-sa.svg/i) !== -1){
+            } else if (licenseURL.search(/cc-by-sa.svg/i) !== -1) {
                 return 9;
             } else {
                 return 1;
             }
-        }
+        },
     },
-
     mounted() {
         axios.get('/media/create?repository=edusharing')
             .then(response => {
@@ -137,6 +143,8 @@ export default {
 
         window.addEventListener("message", this.receiveMessage, false);
     },
-
+    unmounted() {
+        window.removeEventListener("message", this.receiveMessage);
+    },
 }
 </script>

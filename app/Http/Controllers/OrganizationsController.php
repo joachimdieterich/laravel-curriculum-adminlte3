@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
-use App\Http\Requests\MassDestroyOrganizationRequest;
 use App\Organization;
 use App\OrganizationRoleUser;
-use App\OrganizationType;
-use App\State;
 use App\StatusDefinition;
 use App\User;
 use Yajra\DataTables\DataTables;
@@ -21,15 +17,13 @@ class OrganizationsController extends Controller
      */
     public function index()
     {
-
-        // select2 request
-        if (request()->wantsJson() and request()->has(['term', 'page'])) {
+        if (request()->wantsJson()) {
             if (is_admin()) {
-                return  getEntriesForSelect2ByModel(
+                return getEntriesForSelect2ByModel(
                     "App\Organization"
                 );
             } else {
-                return  getEntriesForSelect2ByCollection(
+                return getEntriesForSelect2ByCollection(
                     auth()->user()->organizations(),
                     'organizations.'
                 );
@@ -43,69 +37,26 @@ class OrganizationsController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('organization_access'), 403);
-        $organization_id_field = 'id'; // if auth()->user()->organizations() is used query uses organization_role_user table therefore organization_id field = organization_id
+
 
         if (auth()->user()->role()->id == 1) {
             $organizations = Organization::with(['status']);
+            $organization_id_field = 'id'; // if auth()->user()->organizations() is used query uses organization_role_user table therefore organization_id field = organization_id
         } else  {
             $organizations = auth()->user()->organizations()->with(['status']);
             $organization_id_field = 'organization_id';
         }
 
-        $edit_gate = \Gate::allows('organization_edit');
-        $delete_gate = \Gate::allows('organization_delete');
-
         return DataTables::of($organizations)
             ->addColumn('status', function ($organizations) {
                 return $organizations->status->lang_de;
             })
-            ->addColumn('action', function ($organizations) use ($edit_gate, $delete_gate, $organization_id_field) {
-                $actions = '';
-                if ($organizations->role_id == 4 || is_admin()) { // only show edit/delete in orgs where the user is a schooladmin
-                    if ($edit_gate) {
-                        $actions .= '<a href="'.route('organizations.edit', $organizations->id).'"'
-                        .'id="edit-organization-'.$organizations->$organization_id_field.'" '
-                        .'class="btn p-1">'
-                        .'<i class="fa fa-pencil-alt"></i>'
-                        .'</a>';
-                    }
-                    if ($delete_gate) {
-                        $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'organizations\','.$organizations->$organization_id_field.')">'
-                        .'<i class="fa fa-trash"></i></button>';
-                    }
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId($organization_id_field)
             ->setRowAttr([
                 'color' => 'primary',
             ])
             ->make(true);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        abort_unless(\Gate::allows('organization_create'), 403);
-        $status_definitions = StatusDefinition::all();
-        $organization_types = OrganizationType::all();
-        $countries = Country::all();
-        $states = State::where('country', 'DE')->get();
-
-        return view('organizations.create')
-            ->with(compact('status_definitions'))
-            ->with(compact('countries'))
-            ->with(compact('states'))
-            ->with(compact('organization_types'));
     }
 
     /**
@@ -129,12 +80,9 @@ class OrganizationsController extends Controller
             )
         );
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $organization->path()];
+            return $organization;
         }
-        //dd($organization->path());
-        return redirect($organization->path());
     }
 
     /**
@@ -154,51 +102,10 @@ class OrganizationsController extends Controller
             ];
         }
         $status_definitions = StatusDefinition::all();
-
+        $organization = $organization->load('type', 'state', 'country');
         return view('organizations.show')
                 ->with(compact('organization'))
                 ->with(compact('status_definitions'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Organization $organization)
-    {
-        abort_unless(\Gate::allows('organization_edit'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
-        $status_definitions = StatusDefinition::all();
-        $organization_types = OrganizationType::all();
-        $countries = Country::all();
-        $states = State::where('country', 'DE')->get();
-
-        return view('organizations.edit')
-            ->with(compact('organization'))
-            ->with(compact('countries'))
-            ->with(compact('states'))
-            ->with(compact('status_definitions'))
-            ->with(compact('organization_types'));
-    }
-
-    public function editAddress(Organization $organization)
-    {
-        abort_unless(\Gate::allows('organization_edit_address'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
-
-        return view('organizations.editAddress')
-            ->with(compact('organization'));
-    }
-
-    public function editLmsUrl(Organization $organization)
-    {
-        abort_unless(\Gate::allows('organization_edit_address'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
-
-        return view('organizations.editLmsUrl')
-            ->with(compact('organization'));
     }
 
     /**
@@ -210,8 +117,8 @@ class OrganizationsController extends Controller
      */
     public function update(Organization $organization)
     {
-        abort_unless(\Gate::allows('organization_edit'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
+        abort_unless(\Gate::allows('organization_edit'), 403, "No permission to edit organization information");
+        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403, "Need to be registered in this organization");
 
         $clean_data = $this->validateRequest();
         $clean_data['state_id'] = format_select_input($clean_data['state_id']);
@@ -224,18 +131,9 @@ class OrganizationsController extends Controller
 
         $organization->update($clean_data);
 
-        return redirect($organization->path());
-    }
-
-    public function updateAddress(Organization $organization)
-    {
-        abort_unless(\Gate::allows('organization_edit_address'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
-
-        $clean_data = $this->validateRequest();
-        $organization->update($clean_data);
-
-        return redirect($organization->path());
+        if (request()->wantsJson()) {
+            return $organization->with(['country', 'state', 'type'])->find($organization->id);
+        }
     }
 
     /**
@@ -249,17 +147,7 @@ class OrganizationsController extends Controller
         abort_unless(\Gate::allows('organization_delete'), 403);
         abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
 
-        $organization->delete();
-
-        return back();
-    }
-
-    public function massDestroy(MassDestroyOrganizationRequest $request)
-    {
-        abort_unless(\Gate::allows('organization_delete'), 403);
-        Organization::whereIn('id', request('ids'))->delete();
-
-        return response(null, 204);
+        return $organization->delete();
     }
 
     public function enrol()
@@ -287,8 +175,9 @@ class OrganizationsController extends Controller
                 }
             }
         }
-
-        return $return;
+        if (request()->wantsJson()) {
+            return $return ?? null;
+        }
     }
 
     public function expel()
@@ -311,12 +200,15 @@ class OrganizationsController extends Controller
             }
         }
 
-        return $return;
+        if (request()->wantsJson()) {
+            return $return ?? null;
+        }
     }
 
     protected function validateRequest()
     {
         return request()->validate([
+            'common_name' => 'sometimes',
             'title' => 'sometimes|required',
             'description' => 'sometimes',
             'street' => 'sometimes',
@@ -328,7 +220,7 @@ class OrganizationsController extends Controller
             'phone' => 'sometimes',
             'email' => 'sometimes',
             'status_id' => 'sometimes',
-            'lms_url' => 'sometimes|url',
+            'lms_url' => 'sometimes',
         ]);
     }
 }

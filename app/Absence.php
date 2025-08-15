@@ -9,9 +9,10 @@ class Absence extends Model
 {
     protected $guarded = [];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'done' => 'boolean',
     ];
 
     /**

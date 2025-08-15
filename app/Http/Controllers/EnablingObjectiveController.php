@@ -6,14 +6,13 @@ use App\Config;
 use App\Curriculum;
 use App\EnablingObjective;
 use App\Group;
-use App\Http\Requests\StoreEnablingObjectiveRequest;
-use App\Http\Requests\UpdateEnablingObjectiveRequest;
 use App\Medium;
 use App\QuoteSubscription;
 use App\ReferenceSubscription;
 use App\TerminalObjective;
 use App\User;
 use DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class EnablingObjectiveController extends Controller
@@ -24,20 +23,28 @@ class EnablingObjectiveController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreEnablingObjectiveRequest $request)
+    public function store(Request $request)
     {
-        abort_unless(TerminalObjective::find(request('terminal_objective_id'))->isAccessible(), 403);
+        $input = $this->validateRequest();
+        abort_unless(TerminalObjective::find($input['terminal_objective_id'])->isAccessible(), 403);
 
-        $order_id = $this->getMaxOrderId(request('terminal_objective_id'));
-        $enablingObjective = EnablingObjective::create(array_merge($request->all(), ['order_id' => $order_id]));
+        $order_id = $this->getMaxOrderId($input['terminal_objective_id']);
+        $enablingObjective = EnablingObjective::create([
+            'title'                 => $input['title'],
+            'description'           => $input['description'],
+            'time_approach'         => $input['time_approach'],
+            'curriculum_id'         => $input['curriculum_id'],
+            'terminal_objective_id' => $input['terminal_objective_id'],
+            'level_id'              => format_select_input($input['level_id']),
+            'visibility'            => $input['visibility'],
+            'order_id'              => $order_id
+        ]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['message' => $enablingObjective];
+            return EnablingObjective::with('achievements')->without('terminalObjective')->find($enablingObjective->id);
         }
-
-        return back();
     }
 
     /**
@@ -60,10 +67,12 @@ class EnablingObjectiveController extends Controller
             ->get()->first();
 
         $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
+        $editable = $objective->curriculum->isEditable();
 
         return view('objectives.show')
             ->with(compact('objective'))
-            ->with(compact('repository'));
+            ->with(compact('repository'))
+            ->with(compact('editable'));
     }
 
     /**
@@ -73,20 +82,23 @@ class EnablingObjectiveController extends Controller
      * @param  \App\EnablingObjective  $enablingObjective
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateEnablingObjectiveRequest $request, EnablingObjective $enablingObjective)
+    public function update(Request $request, EnablingObjective $enablingObjective)
     {
         abort_unless($enablingObjective->isAccessible(), 403);
 
-        //first get existing data to later adjust order_id
-        $old_objective = EnablingObjective::find(request('id'));
+        $input = $this->validateRequest();
 
-        if ($request->has('order_id')) {
-            if (request()->wantsJson()) {
-                return ['message' => $this->toggleOrderId($old_objective, request('order_id'))];
-            }
-        }
         if (request()->wantsJson()) {
-            return ['message' => $enablingObjective->update($request->all())];
+            $enablingObjective->update([
+                'title'                 => $input['title'],
+                'description'           => $input['description'],
+                'time_approach'         => $input['time_approach'],
+                'curriculum_id'         => $input['curriculum_id'],
+                'terminal_objective_id' => $input['terminal_objective_id'],
+                'level_id'              => format_select_input($input['level_id']),
+                'visibility'            => $input['visibility']
+            ]);
+            return $enablingObjective->without(['terminalObjective', 'curriculum', 'owner'])->find($enablingObjective->id);
         }
     }
 
@@ -100,76 +112,22 @@ class EnablingObjectiveController extends Controller
     {
         abort_unless((\Gate::allows('objective_delete') and $enablingObjective->isAccessible()), 403);
 
-        //set temp vars
-        $curriculum_id = $enablingObjective->curriculum_id;
-        $terminal_objective_id = $enablingObjective->terminal_objective_id;
-        $order_id = $enablingObjective->order_id;
-
         // delete contents
         foreach ($enablingObjective->contents as $content) {
             (new ContentController)->destroy($content, 'App\EnablingObjective', $enablingObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-        // delete achievements
-        $enablingObjective->achievements()
-                ->where('referenceable_type', '=', 'App\EnablingObjective')
-                ->where('referenceable_id', '=', $enablingObjective->id)
-                ->delete();
+        
+        // decrease order-id of each objective with a higher order-id by 1
+        EnablingObjective::where('terminal_objective_id', $enablingObjective->terminal_objective_id)
+            ->where('order_id', '>', $enablingObjective->order_id)
+            ->decrement('order_id', 1);
 
-        // delete subscriptions
-        $enablingObjective->subscriptions()
-                ->where('enabling_objective_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete mediaSubscriptions
-        $media = $enablingObjective->media;
-        $enablingObjective->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\EnablingObjective')
-                ->where('subscribable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete quoteSubscriptions/Quotes
-        $enablingObjective->quoteSubscriptions()
-                ->where('quotable_type', '=', 'App\EnablingObjective')
-                ->where('quotable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete referenceSubscriptions
-        $enablingObjective->referenceSubscriptions()
-                ->where('referenceable_type', '=', 'App\EnablingObjective')
-                ->where('referenceable_id', '=', $enablingObjective->id)
-                ->delete();
-
-        // delete repositorySubscriptions
-        $enablingObjective->repositorySubscriptions()
-                ->where('subscribable_type', '=', 'App\EnablingObjective')
-                ->where('subscribable_id', '=', $enablingObjective->id)
-                ->delete();
-        // delete prerequisites entries (predecessors)
-        $enablingObjective->predecessors()
-            ->where('successor_type', '=', 'App\EnablingObjective')
-            ->where('successor_id', '=', $enablingObjective->id)
-            ->delete();
-        // delete prerequisites entries (successors)
-        $enablingObjective->successors()
-            ->where('predecessor_type', '=', 'App\EnablingObjective')
-            ->where('predecessor_id', '=', $enablingObjective->id)
-            ->delete();
-
-        //delete objective
+        // delete objective
         $return = $enablingObjective->delete();
 
-        //reset order_ids
-        $this->resetOrderIds($curriculum_id, $terminal_objective_id, $order_id);
-
-        //delete unused media
-        foreach ($media as $medium) {
-            Medium::where('id', $medium->id)->delete();
-        }
-
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $return;
         }
-        //return $return;
     }
 
     public function referenceSubscriptionSiblings(EnablingObjective $enablingObjective)
@@ -182,12 +140,11 @@ class EnablingObjectiveController extends Controller
             $collection = ReferenceSubscription::where('reference_id', '=', $referenceSubscription->reference_id)
                 ->where(function ($query) use ($referenceSubscription, $enablingObjective) {
                     return $query->where('reference_id', '=', $referenceSubscription->reference_id)
-//                                                      ->where('referenceable_type', '!=','App\EnablingObjective')
-                                                      ->where('referenceable_id', '!=', $enablingObjective->id);
+                        ->where('referenceable_id', '!=', $enablingObjective->id);
                 })
-                                ->with(['referenceable.curriculum.organizationType'])
-                                ->with(['reference'])
-                     ->get();
+                ->with(['referenceable.curriculum.organizationType'])
+                ->with(['reference'])
+                ->get();
             $siblings = $siblings->merge($collection);
         }
 
@@ -241,40 +198,36 @@ class EnablingObjectiveController extends Controller
         return (is_numeric($order_id)) ? $order_id + 1 : 0;
     }
 
-    protected function resetOrderIds($curriculum_id, $terminal_objective_id, $order_id, $direction = 'down')
+    public function higher(EnablingObjective $enablingObjective)
     {
-        abort_unless(Curriculum::find($curriculum_id)->isAccessible(), 403);
+        abort_unless($enablingObjective->isAccessible(), 403);
 
-        return (new EnablingObjective)->where('curriculum_id', $curriculum_id)
-            ->where('terminal_objective_id', $terminal_objective_id)
-            ->where('order_id', '>', $order_id)
-            ->update([
-                'order_id' => DB::raw('order_id'.(($direction === 'down') ? '-1' : '+1')),
-            ]);
+        // decrease order_id of the objective with the next highest order_id
+        EnablingObjective::where([
+            'terminal_objective_id' => $enablingObjective->terminal_objective_id,
+            'order_id' => $enablingObjective->order_id + 1,
+        ])->decrement('order_id', 1);
+
+        $enablingObjective->order_id++;
+        $enablingObjective->save();
+
+        return EnablingObjective::where('terminal_objective_id', $enablingObjective->terminal_objective_id)->without('terminalObjective')->orderBy('order_id')->get();
     }
 
-    /**
-     * @param  int  $curriculum_id
-     * @param  int  $order_id
-     * @param  int  $new_order_id
-     * @return type
-     */
-    protected function toggleOrderId($old_objective, $new_order_id)
+    public function lower(EnablingObjective $enablingObjective)
     {
-        abort_unless(Curriculum::find($old_objective->curriculum_id)->isAccessible(), 403);
+        abort_unless($enablingObjective->isAccessible(), 403);
 
-        // toggle order_ids of terminal objectives
-        $responseA = (new EnablingObjective)->where('curriculum_id', $old_objective->curriculum_id)
-            ->where('terminal_objective_id', $old_objective->terminal_objective_id)
-            ->where('order_id', '=', $new_order_id)
-            ->update(['order_id' => $old_objective->order_id]);
+        // increase order_id of the objective with the next lowest order_id
+        EnablingObjective::where([
+            'terminal_objective_id' => $enablingObjective->terminal_objective_id,
+            'order_id' => $enablingObjective->order_id - 1,
+        ])->increment('order_id', 1);
 
-        $responseB = (new EnablingObjective)->where('id', $old_objective->id)
-            ->update(['order_id' => $new_order_id]);
+        $enablingObjective->order_id--;
+        $enablingObjective->save();
 
-        if (($responseA == true) and ($responseB == true)) {
-            return '/curricula/'.$old_objective->curriculum_id;
-        }
+        return EnablingObjective::where('terminal_objective_id', $enablingObjective->terminal_objective_id)->without('terminalObjective')->orderBy('order_id')->get();
     }
 
     /**
@@ -320,5 +273,19 @@ class EnablingObjectiveController extends Controller
         if (request()->wantsJson()) {
             return $result;
         }
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'id'                    => 'sometimes',
+            'title'                 => 'sometimes',
+            'description'           => 'sometimes',
+            'time_approach'         => 'sometimes',
+            'curriculum_id'         => 'sometimes',
+            'terminal_objective_id' => 'sometimes',
+            'level_id'              => 'sometimes',
+            'visibility'            => 'sometimes',
+        ]);
     }
 }

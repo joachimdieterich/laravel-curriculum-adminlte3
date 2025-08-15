@@ -1,45 +1,71 @@
 <template>
-    <span v-if="type === 'enabling' && settings.edit === false"
+    <span v-if="type === 'enabling'"
         class="d-flex align-items-center"
-        style="cursor: default; gap: 4px"
+        style="gap: 4px;"
     >
-        <i class="t-18 margin-r-5"
-            v-bind:class="[green_css, fabadge, disabled ? 'text-gray' : 'text-green pointer']"
-            v-bind:data-count="[green_count]"
-            @click.prevent="achieve('1')">
-        </i>
-        <i class="t-18 margin-r-5"
-            v-bind:class="[orange_css, fabadge, disabled ? 'text-gray' : 'text-orange pointer']"
-            v-bind:data-count="[orange_count]"
-            @click.prevent="achieve('2')">
-        </i>
-        <i class="t-18 margin-r-5"
-            v-bind:class="[red_css, fabadge, disabled ? 'text-gray' : 'text-red pointer']"
-            v-bind:data-count="[red_count]"
-            @click.prevent="achieve('3')">
-        </i>
-        <i class="t-18 margin-r-5 text-gray"
-            v-bind:class="[white_css, fabadge, disabled ? '' : 'pointer']"
-            v-bind:data-count="[white_count]"
-            @click.prevent="achieve('0')">
-        </i>
-        <span v-if="objective.achievements?.length === 1" style="line-height: 1; white-space: nowrap;">
-            {{ objective.achievements[0].updated_at?.substring(0, 10) }}
+        <i
+            class="t-18"
+            :class="[green_css, fabadge, disabled ? 'text-gray' : 'text-green pointer']"
+            :data-count="[green_count]"
+            @click.prevent="achieve('1')"
+        ></i>
+        <i
+            class="t-18"
+            :class="[orange_css, fabadge, disabled ? 'text-gray' : 'text-orange pointer']"
+            :data-count="[orange_count]"
+            @click.prevent="achieve('2')"
+        ></i>
+        <i
+            class="t-18"
+            :class="[red_css, fabadge, disabled ? 'text-gray' : 'text-red pointer']"
+            :data-count="[red_count]"
+            @click.prevent="achieve('3')"
+        ></i>
+        <i
+            class="t-18 text-gray"
+            :class="[white_css, fabadge, disabled ? '' : 'pointer']"
+            :data-count="[white_count]"
+            @click.prevent="achieve('0')"
+        ></i>
+        <span v-if="objective.achievements?.length === 1"
+            class="ml-1"
+            style="line-height: 1; white-space: nowrap;"
+        >
+            {{ new Date(objective.achievements[0].updated_at).toLocaleDateString() }}
         </span>
     </span>
 </template>
-
 <script>
+import {useDatatableStore} from "../../store/datatables";
+
 export default {
     props: {
-        objective: {},
-        type: {},
-        settings: {},
+        objective: {
+            type: Object,
+            default: null,
+        },
+        type: {
+            type: String,
+            default: null,
+        },
+        settings: {
+            type: Object,
+            default: null,
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
         users: {
             type: Array,
             default: () => [],
         },
-        disabled: false,
+    },
+    setup() {
+        const store = useDatatableStore();
+        return {
+            store,
+        }
     },
     data() {
         return {
@@ -64,27 +90,34 @@ export default {
 
             let selected = this.users;
             if (selected.length === 0) {
-                selected = localStorage.getItem('user-datatable-selection')?.split(",");
-            }
-            if (selected === undefined || selected[0] == '') { // if no user is in localStorage, set current user for self-assessment
-                selected = [this.$userId];
+                selected = this.store.getSelectedIds('curriculum-user-datatable');
             }
 
-            let achievement = {
-                'referenceable_type': (this.type === 'terminal' ? 'App\\TerminalObjective' : 'App\\EnablingObjective'),
-                'referenceable_id': this.objective.id,
-                'user_id': selected,
-                'status': status
+            const achievement = {
+                referenceable_id: this.objective.id,
+                referenceable_type: (this.type === 'terminal' ? 'App\\TerminalObjective' : 'App\\EnablingObjective'),
+                user_id: selected,
+                status: status
             }
             try {
-                await axios.post('/achievements', achievement).then(response => {
-                    this.status = response.data.message;
-                    // send new status to SetAchievementsModal to overwrite other AchievementIndicators
-                    if (this.settings.sendStatus === true) {
-                        // first parent is VueJsModal, second parent is SetAchievementsModal
-                        this.$parent.$parent.updateStatus(status);
-                    }
-                });
+                await axios.post('/achievements', achievement)
+                    .then(response => {
+                        if (this.users.length > 1) {
+                            this.status = '0' + response.data[0].status.toString().charAt(1);
+                        } else {
+                            this.status = response.data[0].status.toString();
+                        }
+
+                        if (this.settings.referenceable_id && this.settings.referenceable_type) {
+                            this.$eventHub.emit('achievements-set', {
+                                objective_id: this.objective.id,
+                                referenceable_id: this.settings.referenceable_id,
+                                referenceable_type: this.settings.referenceable_type,
+                                user_id: selected,
+                                achievements: response.data,
+                            });
+                        }
+                    });
 //                    calculateProgress(); //todo?
             } catch(error) {
                 alert(error);
@@ -94,11 +127,11 @@ export default {
             let status = "far fa-circle";
 
             if (this.status.charAt(0) === number &&
-                this.status.charAt(1) === number){
+                this.status.charAt(1) === number) {
                 status = "fa fa-check-circle";
-            } else if (this.status.charAt(0) === number){
+            } else if (this.status.charAt(0) === number) {
                 status = "fa fa-circle";
-            } else if (this.status.charAt(1) === number){
+            } else if (this.status.charAt(1) === number) {
                 status = "far fa-check-circle";
             }
 
@@ -106,32 +139,22 @@ export default {
         },
         calculate_count(number) {
             let student = 0, teacher = 0;
-            if (typeof this.objective.achievements !== 'undefined'){
+            if (typeof this.objective.achievements !== 'undefined') {
                 if (typeof this.objective.achievements[0] === 'object' && this.settings.achievements === true) {
-                    for (let i = 0; i < (this.objective.achievements).length; i++){
+                    for (let i = 0; i < (this.objective.achievements).length; i++) {
                         //console.log('ena:'+ this.objective.id +' lenght:'+ this.objective.achievements.length+' i:'+i+' student: '+this.objective.achievements[i].status.charAt(0)+' teacher: '+ this.objective.achievements[i].status.charAt(1));
-                        if (this.objective.achievements[i].status.charAt(0) === number &&
-                            this.objective.achievements[i].status.charAt(1) === number){
-                                student++;
-                                teacher++;
-                            }
-                            else if (this.objective.achievements[i].status.charAt(0) === number){
-                                student++;
-                            }
-                            else if (this.objective.achievements[i].status.charAt(1) === number){
-                                teacher++;
-                            }
+                        student += this.objective.achievements[i].status.charAt(0) === number;
+                        teacher += this.objective.achievements[i].status.charAt(1) === number;
                     }
                     return teacher; //todo option to show students self achievement status
                 } else {
-                    if (typeof this.objective.achievements !== 'undefined'){
+                    if (typeof this.objective.achievements !== 'undefined') {
                         if (typeof this.objective.achievements[0] === 'object') {
                             this.status = this.objective.achievements[0].status;
                         }
                     } else {
                         this.status = '00';
                     }
-
                 }
             } else {
                 return;
@@ -139,40 +162,43 @@ export default {
         }
     },
     computed: {
-        green_css: function () {
+        green_css: function() {
             return this.calculate_css('1');
         },
-        orange_css: function () {
+        orange_css: function() {
             return this.calculate_css('2');
         },
-        red_css: function () {
+        red_css: function() {
             return this.calculate_css('3');
         },
-        white_css: function () {
+        white_css: function() {
             return this.calculate_css('0');
         },
         //counts
-        green_count: function () {
+        green_count: function() {
             return this.calculate_count('1');
         },
-        orange_count: function () {
+        orange_count: function() {
             return this.calculate_count('2');
         },
-        red_count: function () {
+        red_count: function() {
             return this.calculate_count('3');
         },
-        white_count: function () {
+        white_count: function() {
             return this.calculate_count('0');
         },
-        fabadge: function (){
-            if (window.Laravel.permissions.indexOf('achievement_access') !== -1){
+        fabadge: function() {
+            if (window.Laravel.permissions.indexOf('achievement_access') !== -1) {
                 return "fabadge";
             }
         }
     },
     watch: {
-        objective: function (val, oldVal) {
-            if (typeof this.objective.achievements[0] === 'object'){
+        objective: function(val, oldVal) {
+            // only update the status when in a course
+            if (!this.settings.course) return;
+
+            if (typeof this.objective.achievements[0] === 'object') {
                 //console.log(val.achievements[0].status);
                 this.status = val.achievements[0].status;
             } else {
@@ -181,7 +207,7 @@ export default {
         },
     },
     created() {
-        if (typeof this.objective.achievements !== 'undefined'){
+        if (typeof this.objective.achievements !== 'undefined') {
             if (typeof this.objective.achievements[0] === 'object') {
                 this.status = this.objective.achievements[0].status;
             }

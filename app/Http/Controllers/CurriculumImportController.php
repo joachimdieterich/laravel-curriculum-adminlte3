@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Gate;
 use App\Certificate;
 use App\Content;
 use App\Curriculum;
@@ -24,34 +25,28 @@ use ZipArchive;
 
 class CurriculumImportController extends Controller
 {
-    public function import()
-    {
-        abort_unless(\Gate::allows('curriculum_create'), 403);
-
-        return view('curricula.import');
-    }
 
     /*
      * example http://127.0.0.1:8000/curricula/import?path=/curricula/2019-07-24_15-43-14_curriculum_nr_347.curriculum
      */
     public function store()
     {
-        abort_unless(\Gate::allows('curriculum_create'), 403);
-
+        abort_unless(Gate::allows('curriculum_create'), 403);
         ini_set('max_file_uploads', 200);
-        if (! request()->hasFile('imports')) {
+        if (! request()->hasFile('files')) {
             return redirect('/home');
         }
 
-        foreach (request()->file('imports') as $current_file) {
+        foreach (request()->file('files') as $current_file) {
             if (pathinfo($current_file->getClientOriginalName(), PATHINFO_EXTENSION) == 'curriculum') {
                 $curricula_id[] = $this->importCurriculumClassicExport($current_file);
             } elseif (pathinfo($current_file->getClientOriginalName(), PATHINFO_EXTENSION) == 'cur') {
                 $curricula_id[] = $this->importLaravelExport($current_file);
             }
         }
-
-        return redirect('/curricula');
+        if (request()->wantsJson()) {
+            return true; //todo:error handling
+        }
     }
 
     private function importCurriculumClassicExport($backup)

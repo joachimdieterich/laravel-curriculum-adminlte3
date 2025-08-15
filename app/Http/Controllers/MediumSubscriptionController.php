@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
+use App\Plugins\Repositories\edusharing\Edusharing;
 
 class MediumSubscriptionController extends Controller
 {
@@ -109,22 +110,46 @@ class MediumSubscriptionController extends Controller
     public function destroySubscription(Request $request)
     {
         abort_unless(\Gate::allows('medium_delete'), 403);
-        $subscription = $this->validateRequest();
-        $model = $subscription['subscribable_type'];
-        //! CHANGE IN NEW VERSION
-        // temporary solution to remove mediaSubscriptions for Logbooks/Kanbans
-        if ($model == 'App\\Logbook' || $model == 'App\\Kanban') {
-            app($model)::find($subscription['subscribable_id'])->update(['medium_id' => null]);
+        $input = $this->validateRequest();
+
+        // if request didn't send additional_data (on models where only 1 medium can be attached)
+        if (!isset($input['additional_data'])) {
+            // remove the medium_id from the model, so deleting the medium doesn't cause a foreign key constraint error
+            $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
         }
 
-        return MediumSubscription::where([
-            'medium_id' => $subscription['medium_id'],
-            'subscribable_type' => $subscription['subscribable_type'],
-            'subscribable_id' => $subscription['subscribable_id'],
-            'sharing_level_id' => $subscription['sharing_level_id'],
-            'visibility' => $subscription['visibility'],
-            //"owner_id"=> auth()->user()->id, //Todo: admin should be able to delete everything
-        ])->delete();
+        // technically there could be more than 1 result, but in practice a model can only have 1 attached medium
+        // also, for each edusharing-subscription a new medium is created, so these should always be unique (1:1)
+        $query = MediumSubscription::where([
+            'medium_id' => $input['medium_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+            'sharing_level_id' => $input['sharing_level_id'],
+            'visibility' => $input['visibility'],
+        ]);
+
+        $subscription = $query->first();
+
+        // if subscription doesn't exist => curriculum-media attached to a model->medium_id
+        if (isset($subscription)) {
+            // additional-data is needed to delete the usage
+            $additional_data = $subscription->additional_data;
+            // subscription needs to be deleted before deleting the medium
+            $query->delete();
+
+            if (isset($additional_data)) {
+                // delete the usage
+                $edusharing = new Edusharing;
+                $edusharing->deleteUsage(
+                    $additional_data['nodeId'],
+                    $additional_data['usageId'],
+                );
+                // and then delete the medium-entry
+                Medium::find($input['medium_id'])->delete();
+            }
+        }
+
+        return true;
     }
 
     protected function validateRequest()

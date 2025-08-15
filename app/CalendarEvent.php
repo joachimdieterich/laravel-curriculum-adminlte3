@@ -27,12 +27,17 @@ class CalendarEvent extends Model
         'owner_id'
     ];
 
-    protected $dates = [
-        'start',
-        'end',
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'start' => 'datetime',
+        'end'  => 'datetime',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
 
     /**

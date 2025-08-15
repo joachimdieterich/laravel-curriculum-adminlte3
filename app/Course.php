@@ -18,7 +18,7 @@ class Course extends Model
         return $this->belongsTo('App\Curriculum', 'curriculum_id', 'id');
     }
 
-    public function logbookSubscription()
+    public function logbookSubscriptions()
     {
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
     }
@@ -32,5 +32,11 @@ class Course extends Model
         } else {
             return false;
         }
+    }
+
+    public static function booted() {
+        static::deleting(function(Course $course) { // before delete() method call this
+            $course->logbookSubscriptions()->delete();
+        });
     }
 }

@@ -95,12 +95,12 @@
 @section('scripts')
     @parent
     <!--hack to get select2 working-->
-    <script>
+    <script type="module">
         $(document).ready(function () {
             function formatText(icon) {
                 return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
             }
-            <!--hack to get select2 working z-index-->
+            //hack to get select2 working z-index
              $("#{{ $field }}").select2({
                 placeholder: "{{ $placeholder }}",
                 dropdownParent: $("#{{ $field }}").parent(),
@@ -144,20 +144,20 @@
     @section('scripts')
     @parent
     <!--hack to get select2 working-->
-    <script>
+    <script type="module">
         $(document).ready(function () {
             function formatText(icon) {
                 return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
             }
-        <!--hack to get select2 working z-index-->
-        $("#{{ $field }}").select2({
-            placeholder: "{{ $placeholder }}",
-            dropdownParent: $("#{{ $field }}").parent(),
-            allowClear: "{{ $allowClear ?? true }}",
-            templateSelection: formatText,
-            templateResult: formatText
+            // hack to get select2 working z-index
+            $("#{{ $field }}").select2({
+                placeholder: "{{ $placeholder }}",
+                dropdownParent: $("#{{ $field }}").parent(),
+                allowClear: "{{ $allowClear ?? true }}",
+                templateSelection: formatText,
+                templateResult: formatText
+            });
         });
-    });
     </script>
     @endsection
 @endif

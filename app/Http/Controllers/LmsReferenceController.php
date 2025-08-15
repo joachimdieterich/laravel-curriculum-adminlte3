@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\LmsReference;
+use App\Organization;
 use App\Plugins\Lms\LmsPlugin;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,10 @@ class LmsReferenceController extends Controller
         $lms = new LmsPlugin();
 
         if (request()->wantsJson()) {
-            return ['message' => $lms->plugins[env('LMSPLUGIN')]->{$input['ws_function']}($input)];
+            return [
+                'entries' => $lms->plugins[env('LMSPLUGIN')]->{$input['ws_function']}($input),
+                'lms_url' => Organization::find(auth()->user()->current_organization_id)->lms_url
+            ];
         }
     }
 
@@ -48,9 +52,9 @@ class LmsReferenceController extends Controller
     {
         $input = $this->validateRequest();
 
-        $repositoryPlugin = app()->make('App\Plugins\Lms\LmsPlugin');
+        $lms = new LmsPlugin();
         if (request()->wantsJson()) {
-            return ['subscription' => $repositoryPlugin->plugins[$input['plugin']]->store($request)];
+            return $lms->plugins[$input['plugin']]->store($input);
         }
     }
 
@@ -112,10 +116,10 @@ class LmsReferenceController extends Controller
             'course_id' => 'sometimes',
             'course_content_id' => 'sometimes',
             'course_item' => 'sometimes',
-            'ws_function' => 'sometimes|required',
-            'referenceable_type' => 'sometimes|required',
-            'referenceable_id' => 'sometimes|required',
-            'sharing_level' => 'sometimes|required',
+            'ws_function' => 'sometimes',
+            'referenceable_type' => 'sometimes',
+            'referenceable_id' => 'sometimes',
+            'sharing_level' => 'sometimes',
         ]);
     }
 }

@@ -87,10 +87,10 @@ class NavigatorItemController extends Controller
                                         $new_navigator_item['medium_id'] = $curriculum->medium_id;  //todo how to update medium_id if curriculum->medium_id is changed
                 break;
             case 'App\NavigatorView':   $navigator_view = new NavigatorView([
-                'title' => $new_navigator_item['title'],
-                'description' => $new_navigator_item['description'],
-                'navigator_id' => $navigator_id,
-            ]);
+                                            'title' => $new_navigator_item['title'],
+                                            'description' => $new_navigator_item['description'],
+                                            'navigator_id' => $navigator_id,
+                                        ]);
                                         $navigator_view->save();
 
                                         $title = $new_navigator_item['title'];
@@ -127,12 +127,9 @@ class NavigatorItemController extends Controller
             $medium->subscribe($navigator_item);
         }
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $navigator_item->path()];
+            return $navigator_item;
         }
-
-        return redirect()->route('navigator.view', ['navigator' => $navigator_id, 'navigator_view' => $view_id]);
     }
 
     /**
@@ -178,7 +175,7 @@ class NavigatorItemController extends Controller
     {
         abort_unless(\Gate::allows('navigator_edit'), 403);
 
-        $model = $navigatorItem->update([
+        $navigator_item = $navigatorItem->update([
             'title' => $request['title'],
             'description' => Str::limit($request['description'], 200),
             'position' => format_select_input($request['position']),
@@ -198,7 +195,9 @@ class NavigatorItemController extends Controller
             $medium->subscribe($navigatorItem);
         }
 
-        return redirect()->route('navigator.view', ['navigator' => request()->navigator_id, 'navigator_view' => request()->view_id]);
+        if (request()->wantsJson()) {
+            return $navigator_item;
+        }
     }
 
     /**
@@ -210,9 +209,7 @@ class NavigatorItemController extends Controller
     public function destroy(NavigatorItem $navigatorItem)
     {
         abort_unless(\Gate::allows('navigator_delete'), 403);
-        $navigatorItem->delete();
-
-        return back();
+        return $navigatorItem->delete();
     }
 
     protected function validateRequest()
@@ -227,6 +224,7 @@ class NavigatorItemController extends Controller
             'position'          => 'sometimes',
             'css_class'         => 'sometimes',
             'visibility'        => 'sometimes',
+            'view_id'           => 'sometimes',
         ]);
     }
 

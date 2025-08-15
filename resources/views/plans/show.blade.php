@@ -1,28 +1,18 @@
 @extends('layouts.master')
 
 @section('title')
-    {{ $plan->title }}
-    @can('plan_create')
-        @if (Auth::user()->id ==  $plan->owner_id)
-            <a class="btn btn-flat"
-                onclick="app.__vue__.$eventHub.$emit('edit_plan', {{ $plan->toJson() }})"
-            >
-                <i class="fa fa-pencil-alt text-secondary"></i>
-            </a>
-            <button class="btn btn-flat"
-                    onclick="app.__vue__.$modal.show('subscribe-modal',  {'modelId': {{ $plan->id }}, 'modelUrl': 'plan' });">
-                <i class="fa fa-share-alt text-secondary"></i>
-            </button>
-        @endif
-    @endcan
+    <title-component></title-component>
 @endsection
 
 @section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item active">{{ trans('global.plan.title_singular') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i
-                class="fas fa-question-circle"></i></a></li>
+    <breadcrumbs
+        :entries="{{json_encode([
+            ['active'=> true, 'title'=> trans('global.plan.title_singular'), 'url' => "/plans"],
+            ['active'=> true, 'title'=> $plan->title]
+        ])}}"
+    ></breadcrumbs>
 @endsection
+
 @section('content')
     @switch($plan->type_id)
         @case(1)
@@ -33,17 +23,12 @@
             @break
 
         @case(4)
-            @include ('plans.showType4', [
-               'plan' =>  $plan,
-               'users' => $users,
-               'buttonText' => trans('global.plan.create')
-           ])
-
+            <plan
+                :plan="{{ $plan }}"
+                :editable="{{ $editable ? 'true' : 'false' }}"
+                :users="{{ json_encode($users) }}"
+            ></plan>
             @break
-
         @default
-
     @endswitch
-
-
 @endsection

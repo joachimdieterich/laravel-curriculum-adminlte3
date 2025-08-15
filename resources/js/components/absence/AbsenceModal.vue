@@ -1,65 +1,62 @@
 <template>
-    <modal
-        id="absence-modal"
-        name="absence-modal"
-        height="auto"
-        :adaptive=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
-        style="z-index: 1100">
-        <div class="card"
-             style="margin-bottom: 0px !important">
+    <Transition name="modal">
+        <div v-if="globalStore.modals[$options.name]?.show"
+             class="modal-mask"
+        >
+        <div class="modal-container">
             <div class="card-header">
-                 <h3 class="card-title">
-                     <span v-if="method === 'post'">
-                        {{ trans('global.absences.create')  }}
+                <h3 class="card-title">
+                    <span v-if="method === 'post'">
+                        {{ trans('global.absences.create') }}
                     </span>
                     <span v-if="method === 'patch'">
-                        {{ trans('global.absences.edit')  }}
+                        {{ trans('global.absences.edit') }}
                     </span>
-                 </h3>
-
-                 <div class="card-tools">
-                     <button type="button" class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
+                </h3>
+                <div class="card-tools">
+                    <button type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
-                     </button>
-                 </div>
+                    </button>
+                </div>
             </div>
 
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
+            <div class="card-body"
+                 style="max-height: 80vh; overflow-y: auto;">
                 <div class="form-group "
-                    :class="errors.reason ? 'has-error' : ''"
+                    :class="form.errors.title ? 'has-error' : ''"
                       >
-                    <label for="reason">{{ trans('global.absences.fields.reason') }} *</label>
+                    <label for="title">
+                        {{ trans('global.task.fields.title') }} *
+                    </label>
                     <input
-                        type="text" id="reason"
+                        type="text"
+                        id="reason"
                         name="reason"
                         class="form-control"
-                        v-model="reason"
+                        v-model="form.reason"
                         placeholder="Fehlgrund"
                         required
                         />
-                     <p class="help-block" v-if="errors.reason" v-text="errors.reason[0]"></p>
+                     <p class="help-block"
+                        v-if="form.errors.reason"
+                        v-text="form.errors.reason[0]"></p>
                 </div>
-
-                 <div class="form-group ">
-                    <label for="categorie">
-                        {{ trans('global.user.title') }}
-                    </label>
-                    <select name="users[]"
-                            id="users"
-                            class="form-control select2 "
-                            style="width:100%;"
-                            multiple=true>
-                         <option v-for="(item,index) in user_list" v-bind:value="item.id">{{ item.username }}</option>
-                    </select>
-                </div>
+                <Select2
+                    v-if="this.form.absent_user_id == '' "
+                    id="user_id"
+                    name="user_id"
+                    url="/users"
+                    model="user"
+                    option_id="id"
+                    option_label="title"
+                    :selected="this.form.absent_user_id"
+                    @selectedValue="(id) => {
+                        this.form.absent_user_id = id;
+                    }"
+                >
+                </Select2>
 
                 <div class="form-group ">
                     <label for="categorie">
@@ -69,104 +66,129 @@
                            type="number"
                            id="time"
                            step="5"
-                           v-model="time"
+                           v-model="form.time"
                            class="form-control "
                            style="width:100%;"/>
                 </div>
 
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="done" v-model="done" >
-                    <label class="form-check-label" for="visibility">{{ trans('global.absences.fields.done') }}</label>
-                </div>
-
+                <span class="pull-right custom-control custom-switch custom-switch-on-green">
+                    <input
+                        v-model="form.done"
+                        type="checkbox"
+                        class="custom-control-input pt-1 "
+                        :id="'done_input' + component_id">
+                      <label class="custom-control-label font-weight-light"
+                         :for="'done_input' + component_id">
+                          {{ trans('global.absences.fields.done') }}
+                      </label>
+                </span>
             </div>
 
             <div class="card-footer">
-                <span class="pull-right">
-<!--                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>-->
-                     <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
+                 <span class="pull-right">
+                     <button
+                         id="task-cancel"
+                         type="button"
+                         class="btn btn-default"
+                         @click="globalStore?.closeModal($options.name)">
+                         {{ trans('global.cancel') }}
+                     </button>
+                     <button
+                         id="task-save"
+                         class="btn btn-primary"
+                         @click="submit(method)" >
+                         {{ trans('global.save') }}
+                     </button>
                 </span>
             </div>
         </div>
-    </modal>
+    </div>
+    </Transition>
 </template>
-
 <script>
-    export default {
-        data() {
-            return {
-                params: [],
-                user_list: [],
-                users: [],
-                id: '',
-                reason: '',
-                done: false,
-                time: 0,
-                errors: {},
-                method: 'post'
-            };
-        },
-        methods: {
-            async loadGroupMembers(group_id) {
-                try {
-                    // todo: if more of one course is enroled loadGroupMemebers-calls should be merged
-                    this.user_list = JSON.parse((await axios.get('/groups/'+ group_id)).data.users);
-                }
-                catch(error) {
-                    this.errors = error.response.data.errors;
-                }
-            },
-            async submit() {
-                try {
-                    this.location = (await axios.post('/absences', {
-                        'reason':               this.reason,
-                        'absent_user_ids':      $("#users").val(),
-                        'referenceable_type':   this.params.referenceable_type,
-                        'referenceable_id':     this.params.referenceable_id,
-                        'done':                 this.done,
-                        'time':                 this.time,
-                    })).data.message;
-                    location.reload(true);
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import {useGlobalStore} from "../../store/global";
+import Select2 from "../forms/Select2.vue";
 
-                } catch(error) {
-                    //
-                }
-            },
-
-            beforeOpen(event) {
-                this.params = JSON.parse(event.params);
-
-                // load users from subscribed groups
-                Object.entries(this.params.subscriptions).forEach(([key, value]) => {
-                    if (value.subscribable_type === "App\\Course"){
-                        this.loadGroupMembers(value.subscribable.group_id);
-                    }
-                    if (value.subscribable_type === "App\\Group"){
-                        this.loadGroupMembers(value.subscribable.id);
-                    }
-                });
-                //todo: get users related to logbook
-
-             },
-            beforeClose() {
-            },
-            opened(){
-                this.initSelect2();
-            },
-            initSelect2(){
-                $("#users").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: true
-                });
-            },
-            close(){
-                this.$modal.hide('absence-modal');
-            }
-
-        },
-        components: {
-
+export default {
+    name: 'absence-modal',
+    components: {
+        Select2,
+        Editor,
+        VueDatePicker
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
         }
-    }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            url: '/absences',
+            form: new Form({
+                'id':'',
+                'reason': '',
+                'absent_user_id': '',
+                'referenceable_type': null,
+                'referenceable_id': null,
+                'done': false,
+                'time': 0
+            }),
+        }
+    },
+    methods: {
+        submit(method) {
+            if (method == 'patch') {
+                this.update();
+            } else {
+                this.add();
+            }
+        },
+        add() {
+            axios.post(this.url, this.form)
+                .then(r => {
+                    this.$eventHub.emit('absence-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+        update() {
+            axios.patch(this.url + '/' + this.form.id, this.form)
+                .then(r => {
+                    this.$eventHub.emit('absence-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
+                });
+        },
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                }
+            }
+        });
+
+        this.form.start_date = new Date();
+    },
+}
 </script>
 

@@ -9,106 +9,204 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
      * helper function to paginate on select2 fields
      * @param $model
      * @param string|array $field one or multiple fields to search term
-     * @param string $oderby
+     * @param string $orderby
      * @param string $text
      * @return \Illuminate\Http\JsonResponse
      */
-    function getEntriesForSelect2ByModel($model, $field = 'title', $oderby = 'title', $text = 'title', $id = 'id')
+    function getEntriesForSelect2ByModel($model, $field = 'title', $orderby = 'title', $text = 'title', $id = 'id')
     {
         $input = request()->validate([
-            'page' => 'required|integer',
+            'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
+            'selected' => 'sometimes|nullable',
         ]);
-        $page = $input['page'];
-        $resultCount = 25;
 
-        $offset = ($page - 1) * $resultCount;
+        if (request()->has('selected'))
+        {
+            //dump($input['selected']);
+            //dump($model::whereIn($id, (array)$input['selected'])->get());
+            return response()->json($model::whereIn($id, explode(",", $input['selected']))->get());
+        }
+        else
+        {
+            $page = $input['page'] ?? 1;
+            $resultCount = 25;
 
-        $term = $input['term'];
+            $offset = ($page - 1) * $resultCount;
 
-        $count = Count($model::where(   // count all enties FIRST with filter to get pagination working
-            function ($query) use ($field, $term) {
-                foreach ((array)$field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->get());
+            $term = $input['term'];
 
-        $entries = $model::where(
-            function ($query) use ($field, $term) {
-                foreach ((array)$field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->orderBy($oderby)
-            ->skip($offset)
-            ->take($resultCount)
-            ->get([$id, DB::raw($text . ' as text')]);
+            $count = $model::where(   // count all enties FIRST with filter to get pagination working
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->count();
 
-        $endCount = $offset + $resultCount;
-        $morePages = $count > $endCount;
+            $entries = $model::where(
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->orderBy($orderby)
+                ->skip($offset)
+                ->take($resultCount)
+                ->get([DB::raw( $id . ' as id,' . $text . ' as text')]); //match given $text and $id to get proper values
 
-        $results = array(
-            "results" => $entries,
-            "pagination" => array(
-                "more" => $morePages
-            )
-        );
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
 
-        return response()->json($results);
+            $results = array(
+                "results" => $entries,
+                "pagination" => array(
+                    "more" => $morePages
+                )
+            );
+
+            return response()->json($results);
+        }
+
+
     }
 }
+
 if (! function_exists('getEntriesForSelect2ByCollection'))
 {
-    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $oderby = 'title', $text = 'title', $id = 'id' )
+    /**
+     * helper function to paginate on select2 fields. Actually needs a Builder instead of a Collection
+     * @param $collection
+     * @param string $table
+     * @param string|array $field one or multiple table-columns to filter by
+     * @param string $orderby
+     * @param string $text
+     * @param string $id column to use as id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
     {
         $input = request()->validate([
-            'page' => 'required|integer',
+            'page' => 'sometimes|integer',
             'term' => 'sometimes|string|max:255|nullable',
+            'selected' => 'sometimes|nullable',
         ]);
-        $page = $input['page'];
-        $resultCount = 25;
 
-        $offset = ($page - 1) * $resultCount;
+        if (request()->has('selected'))
+        {
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->get());
+        }
+        else
+        {
+            $page = $input['page'];
+            $resultCount = 25;
 
-        $term = $input['term'];
+            $offset = ($page - 1) * $resultCount;
 
-        $count = Count($collection->where(  // count all enties FIRST with filter to get pagination working
-            function($query) use ($field, $term)
-            {
-                foreach ((array) $field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->get());
+            $term = $input['term'];
 
-        $entries = $collection->where(
-            function($query) use ($field, $term)
-            {
-                foreach ((array) $field as $f) {
-                    $query->orWhere($f, 'LIKE', '%' . $term . '%');
-                }
-            })
-            ->orderBy($oderby)
-            ->skip($offset)
-            ->take($resultCount)
-            ->select([$table.$id, DB::raw($text . ' as text')])
-            ->get();
+            $count = $collection->where(  // count all entries FIRST with filter to get pagination working
+                function ($query) use ($field, $term) {
+                    foreach ((array)$field as $f) {
+                        $query->orWhere($f, 'LIKE', '%' . $term . '%');
+                    }
+                })
+                ->count();
 
-        $endCount = $offset + $resultCount;
-        $morePages = $count > $endCount;
+            // where-clause is kept from count-builder
+            $entries = $collection
+                ->orderBy($orderby)
+                ->skip($offset)
+                ->take($resultCount)
+                ->select([$table . $id, DB::raw($text . ' as text')])
+                ->get();
 
-        $results = array(
-            "results" => $entries,
-            "pagination" => array(
-                "more" => $morePages
-            )
-        );
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
 
-        return response()->json($results);
+            $results = array(
+                "results" => $entries,
+                "pagination" => array(
+                    "more" => $morePages
+                )
+            );
+
+            return response()->json($results);
+        }
     }
 }
 
+if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
+{
+    /**
+     * helper function to paginate on select2 fields. Actually needs a Collection, not a Builder
+     * @param $collection
+     * @param string $table
+     * @param string|array $field one or multiple table-columns to filter by
+     * @param string $orderby
+     * @param string $text
+     * @param string $id column to use as id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function getEntriesForSelect2ByCollectionAlternative($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
+    {
+        $input = request()->validate([
+            'page' => 'sometimes|integer',
+            'term' => 'sometimes|string|max:255|nullable',
+            'selected' => 'sometimes|nullable',
+        ]);
+
+        if (request()->has('selected'))
+        {
+            //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
+            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->values());
+        }
+        else
+        {
+            $page = $input['page'];
+            $resultCount = 25;
+
+            $offset = ($page - 1) * $resultCount;
+
+            $term = strtolower($input['term']); // str_contains is case sensitive
+
+            $allEntries = $collection->filter(function($obj) use ($field, $term) {
+                foreach ((array)$field as $f) {
+                    // if any match is true, return the entry
+                    if (str_contains(strtolower($obj[$f]), $term)) return true;
+                }
+                return false;
+            });
+
+            $count = Count($allEntries);
+
+            $entries = $allEntries
+                ->sortBy($orderby, SORT_NATURAL)
+                ->skip($offset)
+                ->take($resultCount)
+                ->select([$table.$id, $text])
+                ->map(function($entry) use ($table, $id, $text) {
+                    return [
+                        'id' => $entry[$table.$id],
+                        'text' => $entry[$text],
+                    ];
+                })
+                ->values();
+
+            $endCount = $offset + $resultCount;
+            $morePages = $count > $endCount;
+
+            $results = array(
+                "results" => $entries,
+                "pagination" => array(
+                    "more" => $morePages
+                )
+            );
+
+            return response()->json($results);
+        }
+    }
+}
 
 if (! function_exists('format_select_input')) {
 
@@ -159,7 +257,7 @@ if (! function_exists('relativeToAbsolutePaths')) {
             function ($match) {
                 $media = App\Medium::find($match[2]);
 
-                if (! file_exists($media?->absolutePath())) {
+                if (! file_exists($media->absolutePath())) {
                     return ''; //"<!--File does not exist-->"; //todo: remove from db?
                 }
                 if ($media !== null) {

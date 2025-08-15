@@ -14,7 +14,12 @@ class LevelController extends Controller
      */
     public function index()
     {
-        return Level::all()->toJson();
+        if (request()->wantsJson()){
+            return getEntriesForSelect2ByModel(
+                "App\Level"
+            );
+        }
+        //return Level::all()->toJson();
     }
 
     /**

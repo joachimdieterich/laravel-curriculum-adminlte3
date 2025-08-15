@@ -81,8 +81,6 @@ export default {
             }),
         }
     },
-    created() {
-    },
     mounted() {
         this.configs = this.initial_configs;
     },

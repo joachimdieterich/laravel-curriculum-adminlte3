@@ -5,12 +5,14 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class TerminalObjective extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title',
+    protected $fillable = [
+        'title',
         'description',
         'order_id',
         'color',
@@ -19,16 +21,19 @@ class TerminalObjective extends Model
         'objective_type_id',
         'visibility',
     ];
-
-    protected $dates = [
-        'updated_at',
-        'created_at',
-    ];
-
     protected $casts = [
+        'title' => CleanHtml::class,
+        'description' => CleanHtml::class,
         'visibility' => 'boolean',
         'referencing_curriculum_id' => 'object',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -155,5 +160,20 @@ class TerminalObjective extends Model
     public function isAccessible()
     {
         return $this->curriculum->isAccessible();
+    }
+
+    public static function booted() {
+        static::deleting(function(TerminalObjective $terminal) { // before delete() method call this
+            $terminal->achievements()->delete();
+            $terminal->subscriptions()->delete();
+            $terminal->mediaSubscriptions()->delete();
+            $terminal->progresses()->delete();
+            $terminal->quoteSubscriptions()->delete();
+            $terminal->referenceSubscriptions()->delete();
+            $terminal->repositorySubscriptions()->delete();
+            $terminal->predecessors()->delete();
+            $terminal->successors()->delete();
+            $terminal->enablingObjectives->each->delete();
+        });
     }
 }

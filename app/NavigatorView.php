@@ -10,7 +10,7 @@ class NavigatorView extends Model
 
     public function path()
     {
-        return "/navigators/{$this->navigator_id}/{$this->id}";
+        return "/navigatorViews/{$this->id}";
     }
 
     public function items()

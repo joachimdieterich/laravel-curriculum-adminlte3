@@ -28,7 +28,6 @@ abstract class EduSharingHelperAbstract {
         $ts = time() * 1000;
         $toSign = $this->base->appId . $signString . $ts;
         $signature = $this->sign($toSign);
-
         return [
             'Accept: ' . $accept,
             'Content-Type: ' . $contentType,

@@ -11,22 +11,10 @@ class SubjectController extends Controller
     public function index()
     {
         // select2 request
-        if (request()->wantsJson() and request()->has(['term', 'page'])) {
-            if (is_admin()) {
-                abort_unless(\Gate::allows('subject_access'), 403);
-
-                return getEntriesForSelect2ByModel(
-                    "App\Subject"
-                );
-            } else { // TODO: only get subjects in reference with teacher(?)
-                return getEntriesForSelect2ByModel(
-                    "App\Subject"
-                );
-            }
-        } else {
-            if (request()->wantsJson()) {
-                return Subject::all();
-            }
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByModel(
+                "App\Subject"
+            );
         }
         abort_unless(\Gate::allows('subject_access'), 403);
 
@@ -42,30 +30,7 @@ class SubjectController extends Controller
             'title_short',
         ])->get();
 
-        $edit_gate = \Gate::allows('subject_edit');
-        $delete_gate = \Gate::allows('subject_delete');
-
         return DataTables::of($subject)
-            ->addColumn('action', function ($subject) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('subjects.edit', $subject->id).'" '
-                        .'id="edit-subject-'.$subject->id.'" '
-                        .'class="btn">'
-                        .'<i class="fa fa-pencil-alt"></i>'
-                        .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'subjects\','.$subject->id.');">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
     }
@@ -88,15 +53,16 @@ class SubjectController extends Controller
         abort_unless(\Gate::allows('subject_create'), 403);
         $new_subject = $this->validateRequest();
 
-        Subject::create([
+        $subject = Subject::create([
             'title' => $new_subject['title'],
             'title_short' => $new_subject['title_short'],
-            'external_id' => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
-            'organization_type_id' => 1, // todo: is this used?
-
+            'external_id' => $new_subject['external_id'] ?? 1,
+            'organization_type_id' => format_select_input($new_subject['organization_type_id']) ?? 1,
         ]);
 
-        return redirect()->route('subjects.index');
+        if (request()->wantsJson()) {
+            return $subject;
+        }
     }
 
     public function edit(Subject $subject)
@@ -115,11 +81,13 @@ class SubjectController extends Controller
         $subject->update([
             'title' => $new_subject['title'],
             'title_short' => $new_subject['title_short'],
-            'external_id' => isset($new_subject['external_id']) ? $new_subject['external_id'] : 1,
-            'organization_type_id' => 1, // todo: is this used?
+            'external_id' => $new_subject['external_id'] ?? 1,
+            'organization_type_id' => format_select_input($new_subject['organization_type_id']) ?? 1,
         ]);
 
-        return redirect()->route('subjects.index');
+        if (request()->wantsJson()) {
+            return $subject;
+        }
     }
 
     public function show(Subject $subject)
@@ -133,19 +101,16 @@ class SubjectController extends Controller
     {
         abort_unless(\Gate::allows('subject_delete'), 403);
 
-        $subject->delete();
-
-        return back();
+        return $subject->delete();
     }
 
     protected function validateRequest()
     {
         return request()->validate([
             'title' => 'sometimes|required',
-            'title_short' => 'sometimes|required',
+            'title_short' => 'sometimes',
             'external_id' => 'sometimes',
             'organization_type_id' => 'sometimes',
-
         ]);
     }
 }

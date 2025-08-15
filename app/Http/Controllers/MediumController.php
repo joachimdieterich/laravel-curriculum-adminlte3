@@ -108,11 +108,6 @@ class MediumController extends Controller
         return $this->adapter()->destroy($medium, $subscribable_type, $subscribable_id);
     }
 
-    public function massDestroy(Medium $medium)
-    {
-        abort(404);
-    }
-
     public function checkIfUserHasSubscription($subscription)
     {
         return $this->adapter()->checkIfUserHasSubscription($subscription);

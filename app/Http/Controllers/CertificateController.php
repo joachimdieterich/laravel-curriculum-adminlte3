@@ -31,15 +31,13 @@ class CertificateController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
-        $certificates = Certificate::select([
-            'id',
-            'title',
-            'description',
-            'body',
-            'curriculum_id',
-            'organization_id',
-            'owner_id',
-        ])->with(['organization', 'curriculum', 'owner'])->where('owner_id', auth()->user()->id);
+        $certificates = null;
+
+        if (is_admin()) {
+            $certificates = Certificate::with(['organization', 'curriculum', 'owner']);
+        } else {
+            $certificates  = Certificate::where('owner_id', auth()->user()->id)->with(['organization', 'curriculum', 'owner']);
+        }
 
         return DataTables::of($certificates)
             ->addColumn('organization', function ($certificates) {
@@ -51,27 +49,6 @@ class CertificateController extends Controller
             ->addColumn('owner', function ($certificates) {
                 return $certificates->owner->firstname.' '.$certificates->owner->lastname;
             })
-            ->addColumn('action', function ($certificates) {
-                $actions = '';
-                if (\Gate::allows('certificate_show')) {
-                    $actions .= '<a href="'.route('certificates.show', $certificates->id).'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-list-alt"></i>'
-                                    .'</a>';
-                }
-                if (\Gate::allows('certificate_edit')) {
-                    $actions .= '<a href="'.route('certificates.edit', $certificates->id).'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if (\Gate::allows('certificate_delete')) {
-                    $actions .= '<button type="button" class="btn text-danger" onclick="destroyCertificate('.$certificates->id.')"><i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -87,19 +64,7 @@ class CertificateController extends Controller
      */
     public function create(Request $request)
     {
-        abort_unless(\Gate::allows('certificate_create'), 403);
-
-        $curricula = Curriculum::where('id', $request->query('curriculum_id'))->get();
-        $organisations = auth()->user()->organizations()->get();
-
-        $certificate = new Certificate();
-        $certificate->curriculum_id = $request->query('curriculum_id');
-        $certificate->organization_id = auth()->user()->current_organization_id;
-
-        return view('certificates.create')
-                ->with(compact('curricula'))
-                ->with(compact('certificate'))
-                ->with(compact('organisations'));
+        abort(403);
     }
 
     /**
@@ -123,12 +88,9 @@ class CertificateController extends Controller
             'global'          => isset($input['global']) ? 1 : '0',
         ]);
 
-        // axios call?
         if (request()->wantsJson()) {
-            return ['message' => $certificate->path()];
+            return $certificate;
         }
-
-        return redirect($certificate->path());
     }
 
     /**
@@ -151,14 +113,7 @@ class CertificateController extends Controller
      */
     public function edit(Certificate $certificate)
     {
-        abort_unless(\Gate::allows('certificate_edit'), 403);
-        $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
-        $organisations = auth()->user()->organizations()->get();
-
-        return view('certificates.edit')
-            ->with(compact('certificate'))
-            ->with(compact('curricula'))
-            ->with(compact('organisations'));
+        abort(403);
     }
 
     /**
@@ -183,7 +138,9 @@ class CertificateController extends Controller
             'global' => isset($input['global']) ? 1 : '0',
         ]);
 
-        return redirect()->route('certificates.index');
+        if (request()->wantsJson()) {
+            return $certificate;
+        }
     }
 
     /**
@@ -196,9 +153,7 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_delete'), 403);
 
-        $certificate->delete();
-
-        return back();
+        return $certificate->delete();
     }
 
     /**
@@ -210,18 +165,16 @@ class CertificateController extends Controller
     public function generate(Request $request)
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
-        $user_ids = explode(',', request()->user_ids);
-        $certificate = Certificate::find(request()->certificate_id);
+
+        $certificate = Certificate::find(format_select_input(request()->certificate_id));
 
         switch ($certificate->type) {
-            case 'user':            LogController::set(get_class($this).'@'.__FUNCTION__, request()->certificate_id, (is_array($user_ids)) ? count($user_ids) : 1);
-                                    return $this->generateForUsers($certificate);
+            case 'user':            return $this->generateForUsers($certificate);
                 break;
             case 'group':           return $this->generateForGroup($certificate);
                 break;
             case 'organization':    return $this->generateForOrganization($certificate);
                 break;
-
             default:
                 break;
         }
@@ -235,44 +188,51 @@ class CertificateController extends Controller
      */
     protected function generateForUsers($certificate)
     {
-        $user_ids = explode(',', request()->user_ids);
+        $users = User::find(request()->user_ids);
+        LogController::set(get_class($this).'@'.__FUNCTION__, $certificate->id, $users->count());
+        // first check if all given users are accessible by current user
+        foreach ($users as $user) {
+            abort_unless(auth()->user()->mayAccessUser($user),
+                403,
+                'global.error.no_access_to_user',
+                ['abort-info' => 'ID: ' . $user->id . ' => ' . $user->fullName()]
+            );
+        }
+
         $generated_files = [];
-        if
-        (
+        $curriculum = null;
+        if (
             str_contains($certificate->body, '[accomplished_objectives]')
             || str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]')
             || str_contains($certificate->body, '[accomplished_objectives_with_indicator]')
-        )
-        {
+        ) {
             $curriculum = Curriculum::with([
                 'terminalObjectives',
                 'terminalObjectives.enablingObjectives',])
                 ->find((request()->curriculum_id != null) ? request()->curriculum_id : $certificate->curriculum_id);
         }
-
-        foreach ($user_ids as $id) {
-            $user = User::where('id', $id)->get()->first();
-            abort_unless(auth()->user()->mayAccessUser($user), 403);
+        $html_to_print = '';
+        foreach ($users as $user) {
             //replace placeholder
             $html = $this->replaceFields(
-                    $certificate->body,
-                    $user,
-                    Organization::where('id', auth()->user()->current_organization_id)->get()->first(),
-                    request()->date);
+                $certificate->body,
+                $user,
+                Organization::find(auth()->user()->current_organization_id),
+                request()->date
+            );
 
-            if(str_contains($certificate->body, '[accomplished_objectives]'))
+            if (str_contains($certificate->body, '[accomplished_objectives]'))
             {
-                $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
+                $html = $this->generateAccomplishedObjectiveList($html, $user->id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
             }
-            if(str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]'))
+            if (str_contains($certificate->body, '[accomplished_objectives_without_terminal_objectives]'))
             {
-                $html = $this->generateAccomplishedObjectiveList($html, $id, $curriculum, '[accomplished_objectives_without_terminal_objectives]', false); //generate list if "[accomplished_objectives]" is in certificate
+                $html = $this->generateAccomplishedObjectiveList($html, $user->id, $curriculum, '[accomplished_objectives_without_terminal_objectives]', false); //generate list if "[accomplished_objectives]" is in certificate
             }
-            if(str_contains($certificate->body, '[accomplished_objectives_with_indicator]'))
+            if (str_contains($certificate->body, '[accomplished_objectives_with_indicator]'))
             {
-                $html = $this->generateAccomplishedObjectiveListWithIndicator($html, $id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
+                $html = $this->generateAccomplishedObjectiveListWithIndicator($html, $user->id, $curriculum); //generate list if "[accomplished_objectives]" is in certificate
             }
-
 
             $html = preg_replace_callback(
                 '/<span\s+[^>]*reference_type="(.*?)"\s+[^>]*reference_id="(.*?)"\s+[^>]*min_value="(.*?)"[^>]*>(.*?)<\/span>/mis',
@@ -298,27 +258,37 @@ class CertificateController extends Controller
                                 ->where('associable_type', $associable_type)
                                 ->where('associable_id', $associable_id)
                                 ->get();
-
-                    return ($progress->avg('value') != null and (int) $progress->avg('value') >= (int) $match[3])
-                            ? '<div style="opacity: 1;">'.$match[4].'</div>'
-                            : '<div style="opacity: 0.3;">'.$match[4].'</div>';
+                    //dump($progress->avg('value').'_'.$progress->avg('value').'_'.$match[3]);
+                    return ($progress->avg('value') != null and $progress->avg('value') >= (int) $match[3])
+                            ? $match[4]
+                            : '<div style="opacity: .5;">'.$match[4].'</div>';
                 },
 
                 $html
             );
-            //dump($html);
             //end progress
-            $filename = date('Y-m-d_H-i-s').str_replace_special_chars($user->lastname.'_'.$user->firstname).'.pdf'; //Username escape german umlaute
+
             $path = 'users/'.auth()->user()->id.'/';
 
-
-            if(!Storage::exists($path)){
+            if (!Storage::exists($path)) {
                 Storage::makeDirectory($path);
             }
 
-            $pathOfNewFile = $this->buildPdf($html, $path, $filename);
-
-            array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);
+            $input = $this->validateRequest();
+            // if oneFile == true
+            if ($input['oneFile'] === true) {
+                if ($user->id === $users->first()->id) {
+                    $html_to_print = $html;
+                } else {
+                    $html_to_print = $html_to_print.'<p style="page-break-before: always;"></p>'.$html;
+                }
+                $filename = date('Y-m-d_H-i-s').'_Certificates.pdf';
+                $pathOfNewFile = $this->buildPdf($html_to_print, $path, $filename);
+            } else {
+                $filename = date('Y-m-d_H-i-s').str_replace_special_chars($user->lastname.'_'.$user->firstname).'.pdf'; //Username escape german umlaute
+                $pathOfNewFile = $this->buildPdf($html, $path, $filename);
+                array_push($generated_files, ['filename' => $filename, 'path' => Storage::disk('local')->path($path.$filename)]);
+            }
         }//end foreach
 
         if (request()->wantsJson()) {
@@ -329,7 +299,6 @@ class CertificateController extends Controller
             }
         }
     }
-
 
     protected function generateAccomplishedObjectiveList($html, $user_id, $curriculum, $replace = "[accomplished_objectives]", $with_terminal_objectives = true)
     {
@@ -396,7 +365,7 @@ class CertificateController extends Controller
                     case '12':
                     case '22':
                     case '32':
-                        if($current_ter_value != $ter_value->id)
+                        if ($current_ter_value != $ter_value->id)
                         {
                             $accomplished_list .= '<tr><td '.$td_style.' colspan="3"><strong>'.strip_tags($ter_value->title).'</strong></td></tr>';
                             $current_ter_value = $ter_value->id;
@@ -425,18 +394,19 @@ class CertificateController extends Controller
      */
     protected function generateForGroup($certificate)
     {
-        $user_ids = explode(',', request()->user_ids);
+        $user_ids =  request()->user_ids;
 
         $td_style = 'style="border-bottom: 1px solid silver;border-right: 1px solid silver;"';
 
         $html = '<table repeat_header="1" style="width: 100%;padding-bottom: 10px;" border="0"><tbody>'
                 .'<thead><tr><td style="border-bottom: 1px solid silver;"><strong>Ziele / Namen</strong></td>';
-        foreach ($user_ids as $id) {
 
+        foreach ($user_ids as $id) {
             abort_unless(auth()->user()->mayAccessUser(User::find($id)), 403);
-            $user = User::where('id', $id)->get()->first();
+            $user = User::find($id);
             $html .= '<td '.$td_style.'><strong>'.$user->firstname.' '.$user->lastname.'</strong></td>';
         }
+
         $html .= '</tr></thead>';
 
         $curriculum = Curriculum::with([
@@ -450,7 +420,7 @@ class CertificateController extends Controller
             foreach ($ter_value->enablingObjectives as $ena) {
                 $html .= '<tr><td style="width: 25%;border-bottom: 1px solid silver;border-right: 1px solid silver;">'.strip_tags($ena->title).'</td>';
                 foreach ($user_ids as $user_id) {
-                    $html .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;"> ';
+                    $html .= '<td style="text-align: center; border-bottom: 1px solid silver;border-right: 1px solid silver;">';
                     $html .= $this->achievementIndicator(optional(\App\Achievement::where(
                             [
                                 'referenceable_type' => 'App\EnablingObjective',
@@ -505,39 +475,21 @@ class CertificateController extends Controller
 
     protected function achievementIndicator($status)
     {
-
-        $svg_check_green = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="green" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>';
-        $svg_circle_green = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="green" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>';
-
-        $svg_check_orange = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="orange" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>';
-        $svg_circle_orange = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="orange" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>';
-
-        $svg_check_red = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="red" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>';
-        $svg_circle_red = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="red" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>';
+        $span_style = 'style="text-align: center; font-family: DejaVu Sans;"';
 
         switch (true) {
-            case in_array($status, ['01', '11', '21', '31']):
-                $icons=  '<img src="data:image/svg+xml;base64,'.base64_encode($svg_check_green).'"  width="18" height="18" style="margin:5px;"/>'
-                        .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_orange).'"  width="18" height="18" style="margin:5px;"/>'
-                        .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_red).'"  width="18" height="18" style="margin:5px;"/>';
+            case in_array($status, ['01', '11', '21', '31']): $html = '<span '.$span_style.'>&#10004;</span>';
                 break;
-            case in_array($status, ['02', '12', '22', '32']):
-                $icons=  '<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_green).'"  width="18" height="18" style="margin:5px;"/>'
-                    .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_check_orange).'"  width="18" height="18" style="margin:5px;"/>'
-                    .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_red).'"  width="18" height="18" style="margin:5px;"/>';
+            case in_array($status, ['02', '12', '22', '32']): $html = '<span '.$span_style.'>(&#10004;)</span>';
                 break;
-            case in_array($status, ['03', '13', '23', '33']):
-                $icons =  '<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_green).'"  width="18" height="18" style="margin:5px;"/>'
-                    .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_orange).'"  width="18" height="18" style="margin:5px;"/>'
-                    .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_check_red).'"  width="18" height="18" style="margin:5px;"/>';
+            case in_array($status, ['03', '13', '23', '33']): $html = '<span '.$span_style.'>&#10007;</span>';
                 break;
-            default:   $icons =  '<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_green).'"  width="18" height="18" style="margin:5px;"/>'
-                .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_orange).'"  width="18" height="18" style="margin:5px;"/>'
-                .'<img src="data:image/svg+xml;base64,'.base64_encode($svg_circle_red).'"  width="18" height="18" style="margin:5px;"/>';
+
+            default:  $html = '<span '.$span_style.'></span>';
                 break;
         }
-        $style = 'style="text-align: center; margin-top:5px;"';
-        return '<div '.$style.'>'.$icons.'</span>';
+
+        return $html;
     }
 
     /**
@@ -555,25 +507,13 @@ class CertificateController extends Controller
         /* replace relative media links with absolute paths to get snappy working */
         $html = relativeToAbsolutePaths($html);
 
-        $pdf = Pdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <defs>
-                    <style>path{fill: #000000;}</style>
-            </defs>'.$html)
+        $pdf = Pdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
             ->setPaper('a4')
             //->setOrientation($orientation)
             ->setOption('margin-bottom', 0)
             ->setOption('enable-local-file-access', true)
             ->save(storage_path('app/'.$path.$filename));
         return $this->addFileToDb($filename);
-
-        // replaced
-  /*      SnappyPdf::loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'.$html)
-                ->setPaper('a4')
-                ->setOrientation($orientation)
-                ->setOption('margin-bottom', 0)
-                ->setOption('enable-local-file-access', true)
-                ->save(storage_path('app/'.$path.$filename));
-
-        return $this->addFileToDb($filename);*/
     }
 
     protected function zipper($path, $files)
@@ -627,7 +567,9 @@ class CertificateController extends Controller
             'body'                  => 'sometimes',
             'curriculum_id'         => 'sometimes',
             'organization_id'       => 'sometimes',
+            'user_ids'              => 'sometimes',
             'global'                => 'sometimes',
+            'oneFile'               => 'sometimes',
         ]);
     }
 }

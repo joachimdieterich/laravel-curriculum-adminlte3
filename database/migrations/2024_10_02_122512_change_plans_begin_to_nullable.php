@@ -14,7 +14,7 @@ return new class extends Migration
     {
         DB::statement('ALTER TABLE `plans` MODIFY `begin` timestamp NULL');
     }
-
+    
     /**
      * Reverse the migrations.
      *

@@ -5,12 +5,14 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class EnablingObjective extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title',
+    protected $fillable = [
+        'title',
         'description',
         'order_id',
         'time_approach',
@@ -21,16 +23,15 @@ class EnablingObjective extends Model
     ];
 
     protected $casts = [
+        'title' => CleanHtml::class,
+        'description' => CleanHtml::class,
         'visibility' => 'boolean',
         'referencing_curriculum_id' => 'object',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
-    ];
-
-    protected $with = ['terminalObjective', 'level'];
+    protected $with = ['terminalObjective', 'level:id,title,css_color'];
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -157,5 +158,18 @@ class EnablingObjective extends Model
     public function isAccessible()
     {
         return $this->curriculum->isAccessible();
+    }
+
+    public static function booted() {
+        static::deleting(function(EnablingObjective $enabling) { // before delete() method call this
+            $enabling->subscriptions()->delete();
+            $enabling->mediaSubscriptions()->delete();
+            $enabling->quoteSubscriptions()->delete();
+            $enabling->repositorySubscriptions()->delete();
+            $enabling->predecessors()->delete();
+            $enabling->successors()->delete();
+            $enabling->referenceSubscriptions()->delete();
+            $enabling->achievements->each->delete();
+        });
     }
 }

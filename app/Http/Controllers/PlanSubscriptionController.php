@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Plan;
 use App\PlanSubscription;
+use App\CurriculumSubscription;
+use App\TerminalObjective;
+use App\EnablingObjective;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 
 class PlanSubscriptionController extends Controller
 {
@@ -16,28 +18,11 @@ class PlanSubscriptionController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('plan_access'), 403);
-        $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
-            $model = $input['subscribable_type']::find($input['subscribable_id']);
-            abort_unless($model->isAccessible(), 403);
-
-            $planIds = PlanSubscription::where([
-                'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id'],
-            ])->pluck('plan_id')->toArray();
-
-            return DataTables::of(Plan::find($planIds))
-                ->setRowId('id')
-                ->make(true);
-        } else {
-            if (request()->wantsJson()) {
-                return [
-                    'subscribers' => [
-                        'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get(),
-                    ],
-                ];
-            }
+        abort_unless(\Gate::allows('plan_create'), 403);
+        if (request()->wantsJson()) {
+            return [
+                'subscriptions' => Plan::find(request('plan_id'))->subscriptions()->with('subscribable')->get(),
+            ];
         }
     }
 
@@ -50,10 +35,11 @@ class PlanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('plan_create') and Plan::find($input['model_id'])->isAccessible()), 403);   // user owns plan_subscription
+        $plan = Plan::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('plan_create') and $plan->isAccessible()), 403);   // user owns plan_subscription
 
         $subscribe = PlanSubscription::updateOrCreate([
-            'plan_id' => $input['model_id'],
+            'plan_id' => $plan->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id' => $input['subscribable_id'],
         ], [
@@ -62,8 +48,36 @@ class PlanSubscriptionController extends Controller
         ]);
         $subscribe->save();
 
+        // if group-subscription, connect Curricula used in Plan to the group
+        if ($input['subscribable_type'] == "App\Group") {
+            $entry_ids = $plan->entries()->pluck('id');
+            // get connected Curricula-IDs through its terminal-/enabling-subscriptions
+            $terminal = TerminalObjective::join('terminal_objective_subscriptions AS sub', 'terminal_objectives.id', '=', 'sub.terminal_objective_id')
+                ->where('subscribable_type', 'App\\PlanEntry')
+                ->whereIn('subscribable_id', $entry_ids)
+                ->pluck('curriculum_id');
+
+            $enabling = EnablingObjective::join('enabling_objective_subscriptions AS sub', 'enabling_objectives.id', '=', 'sub.enabling_objective_id')
+                ->where('subscribable_type', 'App\\PlanEntry')
+                ->whereIn('subscribable_id', $entry_ids)
+                ->pluck('curriculum_id');
+            // remove duplicates and keys
+            $curriculum_ids = $terminal->merge($enabling)->unique()->flatten();
+
+            // subscribe those Curricula to the group if it isn't already
+            foreach ($curriculum_ids as $id) {
+                CurriculumSubscription::firstOrCreate([
+                    'curriculum_id' => $id,
+                    'subscribable_type' => 'App\\Group',
+                    'subscribable_id' => $input['subscribable_id'],
+                ], [
+                    'owner_id' => auth()->user()->id,
+                ]);
+            }
+        }
+
         if (request()->wantsJson()) {
-            return ['subscription' => Plan::find($input['model_id'])->subscriptions()->with('subscribable')->get()];
+            return $subscribe->with(['subscribable', 'plan'])->find($subscribe->id);
         }
     }
 
@@ -104,12 +118,28 @@ class PlanSubscriptionController extends Controller
         }
     }
 
+    public function expel(Request $request) {
+        $input = $this->validateRequest();
+        $plan = Plan::find(format_select_input($input['model_id']));
+        abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
+
+        $subscription = PlanSubscription::where([
+            'plan_id' => $plan->id,
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ]);
+
+        if ($subscription->delete()) {
+            return trans('global.expel_success');
+        }
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes|integer',
+            'model_id'          => 'sometimes',
             'editable'          => 'sometimes',
         ]);
     }

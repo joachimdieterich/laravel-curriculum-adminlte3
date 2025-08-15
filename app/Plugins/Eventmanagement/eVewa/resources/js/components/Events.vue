@@ -29,6 +29,12 @@
             </span>
         </div>
 
+        <div v-if="loading"
+             class="overlay text-center"
+             style="width:100% !important;">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+        </div>
 
         <div v-for="event in entries" class="border-bottom card collapsed-card">
             <div class="card-header pointer">
@@ -45,19 +51,19 @@
             <div :id="'navigator-item-content-'+event.ARTIKEL_NR" class="card-body collapse">
                 <div class="row">
                     <div class="col-2"><strong>VA-Nummer</strong></div>
-                    <div class="col-10" v-dompurify-html="event.ARTIKEL_NR"></div>
+                    <div class="col-10" v-html="event.ARTIKEL_NR"></div>
 
                     <div class="col-2"
                          v-if="event.BEZ_1_2.length > 2">
                         <strong>Untertitel</strong></div>
                     <div class="col-10 pre-formatted"
                          v-if="event.BEZ_1_2.length > 2"
-                         v-dompurify-html="event.BEZ_1_2"></div>
+                         v-html="event.BEZ_1_2"></div>
                     <div class="col-2"><strong>Beschreibung</strong></div>
-                    <div class="col-10 pre-formatted" v-dompurify-html="event.BEMERKUNG"></div>
+                    <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
 
                     <div class="col-2"><strong>Veranstalter</strong></div>
-                    <div class="col-10" v-dompurify-html="event.MANDANT"></div>
+                    <div class="col-10" v-html="event.MANDANT"></div>
 
 
                     <div class="col-12 mt-2">
@@ -84,13 +90,15 @@
             </div>
         </div>
 
-<!--        <div id="loading-events" class="overlay text-center" style="width:100% !important;">
+        <div v-if="loading == true && (Object.keys(entries).length > 0)"
+             class="overlay text-center"
+             style="width:100% !important;">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             <span class="sr-only">Loading...</span>
-        </div>-->
+        </div>
 
         <div v-if="Object.keys(entries).length > 0"
-             class="row" >
+             class="row mb-3" >
                 <span
                     v-if="Object.keys(entries).length > 0"
                     class="col-6">
@@ -135,28 +143,31 @@
                 entries: [],
                 search:  '',//this.model.title.replace(/(<([^>]+)>)/ig,""),
                 page:    1,
-                errors:  {}
+                errors:  {},
+                loading: false
             }
         },
+        mounted() {},
         methods: {
             async loader(search) {
+                this.loading = true;
 
-                try {
-                    this.search = (search ? search : this.search);
-
-                    this.entries = (await axios.post('/eventSubscriptions/getEvents', {
+                axios.post('/eventSubscriptions/getEvents', {
                         subscribable_type: this.subscribable_type(),
                         subscribable_id: this.model.id,
                         search: (search ? search : this.search),
                         page: this.page,
                         plugin: 'evewa'
-                    })).data.events.data;
-                    $("#loading-events").hide();
-
-                } catch(error) {
-                    //this.errors = error.response.data.errors;
-                }
+                    })
+                    .then(r => {
+                        this.entries = r.data.events.data;
+                        this.loading = false;
+                    })
+                    .catch(e => {
+                        console.log(e.response);
+                    });
             },
+
             lastPage() {
                 this.page = this.page - 1
                 if (this.page == 0){
@@ -164,14 +175,13 @@
                 } else{
                     this.loader();
                 }
-
             },
             nextPage() {
                 this.page = this.page + 1;
                 this.loader();
             },
             subscribable_type() {
-                var reference_class = 'App\\TerminalObjective';
+                let reference_class = 'App\\TerminalObjective';
                 if (typeof this.model.terminal_objective === 'object'){
                     reference_class = 'App\\EnablingObjective';
                 }
@@ -181,7 +191,6 @@
 
         },
         computed: {},
-
     }
 </script>
 <style>

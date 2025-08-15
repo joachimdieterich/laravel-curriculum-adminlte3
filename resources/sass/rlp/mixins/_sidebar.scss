@@ -42,9 +42,7 @@
     }
 
     // Make the sidebar headers
-    .nav-sidebar .nav-header {
-      display: none;
-    }
+    .nav-sidebar .nav-header { opacity: 0; }
 
     .nav-sidebar .nav-link p {
       width: 0;

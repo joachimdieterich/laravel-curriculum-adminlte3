@@ -1,110 +1,180 @@
 <template>
-    <modal
-        id="content-modal"
-        name="content-modal"
-        height="auto"
-        width="100%"
-        :maxWidth=900
-        :adaptive=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
-        style="z-index: 1200">
-        <div class="card"
-             style="margin-bottom: 0 !important">
-            <div class="card-header">
-                 <h3 class="card-title">
-                    {{ content.title }}
-                 </h3>
+    <Transition name="modal">
+        <div v-if="globalStore.modals[$options.name]?.show"
+            class="modal-mask"
+            @click.self="globalStore.closeModal($options.name)"
+        >
+            <div class="modal-container">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span v-if="method === 'post'">
+                            {{ trans('global.content.create') }}
+                        </span>
+                        <span v-if="method === 'patch'">
+                            {{ trans('global.content.edit') }}
+                        </span>
+                    </h3>
+                    <div class="card-tools">
+                        <button
+                            type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
 
-                 <div class="card-tools">
-                     <button v-can="'curriculum_edit'"
-                             type="button"
-                             class="btn btn-tool"
-                             @click="del()">
-                        <i class="fa fa-trash text-danger"></i>
-                     </button>
-                     <button v-can="'curriculum_edit'"
-                             type="button"
-                             class="btn btn-tool"
-                             @click="edit('content-create-modal')">
-                        <i class="fa fa-edit"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
-                        <i class="fa fa-times"></i>
-                     </button>
-                 </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div
+                                class="form-group"
+                                :class="form.errors.title ? 'has-error' : ''"
+                            >
+                                <input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    class="form-control"
+                                    v-model.trim="form.title"
+                                    :placeholder="trans('global.title') + ' *'"
+                                    required
+                                />
+                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
+                            </div>
+        
+                            <Editor
+                                id="content"
+                                name="content"
+                                class="form-control"
+                                :init="tinyMCE"
+                                v-model="form.content"
+                            />
+                        </div>
+                    </div>
+                </div>
 
+                <div class="card-footer">
+                    <span class="pull-right">
+                        <button
+                            id="content-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="content-save"
+                            class="btn btn-primary ml-3"
+                            :disabled="!form.title || !form.content"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
+                </div>
             </div>
-
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;"
-                 v-dompurify-html="content.content">
-            </div>
-            <div class="card-footer">
-                <span class="pull-right">
-                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                </span>
-            </div>
-
         </div>
-    </modal>
+    </Transition>
 </template>
-
 <script>
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        data() {
-            return {
-                content: [],
-                quote: null,
-                subscribable: null,
-                errors: {}
+export default {
+    name: 'content-modal',
+    components: {
+        Editor,
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            form: new Form({
+                id: '',
+                title: '',
+                content: '',
+                subscribable_id: null,
+                subscribable_type: null,
+            }),
+            tinyMCE: null,
+        }
+    },
+    methods: {
+        submit() {
+            if (this.method == 'patch') {
+                this.update();
+            } else {
+                this.add();
             }
+
+            this.globalStore.closeModal(this.$options.name);
         },
-        methods: {
-            beforeOpen(event) {
-                if (event.params.content) {
-                    this.content = event.params.content;
-                    //console.log(event.params.quote);
-                    if (event.params.quote) {
-                        this.quote = event.params.quote;
-                    }
-                    if (event.params.subscribable) {
-                        this.subscribable = event.params.subscribable;
-                    }
-                }
-            },
-            opened(){
-                this.$nextTick(function () {
-                    document.getElementById('quote_'+this.quote).scrollIntoView({ block: 'start', behavior: 'smooth' })
+        add() {
+            axios.post('/contents', this.form)
+                .then(r => {
+                    this.$eventHub.emit('content-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e);
                 });
-
-            },
-            beforeClose() {
-            },
-            edit(modal){
-                 this.$modal.show(modal, { 'id': this.content.id, 'method': 'patch' });
-            },
-            async del(){
-                try {
-                    await axios.post('/contents/'+this.content.id+'/destroy',  { 'subscribable': this.subscribable } );
-                }
-                catch(error) {
-                    this.errors = response.data.errors;
-                }
-               location.reload();
-            },
-            close(){
-                this.$modal.hide('content-modal');
-            }
         },
+        update() {
+            axios.patch('/contents/' + this.form.id, this.form)
+                .then(r => {
+                    r.data.subscribable_id = this.form.subscribable_id;
+                    this.$eventHub.emit('content-updated', r.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        },
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
+                const params = state.modals[this.$options.name].params;
 
-
-
-    }
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.subscribable_type = params.subscribable_type;
+                    this.form.subscribable_id = params.subscribable_id;
+                    this.form.populate(params);
+                    if (this.form.id !== '') {
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
+                    // Editor needs to be re-initialized when the modal is opened again...
+                    this.tinyMCE = this.$initTinyMCE(
+                        [
+                            "autolink link curriculummedia table lists code autoresize"
+                        ],
+                        {
+                            callback: 'insertContent',
+                            callbackId: this.component_id,
+                            subscribable_type: this.form.subscribable_type, // ...so the subscribable values can be passed to it
+                            subscribable_id: this.form.subscribable_id,
+                            placeholder: window.trans.global.description + ' *',
+                        },
+                        "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link mathjax code",
+                        ""
+                    );
+                }
+            }
+        });
+    },
+}
 </script>

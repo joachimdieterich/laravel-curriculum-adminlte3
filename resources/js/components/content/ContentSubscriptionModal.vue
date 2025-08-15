@@ -1,150 +1,143 @@
 <template>
-    <modal
-        id="content-subscription-modal"
-        name="content-subscription-modal"
-        height="auto"
-        :adaptive=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @opened="opened"
-        @before-close="beforeClose"
-        style="z-index: 1200">
-        <div class="card"
-             style="margin-bottom: 0px !important">
+    <Transition name="modal">
+        <div v-if="globalStore.modals[$options.name]?.show"
+             class="modal-mask"
+        >
+        <div class="modal-container">
             <div class="card-header">
-                 <h3 class="card-title">
+                <h3 class="card-title">
                     {{ trans('global.content.copy') }}
-                 </h3>
-
-                 <div class="card-tools">
-                     <button type="button" class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
+                </h3>
+                <div class="card-tools">
+                    <button type="button"
+                            class="btn btn-tool"
+                            @click="globalStore?.closeModal($options.name)">
                         <i class="fa fa-times"></i>
-                     </button>
-                 </div>
+                    </button>
+                </div>
             </div>
 
             <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
                 <div class="form-group "
                     :class="form.errors.title ? 'has-error' : ''"
                       >
-                    <label for="title">{{ trans('global.curriculum.title_singular') }} *</label>
-                    <select name="curricula[]"
-                            id="curricula"
-                            class="form-control select2 "
-                            style="width:100%;"
-                            v-model="curriculum_id">
-                        <option v-for="(item,index) in curricula" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>
+                    <label for="title">{{ trans('global.content.fields.title') }} *</label>
+                    <input
+                        type="text" id="title"
+                        name="title"
+                        class="form-control"
+                        v-model="form.title"
+                        :placeholder="trans('global.content.fields.title')"
+                        required
+                        />
                      <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                 </div>
-
-                <div class="form-group ">
-                    <label for="contents">
-                        {{ trans('global.content.title_singular') }}
-                    </label>
-                    <select name="contents[]"
-                            id="contents"
-                            class="form-control select2 "
-                            style="width:100%;"
-                            multiple=true
-                            v-model="form.content_id">
-                         <option v-for="(item,index) in contents" v-bind:value="item.id">{{ item.title }}</option>
-                    </select>
-                </div>
-
             </div>
+            <Select2
+                id="curricula"
+                name="curricula"
+                url="/curricula"
+                model="curriculum"
+                :selected="this.curriculum_id"
+                @selectedValue="(id) => {
+                    this.curriculum_id = id;
+                    this.form.content_id = '';
+                }"
+            >
+            </Select2>
+
+            <Select2
+                id="contents"
+                name="contents"
+                :url="'/curricula/' + this.curriculum_id + '/contents/'"
+                :term="this.form.content_id"
+                model="state"
+                :selected="this.form.content_id"
+                @selectedValue="(id) => {
+                    this.form.content_id = id;
+                }"
+            >
+            </Select2>
+
             <div class="card-footer">
-                <span class="pull-right">
-                     <button type="button" class="btn btn-primary" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                     <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
+                 <span class="pull-right">
+                     <button
+                         id="content-cancel"
+                         type="button"
+                         class="btn btn-default"
+                         @click="globalStore?.closeModal($options.name)">
+                         {{ trans('global.cancel') }}
+                     </button>
+                     <button
+                         id="content-save"
+                         class="btn btn-primary"
+                         @click="submit(method)" >
+                         {{ trans('global.save') }}
+                     </button>
                 </span>
             </div>
-
         </div>
-    </modal>
+    </div>
+    </Transition>
 </template>
-
 <script>
-    import Form from 'form-backend-validation'
+import Form from 'form-backend-validation';
+import Editor from '@tinymce/tinymce-vue';
+import Select2 from "../forms/Select2.vue";
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        props: {
-            subscribable_type: '',
-            subscribable_id: ''
-        },
-        data() {
-            return {
-                curricula: Object,
-                curriculum_id: null,
-                contents: {},
-
-                form: new Form({
-                    'content_id': [],
-                    'subscribable_type': null,
-                    'subscribable_id': null,
-                }),
-            }
-        },
-        methods: {
-            async submit( ) {
-                try {
-                    this.form.content_id = $("#contents").val();
-                    this.location = (await axios.post('/contentSubscriptions', this.form)).data.message;
-                    this.$parent.$emit('addContent', this.form);
-                    this.close();
-                } catch(error) {
-                    this.form.errors = error.response.data.form.errors;
-                }
-            },
-            beforeOpen(event) {
-                this.getCurricula();
-            },
-            async getCurricula() {
-                try {
-                    this.curricula = (await axios.get('/curricula/')).data.curricula;
-                } catch(error) {
-                    console.log('loading failed')
-                }
-            },
-
-            opened(){
-                this.initSelect2();
-                this.form.subscribable_type = this.subscribable_type;
-                this.form.subscribable_id   = this.subscribable_id;
-            },
-            initSelect2(){
-                $("#curricula").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: true
-                }).on('select2:select', function (e) {
-                    this.getContent($("#curricula").val());
-                }.bind(this));
-                $("#contents").select2({
-                    dropdownParent: $(".v--modal-overlay"),
-                    allowClear: true
+export default {
+    name: 'content-subscription-modal',
+    components: {
+        Editor,
+        Select2
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            url: '/contents',
+            curriculum_id: null,
+            form: new Form({
+                'content_id': [],
+                'subscribable_type': null,
+                'subscribable_id': null,
+            }),
+        }
+    },
+    methods: {
+        submit() {
+            axios.post('/contentSubscriptions', this.form)
+                .then(r => {
+                    this.$eventHub.emit('content-added', r.data);
+                })
+                .catch(e => {
+                    console.log(e.response);
                 });
-            },
-
-            beforeClose() {
-                //console.log('close')
-            },
-            async getContent(id) {
-                try {
-                    this.contents = null;
-                    this.contents = (await axios.get('/curricula/'+id)).data.contents;
-                } catch(error) {
-                    //console.log('loading failed')
+        },
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.form.reset();
+                if (typeof (params) !== 'undefined') {
+                    this.form.populate(params);
+                    if (this.form.id !== ''){
+                        this.method = 'patch';
+                    } else {
+                        this.method = 'post';
+                    }
                 }
-            },
-            close(){
-                this.$modal.hide('content-subscription-modal');
             }
-        },
-        mounted() {
-        },
-    }
+        });
+    },
+}
 </script>

@@ -16,7 +16,7 @@ abstract class DuskTestCase extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
-        Artisan::call('migrate:fresh --seed');
+        //Artisan::call('migrate:fresh --seed');
     }
 
     /**
@@ -28,7 +28,7 @@ abstract class DuskTestCase extends BaseTestCase
      */
     public static function prepare()
     {
-        static::startChromeDriver();
+        static::startChromeDriver(['--port=9515']);
         Browser::macro('scrollTo', function ($selector) {
             $this->driver->executeScript("$(\"html, body\").animate({scrollTop: $(\"$selector\").offset().top}, 0);");
 

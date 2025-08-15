@@ -36,7 +36,7 @@
                         <a class="pr-2 text-decoration-none link-muted"
                            href="{{ $plan->owner->contactdetail->path() }}">
                             <i class="fa fa-graduation-cap "></i>
-                            {{ trans('global.contactdetail.title_singular') }}: {{ $plan->owner->fullname() }}
+                            {{ trans('global.contactDetail.title_singular') }}: {{ $plan->owner->fullname() }}
                         </a>
                     </span>
                     @endif
@@ -84,7 +84,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
                 ])
                 @can('plan_edit')
                 <div class="text-muted"
-                     onclick="app.__vue__.$modal.show('task-modal',  { 'subscribable_type': 'App\\Plan', 'subscribable_id':  {{ $plan->id }} , 'start_date': '{{ $day }}',  'due_date': '{{ $plan->end }}'});">
+                     {{--onclick="app.__vue__.$modal.show('task-modal',  { 'subscribable_type': 'App\\Plan', 'subscribable_id':  {{ $plan->id }} , 'start_date': '{{ $day }}',  'due_date': '{{ $plan->end }}'});"--}}>
                     <i class="fa fa-plus p-2"></i>{{ trans('global.task.create') }}
                 </div>
                 @endcan

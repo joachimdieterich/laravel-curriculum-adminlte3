@@ -12,12 +12,19 @@ class Task extends Model
 
     protected $guarded = [];
 
-    protected $dates = [
+    protected $casts = [
+        'start_date' => 'datetime',
+        'due_date'  => 'datetime',
+        'updated_at'  => 'datetime',
+        'created_at'  => 'datetime',
+    ];
+
+    /*protected $dates = [
         'start_date',
         'due_date',
         'updated_at',
         'created_at',
-    ];
+    ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

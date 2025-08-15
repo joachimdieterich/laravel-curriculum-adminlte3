@@ -13,7 +13,7 @@
         <div class="card" style="margin-bottom: 0px !important">
             <div class="card-header">
                 <h3 class="card-title">
-                    {{ trans('global.media.title') }}
+                    {{ trans('global.medium.title') }}
                 </h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool draggable" >

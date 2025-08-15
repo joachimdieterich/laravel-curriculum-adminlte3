@@ -12,12 +12,4 @@
         :videoconference="{{ $videoconference }}"
         :user="{{auth()->user()}}"
     ></videoconference>
-
-<medium-modal></medium-modal>
-@can('medium_create')
-    <medium-create-modal></medium-create-modal>
-@endcan
-@can('videoconference_create')
-    <subscribe-modal></subscribe-modal>
-@endcan
 @endsection

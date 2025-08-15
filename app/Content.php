@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Content extends Model
 {
@@ -12,10 +13,16 @@ class Content extends Model
 
     protected $guarded = [];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'content'    => CleanHtml::class, // cleans both when getting and setting the value
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -47,9 +54,10 @@ class Content extends Model
     {
         $order_id = ContentSubscription::where([
             'subscribable_type' => get_class($model),
-            'subscribable_id' => $model->id, ])->max('order_id');
+            'subscribable_id' => $model->id,
+        ])->max('order_id');
 
-        $subscribe = new ContentSubscription([
+        $subscribe = ContentSubscription::firstOrCreate([
             'content_id' => $this->id,
             'subscribable_type' => get_class($model),
             'subscribable_id' => $model->id,
@@ -58,7 +66,8 @@ class Content extends Model
             'owner_id' => auth()->user()->id,
             'order_id' => is_int($order_id) ? $order_id + 1 : 0,
         ]);
-        $subscribe->save();
+
+        return $subscribe;
     }
 
     public function mediaSubscriptions()

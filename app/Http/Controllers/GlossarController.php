@@ -52,7 +52,7 @@ class GlossarController extends Controller
         ])->with(['content'])->get(); //todo: sort by content
 
         if (request()->wantsJson()) {
-            return ['message' => $subscriptions];
+            return $subscriptions;
         }
     }
 
@@ -71,15 +71,15 @@ class GlossarController extends Controller
         }
 
         if (request()->wantsJson()) {
-            return ['message' => $glossar->delete()];
+            return $glossar->delete();
         }
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'subscribable_type'       => 'required',
-            'subscribable_id'         => 'required',
+            'subscribable_type' => 'required',
+            'subscribable_id'   => 'required',
         ]);
     }
 }

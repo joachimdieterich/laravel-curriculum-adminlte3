@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class MapMarker extends Model
 {
@@ -28,9 +29,10 @@ class MapMarker extends Model
         'owner_id',
     ];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'content'    => CleanHtml::class, // cleans both when getting and setting the value
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
 
     /**
@@ -71,26 +73,26 @@ class MapMarker extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function maps()
-    {
-        return $this->hasMany(Map::class,'category_id', 'category_id')->where('type_id', $this->type_id);
-    }
-
     public function mediaSubscriptions()
     {
         return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
 
-    public function isAccessible() //accessible yet for all
+    public function subscriptions()
     {
-        foreach ($this->maps AS $map)
-        {
-          if ($map->isAccessible())
-          {
-              return true;
-          }
+        return $this->hasMany(MapMarkerSubscription::class);
+    }
+
+    public function isAccessible()
+    {
+//Todo: how to check if marker is accessible
+        if (
+           is_admin() // or admin
+        ) {
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
 }

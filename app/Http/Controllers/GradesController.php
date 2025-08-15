@@ -31,45 +31,13 @@ class GradesController extends Controller
             'organization_type_id',
         ])->with('organizationType')->get();
 
-        $edit_gate = \Gate::allows('grade_edit');
-        $delete_gate = \Gate::allows('grade_delete');
-
         return DataTables::of($grades)
             ->addColumn('organization_type', function ($grades) {
                 return isset($grades->organizationType->title) ? $grades->organizationType->title : 'default';
             })
-
-            ->addColumn('action', function ($grades) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('grades.edit', $grades->id).'" '
-                                    .'id="edit-grade-'.$grades->id.'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'grades\','.$grades->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->make(true);
-    }
-
-    public function create()
-    {
-        abort_unless(\Gate::allows('grade_create'), 403);
-        $organization_types = \App\OrganizationType::all();
-
-        return view('grades.create')
-                ->with(compact('organization_types'));
     }
 
     public function store()
@@ -84,18 +52,9 @@ class GradesController extends Controller
             'organization_type_id' => format_select_input($new_grade['organization_type_id']),
         ]);
 
-        return redirect()->route('grades.index');
-    }
-
-    public function edit(Grade $grade)
-    {
-        abort_unless(\Gate::allows('grade_edit'), 403);
-
-        $organization_types = \App\OrganizationType::all();
-
-        return view('grades.edit')
-                ->with(compact('grade'))
-                ->with(compact('organization_types'));
+        if (request()->wantsJson()) {
+            return $grades;
+        }
     }
 
     public function update(Grade $grade)
@@ -110,12 +69,14 @@ class GradesController extends Controller
             'organization_type_id' => format_select_input($new_grade['organization_type_id']),
         ]);
 
-        return redirect()->route('grades.index');
+        return $grade;
     }
 
     public function show(Grade $grade)
     {
         abort_unless(\Gate::allows('grade_show'), 403);
+
+        $grade = $grade->load('organizationType');
 
         return view('grades.show', compact('grade'));
     }
@@ -126,7 +87,7 @@ class GradesController extends Controller
 
         $grade->delete();
 
-        return back();
+        return $grade->delete();
     }
 
     public function massDestroy()
@@ -143,7 +104,6 @@ class GradesController extends Controller
             'external_begin'         => 'sometimes|required',
             'external_end'           => 'sometimes|required',
             'organization_type_id'   => 'sometimes|required',
-
         ]);
     }
 }

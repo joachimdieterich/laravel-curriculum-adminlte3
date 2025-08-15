@@ -5,17 +5,16 @@
             @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card-header">
-                    <h3 class="card-title">{{ trans('global.options') }}</h3>
-                    <div class="card-tools">
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="globalStore.closeModal($options.name)"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+                <div class="modal-header">
+                    <span class="card-title">{{ trans('global.options') }}</span>
+                    <button
+                        type="button"
+                        class="btn btn-icon text-secondary"
+                        :title="trans('global.close')"
+                        @click="globalStore.closeModal($options.name)"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
 
                 <div
@@ -44,23 +43,69 @@
                             </div>
 
                             <div class="custom-switch custom-switch-on-green mb-2">
-                                <input type="checkbox" id="teacher_toggle" class="custom-control-input" v-model="options.showTeacher" disabled>
-                                <label for="teacher_toggle" class="custom-control-label pointer" style="cursor: not-allowed">{{ trans('global.plan.options.toggle_teacher') }}</label>
+                                <input
+                                    id="teacher_toggle"
+                                    class="custom-control-input"
+                                    type="checkbox"
+                                    v-model="options.showTeacher"
+                                    disabled
+                                >
+                                <label
+                                    for="teacher_toggle"
+                                    class="custom-control-label"
+                                    style="cursor: not-allowed"
+                                >
+                                    {{ trans('global.plan.options.toggle_teacher') }}
+                                </label>
                             </div>
 
                             <div class="custom-switch custom-switch-on-green mb-2">
-                                <input type="checkbox" id="student_toggle" class="custom-control-input" v-model="options.showStudent" disabled>
-                                <label for="student_toggle" class="custom-control-label pointer" style="cursor: not-allowed">{{ trans('global.plan.options.toggle_student') }}</label>
+                                <input
+                                    type="checkbox"
+                                    id="student_toggle"
+                                    class="custom-control-input"
+                                    v-model="options.showStudent"
+                                    disabled
+                                >
+                                <label
+                                    for="student_toggle"
+                                    class="custom-control-label"
+                                    style="cursor: not-allowed"
+                                >
+                                    {{ trans('global.plan.options.toggle_student') }}
+                                </label>
                             </div>
 
                             <div class="custom-switch custom-switch-on-green mb-2">
-                                <input type="checkbox" id="unset_toggle" class="custom-control-input" v-model="options.hideUnset">
-                                <label for="unset_toggle" class="custom-control-label pointer" @click="toggleUnset()">{{ trans('global.plan.options.toggle_unset') }}</label>
+                                <input
+                                    type="checkbox"
+                                    id="unset_toggle"
+                                    class="custom-control-input"
+                                    v-model="options.hideUnset"
+                                >
+                                <label
+                                    for="unset_toggle"
+                                    class="custom-control-label"
+                                    @click="toggleUnset()"
+                                >
+                                    {{ trans('global.plan.options.toggle_unset') }}
+                                </label>
                             </div>
 
                             <div class="custom-switch custom-switch-on-green">
-                                <input type="checkbox" id="objectives_toggle" class="custom-control-input" v-model="options.collapseObjectives">
-                                <label for="objectives_toggle" class="custom-control-label pointer" @click="toggleObjectives()">{{ trans('global.plan.options.toggle_objectives') }}</label>
+                                <input
+                                    type="checkbox"
+                                    id="objectives_toggle"
+                                    class="custom-control-input"
+                                    v-model="options.collapseObjectives"
+                                >
+                                <label
+                                    for="objectives_toggle"
+                                    class="custom-control-label"
+                                    @click="toggleObjectives()"
+                                >
+                                    {{ trans('global.plan.options.toggle_objectives') }}
+                                </label>
                             </div>
                         </div>
                     </div>

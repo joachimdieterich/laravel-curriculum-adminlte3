@@ -98,11 +98,12 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
         right: -0.75em;
         top: -.75em;
         border-radius: 10em;
-        line-height: .9em;
         text-align: center;
         min-width: 2em;
     }
 }
+.fa-angle-up { transition: 0.4s transform ease; }
+.collapsed .fa-angle-up { transform: rotate3d(1, 0, 0, -180deg) !important; }
 .hide-scrollbars {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none; /* IE */
@@ -124,6 +125,10 @@ textarea { min-height: 150px; }
     line-clamp: 1; // compatibility
     overflow: hidden;
 
+    &.line-clamp-3 {
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
     & p { margin: 0; } // if Editor was used, text is wrapped in <p> tags
 }
 .custom-control-input:hover, .custom-control-label:hover { cursor: pointer; }

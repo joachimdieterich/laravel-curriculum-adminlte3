@@ -177,7 +177,6 @@
             <div class="d-flex ml-auto">
                 <button v-if="commentable"
                     class="btn btn-icon px-2 py-1 mr-2"
-                    role="button"
                     :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
                     data-toggle="collapse"
                     :data-target="'#comments_' + item.id"
@@ -471,6 +470,4 @@ export default {
     border-top-right-radius: 0.25rem;
 }
 .card-header-title:hover { filter: brightness(90%); }
-.fa-angle-up { transition: 0.4s transform; }
-.collapsed .fa-angle-up { transform: rotate(-180deg); }
 </style>

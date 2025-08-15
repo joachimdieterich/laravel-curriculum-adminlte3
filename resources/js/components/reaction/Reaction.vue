@@ -1,7 +1,6 @@
 <template>
     <button
         class="btn btn-icon px-2 py-1"
-        role="button"
         :title="userHasReaction() ? trans('global.remove_like') : trans('global.add_like')"
         @click="toggle()"
     >

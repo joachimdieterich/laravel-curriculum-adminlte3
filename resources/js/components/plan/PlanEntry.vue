@@ -2,19 +2,20 @@
     <div class="row">
         <div class="col-12 pt-2">
             <div class="card">
-                <div v-if="create">
-                    <div
-                        class="card-header pointer"
-                        @click="openModal()"
-                    >
+                <button v-if="create"
+                    class="btn text-left p-0"
+                    @click="openModal()"
+                >
+                    <div class="plan-entry card-header border-0">
                         <i class="fas fa-add pr-1"></i>
                         {{ trans('global.planEntry.create') }}
                     </div>
-                </div>
+                </button>
                 <div v-else>
                     <div
                         :id="'plan-entry-' + entry.id"
-                        :style="{ 'border-left-style': 'solid', 'border-radius': '0.25rem', 'border-color': entry.color }"
+                        class="plan-entry"
+                        :style="{ 'border-color': entry.color }"
                     >
                         <div
                             class="card-header collapsed"
@@ -28,27 +29,35 @@
                             ></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
-                            <div class="card-tools mr-0">
-                                <i v-if="entry.certificates"
-                                    class="fa fa-certificate link-muted pointer p-1"
+                            <div
+                                class="card-tools d-flex align-items-center mr-0"
+                                style="height: 24px;"
+                            >
+                                <button v-if="entry.certificates"
+                                    class="btn btn-icon"
+                                    :title="trans('global.certificate.generate')"
                                     @click.stop="openCertificateModal()"
-                                ></i>
-                                <span v-if="editable && showTools">
-                                    <i
-                                        class="fa fa-pencil-alt link-muted pointer p-1 ml-2"
+                                >
+                                    <i class="fa fa-certificate link-muted"></i>
+                                </button>
+                                <span v-if="editable && showTools" class="d-flex">
+                                    <button
+                                        class="btn btn-icon ml-2"
+                                        :title="trans('global.planEntry.edit')"
                                         @click.stop="openModal(entry)"
-                                    ></i>
-                                    <a v-if="entry.owner_id == $userId
+                                    >
+                                        <i class="fa fa-pencil-alt link-muted"></i>
+                                    </button>
+                                    <button v-if="entry.owner_id == $userId
                                             || plan.owner_id == $userId
                                             || checkPermission('is_admin')
                                         "
-                                        class="text-danger ml-2"
+                                        class="btn btn-icon text-danger ml-2"
+                                        :title="trans('global.planEntry.delete')"
+                                        @click.stop="openConfirm()"
                                     >
-                                        <i
-                                            class="fas fa-trash pointer p-1"
-                                            @click.stop="openConfirm()"
-                                        ></i>
-                                    </a>
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </span>
                             </div>
                         </div>
@@ -192,10 +201,8 @@ export default {
     background-color: #e9ecef;
     cursor: pointer;
 }
-.card-header .fa-angle-up {
-    transition: 0.3s transform;
-}
-.card-header.collapsed .fa-angle-up {
-    transform: rotate(-180deg);
+.plan-entry {
+    border-radius: 0.25rem;
+    border-left-style: solid;
 }
 </style>

@@ -5,24 +5,18 @@
             @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <span v-if="method === 'post'">
-                            {{ trans('global.map.create') }}
-                        </span>
-                        <span v-if="method === 'patch'">
-                            {{ trans('global.map.edit') }}
-                        </span>
-                    </h3>
-                    <div class="card-tools">
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+                <div class="modal-header">
+                    <span class="card-title">
+                        {{ method == 'post' ? trans('global.map.create') : trans('global.map.edit') }}
+                    </span>
+                    <button
+                        type="button"
+                        class="btn btn-icon text-secondary"
+                        :title="trans('global.close')"
+                        @click="globalStore?.closeModal($options.name)"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
 
                 <div class="modal-body">
@@ -31,7 +25,7 @@
                             class="card-header"
                             data-card-widget="collapse"
                         >
-                            <div class="card-title">{{ trans('global.general') }}</div>
+                            <span class="card-title">{{ trans('global.general') }}</span>
                         </div>
 
                         <div class="card-body">
@@ -188,7 +182,7 @@
                             class="card-header"
                             data-card-widget="collapse"
                         >
-                            <div class="card-title">{{ trans('global.display') }}</div>
+                            <span class="card-title">{{ trans('global.display') }}</span>
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">

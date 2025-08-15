@@ -9,7 +9,7 @@
         <span class="clearfix"></span>
         <nav class="mt-2">
             <ul
-                class="nav nav-pills nav-sidebar"
+                class="nav nav-pills"
                 role="menu"
             >
                 <li

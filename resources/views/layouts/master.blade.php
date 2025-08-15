@@ -7,7 +7,7 @@
         <!-- Site wrapper -->
         <div id="app" class="wrapper">
             <!-- Navbar -->
-            <nav class="main-header navbar navbar-expand navbar-lime navbar-light user-select-none">
+            <nav class="main-header navbar navbar-expand navbar-lime navbar-light user-select-none" style="z-index: 1039;">
                 <!-- Brand Logo/menu -->
                 @include('partials.topmenu')
                 <div class="d-flex align-items-center position-relative">

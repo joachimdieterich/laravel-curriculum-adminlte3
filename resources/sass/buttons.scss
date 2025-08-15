@@ -11,12 +11,11 @@
         padding: 0px !important;
 
         &:hover { background-color: #dcdcdc; }
-        &.active, &:active, &[aria-expanded="true"] {
-            background-color: #cbcbcb;
-        }
+        &:active, &[aria-expanded="true"] { background-color: #c0c0c0; }
+        &.text-danger:hover { color: #a71d2a !important; }
     }
 
-    &.text-secondary:hover { color: #494f54 !important; }
+    &.text-secondary:hover { color: #494f54 !important; } // TODO: might be redundant, use 'link-muted' instead
     &:focus { box-shadow: none; }
     &:focus-visible { box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
     &.no-focus:focus { box-shadow: none !important; }

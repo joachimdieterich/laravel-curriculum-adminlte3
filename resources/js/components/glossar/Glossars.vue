@@ -24,8 +24,6 @@
             <div class="card-tools">
                 <button
                     v-permission="'glossar_delete'"
-                    type="button"
-                    role="button"
                     class="btn btn-tool text-danger"
                     @click.prevent="deleteGlossar()"
                 >
@@ -33,28 +31,22 @@
                 </button>
                 <button
                     v-permission="subscribable_type + '_content_create'"
-                    type="button"
-                    class="btn btn-tool "
-                    role="button"
+                    class="btn btn-tool"
                     @click="show()"
                 >
                     <i class="fa fa-plus"></i>
                 </button>
                 <button
-                    type="button"
                     class="btn btn-tool draggable"
                     href="#glossarCarousel"
-                    role="button"
                     data-slide="prev"
                     @click="prev()"
                 >
                     <i class="fa fa-arrow-left"></i>
                 </button>
                 <button
-                    type="button"
                     class="btn btn-tool draggable"
                     href="#glossarCarousel"
-                    role="button"
                     data-slide="next"
                     @click="next()"
                 >

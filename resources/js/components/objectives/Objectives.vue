@@ -7,29 +7,49 @@
             class="d-flex"
         >
             <div class="objectives">
-                <ObjectiveBox
-                    type="terminal"
-                    :objective="terminal"
-                    :settings="settings"
-                />
+                <div class="d-flex flex-column">
+                    <ObjectiveBox
+                        type="terminal"
+                        :objective="terminal"
+                        :settings="settings"
+                    />
+                    <div class="d-flex d-sm-none align-items-center justify-content-center pb-1">
+                        <button
+                            class="btn collapse-objectives collapsed py-0 w-100"
+                            :title="trans('global.enablingObjective.toggle_objectives')"
+                            data-toggle="collapse"
+                            :data-target="'#enabling-objectives-' + terminal.id"
+                            :aria-controls="'enabling-objectives-' + terminal.id"
+                            aria-expanded="false"
+                        >
+                            <i class="fa fa-angles-down"></i>
+                        </button>
+                    </div>
+                </div>
 
-                <EnablingObjectives
-                    :terminalobjective="terminal"
-                    :objectives="terminal.enabling_objectives"
-                    :referenceable_id="referenceable_id"
-                    :referenceable_type="referenceable_type"
-                    :settings="settings"
-                    :editable="editable"
-                />
+                <div
+                    :id="'enabling-objectives-' + terminal.id"
+                    class="d-sm-contents w-100 collapse"
+                >
+                    <EnablingObjectives
+                        :terminalobjective="terminal"
+                        :objectives="terminal.enabling_objectives"
+                        :referenceable_id="referenceable_id"
+                        :referenceable_type="referenceable_type"
+                        :settings="settings"
+                        :editable="editable"
+                    />
+                </div>
             </div>
             <div class="card-tools">
                 <span v-if="editable && showTools">
-                    <a
-                        class="text-danger"
+                    <button
+                        class="btn btn-icon text-danger"
+                        :title="trans('global.terminalObjective.remove')"
                         @click="destroy(terminal)"
                     >
                         <i class="fas fa-trash pointer p-1"></i>
-                    </a>
+                    </button>
                 </span>
             </div>
         </div>
@@ -85,9 +105,9 @@ export default {
         return {
             settings: {
                 last: null,
-                course : false,
-                edit : false,
-                achievements : true,
+                course: false,
+                edit: false,
+                achievements: true,
             },
             terminal_objectives: [],
             enablingCall: null,
@@ -213,3 +233,10 @@ export default {
     }
 }
 </script>
+<style scoped>
+.collapse-objectives {
+    transition: transform 0.4s ease;
+
+    &:not(.collapsed) { transform: rotate3d(1, 0, 0, 180deg); }
+}
+</style>

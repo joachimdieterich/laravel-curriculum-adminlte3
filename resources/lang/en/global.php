@@ -146,6 +146,7 @@ return [
     'curricula_cross_references_description' => 'Suggestions for lesson planning',
     'myProfile' => 'Userprofile',
     'settings' => 'Settings',
+    'open_settings' => 'Open settings',
     'options' => 'Options',
     'minutes' => 'Minutes',
     'sum' => 'Sum',
@@ -610,6 +611,7 @@ return [
         'move_to_curriculum' => 'Move to other curriculum',
         'delete' => 'Delete terminal objective',
         'delete_helper' => 'Should this terminal objective and all its corresponding data be deleted?',
+        'remove' => 'Remove objective',
         'fields' => [
             'time_approach' => 'Time approach',
         ],
@@ -632,6 +634,9 @@ return [
         'edit' => 'Edit enabling objective',
         'delete' => 'Delete enabling objective',
         'delete_helper' => 'Should this enabling objective and all its corresponding data be deleted?',
+        'move_left' => 'Move objective left',
+        'move_right' => 'Move objective right',
+        'toggle_objectives' => 'Collapse/Show objectives',
         'fields' => [
             'time_approach' => 'Time approach',
         ],
@@ -918,6 +923,7 @@ return [
         'create' => 'Create plan',
         'search' => 'Search plan',
         'edit' => 'Edit plan',
+        'print' => 'Print plan',
         'enrol' => 'Connect plan',
         'expel_helper' => 'Disconnect group from plan',
         'copy' => 'Copy plan',

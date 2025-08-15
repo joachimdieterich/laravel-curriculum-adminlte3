@@ -1,3 +1,19 @@
+## 2025-08-15
+- IndexWidget: added accessibility logic
+- Groups: added scope for groups with default period_id
+- changed modal-header structure
+- changed dropdown-toggle animation
+- deleted unused/deprecated ColorPicker-component
+- fixed header and sidebar overlay problems
+- fixed AchievementIndicators being visible in occasions where they shouldn't
+- fixed badge-counter styling
+- fixed objectives-styling for tablet/mobile view
+- ObjectiveBox-Header: fixed arrow positioning and accessibility
+- Objectives: wip on changing layout for mobile-view
+- Plan/PlanAchievements: fixed buttons styling/structure and accessibility
+- AchievementIndicator: show last-updated date in local date format
+- LinkItem: fixed links overflowing and special-chars being parsed to HTML
+
 ## 2025-08-08
 - Kanban: fixed 'collapse-all'-toggle not working
 - KanbanItem: removed isAccessible-check on /editors-request (which was causing a 403 for guests)

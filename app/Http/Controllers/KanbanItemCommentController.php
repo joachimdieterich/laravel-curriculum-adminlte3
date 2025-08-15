@@ -11,43 +11,26 @@ class KanbanItemCommentController extends Controller
 {
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('kanban_show'), 403);
+        abort_unless(\Gate::allows('kanban_edit'), 403);
 
-        $new_comment = $this->validateRequest();
+        $input = $this->validateRequest();
 
-        $comment = new KanbanItemComment();
-        $comment->comment = $new_comment['comment'];
-        $comment->kanban_item_id = $request['model_id'];
-        $comment->user_id = Auth()->user()->id;
-        $comment->save();
+        $comment = KanbanItemComment::Create([
+            'comment' => $input['comment'],
+            'kanban_item_id' => $input['model_id'],
+            'user_id' => Auth()->user()->id
+        ]);
 
-        $comments = $this->getComments($request['model_id']);
-
-        $kanbanItem = KanbanItem::where('id', $request['model_id'])->get()->first();
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemCommentUpdatedEvent($kanbanItem)))
-            {
-                return [
-                    //'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'data' => KanbanItem::where('id', $request['model_id'])
-                        ->with(['comments',
-                            'comments.user',
-                            'comments.likes'])->get()->first(),
-                ];
-            }
+            return $comment->with(['user', 'likes'])->find($comment->id);
         }
-        //return response()->json(['data' => $comments]);
     }
 
     public function destroy(KanbanItemComment $kanbanItemComment)
     {
         abort_unless(\Gate::allows('kanban_delete'), 403);
-        $kanban_item_id = $kanbanItemComment->kanban_item_id;
-        $kanbanItemComment->delete();
 
-        $comments = $this->getComments($kanban_item_id);
-
-        return response()->json(['data' => $comments]);
+        return $kanbanItemComment->delete();
     }
 
     private function getComments($id)

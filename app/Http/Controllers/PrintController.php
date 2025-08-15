@@ -40,24 +40,6 @@ class PrintController extends Controller
         return $this->print($html, 'glossar.pdf', 'save');
     }
 
-    public function model($model, $id)
-    {
-        //todo: check if user has permission to see this model
-        //$model->isAccessible(); //should do the trick
-        //delegate to model class?
-        abort(403);
-        /*
-        $view = class_basename($model);
-        $model= str_starts_with($model, 'App\\') ? $model : "App\\".$model;
-        $model =  app()->make($model)::find($id);
-
-        $html = view('print.'. strtolower($view))
-                ->with(compact('model'))
-                ->render();
-
-        return $this->print($html, $model->title.'.pdf', 'download' );*/
-    }
-
     public function references(Curriculum $curriculum)
     {
         $curriculum->isAccessible();

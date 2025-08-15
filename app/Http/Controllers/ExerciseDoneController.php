@@ -16,13 +16,11 @@ class ExerciseDoneController extends Controller
     public function index()
     {
         $input = $this->validateRequest();
-        if (isset($input['exercise_id']) ) {
-            $model = Exercise::find($input['exercise_id']);
-            abort_unless((\Gate::allows('plan_access') and $model->isAccessible()), 403);
+        $model = Exercise::find($input['exercise_id']);
+        abort_unless((\Gate::allows('plan_access') and $model->isAccessible()), 403);
 
-            if (request()->wantsJson()) {
-                return ['exercise' => $model->load('dones')];
-            }
+        if (request()->wantsJson()) {
+            return $model->load('dones');
         }
     }
 
@@ -40,13 +38,12 @@ class ExerciseDoneController extends Controller
         $entry = ExerciseDone::create([
             'exercise_id' => $new_iteration['exercise_id'],
             'iterations' => $new_iteration['iterations'],
-
             'user_id' => $new_iteration['user_id'] ?? auth()->user()->id,
             'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
-            return ['entry' => $entry];
+            return $entry;
         }
     }
 
@@ -72,15 +69,15 @@ class ExerciseDoneController extends Controller
     public function update(Request $request, ExerciseDone $exerciseDone)
     {
         abort_unless(\Gate::allows('achievement_create_self_assessment'), 403);
-        $update_iteration = $this->validateRequest();
+        $input = $this->validateRequest();
 
         $exerciseDone->update([
-            'iterations' => $update_iteration['iterations'],
+            'iterations' => $input['iterations'],
         ]);
 
         // axios call?
         if (request()->wantsJson()) {
-            return ['entry' => $exerciseDone];
+            return $exerciseDone;
         }
     }
 
@@ -97,9 +94,7 @@ class ExerciseDoneController extends Controller
         $exerciseDone->delete();
 
         if (request()->wantsJson()) {
-            return [
-                'deleted' => true,
-            ];
+            return true;
         }
     }
 

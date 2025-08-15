@@ -9,18 +9,23 @@ class KanbanStatus extends Model
 {
     protected $guarded = [];
 
-    protected $dates = [
+/*    protected $dates = [
         'updated_at',
         'created_at',
         'visible_from',
         'visible_until',
-    ];
+    ];*/
 
     protected $casts = [
         'locked' => 'boolean',
         'editable' => 'boolean',
         'visibility' => 'boolean',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'visible_from'  => 'datetime',
+        'visible_until'  => 'datetime',
     ];
+
     /**
      * Prepare a date for array / JSON serialization.
      *

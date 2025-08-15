@@ -35,6 +35,10 @@
     - [OpenApi](/{{route}}/{{version}}/openapi)
 - ## Helpers
     - [Helpers](/{{route}}/{{version}}/helpers)
+- ## Notifications
+  - [Toast](/{{route}}/{{version}}/notification/toast)
+- ## Validation
+    - [Serverside validation](/{{route}}/{{version}}/validation/serverside)
 - ## Testing
     - [PHP-Tests](/{{route}}/{{version}}/php-test)
     - [Browser-Tests](/{{route}}/{{version}}/browser-test)

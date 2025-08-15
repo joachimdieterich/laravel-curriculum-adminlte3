@@ -1,338 +1,389 @@
 <template >
     <div class="row">
         <div class="col-md-12 ">
-            <ul v-if="typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined'"
-                class="nav nav-pills py-2" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link "
-                       :class="filter === 'all' ? 'active' : ''"
-                       id="curriculum-filter-all"
-                       @click="setFilter('all')"
-                       data-toggle="pill"
-                       role="tab"
+            <ul v-if="!this.subscribable_type && !this.subscribable_id"
+                class="nav nav-pills py-2"
+                role="tablist"
+            >
+                <li class="nav-item pointer">
+                    <a
+                        id="curriculum-filter-all"
+                        class="nav-link "
+                        :class="filter === 'all' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('all')"
                     >
-                        <i class="fas fa-th pr-2"></i>{{ trans('global.all') }} {{ trans('global.curriculum.title') }}
+                        <i class="fas fa-th pr-2"></i> 
+                        {{ trans('global.all') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link"
-                       :class="filter === 'by_organization' ? 'active' : ''"
-                       id="custom-filter-by-organization"
-                       @click="setFilter('by_organization')"
-                       data-toggle="pill"
-                       role="tab"
+                <li class="nav-item pointer">
+                    <a
+                        id="custom-filter-by-organization"
+                        class="nav-link"
+                        :class="filter === 'by_organization' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('by_organization')"
                     >
-                        <i class="fas fa-university pr-2"></i>{{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
+                        <i class="fas fa-university pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
-                    class="nav-item">
-                    <a class="nav-link"
-                       :class="filter === 'owner' ? 'active' : ''"
-                       id="custom-filter-owner"
-                       @click="setFilter('owner')"
-                       data-toggle="pill"
-                       role="tab"
+                <li
+                    v-permission="'curriculum_create'"
+                    class="nav-item pointer"
+                >
+                    <a
+                        id="custom-filter-owner"
+                        class="nav-link"
+                        :class="filter === 'owner' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('owner')"
                     >
-                        <i class="fa fa-user pr-2"></i>{{ trans('global.my') }} {{ trans('global.curriculum.title') }}
+                        <i class="fa fa-user pr-2"></i>
+                        {{ trans('global.my') }} {{ trans('global.curriculum.title') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
-                    class="nav-item">
-                    <a class="nav-link"
-                       :class="filter === 'shared_with_me' ? 'active' : ''"
-                       id="custom-filter-shared-with-me"
-                       @click="setFilter('shared_with_me')"
-                       data-toggle="pill"
-                       role="tab"
+                <li class="nav-item pointer">
+                    <a
+                        id="custom-filter-shared-with-me"
+                        class="nav-link"
+                        :class="filter === 'shared_with_me' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('shared_with_me')"
                     >
-                        <i class="fa fa-paper-plane pr-2"></i>{{ trans('global.shared_with_me') }}
+                        <i class="fa fa-paper-plane pr-2"></i>
+                        {{ trans('global.shared_with_me') }}
                     </a>
                 </li>
-                <li v-can="'curriculum_create'"
-                    class="nav-item">
-                    <a class="nav-link"
-                       :class="filter === 'shared_by_me' ? 'active' : ''"
-                       id="custom-tabs-shared-by-me"
-                       @click="setFilter('shared_by_me')"
-                       data-toggle="pill"
-                       role="tab"
+                <li
+                    v-permission="'curriculum_create'"
+                    class="nav-item pointer"
+                >
+                    <a
+                        id="custom-tabs-shared-by-me"
+                        :class="filter === 'shared_by_me' ? 'active' : ''"
+                        class="nav-link"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('shared_by_me')"
                     >
-                        <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
+                        <i class="fa fa-share-nodes  pr-2"></i>
+                        {{ trans('global.shared_by_me') }}
                     </a>
                 </li>
-
             </ul>
         </div>
 
-        <table id="curriculum-datatable" style="display: none;"></table>
-        <div id="curriculum-content" >
-            <div v-for="curriculum in curricula"
-                 v-if="(curriculum.title.toLowerCase().indexOf(search.toLowerCase()) !== -1)
-                || search.length < 3"
-                 :id="curriculum.id"
-                 v-bind:value="curriculum.id"
-                 class="box box-objective nav-item-box-image pointer my-1 "
-                 style="min-width: 200px !important;"
-                 :style="'border-bottom: 5px solid ' + curriculum.color"
+        <div
+            id="curriculum-content"
+            class="col-md-12 m-0"
+        >
+            <IndexWidget v-if="checkPermission('curriculum_create')
+                    && (
+                        (filter === 'all' && !this.subscribable_type && !this.subscribable_id)
+                        || filter  === 'owner'
+                    )"
+                key="curriculumCreate"
+                modelName="Curriculum"
+                url="/curricula"
+                :create=true
+                :label="trans('global.curriculum.create')"
+            />
+
+            <IndexWidget v-for="curriculum in curricula"
+                :id="curriculum.id"
+                :key="'curriculumIndex' + curriculum.id"
+                :model="curriculum"
+                modelName="Curriculum"
+                url="/curricula"
             >
-                <a :href="'/curricula/' + curriculum.id"
-                   class="text-decoration-none text-black"
-                >
-                    <div v-if="curriculum.medium_id"
-                         class="nav-item-box-image-size"
-                         :style="{'background': 'url(/media/' + curriculum.medium_id + '?model=Curriculum&model_id=' + curriculum.id +') top center no-repeat' }">
-                        <div class="nav-item-box-image-size"
-                             style="width: 100% !important;"
-                             :style="{backgroundColor: curriculum.color + ' !important',  'opacity': '0.5'}">
-                        </div>
-                    </div>
-                    <div v-else
-                         class="nav-item-box-image-size text-center"
-                         :style="{backgroundColor: curriculum.color + ' !important'}">
-<!--                        <i class="fa fa-2x p-5 fa-video nav-item-text text-white"></i>-->
-                    </div>
-                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                   <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                       {{ curriculum.title }}
-                   </h1>
-                   <p class="text-muted small">
-                    {{ htmlToText(curriculum.description) }}
-                   </p>
-                </span>
-                    <div v-permission="'is_admin'"
-                        style="position:absolute; top:100px; left: 0;"
-                        class="badge-primary px-2">
+                <template v-slot:icon>
+                    <i v-if="curriculum.type_id === 1"
+                        class="fas fa-globe"
+                    ></i>
+                    <i v-else-if="curriculum.type_id === 2"
+                        class="fas fa-university"
+                    ></i>
+                    <i v-else-if="curriculum.type_id === 3"
+                        class="fa fa-users"
+                    ></i>
+                    <i v-else
+                        class="fa fa-user"
+                    ></i>
+                </template>
+
+                <template v-slot:owner>
+                    <div
+                        v-permission="'is_admin'"
+                        class="badge-primary position-absolute px-2"
+                        style="top: 100px; left: 0;"
+                    >
                         {{ curriculum.owner.firstname }} {{ curriculum.owner.lastname }}
                     </div>
-                    <div class="symbol"
-                         :style="'color:' + $textcolor(curriculum.color) + '!important'"
-                         style="position: absolute; width: 30px; height: 40px;">
-                        <i v-if="curriculum.type_id === 1"
-                           class="fas fa-globe pt-2"></i>
-                        <i v-else-if="curriculum.type_id === 2"
-                           class="fas fa-university pt-2"></i>
-                        <i v-else-if="curriculum.type_id === 3"
-                           class="fa fa-users pt-2"></i>
-                        <i v-else
-                           class="fa fa-user pt-2"></i>
-                    </div>
-                    <div v-if="$userId == curriculum.owner_id"
-                         class="btn btn-flat pull-right"
-                         :id="'curriculumDropdown_' + curriculum.id"
-                         style="position:absolute; top:0; right: 0; background-color: transparent;"
-                         data-toggle="dropdown"
-                         aria-expanded="false"
-                        >
-                        <i class="fas fa-ellipsis-v"
-                           :style="'color:' + $textcolor(curriculum.color)"></i>
-                        <div class="dropdown-menu dropdown-menu-right"
-                             style="z-index: 1050;"
-                             x-placement="left-start">
-                            <button :name="'curriculum-edit_' + curriculum.id"
-                                    class="dropdown-item text-secondary"
-                                    @click.prevent="editCurriculum(curriculum)">
-                                <i class="fa fa-pencil-alt mr-2"></i>
-                                {{ trans('global.curriculum.edit') }}
-                            </button>
-                            <button :name="'curriculum-set_owner_' + curriculum.id"
-                                    class="dropdown-item text-secondary"
-                                    @click.prevent="setOwner(curriculum)">
-                                <i class="fa fa-user mr-2"></i>
-                                {{ trans('global.curriculum.edit_owner') }}
-                            </button>
-                            <button :name="'curriculum-share_' + curriculum.id"
-                                    class="dropdown-item text-secondary"
-                                    @click.prevent="shareCurriculum(curriculum)">
-                                <i class="fa fa-share-alt mr-2"></i>
-                                {{ trans('global.curriculum.share') }}
-                            </button>
-                            <hr class="my-1">
-                            <button
-                                :id="'delete-curriculum-' + curriculum.id"
-                                type="submit"
-                                class="dropdown-item py-1 text-red"
-                                @click.prevent="confirmItemDelete(curriculum)">
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.curriculum.delete') }}
-                            </button>
-                        </div>
-                    </div>
-                    <div v-else
-                         v-permission="'is_admin'"
-                         class="btn btn-flat pull-right"
-                         :id="'curriculumDropdown_' + curriculum.id"
-                         style="position:absolute; top:0; right: 0; background-color: transparent;"
-                         data-toggle="dropdown"
-                         aria-expanded="false"
-                    >
-                        <i class="fas fa-ellipsis-v"
-                           :style="'color:' + $textcolor(curriculum.color)"></i>
-                        <div class="dropdown-menu dropdown-menu-right"
-                             style="z-index: 1050;"
-                             x-placement="left-start">
-                            <button :name="'curriculum-set_owner_' + curriculum.id"
-                                    class="dropdown-item text-secondary"
-                                    @click.prevent="setOwner(curriculum)">
-                                <i class="fa fa-user mr-2"></i>
-                                {{ trans('global.curriculum.edit_owner') }}
-                            </button>
-                        </div>
-                    </div>
+                </template>
 
-                </a>
-            </div>
-            <curriculum-index-add-widget
-                v-if="((this.filter == 'all' && typeof (this.subscribable_type) == 'undefined' && typeof(this.subscribable_id) == 'undefined')|| this.filter  == 'owner') "
-                v-can="'curriculum_create'"/>
+                <template v-if="curriculum.archived"
+                    v-slot:badges
+                >
+                    <p class="text-muted small">
+                        <span
+                            class="btn btn-info btn-xs position-absolute select-all pull-right mr-1"
+                            style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
+                        >
+                            <i class="fa fa-archive" aria-hidden="true"></i>
+                            {{ trans('global.curriculum.fields.archived') }}
+                       </span>
+                    </p>
+                </template>
+
+                <template v-slot:dropdown>
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
+                        <button
+                            v-permission="'curriculum_edit'"
+                            :name="'curriculum-edit_' + curriculum.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="editCurriculum(curriculum)"
+                        >
+                            <i class="fa fa-pencil-alt mr-2"></i>
+                            {{ trans('global.curriculum.edit') }}
+                        </button>
+                        <button v-if="$userId == curriculum.owner_id"
+                            :name="'curriculum-set_owner_' + curriculum.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="setOwner(curriculum)"
+                        >
+                            <i class="fa fa-user mr-2"></i>
+                            {{ trans('global.curriculum.edit_owner') }}
+                        </button>
+                        <button
+                            :name="'curriculum-share_' + curriculum.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="shareCurriculum(curriculum)"
+                        >
+                            <i class="fa fa-share-alt mr-2"></i>
+                            {{ trans('global.curriculum.share') }}
+                        </button>
+                        <hr v-permission="'curriculum_delete'" class="my-1">
+                        <button
+                            v-permission="'curriculum_delete'"
+                            :id="'delete-curriculum-' + curriculum.id"
+                            type="submit"
+                            class="dropdown-item py-1 text-red"
+                            @click.prevent="confirmItemDelete(curriculum)"
+                        >
+                            <i class="fa fa-trash mr-2"></i>
+                            {{ trans('global.curriculum.delete') }}
+                        </button>
+                    </div>
+                </template>
+            </IndexWidget>
         </div>
-        <Modal
-            :id="'curriculumModal'"
-            css="danger"
-            :title="trans('global.curriculum.delete')"
-            :text="trans('global.curriculum.delete_helper')"
-            :ok_label="trans('global.curriculum.delete')"
-            v-on:ok="destroy()"
-        />
+
+        <div
+            id="curriculum-datatable-wrapper"
+            class="w-100 dataTablesWrapper"
+        >
+            <DataTable
+                id="curriculum-datatable"
+                :columns="columns"
+                :options="options"
+                :ajax="url"
+                width="100%"
+                style="display: none;"
+            />
+        </div>
+
+        <Teleport to="body">
+            <CurriculumModal/>
+            <SubscribeModal/>
+            <MediumModal/>
+            <OwnerModal/>
+            <ConfirmModal
+                :showConfirm="this.showConfirm"
+                :title="trans('global.curriculum.delete')"
+                :description="trans('global.curriculum.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            />
+        </Teleport>
     </div>
 </template>
-
 <script>
-import CurriculumIndexAddWidget from "./CurriculumIndexAddWidget";
-const Modal =
-    () => import('./../uiElements/Modal');
+import IndexWidget from "../uiElements/IndexWidget.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net-bs5';
+import MediumModal from "../media/MediumModal.vue";
+import SubscribeModal from "../subscription/SubscribeModal.vue";
+import CurriculumModal from "./CurriculumModal.vue";
+import {useGlobalStore} from "../../store/global";
+import OwnerModal from "../user/OwnerModal.vue";
+import {useToast} from "vue-toastification";
+DataTable.use(DataTablesCore);
 
 export default {
     props: {
-        subscribable_type: '',
-        subscribable_id: '',
+        subscribable_type: {
+            type: String,
+            default: null,
+        },
+        subscribable_id: {
+            type: Number,
+            default: null,
+        },
+    },
+    setup() {
+        const toast = useToast();
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+            toast,
+        }
     },
     data() {
         return {
+            component_id: this.$.uid,
             curricula: [],
             subscriptions: {},
-            search: '',
-            url: '/curricula/list',
+            showConfirm: false,
+            url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id : '/curricula/list',
             errors: {},
             currentCurriculum: {},
-            filter: 'all'
+            columns: [
+                { title: 'id', data: 'id' },
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'description', data: 'description', searchable: true },
+            ],
+            options : this.$dtOptions,
+            filter: 'all',
+            dt: null,
         }
     },
     methods: {
-        confirmItemDelete(curriculum){
-            $('#curriculumModal').modal('show');
+        confirmItemDelete(curriculum) {
             this.currentCurriculum = curriculum;
+            this.showConfirm = true;
         },
-        editCurriculum(curriculum){
-            this.$eventHub.$emit('edit_curriculum', curriculum);
-            //window.location = "/curricula/" + curriculum.id + "/edit";
+        editCurriculum(curriculum) {
+            this.globalStore?.showModal('curriculum-modal', curriculum);
         },
-        setOwner(curriculum){
-            window.location = "/curricula/" + curriculum.id + "/editOwner";
+        setOwner(curriculum) {
+            this.globalStore?.showModal('owner-modal', {
+                model_id: curriculum.id,
+                model: 'curriculum',
+                model_url: 'curricula',
+                owner_id: curriculum.owner_id,
+            });
+            //window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
-            this.$modal.show('subscribe-modal', { 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditLabel': ' ', 'canEditCheckbox': false});
+            this.globalStore?.showModal(
+                'subscribe-modal',
+                {
+                    modelId: curriculum.id,
+                    modelUrl: 'curriculum',
+                    shareWithUsers: true,
+                    shareWithGroups: true,
+                    shareWithOrganizations: true,
+                    shareWithToken: true,
+                    canEditCheckbox: false,
+                }
+            );
         },
-        loaderEvent(){
-            if (typeof (this.subscribable_type) !== 'undefined' && typeof(this.subscribable_id) !== 'undefined'){
-                this.url = '/curriculumSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id
-            } else {
-                this.url = '/curricula/list?filter=' + this.filter
-            }
-
-            if ($.fn.dataTable.isDataTable( '#curriculum-datatable' )){
-                $('#curriculum-datatable').DataTable().ajax.url(this.url).load();
-            } else {
-                const dtObject = $('#curriculum-datatable').DataTable({
-                    ajax: this.url,
-                    dom: 'tilpr',
-                    pageLength: 50,
-                    language: {
-                        url: '/datatables/i18n/German.json',
-                        paginate: {
-                            "first":      '<i class="fa fa-angle-double-left"></id>',
-                            "last":       '<i class="fa fa-angle-double-right"></id>',
-                            "next":       '<i class="fa fa-angle-right"></id>',
-                            "previous":   '<i class="fa fa-angle-left"></id>',
-                        },
-                    },
-                    columns: [
-                        { title: 'id', data: 'id' },
-                        { title: 'title', data: 'title', searchable: true},
-                    ],
-                }).on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                    this.curricula = dtObject.rows({ page: 'current' }).data().toArray();
-                    $('#curriculum-content').insertBefore('#curriculum-datatable');
-                });
-            }
-        },
-        setFilter(filter){
+        setFilter(filter) {
             this.filter = filter;
-            this.loaderEvent();
+            if (this.subscribable_type && this.subscribable_id) {
+                this.url = '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
+            } else {
+                this.url = '/curricula/list?filter=' + this.filter;
+            }
+            this.dt.ajax.url(this.url).load();
+        },
+        loaderEvent() {
+            this.dt = $('#curriculum-datatable').DataTable();
+
+            this.dt.on('draw.dt', () => {
+                this.curricula = this.dt.rows({page: 'current'}).data().toArray();
+                $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
+            });
         },
         destroy() {
-            axios.delete('/curricula/' + this.currentCurriculum.id)
-                .then(res => {
-                    let index = this.curricula.indexOf(this.currentCurriculum);
-                    this.curricula.splice(index, 1);
+            if (this.subscribable) {
+                axios.delete('/curriculumSubscriptions/expel', {
+                    data: {
+                        model_id : this.currentCurriculum.id,
+                        subscribable_type : this.subscribable_type,
+                        subscribable_id : this.subscribable_id,
+                    }
                 })
-                .catch(err => {
-                    console.log(err.response);
-                });
+                    .then(r => {
+                        this.toast.success(r)
+                    })
+                    .catch(e => {
+                        this.toast.error(e)
+                    });
+            } else {
+                axios.delete('/curricula/' + this.currentCurriculum.id)
+                    .then(res => {
+                        let index = this.curricula.indexOf(this.currentCurriculum);
+                        this.curricula.splice(index, 1);
+                    })
+                    .catch(err => {
+                        console.log(err.response);
+                    });
+            }
         },
     },
     mounted() {
-        if (document.getElementById('searchbar') != null) {
-            document.getElementById('searchbar').classList.remove('d-none');
-        }
+        this.$eventHub.emit('showSearchbar', true);
 
-        const filters = ["all", "owner", "shared_with_me", "shared_by_me"];
-        let url = new URL(window.location.href);
-        let urlFilter = url.searchParams.get("filter");
+        this.loaderEvent();
 
-        if (filters.includes(urlFilter)){
-          this.filter = urlFilter
-        }
-
-        this.$eventHub.$on('filter', (filter) => {
-            $('#curriculum-datatable').DataTable().search(filter).draw();
+        this.$eventHub.on('curriculum-added', (curriculum) => {
+            this.curricula.push(curriculum);
         });
-        this.$eventHub.$on('curriculum-added', (curriculum) => {
-            this.loaderEvent();//this.curricula.push(curriculum);
+        this.$eventHub.on('curriculum-imported', (curricula) => {
+            this.globalStore?.closeModal('curriculum-modal');
+            this.loaderEvent(); //todo -> use global widget to get add working
         });
-        this.$eventHub.$on('curriculum-updated', (curriculum) => {
-            //console.log(curriculum);
-            const index = this.curricula.findIndex(
-                vc => vc.id === curriculum.id
-            );
 
-            for (const [key, value] of Object.entries(curriculum)) {
-                this.curricula[index][key] = value;
-            }
+        this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {
+            let cur = this.curricula.find(c => c.id === updatedCurriculum.id);
+
+            Object.assign(cur, updatedCurriculum);
         });
-        this.loaderEvent()
+
+        this.$eventHub.on('filter', (filter) => {
+            this.dt.search(filter).draw();
+        });
+
+        this.$eventHub.on('owner-updated', (owner) => {
+            this.globalStore?.closeModal('owner-modal');
+            this.loaderEvent();
+        });
     },
-
     components: {
-        CurriculumIndexAddWidget,
-        Modal
+        OwnerModal,
+        IndexWidget,
+        MediumModal,
+        DataTable,
+        SubscribeModal,
+        ConfirmModal,
+        CurriculumModal,
     },
 }
 </script>
-<style>
-#curriculum-datatable_wrapper {
-    width: 100%;
-    padding: 0px 15px;
-}
-</style>
-<style scoped>
-.nav-link:hover {
-    cursor: default;
-    user-select: none;
-}
-
-.nav-item:hover .nav-link:not(.active) {
-    background-color: rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-}
-</style>

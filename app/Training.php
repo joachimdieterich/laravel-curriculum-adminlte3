@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 use DateTimeInterface;
 
 class Training extends Model
@@ -19,8 +20,16 @@ class Training extends Model
         'order_id',
         'subscribable_type',
         'subscribable_id',
-        'owner_id'
+        'owner_id',
     ];
+
+    protected $casts = [
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
+        'begin' => 'datetime',
+        'end' => 'datetime',
+    ];
+
+    protected $with = ['subscriptions:id,training_id,order_id,subscribable_type,subscribable_id'];
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -48,13 +57,12 @@ class Training extends Model
         return $this->hasMany(Exercise::class);
     }
 
-
     public function isAccessible()
     {
         if (
-            $this->subscriptions->first()->subscribable->plan->isAccessible() //user has access throught a plan
-            or ($this->owner_id == auth()->user()->id)            // or owner
-            or is_admin() // or admin
+            is_admin()
+            or ($this->owner_id == auth()->user()->id)
+            or $this->subscriptions->first()->subscribable->plan->isAccessible() // user has access through a plan
         ) {
             return true;
         } else {
@@ -62,9 +70,9 @@ class Training extends Model
         }
     }
 
-
-    protected static function booted () {
+    protected static function booted() {
         static::deleting(function(Training $training) { // before delete() method call this
+            $training->exercises->each->delete();
             $training->subscriptions()->delete();
         });
     }

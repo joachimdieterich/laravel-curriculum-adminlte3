@@ -14,7 +14,12 @@ class CurriculumTypeController extends Controller
      */
     public function index()
     {
-        //
+        if (request()->wantsJson()) {
+
+            return getEntriesForSelect2ByModel(
+                "App\CurriculumType"
+            );
+        }
     }
 
     /**

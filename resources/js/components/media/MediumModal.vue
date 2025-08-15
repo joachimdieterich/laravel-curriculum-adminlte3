@@ -1,211 +1,458 @@
 <template>
-    <modal
-        id="medium-modal"
-        name="medium-modal"
-        height="auto"
-        :adaptive=true
-        :scrollable=true
-        draggable=".draggable"
-        :resizable=true
-        @before-open="beforeOpen"
-        @before-close="beforeClose"
-        style="z-index: 1300">
-        <div class="card" style="margin-bottom: 0px !important">
-            <div class="card-header">
-                 <h3 class="card-title">
-                     <span v-if="edit == true">
-                         <input
-                             id="save-medium"
-                             type="text"
-                                v-model="medium.title"
-                         style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0; width: 400px;"
-                         @keyup.enter="saveMedium()"/>
-                     </span>
-                     <span v-else>{{ medium.title }}</span>
-
-                 </h3>
-
-                 <div class="card-tools">
-                     <button v-can="'medium_edit'"
-                             v-if="edit == true"
-                             type="button"
-                             class="btn btn-tool text-success"
-                             @click="saveMedium()">
-                         <i class="fa fa-save"></i>
-                     </button>
-                     <button v-can="'medium_edit'"
-                             v-if="edit != true"
-                             type="button"
-                             class="btn btn-tool"
-                             @click="edit_title()">
-                         <i class="fa fa-pencil-alt"></i>
-                     </button>
-                     <button v-can="'medium_delete'"
-                             type="button"
-                             class="btn btn-tool"
-                             @click="del()">
-                         <i class="fa fa-trash text-danger"></i>
-                     </button>
-                     <button type="button"
-                             class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                     </button>
-                     <button type="button" class="btn btn-tool" data-widget="remove" @click="close()">
+    <Transition name="modal">
+        <div v-if="globalStore.modals[$options.name]?.show"
+            class="modal-mask"
+            style="z-index: 10000000 !important;"
+            @mouseup.self="globalStore.closeModal($options.name)"
+        >
+            <div class="modal-container">
+                <div class="modal-header">
+                    <span class="card-title">
+                        {{ method == 'post' ? trans('global.medium.add') : trans('global.medium.edit') }}
+                    </span>
+                    <button
+                        type="button"
+                        class="btn btn-icon text-secondary"
+                        :title="trans('global.close')"
+                        @click="globalStore?.closeModal($options.name)"
+                    >
                         <i class="fa fa-times"></i>
-                     </button>
-                 </div>
-            </div>
-            <div class="card-body"
-                 style="overflow-y: auto;padding:0;">
-                <div v-if="edit == true"
-                     class="p-2">
-                         <textarea
-                             style="width:100%"
-                             v-model="medium.description"/>
+                    </button>
                 </div>
-                <div v-else-if="medium.description != ''"
-                    v-dompurify-html="medium.description"
-                    class="text-muted text-sm p-2"></div>
-                <mediumRenderer
-                    :medium="medium"
-                ></mediumRenderer>
-            </div>
 
-            <div class="card-footer">
-                <license class="pull-left pr-2"
-                         :licenseId="medium.license_id">
-                </license>
-                 <span class="pull-right">
-                     <button type="button" class="btn btn-info" data-widget="remove" @click="close()">{{ trans('global.close') }}</button>
-                     <button
-                         v-if="medium.mime_type == 'url'"
-                         class="btn btn-primary"
-                         data-widget="remove"
-                         @click="close();window.open(medium.path, '_blank');">
-                         <a :href="scr" class="text-white text-decoration-none" target="_blank">{{ trans('global.open') }}</a>
-                     </button>
-                     <button
-                         v-else
-                         class="btn btn-primary"
-                         data-widget="remove"
-                         @click="close(true)">
-                         <a class="text-white text-decoration-none" target="_self">{{ trans('global.downloadFile') }}/{{ trans('global.open') }}</a>
-                     </button>
-                </span>
-            </div>
+                <div class="modal-body">
+                    <div class="d-md-flex">
+                        <!-- left side of menu only visible to admins -->
+                        <div
+                            v-permission="'is_admin'"
+                            class="card-pane-left p-0"
+                        >
+                            <ul class="nav flex-column">
+                                <li
+                                    v-permission="'is_admin'"
+                                    class="nav-link text-sm"
+                                >
+                                    <a
+                                        href="#upload"
+                                        class="link-muted"
+                                        data-toggle="tab"
+                                        @click="setTab('upload');"
+                                    >
+                                        {{ trans('global.medium.upload') }}
+                                    </a>
+                                </li>
+                                <li
+                                    v-permission="'is_admin'"
+                                    class="nav-link text-sm"
+                                >
+                                    <a
+                                        href="#local-media"
+                                        class="link-muted"
+                                        data-toggle="tab"
+                                        @click="setTab('media');"
+                                    >
+                                        {{ trans('global.medium.title') }}
+                                    </a>
+                                </li>
+    <!--                            <li class="nav-link text-sm"
+                                    v-can="'link_create'">
+                                    <a class="link-muted"
+                                    data-toggle="tab"
+                                    @click="setTab('link')">
+                                        {{ trans('global.medium.link') }}
+                                    </a>
+                                </li>-->
+                                <li
+                                    v-permission="'external_medium_create'"
+                                    class="nav-link text-sm"
+                                >
+                                    <a
+                                        href="#external"
+                                        class="link-muted active show"
+                                        data-toggle="tab"
+                                        @click="setTab('external')"
+                                    >
+                                        {{ trans('global.externalRepositorySubscription.title_singular') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
 
+                        <div class="p-1 flex-fill border-left">
+                            <div class="tab-content">
+                                <div
+                                    v-permission="'is_admin'"
+                                    id="upload"
+                                    class="tab-pane"
+                                >
+                                    <form v-if="isInitial || isSaving"
+                                        action="javascript:void(0)"
+                                        enctype="multipart/form-data"
+                                        method="post"
+                                        @submit.prevent="uploadSubmit"
+                                    >
+                                        <div v-if="message != ''"
+                                            class="alert alert-success"
+                                        >
+                                            {{ message }}
+                                        </div>
+                                        <div class="dropbox text-secondary p-0 m-1">
+                                            <input
+                                                id="file"
+                                                name="file"
+                                                type="file"
+                                                class="input-file"
+                                                multiple
+                                                :disabled="isSaving"
+                                                :accept="accept"
+                                                ref="file"
+                                                @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+                                                required
+                                            />
+                                            <p v-if="isInitial">
+                                                <i class="fa fa-upload"></i><br>
+                                                <span v-dompurify-html="trans('global.medium.upload_helper')"></span>
+                                            </p>
+                                            <p v-if="isSaving">
+                                                {{ fileCount }} {{ trans('global.medium.upload') }}...
+                                            </p>
+                                        </div>
+                                    </form>
+
+                                    <div v-if="progressBar"
+                                        class="progress"
+                                    >
+                                        <div
+                                            class="progress-bar" role="progressbar"
+                                            :style="{width: progressBar + '%'}"
+                                            :aria-valuenow="progressBar"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <div v-if="checkPermission('is_admin')"
+                                    id="local-media"
+                                    class="tab-pane m-2"
+                                >
+                                    <div
+                                        id="media_create_datatable_filter"
+                                        class="dataTables_filter"
+                                    >
+                                        <input
+                                            id="media_search_datatable"
+                                            name="media_search_datatable"
+                                            type="search"
+                                            class="form-control form-control-sm"
+                                            v-model="search"
+                                            placeholder="Suchbegriff"
+                                            aria-controls="media_create_datatable"
+                                        />
+                                    </div>
+                                    <div style="width: 600px;">
+                                        <div
+                                            id="media-datatable-wrapper"
+                                            class="w-100 dataTablesWrapper"
+                                        >
+                                            <DataTable
+                                                id="media-datatable"
+                                                :columns="columns"
+                                                :options="options"
+                                                ajax="/media/list"
+                                                :search="search"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    v-permission="'external_medium_create'"
+                                    id="external"
+                                    class="tab-pane active show"
+                                >
+                                    <RepositoryPluginCreate v-if="!postProcess"
+                                        :model="this.form"
+                                    />
+                                    <div v-if="postProcess"
+                                        :id="'loading_'+this.component_id"
+                                        class="overlay text-center w-100 h-100"
+                                    >
+                                        <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                        <span>Fertigstellen...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="tab !== 'external'"
+                    class="card-footer"
+                >
+                    <span class="pull-right">
+                        <button
+                            id="medium-cancel"
+                            type="button"
+                            class="btn btn-default"
+                            @click="globalStore?.closeModal($options.name)"
+                        >
+                            {{ trans('global.cancel') }}
+                        </button>
+                        <button
+                            id="medium-save"
+                            class="btn btn-primary ml-3"
+                            @click="add()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </span>
+                </div>
+            </div>
         </div>
-    </modal>
+    </Transition>
 </template>
-
 <script>
-const License =
-    () => import('../uiElements/License');
-const mediumRenderer =
-    () => import('../media/MediaRenderer');
-//import License from '../uiElements/License'
-    export default {
-        data() {
-            return {
-                medium: [],
-                subscribable: null,
+import Form from 'form-backend-validation';
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net-bs5';
+import 'datatables.net-select-bs5'
+import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/edusharing/resources/js/components/Create.vue';
+import {useGlobalStore} from "../../store/global.js";
+
+DataTable.use(DataTablesCore);
+
+const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
+
+export default {
+    name: 'medium-modal',
+    components: {
+        RepositoryPluginCreate,
+        DataTable,
+    },
+    props: {},
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            method: 'post',
+            tab: 'external',
+            progressBar: false,
+            form: new Form({
+                path: '',
+                thumb_path: '',
+                medium_name: '',
+                title: '',
+                author: '',
+                size: '',
+                mimetype: '',
+                license_id: '',
+                external_id: '',
                 subscribable_type: null,
                 subscribable_id: null,
-                edit: false,
-                errors: {}
-            }
-        },
-        methods: {
-            beforeOpen(event) {
-                if (event.params.content) {
-                    this.medium = event.params.content;
-                }
-                if (event.params.subscribable) {
-                    this.subscribable = event.params.subscribable;
-                }
-                if (event.params.subscribable_type) {
-                    this.subscribable_type = event.params.subscribable_type;
-                }
-                if (event.params.subscribable_id) {
-                    this.subscribable_id = event.params.subscribable_id;
-                }
-            },
-            mime(type) {
-
-                switch (type) {
-                    //Images use <img>
-                    case 'image/jpg' :
-                    case 'image/jpeg':
-                    case 'image/png':
-                    case 'image/gif':
-                    case 'image/bmp':
-                    case 'image/tiff':
-                    case 'image/ico':
-                    case 'image/svg':
-                    case 'edusharing':
-                        return 'img';
-                        break;
-                    // default use <embed>
-
-                    default:
-                        return 'embed';
-                        break;
-                }
-            },
-            async del(){
-                try {
-                    var response =  await axios.post('/media/'+this.medium.id+'/destroy',  { 'subscribable': this.subscribable, 'subscribable_type': this.subscribable_type,'subscribable_id': this.subscribable_id } );
-                }
-                catch(error) {
-                    this.errors = response.data.errors;
-                }
-                location.reload();
-            },
-            edit_title: function() {
-                this.edit = !this.edit;
-            },
-            async saveMedium(){
-                await axios.patch('/media/' + this.medium.id, {'title': this.medium.title, 'description': this.medium.description})
-                .then(response =>{
-                    this.medium = response.data.message;
-                    this.edit_title();
-                })
-                .catch(error => {
-                    //alert(error.response.data.errors);
-                    this.errors = error.response.data.errors;
-                });
-            },
-            beforeClose() {
-
-            },
-            async close(image = false) {
-                if (image) {
-                    $("#loading_" + this.medium.id).show();
-                    await axios.get(this.scr + '?content=true')
-                        .then((response) => {
-                            window.location.assign(response.data.url);
-                            $("#loading_" + this.medium.id).hide();
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            $("#loading_"+this.medium.id).hide();
-                        });
-                }
-
-
-                this.$modal.hide('medium-modal');
-            }
-
-        },
-        computed: {
-            scr: function () {
-                return '/media/' + this.medium.id ;
-            },
-        },
-        components: {
-            License,
-            mediumRenderer
+                repository: 'local',
+                public: 0,
+            }),
+            currentStatus: STATUS_INITIAL,
+            subscribeSelected: false,
+            accept: '',
+            callback: 'medium-added',
+            callbackId: null,
+            search: '',
+            message: '',
+            columns: [
+                {
+                    title: 'img',
+                    data: 'id',
+                    render: function(data, type, full, meta) {
+                        return '<img src="/media/' + data + '" width="60"/>';
+                    },
+                },
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'size', data: 'size' },
+                { title: 'created_at', data: 'created_at' },
+            ],
+            options : this.$dtOptions,
+            postProcess: false,
         }
+    },
+    computed: {
+        isInitial() {
+            return this.currentStatus === STATUS_INITIAL;
+        },
+        isSaving() {
+            return this.currentStatus === STATUS_SAVING;
+        },
+        isSuccess() {
+            return this.currentStatus === STATUS_SUCCESS;
+        },
+        isFailed() {
+            return this.currentStatus === STATUS_FAILED;
+        }
+    },
+    methods: {
+        filesChange(fieldName, fileList) {
+            const formData = new FormData();
 
-    }
+            if (!fileList.length) return;
+            Array.from(fileList).map(file => {
+                formData.append(fieldName, file, file.name); // append the files to FormData
+            });
+            this.uploadSubmit(formData);
+        },
+        uploadSubmit(formData) {
+            this.currentStatus = STATUS_SAVING;
+            this.message = '';
+            formData.append('path', this.form.path);
+            formData.append('subscribable_type', this.form.subscribable_type);
+            formData.append('subscribable_id', this.form.subscribable_id);
+            formData.append('repository', this.form.repository);
+            formData.append('public', this.form.public ?? 1);
+            axios.post('/media', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                onUploadProgress: function( progressEvent ) {
+                    this.progressBar = parseInt(Math.round((progressEvent.loaded * 100) / progressEvent.total))
+                }.bind(this)
+            })
+                .then((response) => {
+                    this.globalStore.setSelectedMedia(response.data);
+                    this.message = 'OK';
+                    this.form.reset();
+                    this.progressBar = false;
+                });
+        },
+        subscribe() {
+            this.globalStore.selectedMedia.forEach((medium) => {
+                axios.post('/mediumSubscriptions', {
+                    subscribable_type: this.form.subscribable_type,
+                    subscribable_id: this.form.subscribable_id,
+                    medium_id: medium.id
+                }).then((response) => {
+                    console.log(medium.id + 'subscribed');
+                });
+            });
+        },
+        add() {
+            if (this.subscribeSelected) {
+                this.subscribe();
+            }
+
+            this.$eventHub.emit(
+                this.callback, //default callback == 'medium-added'
+                {
+                    id: this.callbackId,
+                    selectedMedia:  this.globalStore.selectedMedia,
+                    //'selectedMediumId':  this.globalStore.selectedMedia,
+                    //'files': this.globalStore.selectedMedia,
+                }
+            );
+            this.reset();
+            this.globalStore?.closeModal(this.$options.name);
+        },
+        reset() {
+            this.globalStore.setSelectedMedia(null);
+            this.form.reset();
+
+            this.currentStatus = STATUS_INITIAL;
+            this.accept = '';
+            this.callback = 'medium-added'; //previous eventHubCallbackFunction
+            this.callbackId =  null; //previous eventHubCallbackParams
+            this.public = 0;
+            this.repository = 'local';
+            this.subscribeSelected = false;
+            this.message = '';
+            this.progressBar = false;
+        },
+        setTab(tab) {
+            this.tab = tab;
+
+            if (tab === 'media') {
+                const dt = $('#media-datatable').DataTable();
+
+                $('#media_search_datatable').on('keyup', function () {
+                    dt.search(this.search).draw();
+                }.bind(this));
+
+                dt.on('select', () => {
+                    let selection = dt.rows('.selected').data().toArray();
+                    this.globalStore.setSelectedMedia(selection);
+                });
+            }
+        },
+        externalAdd(form) {
+            this.postProcess = true;
+            axios.post('/media?repository=edusharing', form)
+                .then((response) => {
+                    this.globalStore.setSelectedMedia([response.data]);
+                    this.add();
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+    },
+    mounted() {
+        this.globalStore.registerModal(this.$options.name);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.$options.name].show) {
+                const params = state.modals[this.$options.name].params;
+                this.reset();
+
+                this.postProcess = false;
+                this.subscribeSelected = params.subscribeSelected;
+                this.callback = params.callback ?? this.callback;
+                this.callbackId = params.callbackId;
+                this.accept = params.accept;
+                this.currentStatus = STATUS_INITIAL;
+
+                this.form.populate(params);
+
+                if (this.form.id !== '') {
+                    this.method = 'patch';
+                } else {
+                    this.method = 'post';
+                }
+            }
+        });
+
+        this.$eventHub.on('external_add', (form) => {
+            this.externalAdd(form);
+        });
+    },
+}
 </script>
+<style lang="scss">
+.dropbox {
+    outline: 2px dashed grey; /* the dash box */
+    padding: 10px 10px;
+    background: #fbfbfc;
+    min-height: 200px; /* minimum height */
+    position: relative;
+    cursor: pointer;
+}
+
+.input-file {
+    opacity: 0; /* invisible but it's there! */
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    cursor: pointer;
+}
+
+.dropbox:hover {
+    background: #f7f6f8; /* when mouse over to the drop zone, change color */
+}
+
+.dropbox p {
+    font-size: 1em;
+    text-align: center;
+    padding: 50px 0;
+}
+</style>

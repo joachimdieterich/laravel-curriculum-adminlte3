@@ -126,10 +126,9 @@ class Videoconference extends Model
 
         if (
             auth()->user()->videoconferences->contains('id', $this->id) // user enrolled
-            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
-            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
-            or ($this->owner_id == auth()->user()->id)            // or owner
-            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->videoconferences->contains('id', $this->id) : false) //or allowed via guest
+            or $this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))->isNotEmpty() //user is enroled in group
+            or $this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id)->isNotEmpty() //user is enroled in group
+            or $this->owner_id == auth()->user()->id // or owner
             or is_admin() // or admin
         ) {
             return true;

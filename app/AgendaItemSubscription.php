@@ -15,6 +15,10 @@ class AgendaItemSubscription extends Model
         'owner_id'
     ];
 
+    protected $casts = [
+        'editable' => 'boolean',
+    ];
+
     use HasFactory;
     /**
     * Get the subscriber model.

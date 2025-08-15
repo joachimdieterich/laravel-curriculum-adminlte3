@@ -1,6 +1,6 @@
 <template>
     <div>
-        <span v-for="terminal_subscription in entry.terminal_objective_subscriptions">
+        <span v-for="terminal_subscription in subscriptions.terminal_objective_subscriptions">
             <objective-box
                 v-bind:key="terminal_subscription.id"
                 :objective="terminal_subscription.terminal_objective"
@@ -15,7 +15,7 @@
             </button>
         </span>
         <span class="clearfix"></span>
-        <span v-for="enabling_subscription in entry.enabling_objective_subscriptions"
+        <span v-for="enabling_subscription in subscriptions.enabling_objective_subscriptions"
         >
             <objective-box
                 :objective="enabling_subscription.enabling_objective.terminal_objective"
@@ -42,7 +42,7 @@
                 <td
                     class="py-2 link-muted text-sm pointer"
                     v-permission="'lms_create'"
-                    @click.prevent="open('subscribe-objective-modal')">
+                    @click.prevent="create()">
                     <i class="fa fa-plus px-2 "></i> {{
                         trans('global.terminalObjective.title')
                     }}/{{ trans('global.enablingObjective.title') }}
@@ -52,9 +52,8 @@
     </div>
 </template>
 <script>
-const ObjectiveBox =
-    () => import('../objectives/ObjectiveBox');
-//import ObjectiveBox from '../objectives/ObjectiveBox'
+import ObjectiveBox from '../objectives/ObjectiveBox.vue'
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'reference-list',
@@ -64,32 +63,66 @@ export default {
         'subscribable_type': String,
         'subscribable_id': Number,
     },
+    setup () {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
+            subscriptions: [],
             settings: {
                 'edit': false,
             },
         }
     },
     methods: {
-        open(modal) {
-            this.$modal.show(modal, {
-                'referenceable_type': this.subscribable_type,
-                'referenceable_id': this.subscribable_id
-            });
+        loaderEvent() {
+            console.log('Ddd');
+            axios.get('/terminalObjectiveSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
+                .then(response => {
+                    this.subscriptions.terminal_objective_subscriptions = response.data.subscriptions;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+            axios.get('/enablingObjectiveSubscriptions?subscribable_type='+this.subscribable_type + '&subscribable_id='+this.subscribable_id)
+                .then(response => {
+                    this.subscriptions.enabling_objective_subscriptions = response.data.subscriptions;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        },
+        create(){
+            this.globalStore?.showModal('subscribe-objective-modal',{
+                'subscribable_type': this.subscribable_type,
+                'subscribable_id': this.subscribable_id
+            })
         },
 
         del(type, subscription) { //id of external reference and value in db
             axios.post('/' + type + 'ObjectiveSubscriptions/destroy', subscription)
                 .then((res) => {
-
+                    this.loaderEvent();
                 })
                 .catch((error) => {
                     console.log(error);
                 });
-
         },
-
+    },
+    mounted() {
+        this.subscriptions = this.entry;
+        this.$eventHub.on('subscriptions_added', (subscription) => {
+            if(
+                subscription.subscribable_type  === this.subscribable_type
+                && subscription.subscribable_id === this.subscribable_id
+            ){
+                this.globalStore?.closeModal('subscribe-objective-modal');
+                this.loaderEvent();
+            }
+        });
     }
 }
 </script>

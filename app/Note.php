@@ -2,7 +2,6 @@
 
 namespace App;
 
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
@@ -35,22 +34,6 @@ class Note extends Model
         'notable_id' => 'integer',
         'user_id' => 'integer',
     ];
-
-    protected $dates = [
-        'updated_at',
-        'created_at',
-    ];
-
-    /**
-     * Prepare a date for array / JSON serialization.
-     *
-     * @param  \DateTimeInterface  $date
-     * @return string
-     */
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
 
     public function notable()
     {

@@ -19,9 +19,7 @@ class UsersApiController extends Controller
         }
         else
         {
-            $users = User::all();
-
-            return $users;
+            return User::all();
         }
 
     }
@@ -73,7 +71,7 @@ class UsersApiController extends Controller
         }
     }
 
-    public function forceDestroy($id)
+            public function forceDestroy($id)
     {
         $user = User::withTrashed()->findOrFail($id);
 
@@ -102,7 +100,7 @@ class UsersApiController extends Controller
     public function dashboard(User $user)
     {
         //Dummy fullcalendar event
-       /* $event = [
+        /*$event = [
             'Event from curriculum', //event title
             false, //full day event?
             '2019-08-02 10:00:00 UTC+2', //start time, must be a DateTime object or valid DateTime format (http://bit.ly/1z7QWbg)

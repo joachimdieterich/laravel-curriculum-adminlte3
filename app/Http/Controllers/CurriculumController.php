@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
+use App\Certificate;
 use App\Curriculum;
 use App\CurriculumSubscription;
 use App\CurriculumType;
-use App\Grade;
 use App\Medium;
 use App\Organization;
-use App\OrganizationType;
-use App\State;
-use App\Subject;
 use App\User;
 use App\VariantDefinition;
+use Carbon\Carbon;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class CurriculumController extends Controller
@@ -27,18 +25,23 @@ class CurriculumController extends Controller
      */
     public function index()
     {
-        if (request()->wantsJson() AND request()->has(['term', 'page'])) {
-            return $this->getEntriesForSelect2();
-        }
-
-        //used by subscribeObjectiveModel
         if (request()->wantsJson()) {
-            return ['curricula' => $this->userCurricula()]; //no gate! every user should get his enrolled curricula
+            if (request()->has('owner')) {
+                return getEntriesForSelect2ByCollection(Curriculum::where('owner_id', auth()->user()->id));
+            } else {
+                return $this->getEntriesForSelect2();
+            }
         }
 
         abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users
 
         return view('curricula.index');
+    }
+
+    public function getTerminalObjectives(Curriculum $curriculum){
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByCollectionAlternative($curriculum->terminalObjectives);
+        }
     }
 
     public function types()
@@ -82,16 +85,9 @@ class CurriculumController extends Controller
         {
             $owned = Curriculum::where('owner_id', $user->id)->get();
             $userCanSee = $userCanSee->merge($owned);
-        }
-
-        if ((env('GUEST_USER') != null))
-        {
-            $guest_groups = User::find(env('GUEST_USER'))->groups;
-        }
-
-        foreach ($guest_groups as $group)
-        {
-            $userCanSee = $userCanSee->merge($group->curricula);
+            // global curricula are visible for all users, but shouldn't be shown on 'shared with me'
+            $global = Curriculum::where('type_id', 1)->get();
+            $userCanSee = $userCanSee->merge($global);
         }
 
         return $userCanSee->unique();
@@ -101,7 +97,6 @@ class CurriculumController extends Controller
     {
         abort_unless(Gate::allows('curriculum_access'), 403);
 
-
         switch ($request->filter)
         {
             case 'owner':            $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
@@ -110,7 +105,7 @@ class CurriculumController extends Controller
                 break;
             case 'shared_by_me':     $curricula = Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
                 break;
-            case 'by_organization':  $curricula = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->curricula;
+            case 'by_organization':  $curricula = Organization::find(auth()->user()->current_organization_id)->curricula;
                 break;
             case 'all':
             default:                 $curricula = $this->userCurricula();
@@ -129,24 +124,7 @@ class CurriculumController extends Controller
      */
     public function create()
     {
-        abort_unless(Gate::allows('curriculum_create'), 403);
-
-        $grades = Grade::all();
-        $subjects = Subject::all();
-        $organization_types = OrganizationType::all();
-        $curriculum_types = $this->getCurriculumTypesByPermission();
-        $variant_definitions = VariantDefinition::all();
-        $countries = Country::all();
-        $states = State::where('country', 'DE')->get();
-
-        return view('curricula.create')
-                ->with(compact('grades'))
-                ->with(compact('subjects'))
-                ->with(compact('countries'))
-                ->with(compact('states'))
-                ->with(compact('organization_types'))
-                ->with(compact('variant_definitions'))
-                ->with(compact('curriculum_types'));
+        abort(403);
     }
 
     /**
@@ -178,20 +156,35 @@ class CurriculumController extends Controller
             'country_id'            => format_select_input($input['country_id']),
             'medium_id'             => $input['medium_id'],
             'variants'              => $this->formatVariantsField(
-                        $input['variants'] ?? NULL,
-                        $input['variant_default_title'] ?? NULL,
-                        $input['variant_default_description'] ?? NULL
+                                            $input['variants'] ?? NULL,
+                                            $input['variant_default_title'] ?? NULL,
+                                            $input['variant_default_description'] ?? NULL
                                         ),
+            'archived'              =>  $input['archived'] ?? false,
             'owner_id'              => auth()->user()->id,
         ]);
+
+        switch ($curriculum->type_id) {
+            case 2: // organization
+                CurriculumSubscription::updateOrCreate([
+                    'curriculum_id' => $curriculum->id,
+                    'subscribable_type' => 'App\Organization',
+                    'subscribable_id' => auth()->user()->current_organization_id,
+                ], [
+                    'editable' => true,
+                    'owner_id' => auth()->user()->id,
+                ]);
+                break;
+            case 3: // group
+                //Todo: if type_id == 3 there should be an option to add group_id
+                break;
+        }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $curriculum->with('owner')->find($curriculum->id);
         }
-
-        return redirect($curriculum->path());
     }
 
     /**
@@ -200,20 +193,35 @@ class CurriculumController extends Controller
      * @param  \App\Curriculum  $curriculum
      * @return \Illuminate\Http\Response
      */
-    public function show(Curriculum $curriculum, $achievements = false)
+    public function show(Curriculum $curriculum, $achievements = false, $token = null)
     {
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
-        $objectiveTypes = \App\ObjectiveType::all();
+        $objectiveTypes = \App\ObjectiveType::select('objective_types.id', 'objective_types.title', 'objective_types.uuid')
+            ->join('terminal_objectives', 'objective_types.id', '=', 'terminal_objectives.objective_type_id')
+            ->join('curricula', 'curricula.id', '=', 'terminal_objectives.curriculum_id')
+            ->where('curricula.id', $curriculum->id)
+            ->distinct()
+            ->get();
         $levels = \App\Level::all();
 
         $curriculum = Curriculum::with([
             'glossar.contents',
         ])
         ->find($curriculum->id);
+
+        if ($token == null)
+        {
+            $may_edit = $curriculum->isEditable();
+        }
+        else
+        {
+            $may_edit = $curriculum->isEditable(auth()->user()->id, $token);
+        }
+
         $settings = json_encode([
-            'edit' => (auth()->user()->id === $curriculum->owner_id) ? true : false,
+            'edit' => $may_edit, //(auth()->user()->id === $curriculum->owner_id) ? true : false,
             'cross_reference_curriculum_id' => false,
         ]);
 
@@ -222,10 +230,10 @@ class CurriculumController extends Controller
         }
 
         return view('curricula.show')
-                ->with(compact('curriculum'))
-                ->with(compact('objectiveTypes'))
-                ->with(compact('levels'))
-                ->with(compact('settings'));
+            ->with(compact('curriculum'))
+            ->with(compact('objectiveTypes'))
+            ->with(compact('levels'))
+            ->with(compact('settings'));
     }
 
     /**
@@ -241,21 +249,8 @@ class CurriculumController extends Controller
 
     public function getObjectives(Curriculum $curriculum)
     {
-        $curriculum = Curriculum::with(
-            [
-                'terminalObjectives',
-                'terminalObjectives.achievements',
-                'terminalObjectives.enablingObjectives',
-                'terminalObjectives.enablingObjectives.achievements' => function ($query) {
-                    $query->where('user_id', auth()->user()->id);
-                },
-            ])
-            ->find($curriculum->id);
-        //todo: only get achievments of defined users
-
-        //  $curriculum = Curriculum::where('id', $curriculum->id)->with('terminalObjectives.enablingObjectives')->get()->first(); //replaced to use lazy loading on curriculum/courseview
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $this->getObjectivesByType($curriculum);
         }
     }
 
@@ -267,27 +262,39 @@ class CurriculumController extends Controller
      */
     public function getAchievements(Curriculum $curriculum)
     {
-        abort_unless(Gate::allows('curriculum_show'), 403);
-        //check if user is enrolled or admin -> else 403
-        abort_unless(($curriculum->isAccessible() // user enrolled
-                  or (auth()->user()->currentRole()->first()->id == 1)), 403);     // or admin
-        $user_ids = request()->user_ids;
+        abort_unless(Gate::allows('curriculum_show') and $curriculum->isAccessible(), 403, "No access to this curriculum");
 
-        $curriculum = Curriculum::with(
-            [
-                'terminalObjectives',
-                'terminalObjectives.achievements' => function ($query) use ($user_ids) {
-                    $query->whereIn('user_id', $user_ids);
-                },
-                'terminalObjectives.enablingObjectives',
-                'terminalObjectives.enablingObjectives.achievements' => function ($query) use ($user_ids) {
-                    $query->whereIn('user_id', $user_ids);
-                },
-            ])
-            ->find($curriculum->id);
         if (request()->wantsJson()) {
-            return ['curriculum' => $curriculum];
+            return $this->getObjectivesByType($curriculum, request()->user_ids);
         }
+    }
+
+    private function getObjectivesByType(Curriculum $curriculum, $user_ids = null)
+    {
+        if ($user_ids == null) {
+            $user_ids = [auth()->user()->id];
+        }
+
+        return \App\ObjectiveType::select('id', 'title', 'uuid')
+            ->whereHas('terminalObjectives', function ($query) use ($curriculum) {
+                $query->where('curriculum_id', $curriculum->id);
+            })
+            ->with(['terminalObjectives' => function ($query) use ($curriculum, $user_ids) {
+                $query->select('id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
+                    ->where('curriculum_id', $curriculum->id)
+                    ->with([
+                        'enablingObjectives' => function($query) use ($user_ids) {
+                            $query->without('terminalObjective')
+                                ->with(['achievements' => function($query) use ($user_ids) {
+                                    $query->select('id', 'status', 'referenceable_id', 'referenceable_type', 'updated_at')
+                                        ->whereIn('user_id', $user_ids);
+                                }])
+                                ->orderBy('order_id');
+                        },
+                    ])
+                    ->orderBy('order_id');
+            }])
+            ->get();
     }
 
     /**
@@ -298,23 +305,7 @@ class CurriculumController extends Controller
      */
     public function edit(Curriculum $curriculum)
     {
-        $grades = Grade::all();
-        $subjects = Subject::all();
-        $organization_types = OrganizationType::all();
-        $curriculum_types = CurriculumType::all();
-        $variant_definitions = VariantDefinition::all();
-        $countries = Country::all();
-        $states = State::all();
-
-        return view('curricula.edit')
-                ->with(compact('grades'))
-                ->with(compact('subjects'))
-                ->with(compact('organization_types'))
-                ->with(compact('curriculum_types'))
-                ->with(compact('countries'))
-                ->with(compact('states'))
-                ->with(compact('variant_definitions'))
-                ->with(compact('curriculum'));
+        abort(403);
     }
 
     /**
@@ -325,11 +316,7 @@ class CurriculumController extends Controller
      */
     public function editOwner(Curriculum $curriculum)
     {
-        $users = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->get();
-
-        return view('curricula.owner')
-                ->with(compact('curriculum'))
-                ->with(compact('users'));
+        abort(403);
     }
 
     /**
@@ -340,14 +327,16 @@ class CurriculumController extends Controller
      */
     public function storeOwner(Request $request, Curriculum $curriculum)
     {
-        abort_unless(Gate::allows('curriculum_edit'), 403);
+        abort_unless(Gate::allows('curriculum_edit'), 403, "No permission to change owner");
         $input = $this->validateRequest();
 
         $curriculum->update([
             'owner_id' => format_select_input($input['owner_id']),
         ]);
 
-        return redirect('/curricula');
+        if (request()->wantsJson()) {
+            return $curriculum;
+        }
     }
 
     /**
@@ -362,7 +351,6 @@ class CurriculumController extends Controller
         abort_unless(Gate::allows('curriculum_edit'), 403);
 
         $input = $this->validateRequest();
-        $this->checkPermissions($input['type_id']);
 
         $curriculum->update([
             'title'                 => $input['title'],
@@ -384,10 +372,14 @@ class CurriculumController extends Controller
                                         $input['variant_default_title'] ?? NULL,
                                         $input['variant_default_description'] ?? NULL
                                        ),
-            'owner_id'              => auth()->user()->id,
+            'archived'              =>  $input['archived'] ?? false,
+            'owner_id'              => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
 
-        return view('curricula.index');//return redirect($curriculum->path());
+        if (request()->wantsJson()) {
+            return $curriculum;
+        }
+        //return redirect($curriculum->path());
     }
 
     /**
@@ -406,15 +398,18 @@ class CurriculumController extends Controller
             {
                 foreach ($enrolment['curriculum_id'] as $curriculum_id)
                 {
-                    $this->subscribe($curriculum_id, $enrolment['group_id']);
+                    $this->subscribe(format_select_input($curriculum_id), $enrolment['group_id']);
                 }
             } else {
-                $this->subscribe($enrolment['curriculum_id'], $enrolment['group_id']);
+                $this->subscribe(format_select_input($enrolment['curriculum_id']), $enrolment['group_id']);
             }
         }
 
-        return CurriculumSubscription::where('subscribable_type', "App\Group")
-            ->where('subscribable_id', $enrolment['group_id'])->get();
+        return Curriculum::select('curricula.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
+            ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
+            ->where('subscribable_id', request()->enrollment_list[0]['group_id'])
+            ->where('subscribable_type', "App\Group")
+            ->get();
     }
 
     private function subscribe($curriculum_id, $group_id, $model = "App\Group", $editable = false)
@@ -433,7 +428,7 @@ class CurriculumController extends Controller
     public function references()
     {
         if (request()->wantsJson()) {
-            return ['message' => auth()->user()->currentCurriculaEnrolments()];
+            return getEntriesForSelect2ByCollectionAlternative(auth()->user()->currentCurriculaEnrolments());
         }
     }
 
@@ -478,49 +473,13 @@ class CurriculumController extends Controller
         //todo: delete media attached to content, descriptions...
         abort_unless(Gate::allows('curriculum_delete'), 403);
 
-        // detach groups
-        CurriculumSubscription::where([
-            'curriculum_id' => $curriculum,
-            'subscribable_type' => "App\Group",
-        ])->delete();
-        //$curriculum->groups()->detach();
-
-        // delete certificates
-        foreach ($curriculum->certificates as $certificate) {
-            (new CertificateController)->destroy($certificate);
-        }
-
-        foreach ($curriculum->enablingObjectives as $ena) {
-            (new EnablingObjectiveController)->destroy($ena);
-        }
-
-        foreach ($curriculum->terminalObjectives as $ter) {
-            (new TerminalObjectiveController)->destroy($ter);
-        }
-
-        //  delete glossar
-        $curriculum->glossar()->delete();
-
         // delete mediaSubscriptions -> media will not be deleted
         $media = $curriculum->media;
-
-        $curriculum->mediaSubscriptions()
-                ->where('subscribable_type', '=', 'App\Curriculum')
-                ->where('subscribable_id', '=', $curriculum->id)
-                ->delete();
-
-        // delete navigator_items
-        $curriculum->navigator_item()
-                ->where('referenceable_type', '=', 'App\Curriculum')
-                ->where('referenceable_id', '=', $curriculum->id)
-                ->delete();
 
         // delete contents
         foreach ($curriculum->contents as $content) {
             (new ContentController)->destroy($content, 'App\Curriculum', $curriculum->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-
-        $curriculum->subscriptions()->delete();
 
         $return = $curriculum->delete();
 
@@ -531,40 +490,30 @@ class CurriculumController extends Controller
 
         //todo check/delete unrelated references(in references table)
         if (request()->wantsJson()) {
-            return ['message' => $return];
+            return $return;
         }
-        //   return back();
     }
 
     public function resetOrderIds(Curriculum $curriculum)
     {
-        $curriculum = Curriculum::with(
-            [
-                'terminalObjectives',
-                'terminalObjectives.enablingObjectives',
-            ])
-            ->find($curriculum->id);
         $t = 0;
-        $currentObjectiveType = $curriculum->terminalObjectives->first()->objective_type_id;
-        foreach ($curriculum->terminalObjectives as $terminalObjective) {
+        $terminalObjectives = $curriculum->terminalObjectives()->reorder()->orderBy('objective_type_id')->get();
+        $currentObjectiveType = $terminalObjectives->first()->objective_type_id;
+        foreach ($terminalObjectives as $terminalObjective) {
             if ($currentObjectiveType != $terminalObjective->objective_type_id) {
                 $currentObjectiveType = $terminalObjective->objective_type_id;
                 $t = 0;
             }
 
-            $e = 0;
-            $terminalObjective->order_id = $t;
-            $terminalObjective->save();
+            $terminalObjective->update(['order_id' => $t]);
             $t++;
-
+            
+            $e = 0;
             foreach ($terminalObjective->enablingObjectives as $enablingObjective) {
-                $enablingObjective->order_id = $e;
-                $enablingObjective->save();
+                $enablingObjective->update(['order_id' => $e]);
                 $e++;
             }
         }
-
-        $this->show($curriculum);
     }
 
     public function print(Curriculum $curriculum)
@@ -582,15 +531,18 @@ class CurriculumController extends Controller
 
     public function syncObjectiveTypesOrder(Curriculum $curriculum)
     {
-        abort_unless(auth()->user()->id === $curriculum->owner_id, 403);
+        abort_unless((
+            auth()->user()->id === $curriculum->owner_id
+            OR is_admin()
+        ), 403, "Only the owner has permission to change the order of objective types");
 
         $input = $this->validateRequest();
 
         $curriculum->update([
-            'objective_type_order'                 => $input['objective_type_order']
+            'objective_type_order' => $input['objective_type_order']
         ]);
 
-        return ['objective_type_order' => $curriculum->objective_type_order];
+        return $curriculum->objective_type_order;
     }
 
     public function getVariantDefinitions(Curriculum $curriculum)
@@ -635,6 +587,43 @@ class CurriculumController extends Controller
             ->update(['variants->order' => $input['variants']]);
     }
 
+    public function getCertificates(Curriculum $curriculum)
+    {
+        if (request()->wantsJson()) {
+            return getEntriesForSelect2ByCollection(
+                Certificate::where([
+                    ['curriculum_id', '=', $curriculum->id],
+                    ['organization_id', '=', auth()->user()->current_organization_id],
+                ])
+                    ->orWhere([
+                        ['curriculum_id', '=', $curriculum->id],
+                        ['global', '=', 1],
+                    ])
+                    ->orWhere([
+                        ['type', '=', 'group'],
+                        ['global', '=', 1],
+                    ])
+            );
+        }
+    }
+
+    public function getCurriculumByToken(Curriculum $curriculum, Request $request)
+    {
+        $input = $this->validateRequest();
+
+        $subscription = CurriculumSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
+        if (!$subscription?->due_date) abort(403, 'global.token_deleted');
+
+        $now = Carbon::now();
+        $due_date = Carbon::parse($subscription->due_date);
+        if ($due_date < $now) {
+            abort(410, 'global.token_expired');
+        }
+
+        return $this->show($curriculum, false, $input['sharing_token']);
+
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
@@ -657,6 +646,8 @@ class CurriculumController extends Controller
             'variants'  => 'sometimes',
             'variant_default_title'  => 'sometimes',
             'variant_default_description'  => 'sometimes',
+            'archived' => 'sometimes',
+            'sharing_token' => 'sometimes'
         ]);
     }
 
@@ -718,45 +709,46 @@ class CurriculumController extends Controller
      */
     private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
     {
-        $input = request()->validate([
-            'page' => 'required|integer',
-            'term' => 'sometimes|string|max:255|nullable',
-        ]);
-        if (is_admin() || is_creator())
+        if (is_admin())
         {
             return getEntriesForSelect2ByModel("App\Curriculum");
         }
-        else if (is_schooladmin() || is_teacher())
+        else if (is_creator() || is_schooladmin() || is_teacher())
         {
-            return getEntriesForSelect2ByCollection(
-                Curriculum::where(
-                        function($query) use ($input)
-                        {
-                            $query->whereIn('owner_id', Organization::where('id', auth()->user()->current_organization_id)
-                                ->first()->users()->pluck('id')->toArray())
-                                ->where('title', 'LIKE', '%' . $input['term'] . '%')
-                                ->where('type_id', 1);
-                        })
-                    ->orwhere(
-                        function($query) use ($input)
-                        {
-                            $query->where('title', 'LIKE', '%' . $input['term'] . '%')
-                                  ->where('type_id', 1);
-                        })
-            );
+            $curriculum = Curriculum::where('owner_id', auth()->user()->id) // owner
+                ->orWhere('type_id', 1) // global curricula
+                ->orWhereHas('subscriptions', function ($query) {
+                    $query->where( // organization-subscription
+                        function ($query) {
+                            $query->where('subscribable_type', 'App\\Organization')
+                                ->where('subscribable_id', auth()->user()->current_organization_id);
+                        }
+                    )->orWhere( // group-subscription
+                        function ($query) {
+                            $query->where('subscribable_type', 'App\\Group')
+                                ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                        }
+                    )->orWhere( // user-subscription
+                        function ($query) {
+                            $query->where('subscribable_type', 'App\\User')
+                                ->where('subscribable_id', auth()->user()->id);
+                        }
+                    );
+                })->get();
+
+            return getEntriesForSelect2ByCollectionAlternative($curriculum);
         }
         else
         {
-            return getEntriesForSelect2ByCollection(
-                DB::table('curricula')
+            return getEntriesForSelect2ByCollectionAlternative(
+                Curriculum::select('curricula.id', 'curricula.title')
                     ->distinct()
-                    ->select('curricula.id, curricula.title')
                     ->leftjoin('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
                     ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_subscriptions.subscribable_id')
                     ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
                     ->where('group_user.user_id', auth()->user()->id)
-                    ->orWhere('curricula.owner_id', auth()->user()->id), //user should also see curricula which he/she owns
-                "curricula."
+                    ->orWhere('curricula.owner_id', auth()->user()->id) //user should also see curricula which he/she owns
+                    ->get()
             );
         }
     }

@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 /**
  *   @OA\Schema(
@@ -36,13 +37,13 @@ class Curriculum extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'description' => CleanHtml::class,
         'objective_type_order' => 'array',
         'variants' => 'array',
-    ];
-
-    protected $dates = [
-        'updated_at',
-        'created_at',
+        'date'  => 'datetime',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'archived' => 'boolean',
     ];
 
     protected $attributes = [
@@ -138,11 +139,6 @@ class Curriculum extends Model
         return $this->hasOne('App\CurriculumType', 'id', 'type_id');
     }
 
-    public function organization_type()
-    {
-        return $this->hasOne('App\OrganizationType', 'id', 'organization_type_id');
-    }
-
     public function contentSubscriptions()
     {
         return $this->morphMany('App\ContentSubscription', 'subscribable')->orderBy('order_id');
@@ -220,17 +216,87 @@ class Curriculum extends Model
     public function isAccessible()
     {
         if (
-            auth()->user()->curricula->contains('id', $this->id) // user enrolled
-            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
-            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
-            or ($this->owner_id == auth()->user()->id)            // or owner
-            //or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula->contains('id', $this->id) : false) //or allowed via guest
-            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->currentCurriculaEnrolments()->contains('id', $this->id) : false) //or allowed via guest
+            $this->type_id == 1 // global = allowed for everybody (even guests)
             or is_admin() // or admin
+            or auth()->user()->curricula->contains('id', $this->id) // user enrolled
+            or ($this->owner_id == auth()->user()->id) // or owner
+            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() // user is enroled in group
+            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() // user is enroled in group
+            //or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula->contains('id', $this->id) : false) // or allowed via guest
         ) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public function userSubscriptions()
+    {
+        return $this->hasMany(CurriculumSubscription::class)
+            ->where('subscribable_type', 'App\User');
+    }
+
+    public function groupSubscriptions()
+    {
+        return $this->hasMany(CurriculumSubscription::class)
+            ->where('subscribable_type', 'App\Group');
+    }
+
+    public function organizationSubscriptions()
+    {
+        return $this->hasMany(CurriculumSubscription::class)
+            ->where('subscribable_type', 'App\Organization');
+    }
+
+    public function isEditable($user_id = null, $token = null)
+    {
+        if ($user_id == null)
+        {
+            $user_id = auth()->user()->id;
+        }
+
+        if ($token == null){
+            $userSubscription = optional($this->userSubscriptions()
+                ->where('subscribable_id', $user_id)
+                ->first());
+            $groupSubscription = optional($this->groupSubscriptions()
+                ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
+                ->where('editable', 1)
+                ->first());
+            $organizationSubscription = optional($this->organizationSubscriptions()
+                ->whereIn('subscribable_id', auth()->user()->organizations->pluck('id'))
+                ->where('editable', 1)
+                ->first());
+        }
+        else
+        {
+            $userSubscription = optional($this->userSubscriptions()
+                /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
+                ->where('sharing_token', $token)
+                ->first());
+        }
+        if (
+            ($this->owner_id == $user_id or is_admin()) or // owner or admin
+            ($this->type_id !== 1 and ( // non-global
+                $userSubscription->editable // user enrolled
+                or $groupSubscription->editable ?? false // group enrolled
+                or $organizationSubscription->editable ?? false // organization enrolled
+            ))
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function booted() {
+        static::deleting(function(Curriculum $curriculum) { // before delete() method call this
+            $curriculum->subscriptions()->delete();
+            $curriculum->certificates()->delete();
+            $curriculum->glossar()->delete();
+            $curriculum->terminalObjectives->each->delete();
+            $curriculum->mediaSubscriptions()->delete();
+            $curriculum->navigator_item()->delete();
+        });
     }
 }

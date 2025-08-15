@@ -22,10 +22,15 @@
                         <div class="col-xs-12 p2" >
                             <div class="p-2">
                                 <div v-dompurify-html="filtered_quote.quote.quote"></div>
-                                <a style="cursor: pointer;" @click="show(filtered_quote.quote.content, filtered_quote.quote.id)">
+                                <a style="cursor: pointer;" @click="showFullContent = !showFullContent">
                                     <cite class="text-primary" v-dompurify-html="filtered_quote.quote.content.title"></cite>
                                 </a>
+                                <div
+                                    v-if="showFullContent"
+                                    v-dompurify-html="filtered_quote.quote.content.content">
+                                </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -38,22 +43,45 @@
 
 
 <script>
-
+    import content from "../content/Content.vue";
 
     export default {
-        props: ['quote_subscriptions', 'quote_curricula_list'],
+        props: {
+            objective: {
+                type: Object
+            },
+            type: {
+                type: String
+            }
+        },
         data: function() {
             return {
-
+                showFullContent: false,
+                quote_subscriptions: [],
+                quote_curricula_list: [],
             }
         },
 
         methods: {
+            loaderEvent() {
+                axios.get('/' + this.type + 'Objectives/' + this.objective.id + '/quoteSubscriptions')
+                    .then(response => {
+                        if (typeof (response.data.quotes_subscriptions) !== 'undefined') {
+                            this.quote_subscriptions = response.data.quotes_subscriptions;
+                            this.quote_curricula_list = response.data.curricula_list;
+                        }
+                    }).catch(e => {
+                    console.log(e)
+                });
+            },
            filterQuotes(curriculum_id) {
-
                 let filterQuotes = this.quote_subscriptions;
                 filterQuotes = filterQuotes.filter(
-                    c => c.quote.content.subscriptions[0].subscribable_id === curriculum_id
+                    (c) => {
+                        if (c.quote.content) {
+                          return c.quote.content?.subscriptions[0].subscribable_id === curriculum_id;
+                        }
+                    }
                   );
 
                 return filterQuotes;
@@ -62,12 +90,12 @@
                 return 'quote_curriculum_'+i;
             },
             show(content, quote) {
-                this.$modal.show('content-modal', {'content': content, 'quote': quote});
+                //this.$modal.show('content-modal', {'content': content, 'quote': quote});
             },
-
         },
 
         components: {
+            content
 
         },
 

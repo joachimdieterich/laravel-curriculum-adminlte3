@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\TaskSubscription;
+use App\Task;
+use Yajra\DataTables\DataTables;
 
 class TaskSubscriptionController extends Controller
 {
@@ -18,15 +19,18 @@ class TaskSubscriptionController extends Controller
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             abort_unless((\Gate::allows('task_access') and $model->isAccessible()), 403);
 
-            $subscriptions = TaskSubscription::where([
-                'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id'],
-            ]);
-
-            if (request()->wantsJson()) {
-                return ['subscriptions' => $subscriptions->with(['task'])->get()];
-            }
+            $tasks = Task::with('subscriptions')
+                ->join('task_subscriptions', 'tasks.id', '=', 'task_subscriptions.task_id')
+                ->where('task_subscriptions.subscribable_type', '=', $input['subscribable_type'])
+                ->where('task_subscriptions.subscribable_id', '=', $input['subscribable_id'])
+                ->get();
+            // TODO: for some reason the task->id gets overwritten by its task->subscription->id, making this unuseable
+            return empty($tasks) ? '' : DataTables::of($tasks)
+                ->addColumn('check', '')
+                ->setRowId('id')
+                ->make(true);
         }
+        //todo -> make it subscribable?
     }
 
     protected function validateRequest()

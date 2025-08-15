@@ -9,15 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 class Achievement extends Model
 {
     use HasFactory;
-
-    protected $guarded = [''];
-
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    
+    protected $casts = [
+        'status' => 'string',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
-
-    protected $cast = ['status' => 'string']; //important to get id as unique string
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -43,5 +40,11 @@ class Achievement extends Model
     public function owner()
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
+    }
+
+    public static function booted() {
+        static::deleting(function(Achievement $achievement) { // before delete() method call this
+            $achievement->notes()->delete();
+        });
     }
 }

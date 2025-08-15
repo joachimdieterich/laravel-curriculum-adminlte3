@@ -26,25 +26,28 @@
         <!-- /.navbar -->
 
         <!-- Content Header (Page header) -->
-        <section class="content-header p-2"
-            style="padding-top:60px !important">
+        <section
+            class="content-header px-3 py-2"
+            style="margin-top: 3.5rem !important"
+        >
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-6 pl-0">
                         <h1> @yield('title')</h1>
                     </div>
-                    <div class="col-sm-6 pr-0">
-                        <ol class="breadcrumb float-sm-right">
-                            @yield('breadcrumb')
-                        </ol>
+                    <div class="d-flex align-items-center col-sm-6 px-0">
+                        @yield('breadcrumb')
                     </div>
                 </div>
             </div>
         </section>
-        <div class="d-flex flex-column flex-fill px-3">
+
+        <!-- Main content -->
+        <section class="content d-flex flex-column flex-fill px-3">
             @yield('content')
             <input id="medium_id" class="d-none"> <!-- DONT REMOVE - used by TINYMCE -->
-        </div>
+        </section>
+
         <!-- Footer -->
         @include('partials.footer', ['contentonly' => true])
     </div>
@@ -53,13 +56,11 @@
         {{ csrf_field() }}
     </form>
     <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
-    <script src="{{ mix('js/app.js') }}"></script>
     <script src="{{ asset('node_modules/mathjax/es5/tex-svg.js') }}"></script>
-    <script src="{{ asset('node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('node_modules/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('node_modules/datatables.net-select/js/dataTables.select.min.js') }}"></script>
+    {{--
+    <script src="{{ mix('js/app.js') }}"></script>
     <script src="{{ asset('node_modules/moment/js/moment.min.js') }}"></script>
-    <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('node_modules/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js') }}"></script>--}}
     @yield('scripts')
 
 </body>

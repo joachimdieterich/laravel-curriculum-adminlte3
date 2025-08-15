@@ -24,11 +24,12 @@ class AchievementController extends Controller
         $user_ids = ! empty($input['user_id']) ? $input['user_id'] : auth()->user()->id;
 
         foreach ((array) $user_ids as $user_id) {
-            abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403);
+            abort_unless(auth()->user()->mayAccessUser(User::find($user_id)), 403, "User $user_id is not enroled in current organization.");
 
             $achievement = Achievement::where('referenceable_type', '=', $input['referenceable_type'])
-                                      ->where('referenceable_id', '=', $input['referenceable_id'])
-                                      ->where('user_id', '=', $user_id)->first();
+                ->where('referenceable_id', '=', $input['referenceable_id'])
+                ->where('user_id', '=', $user_id)
+                ->first();
 
             $achievement = Achievement::updateOrCreate(
                 [
@@ -48,24 +49,28 @@ class AchievementController extends Controller
             (new ProgressController)->calculateProgress('App\TerminalObjective', $obj->terminal_objective_id, $user_id);
         }
 
-        LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, (is_array($user_ids)) ? count($user_ids) : 1);
-        // axios call?
+        LogController::set(get_class($this).'@'.__FUNCTION__, auth()->user()->role()->id, count((array) $user_ids));
+
         if (request()->wantsJson()) {
-            return ['message' => $achievement->status, 'id' => $achievement->id];
+            return Achievement::whereIn('user_id',  (array) $user_ids)
+                ->where('referenceable_id', '=', $input['referenceable_id'])
+                ->where('referenceable_type', '=', $input['referenceable_type'])
+                ->with([
+                    'owner' => function($query) {
+                        $query->select('id', 'firstname', 'lastname');
+                    },
+                    'user' => function($query) {
+                        $query->select('id', 'firstname', 'lastname');
+                    },
+                ])
+                ->get();
         }
 
         return $achievement;
     }
 
-    public function getEnablingAchievements(Request $request) {
-        return Achievement::where('referenceable_type', '=', 'App\EnablingObjective')
-            ->where('referenceable_id', '=', $request->id)
-            ->whereIn('user_id', $request->users)
-            ->get();
-    }
-
     /* calculate proper status id */
-    protected function calculateStatus($user_id, $input, $status = '0')
+    protected function calculateStatus($user_id, $input, $status = '00')
     {
         if (\Gate::allows('achievement_create') and $user_id != auth()->user()->id) {
             abort_unless((auth()->user()->role()->id <= 5), 403); //only Teacher and roles above

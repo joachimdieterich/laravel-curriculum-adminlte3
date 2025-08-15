@@ -47,33 +47,33 @@ class PrerequisitesController extends Controller
 
     protected function getModelType($validated_request)
     {
-        if ($validated_request['enabling_objective_id'] != null) {
+        if (format_select_input($validated_request['enabling_objective_id']) != null) {
             return "App\EnablingObjective";
         } else {
-            return ($validated_request['terminal_objective_id'] != null) ? "App\TerminalObjective" : "App\Curriculum";
+            return (format_select_input($validated_request['terminal_objective_id']) != null) ? "App\TerminalObjective" : "App\Curriculum";
         }
     }
 
     protected function getModelId($validated_request)
     {
-        if ($validated_request['enabling_objective_id'] != null) {
-            return $validated_request['enabling_objective_id'];
+        if (format_select_input($validated_request['enabling_objective_id']) != null) {
+            return format_select_input($validated_request['enabling_objective_id']);
         } else {
-            return ($validated_request['terminal_objective_id'] != null) ? $validated_request['terminal_objective_id'] : $validated_request['curriculum_id'];
+            return format_select_input($validated_request['terminal_objective_id'])  ?? format_select_input($validated_request['curriculum_id']);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Prerequisites  $prerequisites
+     * @param  \App\Prerequisites  $prerequisite
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Prerequisites $prerequisites)
+    public function destroy(Prerequisites $prerequisite)
     {
         abort_unless(\Gate::allows('prerequisite_delete'), 403);
-        $entry = $prerequisites->get()->first();
-        $entry->delete();
+
+        $prerequisite->delete();
     }
 
     protected function generateD3Data($request)

@@ -8,7 +8,6 @@
                     model="agendaItemType"
                     :selected="this.form.agenda_item_type_id"
                     url="/agendaItemTypes"
-                    :placeholder="trans('global.pleaseSelect')"
                     @selectedValue="(id) => this.form.agenda_item_type_id = id"
                 ></Select2>
             </div>
@@ -61,7 +60,7 @@
                     type="button"
                     class="btn btn-info py-2"
                     @click="addMedia()">
-                    {{ trans('global.media.add') }}
+                    {{ trans('global.medium.add') }}
                 </button>
             </div>
         </div>
@@ -84,14 +83,8 @@
 </template>
 <script>
 import Form from "form-backend-validation";
-const Select2 =
-    () => import('../forms/Select2');
-const DatePicker =
-    () => import('vue2-datepicker');
-/*
-import Select2 from "../forms/Select2";
-import DatePicker from 'vue2-datepicker';*/
-import 'vue2-datepicker/index.css';
+import Select2 from "../forms/Select2.vue";
+import DatePicker from "vue3-datepicker";
 
 export default {
     name: 'AgendaItemForm',
@@ -146,10 +139,10 @@ export default {
       },
         addMedia() {
             this.$modal.show(
-                'medium-create-modal',
+                'medium-modal',
                 {
-                    'eventHubCallbackFunction': 'add_media_to_agenda_item',
-                    'eventHubCallbackFunctionParams': this.form.id
+                    'callback': 'add_media_to_agenda_item',
+                    'callbackId': this.component_id
                 });
         },
         /*setSelectedValue(id){
@@ -174,7 +167,7 @@ export default {
         ]);
     },
     created() {
-        this.$eventHub.$on('add_media_to_agenda_item', (e) => {
+        this.$eventHub.on('add_media_to_agenda_item', (e) => {
             if (this.form.id == e.id) {
                 this.form.medium_id = e.selectedMediumId;
             }

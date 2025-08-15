@@ -21,15 +21,16 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
     )
     {
         if(!is_guest()){
-            $headers =  $this->getSignatureHeaders($ticket);
+            $headers = $this->getSignatureHeaders($ticket);
             $headers[] = $this->getRESTAuthenticationHeader($ticket);
         }
+
         $curl = $this->base->handleCurlRequest(
             $this->repoUrl.'/rest/rendering/v1/details/'.$repository.'/'.$nodeId,
             [
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_HTTPHEADER => $headers ?? '',
+                CURLOPT_HTTPHEADER => $headers ?? [],
                 CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
                 CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
             ]
@@ -168,8 +169,8 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         //dump(json_encode ( $postFields ));
         //dump($this->repoUrl . '/rest/search/v1/queries/' . $repository.'/-default-/curriculum?'.http_build_query($params));
 
-        if(!is_guest()){
-            $headers =  $this->getSignatureHeaders($ticket);
+        if(!is_guest()) {
+            $headers = $this->getSignatureHeaders($ticket);
             $headers[] = $this->getRESTAuthenticationHeader($ticket);
         } else {
             $ts = time() * 1000;

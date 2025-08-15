@@ -33,28 +33,12 @@ class LocalMediaAdapter implements MediaInterface
     public function list()
     {
         abort_unless(\Gate::allows('medium_access'), 403);
-        $media = (auth()->user()->role()->id == 1) ? Medium::all() : auth()->user()->media()->get();
-
-        $delete_gate = \Gate::allows('medium_delete');
+        $media = (auth()->user()->role()->id == 1)
+            ? Medium::where('adapter', '=', 'local')->get()
+            : auth()->user()->media()->get();
 
         return DataTables::of($media)
-            ->addColumn('action', function ($media) use ($delete_gate) {
-                $actions = '';
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'media\','.$media->id.')">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 
@@ -70,14 +54,17 @@ class LocalMediaAdapter implements MediaInterface
 
     public function store(Request $request)
     {
-        if ($request->hasFile('file')) {
+        if ($request->hasFile('file')) { //if size == 0 increase upload_max_filesize in php.ini
             $input = $this->validateRequest();
 
             $files = $request->file('file');
+            if (gettype($files) == 'object') $files = [$files];
+
             $uploaded = new Collection();
             $pathPrefix = '/users/'.auth()->user()->id;//.'/';
             foreach ($files as $file) {
-                $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.'.$file->getClientOriginalExtension(); //todo: filename should be editable
+                $cleanFilename = $this->cleanFileName(time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+                $filename = $cleanFilename.'.'.$file->getClientOriginalExtension(); //todo: filename should be editable
 
                 if ($file->storeAs($pathPrefix.$input['path'], $filename, config('filesystems.default'))) {
                     $uploaded->push($this->onStore($file, $filename, $input));
@@ -93,19 +80,25 @@ class LocalMediaAdapter implements MediaInterface
         }
     }
 
+    private function cleanFileName($string) {
+        $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+        $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+
+        return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+    }
+
     public function show(Medium $medium)
     {
         /* id link */
         if (($medium->mime_type != 'url')) {
             $path = storage_path('app'.$medium->path.$medium->medium_name);
-            //dd($path);
             if (! file_exists($path)) {
-                abort(404);
+                abort(404, "File doesn't exist");
             }
         }
 
         // Medium is public (sharing_level_id == 1) or user is owner
-        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
+        if (($medium->public) or ($medium->owner_id == auth()->user()->id) or is_admin()) {
             return ($medium->mime_type != 'url') ? response()->file($path, ['Content-Disposition' => 'filename="'.$medium->medium_name.'"']) : redirect($medium->path); //return file or url
         }
 
@@ -117,37 +110,23 @@ class LocalMediaAdapter implements MediaInterface
                 }
             }
         }
-        /* end checkIfUserHasSubscription and visibility */
 
         /* check if User has access to model->medium_id*/
         $params = $this->validateRequest();
         if (isset($params['model'])) {
-            switch ($params['model']){
-                case 'Curriculum':
-                case 'Videoconference':
-                case 'Kanban':
-                case 'Map':
-                case 'MapMarker':
-                    $class = 'App\\'.$params['model'];
-                    $model = (new $class)::where('id',$params['model_id'] )->get()->first();
+            $class = 'App\\'.$params['model'];
+            $model = (new $class)::where('id',$params['model_id'] )->get()->first();
 
-                    if ($model->isAccessible() && ($model->medium_id == $medium->id)){
-                        return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
-                    }
-                break;
-
-                default:
-                    break;
+            if ($model->isAccessible() && ($model->medium_id == $medium->id)){
+                return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
             }
         }
 
-        /* user has permission to access this file ! */
-        abort(403);
+        abort(403, "No permission to view local media");
     }
 
-    public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs
+    public function thumb(Medium $medium, $size)
     {
-
         /* id link */
         if (($medium->mime_type != 'url')) {
             $path = storage_path('app'.$medium->path.$medium->medium_name);
@@ -242,7 +221,6 @@ class LocalMediaAdapter implements MediaInterface
 
     public function checkIfUserHasSubscription($subscription)
     {
-
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())
@@ -263,19 +241,16 @@ class LocalMediaAdapter implements MediaInterface
                 }
                 break;
             case "App\KanbanItem":
-                if ($subscription->subscribable->kanban->isAccessible()) {
+                return true;
+                break;
+            default:
+                if ($subscription->subscribable->isAccessible())
+                {
                     return true;
                 }
-                break;
-            case "App\Exercise":
-                if ($subscription->subscribable->training->subscriptions[0]->subscribable->plan->isAccessible()) {
-                    return true;
-                }
-                break;
-
-            default: return $subscription->subscribable->isAccessible();
                 break;
         }
+        return false;
     }
 
     public function subscribe($medium, $subscribable_type, $subscribable_id, $sharing_level_id = 1, $visibility = 1)

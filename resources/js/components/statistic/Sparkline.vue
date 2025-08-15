@@ -35,7 +35,7 @@ export default {
     },
     data() {
         return {
-            id: 'chart-' + this._uid
+            id: 'chart-' + this.$.uid
         };
     },
     watch: {

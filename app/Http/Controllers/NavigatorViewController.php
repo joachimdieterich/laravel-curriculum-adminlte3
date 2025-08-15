@@ -7,9 +7,51 @@ use App\NavigatorItem;
 use App\NavigatorView;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Yajra\DataTables\DataTables;
 
 class NavigatorViewController extends Controller
 {
+
+    public function list(NavigatorView $navigator_view)
+    {
+        abort_unless(\Gate::allows('navigator_show'), 403);
+        $items = NavigatorItem::select([
+            'id',
+            'title',
+            'description',
+            'navigator_view_id',
+            'referenceable_type',
+            'referenceable_id',
+            'position',
+            'css_class',
+            'visibility',
+        ])->where('navigator_view_id', $navigator_view->id)
+            ->with(['referenceable']);
+
+        return DataTables::of($items)
+            ->addColumn('check', '')
+            ->addColumn('medium_id', function ($items)  {
+                if ($items->medium) {
+                    return $items->medium->id;
+                }
+            })
+            ->addColumn('url', function ($items)  {
+
+               switch ($items->referenceable_type){
+                   case 'App\NavigatorView':
+                       return '/navigatorViews' ;
+                       break;
+                   case 'App\Curriculum':
+                       return '/curricula' ;
+                       break;
+                   case 'App\Content':
+                       return '/contents';
+                       break;
+               }
+            })
+            ->setRowId('referenceable_id')
+            ->make(true);
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -48,20 +90,19 @@ class NavigatorViewController extends Controller
      * @param  NavigatorView  $navigatorView
      * @return Response
      */
-    public function show(Navigator $navigator, NavigatorView $navigator_view)
+    public function show(NavigatorView $navigatorView)
     {
-        $navigators = Navigator::where('id', $navigator->id)->get()->first();
-        $views = NavigatorView::where('id', $navigator_view->id)
-                                    ->where('navigator_id', $navigator->id)
-                                    ->with(['items'])
-                                    ->get()->first();
-        $breadcrumbs = $this->breadcrumbs($views);
+        $navigator = $navigatorView->navigator;
 
-        LogController::set(get_class($this).'@'.__FUNCTION__, $navigator_view->id);
+        $view = NavigatorView::where('id', $navigatorView->id)
+                    ->where('navigator_id', $navigator->id)
+                    ->get()
+                    ->first();
+        $breadcrumbs = $this->breadcrumbs($view);
 
         return view('navigators.show')
-                ->with(compact('navigators'))
-                ->with(compact('views'))
+                ->with(compact('navigator'))
+                ->with(compact('view'))
                 ->with(compact('breadcrumbs'));
     }
 

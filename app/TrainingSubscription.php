@@ -19,6 +19,9 @@ class TrainingSubscription extends Model
         'editable',
         'owner_id'
     ];
+    protected $casts = [
+        'editable' => 'boolean',
+    ];
 
     /**
      * Prepare a date for array / JSON serialization.

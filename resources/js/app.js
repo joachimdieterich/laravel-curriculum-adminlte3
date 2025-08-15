@@ -1,44 +1,58 @@
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
 require('./bootstrap');
-require('tinymce/tinymce');
-//require('leaflet/dist/leaflet.js');
 require('@activix/bootstrap-datetimepicker');
 
 //vue
-window.Vue = require('vue').default;
+import { createApp } from 'vue';
 
-window.moment = require('moment');
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
+const app = createApp({});
+/**
+ *
+ * global eventHub
+ *
+ * How to add a receiver:
+ * created() {
+ *     this.$eventHub.on('reload_agenda', (params) => {
+ *         // do something
+ *     });
+ * },
+ *
+ * how to add a sender
+ * this.$eventHub.emit('reload_agenda', params);
+ */
+import mitt from 'mitt';
+app.config.globalProperties.$eventHub = mitt();
 
-//security
-import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
-import DOMPurify from 'dompurify';
-const createWrapper = (inner) => {
-    return (el, binding) => {
-        if (binding.value === undefined || binding.value === null) {
-            return;
-        }
-        inner(el, binding);
-    };
-};
-const directive = buildVueDompurifyHTMLDirective({}, () => DOMPurify);
-Vue.directive(
-    'dompurify-html',
-    {
-        inserted: createWrapper(directive.inserted),
-        update: createWrapper(directive.update),
-        unbind(el) {
-            el.innerHTML = '';
+import VueDOMPurifyHTML from 'vue-dompurify-html';
+app.use(VueDOMPurifyHTML, {
+    hooks: {
+        afterSanitizeAttributes: (currentNode) => {
+            if ('rel' in currentNode && currentNode.rel == 'noopener') {
+                currentNode.setAttribute('target', '_blank');
+            }
         },
-    }
-);
+    },
+});
+import { useGlobalStore } from "./store/global";
+import { createPinia } from "pinia";
+const pinia = createPinia();
+app.use(pinia);
+const globalStore = useGlobalStore();
+
+window.moment = require('moment/src/moment');
+import 'moment/src/locale/de'; // import german locale for moment.js
 
 //broadcasting
-import VueEcho from 'vue-echo';
+/*import VueEcho from 'vue-echo';
 if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
     Vue.use(VueEcho, {
         broadcaster: 'pusher',
@@ -53,21 +67,34 @@ if (process.env.MIX_PUSHER_APP_ACTIVE == 'true') {
         wssPort: process.env.MIX_PUSHER_APP_WSSPORT,
         enableTransports: ['ws', 'wss']
     });
-}
+}*/
 
 // use trans function like in blade
 import _ from 'lodash'; //needed to get
 
-//todo: explain function
-Vue.prototype.trans = (key) => {
-    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key) );
+/**
+ * search for key in language file
+ * @param {String} key
+ * @returns translated String or key if not found
+ */
+app.config.globalProperties.trans = (key) => {
+    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
 };
 
-import "vue-swatches/dist/vue-swatches.css";
+import VSwatches from 'vue3-swatches';
+import 'vue3-swatches/dist/style.css';
+app.use(VSwatches);
 
+app.config.globalProperties.$swatches = [
+    ['#166534', '#16a34a', '#10b981', '#4ade80', '#6ee7b7'], // green
+    ['#1e40af', '#2563eb', '#0ea5e9', '#60a5fa', '#a5b4fc'], // blue
+    ['#581c87', '#a21caf', '#7c3aed', '#a855f7', '#e879f9'], // purple -> pink
+    ['#991b1b', '#dc2626', '#f97316', '#f59e0b', '#facc15'], // red -> orange -> yellow
+    ['#111827', '#78350f', '#9ca3af', '#d1d5db', '#f4f4f4'], // black -> brown -> grey
+];
 
-Vue.prototype.$textcolor = (color, dark = '#000', light = '#fff') => {
-    if (typeof(color) != 'string'){
+app.config.globalProperties.$textcolor = (color, dark = '#000', light = '#fff') => {
+    if (typeof(color) != 'string') {
         color = 'ffffff';
     }
 
@@ -79,74 +106,99 @@ Vue.prototype.$textcolor = (color, dark = '#000', light = '#fff') => {
     //console.log(r + ' ' + g + ' ' + b);
     if (((r * 0.299) + (g * 0.587) + (b * 0.114)) > 140)
     {
-        //console.log('black');
         return dark;
-
     } else {
-        //console.log('white');
         return light;
     }
 };
 
-
 /**
- * Store current ab in browser storage
- * example @click="setLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+ * Store current ab in global storage
+ * example @click="setGlobalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
  * @param key
  * @param value
  */
-Vue.prototype.setLocalStorage = (key, value) => {
-    localStorage.setItem(key, value);
+app.config.globalProperties.setGlobalStorage = (key, value) => {
+    globalStore.setItem(key, value);
 };
 
 /**
- * check if current value is set in browser storage
- * example: :class="checkLocalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
+ * check if current value is set in global storage
+ * example: :class="getGlobalStorage('#logbook_'+entry.id, '#logbook_description_'+entry.id)"
  * @param key
  * @param value
  * @param class_string
  * @param is_default_element
  * @returns {string}
  */
-Vue.prototype.checkLocalStorage = (key, value, class_string = "active", is_default_element = false) => {
-    if (localStorage.getItem(key) === value) {
+app.config.globalProperties.getGlobalStorage = (key, value, class_string = "active", is_default_element = false) => {
+    if (globalStore.getItem(key) === value) {
         return class_string;
     }
-    if (localStorage.getItem(key) === null && is_default_element === true) {
+    if (globalStore.getItem(key) === null && is_default_element === true) {
         return class_string;
     }
 };
 
-Vue.prototype.checkPermission = (permission) => {
+//-> use v-permission in vue3 templates, use checkPermission in scripts
+app.config.globalProperties.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
 };
 
 /**
- * Gets the text content of the HTML
- * No HTML tags are included, but any text, including the text inside the tags, is included.
- *
- * @param {string} html Input HTML
- * @returns The text content of the HTML
+ * removes HTML-tags of given String via parsing it through a <textarea>
+ * @param {String} text 
+ * @returns raw text without HTML-tags
  */
-Vue.prototype.htmlToText = (html) => {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = html ?? '';
+app.config.globalProperties.$decodeHTMLEntities = (text) => {
+    return $("<textarea/>")
+        .html(text)
+        .text();
+};
+
+/**
+ * Decodes html entities (used in datatable/list-results) via RegEx
+ */
+app.config.globalProperties.$decodeHtml = (str) =>  {
     let map =
         {
             '&amp;': '&',
             '&lt;': '<',
             '&gt;': '>',
             '&quot;': '"',
-            '&#039;': "'",
-            '&nbsp;': " ",
-            '&szlig;': "ß",
-            '&Auml;': 'Ä',
-            '&auml;': 'ä',
-            '&Uuml;': 'Ü',
-            '&uuml;': 'ü',
-            '&Ouml;': 'Ö',
-            '&ouml;': 'ö',
-            '&copy;': '©',
+            '&#039;': "'"
+        };
+    if (str !== null) {
+        return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;/g, function(m) {return map[m];});
+    } else {
+        return '';
+    }
+};
+
+/**
+ * selected special chars are replaced with their actual char (e.g. '&amp;' => '&')
+ * @param {String} html 
+ * @returns 
+ */
+app.config.globalProperties.htmlToText = (html) => {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html ?? '';
+    let map =
+        {
+            '&amp;':    '&',
+            '&lt;':     '<',
+            '&gt;':     '>',
+            '&quot;':   '"',
+            '&#039;':   "'",
+            '&nbsp;':   " ",
+            '&szlig;':  "ß",
+            '&Auml;':   'Ä',
+            '&auml;':   'ä',
+            '&Uuml;':   'Ü',
+            '&uuml;':   'ü',
+            '&Ouml;':   'Ö',
+            '&ouml;':   'ö',
+            '&copy;':   '©',
         };
 
     txt =  txt.value.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&nbsp;|&szlig;|&Auml;|&auml;|&Uuml;|&uuml;|&Ouml;|&ouml;|&copy;/g, function(m) {return map[m];})
@@ -154,47 +206,60 @@ Vue.prototype.htmlToText = (html) => {
         .replace('<br>', ' ');
 
     return txt.replace(/(&lt;|<)script.*?(&lt;|<)\/script(&gt;|>)|<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, ' ');
-
-}
+};
 
 /**
  * make userId accessible for vue
  * @type {string}
  */
 if (document.querySelector("meta[name='user-id']")){
-    Vue.prototype.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
+    app.config.globalProperties.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 }
-
-import VModal from 'vue-js-modal';
-
-Vue.use(VModal, {dynamic: true});
-
-import DataTable from 'laravel-vue-datatable';
-Vue.use(DataTable);
 
 import Sticky from 'vue-sticky-directive';
 
-Vue.use(Sticky);
+app.use(Sticky);
 
 import Toast from 'vue-toastification';
-
 import 'vue-toastification/dist/index.css';
 
-Vue.use(Toast, {
+app.use(Toast, {
     transition: "Vue-Toastification__bounce",
     maxToasts: 20,
-    newestOnTop: true
+    newestOnTop: true,
 });
 
-var filter = function (text, length, clamp) {
-    clamp = clamp || '...';
-    var node = document.createElement('div');
-    node.innerHTML = text;
-    var content = node.textContent;
-    return content.length > length ? content.slice(0, length) + clamp : content;
-};
+/**
+ * checks which error message is appropriate for the given error
+ * @param {Error} error 
+ * @param {String} fallback fallback translation-key, if given error doesn't have a specified error-message
+ * @returns @String key to translate error message
+ */
+app.config.globalProperties.errorMessage = (error, fallback = 'global.error.default') => {
+    let translation_key = fallback; // default error message
 
-Vue.filter('truncate', filter);
+    if (error.response.data.message?.startsWith('global.')) { // if translation key is given in response
+        translation_key = error.response.data.message;
+    } else {
+        switch (error.status) {
+            case 403:
+            case 404:
+            case 419:
+            case 500:
+                translation_key = 'global.error.' + error.status;
+                break;
+            default:
+                break;
+        }
+    }
+    let msg = window.trans;
+    // since trans()-function is not available here, we traverse the translation object to get the message
+    translation_key.split('.').forEach(key => msg = msg[key]);
+    // add information why the request was aborted (no translation)
+    if (error.response.headers.has('abort-info')) msg += ' (' + error.response.headers.get('abort-info') + ')';
+
+    return msg;
+};
 
 /**
  * The following block of code may be used to automatically register your
@@ -203,291 +268,341 @@ Vue.filter('truncate', filter);
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
-Vue.component('organization-modal', () => import('./components/organization/OrganizationModal.vue'));
-Vue.component('group-modal', () => import('./components/group/GroupModal.vue'));
+import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce payload for users
 
-Vue.component('admin-view', () => import('./components/admin/AdminView.vue'));
-Vue.component('absence-modal', () => import('./components/absence/AbsenceModal.vue'));
-Vue.component('curriculum-view', () => import('./components/curriculum/CurriculumView.vue'));
-Vue.component('group-view', () => import('./components/group/GroupView.vue'));
-Vue.component('terminal-objective-modal', () => import('./components/objectives/TerminalObjectiveModal.vue'));
-Vue.component('data-table-widgets', () => import('./components/uiElements/DataTableWidgets.vue'));
-Vue.component('enabling-objective-modal', () => import('./components/objectives/EnablingObjectiveModal.vue'));
-Vue.component('events', () => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents'));
-Vue.component('objective-view', () => import('./components/objectives/ObjectiveView.vue'));
-Vue.component('objective-box', () => import('./components/objectives/ObjectiveBox.vue'));
-Vue.component('dropdown-button', () => import('./components/uiElements/DropdownButton.vue'));
-Vue.component('model-limiter', () => import('./components/config/ModelLimiter.vue'));
-Vue.component('content-modal', () => import('./components/content/ContentModal.vue'));
-Vue.component('content-create-modal', () => import('./components/content/ContentCreateModal.vue'));
-Vue.component('content-subscription-modal', () => import('./components/content/ContentSubscriptionModal.vue'));
-Vue.component('curricula', () => import('./components/curriculum/Curricula.vue'));
-Vue.component('reference-objective-modal', () => import('./components/reference/ReferenceObjectiveModal.vue'));
-Vue.component('maps', () => import('./components/map/Maps.vue'));
-Vue.component('media-renderer', () => import('./components/media/MediaRenderer.vue'));
-Vue.component('medium-modal', () => import('./components/media/MediumModal.vue'));
-Vue.component('medium-create-modal', () => import('./components/media/MediumCreateModal.vue'));
-Vue.component('medium-export-modal', () => import('./components/media/MediumExportModal.vue'));
-Vue.component('meeting', () => import('./components/meeting/Meeting.vue'));
-Vue.component('note-modal', () => import('./components/note/NoteModal.vue'));
-Vue.component('notes', () => import('./components/note/Notes.vue'));
-/*Vue.component('objective-medium-modal', () => import('./components/objectives/ObjectiveMediumModal.vue'));*/
-Vue.component('certificate-generate-modal', () => import('./components/certificate/GenerateCertificateModal.vue'));
-Vue.component('logbook', () => import('./components/logbooks/Logbook.vue'));
-Vue.component('logbooks', () => import('./components/logbooks/Logbooks.vue'));
-Vue.component('logbook-entry-modal', () => import('./components/logbooks/LogbookEntryModal.vue'));
-Vue.component('logbook-entry-subject-modal', () => import('./components/logbooks/LogbookEntrySubjectModal.vue'));
-Vue.component('plan', () => import('./components/plan/Plan.vue'));
-Vue.component('plans', () => import('./components/plan/Plans.vue'));
-Vue.component('plan-achievements', () => import('./components/plan/PlanAchievements.vue'));
-Vue.component('subscribe-objective-modal', () => import('./components/objectives/SubscribeObjectiveModal.vue'));
-Vue.component('set-achievements-modal', () => import('./components/plan/SetAchievementsModal.vue'));
-Vue.component('plan-achievements-options-modal', () => import('./components/plan/PlanAchievementsOptionsModal.vue'));
-Vue.component('select-users-modal', () => import('./components/users/SelectUsersModal.vue'));
-Vue.component('objective-progress-subscription-modal', () => import('./components/objectives/ObjectiveProgressSubscriptionModal.vue'));
-Vue.component('task-modal', () => import('./components/tasks/TaskModal.vue'));
-Vue.component('task', () => import('./components/tasks/Task.vue'));
-Vue.component('task-timeline', () => import('./components/tasks/Timeline.vue'));
-Vue.component('training', () => import('./components/training/Training'));
-Vue.component('kanbans', () => import('./components/kanban/Kanbans.vue'));
-Vue.component('kanban-board', () => import('./components/kanban/KanbanBoard.vue'));
-Vue.component('subscribe-modal', () => import('./components/subscription/SubscribeModal.vue'));
-Vue.component('sidebar', () => import('./components/uiElements/Sidebar.vue'));
-Vue.component('move-terminal-objective-modal', () => import('./components/objectives/MoveTerminalObjectiveModal.vue'));
-Vue.component('prerequisite-modal', () => import('./components/prerequisites/PrerequisiteObjectiveModal.vue'));
-Vue.component('lms-modal', () => import('./../../app/Plugins/Lms/resources/js/components/Create.vue'));
-Vue.component('color-picker-component', () => import('./components/kanban/ColorPickerComponent.vue'));
-Vue.component('color-picker-input', () => import('./components/kanban/ColorPickerInput.vue'));
-Vue.component('leaflet-map', () => import('./components/map/Map.vue'));
-Vue.component('searchbar', () => import('./components/uiElements/Searchbar.vue'));
-Vue.component('date-picker-wrapper', () => import('./components/uiElements/DatePickerWrapper.vue'));
-Vue.component('videoconference', () => import('./components/videoconference/Videoconference.vue'));
-Vue.component('videoconferences', () => import('./components/videoconference/Videoconferences.vue'));
+app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
+app.component('admin-view',  defineAsyncComponent(() => import('./components/admin/AdminView.vue')));
+app.component('breadcrumbs',  defineAsyncComponent(() => import('./components/uiElements/Breadcrumbs.vue')));
 
-Vue.component('tests-table', () => import('./components/tests/TestsTable.vue'));
+app.component('certificates', defineAsyncComponent(() => import('./components/certificate/Certificates.vue')));
+app.component('certificate', defineAsyncComponent(() => import('./components/certificate/Certificate.vue')));
 
-Vue.prototype.$initTinyMCE = function (tinyMcePlugins, attr = null, customToolbar1 = null, customToolbar2 = null, extended_valid_elements = null) {
+app.component('configs', defineAsyncComponent(() => import('./components/config/Configs.vue')));
+app.component('config', defineAsyncComponent(() => import('./components/config/Config.vue')));
+
+app.component('curricula',  defineAsyncComponent(() => import('./components/curriculum/Curricula.vue')));
+app.component('curriculum',  defineAsyncComponent(() => import('./components/curriculum/Curriculum.vue')));
+
+app.component('events', defineAsyncComponent(() => import('../../app/Plugins/Eventmanagement/eVewa/resources/js/components/embedEvents.vue')));
+app.component('exam', defineAsyncComponent(() => import('./components/exam/Exam.vue')));
+app.component('exams_list', defineAsyncComponent(() => import('./components/exam/Exams.vue')));
+
+app.component('grades', defineAsyncComponent(() => import('./components/grade/Grades.vue')));
+app.component('grade', defineAsyncComponent(() => import('./components/grade/Grade.vue')));
+
+app.component('groups', defineAsyncComponent(() => import('./components/group/Groups.vue')));
+app.component('group', defineAsyncComponent(() => import('./components/group/Group.vue')));
+
+app.component('maps', defineAsyncComponent(() => import('./components/map/Maps.vue')));
+app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue'))); // cannot be "map" -> name map is reserved
+
+app.component('link-item', defineAsyncComponent(() => import('./components/uiElements/LinkItem.vue')));
+
+app.component('logbooks', defineAsyncComponent(() => import('./components/logbook/Logbooks.vue')));
+app.component('logbook', defineAsyncComponent(() => import('./components/logbook/Logbook.vue')));
+
+app.component('media-index', defineAsyncComponent(() => import('./components/media/MediaIndex.vue')));
+app.component('media-renderer', defineAsyncComponent(() => import('./components/media/MediaRenderer.vue')));
+
+app.component('meeting', defineAsyncComponent(() => import('./components/meeting/Meeting.vue')));
+app.component('meetings', defineAsyncComponent(() => import('./components/meeting/Meetings.vue')));
+
+app.component('metadatasets', defineAsyncComponent(() => import('./components/metadataset/Metadatasets.vue')));
+app.component('model-limiter', defineAsyncComponent(() => import('./components/config/ModelLimiter.vue')));
+
+app.component('navigators', defineAsyncComponent(() => import('./components/navigator/Navigators.vue')));
+app.component('navigator', defineAsyncComponent(() => import('./components/navigator/Navigator.vue')));
+
+app.component('notes', defineAsyncComponent(() => import('./components/note/Notes.vue')));
+
+app.component('objective', defineAsyncComponent(() => import('./components/objectives/Objective.vue')));
+app.component('objective-box', defineAsyncComponent(() => import('./components/objectives/ObjectiveBox.vue')));
+
+app.component('objective-types', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveTypes.vue')));
+app.component('objective-type', defineAsyncComponent(() => import('./components/objectiveType/ObjectiveType.vue')));
+
+app.component('organizations', defineAsyncComponent(() => import('./components/organization/Organizations.vue')));
+app.component('organization', defineAsyncComponent(() => import('./components/organization/Organization.vue')));
+
+app.component('organization-types', defineAsyncComponent(() => import('./components/organizationType/OrganizationTypes.vue')));
+app.component('organization-type', defineAsyncComponent(() => import('./components/organizationType/OrganizationType.vue')));
+
+app.component('kanbans', defineAsyncComponent(() => import('./components/kanban/Kanbans.vue')));
+app.component('kanban', defineAsyncComponent(() => import('./components/kanban/Kanban.vue')));
+
+app.component('searchbar', defineAsyncComponent(() => import('./components/uiElements/Searchbar.vue')));
+app.component('sidebar', defineAsyncComponent(() => import('./components/uiElements/Sidebar.vue')));
+
+app.component('subjects', defineAsyncComponent(() => import('./components/subject/Subjects.vue')));
+app.component('subject', defineAsyncComponent(() => import('./components/subject/Subject.vue')));
+
+app.component('tests-table', defineAsyncComponent(() => import('./components/tests/TestsTable.vue')));
+app.component('title-component', defineAsyncComponent(() => import('./components/uiElements/Title.vue')));
+
+app.component('task', defineAsyncComponent(() => import('./components/task/Task.vue')));
+app.component('tasks', defineAsyncComponent(() => import('./components/task/Tasks.vue')));
+
+app.component('training', defineAsyncComponent(() => import('./components/training/Training.vue')));
+
+app.component('permissions', defineAsyncComponent(() => import('./components/permission/Permissions.vue')));
+app.component('permission', defineAsyncComponent(() => import('./components/permission/Permission.vue')));
+
+app.component('periods', defineAsyncComponent(() => import('./components/period/Periods.vue')));
+app.component('period', defineAsyncComponent(() => import('./components/period/Period.vue')));
+
+app.component('plans', defineAsyncComponent(() => import('./components/plan/Plans.vue')));
+app.component('plan', defineAsyncComponent(() => import('./components/plan/Plan.vue')));
+app.component('plan-achievements', defineAsyncComponent(() => import('./components/plan/PlanAchievements.vue')));
+
+app.component('roles', defineAsyncComponent(() => import('./components/role/Roles.vue')));
+app.component('role', defineAsyncComponent(() => import('./components/role/Role.vue')));
+
+app.component('users', defineAsyncComponent(() => import('./components/user/Users.vue')));
+app.component('user', defineAsyncComponent(() => import('./components/user/User.vue')));
+
+app.component('variant-definition-modal', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinitionModal.vue')));
+app.component('variant-definition', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinition.vue')));
+app.component('variant-definitions', defineAsyncComponent(() => import('./components/variantDefinition/VariantDefinitions.vue')));
+
+app.component('videoconferences', defineAsyncComponent(() => import('./components/videoconference/Videoconferences.vue')));
+app.component('videoconference', defineAsyncComponent(() => import('./components/videoconference/Videoconference.vue')));
+
+app.config.globalProperties.$initTinyMCE = function(
+    tinyMcePlugins,
+    attr = null,
+    customToolbar1 = null,
+    customToolbar2 = null,
+    extended_valid_elements = null,
+    height = 200,
+) {
 
     const defaultPlugins = [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",
         "insertdatetime media nonbreaking save table directionality",
-        "emoticons template paste textpattern example"
+        "emoticons template paste textpattern curriculummedia",
+        "autoresize"
     ];
 
-    tinymce.remove();
-    tinymce.init({
+    return {
         // allows adding additional attributes for specific cases
         // attributes can be overwritten if they are set BEFORE this line
         ...attr,
-
         path_absolute : "/",
         selector: "textarea.my-editor",
         branding: false,
+        placeholder: attr?.placeholder ?? this.trans('global.description'),
         plugins: tinyMcePlugins ?? defaultPlugins,
-        external_plugins: {'mathjax': '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js'},
+        external_plugins: { mathjax: '/node_modules/@dimakorotkov/tinymce-mathjax/plugin.min.js' },
         menubar: "edit format",
-        toolbar1: customToolbar1 ?? "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify",
-        toolbar2: customToolbar2 ?? "bullist numlist outdent indent | example mathjax link image media code",
+        toolbar1: customToolbar1 ?? "bold underline italic | alignleft aligncenter alignright alignjustify",
+        toolbar2: customToolbar2 ?? "bullist numlist outdent indent | curriculummedia link",
         extended_valid_elements: extended_valid_elements ?? '',
-        font_size_input_default_unit: "pt",
+        default_link_target:"_blank",
         relative_urls: false,
-        entity_encoding : "raw",
-        language: 'de',
-
+        entity_encoding: "raw",
+        language: window.navigator.language.substring(0, 2), // use browser language (only 'de'/'en' available, default => 'en')
+        height: height,
+        table_default_attributes: {
+            border: '1',
+        },
         mathjax: {
             lib: '/node_modules/mathjax/es5/tex-mml-chtml.js', // path to mathjax
-            //symbols: {start: '\\(', end: '\\)'}, //optional: mathjax symbols
-            //className: "math-tex", //optional: mathjax element class
-            //configUrl: '/your-path-to-plugin/@dimakorotkov/tinymce-mathjax/config.js' //optional: mathjax config js
         },
+        setup: function (editor) {
+            editor.ui.registry.addButton('insertFirstname', {
+                text: window.trans.global.firstname,
+                onAction: function (_) {
+                    editor.insertContent('<span id="firstname" style="background-color: lightgray;">'+ window.trans.global.firstname + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('insertLastname', {
+                text: window.trans.global.lastname,
+                onAction: function (_) {
+                    editor.insertContent('<span id="lastname" style="background-color: lightgray;">'+ window.trans.global.lastname + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('organizationTitle', {
+                text: window.trans.global.organization.title_singular,
+                onAction: function (_) {
+                    editor.insertContent('<span id="organization_title" style="background-color: lightgray;">'+ window.trans.global.organization.title_singular + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('organizationStreet', {
+                text: window.trans.global.organization.fields.street,
+                onAction: function (_) {
+                    editor.insertContent('<span id="organization_street" style="background-color: lightgray;">'+ window.trans.global.organization.fields.street + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('organizationPostcode', {
+                text: window.trans.global.organization.fields.postcode,
+                onAction: function (_) {
+                    editor.insertContent('<span id="organization_postcode" style="background-color: lightgray;">'+ window.trans.global.organization.fields.postcode + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('organizationCity', {
+                text: window.trans.global.organization.fields.city,
+                onAction: function (_) {
+                    editor.insertContent('<span id="organization_city" style="background-color: lightgray;">'+ window.trans.global.organization.fields.city + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('certificateDate', {
+                text: window.trans.global.date,
+                onAction: function (_) {
+                    editor.insertContent('<span id="date" style="background-color: lightgray;">'+ window.trans.global.date + '</span>&nbsp;');
+                }
+            });
+            editor.ui.registry.addButton('usersProgress', {
+                text: window.trans.global.progress.title_singular,
+                onAction: function (_) {
+                    document.querySelector("#app").__vue__.$modal.show('objective-progress-subscription-modal');
+                    $('#progress_reference').on('change', function() {
+                        const progress_reference = JSON.parse(document.getElementById('progress_reference').value);
+                        editor.selection.setContent('<span reference_type="' + progress_reference.referenceable_type + '" reference_id="'+ ( Array.isArray(progress_reference.referenceable_id) ? progress_reference.referenceable_id.join() : progress_reference.referenceable_id) +'" min_value="'+ progress_reference.percentage +'"/>'   +  tinymce.activeEditor.selection.getContent() + '</span>', {format: 'raw'});
+                    });
+                }
+            });
 
-        file_browser_callback : function(field_name, url, type, win) {
-            var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-            var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
-        }
-    });
-
-
-    tinymce.PluginManager.add('example', function(editor, url) {
-        var openDialog = function () {
-            document.querySelector("#app").__vue__.$modal.show('medium-create-modal', attr);
-
-            if (!document.querySelector("#app").__vue__.$eventHub._events.insertContent){
-                document.querySelector("#app").__vue__.$eventHub.$on('insertContent', (event) => {
-                    console.log(event);
-                    if (attr.eventHubCallbackFunctionParams == event.id) {
-                        editor.insertContent('<img src="/media/'+ event.selectedMediumId +'?preview=true" width="500">', {format: 'raw'});
-                    }
-                    document.querySelector("#app").__vue__.$eventHub._events.insertContent = undefined; //destroy listener to prevent multiple inserts on 2nd, 3rd.. time
-                });
-            }
-        };
-
-        // Add a button that opens a window
-        editor.ui.registry.addButton('example', {
-            text: 'Medien',
-            onAction: function ()  {
-                // Open window
-                openDialog();
-            }
-        });
-
-        return {
-            getMetadata: function () {
-                return  {
-                    name: 'Curriculum Media Plugin',
-                    url: 'http://curriculumonline.de'
-                };
-            }
-        };
-    });
-
+            editor.ui.registry.addButton('curriculummedia',  {
+                text: window.trans.global.medium.title,
+                icon: 'image',
+                tooltip: window.trans.global.medium.title,
+                onAction: function () {
+                    globalStore.showModal('medium-modal', attr);
+                    app.config.globalProperties.$eventHub.on('insertContent', (event) => {
+                        if (attr.callbackId == event.id) {
+                            let html = '';
+                            globalStore.selectedMedia.forEach((media) => {
+                                html = html.concat(
+                                    editor.insertContent(
+                                        '<img src="/media/' + media.id + '?preview=true" width="500">',
+                                        { format: 'raw' }
+                                    )
+                                );
+                            });
+                            app.config.globalProperties.$eventHub.off('insertContent'); // remove listener
+                            globalStore.setSelectedMedia(null); // unselect
+                            return html;
+                        }
+                    });
+                }
+            });
+        },
+    };
 };
+
 /**
- * Custom Vue directive "can" to check against permissions.
- * If permission is not given element gets style display:none
- *
- * ! Always check permissions in the backend.
- * This directive enables shorter syntax on vue.
- *
- * Example:
- * <element v-can="'curriculum_edit'" ><element>
- *
- * @type Vue
+ * Global Datatable options
  */
+app.config.globalProperties.$dtOptions = {
+    dom: 'tilpr',
+    pageLength: 10,
+    serverSide: true,
+    processing: true,
+    language: {
+        url: '/datatables/i18n/German.json',
+        paginate: {
+            "first":      '<i class="fa fa-angle-double-left"></id>',
+            "last":       '<i class="fa fa-angle-double-right"></id>',
+            "next":       '<i class="fa fa-angle-right"></id>',
+            "previous":   '<i class="fa fa-angle-left"></id>',
+        },
+    },
+    select: 'multiple',
+};
 
-Vue.directive('can', function (el, binding) {
-    if(window.Laravel.permissions.indexOf(binding.value) == -1){
-        el.style.display = 'none';
-    }
-    return window.Laravel.permissions.indexOf(binding.value) !== -1;
-});
-
-Vue.directive('hide-if-permission', function (el, binding) {
-    if(window.Laravel.permissions.indexOf(binding.value) !== -1){
+app.directive('hide-if-permission', function (el, binding) {
+    if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
         el.style.display = 'none';
     }
 });
 
 /**
  * Custom Vue directive "permission" to check against permissions.
+ * csv with permissions.
  * If permission(s) is/are not given element gets removed from dom
+ * 
+ * ! IMPORTANT: even if element gets removed, Vue will act like its still there.
+ * This can cause weird bugs that seem like a logic-error, but the actual problem is this behaviour.
+ * To solve this issue use v-if="checkPermission('permission_name')"
  *
  * ! Always check permissions in the backend.
  * This directive enables shorter syntax on vue.
  *
- * Example:
- * <element v-permission="'curriculum_edit'" ><element>
- * <element v-permission="'content_create, ' + subscribable_type + '_content_create'" ><element>
- *  ! you have to use 'App\\Curriculum_content_create' to get 'App\Curriculum_content_create'
+ * Examples:
+ * <element v-permission="'curriculum_edit'"><element>
+ * <element v-permission="'content_create, ' + subscribable_type + '_content_create'"><element>
+ * ! you have to use 'App\\Curriculum_content_create' to get 'App\Curriculum_content_create'
  *
  * @type Vue
  */
-Vue.directive('permission', function (el, binding, vnode) {
-    let allowed = false;
-
-    binding.value.split(',').forEach(function (permission){
-        if(window.Laravel.permissions.indexOf(permission.trim()) !== -1) {
-            allowed = true;
-        }
-    });
-
-    if (allowed == false){
-        // replace HTMLElement with comment node
-        const comment = document.createComment('removing elements, missing permission(s): ' + binding.value);
-        Object.defineProperty(comment, 'setAttribute', {
-            value: () => undefined,
-        });
-        vnode.elm = comment;
-        vnode.text = ' ';
-        vnode.isComment = true;
-        vnode.context = undefined;
-        vnode.tag = undefined;
-        vnode.data.directives = undefined;
-
-        if (vnode.componentInstance) {
-            vnode.componentInstance.$el = comment;
+app.directive('permission', function (el, binding, vnode) {
+        let allowed = true;
+        for (const permission of binding.value.split(',')) {
+            if (window.Laravel.permissions.indexOf(permission.trim()) === -1) {
+                allowed = false;
+                break;
+            }
         }
 
-        if (el.parentNode) {
-            el.parentNode.replaceChild(comment, el);
+        if (!allowed) {
+            if (el.parentNode) { // needed since parent might not exist because of v-if
+                el.parentNode.removeChild(vnode.el);
+            }
         }
-    }
-
 });
 
-/**
- *
- * global eventHub
- *
- * How to add a receiver:
- * created() {
- *     this.$eventHub.$on('reload_agenda', (params) => {
- *         // do something
- *     });
- * },
- *
- * how to add a sender
- * this.$eventHub.$emit('reload_agenda', params);
- * @type {Vue}
- */
-Vue.prototype.$eventHub = new Vue();
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-var app = new Vue({
-    el: '#app'
-
+app.directive("inline", (element) => {
+    element.replaceWith(...element.children);
 });
+
+//mount vue
+app.mount('#app');
 
 $(document).ready(function () {
-    window._token = $('meta[name="csrf-token"]').attr('content')
+    window._token = $('meta[name="csrf-token"]').attr('content');
 
     moment.updateLocale('en', {
         week: {dow: 1} // Monday is the first day of the week
-    })
+    });
 
     $('.date').datetimepicker({
         format: 'YYYY-MM-DD',
         locale: 'en'
-    })
+    });
 
     $('.datetime').datetimepicker({
         format: 'YYYY-MM-DD HH:mm:ss',
         locale: 'en',
         sideBySide: true
-    })
+    });
 
     $('.timepicker').datetimepicker({
         format: 'HH:mm:ss'
-    })
+    });
 
     $('.select-all').click(function () {
-        let $select2 = $(this).parent().siblings('.select2')
-        $select2.find('option').prop('selected', 'selected')
-        $select2.trigger('change')
-    })
+        let $select2 = $(this).parent().siblings('.select2');
+        $select2.find('option').prop('selected', 'selected');
+        $select2.trigger('change');
+    });
     $('.deselect-all').click(function () {
-        let $select2 = $(this).parent().siblings('.select2')
-        $select2.find('option').prop('selected', '')
-        $select2.trigger('change')
-    })
+        let $select2 = $(this).parent().siblings('.select2');
+        $select2.find('option').prop('selected', '');
+        $select2.trigger('change');
+    });
 
-    $('.select2').select2()
+    $('.select2').select2();
 
     $('.treeview').each(function () {
-        var shouldExpand = false
+        var shouldExpand = false;
         $(this).find('li').each(function () {
             if ($(this).hasClass('active')) {
-                shouldExpand = true
+                shouldExpand = true;
             }
-        })
+        });
         if (shouldExpand) {
-            $(this).addClass('active')
+            $(this).addClass('active');
         }
-    })
-})
+    });
+});

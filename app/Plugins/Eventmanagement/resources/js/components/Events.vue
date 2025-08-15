@@ -8,7 +8,7 @@
 
 
 <script>
-    import events from '../../../eVewa/resources/js/components/Events';
+    import events from '../../../eVewa/resources/js/components/Events.vue';
     export default {
         props: {
             model: Object,

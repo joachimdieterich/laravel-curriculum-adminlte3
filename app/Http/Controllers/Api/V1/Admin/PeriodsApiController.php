@@ -9,9 +9,7 @@ class PeriodsApiController extends Controller
 {
     public function index()
     {
-        $periods = Period::all();
-
-        return $periods;
+        return Period::all();
     }
 
     public function show(Period $period)

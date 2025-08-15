@@ -16,19 +16,10 @@ class NoteController extends Controller
     {
         //abort_unless(\Gate::allows('note_access'), 403);
         if (request()->wantsJson()) {
-            $input = $this->validateRequest();
-
-            if (isset($input['notable_type'], $input['notable_id'])) {
-                return Note::where('notable_type', $input['notable_type'])
-                    ->whereIn('notable_id', explode(',', $input['notable_id']))
-                    ->where('user_id', auth()->id())
-                    ->with(['notable'])
-                    ->latest('updated_at')->get();
-            } else { // get all written notes from this user
-                return Note::where('user_id', auth()->id())
-                    ->with(['notable'])
-                    ->latest('updated_at')->get();
-            } // TODO: get notes for user => a student should see notes that were created to a resource of his
+            return Note::where($this->validateRequest())
+                ->where('user_id', auth()->id())
+                ->with(['notable'])
+                ->latest('updated_at')->get();
         }
 
         return view('notes.index');
@@ -43,20 +34,14 @@ class NoteController extends Controller
     public function store(Request $request)
     {
         $new_note = $this->validateRequest();
-        $id = $new_note['notable_id'];
-        // handle every request as an array of ids
-        if (gettype($id) != 'array') { $id = [$id]; }
-        // to be able to iterate through them
-        foreach ($id as $notable_id) {
-            $note = Note::Create([
-                'title' => $new_note['title'],
-                'content' => $new_note['content'],
-                'notable_id' => $notable_id,
-                'notable_type' => $new_note['notable_type'],
-                'user_id' => auth()->id(),
-            ]);
-        }
-        // even if multiple notes get created, we can just send the last one, since they have the same content
+        $note = Note::create([
+            'title' => $new_note['title'],
+            'content' => $new_note['content'],
+            'notable_id' => $new_note['notable_id'],
+            'notable_type' => $new_note['notable_type'],
+            'user_id' => auth()->id(),
+        ]);
+
         return $note->load('notable');
     }
 

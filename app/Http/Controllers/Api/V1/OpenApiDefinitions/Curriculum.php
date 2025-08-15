@@ -9,14 +9,23 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      summary="Get all curricula",
 *      description="Returns a collection of curriculum objects",
 *      security={
-*           {"passport": {"*"}},
+*          {"passport": {"*"}},
 *      },
+*      @OA\Parameter(
+*          name="password",
+*          description="metadata password",
+*          required=true,
+*          in="path",
+*          @OA\Schema(
+*              type="string"
+*          )
+*      ),
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",
 *          @OA\Schema(ref="#/components/schemas/Curriculum"),
-*       ),
-*       @OA\Response(response=400, description="Bad request"),
+*      ),
+*      @OA\Response(response=400, description="Bad request"),
 * )
 *
 * @OA\Get(
@@ -26,7 +35,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      summary="Get curriculum by Id",
 *      description="Returns a curriculum object",
 *      security={
-*           {"passport": {"*"}},
+*          {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
 *          name="curriculum",
@@ -41,16 +50,16 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *          response=200,
 *          description="successful operation",
 *          @OA\JsonContent(ref="#/components/schemas/Curriculum"),
-*       ),
-*       @OA\Response(
+*      ),
+*      @OA\Response(
 *          response=400,
 *          description="Bad request",
-*       ),
-*       @OA\Response(
+*      ),
+*      @OA\Response(
 *          response=404,
 *          description="Bad request",
-*         @OA\JsonContent(),
-*       ),
+*          @OA\JsonContent(),
+*      ),
 * )
 *
 * @OA\Get(
@@ -60,7 +69,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      summary="Get metadataset of curriculum by Id",
 *      description="Returns a metadataset of a curriculum object",
 *      security={
-*           {"passport": {"*"}},
+*          {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
 *          name="curriculum",
@@ -71,7 +80,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *              type="integer"
 *          )
 *      ),
-*     @OA\Parameter(
+*      @OA\Parameter(
 *          name="password",
 *          description="metadata password",
 *          required=true,
@@ -83,16 +92,16 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",
-*       ),
-*       @OA\Response(
+*      ),
+*      @OA\Response(
 *          response=400,
 *          description="Bad request",
-*       ),
-*       @OA\Response(
+*      ),
+*      @OA\Response(
 *          response=404,
 *          description="Bad request",
-*         @OA\JsonContent(),
-*       ),
+*          @OA\JsonContent(),
+*      ),
 * )
 *
 * @OA\Get(

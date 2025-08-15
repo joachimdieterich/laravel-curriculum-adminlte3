@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  *   @OA\Schema(
- *      required={"id", "title"},
+ *      required={"title"},
  *      @OA\Xml(name="Kanban"),
  *
  *      @OA\Property( property="id", type="integer"),
@@ -28,16 +28,19 @@ class Kanban extends Model
 {
     protected $guarded = [];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
-    ];
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     protected $casts = [
         'commentable' => 'boolean',
         'auto_refresh' => 'boolean',
         'only_edit_owned_items' => 'boolean',
+        'collapse_items' => 'boolean',
         'allow_copy' => 'boolean',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
     /**
      * Prepare a date for array / JSON serialization.
@@ -75,7 +78,6 @@ class Kanban extends Model
         return $this->hasOne('App\Medium', 'id', 'medium_id');
     }
 
-
     public function userSubscriptions()
     {
         return $this->hasMany(KanbanSubscription::class)
@@ -112,11 +114,10 @@ class Kanban extends Model
     {
         if (
             auth()->user()->kanbans->contains('id', $this->id) // user enrolled
-            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
-            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
-            or ($this->owner_id == auth()->user()->id)            // or owner
-            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->kanbans->contains('id', $this->id) : false) //or allowed via guest
-            or is_admin() // or admin
+            or $this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))->isNotEmpty() // user is enroled in group
+            or $this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id)->isNotEmpty() // user is enroled in organization
+            or $this->owner_id == auth()->user()->id
+            or is_admin()
         ) {
             return true;
         } else {
@@ -130,8 +131,8 @@ class Kanban extends Model
         {
             $user_id = auth()->user()->id;
         }
-
-        if ($token == null){
+        // check for subscriptions if not guest user
+        if ($user_id != env('GUEST_USER')) {
             $userSubscription = optional($this->userSubscriptions()
                 ->where('subscribable_id', $user_id)
                 ->first());
@@ -144,19 +145,20 @@ class Kanban extends Model
                 ->where('editable', 1)
                 ->first());
         }
-        else
-        {
-            $userSubscription = optional($this->userSubscriptions()
-                /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
+
+        if ($token != null) {
+            $tokenSubscription = optional($this->userSubscriptions()
                 ->where('sharing_token', $token)
                 ->first());
         }
+
         if (
-            $userSubscription->editable // user enrolled
+            $userSubscription->editable ?? false // user enrolled
+            or $tokenSubscription->editable ?? false // token has edit permission
             or $groupSubscription->editable ?? false // group enrolled
             or $organizationSubscription->editable ?? false // organization enrolled
-            or ($this->owner_id == $user_id)            // or owner
-            or is_admin() // or admin
+            or $this->owner_id == $user_id
+            or is_admin()
         ) {
             return true;
         } else {

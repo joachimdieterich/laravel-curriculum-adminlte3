@@ -59,39 +59,25 @@
   background: $direct-chat-default-msg-bg;
   border: 1px solid $direct-chat-default-msg-border-color;
   color: $direct-chat-default-font-color;
-  margin: 5px 0 0 50px;
   padding: 5px 10px;
+  margin-left: 10px;
   position: relative;
 
   //Create the arrow
-  &::after,
   &::before {
-    border: solid transparent;
-    border-right-color: $direct-chat-default-msg-border-color;
     content: ' ';
-    height: 0;
+    border: 6px solid transparent;
+    border-right-color: $direct-chat-default-msg-border-color;
     pointer-events: none;
     position: absolute;
     right: 100%;
-    top: 15px;
-    width: 0;
-  }
-
-  &::after {
-    border-width: 5px;
-    margin-top: -5px;
-  }
-
-  &::before {
-    border-width: 6px;
-    margin-top: -6px;
+    top: 14px;
   }
 
   .right & {
-    margin-left: 0;
-    margin-right: 50px;
+    margin-right: 10px;
+    margin-left: 0px !important;
 
-    &::after,
     &::before {
       border-left-color: $direct-chat-default-msg-border-color;
       border-right-color: transparent;

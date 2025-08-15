@@ -29,36 +29,7 @@ class ProgressController extends Controller
      */
     public function store(Request $request)
     {
-        switch ($request->referencable_type) {
-            case 'App\TerminalObjective':
-                $input = $this->validateRequest();
-
-                $model = TerminalObjective::find($input['parent_id']);
-                abort_unless($model->isAccessible(), 403);
-
-                $enabling_objectives = EnablingObjective::where('terminal_objective_id', $input['parent_id'])->get();
-
-                $total_achieved = Achievement::where('referenceable_type', 'App\\EnablingObjective')
-                    ->where('user_id', $user_id)
-                    ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
-                    ->where(DB::raw('RIGHT(status,1) = 1 OR RIGHT(status,1) = 2'))
-                    ->get();
-                $progress = Progress::updateOrCreate(
-                    [
-                        'referenceable_type' => $input['referenceable_type'],
-                        'referenceable_id' => $input['parent_id'],
-                        'associable_type' => 'App\\User',
-                        'associable_id' => $user_id,
-                    ],
-                    [
-                        'value' => ($total_achieved->count() / $enabling_objectives->count() * 100),
-                    ]
-                );
-                break;
-
-            default:
-                break;
-        }
+        abort(403);
     }
 
     protected function validateRequest()
@@ -75,12 +46,12 @@ class ProgressController extends Controller
     /**
      * Example (new ProgressController)->calculateProgress('App\TerminalObjective', $terminal_objective_id, $user_id);
      *
-     * @param  type  $parent_model
-     * @param  type  $parent_id
-     * @param  type  $user_id
-     * @return type
+     * @param string $parent_model
+     * @param int $parent_id
+     * @param int $user_id
+     * @return mixed
      */
-    public function calculateProgress($parent_model, $parent_id, $user_id)
+    public function calculateProgress(string $parent_model, int $parent_id, int $user_id)
     {
         $dynamicFunction = 'calculate'.class_basename($parent_model).'Progress';
 
@@ -90,12 +61,12 @@ class ProgressController extends Controller
     /**
      * calculate users terminal objective progress based on enabling objectives achievements
      *
-     * @param  type  $parent_model
-     * @param  type  $parent_id
-     * @param  type  $user_id
-     * @return type
+     * @param string $parent_model
+     * @param int $parent_id
+     * @param int $user_id
+     * @return mixed
      */
-    public function calculateTerminalObjectiveProgress($parent_model, $parent_id, $user_id)
+    public function calculateTerminalObjectiveProgress(string $parent_model, int $parent_id, int $user_id)
     {
         //Parent App\TerminalObjective
         $enabling_objectives = EnablingObjective::where('terminal_objective_id', $parent_id)->get();

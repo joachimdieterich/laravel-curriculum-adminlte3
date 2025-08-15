@@ -36,9 +36,9 @@ const TerminalObjectives =
                     this.errors = error.response.data.errors;
                 }
             },
-            setCrossReferenceCurriculumId: function(curriculum_id) { //can be called external
+           /* setCrossReferenceCurriculumId: function(curriculum_id) { //can be called external
                 this.settings.cross_reference_curriculum_id = curriculum_id;
-            }
+            }*/
         },
         mounted() {
 

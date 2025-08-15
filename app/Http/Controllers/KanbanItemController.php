@@ -27,7 +27,7 @@ class KanbanItemController extends Controller
             ->where('kanban_status_id', $input['kanban_status_id'])
             ->max('order_id');
 
-        $kanbanItem = KanbanItem::firstOrCreate([
+        $kanbanItem = KanbanItem::create([
             'title'             => $input['title'],
             'description'       => $input['description'],
             'order_id'          => ($order_id === NULL) ? 0 : $order_id + 1,
@@ -35,11 +35,12 @@ class KanbanItemController extends Controller
             'kanban_status_id'  => $input['kanban_status_id'],
             'color'             => $input['color'],
             'due_date'          => $input['due_date'],
-            'locked' => $input['locked'] ?? false,
-            'editable' => $input['editable'] ?? true,
-            'visibility' => $input['visibility'] ?? true,
-            'visible_from' => $input['visible_from'],
-            'visible_until' => $input['visible_until'],
+            'locked'            => $input['locked'] ?? false,
+            'editable'          => $input['editable'] ?? true,
+            'replace_links'     => $input['replace_links'] ?? false,
+            'visibility'        => $input['visibility'] ?? true,
+            'visible_from'      => $input['visible_from'],
+            'visible_until'     => $input['visible_until'],
             'owner_id'          => auth()->user()->id,
         ]);
 
@@ -51,18 +52,16 @@ class KanbanItemController extends Controller
 
             if (!pusher_event(new \App\Events\Kanbans\KanbanItemAddedEvent($kanbanItem)))
             {
-                return [
-                    'message' =>  KanbanItem::where('id', $kanbanItem->id)
-                        ->with([
-                            'comments',
-                            'comments.user',
-                            'comments.likes',
-                            'likes',
-                            'mediaSubscriptions.medium',
-                            'owner',
-                        ])
-                        ->get()->first()
-                ];
+                return KanbanItem::where('id', $kanbanItem->id)
+                    ->with([
+                        'comments',
+                        'comments.user',
+                        'comments.likes',
+                        'likes',
+                        'mediaSubscriptions.medium',
+                        'owner',
+                    ])
+                    ->get()->first();
             }
         }
     }
@@ -70,38 +69,19 @@ class KanbanItemController extends Controller
     public function sync(Request $request)
     {
         $this->validate(request(), [
-            'columns' => ['required', 'array'],
+            'items' => ['required', 'array'],
         ]);
-        $kanban_id = $request->columns[0]['kanban_id'];
+        $kanban_id = KanbanItem::select('kanban_id')->find($request->items[0]['id'])->kanban_id;
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
-        foreach ($request->columns as $kanban_status) {
-            foreach ($kanban_status['items'] as $order_id => $item) {
-                if ($item['kanban_status_id'] !== $kanban_status['id'] || $item['order_id'] !== $order_id) {
-                    if ($item['kanban_status_id'] !== $kanban_status['id']) {
-                        KanbanItem::where('kanban_status_id', '=', $item['kanban_status_id'])
-                            ->where('order_id', '>', $item['order_id'])->decrement('order_id');
-                    }
-                    KanbanItem::where('kanban_status_id', '=', $kanban_status['id'])
-                        ->where('order_id', '>=', $order_id)->increment('order_id');
-
-                    //update  set order_id +1 where $kanban_status['id'] and order_id >= $order_id
-                    KanbanItem::find($item['id'])
-                        ->update(['kanban_status_id' => $kanban_status['id'], 'order_id' => $order_id]);
-                }
-            }
+        foreach ($request->items as $item) {
+            KanbanItem::whereId($item['id'])->update([
+                'order_id'          => $item['order_id'],
+                'kanban_status_id'  => $item['kanban_status_id'],
+            ]);
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
-
-        if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemMovedEvent($request->columns)))
-            {
-                return [
-                    'message' => $request->columns
-                ];
-            }
-        }
     }
 
     /**
@@ -151,29 +131,35 @@ class KanbanItemController extends Controller
         $input = $this->validateRequest();
 
         $kanbanItem->update([
-            'title' => $input['title'],
-            'description' => $input['description'],
-            'order_id' => $input['order_id'],
-            'kanban_id' => $input['kanban_id'],
-            'kanban_status_id' => $input['kanban_status_id'],
-            'color' => $input['color'],
-            'due_date' => $input['due_date'],
-            'locked' => $input['locked'] ?? false,
-            'editable' => $input['editable'] ?? true,
-            'visibility' => $input['visibility'] ?? true,
-            'visible_from' => $input['visible_from'] ?? NULL,
-            'visible_until' => $input['visible_until'] ?? NULL,
-            'owner_id' => $kanbanItem->owner_id, //owner should not be updated
-            'editors_ids' => array_merge($kanbanItem->editors_ids, [auth()->user()->id] )
+            'title'             => $input['title'],
+            'description'       => $input['description'],
+            'kanban_id'         => $input['kanban_id'],
+            'kanban_status_id'  => $input['kanban_status_id'],
+            'color'             => $input['color'],
+            'due_date'          => $input['due_date'],
+            'locked'            => $input['locked'] ?? false,
+            'editable'          => $input['editable'] ?? true,
+            'replace_links'     => $input['replace_links'] ?? false,
+            'visibility'        => $input['visibility'] ?? true,
+            'visible_from'      => $input['visible_from'] ?? NULL,
+            'visible_until'     => $input['visible_until'] ?? NULL,
+            'owner_id'          => $kanbanItem->owner_id, //owner should not be updated
+            'editors_ids'       => array_unique(array_merge($kanbanItem->editors_ids, [auth()->user()->id])),
         ]);
 
         if (request()->wantsJson()) {
             if (!pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent($kanbanItem)))
             {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanItem
-                ];
+                return KanbanItem::where('id', $kanbanItem->id)
+                    ->with([
+                        'comments',
+                        'comments.user',
+                        'comments.likes',
+                        'likes',
+                        'mediaSubscriptions.medium',
+                        'owner:id,username,firstname,lastname',
+                    ])
+                    ->get()->first();
             }
         }
     }
@@ -227,8 +213,8 @@ class KanbanItemController extends Controller
         foreach ($item->mediaSubscriptions as $mediaSubscription) {
             MediumSubscription::Create([
                 'medium_id'         => $mediaSubscription->medium_id,
-                'subscribable_type' => $mediaSubscription->subscribable_type,
                 'subscribable_id'   => $itemCopy->id,
+                'subscribable_type' => $mediaSubscription->subscribable_type,
                 'sharing_level_id'  => $mediaSubscription->sharing_level_id,
                 'visibility'        => $mediaSubscription->visibility,
                 'additional_data'   => $mediaSubscription->additional_data,
@@ -236,18 +222,15 @@ class KanbanItemController extends Controller
             ]);
         }
 
-        return [
-            'message' => KanbanItem::Where('id', $itemCopy->id)
-                ->with([
-                    'comments',
-                    'comments.user',
-                    'comments.likes',
-                    'likes',
-                    'mediaSubscriptions.medium',
-                    'owner',
-                ])
-                ->get()->first()
-        ];
+        return KanbanItem::with([
+                'comments',
+                'comments.user',
+                'comments.likes',
+                'likes',
+                'mediaSubscriptions.medium',
+                'owner',
+            ])
+            ->find($itemCopy->id);
     }
 
     /**
@@ -292,12 +275,10 @@ class KanbanItemController extends Controller
      */
     public function editors(KanbanItem $kanbanItem)
     {
-        abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
+        abort_unless(\Gate::allows('kanban_show'), 403);
 
         if (request()->wantsJson()) {
-            return [
-                'editors' =>  $kanbanItem->editors(['id', 'username', 'firstname', 'lastname'])
-            ];
+            return $kanbanItem->editors(['id', 'username', 'firstname', 'lastname']);
         }
     }
 
@@ -314,6 +295,7 @@ class KanbanItemController extends Controller
             'due_date' => 'sometimes',
             'locked' => 'sometimes|boolean',
             'editable' => 'sometimes|boolean',
+            'replace_links' => 'sometimes|boolean',
             'visibility' => 'sometimes|boolean',
             'visible_from' => 'sometimes',
             'visible_until' => 'sometimes',

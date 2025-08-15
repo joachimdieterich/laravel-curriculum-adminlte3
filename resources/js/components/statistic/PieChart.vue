@@ -4,9 +4,9 @@
         <div class="w-full flex-1 p-2">
             {{ this.title }}
             <Doughnut
-                :chart-options="chartOptions"
-                :chart-data="chartData"
-                :chart-id="chartId"
+                :options="chartOptions"
+                :data="chartData"
+                :id="chartId"
                 :dataset-id-key="datasetIdKey"
                 :plugins="plugins"
                 :css-classes="cssClasses"
@@ -26,9 +26,12 @@
                 <li v-for="item in chart_data"
                     class="nav-item"
                     :style="isVisible(item)">
-                    <span  class="nav-link">
+                    <span  class="nav-link text-sm">
+                        <i class="fa fa-circle"
+                           :style="{ 'color': item.color }"
+                           ></i>
                         {{item.value}}
-                        <span class="float-right">
+                        <span class="float-right text-sm">
                         {{item.counter}}</span>
                     </span>
                 </li>
@@ -48,18 +51,17 @@
     </div>
 </template>
 <script>
-import { Doughnut } from 'vue-chartjs/legacy'
-
 import {
     Chart as ChartJS,
-    Title,
+    ArcElement,
     Tooltip,
     Legend,
-    ArcElement,
+    Title,
     CategoryScale
 } from 'chart.js'
+import { Doughnut } from 'vue-chartjs';
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
 export default {
     name: 'DoughnutChart',
@@ -82,7 +84,7 @@ export default {
         },
         width: {
             type: Number,
-            default: 400
+            default: 200
         },
         height: {
             type: Number,
@@ -94,17 +96,18 @@ export default {
         },
         styles: {
             type: Object,
-            default: () => {}
+
         },
         plugins: {
             type: Array,
             default: () => []
-        }
+        },
     },
 
     data() {
         return {
             search: '',
+            backgroundColor: ["#001219","#005f73","#0a9396","#94d2bd","#e9d8a6","#ee9b00","#ca6702","#bb3e03","#ae2012","#9b2226", "#ff5400","#ff6d00","#ff8500","#ff9100","#ff9e00","#00b4d8","#0096c7","#0077b6","#023e8a","#03045e"],
             chartData: {
                 labels: [],
                 datasets: [
@@ -115,9 +118,13 @@ export default {
                 ]
             },
             chartOptions: {
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
                 responsive: true,
-                maintainAspectRatio: false,
-                borderRadius: 10,
+                maintainAspectRatio: true,
             },
             legend: {
                 onHover: this.handleHover,
@@ -151,37 +158,26 @@ export default {
                             }
                         ]
                     };
-                    this.chart_data = this.sumIfEqual(response.data.message);
+
+                    this.chart_data = response.data.message
+                        .map((item, index) => {
+                            const colorIndex = index % this.backgroundColor.length; // Calculate color index
+                            return {
+                                value: item.value,
+                                counter: item.counter,
+                                color: this.backgroundColor[colorIndex]
+                            };
+                        })
+                        .sort((a, b) => b.counter - a.counter);
 
                 }).catch(e => {
                     console.log(e);
                 });
         },
-        sumIfEqual(data){
-            let obj     = data;
-            var holder  = {};
 
-            obj.forEach(function(d) {
-                if (holder.hasOwnProperty(d.value)) {
-                    holder[d.value] = parseInt(holder[d.value]) + parseInt(d.counter);
-                } else {
-                    holder[d.value] = parseInt(d.counter);
-                }
-            });
-
-            var obj2 = [];
-
-            for (var prop in holder) {
-                obj2.push({ value: prop, counter: holder[prop] });
-            }
-
-            obj2.sort((a,b) => (a.counter < b.counter) ? 1 : ((b.counter < a.counter) ? -1 : 0)) //sort by counter (desc)
-
-            return obj2;
-        },
         isVisible(item){
             if (item.value === null){
-                if (this.search.toLowerCase() != ''){
+                if (this.search.toLowerCase() !== ''){
                     return "display:none";
                 } else {
                     return "";

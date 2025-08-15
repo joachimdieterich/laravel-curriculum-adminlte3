@@ -16,13 +16,16 @@ class MapMarkerCategoryController extends Controller
     {
         //abort_unless(\Gate::allows('map_access'), 403);
         if (request()->wantsJson()) {
+            return  getEntriesForSelect2ByModel(
+                "App\MapMarkerCategory"
+            );
 
-            return [
+           /* return [
                 'mapMarkerCategories' => MapMarkerCategory::with('children')->get()
-            ];
-        } else {
+            ];*/
+        } /*else {
             return ['markers' => MapMarkerCategory::all()];
-        }
+        }*/
     }
 
     /**

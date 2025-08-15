@@ -9,9 +9,7 @@ class CountriesApiController extends Controller
 {
     public function index()
     {
-        $countries = Country::all();
-
-        return $countries;
+        return Country::all();
     }
 
     public function show(Country $country)

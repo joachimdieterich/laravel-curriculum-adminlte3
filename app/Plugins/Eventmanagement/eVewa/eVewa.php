@@ -53,24 +53,6 @@ class eVewa extends EventmanagementPlugin
     {
 
         $search = $params['search'];
-
-//            $params = array(
-//                'method'=> 'lesePlrlpVeranstaltungen',
-//                'session_id' => (string) $this->sessionId,
-//                'mandant'=> '',
-//                'page'=> '',
-//                'limit'=> '',
-//                'order'=> '',
-//                'search'=> $search, //todo better search in evewa!
-//                'abgeschlossene'=> '',
-//                'gs_ort'=> '',
-//                'gs_plz'=> '',
-//                'veranstalter'=> '',
-//                'von'=> '',
-//                'bis'=> '',
-//                'schulartentag'=> '',
-//                'zielgruppentag'=> '',
-//            );
         //dump($params) ;
 
         $params = array_replace_recursive( //replace defaults with given params

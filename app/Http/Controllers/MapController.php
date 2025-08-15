@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Map;
-use App\MapSubscription;
 use App\Organization;
-use App\User;
 use App\Videoconference;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\MapSubscription;
 
 class MapController extends Controller
 {
@@ -55,6 +55,8 @@ class MapController extends Controller
         {
             case 'owner':            $maps = Map::where('owner_id', auth()->user()->id)->get();
                 break;
+            case 'by_organization':  $maps = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->maps;
+                break;
             case 'shared_with_me':   $maps = $this->userMaps(false);
                 break;
             case 'shared_by_me':     $maps = Map::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
@@ -97,9 +99,8 @@ class MapController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            return ['map' => $map];
+            return $map;
         }
-
     }
 
     /**
@@ -108,9 +109,9 @@ class MapController extends Controller
      * @param  \App\Map  $map
      * @return \Illuminate\Http\Response
      */
-    public function show(Map $map)
+    public function show(Map $map, $token = null)
     {
-        abort_unless( $map->isAccessible(), 403); // don't use map_show -> bugfix for 403 problem on tokens.
+        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
 
         $map = Map::where('id', $map->id)
             ->with(['type', 'category'])
@@ -134,24 +135,25 @@ class MapController extends Controller
         $input = $this->validateRequest();
 
         $map->update([
-            'title' => $input['title'] ?? $map->title,
-            'subtitle'=> $input['subtitle'] ?? $map->subtitle,
-            'description'=> $input['description'] ?? $map->description,
-            'tags'=> $input['tags'] ?? $map->tags,
-            'type_id'=> $input['type_id'] ?? $map->type_id,
-            'category_id'=> $input['category_id'] ?? $map->category_id,
-            'border_url'=> $input['border_url'] ?? $map->border_url,
-            'latitude'=> $input['latitude'] ?? $map->latitude,
-            'longitude'=> $input['longitude'] ?? $map->longitude,
-            'zoom'=> $input['zoom'] ?? $map->zoom,
-            'color'=> $input['color'] ?? $map->color,
-            'owner_id' => auth()->user()->id,
+            'title'         => $input['title'] ?? $map->title,
+            'subtitle'      => $input['subtitle'],
+            'description'   => $input['description'],
+            'tags'          => $input['tags'],
+            'type_id'       => $input['type_id'] ?? $map->type_id,
+            'category_id'   => $input['category_id'] ?? $map->category_id,
+            'border_url'    => $input['border_url'] ?? $map->border_url,
+            'latitude'      => $input['latitude'] ?? $map->latitude,
+            'longitude'     => $input['longitude'] ?? $map->longitude,
+            'zoom'          => $input['zoom'] ?? $map->zoom,
+            'color'         => $input['color'] ?? $map->color,
+            'medium_id'     => $input['medium_id'],
+            'owner_id'      => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
 
         $map->save();
         if (request()->wantsJson())
         {
-            return ['map' => $map];
+            return $map;
         }
         else {
             return redirect(route('maps.show', ['map' => $map]));
@@ -177,30 +179,27 @@ class MapController extends Controller
 
     public function getMapByToken(Map $map, Request $request)
     {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
-
         $input = $this->validateRequest();
 
-        $subscription = MapSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
-        if ($subscription->due_date) {
+        $subscription = MapSubscription::where('sharing_token', $input['sharing_token'] )->get()->first();
+
+        if (!isset($subscription)) abort(410, 'global.token_deleted');
+
+        if (isset($subscription->due_date)) {
             $now = Carbon::now();
             $due_date = Carbon::parse($subscription->due_date);
             if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
+                abort(410, 'global.token_expired');
             }
         }
 
         return $this->show($map, $input['sharing_token']);
-    }
 
+    }
     protected function validateRequest()
     {
         return request()->validate([
-            'id' => 'sometimes|integer',
+            'id' => 'sometimes',
             'title' => 'sometimes',
             'subtitle'=> 'sometimes',
             'description'=> 'sometimes',
@@ -213,7 +212,8 @@ class MapController extends Controller
             'zoom'=> 'sometimes',
             'color'=> 'sometimes',
             'medium_id'=> 'sometimes',
-            'sharing_token' => 'sometimes'
+            'owner_id' => 'sometimes',
+            'sharing_token' => 'sometimes',
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 use DateTimeInterface;
 
 class PlanEntry extends Model
@@ -22,10 +23,16 @@ class PlanEntry extends Model
 
     ];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -96,5 +103,13 @@ class PlanEntry extends Model
     {
         return $this->plan->isAccessible();
     }
-
+    
+    protected static function booted() {
+        static::deleting(function(PlanEntry $entry) { // before delete() method call this
+            $entry->terminalObjectiveSubscriptions()->delete();
+            $entry->enablingObjectiveSubscriptions()->delete();
+            //? if media-subscriptions can be added in the future, they need to be deleted too
+            $entry->trainings->each->delete();
+        });
+    }
 }

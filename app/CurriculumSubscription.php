@@ -19,6 +19,9 @@ class CurriculumSubscription extends Model
         'sharing_token',
         'owner_id'
     ];
+    protected $casts = [
+        'editable' => 'boolean',
+    ];
 
 
     /**

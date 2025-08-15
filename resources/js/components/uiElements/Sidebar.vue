@@ -168,7 +168,7 @@
                                    class="text-danger pull-right p-1 fa fa-trash pointer"
                                    @click="destroyMessage(message)"></i>
                                 <i v-else-if="hover == message.id"
-                                   v-can="'message_delete'"
+                                   v-permission="'message_delete'"
                                    class="text-danger pull-right p-1 fa fa-trash pointer"
                                    @click="destroyMessage(message)"></i>
                             {{ message.body }}
@@ -206,7 +206,7 @@
                                                 {{ diffForHumans(thread.messages[0].created_at) }}
                                             </small>
                                       </span>
-                                      <span class="contacts-list-msg link-muted">{{thread.subject | truncate(27, '...')}}</span>
+                                      <span class="contacts-list-msg link-muted">{{thread.subject }}</span>
                                 </div>
                                 <!-- /.contacts-list-info -->
                             </a>
@@ -249,8 +249,6 @@
                     <!-- /.contacts-list -->
                 </div>
                 <!-- /.direct-chat-pane -->
-
-
             </div>
             <!-- /.card-body -->
 
@@ -261,13 +259,8 @@
 </template>
 
 <script>
-const moment =
-    () => import('moment');
 import Form from 'form-backend-validation';
-const Avatar =
-    () => import('../uiElements/Avatar');
- /*   import moment from 'moment';
-    import Avatar from "../uiElements/Avatar";*/
+import Avatar from "../uiElements/Avatar.vue";
 
     export default {
         props: ['user'],

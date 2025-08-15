@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Domains\Exams\Models\Exam;
-use App\Scopes\NoSharingUsers;
 use Carbon\Carbon;
 use Cmgmyr\Messenger\Models\Thread;
 use Cmgmyr\Messenger\Traits\Messagable;
@@ -46,12 +45,19 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $dates = [
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'deleted_at' => 'datetime',
+        'email_verified_at'  => 'datetime',
+    ];
+
+    /*protected $dates = [
         'updated_at',
         'created_at',
         'deleted_at',
         'email_verified_at',
-    ];
+    ];*/
 
     protected $fillable = [
         'username',
@@ -73,7 +79,7 @@ class User extends Authenticatable
 
     protected static function booted()
     {
-        //static::addGlobalScope(new NoSharingUsers());
+
     }
 
 
@@ -237,6 +243,23 @@ class User extends Authenticatable
     public function kanbanSubscription()
     {
         return $this->morphMany('App\KanbanSubscription', 'subscribable');
+    }
+
+    public function meetings(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            'App\Meeting',
+            'App\MeetingSubscription',
+            'subscribable_id',
+            'id',
+            'id',
+            'meeting_id'
+        )->where('subscribable_type', get_class($this));
+    }
+
+    public function meetingSubscription()
+    {
+        return $this->morphMany('App\MeetingSubscription', 'subscribable');
     }
 
     public function kanbans()
@@ -415,8 +438,10 @@ class User extends Authenticatable
 
     public function mayAccessUser(User $user, $context = 'organization')
     {
+        if (is_admin()) return true;
         switch ($context) {
-            case 'organization': return $user->organizations->pluck('id')->contains($this->current_organization_id);
+            case 'organization':
+                return $user->organizations()->pluck('organizations.id')->contains($this->current_organization_id);
             //Todo: check for groups
             break;
             default: return false;

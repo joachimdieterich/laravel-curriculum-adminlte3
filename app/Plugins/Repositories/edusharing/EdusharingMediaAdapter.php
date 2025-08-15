@@ -66,7 +66,7 @@ class EdusharingMediaAdapter implements MediaInterface
             'path'          => $input['path'],
             'thumb_path'    => $input['thumb_path'],
             'medium_name'   => $input['medium_name']    ?? '',
-            'title'         => $input['title']          ?? '',
+            'title'         => $input['title']          ?? $input['medium_name'],
             'description'   => $input['description']    ?? '',
             'author'        => $input['author']         ?? '',
             'publisher'     => $input['publisher']      ?? '',
@@ -126,94 +126,82 @@ class EdusharingMediaAdapter implements MediaInterface
         /*if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
             return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
         }*/
-
-
         $params = $this->validateRequest();
         if (isset($params['model'])) {
             $class = 'App\\'.$params['model'];
             $model = (new $class)::where('id', $params['model_id'] )->get()->first();
 
             if ($model->isAccessible() && ($model->medium_id == $medium->id)){
-               $subscriptions = MediumSubscription::where('subscribable_type','App\\'.$params['model'])
-                                ->where('subscribable_id',$params['model_id'])
-                   ->where('medium_id', $medium->id)->get();
+                $subscriptions = MediumSubscription::where('subscribable_type','App\\'.$params['model'])
+                    ->where('subscribable_id',$params['model_id'])
+                    ->where('medium_id', $medium->id)->get();
             }
         } else {
             $subscriptions = $medium->subscriptions;
         }
 
-        /* checkIfUserHasSubscription and visibility*/
         if (count($subscriptions) > 0)
         {
             foreach ($subscriptions as $subscription)
             {
-                if ($this->checkIfUserHasSubscription($subscription))
+                if (!$this->checkIfUserHasSubscription($subscription) || $subscription->additional_data == null) continue;
+
+                $edusharing = new Edusharing;
+                if (request('download'))
                 {
-                    if ($subscription->additional_data != null)
+                    $url = $edusharing->getRedirectUrl($subscription->additional_data, 'download', $subscription->owner_id);
+                    if (request()->wantsJson()) {
+                        return $url;
+                    } else {
+                        return redirect($url);
+                    }
+                }
+                else if (request('content'))
+                {
+                    $url = $edusharing->getRedirectUrl($subscription->additional_data, 'content', $subscription->owner_id);
+                    if (request()->wantsJson()) {
+                        return $url;
+                    } else {
+                        return redirect($url);
+                    }
+                }
+                else if (request('preview'))
+                {
+                    $url = $edusharing->getPreview($subscription->additional_data, $subscription->owner_id);
+
+                    if ($url->content == "")
                     {
-                        $edusharing = new Edusharing;
-
-                        if (request('download'))
-                        {
-                            $url = $edusharing->getRedirectUrl($subscription->additional_data, 'download', $subscription->owner_id);
-                            if (request()->wantsJson()) {
-                                return [
-                                    'url' => $url,
-                                ];
-                            } else {
-                                return redirect($url->info['downloadUrl']['url']);
-                            }
-                        }
-                        else if (request('content'))
-                        {
-                            $url = $edusharing->getRedirectUrl($subscription->additional_data, 'content', $subscription->owner_id);
-
-                            if (request()->wantsJson()) {
-                                return [
-                                    'url' => $url,
-                                ];
-                            } else {
-                                return redirect($url->content);
-                            }
-                        }
-                        else if (request('preview'))
-                        {
-                            $url = $edusharing->getPreview($subscription->additional_data, $subscription->owner_id);
-
-                            if ($url->content == "") {
-                                return redirect($url->info['redirect_url']);
-                            }
-                            else {
-                                return response($url->content)->header('Content-Type', 'image/png');
-                            }
-                        }
-                        else
-                        {
-                            $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
-
-                            if (request()->wantsJson()) {
-                                return [
-                                    'detailsSnippet' => $node['detailsSnippet'],
-                                    'downloadUrl' => $node['node']['downloadUrl'],
-                                    'preview' => $node['node']['preview'],
-                                    'title' => $node['node']['title'],
-                                    'name' => $node['node']['name'],
-                                ];
-                            } else {
-                                $url = $node['node']['preview']['url'];
-                                if (gettype($url) == 'string') {
-                                    return redirect($url);
-                                } else { // don't understand why/when the 'url'-attribute should be an array
-                                    return redirect($node['node']['preview']['url']['info']['redirect_url']);
-                                }
-                            }
+                        return redirect($url->info['redirect_url']);
+                    }
+                    else
+                    {
+                        return response($url->content)->header('Content-Type', 'image/png');
+                    }
+                }
+                else
+                {
+                    $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
+                    if (request()->wantsJson()) {
+                        return [
+                            'detailsSnippet' => $node['detailsSnippet'],
+                            'downloadUrl' => $node['node']['downloadUrl'],
+                            'preview' => $node['node']['preview'],
+                            'title' => $node['node']['title'],
+                            'name' => $node['node']['name'],
+                        ];
+                    } else {
+                        $url = $node['node']['preview']['url'];
+                        if (gettype($url) == 'string') {
+                            return redirect($url);
+                        } else { // sometimes the url attribute is another array
+                            return redirect($url['info']['redirect_url']);
                         }
                     }
                 }
             }
         }
-        /* end checkIfUserHasSubscription and visibility */
-        abort(403); // user has no permission to access this file !
+
+        abort(403, "No permission to view Edusharing media"); // user has no permission to access this file !
     }
 
     public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs
@@ -328,12 +316,10 @@ class EdusharingMediaAdapter implements MediaInterface
                 }
                 break;
             case "App\KanbanItem":
-                return $subscription->subscribable->kanban->isAccessible();
+                    return true; // media in kanban-items should always be accessible
                 break;
-            case "App\Exercise":
-                return $subscription->subscribable->training->subscriptions[0]->subscribable->plan->isAccessible();
-                break;
-            default: return $subscription->subscribable->isAccessible();
+            default:
+                return $subscription->subscribable->isAccessible();
                 break;
         }
     }
@@ -350,6 +336,7 @@ class EdusharingMediaAdapter implements MediaInterface
             'repository' => 'sometimes',
             'artefact' => 'sometimes',
             'file.*' => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
+            'medium_name' => 'sometimes|string|nullable',
             'model' => 'sometimes',
             'model_id' => 'sometimes',
 

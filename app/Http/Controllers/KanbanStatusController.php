@@ -32,6 +32,7 @@ class KanbanStatusController extends Controller
             'title' => $input['title'],
             'order_id' => ($order_id === NULL) ? 0 : $order_id + 1,
             'kanban_id' => $input['kanban_id'],
+            'color'   => $input['color'],
             'locked' => $input['locked'] ?? false,
             'editable' => $input['editable'] ?? true,
             'visibility' => $input['visibility'] ?? true,
@@ -43,10 +44,7 @@ class KanbanStatusController extends Controller
         if (request()->wantsJson()) {
             if (!pusher_event(new \App\Events\Kanbans\KanbanStatusAddedEvent($kanbanStatus)))
             {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanStatus
-                ];
+                return $kanbanStatus;
             }
         }
     }
@@ -71,35 +69,40 @@ class KanbanStatusController extends Controller
             'visibility' => $input['visibility'] ?? true,
             'visible_from' => $input['visible_from'],
             'visible_until' => $input['visible_until'],
+            'color'         => $input['color'],
             'owner_id' => $kanbanStatus->owner_id, //owner should not be updated
-            'editors_ids' => array_merge($kanbanStatus->editors_ids, [auth()->user()->id] )
+            'editors_ids' => array_merge($kanbanStatus->editors_ids, [auth()->user()->id])
         ]);
 
         if (request()->wantsJson()) {
             if (!pusher_event(new \App\Events\Kanbans\KanbanStatusUpdatedEvent($kanbanStatus)))
             {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanStatus
-                ];
+                return $kanbanStatus;
             }
         }
     }
 
-    public function checkSync(Kanban $kanban){
+    public function checkSync(Kanban $kanban)
+    {
         $date = new DateTime;
-        $date->modify('-10 seconds');
+        $date->modify('-10 seconds'); // refresh of max 10 seconds
         $formatted_date = $date->format('Y-m-d H:i:s');
 
-        $update_kanban = Kanban::where('id', $kanban->id)
-            ->where('updated_at','>=',$formatted_date)->get();
-        $new_statuses = KanbanStatus::where('kanban_id', $kanban->id)
-            ->where('created_at','>=',$formatted_date)
-            ->orWhere('updated_at','>=',$formatted_date)->get();
-        $new_items = KanbanItem::where('kanban_id', $kanban->id)
-            ->where('created_at','>=',$formatted_date)
-            ->orWhere('updated_at','>=',$formatted_date)->get();
-
+        // check models for updated_at value (no need for created_at)
+        $update_kanban = Kanban::select('id')
+            ->where('id', $kanban->id)
+            ->where('updated_at', '>=', $formatted_date)->get();
+        $new_statuses = KanbanStatus::select('id')
+            ->where('kanban_id', $kanban->id)
+            ->where('updated_at', '>=', $formatted_date)->get();
+        $new_items = KanbanItem::select('kanban_items.id')
+            ->where('kanban_id', $kanban->id)
+            ->leftJoin('kanban_item_comments', 'kanban_items.id', '=', 'kanban_item_comments.kanban_item_id')
+            ->where(function ($query) use ($formatted_date) {
+                $query->where('kanban_items.updated_at', '>=', $formatted_date)
+                    ->orWhere('kanban_item_comments.updated_at', '>=', $formatted_date);
+            })
+            ->get();
 
         if (request()->wantsJson()) {
             if ($update_kanban->count() !== 0 OR $new_statuses->count() !== 0 OR $new_items->count() !== 0) {
@@ -113,34 +116,18 @@ class KanbanStatusController extends Controller
     public function sync(Request $request)
     {
         $this->validate(request(), [
-            'columns' => ['required', 'array'],
+            'statuses' => ['required', 'array'],
         ]);
-        $kanban_id = $request->columns[0]['kanban_id'];
+        $kanban_id = KanbanStatus::select('kanban_id')->find($request->statuses[0]['id'])->kanban_id;
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
-        foreach ($request->columns as $order_id => $status) {
-            if ($status['order_id'] !== $order_id) {
-                KanbanStatus::where('kanban_id', '=', $status['kanban_id'])
-                    ->where('order_id', '>=', $order_id)->increment('order_id');
-            }
-            KanbanStatus::find($status['id'])
-                ->update(['order_id' => $order_id]);
+        foreach ($request->statuses as $status) {
+            KanbanStatus::whereId($status['id'])->update([
+                'order_id' => $status['order_id'],
+            ]);
         }
 
-        $kanban_id = $request->columns[0]['kanban_id'];
-        if (request()->wantsJson()) {
-            $kanban = Kanban::find($kanban_id);
-            if (!pusher_event(new \App\Events\Kanbans\KanbanStatusMovedEvent($kanban)))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' => $kanban
-                        ->where('id', $kanban->id)
-                        ->with(['statuses'])
-                        ->get()->first()
-                ];
-            }
-        }
+        LogController::set(get_class($this).'@'.__FUNCTION__);
     }
 
     /**
@@ -182,6 +169,7 @@ class KanbanStatusController extends Controller
             'title'     => '[Kopie] ' . $status->title,
             'order_id'  => $order_id + 1,
             'kanban_id' => $status['kanban_id'],
+            'color'     => $status->color,
             'owner_id'  => auth()->user()->id,
         ]);
 
@@ -209,19 +197,16 @@ class KanbanStatusController extends Controller
             }
         }
 
-        return [
-            'message' => KanbanStatus::Where('id', $statusCopy->id)
-                ->with([
-                    'items',
-                    'items.comments',
-                    'items.comments.user',
-                    'items.comments.likes',
-                    'items.likes',
-                    'items.mediaSubscriptions.medium',
-                    'items.owner',
-                ])
-                ->get()->first()
-        ];
+        return KanbanStatus::with([
+                'items',
+                'items.comments',
+                'items.comments.user',
+                'items.comments.likes',
+                'items.likes',
+                'items.mediaSubscriptions.medium',
+                'items.owner',
+            ])
+            ->find($statusCopy->id);
     }
 
     protected function validateRequest()
@@ -236,9 +221,9 @@ class KanbanStatusController extends Controller
             'visible_from' => 'sometimes',
             'visible_until' => 'sometimes',
             'editors_id' => 'sometimes',
+            'color' => 'sometimes',
         ]);
     }
-
 
     private function getStatusWithRelations(KanbanStatus $kanbanStatus): array
     {

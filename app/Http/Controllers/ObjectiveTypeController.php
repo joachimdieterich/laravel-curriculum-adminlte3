@@ -16,11 +16,13 @@ class ObjectiveTypeController extends Controller
     public function index()
     {
         if (request()->wantsJson()) {
-            return ObjectiveType::all()->toJson();
+            return getEntriesForSelect2ByModel(
+                "App\ObjectiveType"
+            );
+        } else {
+            abort_unless(\Gate::allows('objectivetype_access'), 403);
+            return view('objectivetypes.index');
         }
-        abort_unless(\Gate::allows('objectivetype_access'), 403);
-
-        return view('objectivetypes.index');
     }
 
     public function list()
@@ -66,9 +68,7 @@ class ObjectiveTypeController extends Controller
      */
     public function create()
     {
-        abort_unless(\Gate::allows('objectivetype_create'), 403);
-
-        return view('objectivetypes.create');
+        abort(405);
     }
 
     /**
@@ -80,13 +80,13 @@ class ObjectiveTypeController extends Controller
     public function store(Request $request)
     {
         abort_unless(\Gate::allows('objectivetype_create'), 403);
-        $new_type = $this->validateRequest();
+        $input = $this->validateRequest();
 
-        ObjectiveType::create([
-            'title' => $new_type['title'],
+        $objectiveType = ObjectiveType::create([
+            'title' => $input['title'],
         ]);
 
-        return redirect()->route('objectiveTypes.index');
+        return $objectiveType;
     }
 
     /**
@@ -110,10 +110,7 @@ class ObjectiveTypeController extends Controller
      */
     public function edit(ObjectiveType $objectiveType)
     {
-        abort_unless(\Gate::allows('objectivetype_edit'), 403);
-
-        return view('objectivetypes.edit')
-            ->with(compact('objectiveType'));
+        abort(405);
     }
 
     /**
@@ -127,12 +124,12 @@ class ObjectiveTypeController extends Controller
     {
         abort_unless(\Gate::allows('objectivetype_edit'), 403);
 
-        $new_type = $this->validateRequest();
+        $input = $this->validateRequest();
         $objectiveType->update([
-            'title' => $new_type['title'],
+            'title' => $input['title'],
         ]);
 
-        return redirect()->route('objectiveTypes.index');
+        return $objectiveType;
     }
 
     /**
@@ -146,14 +143,12 @@ class ObjectiveTypeController extends Controller
         abort_unless(\Gate::allows('objectivetype_delete'), 403);
 
         $objectiveType->delete();
-
-        return redirect()->route('objectiveTypes.index');
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'title' => 'sometimes|required',
+            'title' => 'required|string',
         ]);
     }
 }

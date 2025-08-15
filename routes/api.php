@@ -49,6 +49,8 @@ Route::group([
 //    Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
 //    Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
     Route::apiResource('curricula', 'CurriculaApiController');
+    // index-Route needs to be defined after Resource-Route, otherwise it will be overridden
+    Route::get('curricula', 'CurriculaApiController@index')->middleware('throttle:1,10');
     Route::apiResource('permissions', 'PermissionsApiController');
 
     Route::apiResource('roles', 'RolesApiController');
@@ -90,9 +92,12 @@ Route::group([
     Route::get('moodle/kanbans', 'MoodleApiController@getKanbans');
     Route::get('moodle/groups', 'MoodleApiController@getGroups');
     Route::post('moodle/groups/enrol', 'MoodleApiController@enrolToGroup');
+    Route::post('moodle/users/enrol', 'MoodleApiController@enrolUsers');
+    Route::post('moodle/users/expel', 'MoodleApiController@expelUsers');
 
     Route::post('kanbans/{kanban}/enrol', 'KanbansApiController@enrolToKanban');
     Route::post('kanbans/{kanban}/expel', 'KanbansApiController@expelFromKanban');
     Route::get('kanbans/{kanban}/subscriptions', 'KanbansApiController@subscriptions');
     Route::apiResource('kanbans', 'KanbansApiController');
+
 });

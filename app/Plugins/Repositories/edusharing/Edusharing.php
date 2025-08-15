@@ -53,7 +53,8 @@ class Edusharing extends RepositoryPlugin
         {
             $common_name =  User::where('id', $owner_id)->get()->first()->common_name; //get ticket for $owner_id
         }
-        if (!is_guest()){
+
+        if (!is_guest()) {
             $ticket = $authHelper->getTicketForUser($common_name);
             $this->accessToken = $ticket;
         }

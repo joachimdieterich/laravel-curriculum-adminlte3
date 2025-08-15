@@ -6,9 +6,6 @@
 # sudo apt-get update
 
 # Clone repo from git
-git clone https://github.com/joachimdieterich/laravel-curriculum-adminlte3.git
-cp .env laravel-curriculum-adminlte3/.env
-cd laravel-curriculum-adminlte3
 
 # Install/update composer dependecies
 rm composer.lock

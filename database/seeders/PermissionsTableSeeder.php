@@ -1116,12 +1116,6 @@ class PermissionsTableSeeder extends Seeder
                 'updated_at' => '2020-06-07 17:57:44',
             ],
             [
-                'id' => '208',
-                'title' => 'organization_edit_address',
-                'created_at' => '2020-06-07 17:57:10',
-                'updated_at' => '2020-06-07 17:57:10',
-            ],
-            [
                 'id' => '209',
                 'title' => 'App\Curriculum_content_create',
                 'created_at' => '2020-06-07 17:57:19',
@@ -1325,7 +1319,24 @@ class PermissionsTableSeeder extends Seeder
                 'created_at' => '2020-06-07 17:57:44',
                 'updated_at' => '2020-06-07 17:57:44',
             ],
-
+            [
+                'id' => '243',
+                'title' => 'is_teacher',
+                'created_at' => '2020-06-07 17:57:44',
+                'updated_at' => '2020-06-07 17:57:44',
+            ],
+            [
+                'id' => '244',
+                'title' => 'is_schooladmin',
+                'created_at' => '2020-06-07 17:57:44',
+                'updated_at' => '2020-06-07 17:57:44',
+            ],
+            [
+                'id' => '245',
+                'title' => 'is_admin',
+                'created_at' => '2020-06-07 17:57:44',
+                'updated_at' => '2020-06-07 17:57:44',
+            ],
         ];
 
         Permission::insert($permissions);

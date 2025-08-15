@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  *      @OA\Property( property="grade_id", type="integer"),
  *      @OA\Property( property="period_id", type="integer"),
  *      @OA\Property( property="organization_id", type="integer"),
+ *      @OA\Property( property="common_name", type="string"),
  *      @OA\Property( property="created_at", type="string"),
  *      @OA\Property( property="updated_at", type="string")
  *   ),
@@ -26,16 +27,15 @@ class Group extends Model
 
     protected $guarded = [];
 
-    /**
-     * Prepare a date for array / JSON serialization.
-     *
-     * @param  \DateTimeInterface  $date
-     * @return string
-     */
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     protected function serializeDate(DateTimeInterface $date)
     {
@@ -85,6 +85,11 @@ class Group extends Model
         return $this->hasOne('App\Period', 'id', 'period_id');
     }
 
+    public function scopeDefaultPeriod($query)
+    {
+        $query->where('period_id', Config::where('key', 'default_period')->first()?->value ?? 1);
+    }
+
     public function organization()
     {
         return $this->hasOne('App\Organization', 'id', 'organization_id');
@@ -95,6 +100,10 @@ class Group extends Model
         return $this->hasMany('App\Course', 'group_id', 'id');
     }
 
+    public function exams()
+    {
+        return $this->hasMany('App\Domains\Exams\Models\Exam', 'group_id', 'id');
+    }
     public function kanbans()
     {
         return $this->hasManyThrough(

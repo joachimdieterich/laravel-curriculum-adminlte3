@@ -1,233 +1,208 @@
 <template>
-    <div class="card-header border-bottom-0 p-0 kanban-header"
-         :key="form.id">
-        <div v-if="(editor !== false && form.visibility !== 0 ) || (editor !== false && $userId == status_owner_id ) || (editor !== false && $userId == kanban.owner_id ) "
-              filter=".ignore">
-            <input
-                :id="'title_'+ form.id"
-                ref="newStatus"
-                type="text"
-                v-model="form.title"
-                class="w-100"
-                style="font-size: 1.1rem; font-weight: 400; border: 0; border-bottom: 1px; border-style:solid; margin: 0;"
-            />
-             <div class="form-group "
-                  v-if="($userId == status_owner_id) || ($userId == kanban.owner_id) ">
-                 <span class="custom-control custom-switch custom-switch-on-green">
-                    <input  v-model="form.editable"
-                            type="checkbox"
-                            class="custom-control-input pt-1 "
-                            :id="'editable_'+ form.id">
-                    <label class="custom-control-label  font-weight-light"
-                           :for="'editable_'+ form.id" >
-                        {{ trans('global.editable') }}
-                    </label>
-                </span>
-                 <span class="custom-control custom-switch custom-switch-on-green">
-                    <input  v-model="form.locked"
-                            type="checkbox"
-                            class="custom-control-input pt-1 "
-                            :id="'locked_'+ form.id">
-                    <label class="custom-control-label  font-weight-light"
-                           :for="'locked_'+ form.id" >
-                        {{ trans('global.locked') }}
-                    </label>
-                </span>
-                 <span class="custom-control custom-switch custom-switch-on-green">
-                    <input
-                        v-model="form.visibility"
-                            type="checkbox"
-                            class="custom-control-input pt-1 "
-                            :id="'visibility_'+ form.id">
-                    <label class="custom-control-label font-weight-light"
-                           :for="'visibility_'+ form.id" >
-                        {{ trans('global.visibility') }}
-                    </label>
-                </span>
-            </div>
-
-             <button :name="'kanbanStatusSave_'+form.id"
-                     class="btn btn-primary p-2 pull-right"
-                     @click="submit()">
-                {{ trans('global.save') }}
-            </button>
-        </div>
-        <div v-else-if="newStatus == true"
-            :id="'kanbanStatusCreate_'+form.id"
-            type="button"
+    <div
+        class="kanban-header"
+        :style="{ backgroundColor: status?.color }"
+    >
+        <div v-if="newStatus"
+            id="kanbanStatusCreate"
+            class="d-flex align-items-center pointer"
             @click="edit()"
         >
-            <strong class="text-secondary btn px-1 py-0">
-                <i class="fa fa-plus"></i> {{ trans('global.kanbanStatus.create') }}
-            </strong>
+            <span class="text-secondary btn px-1 py-0">
+                <i class="fa fa-plus"></i>
+                {{ trans('global.kanbanStatus.create') }}
+            </span>
         </div>
-        <div v-else>
-            <strong>{{ form.title }}</strong>
-            <div v-if="(editable == 1 && status.editable == true && status.visibility == true && kanban.only_edit_owned_items == false)
-                || (editable == 1 && $userId == status_owner_id )
-                || ($userId == kanban.owner_id )"
-                 :id="'kanbanStatusDropdown_'+form.id"
-                 class="btn btn-flat py-0 pl-0 pull-left"
-                 data-toggle="dropdown"
-                 aria-expanded="false">
-                <i class="text-muted fas fa-bars"></i>
-                <div class="dropdown-menu"
-                     x-placement="top-start">
+        <div v-else
+            class="d-flex align-items-center"
+            :style="'color:' + $textcolor(status.color)"
+        >
+            <div v-if="edit_rights || copy_rights || delete_rights"
+                :id="'kanbanStatusDropdown_' + status.id"
+                class="btn btn-flat py-0 pl-0 pull-left"
+                data-toggle="dropdown"
+                aria-expanded="false"
+            >
+                <i
+                    class="fas fa-bars"
+                    :style="'color:' + $textcolor(status.color)"
+                ></i>
+                <div
+                    class="dropdown-menu"
+                    x-placement="top-start"
+                >
                     <div>
-                        <div>
+                        <div v-if="edit_rights">
                             <button
                                 name="kanbanStatusEdit"
-                                class="dropdown-item py-1"
+                                class="dropdown-item text-secondary py-1"
                                 @click="edit()"
                             >
-                                <i class="fa fa-pencil-alt mr-4"></i>
+                                <i class="fa fa-pencil-alt mr-2"></i>
                                 {{ trans('global.kanbanStatus.edit') }}
                             </button>
                         </div>
-                        <div v-if="kanban.allow_copy">
+
+                        <div v-if="copy_rights">
                             <button
                                 name="kanbanStatusCopy"
-                                class="dropdown-item py-1"
+                                class="dropdown-item text-secondary py-1"
                                 @click="confirmCopy()"
                             >
-                                <i class="fa fa-copy mr-4"></i>
+                                <i class="fa fa-copy mr-2"></i>
                                 {{ trans('global.kanbanStatus.copy') }}
                             </button>
                         </div>
-                        <div v-if="($userId == status_owner_id) || (editable == 1 && $userId == kanban.owner_id)">
+
+                        <div v-if="delete_rights">
                             <hr class="my-1">
                             <button
-                                v-can="'kanban_delete'"
+                                v-permission="'kanban_delete'"
                                 name="kanbanStatusDelete"
-                                class="dropdown-item py-1 text-red "
-                                @click="confirmStatusDelete()">
-                                <i class="fa fa-trash mr-4"></i>
-                                {{ trans('global.delete') }}
+                                class="dropdown-item py-1 text-red"
+                                @click="confirmItemDelete()"
+                            >
+                                <i class="fa fa-trash mr-2"></i>
+                                {{ trans('global.kanbanStatus.delete') }}
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-if="((!status.locked && editable)|| $userId == status.owner_id) || $userId == kanban.owner_id"
-                 class="pull-right handle pointer">
-                <i class="fa fa-arrows-up-down-left-right text-muted"></i>
+            <strong>{{ status.title }}</strong>
+            <div v-if="$userId == kanban_owner_id
+                    || (!status.locked || $userId == status.owner_id)"
+                class="handle ml-auto pointer"
+            >
+                <span class="position-relative">
+                    <i v-if="editable"
+                        class="fa fa-arrows-up-down-left-right"
+                    ></i>
+                    <i v-if="status.locked"
+                        class="fa fa-lock text-muted position-absolute"
+                        style="left: 8px; top: 10px; cursor: not-allowed;"
+                    ></i>
+                </span>
             </div>
-
         </div>
 
-        <Modal
-            :id="'statusModal_'+form.id"
-            css="danger"
-            :title="trans('global.kanbanStatus.delete')"
-            :text="trans('global.kanbanStatus.delete_helper')"
-            :ok_label="trans('global.kanbanStatus.delete')"
-            v-on:ok="deleteStatus"
-        />
+        <Teleport to=".content">
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.kanbanStatus.delete')"
+                :description="trans('global.kanbanStatus.delete_helper')"
+                @close="this.showConfirm = false"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.delete();
+                }"
+            />
+        </Teleport>
     </div>
 </template>
 <script>
-import Form from "form-backend-validation";
-
-const Modal =
-    () => import('./../uiElements/Modal');
-//import Modal from "./../uiElements/Modal";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'KanbanStatus',
     props: {
-        kanban: {},
         status: {
             type: Object,
+            default: null,
         },
-        'editable': true,
-        'newStatus': false,
+        kanban_owner_id: {
+            type: Number,
+            default: null,
+        },
+        editable: {
+            type: Boolean,
+            default: false,
+        },
+        allow_copy: {
+            type: Boolean,
+            default: false,
+        },
+        only_edit_owned_items: {
+            type: Boolean,
+            default: true,
+        },
+        newStatus: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
-      return {
-          editor: false,
-          form: new Form({
-              'id': '',
-              'title': '',
-              'kanban_id': '',
-              'locked': false,
-              'editable': true,
-              'visibility': true,
-              'visible_from': null,
-              'visible_until': null,
-          }),
-          url: '',
-          method: 'patch',
-          event: ''
-      }
+        return {
+            component_id: this.$.uid,
+            showConfirm: false,
+            url: '',
+            method: 'patch',
+            event: '',
+            edit_rights: false,
+            copy_rights: false,
+            delete_rights: false,
+        }
     },
     methods: {
         edit() {
-            this.editor = true;
-            if (this.newStatus === true) {
-                this.form.id =  0;
-                this.form.title = '';
-            }
-            this.$nextTick(function () {
-                this.$refs['newStatus'].focus();
+            this.globalStore?.showModal('kanban-status-modal', {
+                status: this.status ?? {},
+                method: this.method,
             });
         },
-        submit() {
-            if (this.form.id === 0){
-                this.url = '/kanbanStatuses';
-                this.method = 'post';
-                this.form.kanban_id = this.kanban.id;
-                this.event = 'status-added';
-            } else {
-                this.url = '/kanbanStatuses/' + this.form.id;
-                this.method = 'patch';
-                this.event = 'status-updated';
-            }
-            axios[this.method](this.url, this.form)
-                .then(res => {
-                    this.$emit(this.event, res.data.message);
-                    this.form = res.data.message; //selfupdate
-                })
-                .catch(error => { // Handle the error returned from our request
-                    console.log(error);
-                });
-            this.editor = false;
+        confirmCopy() {
+            this.$eventHub.emit('kanban-show-copy', {
+                id: this.status.id,
+                type: 'status',
+            });
         },
-        confirmStatusDelete(){
-            $('#statusModal_'+ this.form.id).modal('show');
+        confirmItemDelete() {
+            this.showConfirm = true;
         },
-        deleteStatus(){
-            axios.delete("/kanbanStatuses/"+this.form.id)
+        delete() {
+            axios.delete("/kanbanStatuses/" + this.status.id)
                 .then(() => {
-                    this.$emit("status-destroyed", this.status);
+                    this.$eventHub.emit("kanban-status-deleted", this.status);
                 })
                 .catch(err => {
                     console.log(err.response);
                 });
         },
-        confirmCopy() {
-            this.$eventHub.$emit('copy-id', this.status.id);
-            $('#kanbanStatusCopyModal').modal('show');
-        },
     },
     mounted() {
-        if (this.newStatus === true) {
-            this.form.id = 0;
-            this.form.title = window.trans.global.kanbanStatus.create;
+        if (this.newStatus) {
+            this.method = 'post';
         } else {
-            this.form = this.status;
+            this.edit_rights =
+                this.$userId == this.kanban_owner_id
+                || this.checkPermission('is_admin')
+                // (edit = true and status-owner) or (edit = true and status-edit = true and everyone can edit)
+                || (this.editable && (this.$userId == this.status.owner_id || (this.status.editable && !this.only_edit_owned_items)));
+
+            this.copy_rights = this.allow_copy && this.editable;
+
+            this.delete_rights =
+                this.$userId == this.kanban_owner_id
+                || this.checkPermission('is_admin')
+                || this.$userId == this.status.owner_id;
         }
     },
-    computed: {
-        status_owner_id: function () {
-            if (typeof(this.status) == 'undefined') {
-                return -1;
-            } else {
-                return this.status.owner_id
-            }
-        },
-    },
     components: {
-        Modal,
-    }
+        ConfirmModal,
+    },
 }
 </script>
+<style scoped>
+.kanban-header {
+    background-color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+</style>

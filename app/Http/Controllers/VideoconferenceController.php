@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Organization;
 use App\User;
-use \App\Http\Controllers\ShareTokenController;
 use App\Videoconference;
 use App\VideoconferenceSubscription;
 use Carbon\Carbon;
@@ -53,9 +52,49 @@ class VideoconferenceController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('videoconference_access'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
 
-        return view('videoconference.index');
+        if (request()->wantsJson())
+        {
+            return getEntriesForSelect2ByCollection(
+                $this->getVideoconferences(),
+                'videoconferences.',
+                        ['meetingName', 'medium_id'],
+                'meetingName',
+                "meetingName",
+            );
+        }
+        else
+        {
+            return view('videoconference.index');
+        }
+
+    }
+
+    public function getVideoconferences($withOwned = true)
+    {
+        $videoconferences = Videoconference::with('subscriptions')
+            ->whereHas('subscriptions', function ($query) {
+                $query->where(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
+                    }
+                )->orWhere(
+                    function ($query) {
+                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
+                    }
+                );
+            });
+
+        if ($withOwned) {
+            $videoconferences = $videoconferences->orWhere('owner_id', auth()->user()->id);
+        }
+
+        return $videoconferences;
     }
 
     public function userVideoconferences($withOwned = true, $user = null)
@@ -83,20 +122,44 @@ class VideoconferenceController extends Controller
 
     public function list(Request $request)
     {
-        abort_unless(\Gate::allows('videoconference_access'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
 
-        switch ($request->filter)
+        if (request()->has(['group_id']))
         {
-            case 'owner':            $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->get();
-                break;
-            case 'shared_with_me':   $videoconferences = $this->userVideoconferences(false);
-                break;
-            case 'shared_by_me':     $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
-                break;
-            case 'all':
-            default:                 $videoconferences = $this->userVideoconferences();
-                break;
+            $request = request()->validate(
+                [
+                    'group_id' => 'required',
+                ]
+            );
+            $group_id = $request['group_id'];
+            $videoconferences = Videoconference::with('subscriptions')
+                ->whereHas('subscriptions', function ($query) use ($group_id){
+                    $query->where(
+                        function ($query) use ($group_id) {
+                            $query->where('subscribable_type', 'App\\Group')
+                                ->where('subscribable_id', $group_id);
+                        }
+                    );
+                });
         }
+        else
+        {
+            switch ($request->filter)
+            {
+                case 'owner':            $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->get();
+                    break;
+                case 'shared_with_me':   $videoconferences = $this->userVideoconferences(false);
+                    break;
+                case 'shared_by_me':     $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                    break;
+                case 'all':
+                default:                 $videoconferences = $this->userVideoconferences();
+                    break;
+            }
+        }
+
+
+
 
         return empty($videoconferences) ? '' : DataTables::of($videoconferences)
             ->setRowId('id')
@@ -110,9 +173,7 @@ class VideoconferenceController extends Controller
      */
     public function create()
     {
-        abort_unless(/*\Gate::allows('videoconference_create') AND */is_admin(), 403);
-
-        return view('videoconference.create');
+        abort(403);
     }
 
     /**
@@ -192,10 +253,8 @@ class VideoconferenceController extends Controller
         }
 
         if (request()->wantsJson()) {
-            return ['videoconference' => $videoconference];
+            return $videoconference;
         }
-
-        return view('videoconference.index');
     }
 
     /**
@@ -204,22 +263,16 @@ class VideoconferenceController extends Controller
      * @param  \App\Videoconference  $videoconference
      * @return \Illuminate\Http\Response
      */
-    public function show(Videoconference $videoconference, $editable = false)
+    public function show(Videoconference $videoconference, $editable = false, $token = null)
     {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
         $input = $this->validateRequest();
 
         abort_unless((
             $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
-            OR
-            $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
+            OR $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
         )
-        OR
-        $videoconference->isAccessible(),
+        OR $videoconference->isAccessible()
+        OR $token != null,
         403);
 
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
@@ -288,7 +341,7 @@ class VideoconferenceController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, date('d.m.Y'));
 
         $moderatorTextPostfix = '<br/>Um jemanden als <b>Moderator:in</b> zur Konferenz einzuladen, schicken Sie diesen Link: <a href="'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
-        . '">'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
+            . '">'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
             . '</a><br/><br/> Um jemanden als <b>Teilnehmer:in</b> zur Konferenz einzuladen, schicken Sie diesen Link:  <a href="'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
             . '">'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?attendeePW=' . $videoconference->attendeePW
             . '</a>';
@@ -308,9 +361,9 @@ class VideoconferenceController extends Controller
         }
 
         if (!$adapter->isMeetingRunning([
-                'server' => $videoconference->server,
-                'meetingID' => $videoconference->meetingID
-            ])
+            'server' => $videoconference->server,
+            'meetingID' => $videoconference->meetingID
+        ])
         ) {
 
             if (
@@ -321,7 +374,7 @@ class VideoconferenceController extends Controller
                 $videoconference->anyoneCanStart === true
             )
             {
-                 $conf =  $adapter->start([
+                $conf =  $adapter->start([
                     'meetingID'                             => $videoconference->meetingID,
                     'meetingName'                           => $videoconference->meetingName,
                     'attendeePW'                            => $videoconference->attendeePW,
@@ -414,10 +467,7 @@ class VideoconferenceController extends Controller
      */
     public function edit(Videoconference $videoconference)
     {
-        abort_unless((/*\Gate::allows('group_edit') and $videoconference->isAccessible() AND */is_admin()), 403);
-
-        return view('videoconference.edit')
-            ->with(compact('videoconference'));
+        abort(403);
     }
 
     /**
@@ -429,8 +479,8 @@ class VideoconferenceController extends Controller
      */
     public function update(Request $request, Videoconference $videoconference)
     {
-        $input = $this->validateRequest();
         abort_unless((\Gate::allows('videoconference_edit') and $videoconference->isAccessible()), 403);
+        $input = $this->validateRequest();
 
         //todo: check if guestPolicy is changed. -> if not use initCreateMeeting() ?
         $videoconference->update([
@@ -463,11 +513,11 @@ class VideoconferenceController extends Controller
             'lockSettingsLockedLayout' => $input['lockSettingsLockedLayout'] ?? $videoconference->lockSettingsLockedLayout,
             'lockSettingsLockOnJoin' => $input['lockSettingsLockOnJoin'] ?? $videoconference->lockSettingsLockOnJoin,
             'lockSettingsLockOnJoinConfigurable' => $input['lockSettingsLockOnJoinConfigurable'] ?? $videoconference->lockSettingsLockOnJoinConfigurable,
-            'guestPolicy' => $input['guestPolicy'] ?? $videoconference->guestPolicy,
+            'guestPolicy' => format_select_input($input['guestPolicy']) ?? $videoconference->guestPolicy,
             'meetingKeepEvents' => $input['meetingKeepEvents'] ?? $videoconference->meetingKeepEvents,
             'endWhenNoModerator' => $input['endWhenNoModerator'] ?? $videoconference->endWhenNoModerator,
             'endWhenNoModeratorDelayInMinutes' => $input['endWhenNoModeratorDelayInMinutes'] ?? $videoconference->endWhenNoModeratorDelayInMinutes,
-            'meetingLayout' => $input['meetingLayout'] ?? $videoconference->meetingLayout,
+            'meetingLayout' => format_select_input($input['meetingLayout']) ?? $videoconference->meetingLayout,
             'learningDashboardCleanupDelayInMinutes' => $input['learningDashboardCleanupDelayInMinutes'] ?? $videoconference->learningDashboardCleanupDelayInMinutes,
             'allowModsToEjectCameras' => $input['allowModsToEjectCameras'] ?? $videoconference->allowModsToEjectCameras,
             'allowRequestsWithoutSession' => $input['allowRequestsWithoutSession'] ?? $videoconference->allowRequestsWithoutSession,
@@ -477,12 +527,11 @@ class VideoconferenceController extends Controller
             'webcamsOnlyForModerator' => $input['webcamsOnlyForModerator'] ?? $videoconference->webcamsOnlyForModerator,
             'anyoneCanStart' => $input['anyoneCanStart'] ?? $videoconference->anyoneCanStart,
 
-            'owner_id' => auth()->user()->id,
+            'owner_id' => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
         $videoconference->save();
 
         return $videoconference;
-
     }
 
     /**
@@ -506,25 +555,21 @@ class VideoconferenceController extends Controller
 
     public function getVideoconferenceByToken(Videoconference $videoconference, Request $request)
     {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
-            LogController::set('guestLogin');
-            LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
-        }
-
         $input = $this->validateRequest();
 
         $subscription = VideoconferenceSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
-        if ($subscription->due_date) {
+
+        if (!isset($subscription)) abort(410, 'global.token_deleted');
+
+        if (isset($subscription->due_date)) {
             $now = Carbon::now();
             $due_date = Carbon::parse($subscription->due_date);
             if ($due_date < $now) {
-                abort(410, 'Dieser Link ist nicht mehr gültig');
+                abort(410, 'global.token_expired');
             }
         }
 
-        return $this->show($videoconference, $subscription->editable);
-
+        return $this->show($videoconference, $subscription->editable, $input['sharing_token']);
     }
 
     public function endCallback(Request $request)
@@ -546,13 +591,12 @@ class VideoconferenceController extends Controller
         {
             LogController::set(get_class($this).'@'.__FUNCTION__.'->participantCount', $videoconference->meetingID, $info['participantCount']);
         }
-
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'id' => 'sometimes|integer',
+            'id' => 'sometimes|nullable|integer',
             'meetingID' => 'sometimes',
             'meetingName' => 'sometimes',
             'attendeePW' => 'sometimes',
@@ -587,11 +631,11 @@ class VideoconferenceController extends Controller
             'lockSettingsLockedLayout' => 'sometimes|boolean',
             'lockSettingsLockOnJoin' => 'sometimes|boolean',
             'lockSettingsLockOnJoinConfigurable' => 'sometimes|boolean',
-            'guestPolicy' => 'sometimes|string',
+            'guestPolicy' => 'sometimes',
             'meetingKeepEvents' => 'sometimes|boolean',
             'endWhenNoModerator' => 'sometimes|boolean',
             'endWhenNoModeratorDelayInMinutes' => 'sometimes|integer',
-            'meetingLayout' => 'sometimes|string',
+            'meetingLayout' => 'sometimes',
             'learningDashboardCleanupDelayInMinutes' => 'sometimes|integer',
             'allowModsToEjectCameras' => 'sometimes|boolean',
             'allowRequestsWithoutSession' => 'sometimes|boolean',
@@ -605,8 +649,8 @@ class VideoconferenceController extends Controller
             'medium_id' => 'sometimes',
             'webcamsOnlyForModerator' => 'sometimes|boolean',
             'anyoneCanStart' => 'sometimes|boolean',
-            'server' => 'sometimes|string'
+            'server' => 'sometimes|string',
+            'owner_id' => 'sometimes|integer|nullable',
         ]);
     }
-
 }

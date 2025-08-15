@@ -44,7 +44,7 @@
      @endif
      style="margin-top:15px;max-height:100px;">
 
-<medium-create-modal></medium-create-modal>
+<medium-modal></medium-modal>
 @section('scripts')
 @parent
 <script>

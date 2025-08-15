@@ -24,9 +24,9 @@ class OrganizationType extends Model
 
     protected $fillable = ['title', 'external_id', 'state_id', 'country_id', 'created_at', 'updated_at'];
 
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
 
     /**

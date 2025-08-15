@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QRCodeHelper;
 use App\Curriculum;
 use App\CurriculumSubscription;
 use Illuminate\Http\Request;
@@ -46,19 +47,17 @@ class CurriculumSubscriptionController extends Controller
                     ];
                 }
                 return [
-                    'subscribers' => [
-                        'tokens' => $tokens ?? [],
-                        'subscriptions' => optional(
+                    'tokens' => $tokens ?? [],
+                    'subscriptions' => optional(
                             optional(
                                 Curriculum::find(request('curriculum_id'))
                             )->subscriptions()
                         )->with('subscribable')
-                            ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                                if ($type == 'App\\User') {
-                                    $q->whereNot('id', env('GUEST_USER'));
-                                }
-                            })->get(),
-                    ],
+                        ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                            if ($type == 'App\\User') {
+                                $q->whereNot('id', env('GUEST_USER'));
+                            }
+                        })->get(),
                 ];
             }
         }
@@ -74,7 +73,7 @@ class CurriculumSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
         $curriculum = Curriculum::find($input['model_id']);
-        abort_unless((\Gate::allows('curriculum_create') and $curriculum->isAccessible()), 403);
+        abort_unless(($curriculum->isEditable()), 403);
 
         $subscribe = CurriculumSubscription::updateOrCreate([
             'curriculum_id' => $input['model_id'],
@@ -87,7 +86,13 @@ class CurriculumSubscriptionController extends Controller
         $subscribe->save();
 
         if (request()->wantsJson()) {
-            return ['subscription' => $curriculum->subscriptions()->with('subscribable')->get()];
+            return CurriculumSubscription::with('subscribable')
+                ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                    if ($type == 'App\\User') {
+                        $q->whereNot('id', env('GUEST_USER'));
+                    }
+                })
+                ->find($subscribe->id);
         }
     }
 
@@ -135,7 +140,7 @@ class CurriculumSubscriptionController extends Controller
             'subscribable_id'   => 'sometimes|integer',
             'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
-            'curriculum_id'=> 'sometimes',
+            'curriculum_id'     => 'sometimes',
         ]);
     }
 }

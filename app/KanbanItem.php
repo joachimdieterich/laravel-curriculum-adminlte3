@@ -6,6 +6,7 @@ use DateTimeInterface;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Like;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class KanbanItem extends Model
 {
@@ -14,18 +15,25 @@ class KanbanItem extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
         'created_at' => 'datetime:d.m.Y H:i',
         'locked' => 'boolean',
         'editable' => 'boolean',
+        'replace_links' => 'boolean',
         'visibility' => 'boolean',
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'due_date' => 'datetime',
+        'visible_from'  => 'datetime',
+        'visible_until'  => 'datetime',
     ];
 
-    protected $dates = [
+    /*protected $dates = [
         'updated_at',
         'created_at',
         'visible_from',
         'visible_until',
-    ];
+    ];*/
 
     protected static $marks = [
         Like::class,
@@ -154,6 +162,7 @@ class KanbanItem extends Model
      */
     public function getEditorsIdsAttribute($commaSeparatedIds)
     {
+
         return explode(',', $commaSeparatedIds);
     }
 

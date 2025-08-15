@@ -23,7 +23,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerPolicies();
+        //$this->registerPolicies(); --> now automatic registered by Framework v.10 https://laravel.com/docs/10.x/upgrade#register-policies
 
         \Gate::define('viewWebSocketsDashboard', function ($user = null) {
             return in_array($user->email, [
@@ -31,6 +31,6 @@ class AuthServiceProvider extends ServiceProvider
             ]);
         });
 
-        Passport::routes();
+        //Passport::routes(); --> now moved to dedicated route file -> v.10 https://github.com/laravel/passport/blob/12.x/UPGRADE.md
     }
 }

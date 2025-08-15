@@ -33,10 +33,11 @@ class KanbanSubscription extends Model
         'sharing_token',
         'title'
     ];
+
     protected $casts = [
         'editable' => 'boolean',
     ];
-    /**
+
     /**
      * Get the subscriber model.
      */

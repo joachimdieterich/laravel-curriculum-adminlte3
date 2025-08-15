@@ -1,264 +1,167 @@
 <template >
-    <div class="row ">
+    <div class="row">
         <div class="col-12 pt-2">
             <div class="card ">
-                <div class="card-header"
-                     style="display: flex;justify-content: flex-start;">
+                <div class="card-header d-flex justify-content-start">
                     <span style="width:30%;">{{ trans('global.exercise.title')}}</span>
                     <span>{{ trans('global.exercisedone.fields.iterations')}}</span>
                 </div>
 
-                <div style="clear:right;"
-                     v-for="(exercise,index) in exercises"
-                     v-if="(exercise.title.toLowerCase().indexOf(search.toLowerCase()) !== -1) || search.length < 3"
-                     :id="exercise.id"
-                     v-bind:value="exercise.id">
-                        <div class="card-footer "
-                             style="display: flex;justify-content: flex-start;">
-                            <div style="width:30%;">
+                <span v-for="exercise in exercises">
+                    <div v-if="search.length < 3
+                            || exercise?.title.toLowerCase().indexOf(search.toLowerCase()) !== -1"
+                        :id="exercise?.id"
+                        style="clear: right;"
+                        :value="exercise.id"
+                    >
+                        <div class="card-footer d-flex justify-content-start">
+                            <div style="width: 30%;">
                                 <span v-if="exercise.description"
-                                    @click="toggle('exercise_'+exercise.id)">
-                                    <i  v-if="toggle_id != 'exercise_' + exercise.id"
+                                    @click="toggle(exercise.id)"
+                                >
+                                    <i v-if="toggle_id != exercise.id"
                                         class="fa fa-caret-right pr-2"
-                                       ></i>
+                                    ></i>
                                     <i v-else
-                                       class="fa fa-caret-down pr-2"></i>
+                                        class="fa fa-caret-down pr-2"
+                                    ></i>
                                 </span>
                                 {{ exercise.title }}
                                 <span v-if="$userId == training.owner_id">
-                                      <i class="pl-2 fa fa-pencil-alt text-secondary"
-                                         @click="edit(exercise)"></i>
-                                <i class="pl-2 fa fa-trash text-danger"
-                                   @click="destroy(exercise)"></i>
+                                    <a
+                                        class="text-secondary pointer mx-1"
+                                        @click="openModal(exercise)"
+                                    >
+                                        <i class="fa fa-pencil-alt px-1"></i>
+                                    </a>
+                                    <a
+                                        class="text-danger pointer mx-1"
+                                        @click="confirmItemDelete(exercise)"
+                                    >
+                                    <i class="fa fa-trash px-1"></i>
+                                    </a>
                                 </span>
                             </div>
 
-                            <exerciseDones
-                                :exercise="exercise">
-                            </exerciseDones>
+                            <exerciseDones :exercise="exercise"/>
                         </div>
 
-                    <div v-if="toggle_id == 'exercise_'+exercise.id"
-                         :id="'exercise_'+exercise.id"
-                         class="card-body"
-                        v-dompurify-html="exercise.description">
+                        <div v-if="toggle_id == exercise.id"
+                            :id="'exercise_' + exercise.id"
+                            class="card-body"
+                            v-dompurify-html="exercise.description"
+                        ></div>
                     </div>
-                </div>
+                </span>
 
-                <div class="card-footer" role="button"
-                     v-if="!editor &&  $userId == training.owner_id"
-                     @click="edit()">
-                    <i class="fa fa-add"></i> {{ trans('global.exercise.create') }}
-                </div>
-
-                <div v-if="editor"
-                    class="card-body"
+                <div v-if="$userId == training.owner_id"
+                    class="card-footer"
+                    role="button"
+                    @click="openModal()"
                 >
-                    <form class="needs-validation">
-                        <div class="form-group">
-                            <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                class="form-control"
-                                v-model.trim="form.title"
-                                :placeholder="trans('global.exercise.fields.title')"
-                                required
-                            />
-                            <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                            <div class="invalid-feedback">
-                                {{ trans('global.invalid_form') }}
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <textarea
-                                :id="'description'+component_id"
-                                :name="'description'+component_id"
-                                :placeholder="trans('global.exercise.fields.description')"
-                                class="form-control description my-editor"
-                                v-model.trim="form.description"
-                            ></textarea>
-                            <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
-                        </div>
-
-                        <div class="form-group">
-                            <input
-                                type="number"
-                                min="1"
-                                id="recommended_iterations"
-                                name="recommended_iterations"
-                                class="form-control"
-                                v-model.trim="form.recommended_iterations"
-                                :placeholder="trans('global.exercise.fields.recommended_iterations')"
-                                required
-                            />
-                            <div class="invalid-feedback">
-                                {{ trans('global.invalid_form') }}
-                            </div>
-                        </div>
-                        <button :name="'exerciseSave'"
-                                class="btn btn-primary p-2 m-2"
-                                @click.prevent="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </form>
+                    <i class="fa fa-add"></i> {{ trans('global.exercise.create') }}
                 </div>
             </div>
         </div>
+
+        <Teleport to="body">
+            <ExerciseModal/>
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.exercise.delete')"
+                :description="trans('global.exercise.delete_helper')"
+                @close="() => {
+                    this.showConfirm = false;
+                }"
+                @confirm="() => {
+                    this.showConfirm = false;
+                    this.destroy();
+                }"
+            ></ConfirmModal>
+        </Teleport>
     </div>
 </template>
-
 <script>
-import Form from "form-backend-validation";
-import moment from "moment/moment";
-import ExerciseDones from "./ExerciseDones";
+import ExerciseDones from "./ExerciseDones.vue";
+import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import ExerciseModal from "./ExerciseModal.vue";
+import {useGlobalStore} from "../../store/global.js";
 
 export default {
     props: {
         training: {
-            default: null
+            default: null,
         },
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
-            component_id: this._uid,
-            method: 'post',
-            requestUrl: '/exercises',
-            form: new Form({
-                'id': null,
-                'training_id':'',
-                'title': '',
-                'description': '',
-                'recommended_iterations': '',
-                'order_id': 0,
-            }),
+            component_id: this.$.uid,
+            showConfirm: false,
             search: '',
-            editor: false,
             exercises: [],
-            toggle_id:'',
-            errors: {}
-
+            currentExercise: null,
+            toggle_id: 0,
         }
     },
     mounted() {
+        this.$eventHub.emit('showSearchbar', true);
+
         this.loaderEvent();
-        const plugins = "autolink link" + (this.method === 'patch' ? ' example' : '');
-        this.$initTinyMCE(
-            [
-                plugins
-            ],
-            {
-                'referenceable_type': 'App\\Exercise',
-                'referenceable_id': this.form.id,
-                'eventHubCallbackFunction': 'insertContent',
-                'eventHubCallbackFunctionParams': this.component_id,
-            }
-        );
-        this.$eventHub.$on('exercise_dones_added', (e) => {
+
+        this.$eventHub.on('exercise-added', (exercise) => {
+            exercise.dones = [];
+            this.exercises.push(exercise);
+        });
+        this.$eventHub.on('exercise-updated', (updatedExercise) => {
+            Object.assign(this.exercises.find(e => e.id === updatedExercise.id), updatedExercise);
+        });
+        this.$eventHub.on('exercise_dones_added', (e) => {
             this.loaderEvent();
         });
     },
     methods: {
-        loaderEvent(){
+        loaderEvent() {
             axios.get('/exercises?training_id=' + this.training.id)
                 .then(response => {
-                    this.exercises = response.data.exercises;
+                    this.exercises = response.data;
                 })
                 .catch(e => {
                     console.log(e);
                 });
         },
-        edit(exercise = false) {
-            if (exercise){
-                this.form.id = exercise.id;
-                this.form.title = exercise.title;
-                this.form.description = exercise.description;
-                this.form.recommended_iterations =  exercise.recommended_iterations;
-                this.form.order_id = exercise.order_id;
-                this.method = 'patch';
-            }
-            this.editor = !this.editor;
-
-            this.$nextTick(() => {
-                const plugins = "autolink link" + (this.method === 'patch' ? ' example' : '');
-                this.$initTinyMCE(
-                    [
-                        plugins
-                    ],
-                    {
-                        'referenceable_type': 'App\\Exercise',
-                        'referenceable_id': this.form.id,
-                        'eventHubCallbackFunction': 'insertContent',
-                        'eventHubCallbackFunctionParams': this.component_id,
-                    }
-                );
-            });
-
+        openModal(exercise = { training_id: this.training.id }) {
+            this.globalStore?.showModal('exercise-modal', exercise);
         },
-        destroy(exercise){
-            axios.delete('/exercises/'+exercise.id)
+        confirmItemDelete(exercise) {
+            this.currentExercise = exercise;
+            this.showConfirm = true;
+        },
+        destroy() {
+            axios.delete('/exercises/' + this.currentExercise.id)
                 .then(response => {
-                    this.loaderEvent();
+                    if (response.data) this.exercises.splice(this.exercises.indexOf(this.currentExercise), 1);
                 })
                 .catch(e => {
                     console.log(e);
                 });
         },
-        submit() {
-            if (!this.validate()) return;
-
-            const method = this.method.toLowerCase();
-            this.form.description = tinyMCE.get('description'+this.component_id).getContent();
-            this.form.training_id = this.training.id;
-            this.form.order_id = this.exercises.length;
-
-            if (method === 'patch') {
-                axios.patch(this.requestUrl += '/' + this.form.id, this.form)
-                    .then(res => {
-                        this.loaderEvent();
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-                this.method = 'post';
-            } else {
-                axios.post(this.requestUrl, this.form)
-                    .then(res => {
-                        this.loaderEvent();
-                    })
-                    .catch(error => { // Handle the error returned from our request
-                        console.log(error);
-                    });
-            }
-            this.editor = false;
-            this.form.title = '';
-            this.form.description = '';
-            this.form.recommended_iterations = '';
-            this.form.order_id = null;
-        },
-        validate() {
-            const form = this.$el.querySelector('.needs-validation');
-
-            if (!form.checkValidity()) {
-                form.classList.add('was-validated')
-                return false;
-            } else {
-                form.classList.remove('was-validated')
-                return true;
-            }
-        },
-        toggle(id){
-            if (this.toggle_id != id){
+        toggle(id) {
+            if (this.toggle_id != id) {
                 this.toggle_id = id;
             } else {
-                this.toggle_id = '';
+                this.toggle_id = 0;
             }
         },
     },
-
     components: {
+        ExerciseModal,
+        ConfirmModal,
         ExerciseDones,
     },
 }

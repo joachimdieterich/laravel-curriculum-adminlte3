@@ -13,6 +13,9 @@ class KanbanItemSubscription extends Model
         'editable',
         'owner_id', ];
 
+    protected $casts = [
+        'editable' => 'boolean',
+    ];
     /**
      * Get the subscriber model.
      */

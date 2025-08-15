@@ -10,12 +10,15 @@ class MapMarkerType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'color', 'css_icon', 'owner_id', 'created_at', 'updated_at'];
-
-    protected $dates = [
-        'updated_at',
-        'created_at',
+    protected $casts = [
+        'updated_at' => 'datetime',
+        'created_at'  => 'datetime',
     ];
+
+    /* protected $dates = [  --> change v.10
+         'updated_at',
+         'created_at',
+     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -26,11 +29,6 @@ class MapMarkerType extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
-    }
-
-    public function path()
-    {
-        return "/mapMarkerTypes/{$this->id}";
     }
 
     public function markers()

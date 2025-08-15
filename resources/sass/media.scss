@@ -1,0 +1,50 @@
+// mobile-view
+@media (max-width: 575px) {
+    .objectives {
+        flex-direction: column !important;
+        gap: 0px;
+
+        .objective {
+            width: 100% !important;
+            border-top: 0px;
+        }
+    }
+}
+@media (min-width: 576px) {
+    .d-sm-contents { display: contents !important; }
+}
+// tablet-view small
+@media (min-width: 576px) and (max-width: 767px) {
+    .objectives {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        .objective {
+            height: auto !important;
+            width: auto !important;
+            aspect-ratio: 1/1;
+        }
+    }
+}
+// tablet-view large
+@media (min-width: 768px) and (max-width: 991px) {
+    .objectives {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        .objective {
+            height: auto !important;
+            width: auto !important;
+            aspect-ratio: 1/1;
+        }
+    }
+}
+// desktop-view
+@media (min-width: 992px) {
+    .vuehover {
+        display: none;
+    }
+    li:hover .vuehover,
+    tr:hover .vuehover {
+        display: block;
+        cursor: pointer;
+    }
+}

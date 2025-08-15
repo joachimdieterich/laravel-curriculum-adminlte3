@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
 use App\OrganizationType;
 use App\State;
 use Yajra\DataTables\DataTables;
@@ -13,6 +12,7 @@ class OrganizationTypesController extends Controller
     {
 
         if (request()->wantsJson()) {
+
             return getEntriesForSelect2ByModel(
                 "App\OrganizationType"
             );
@@ -39,47 +39,13 @@ class OrganizationTypesController extends Controller
             'state_id',
             'country_id', ]);
 
-        $edit_gate = \Gate::allows('organization_type_edit');
-        $delete_gate = \Gate::allows('organization_type_delete');
-
         return DataTables::of($organization_types)
-            ->addColumn('action', function ($organization_types) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('organizationtypes.edit', $organization_types->id).'" '
-                                    .'id="edit-organization-type-'.$organization_types->id.'" '
-                                    .'class="btn">'
-                                    .'<i class="fa fa-pencil-alt"></i>'
-                                    .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                                .'class="btn text-danger" '
-                                .'onclick="destroyDataTableEntry(\'organizationtypes\','.$organization_types->id.')">'
-                                .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
                 'color' => 'primary',
             ])
             ->make(true);
-    }
-
-    public function create()
-    {
-        abort_unless(\Gate::allows('organization_type_create'), 403);
-        $countries = Country::all();
-
-        $states = State::all()->sortBy('country');
-
-        return view('organizationtypes.create')
-                    ->with(compact('countries'))
-                    ->with(compact('states'));
     }
 
     public function store()
@@ -96,55 +62,44 @@ class OrganizationTypesController extends Controller
             'country_id'    =>  $input_state->country,
         ]);
 
-        return redirect()->route('organizationtypes.index');
+        if (request()->wantsJson()) {
+            return $organization_types;
+        }
     }
 
-    public function edit(OrganizationType $organizationtype)
-    {
-        abort_unless(\Gate::allows('organization_type_edit'), 403);
-        $countries = Country::all();
-        $states = State::all();
-
-        return view('organizationtypes.edit')
-                    ->with(compact('organizationtype'))
-                    ->with(compact('countries'))
-                    ->with(compact('states'));
-    }
-
-    public function update(OrganizationType $organizationtype)
+    public function update(OrganizationType $organizationType)
     {
         abort_unless(\Gate::allows('organization_type_edit'), 403);
         $input = $this->validateRequest();
         $input_state = State::where('code', format_select_input($input['state_id']))->get()->first();
-        $organizationtype->update([
+        $organizationType->update([
             'title' => $input['title'],
             'external_id' => $input['external_id'],
             'state_id' => $input_state->code,
             'country_id' => $input_state->country,
         ]);
 
-        return redirect()->route('organizationtypes.index');
+        if (request()->wantsJson()) {
+            return $organizationType;
+        }
     }
 
-    public function show(OrganizationType $organizationtype)
+    public function show(OrganizationType $organizationType)
     {
+
         abort_unless(\Gate::allows('organization_type_show'), 403);
-        $countries = Country::all();
-        $states = State::all();
+
+        $organizationType = $organizationType->load( 'country', 'state');
 
         return view('organizationtypes.show')
-                    ->with(compact('organizationtype'))
-                    ->with(compact('countries'))
-                    ->with(compact('states'));
+                    ->with(compact('organizationType'));
     }
 
-    public function destroy(OrganizationType $organizationtype)
+    public function destroy(OrganizationType $organizationType)
     {
         abort_unless(\Gate::allows('organization_type_delete'), 403);
 
-        $organizationtype->delete();
-
-        return back();
+        return $organizationType->delete();
     }
 
     protected function validateRequest()

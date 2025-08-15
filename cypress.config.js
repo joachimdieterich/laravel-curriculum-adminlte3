@@ -1,6 +1,7 @@
-const { defineConfig } = require('cypress')
+import { defineConfig } from 'cypress';
+import vitePreprocessor from 'cypress-vite';
 
-module.exports = defineConfig({
+export default defineConfig({
     chromeWebSecurity: false,
     retries: 2,
     defaultCommandTimeout: 5000,
@@ -9,11 +10,11 @@ module.exports = defineConfig({
     screenshotsFolder: 'tests/cypress/screenshots',
     fixturesFolder: 'tests/cypress/fixture',
     e2e: {
-        setupNodeEvents(on, config) {
-            return require('./tests/cypress/plugins/index.js')(on, config)
+        setupNodeEvents(on) {
+            on('file:preprocessor', vitePreprocessor())
         },
         baseUrl: 'http://127.0.0.1:8001',
         specPattern: 'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
         supportFile: 'tests/cypress/support/index.js',
     },
-})
+});

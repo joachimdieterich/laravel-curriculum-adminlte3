@@ -13,6 +13,10 @@ class LogbookSubscription extends Model
         'editable',
         'owner_id', ];
 
+    protected $casts = [
+        'editable' => 'boolean',
+    ];
+
     public function subscribable()
     {
         return $this->morphTo();

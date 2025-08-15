@@ -4,11 +4,13 @@
             <div id="fixed-header" class="d-flex position-fixed w-100 px-3">    
                 <span class="d-flex align-items-center">
                     Ziele / Namen
-                    <i
-                        class="fa fa-gear text-secondary ml-1 p-1 pointer"
-                        style="font-size: 1rem;"
-                        @click="$modal.show('plan-achievements-options-modal');"
-                    ></i>
+                    <button
+                        class="btn btn-icon link-muted ml-1"
+                        :title="trans('global.open_settings')"
+                        @click="globalStore.showModal('plan-achievements-options-modal');"
+                    >
+                        <i class="fa fa-gear"></i>
+                    </button>
                 </span>
                 <span v-for="user in users"
                     class="text-center"
@@ -20,7 +22,7 @@
         <div id="achievements">
             <div v-for="ter in objectives">
                 <div
-                    class="terminal pointer"
+                    class="terminal pointer px-3"
                     data-toggle="collapse"
                     :data-target="'#terminal_' + ter.terminal_objective.id"
                     aria-expanded="true"
@@ -32,7 +34,7 @@
                 </div>
                 <div :id="'terminal_' + ter.terminal_objective.id" class="collapse show">
                     <div v-for="ena in ter.terminal_objective.enabling_objectives"
-                        class="d-flex w-100 enabling"
+                        class="d-flex enabling px-3 w-100"
                     >
                         <span
                             class="pl-2"
@@ -64,15 +66,35 @@
                 </div>
             </div>
         </div>
-        <plan-achievements-options-modal></plan-achievements-options-modal>
+        <Teleport to="body">
+            <PlanAchievementsOptionsModal/>
+        </Teleport>
     </div>
 </template>
 <script>
+import PlanAchievementsOptionsModal from './PlanAchievementsOptionsModal.vue';
+import {useGlobalStore} from "../../store/global";
+
 export default {
     props: {
-        terminal: [],
-        enabling: [],
-        users: [],
+        terminal: {
+            type: Array,
+            default: null,
+        },
+        enabling: {
+            type: Array,
+            default: null,
+        },
+        users: {
+            type: Array,
+            default: null,
+        },
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
     },
     data() {
         return {
@@ -109,16 +131,17 @@ export default {
         filterByTimespan(date) {
             const elements = $('[data-date]');
             // if timespan got cleared, show all objectives again
-            if (date[0] == null || date[1] == null) {
+            if (date == null) {
                 for (const element of elements) {
                     element.parentElement.parentElement.classList.add('d-flex');
                     element.parentElement.parentElement.classList.remove('d-none');
                 }
+
                 return;
             }
 
-            const begin = Date.parse(date[0]);
-            const end = Date.parse(date[1] + ' 23:59:59');
+            const begin = Date.parse(date[0]); // begins at 00:00:00
+            const end = Date.parse(date[1]); // ends at 23:59:00
             
             if (this.users.length === 1) { // only 1 user is listed
                 for (const element of elements) {
@@ -193,26 +216,27 @@ export default {
             }
         }
     },
+    components: {
+        PlanAchievementsOptionsModal,
+    },
 }
 </script>
 <style>
 #show-achievements {
-    p { margin: 0px !important; }
-    #header {
-        margin: -12px -16px 0px;
-        
-        > #fixed-header {
-            padding: 9px 0px;
-            background-color: white;
-            z-index: 1;
-            border-bottom: 3px solid #dee2e6;
+    margin: -15px -16px 0px;
 
-            > span {
-                font-size: 1.25rem;
-                font-weight: 700;
-                min-width: 25%;
-                flex: 1 1 0px;
-            }
+    p { margin: 0px !important; }
+    #header > #fixed-header {
+        padding: 9px 0px;
+        background-color: white;
+        z-index: 1;
+        border-bottom: 3px solid #dee2e6;
+
+        > span {
+            font-size: 1.25rem;
+            font-weight: 700;
+            min-width: 25%;
+            flex: 1 1 0px;
         }
     }
     #achievements {
@@ -224,8 +248,6 @@ export default {
                 border-bottom: 3px solid #dee2e6;
     
                 &:hover { background-color: #e9ecef; }
-                .fa-angle-up { transition: 0.3s transform; }
-                &:not(.collapsed) .fa-angle-up { transform: rotate(-180deg); }
             }
             &:first-child > .terminal { border-top: none !important; }
         }

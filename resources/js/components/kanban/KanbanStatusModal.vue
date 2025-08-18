@@ -71,7 +71,9 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div v-if="hasPermissionsAccess"
+                        class="card"
+                    >
                         <div
                             class="card-header border-bottom"
                             data-card-widget="collapse"
@@ -79,54 +81,48 @@
                             <span class="card-title">{{ trans('global.permissions') }}</span>
                         </div>
                         <div class="card-body">
-                            <div v-if="$userId == form.owner_id
-                                    || $userId == kanban.owner_id
-                                    || checkPermission('is_admin')
-                                    || method === 'post'"
-                            >
-                                <span class="custom-control custom-switch custom-switch-on-green">
-                                    <input
-                                        :id="'editable_' + form.id"
-                                        class="custom-control-input pt-1"
-                                        type="checkbox"
-                                        v-model="form.editable"
-                                    />
-                                    <label
-                                        class="custom-control-label font-weight-light"
-                                        :for="'editable_' + form.id"
-                                    >
-                                        {{ trans('global.editable') }}
-                                    </label>
-                                </span>
-                                <span class="custom-control custom-switch custom-switch-on-green">
-                                    <input
-                                        :id="'locked_' + form.id"
-                                        class="custom-control-input pt-1"
-                                        type="checkbox"
-                                        v-model="form.locked"
-                                    />
-                                    <label
-                                        class="custom-control-label font-weight-light"
-                                        :for="'locked_' + form.id"
-                                    >
-                                        {{ trans('global.locked') }}
-                                    </label>
-                                </span>
-                                <span class="custom-control custom-switch custom-switch-on-green">
-                                    <input
-                                        :id="'visibility_' + form.id"
-                                        class="custom-control-input pt-1"
-                                        type="checkbox"
-                                        v-model="form.visibility"
-                                    />
-                                    <label
-                                        class="custom-control-label font-weight-light"
-                                        :for="'visibility_' + form.id"
-                                    >
-                                        {{ trans('global.visibility') }}
-                                    </label>
-                                </span>
-                            </div>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'editable_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.editable"
+                                />
+                                <label
+                                    class="custom-control-label font-weight-light"
+                                    :for="'editable_' + form.id"
+                                >
+                                    {{ trans('global.editable') }}
+                                </label>
+                            </span>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'locked_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.locked"
+                                />
+                                <label
+                                    class="custom-control-label font-weight-light"
+                                    :for="'locked_' + form.id"
+                                >
+                                    {{ trans('global.locked') }}
+                                </label>
+                            </span>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'visibility_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.visibility"
+                                />
+                                <label
+                                    class="custom-control-label font-weight-light"
+                                    :for="'visibility_' + form.id"
+                                >
+                                    {{ trans('global.visibility') }}
+                                </label>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -221,6 +217,14 @@ export default {
                     this.toast.error(this.errorMessage(e));
                     console.log(e);
                 });
+        },
+    },
+    computed: {
+        hasPermissionsAccess() {
+            return this.method == 'post'
+                || this.form.owner_id == this.$userId
+                || this.$parent.kanban.owner_id == this.$userId
+                || this.checkPermission('is_admin');
         },
     },
     mounted() {

@@ -76,7 +76,7 @@
                         </div>
                     </div>
 
-                    <div v-if="ownerOrAdmin"
+                    <div v-if="hasPermissionsAccess"
                         class="card"
                     >
                         <div
@@ -318,8 +318,9 @@ export default {
         },
     },
     computed: {
-        ownerOrAdmin() {
-            return this.form.owner_id == this.$userId
+        hasPermissionsAccess() {
+            return this.method == 'post'
+                || this.form.owner_id == this.$userId
                 || this.$parent.kanban.owner_id == this.$userId
                 || this.checkPermission('is_admin');
         },

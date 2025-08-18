@@ -13,7 +13,7 @@
                     class="fa fa-pencil-alt text-muted pull-right"
                     @click="toggleEdit()"
                 ></i>
-                <span v-dompurify-html="agenda.description"></span>
+                <span v-html="agenda.description"></span>
                 <hr>
             </div>
         </span>

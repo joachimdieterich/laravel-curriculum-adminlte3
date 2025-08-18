@@ -103,8 +103,8 @@
                                         <br>
                                         <small
                                             class="text-muted"
-                                            v-dompurify-html="item.content.content">
-                                        </small>
+                                            v-html="item.content.content"
+                                        ></small>
                                     </span>
                                 </li>
                             </span>

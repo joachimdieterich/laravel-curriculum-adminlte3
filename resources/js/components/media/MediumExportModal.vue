@@ -6,7 +6,7 @@
         >
             <div class="modal-container">
                 <div class="card-header">
-                    <h3 class="card-title" v-dompurify-html="this.header"></h3>
+                    <h3 class="card-title">{{ header }}</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool draggable">
                             <i class="fa fa-arrows-alt"></i>
@@ -60,8 +60,6 @@
 import {useGlobalStore} from "../../store/global";
 export default {
     name: 'medium-export-modal',
-    components: {},
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {

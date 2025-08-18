@@ -49,7 +49,7 @@
 
                     <p v-if="map.description"
                         class="pt-2"
-                        v-dompurify-html="map.description"
+                        v-html="map.description"
                     ></p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
@@ -129,7 +129,7 @@
 
                     <div v-if="currentMarker.BEZ_1_2.length > 2"
                         class="py-0 pre-formatted"
-                        v-dompurify-html="currentMarker.BEZ_1_2"
+                        v-html="currentMarker.BEZ_1_2"
                     ></div>
 
                     <div class="py-0 pt-2">
@@ -138,7 +138,7 @@
 
                     <div
                         class="py-0 pre-formatted text-justify"
-                        v-dompurify-html="currentMarker.BEMERKUNG"
+                        v-html="currentMarker.BEMERKUNG"
                     ></div>
 
                     <div class="py-0 pt-2"><strong>Termine</strong></div>
@@ -153,7 +153,7 @@
 
                     <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
 
-                    <div class="py-0 pre-formatted" v-dompurify-html="currentMarker.ARTIKEL_NR"></div>
+                    <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
 
                     <div class="py-0 pt-2">
                         <a

@@ -21,14 +21,17 @@
                 </div>
 
                 <span class="text">
-                <a class="link-muted text-decoration-none"
-                   :href="'/tasks/'+task.task.id"
-                   v-dompurify-html="task.task.title"></a>
+                <a
+                    :href="'/tasks/' + task.task.id"
+                    class="link-muted text-decoration-none"
+                >
+                    {{ task.task.title }}
+                </a>
             </span>
 
                 <small class="badge badge-secondary pull-right p-1 mt-1">
                     <i class="far fa-clock"></i>
-                    <span v-dompurify-html="task.task.due_date"></span>
+                    {{ task.task.due_date }}
                 </small>
                 <!-- General tools such as edit or delete-->
                 <div class="tools">

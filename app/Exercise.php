@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DateTimeInterface;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Exercise extends Model
 {
@@ -17,6 +18,10 @@ class Exercise extends Model
         'description',
         'recommended_iterations',
         'owner_id'
+    ];
+
+    protected $casts = [
+        'description' => CleanHtml::class,
     ];
 
     /**

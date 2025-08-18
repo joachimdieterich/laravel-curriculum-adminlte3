@@ -34,7 +34,7 @@
                     </div>
                     <hr class="my-2">
 
-                    <span v-dompurify-html="task.description"></span>
+                    <span v-html="task.description"></span>
                 </div>
 
                 <ul class="nav nav-tabs">

@@ -49,21 +49,23 @@
 
             </div>
 
-            <div class="card-body"
-                 style="overflow-y: auto;padding:0;">
-                <div v-if="edit == true"
-                     class="p-2">
-                     <textarea
-                         style="width:100%"
-                         v-model="medium.description"/>
+            <div
+                class="card-body p-0"
+                style="overflow-y: auto;"
+            >
+                <div v-if="edit"
+                    class="p-2"
+                >
+                    <textarea
+                        style="width:100%"
+                        v-model="medium.description"
+                    />
                 </div>
                 <div v-else-if="medium.description != ''"
-                     v-dompurify-html="medium.description"
-                     class="text-muted text-sm p-2"></div>
-               <render-usage
-               :medium="medium"
-               >
-               </render-usage>
+                    v-html="medium.description"
+                    class="text-muted text-sm p-2"
+                ></div>
+               <render-usage :medium="medium"></render-usage>
 <!--                    <div v-if="mime(medium.mime_type) === 'embed'"
                      style="height:500px">
                     <iframe :src="scr" height="500" width="600" frameborder="0"></iframe>

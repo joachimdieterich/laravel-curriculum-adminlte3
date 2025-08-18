@@ -31,16 +31,6 @@ const app = createApp({});
 import mitt from 'mitt';
 app.config.globalProperties.$eventHub = mitt();
 
-import VueDOMPurifyHTML from 'vue-dompurify-html';
-app.use(VueDOMPurifyHTML, {
-    hooks: {
-        afterSanitizeAttributes: (currentNode) => {
-            if ('rel' in currentNode && currentNode.rel == 'noopener') {
-                currentNode.setAttribute('target', '_blank');
-            }
-        },
-    },
-});
 import { useGlobalStore } from "./store/global";
 import { createPinia } from "pinia";
 const pinia = createPinia();

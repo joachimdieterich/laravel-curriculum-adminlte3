@@ -8,7 +8,9 @@ class Quote extends Model
 {
     protected $guarded = [];
 
-    protected $casts = ['id' => 'string']; //important to get id as unique string
+    protected $casts = [
+        'id' => 'string', //important to get id as unique string
+    ];
 
     /**
      * Get the owning commentable model.

@@ -30,7 +30,7 @@ class MapMarker extends Model
     ];
 
     protected $casts = [
-        'content'    => CleanHtml::class, // cleans both when getting and setting the value
+        'description' => CleanHtml::class, // cleans both when getting and setting the value
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
     ];

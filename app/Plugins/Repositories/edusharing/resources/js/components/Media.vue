@@ -113,8 +113,8 @@
         
                     <span>
                         <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
-                            <h6 class="pt-1 hyphens" v-dompurify-html="medium.title"></h6>
-                            <p class="text-muted small" v-dompurify-html="medium.description"></p>
+                            <h6 class="pt-1 hyphens" v-html="medium.title"></h6>
+                            <p class="text-muted small" v-html="medium.description"></p>
                         </span>
                     </span>
                     <span style="position: absolute; bottom: 5px; left: 5px;">

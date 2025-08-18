@@ -32,17 +32,17 @@
 
                             <div v-if="variant_definition.id === 0">
                                 <div v-if="field === 'description'"
-                                    v-dompurify-html="model.description"
+                                    v-html="model.description"
                                 ></div>
-                                <div v-else v-dompurify-html="model.title"></div>
+                                <div v-else>{{ model.title }}</div>
                             </div>
 
                             <div v-else>
                                 <span v-if="filterVariant(variant_definition.id).length !== 0">
-                                    <div v-if="filterVariant(variant_definition.id)[0][field] != '' "
+                                    <div v-if="filterVariant(variant_definition.id)[0][field] != ''"
                                         class="h-100"
                                     >
-                                        <span v-dompurify-html="filterVariant(variant_definition.id)[0][field]"></span>
+                                        <span>{{ filterVariant(variant_definition.id)[0][field] }}</span>
                                     </div>
                                 </span>
                             </div>

@@ -243,7 +243,7 @@
                     >
                         <div
                             class="card p-3"
-                            v-dompurify-html="currentCurriculum.description"
+                            v-html="currentCurriculum.description"
                         ></div>
                     </div>
                 </div>

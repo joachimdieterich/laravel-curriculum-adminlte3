@@ -66,10 +66,10 @@
                                 id="content-tab"
                                 class="nav-link small link-muted"
                                 data-toggle="tab"
-                                data-target="#content"
+                                data-target="#contents"
                                 type="button"
                                 role="tab"
-                                aria-controls="content"
+                                aria-controls="contents"
                                 aria-selected="false"
                                 @click="loaderContents()"
                             >
@@ -267,7 +267,7 @@
                         </div>
                         <!-- 3 Contents-->
                         <div
-                            id="content"
+                            id="contents"
                             class="tab-pane fade"
                             role="tabpanel"
                             aria-labelledby="content-tab"

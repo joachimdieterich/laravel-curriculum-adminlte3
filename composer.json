@@ -10,7 +10,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.2.0",
-        "aacotroneo/laravel-saml2": "*",
         "bacon/bacon-qr-code": "^2.0",
         "barryvdh/laravel-dompdf": "^2.0",
         "barryvdh/laravel-snappy": "^1.0.0",

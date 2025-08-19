@@ -31,6 +31,7 @@ class AuthServiceProvider extends ServiceProvider
             ]);
         });
 
+        Passport::tokensCan(config('openid.passport.tokens_can'));
         //Passport::routes(); --> now moved to dedicated route file -> v.10 https://github.com/laravel/passport/blob/12.x/UPGRADE.md
     }
 }

@@ -22,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(DuskServiceProvider::class);
         }*/
 
+        $this->app->register(\OpenIDConnect\Laravel\PassportServiceProvider::class);
+
         $this->app->singleton(TestToolkitInterface::class, function ($app) {
             $request = app(TestToolRequest::class);
             switch ($request->input('tool')) {

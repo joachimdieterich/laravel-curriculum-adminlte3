@@ -20,7 +20,7 @@ class KanbanItemController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('kanban_edit') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
+        abort_unless(\Gate::allows('kanban_edit') and Kanban::find($input['kanban_id'])->isEditable(null, $this->getCurrentToken()), 403);
 
         $order_id = DB::table('kanban_items')
             ->where('kanban_id', $input['kanban_id'])
@@ -126,7 +126,7 @@ class KanbanItemController extends Controller
      */
     public function update(Request $request, KanbanItem $kanbanItem)
     {
-        abort_unless((\Gate::allows('kanban_edit') and $kanbanItem->isAccessible()), 403);
+        abort_unless(\Gate::allows('kanban_edit') and $kanbanItem->isEditable(null, $this->getCurrentToken()), 403);
 
         $input = $this->validateRequest();
 
@@ -172,7 +172,7 @@ class KanbanItemController extends Controller
      */
     public function destroy(KanbanItem $kanbanItem)
     {
-        abort_unless((\Gate::allows('kanban_delete') and $kanbanItem->isAccessible()), 403);
+        abort_unless(\Gate::allows('kanban_delete') and $kanbanItem->isEditable(null, $this->getCurrentToken()), 403);
 
         Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
 
@@ -282,6 +282,12 @@ class KanbanItemController extends Controller
         }
     }
 
+    protected function getCurrentToken()
+    {
+        $url = parse_url(request()->headers->get('referer'), PHP_URL_QUERY);
+        parse_str($url ?? '', $query);
+        return $query['sharing_token'] ?? null;
+    }
 
     protected function validateRequest()
     {

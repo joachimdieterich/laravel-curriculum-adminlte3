@@ -55,6 +55,10 @@ import 'moment/src/locale/de'; // import german locale for moment.js
 import echo from './echo.js';
 app.config.globalProperties.$echo = echo;
 
+// Broadcasting
+import style from './scripts/style.js';
+app.config.globalProperties.$style = style;
+
 // use trans function like in blade
 import _ from 'lodash'; //needed to get
 

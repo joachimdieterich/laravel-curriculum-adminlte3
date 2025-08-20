@@ -1018,6 +1018,9 @@ return [
         ],
     ],
     'kanban' => [
+        'contributor' => 'Contributor',
+        'contributor_joined' => 'Contributor joined',
+        'contributor_left' => 'Contributor left',
         'title' => 'Kanban-Boards',
         'title_singular' => 'Kanban-Board',
         'create' => 'Create Kanban-Board',

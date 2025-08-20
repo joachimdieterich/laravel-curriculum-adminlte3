@@ -270,6 +270,8 @@ app.component('certificate', defineAsyncComponent(() => import('./components/cer
 app.component('configs', defineAsyncComponent(() => import('./components/config/Configs.vue')));
 app.component('config', defineAsyncComponent(() => import('./components/config/Config.vue')));
 
+app.component('contributors-list', defineAsyncComponent(() => import('./components/uiElements/ContributorsList.vue')));
+
 app.component('curricula',  defineAsyncComponent(() => import('./components/curriculum/Curricula.vue')));
 app.component('curriculum',  defineAsyncComponent(() => import('./components/curriculum/Curriculum.vue')));
 

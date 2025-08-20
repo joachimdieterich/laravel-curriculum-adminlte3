@@ -1051,6 +1051,9 @@ return [
         ],
     ],
     'kanban' => [
+        'contributor' => 'Bearbeiter',
+        'contributor_joined' => 'Bearbeiter dazu gekommen',
+        'contributor_left' => 'Bearbeiter gegangen',
         'title' => 'Pinnwände',
         'title_singular' => 'Pinnwand',
         'create' => 'Pinnwand erstellen',

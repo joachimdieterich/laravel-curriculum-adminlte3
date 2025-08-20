@@ -3,6 +3,8 @@
 namespace App;
 
 use DateTimeInterface;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -26,12 +28,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Kanban extends Model
 {
-    protected $guarded = [];
+    use BroadcastsEvents;
 
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
+    protected $guarded = [];
 
     protected $casts = [
         'commentable' => 'boolean',
@@ -42,6 +41,14 @@ class Kanban extends Model
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
     ];
+
+    public function broadcastOn($event): array
+    {
+        return [
+            new Channel($this->broadcastChannel())
+        ];
+    }
+
     /**
      * Prepare a date for array / JSON serialization.
      *

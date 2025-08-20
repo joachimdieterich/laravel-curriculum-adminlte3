@@ -5,7 +5,7 @@
 | Broadcast Channels
 |--------------------------------------------------------------------------
 |
-| Here you may register all of the event broadcasting channels that your
+| Here you may register all the event broadcasting channels that your
 | application supports. The given channel authorization callbacks are
 | used to check if an authenticated user can listen to the channel.
 |
@@ -14,15 +14,11 @@
 use App\User;
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('App.User.{id}', function ($user, $id) {
-    return (int)$user->id === (int)$id;
+Broadcast::channel('App.Kanban.{id}', function (User $user) {
+    return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });
 
-
-Broadcast::channel('Presence.App.Kanban.{id}', function ($user, $id) {
-    return $user->only(['id', 'firstname', 'lastname']);
-});
-
-Broadcast::channel('orders', function ($a, $b) {
-    return true;
-});
+// Typical public channel
+// Broadcast::channel('channel.name', function ($a, $b) {
+//     return true;
+// });

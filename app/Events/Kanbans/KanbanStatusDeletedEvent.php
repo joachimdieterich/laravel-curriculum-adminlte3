@@ -38,7 +38,7 @@ class KanbanStatusDeletedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('Presence.App.Kanban.' . $this->kanbanStatus->kanban_id);
+        return new PresenceChannel('App.Kanban.' . $this->kanbanStatus->kanban_id);
     }
 
     public function broadcastAs(){

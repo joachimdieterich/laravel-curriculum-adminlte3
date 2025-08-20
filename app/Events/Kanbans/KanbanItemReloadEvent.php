@@ -37,7 +37,7 @@ class KanbanItemReloadEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('Presence.App.Kanban.' . $this->kanbanItem->kanban_id);
+        return new PresenceChannel('App.Kanban..' . $this->kanbanItem->kanban_id);
     }
 
     public function broadcastAs(){

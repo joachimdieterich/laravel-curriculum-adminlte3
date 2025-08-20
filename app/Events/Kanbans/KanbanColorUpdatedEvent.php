@@ -38,7 +38,7 @@ class KanbanColorUpdatedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('Presence.App.Kanban.' . $this->kanban->id);
+        return new PresenceChannel('App.Kanban.' . $this->kanban->id);
     }
 
     public function broadcastAs(){

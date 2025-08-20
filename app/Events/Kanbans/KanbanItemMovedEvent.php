@@ -35,7 +35,7 @@ class KanbanItemMovedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('Presence.App.Kanban.' . $this->columns[0]['kanban_id']);
+        return new PresenceChannel('App.Kanban.' . $this->columns[0]['kanban_id']);
     }
 
     public function broadcastAs(){

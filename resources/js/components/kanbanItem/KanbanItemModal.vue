@@ -81,7 +81,7 @@
                                     class="btn btn-default"
                                 >
                                     <div class="position-relative d-flex align-items-center">
-                                        <img class="img-size-64" src="/media/3" alt="default img">
+                                        <img class="img-size-64" style="border-radius: 10px;" src="/media/3" alt="default img">
                                         <span v-if="form.media.length > 1 || true"
                                             class="position-absolute d-flex align-items-center justify-content-center text-black bg-white rounded-pill"
                                             style="right: -12px; height: 24px; width: 24px; box-shadow: 0px 0px 3px black;"

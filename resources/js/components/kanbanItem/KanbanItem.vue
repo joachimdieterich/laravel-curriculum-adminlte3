@@ -18,13 +18,13 @@
                 :style="{ backgroundColor: item.color }"
             >
                 {{ item.title }}
-                <i class="fa fa-angle-up"></i>
+                <i class="fa fa-angle-up d-print-none"></i>
                 <div style="font-size: 10px;">
                     {{ item.created_at }}
                 </div>
             </div>
             <div
-                class="card-tools position-absolute"
+                class="card-tools d-print-none position-absolute"
                 style="top: 8px; right: 16px;"
             >
                 <div v-if="edit_rights || copy_rights || delete_rights"

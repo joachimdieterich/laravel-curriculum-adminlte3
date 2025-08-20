@@ -148,7 +148,7 @@
             />
         </Teleport>
         <Teleport to="#customTitle">
-            <small>{{ kanban.title }}</small>
+            <small v-text="currentKanban.title"></small>
             <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                 type="button"
                 class="btn text-secondary px-2 mx-1"
@@ -181,6 +181,9 @@
 
             <p class="h6">{{ trans('global.owner') }}: {{ kanban.owner.firstname + ' ' + kanban.owner.lastname }}</p>
         </Teleport>
+        <Teleport to="#contributors">
+            <contributors-list :contributors="currentContributors"></contributors-list>
+        </Teleport>
     </div>
 </template>
 <script>
@@ -194,6 +197,8 @@ import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
+import ContributorsList from "../uiElements/ContributorsList.vue";
+import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -205,21 +210,24 @@ export default {
             type: Boolean,
             default: true,
         },
-        pusher: {
+        websocket: {
             type: Boolean,
             default: false,
         },
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
         return {
             currentKanban: {},
             statuses: [],
+            currentContributors: [],
             newItem: 0, // track the ID of the status we want to add to
             newStatus: 0,
             itemWidth: 320,
@@ -229,7 +237,6 @@ export default {
             show_status_copy: false,
             autoRefresh: false,
             refreshRate: 5000,
-            usersOnline: [],
         };
     },
     methods: {
@@ -394,7 +401,6 @@ export default {
             let index = this.statuses.indexOf(status);
             this.statuses.splice(index, 1);
         },
-        /** unused | needed if websockets are active to update statuses
         handleStatusMoved(newStatusOrder) {
             let newStatusesOrderTemp = [];
 
@@ -405,7 +411,7 @@ export default {
                 newStatusesOrderTemp.push(this.statuses[statusIndex]);
             });
             this.statuses = newStatusesOrderTemp;
-        }, */
+        },
         handleItemAdded(newItem) {
             // add an item to the correct column in our list
             const statusIndex = this.statuses.findIndex(
@@ -414,7 +420,6 @@ export default {
             // Add newly created item to our column
             this.statuses[statusIndex].items.push(newItem);
         },
-        /** unused | needed if websockets are active to update items
         handleItemMoved(columns) {
             let newStatusOrder = [];
 
@@ -439,7 +444,7 @@ export default {
                 newStatusOrder.push(tempStatus);
             })
             this.statuses = newStatusOrder;
-        }, */
+        },
         findItem(item) {
             let foundItem = []
             this.statuses.forEach((status) => {
@@ -488,11 +493,12 @@ export default {
             // Add updated item to our column
             this.statuses[statusIndex].items[itemIndex]['comments'] = updatedItem.comments;
         },
-        startPusher() {
-            if (this.pusher === true) {
-                this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
+        startWebsocket() {
+            if (this.websocket === true) {
+                this.$echo
+                    .join('App.Kanban.' + this.kanban.id)
                     .here((users) => {
-                        this.usersOnline = [...users];
+                        this.currentContributors = [...users];
                     })
                     .listen('.kanbanStatusAdded', (payload) => {
                         this.handleStatusAdded(payload.message);
@@ -525,32 +531,27 @@ export default {
                         this.currentKanban.color = payload.message;
                     })
                     .listen('.kanbanItemCommentUpdated', (payload) => {
-                        //console.log('kanbanItemCommentUpdated');
+                    //     console.log('kanbanItemCommentUpdated');
                         this.handleItemCommentUpdated(payload.message);
                     })
                     .joining((user) => {
-                        this.usersOnline.push(user);
-                        console.log({user}, 'joined');
+                        this.toast.info(this.trans('global.kanban.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
+                        this.currentContributors.push(user);
                     })
                     .leaving((user) => {
-                        console.log({user}, 'leaving');
-                        this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
+                        this.toast.info(this.trans('global.kanban.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
+                        this.currentContributors = this.currentContributors.filter((currentContributors) => currentContributors.id !== user.id);
                     });
             }
         },
         isLocked(value) {
-            if (value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id) { //locked and not owner
-                return false;
-            } else {
-                return true;
-            }
+            return !(value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id);
         },
     },
     mounted() {
         this.currentKanban = this.kanban;
 
-        // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
-        this.startPusher();
+        this.startWebsocket();
         this.$eventHub.on('reload_kanban_board', () => {
             this.sync()
         });
@@ -622,6 +623,7 @@ export default {
         },
     },
     components: {
+        ContributorsList,
         KanbanStatus,
         draggable,
         KanbanItem,
@@ -648,7 +650,7 @@ export default {
     overflow-y: clip;
 }
 .kanban-items-container { scroll-behavior: smooth; }
-.kanban-items-container > :last-child > .card { margin-bottom: 0px; }
+.kanban-items-container > :last-child > .card { margin-bottom: 0; }
 @media (max-width: 991px) {
     .kanban-container {
         width: 100vw;

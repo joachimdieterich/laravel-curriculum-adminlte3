@@ -1,5 +1,15 @@
 @extends((Auth::user()->id == env('GUEST_USER')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
 
+@section('contributors')
+    <div class="row">
+        <div>
+            <div>
+                <h5>{{ trans('global.kanban.contributor') }}</h5>
+                <div id="contributors"></div>
+            </div>
+        </div>
+    </div>
+@endsection
 @section('breadcrumb')
     @if (Auth::user()->id == env('GUEST_USER'))
         <breadcrumbs
@@ -25,7 +35,7 @@
     <div class="d-flex flex-fill h-print-auto" style="height: calc(100vh - 218px)">
         <kanban
             :editable="{{ $may_edit ? 'true' : 'false' }}"
-            :pusher="{{ $is_websocket_active ? 'true' : 'false' }}"
+            :websocket="{{ $is_websocket_active ? 'true' : 'false' }}"
             ref="kanbanBoard"
             :kanban="{{ $kanban }}"></kanban>
     </div>

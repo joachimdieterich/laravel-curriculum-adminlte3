@@ -57,7 +57,7 @@
                         >
                             <span class="card-title">{{ trans('global.display') }}</span>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body d-flex align-items-center">
                             <v-swatches
                                 class="d-flex"
                                 style="height: 42px;"
@@ -73,6 +73,37 @@
                                     }
                                 }"
                             />
+                            <MediumForm class="ml-auto"
+                            />
+                            <div class="d-flex ml-auto">
+                                <button v-if="form.media.length > 0 || true"
+                                    type="button"
+                                    class="btn btn-default"
+                                >
+                                    <div class="position-relative d-flex align-items-center">
+                                        <img class="img-size-64" src="/media/3" alt="default img">
+                                        <span v-if="form.media.length > 1 || true"
+                                            class="position-absolute d-flex align-items-center justify-content-center text-black bg-white rounded-pill"
+                                            style="right: -12px; height: 24px; width: 24px; box-shadow: 0px 0px 3px black;"
+                                        >
+                                            <i
+                                                class="fa fa-plus"
+                                                style="font-size: 14px;"
+                                            >
+                                                <!-- {{ form.media.length - 1 }} -->3
+                                            </i>
+                                        </span>
+                                    </div>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    @click="openMediumModal()"
+                                >
+                                    <i class="fa fa-cloud-upload mr-1"></i>
+                                    {{ trans('global.medium.title_singular') }}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -205,6 +236,7 @@
     </Transition>
 </template>
 <script>
+import MediumForm from '../media/MediumForm.vue';
 import Form from 'form-backend-validation';
 import VueDatePicker from "@vuepic/vue-datepicker";
 import Editor from '@tinymce/tinymce-vue';
@@ -227,6 +259,7 @@ export default {
                 order_id: 0,
                 owner_id: null,
                 color: '#f4f4f4',
+                media: [],
                 due_date: '',
                 locked: false,
                 editable: true,
@@ -316,6 +349,16 @@ export default {
                     console.log(e);
                 });
         },
+        openMediumModal() {
+            this.globalStore?.showModal('medium-modal', {
+                subscribable_id: this.method == 'post' ? this.form.kanban_id : this.form.id,
+                subscribable_type: this.method == 'post' ? 'App\\Kanban' : 'App\\KanbanItem',
+                subscribeSelected: false,
+                accept: 'image/*',
+                public: true,
+                callbackId: this.component_id,
+            });
+        },
     },
     computed: {
         hasPermissionsAccess() {
@@ -328,6 +371,7 @@ export default {
     components: {
         VueDatePicker,
         Editor,
+        MediumForm,
     },
 }
 </script>

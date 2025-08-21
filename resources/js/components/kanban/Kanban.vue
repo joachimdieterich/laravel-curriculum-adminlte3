@@ -227,7 +227,7 @@ export default {
         return {
             currentKanban: {},
             statuses: [],
-            currentContributors: [],
+            currentContributors: {},
             newItem: 0, // track the ID of the status we want to add to
             newStatus: 0,
             itemWidth: 320,
@@ -493,54 +493,32 @@ export default {
             // Add updated item to our column
             this.statuses[statusIndex].items[itemIndex]['comments'] = updatedItem.comments;
         },
+        joinContributors(user) {
+
+        },
+        leaveContributors(user) {
+
+        },
         startWebsocket() {
             if (this.websocket === true) {
                 this.$echo
                     .join('App.Kanban.' + this.kanban.id)
                     .here((users) => {
-                        this.currentContributors = [...users];
+                        for(let user of users) {
+                            this.currentContributors[user.id] = user;
+                        }
                     })
-                    .listen('.kanbanStatusAdded', (payload) => {
+                    .listen('.KanbanUpdated', (payload) => {
+                        this.currentKanban = payload.model;
+                    })
+                    .listen('.kanbanStatusesUpdated', (payload) => {
                         this.handleStatusAdded(payload.message);
                     })
-                    .listen('.kanbanStatusUpdated', (payload) => {
-                        this.handleStatusUpdated(payload.message);
-                    })
-                    .listen('.kanbanStatusMoved', (payload) => {
-                        this.handleStatusMoved(payload.message.statuses);
-                    })
-                    .listen('.kanbanStatusDeleted', (payload) => {
-                        this.handleStatusDeleted(payload.message);
-                    })
-                    .listen('.kanbanItemAdded', (payload) => {
-                        this.handleItemAdded(payload.message);
-                    })
-                    .listen('.kanbanItemUpdated', (payload) => {
-                        this.handleItemUpdated(payload.message);
-                    })
-                    .listen('.kanbanItemMoved', (payload) => {
-                        this.handleItemMoved(payload.message);
-                    })
-                    .listen('.kanbanItemReload', (payload) => {
-                        this.handleItemUpdated(payload.message);
-                    })
-                    .listen('.kanbanItemDeleted', (payload) => {
-                        this.handleItemDeleted(payload.message);
-                    })
-                    .listen('.kanbanColorUpdated', (payload) => {
-                        this.currentKanban.color = payload.message;
-                    })
-                    .listen('.kanbanItemCommentUpdated', (payload) => {
-                    //     console.log('kanbanItemCommentUpdated');
-                        this.handleItemCommentUpdated(payload.message);
-                    })
                     .joining((user) => {
-                        this.toast.info(this.trans('global.kanban.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
-                        this.currentContributors.push(user);
+                        this.currentContributors[user.id] = user;
                     })
                     .leaving((user) => {
-                        this.toast.info(this.trans('global.kanban.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
-                        this.currentContributors = this.currentContributors.filter((currentContributors) => currentContributors.id !== user.id);
+                        delete this.currentContributors[user.id];
                     });
             }
         },
@@ -621,6 +599,29 @@ export default {
                 disabled: !this.editable,
             };
         },
+    },
+    watch: {
+        currentContributors:{
+            handler(newValue, oldValue) {
+                if ((oldValue.length ?? 0) === 0) {
+                    return;
+                }
+
+                let joinedContributors = newValue.filter(x => !oldValue.includes(x) && x.id != this.$userId);
+                console.log('joinedContributors', joinedContributors);
+                for (let user of joinedContributors) {
+                    console.log(joinedContributors);
+                    this.toast.info(this.trans('global.kanban.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
+                }
+
+                let leftContributors = oldValue.filter(x => !newValue.includes(x) && x.id != this.$userId);
+                console.log('leftContributors', joinedContributors);
+                for (let user of leftContributors) {
+                    this.toast.info(this.trans('global.kanban.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
+                }
+            },
+            deep: true,
+        }
     },
     components: {
         ContributorsList,

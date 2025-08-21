@@ -115,7 +115,7 @@ class User extends Authenticatable
 
     public function initials(): string
     {
-        return strtoupper($this->lastname[0] . $this->firstname[0]);
+        return strtoupper($this->firstname[0] . $this->lastname[0]);
     }
 
     public function comments(): HasMany

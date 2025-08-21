@@ -3,8 +3,8 @@
         <div @mouseenter="contributorDetailsEntered(contributor.id)"
              @mouseleave="contributorDetailsLeft()"
              @mousemove="contributorDetailsMovement"
-             class="d-flex contributor-icon rounded-circle align-items-center px-1"
-             v-for="contributor in contributors"
+             class="d-flex contributor-icon rounded-circle align-items-center"
+             v-for="contributor of contributors"
              :style="this.contributorStyles[contributor.id]"
         >
             <span class="contributor-initials">{{ contributor.initials }}</span>
@@ -53,7 +53,7 @@
 export default {
     props: {
         contributors: {
-            type: Array
+            type: Object
         },
         bgColors: {
             type: Array,
@@ -81,20 +81,21 @@ export default {
     watch: {
         contributors:{
             handler(newValue) {
-                for (let item of newValue) {
-                    if (this.contributorStyles[item.id] !== undefined) {
-                        return;
+                for (let item in newValue) {
+                    if (this.contributorStyles[item] !== undefined) {
+                        continue;
                     }
 
-                    this.contributorStyles[item.id] = this.getStyleForContributor();
+                    this.contributorStyles[item] = this.getStyleForContributor();
                 }
-            }
+            },
+            deep: true,
         }
     },
     methods: {
         getStyleForContributor: function() {
             let randomBgColor = this.bgColors[Math.floor(Math.random() * this.bgColors.length)];
-            let fontColor = this.$style.fontColorByBackgroundBgColor(randomBgColor);
+            let fontColor = this.$textcolor(randomBgColor);
 
             return "color:" + fontColor + "; background-color:" + randomBgColor + ";";
         },

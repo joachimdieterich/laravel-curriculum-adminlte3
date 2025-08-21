@@ -10,6 +10,8 @@ class Achievement extends Model
 {
     use HasFactory;
     
+    protected $guarded = [];
+
     protected $casts = [
         'status' => 'string',
         'updated_at' => 'datetime',

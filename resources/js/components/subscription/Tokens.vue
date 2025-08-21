@@ -51,15 +51,16 @@
                 </div>
                 <div>
                     <span
-                        :id="'subscription_link_'+item.token.id"
+                        :id="'subscription_link_' + item.token.id"
                         class="pointer text-muted text-xs line-clamp"
-                        v-dompurify-html="generateShareURL(item.token)"
                         @click="copyToClipboard"
-                    ></span>
+                    >
+                        {{ generateShareURL(item.token) }}
+                    </span>
                 </div>
                 <div v-if="item.token.id == showQrCodeId"
-                    :id="'svgQrCode_'+item.token.id"
-                    v-dompurify-html="item.qr.image"
+                    :id="'svgQrCode_' + item.token.id"
+                    v-html="item.qr.image"
                     style="width: 212px;"
                     class="pointer"
                     @click="downloadSVG(item)"
@@ -110,7 +111,7 @@ export default {
             if(this.modelUrl == 'curriculum') {
                 return window.location.origin + "/curricula/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
             } else {
-                return window.location.origin + "/" + this.modelUrl + "s/" + item[this.modelUrl+'_id']  + "/token?sharing_token=" + item.sharing_token;
+                return window.location.origin + "/" + this.modelUrl + "s/" + item[this.modelUrl + '_id']  + "/token?sharing_token=" + item.sharing_token;
             }
         },
         copyToClipboard(event) {

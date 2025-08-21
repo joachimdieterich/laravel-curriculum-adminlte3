@@ -18,13 +18,13 @@
                 :style="{ backgroundColor: item.color }"
             >
                 {{ item.title }}
-                <i class="fa fa-angle-up"></i>
+                <i class="fa fa-angle-up d-print-none"></i>
                 <div style="font-size: 10px;">
                     {{ item.created_at }}
                 </div>
             </div>
             <div
-                class="card-tools position-absolute"
+                class="card-tools d-print-none position-absolute"
                 style="top: 8px; right: 16px;"
             >
                 <div v-if="edit_rights || copy_rights || delete_rights"
@@ -223,7 +223,6 @@
     </div>
 </template>
 <script>
-import DatePicker from 'vue3-datepicker';
 import MediaCarousel from '../media/MediaCarousel.vue';
 import Avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
@@ -444,7 +443,6 @@ export default {
         Reaction,
         MediaCarousel,
         Avatar,
-        DatePicker,
         ConfirmModal,
     },
 }

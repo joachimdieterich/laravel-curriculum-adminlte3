@@ -49,7 +49,7 @@
                         <div v-if="toggle_id == exercise.id"
                             :id="'exercise_' + exercise.id"
                             class="card-body"
-                            v-dompurify-html="exercise.description"
+                            v-html="exercise.description"
                         ></div>
                     </div>
                 </span>

@@ -32,66 +32,57 @@
             class="p-1 pointer_hand"
             accesskey=""
             style="position:absolute; top:0px; height: 30px; width:100%;"
-            >
+        >
                 <button
-                    :id="'delete-medium'+medium.id"
+                    :id="'delete-medium' + medium.id"
                     type="submit"
                     class="btn btn-danger btn-sm pull-right"
-                    v-on:click.stop="unlinkMedium();"
-                    >
+                    @click.stop="unlinkMedium();"
+                >
                     <small>
-                        <i class="fa fa-unlink"
-                           ></i>
+                        <i class="fa fa-unlink"></i>
                     </small>
                 </button>
         </span>
-        <span class="bg-white text-center p-1 overflow-auto "
-            style="position:absolute; bottom:0px; height: 150px; width:100%;">
-            <h6 class="events-heading pt-1 hyphens" v-dompurify-html="medium.title"></h6>
-            <p class=" text-muted small" v-dompurify-html="medium.description"></p>
+        <span
+            class="bg-white text-center p-1 overflow-auto"
+            style="position :absolute; bottom: 0px; height: 150px; width: 100%;"
+        >
+            <h6 class="events-heading pt-1 hyphens" v-html="medium.title"></h6>
+            <p class=" text-muted small" v-html="medium.description"></p>
        </span>
-
     </div>
 </template>
-
-
 <script>
-
-    export default {
-        props: {
-                subscription: {},
-                medium: {},
-              },
-        data() {
-            return {
-                errors: {}
+export default {
+    props: {
+        subscription: {},
+        medium: {},
+    },
+    methods: {
+        show(model, entry) {
+            this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry});
+        },
+        async unlinkMedium() { //id of external reference and value in db
+            try {
+                await axios.post('/mediumSubscriptions/destroy', this.subscription).data;
+            } catch(error) {
+                console.log(error.response.data.errors);
             }
+            $("#medium_" + this.medium.id).hide();
         },
-        methods: {
-           show(model, entry) {
-                this.$modal.show(model.toLowerCase()+'-modal', { 'content': entry});
-            },
-            async unlinkMedium() { //id of external reference and value in db
-                try {
-                    await axios.post('/mediumSubscriptions/destroy', this.subscription).data;
-                } catch(error) {
-                    console.log(error.response.data.errors);
-                }
-                $("#medium_"+this.medium.id).hide();
-            },
+    },
+    computed: {
+        href: function () {
+            return '/media/' + this.subscription.medium_id;
         },
-        computed: {
-            href: function () {
-                return '/media/'+ this.subscription.medium_id;
-            },
-        },
-        bevorOpen() {
-             axios.get('/media/'+this.subscription.medium_id ).then(response => {
-                this.sharingLevels = response.data.sharingLevel;
-            }).catch(e => {
-                this.errors = error.response.data.errors;
-            });
-        },
-
-    }
+    },
+    bevorOpen() {
+            axios.get('/media/' + this.subscription.medium_id).then(response => {
+            this.sharingLevels = response.data.sharingLevel;
+        }).catch(e => {
+            console.log(e);
+        });
+    },
+}
 </script>

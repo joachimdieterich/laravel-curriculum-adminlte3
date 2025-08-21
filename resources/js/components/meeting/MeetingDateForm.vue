@@ -100,8 +100,6 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-const DatePicker =
-    () => import('vue3-datepicker');
 
 export default {
     name: 'MeetingDateForm',
@@ -142,7 +140,7 @@ export default {
             this.time = [moment().format("YYYY-MM-DD HH:mm:ss"), moment().add(30, 'minutes').format("YYYY-MM-DD HH:mm:ss")];
             this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia"
+                    "autolink link"
                 ],
                 {
                     'callback': 'insertContent',
@@ -169,13 +167,6 @@ export default {
         async destroy() {
             this.error = (await axios.delete('/meetingDates/' + this.form.id)).data;
         },
-    },
-    mounted() {
-
-
-    },
-    components: {
-        DatePicker
     },
 }
 </script>

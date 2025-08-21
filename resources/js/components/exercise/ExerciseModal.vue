@@ -35,10 +35,10 @@
                             </div>
                             <div class="form-group">
                                 <Editor
-                                    :id="'description'+component_id"
-                                    :name="'description'+component_id"
+                                    :id="'description' + component_id"
+                                    :name="'description' + component_id"
                                     class="form-control"
-                                    :placeholder="trans('global.exercise.fields.description')"
+                                    licenseKey="gpl"
                                     :init="tinyMCE"
                                     v-model="form.description"
                                 />
@@ -116,7 +116,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia autoresize"
+                    "autolink", "link", "autoresize",
                 ],
                 {
                     'callback': 'insertContent',

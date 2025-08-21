@@ -75,6 +75,7 @@
                                         id="welcomeMessage"
                                         name="welcomeMessage"
                                         class="form-control"
+                                        licenseKey="gpl"
                                         :init="tinyMCE"
                                         :initial-value="form.welcomeMessage"
                                     />
@@ -92,6 +93,7 @@
                                         id="moderatorOnlyMessage"
                                         name="moderatorOnlyMessage"
                                         class="form-control"
+                                        licenseKey="gpl"
                                         :init="tinyMCE"
                                         :initial-value="form.moderatorOnlyMessage"
                                     />
@@ -683,7 +685,7 @@ export default {
             servers: {},
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link table lists autoresize",
+                    "autolink", "link", "table", "lists", "autoresize",
                 ],
                 {
                     'callback': 'insertContent',

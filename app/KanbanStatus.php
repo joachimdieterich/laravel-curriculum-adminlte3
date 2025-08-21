@@ -100,9 +100,13 @@ class KanbanStatus extends Model
         $this->attributes['editors_ids'] = is_string($ids) ? $ids : implode(',', array_filter($ids)); // array filter removes empty entries.
     }
 
-
     public function isAccessible()
     {
         return $this->kanban->isAccessible();
+    }
+
+    public function isEditable($user = null, $sharing_token = null)
+    {
+        return $this->kanban->isEditable($user, $sharing_token);
     }
 }

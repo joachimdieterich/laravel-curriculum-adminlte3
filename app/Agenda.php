@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Agenda extends Model
 {
@@ -15,6 +16,10 @@ class Agenda extends Model
         'title',
         'description',
         'owner_id',
+    ];
+
+    protected $casts = [
+        'description' => CleanHtml::class,
     ];
 
     public function path()

@@ -11,7 +11,8 @@
                     </div>
                     <div
                         v-permission="'certificate_edit'"
-                        class="card-tools pr-2">
+                        class="card-tools pr-2"
+                    >
                         <a  @click="editCertificate(certificate)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
@@ -19,20 +20,21 @@
                 </div>
 
                 <div class="card-body">
-                    <strong><i class="fa fa-file-alt mr-1"></i>
+                    <strong>
+                        <i class="fa fa-file-alt mr-1"></i>
                         {{ trans('global.certificate.fields.description') }}
                     </strong>
-                    <p class="text-muted"
-                       v-dompurify-html="certificate.description"></p>
+                    <p
+                        class="text-muted"
+                       v-html="certificate.description"
+                    ></p>
                     <hr>
 
                     <strong>
                         <i class="fas fa-layer-group mr-1"></i>
                         {{ trans('global.certificate.type') }}
                     </strong>
-                    <p class="text-muted">
-                        {{ certificate.type }}
-                    </p>
+                    <p class="text-muted">{{ certificate.type }}</p>
                 </div>
 
                 <div class="card-footer">
@@ -43,23 +45,25 @@
             </div>
         </div>
 
-            <div class="col-lg-8 col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title px-1">
-                            {{ trans('global.preview') }}
-                        </div>
+        <div class="col-lg-8 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title px-1">
+                        {{ trans('global.preview') }}
                     </div>
-                    <div class="card-body"
-                    style="position:relative;">
-                        <div class="tab-content">
-                            <div class="tab-pane active show" id="example">
-                                <div v-dompurify-html="certificate.body"></div>
-                            </div>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div
+                            id="example"
+                            class="tab-pane active show"
+                        >
+                            <div v-html="certificate.body"></div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
         <Teleport to="body">
             <CertificateModal></CertificateModal>
@@ -73,21 +77,22 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "Certificate",
-    components:{
+    components: {
         CertificateModal
     },
     props: {
         certificate: {
-            default: null
+            type: Object,
+            default: null,
         },
         status_definitions: {
-            default: null
+            default: null,
         },
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
-            globalStore
+            globalStore,
         }
     },
     data() {
@@ -102,7 +107,7 @@ export default {
         });
     },
     methods: {
-        editCertificate(certificate){
+        editCertificate(certificate) {
             this.globalStore?.showModal('certificate-modal', certificate);
         },
     }

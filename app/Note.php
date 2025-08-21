@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Note extends Model
 {
@@ -18,19 +19,10 @@ class Note extends Model
         'notable_type',
         'user_id',
     ];
-
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    /*protected $hidden = [
-        'notable_id',
-        'notable_type',
-    ];*/
-
+    
     protected $casts = [
         'id' => 'integer',
+        'content' => CleanHtml::class,
         'notable_id' => 'integer',
         'user_id' => 'integer',
     ];

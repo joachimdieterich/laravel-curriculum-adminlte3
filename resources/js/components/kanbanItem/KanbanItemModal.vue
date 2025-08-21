@@ -43,6 +43,7 @@
                                 :id="'description_' + component_id"
                                 :name="'description_' + component_id"
                                 class="form-control"
+                                licenseKey="gpl"
                                 :init="tinyMCE"
                                 v-model="form.description"
                             />
@@ -75,7 +76,7 @@
                         </div>
                     </div>
 
-                    <div v-if="ownerOrAdmin"
+                    <div v-if="hasPermissionsAccess"
                         class="card"
                     >
                         <div
@@ -237,7 +238,7 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link lists code curriculummedia autoresize table"
+                    "autolink", "link", "lists", "table", "code", "autoresize",
                 ],
                 {
                     'callback': 'insertContent',
@@ -317,8 +318,9 @@ export default {
         },
     },
     computed: {
-        ownerOrAdmin() {
-            return this.form.owner_id == this.$userId
+        hasPermissionsAccess() {
+            return this.method == 'post'
+                || this.form.owner_id == this.$userId
                 || this.$parent.kanban.owner_id == this.$userId
                 || this.checkPermission('is_admin');
         },

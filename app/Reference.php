@@ -3,12 +3,16 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Reference extends Model
 {
     protected $guarded = [];
 
-    protected $casts = ['id' => 'string']; //important to get id as unique string
+    protected $casts = [
+        'id' => 'string', //important to get id as unique string
+        'description' => CleanHtml::class,
+    ];
 
     public $incrementing = false;
 

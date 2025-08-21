@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Meeting extends Model
 {
@@ -33,6 +34,10 @@ class Meeting extends Model
     ];
 
     protected $casts = [
+        'description' => CleanHtml::class,
+        'info' => CleanHtml::class,
+        'speakers' => CleanHtml::class,
+        'livestream' => CleanHtml::class,
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
     ];

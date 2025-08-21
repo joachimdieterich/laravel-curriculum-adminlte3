@@ -97,7 +97,7 @@ export default {
         }
         this.$initTinyMCE(
             [
-                "autolink link curriculummedia"
+                "autolink link"
             ],
             {
                 'callback': 'insertContent',

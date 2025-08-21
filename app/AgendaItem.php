@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class AgendaItem extends Model
 {
@@ -21,6 +22,10 @@ class AgendaItem extends Model
         'end',
         'order_id',
         'owner_id'
+    ];
+
+    protected $casts = [
+        'description' => CleanHtml::class,
     ];
 
     public function agenda()

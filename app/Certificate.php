@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Certificate extends Model
 {
@@ -14,6 +15,7 @@ class Certificate extends Model
 
     protected $casts = [
         'global' => 'boolean',
+        'body' => CleanHtml::class,
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
     ];

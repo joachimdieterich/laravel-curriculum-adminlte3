@@ -4,6 +4,7 @@ namespace App;
 
 use DateTimeInterface;
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,7 +46,7 @@ class Kanban extends Model
     public function broadcastOn($event): array
     {
         return [
-            new Channel($this->broadcastChannel())
+            new PresenceChannel($this->broadcastChannel())
         ];
     }
 

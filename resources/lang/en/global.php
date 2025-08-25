@@ -35,7 +35,7 @@ return [
     'shared_files' => 'shared media',
     'public_files' => 'public media',
     'auto_refresh' => 'auto refresh',
-    'add' => 'Add',
+    'add' => 'add',
     'create' => 'Create',
     'paste' => 'paste',
     'list' => 'List',

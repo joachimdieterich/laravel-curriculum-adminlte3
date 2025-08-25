@@ -73,9 +73,7 @@
                                     }
                                 }"
                             />
-                            <MediumForm class="ml-auto"
-                            />
-                            <div class="d-flex ml-auto">
+                            <div class="btn-group d-flex ml-auto">
                                 <button v-if="form.media.length > 0 || true"
                                     type="button"
                                     class="btn btn-default"
@@ -97,11 +95,14 @@
                                 </button>
                                 <button
                                     type="button"
-                                    class="btn btn-primary"
+                                    class="btn btn-primary d-flex align-items-center pl-0"
                                     @click="openMediumModal()"
                                 >
-                                    <i class="fa fa-cloud-upload mr-1"></i>
-                                    {{ trans('global.medium.title_singular') }}
+                                    <i class="fa fa-cloud-upload px-1 mx-2"></i>
+                                    <div>
+                                        {{ trans('global.medium.title') }}<br/>
+                                        {{ trans('global.add') }}
+                                    </div>
                                 </button>
                             </div>
                         </div>

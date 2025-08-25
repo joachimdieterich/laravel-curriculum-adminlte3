@@ -15,22 +15,34 @@
             </li>
         </div>
         <div class="carousel-inner">
-            <div class="w-100">
-                <div class="carousel-indicators-tools">
-                    <a
-                        :id="'download_medium_' + subscriptions[currentSlide].medium_id"
-                        @click.prevent="downloadMedium(subscriptions[currentSlide])"
-                        class="text-muted pointer px-2"
+            <button v-if="$userId == subscriptions[currentSlide].medium.owner_id"
+                type="button"
+                class="btn btn-icon position-absolute text-danger pointer px-2"
+                style="right: 5px; z-index: 10;"
+                @click.prevent="unlinkMedium(subscriptions[currentSlide])"
+            >
+                <i class="fa fa-trash"></i>
+            </button>
+            <div
+                class="d-flex align-items-center justify-content-center position-absolute w-100 h-100"
+                style="z-index: 20;"
+            >
+                <span
+                    id="link-wrapper"
+                    class="d-flex justify-content-center bg-white rounded-pill"
+                    style="transition: width 0.3s ease;"
+                    :style="{ width: generatingLinks ? '50px' : '176px' }"
+                    @click="this.getURLs()"
+                >
+                    <button v-if="!generatingLinks"
+                        type="button"
+                        class="btn btn-default bg-transparent border-0"
                     >
-                        <i class="fa fa-download"></i>
-                    </a>
-                    <a v-if="$userId == subscriptions[currentSlide].medium.owner_id"
-                        class="text-danger pointer px-2"
-                        @click.prevent="unlinkMedium(subscriptions[currentSlide])"
-                    >
-                        <i class="fa fa-trash"></i>
-                    </a>
-                </div>
+                        <i class="fa fa-link"></i>
+                        Links erzeugen
+                    </button>
+                    <i v-if="generatingLinks" class="fa fa-spinner fa-pulse p-2"></i>
+                </span>
             </div>
 
             <div v-for="(item, index) in subscriptions"
@@ -87,6 +99,9 @@ export default {
         return {
             id: null,
             currentSlide: 0,
+            generatingLinks: false,
+            currentViewLink: null,
+            currentDownloadLink: null,
             errors: {},
         }
     },
@@ -114,6 +129,22 @@ export default {
         downloadMedium(item) {
             this.$eventHub.emit('download', item.medium);
         },
+        getURLs() {
+            this.generatingLinks = true;
+            this.generateViewLink();
+            this.generateDownloadLink();
+        },
+        generateViewLink() {
+            axios.get('/media/' + this.subscriptions[this.currentSlide].medium.id + '?content=true')
+                .then((response) => this.currentViewLink = response.data);
+        },
+        generateDownloadLink() {
+            axios.get('/media/' + this.subscriptions[this.currentSlide].medium.id + '?download=true')
+                .then((response) => this.currentDownloadLink = response.data);
+        },
+        setURLs() {
+            this.generatingLinks = false;
+        },
         unlinkMedium(item) { //id of external reference and value in db
             axios.post('/mediumSubscriptions/destroy', {
                 medium_id: item.medium_id,
@@ -136,6 +167,16 @@ export default {
             .catch(err => {
                 console.log(err.response);
             });
+        },
+    },
+    computed: {
+        URLsLoaded() {
+            return this.currentViewLink && this.currentDownloadLink;
+        },
+    },
+    watch: {
+        URLsLoaded(loaded) {
+            if (loaded) this.setURLs();
         },
     },
     components: {

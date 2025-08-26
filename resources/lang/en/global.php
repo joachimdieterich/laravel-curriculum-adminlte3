@@ -190,6 +190,7 @@ return [
     'media' => [
         'title' => 'Media',
         'title_singular' => 'Medium',
+        'add' => 'Add media',
         'create' => 'Create medium',
         'link' => 'Link medium',
     ],

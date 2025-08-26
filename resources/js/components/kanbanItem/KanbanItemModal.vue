@@ -74,7 +74,7 @@
                                 }"
                             />
                             <div class="btn-group d-flex ml-auto">
-                                <button v-if="form.media.length > 0 || true"
+                                <button v-if="form.media.length > 0"
                                     type="button"
                                     class="btn btn-default"
                                 >
@@ -99,10 +99,7 @@
                                     @click="openMediumModal()"
                                 >
                                     <i class="fa fa-cloud-upload px-1 mx-2"></i>
-                                    <div>
-                                        {{ trans('global.medium.title') }}<br/>
-                                        {{ trans('global.add') }}
-                                    </div>
+                                    <div style="width: min-content;">{{ trans('global.medium.add') }}</div>
                                 </button>
                             </div>
                         </div>

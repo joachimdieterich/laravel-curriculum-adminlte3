@@ -18,21 +18,21 @@
             <button v-if="$userId == subscriptions[currentSlide].medium.owner_id"
                 type="button"
                 class="btn btn-icon position-absolute text-danger pointer px-2"
-                style="right: 5px; z-index: 10;"
+                style="top: 5px; right: 5px; z-index: 30;"
                 @click.prevent="unlinkMedium(subscriptions[currentSlide])"
             >
                 <i class="fa fa-trash"></i>
             </button>
             <div
                 class="d-flex align-items-center justify-content-center position-absolute w-100 h-100"
-                style="z-index: 20;"
+                style="z-index: 10;"
             >
                 <span
                     id="link-wrapper"
                     class="d-flex justify-content-center bg-white rounded-pill"
                     style="transition: width 0.3s ease;"
                     :style="{ width: generatingLinks ? '50px' : '176px' }"
-                    @click="this.getURLs()"
+                    @click="getURLs()"
                 >
                     <button v-if="!generatingLinks"
                         type="button"
@@ -42,6 +42,14 @@
                         Links erzeugen
                     </button>
                     <i v-if="generatingLinks" class="fa fa-spinner fa-pulse p-2"></i>
+                    <span class="btn-group">
+                        <button class="btn btn-default bg-transparent border-0">
+                            <i class="fa fa-arrow-up-right-from-square"></i>
+                        </button>
+                        <button class="btn btn-default bg-transparent border-0">
+                            <i class="fa fa-download"></i>
+                        </button>
+                    </span>
                 </span>
             </div>
 
@@ -58,7 +66,8 @@
 
         <a v-if="subscriptions.length > 1"
             :href="'#' + id"
-            class="carousel-control-prev "
+            class="carousel-control-prev"
+            style="z-index: 20;"
             role="button"
             data-slide="prev"
             :aria-label="trans('pagination.previous')"
@@ -70,6 +79,7 @@
         <a v-if="subscriptions.length > 1"
             :href="'#' + id"
             class="carousel-control-next"
+            style="z-index: 20;"
             role="button"
             data-slide="next"
             :aria-label="trans('pagination.next')"

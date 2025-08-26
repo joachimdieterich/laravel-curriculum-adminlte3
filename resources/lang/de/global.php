@@ -205,6 +205,7 @@ return [
     'media' => [
         'title' => 'Medien',
         'title_singular' => 'Medium',
+        'add' => 'Medien hinzufügen',
         'create' => 'Medium erstellen',
         'link' => 'Medium verknüpfen',
     ],

@@ -589,14 +589,18 @@ class CurriculumController extends Controller
                     ['curriculum_id', '=', $curriculum->id],
                     ['organization_id', '=', auth()->user()->current_organization_id],
                 ])
-                    ->orWhere([
+                ->orWhere(function ($query) use ($curriculum) {
+                    $query->where([
                         ['curriculum_id', '=', $curriculum->id],
                         ['global', '=', 1],
-                    ])
-                    ->orWhere([
+                    ]);
+                })
+                ->orWhere(function ($query) {
+                    $query->where([
                         ['type', '=', 'group'],
                         ['global', '=', 1],
-                    ])
+                    ]);
+                })
             );
         }
     }

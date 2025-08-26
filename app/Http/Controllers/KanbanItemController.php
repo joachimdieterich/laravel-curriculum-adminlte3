@@ -49,20 +49,16 @@ class KanbanItemController extends Controller
 
 
         if (request()->wantsJson()) {
-
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemAddedEvent($kanbanItem)))
-            {
-                return KanbanItem::where('id', $kanbanItem->id)
-                    ->with([
-                        'comments',
-                        'comments.user',
-                        'comments.likes',
-                        'likes',
-                        'mediaSubscriptions.medium',
-                        'owner',
-                    ])
-                    ->get()->first();
-            }
+            return KanbanItem::where('id', $kanbanItem->id)
+                ->with([
+                    'comments',
+                    'comments.user',
+                    'comments.likes',
+                    'likes',
+                    'mediaSubscriptions.medium',
+                    'owner',
+                ])
+                ->get()->first();
         }
     }
 
@@ -95,23 +91,20 @@ class KanbanItemController extends Controller
         abort_unless((\Gate::allows('kanban_show') and $kanbanItem->isAccessible()), 403);
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemReloadEvent($kanbanItem)))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanItem
-                        ->where('id', $kanbanItem->id)
-                        ->with([
-                            'comments',
-                            'comments.user',
-                            'comments.likes',
-                            'likes',
-                            'mediaSubscriptions.medium',
-                            'owner',
-                            ])
-                        ->get()->first()
-                ];
-            }
+            return [
+                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                'message' =>  $kanbanItem
+                    ->where('id', $kanbanItem->id)
+                    ->with([
+                        'comments',
+                        'comments.user',
+                        'comments.likes',
+                        'likes',
+                        'mediaSubscriptions.medium',
+                        'owner',
+                        ])
+                    ->get()->first()
+            ];
         }
 
         return redirect()->action('KanbanController@show', ['kanban' => $kanbanItem->kanban_id]);
@@ -148,19 +141,16 @@ class KanbanItemController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent($kanbanItem)))
-            {
-                return KanbanItem::where('id', $kanbanItem->id)
-                    ->with([
-                        'comments',
-                        'comments.user',
-                        'comments.likes',
-                        'likes',
-                        'mediaSubscriptions.medium',
-                        'owner:id,username,firstname,lastname',
-                    ])
-                    ->get()->first();
-            }
+            return KanbanItem::where('id', $kanbanItem->id)
+                ->with([
+                    'comments',
+                    'comments.user',
+                    'comments.likes',
+                    'likes',
+                    'mediaSubscriptions.medium',
+                    'owner:id,username,firstname,lastname',
+                ])
+                ->get()->first();
         }
     }
 
@@ -183,13 +173,10 @@ class KanbanItemController extends Controller
         $kanbanItem->delete();
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemDeletedEvent($kanbanItemForEvent)))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanItemForEvent
-                ];
-            }
+            return [
+                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                'message' =>  $kanbanItemForEvent
+            ];
         }
     }
 
@@ -253,16 +240,13 @@ class KanbanItemController extends Controller
         }
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent($kanbanItem)))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' => KanbanItem::where('id', $kanbanItem->id)
-                        ->with([
-                            'likes',
-                        ])->get()->first(),
-                ];
-            }
+            return [
+                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                'message' => KanbanItem::where('id', $kanbanItem->id)
+                    ->with([
+                        'likes',
+                    ])->get()->first(),
+            ];
         }
     }
 

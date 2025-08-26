@@ -59,16 +59,13 @@ class KanbanItemCommentController extends Controller
         }
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent(KanbanItem::find($kanbanItemComment->kanban_item_id))))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' => KanbanItemComment::where('id', $kanbanItemComment->id)
-                        ->with([
-                            'likes',
-                        ])->get()->first(),
-                ];
-            }
+            return [
+                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                'message' => KanbanItemComment::where('id', $kanbanItemComment->id)
+                    ->with([
+                        'likes',
+                    ])->get()->first(),
+            ];
         }
     }
 

@@ -16,8 +16,8 @@ class KanbanStatusController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return KanbanStatus|void
      */
     public function store(Request $request)
     {
@@ -42,19 +42,16 @@ class KanbanStatusController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanStatusAddedEvent($kanbanStatus)))
-            {
-                return $kanbanStatus;
-            }
+            return $kanbanStatus;
         }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\KanbanStatus  $kanbanStatus
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param KanbanStatus $kanbanStatus
+     * @return KanbanStatus|void
      */
     public function update(Request $request, KanbanStatus $kanbanStatus)
     {
@@ -75,10 +72,7 @@ class KanbanStatusController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanStatusUpdatedEvent($kanbanStatus)))
-            {
-                return $kanbanStatus;
-            }
+            return $kanbanStatus;
         }
     }
 
@@ -122,19 +116,17 @@ class KanbanStatusController extends Controller
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
         foreach ($request->statuses as $status) {
-            KanbanStatus::whereId($status['id'])->update([
-                'order_id' => $status['order_id'],
-            ]);
+            $kanbanStatus = KanbanStatus::find($status['id']);
+            $kanbanStatus->order_id = $status['order_id'];
+            $kanbanStatus->save();
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\KanbanStatus  $kanbanStatus
-     * @return \Illuminate\Http\Response
+     * @param KanbanStatus $kanbanStatus
+     * @return array|void
      */
     public function destroy(KanbanStatus $kanbanStatus)
     {
@@ -148,14 +140,10 @@ class KanbanStatusController extends Controller
         $kanbanStatus->delete();
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanStatusDeletedEvent($kanbanStatusForEvent)))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanStatusForEvent
-                ];
-            }
-
+            return [
+                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                'message' =>  $kanbanStatusForEvent
+            ];
         }
     }
 

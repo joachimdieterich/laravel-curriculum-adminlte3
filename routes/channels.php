@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Kanban.{id}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });
+Broadcast::channel('App.KanbanStatus.{id}', function (User $user) {
+    return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
+});
+
 
 // Typical public channel
 // Broadcast::channel('channel.name', function ($a, $b) {

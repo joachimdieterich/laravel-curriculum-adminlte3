@@ -131,6 +131,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        websocket: {
+            type: Boolean,
+            default: false,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -168,15 +172,31 @@ export default {
         },
         delete() {
             axios.delete("/kanbanStatuses/" + this.status.id)
-                .then(() => {
-                    this.$eventHub.emit("kanban-status-deleted", this.status);
-                })
                 .catch(err => {
                     console.log(err.response);
                 });
         },
+        startWebsocket() {
+            if (this.websocket === true) {
+                this.$echo
+                    .join('App.KanbanStatus.' + this.status.id)
+                    .listen('.KanbanStatusUpdated', (payload) => {
+                        this.$eventHub.emit('kanban-status-moved', payload.model);
+                        this.$eventHub.emit('kanban-status-updated', payload.model);
+                    })
+                    .listen('.KanbanStatusCreated', (payload) => {
+                        this.$eventHub.emit('kanban-status-created', payload.model);
+                    })
+                    .listen('.KanbanStatusDeleted', (payload) => {
+                        this.$eventHub.emit('kanban-status-deleted', payload.model);
+                    })
+                ;
+            }
+        },
     },
     mounted() {
+        this.startWebsocket();
+
         if (this.newStatus) {
             this.method = 'post';
         } else {

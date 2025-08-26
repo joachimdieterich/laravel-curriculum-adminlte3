@@ -37,6 +37,6 @@
             :editable="{{ $may_edit ? 'true' : 'false' }}"
             :websocket="{{ $is_websocket_active ? 'true' : 'false' }}"
             ref="kanbanBoard"
-            :kanban="{{ $kanban }}"></kanban>
+            :initial-kanban="{{ $kanban }}"></kanban>
     </div>
 @endsection

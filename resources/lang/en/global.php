@@ -71,6 +71,7 @@ return [
     'waitForFile' => 'Generating file...',
     'areYouSure' => 'Are you sure?',
     'allRightsReserved' => 'All rights reserved.',
+    'download' => 'Download',
     'downloadFile' => 'Download file',
     'toggleNavigation' => 'Toggle navigation',
     'toggle' => 'toggle',
@@ -658,8 +659,9 @@ return [
         'edit' => 'Edit media',
         'upload' => 'Upload media',
         'upload_helper' => 'Drag your file(s) here to begin<br> or click to browse',
-        'link' => 'Link',
         'no_media' => 'Nothing here yet.',
+        'link' => 'Link',
+        'generate_links' => 'Generate links',
         'fields' => [
             'path' => 'Path',
             'path_helper' => '',

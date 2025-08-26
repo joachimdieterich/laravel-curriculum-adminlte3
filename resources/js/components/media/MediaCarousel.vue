@@ -23,34 +23,47 @@
             >
                 <i class="fa fa-trash"></i>
             </button>
+
             <div
-                class="d-flex align-items-center justify-content-center position-absolute w-100 h-100"
-                style="z-index: 10;"
+                id="link-overlay"
             >
-                <span
+                <div
                     id="link-wrapper"
-                    class="d-flex justify-content-center bg-white rounded-pill"
-                    style="transition: width 0.3s ease;"
-                    :style="{ width: generatingLinks ? '50px' : '176px' }"
+                    class="d-flex align-items-center justify-content-center bg-light rounded-pill hide"
+                    :style="{ width: generatingLinks ? '50px' : '175px' }"
                     @click="getURLs()"
                 >
-                    <button v-if="!generatingLinks"
+                    <button v-if="!generatingLinks && !URLsLoaded"
                         type="button"
-                        class="btn btn-default bg-transparent border-0"
+                        class="btn btn-default bg-transparent border-0 w-100"
                     >
                         <i class="fa fa-link"></i>
-                        Links erzeugen
+                        {{ trans('global.medium.generate_links') }}
                     </button>
                     <i v-if="generatingLinks" class="fa fa-spinner fa-pulse p-2"></i>
-                    <span class="btn-group">
-                        <button class="btn btn-default bg-transparent border-0">
-                            <i class="fa fa-arrow-up-right-from-square"></i>
-                        </button>
-                        <button class="btn btn-default bg-transparent border-0">
-                            <i class="fa fa-download"></i>
-                        </button>
-                    </span>
-                </span>
+
+                </div>
+                <div v-if="currentViewLink && currentDownloadLink"
+                    id="link-buttons"
+                    class="btn-group-vertical position-absolute d-flex flex-column bg-light rounded-pill hide"
+                >
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;"
+                    >
+                        <i class="fa fa-arrow-up-right-from-square"></i>
+                        {{ trans('global.open') }}
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        style="border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;"
+                    >
+                        <i class="fa fa-download"></i>
+                        {{ trans('global.download') }}
+                    </button>
+                </div>
             </div>
 
             <div v-for="(item, index) in subscriptions"
@@ -153,7 +166,24 @@ export default {
                 .then((response) => this.currentDownloadLink = response.data);
         },
         setURLs() {
-            this.generatingLinks = false;
+            const animationTime = 200; // should be shorter than the CSS transition
+            const linkValidTime = 5000; // edusharing links are only valid for a couple of seconds
+
+            // to activate the transitions, we need to implement the logic through timeouts
+            setTimeout(() => { // first we hide the loading-indicator
+                const buttons = document.getElementById('link-buttons'); // element doesn't exist before
+                this.generatingLinks = false;
+                buttons.classList.remove('hide');
+
+                setTimeout(() => { // then we show the actual links
+                    buttons.classList.add('hide');
+
+                    setTimeout(() => { // after the links aren't valid anymore, we reset everything
+                        this.currentViewLink = null;
+                        this.currentDownloadLink = null;
+                    }, animationTime);
+                }, linkValidTime);
+            }, animationTime);
         },
         unlinkMedium(item) { //id of external reference and value in db
             axios.post('/mediumSubscriptions/destroy', {
@@ -181,7 +211,7 @@ export default {
     },
     computed: {
         URLsLoaded() {
-            return this.currentViewLink && this.currentDownloadLink;
+            return this.currentViewLink !== null && this.currentDownloadLink !== null;
         },
     },
     watch: {
@@ -194,3 +224,20 @@ export default {
     },
 }
 </script>
+<style scoped>
+#link-overlay {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    transition: opacity 0.3s linear;
+
+    & > #link-wrapper, & > #link-buttons {
+        transition: width 0.3s ease, opacity 0.3s linear;
+    }
+    &:hover > #link-wrapper { opacity: 1 !important; }
+}
+</style>

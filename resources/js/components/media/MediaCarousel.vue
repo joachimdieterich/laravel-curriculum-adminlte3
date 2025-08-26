@@ -26,10 +26,11 @@
 
             <div
                 id="link-overlay"
+                @click.self="(e) => e.target.classList.toggle('active')"
             >
                 <div
                     id="link-wrapper"
-                    class="d-flex align-items-center justify-content-center bg-light rounded-pill hide"
+                    class="d-flex align-items-center justify-content-center bg-light rounded-pill hide-lg"
                     :style="{ width: generatingLinks ? '50px' : '175px' }"
                     @click="getURLs()"
                 >
@@ -238,6 +239,6 @@ export default {
     & > #link-wrapper, & > #link-buttons {
         transition: width 0.3s ease, opacity 0.3s linear;
     }
-    &:hover > #link-wrapper { opacity: 1 !important; }
+    &:hover > #link-wrapper, &.active > #link-wrapper { opacity: 1 !important; }
 }
 </style>

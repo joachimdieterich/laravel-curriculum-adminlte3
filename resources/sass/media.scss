@@ -39,9 +39,8 @@
 }
 // desktop-view
 @media (min-width: 992px) {
-    .vuehover {
-        display: none;
-    }
+    .vuehover { display: none; }
+    .hide-lg { opacity: 0; }
     li:hover .vuehover,
     tr:hover .vuehover {
         display: block;

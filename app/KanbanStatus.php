@@ -3,33 +3,37 @@
 namespace App;
 
 use DateTimeInterface;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 
 class KanbanStatus extends Model
 {
+    use BroadcastsEvents;
+
     protected $guarded = [];
 
-/*    protected $dates = [
-        'updated_at',
-        'created_at',
-        'visible_from',
-        'visible_until',
-    ];*/
+    public function broadcastOn($event): array
+    {
+        return [
+            new PresenceChannel($this->broadcastChannel())
+        ];
+    }
 
     protected $casts = [
         'locked' => 'boolean',
         'editable' => 'boolean',
         'visibility' => 'boolean',
         'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
-        'visible_from'  => 'datetime',
-        'visible_until'  => 'datetime',
+        'created_at' => 'datetime',
+        'visible_from' => 'datetime',
+        'visible_until' => 'datetime',
     ];
 
     /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param  \DateTimeInterface  $date
+     * @param \DateTimeInterface $date
      * @return string
      */
     protected function serializeDate(DateTimeInterface $date)
@@ -92,7 +96,7 @@ class KanbanStatus extends Model
     /**
      * Mutator for layer_ids property.
      *
-     * @param  array|string|id $ids
+     * @param array|string|id $ids
      * @return void
      */
     public function setEditorsIdsAttribute($ids)

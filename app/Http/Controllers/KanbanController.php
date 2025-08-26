@@ -190,7 +190,7 @@ class KanbanController extends Controller
             or !$kanban->isAccessible()
         ), 403);
 
-        $kanban = $this->getKanbanWithRelations($kanban);
+        $kanban = $kanban->withRelations($kanban);
 
         $may_edit = $kanban->isEditable(auth()->user()->id, $token);
 
@@ -331,29 +331,6 @@ class KanbanController extends Controller
         [$r, $g, $b] = sscanf($color, '#%02x%02x%02x');
 
         return 'rgba('.$r.', '.$g.', '.$b.', .7)';
-    }
-
-    public function getKanbanWithRelations(Kanban $kanban)
-    {
-        return $kanban->with([
-            'owner' => function($query) {
-                $query->select('id', 'firstname', 'lastname');
-            },
-            'statuses.items' => function($query) use ($kanban) {
-                $query->with([
-                    'comments',
-                    'comments.user',
-                    'comments.likes',
-                    'likes',
-                    'mediaSubscriptions.medium',
-                    'owner' => function($query) {
-                        $query->select('id', 'username', 'firstname', 'lastname');
-                    },
-                ])
-                ->orderBy('order_id');
-            },
-            'medium',
-        ])->find($kanban->id);
     }
 
     public function getKanbanByToken(Kanban $kanban, Request $request)

@@ -50,7 +50,14 @@ class Kanban extends Model
         ];
     }
 
-    /**
+    public function broadcastWith(string $event): array
+    {
+        return [
+            'model' => $this->withRelations($this),
+        ];
+    }
+
+        /**
      * Prepare a date for array / JSON serialization.
      *
      * @param  \DateTimeInterface  $date
@@ -74,6 +81,29 @@ class Kanban extends Model
     public function statuses()
     {
         return $this->hasMany('App\KanbanStatus', 'kanban_id', 'id')->orderBy('order_id');
+    }
+
+    public function withRelations(Kanban $kanban):Kanban|null
+    {
+        return $this->with([
+            'owner' => function($query) {
+                $query->select('id', 'firstname', 'lastname');
+            },
+            'statuses.items' => function($query) use ($kanban) {
+                $query->with([
+                    'comments',
+                    'comments.user',
+                    'comments.likes',
+                    'likes',
+                    'mediaSubscriptions.medium',
+                    'owner' => function($query) {
+                        $query->select('id', 'username', 'firstname', 'lastname');
+                    },
+                ])
+                    ->orderBy('order_id');
+            },
+            'medium',
+        ])->find($kanban->id);
     }
 
     public function subscriptions()

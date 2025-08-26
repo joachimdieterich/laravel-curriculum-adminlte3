@@ -106,7 +106,7 @@ class KanbanStatusController extends Controller
 
         if (request()->wantsJson()) {
             if ($update_kanban->count() !== 0 OR $new_statuses->count() !== 0 OR $new_items->count() !== 0) {
-                return ['message' => (new KanbanController)->getKanbanWithRelations($kanban)];
+                return ['message' => $kanban->withRelations($kanban)];
             } else {
                 return ['message' => 'uptodate'];
             }

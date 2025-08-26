@@ -3,11 +3,17 @@
         <div @mouseenter="contributorDetailsEntered(contributor.id)"
              @mouseleave="contributorDetailsLeft()"
              @mousemove="contributorDetailsMovement"
-             class="d-flex contributor-icon rounded-circle align-items-center"
+             class="d-flex  rounded-circle align-items-center"
              v-for="contributor of contributors"
              :style="this.contributorStyles[contributor.id]"
         >
-            <span class="contributor-initials">{{ contributor.initials }}</span>
+            <avatar data-toggle="tooltip"
+                    :title="contributor.firstname + ' ' + contributor.lastname"
+                    :username="contributor.firstname + ' ' + contributor.lastname"
+                    :firstname="contributor.firstname"
+                    :lastname="contributor.lastname"
+                    :size="35"
+            />
             <div v-show="contributorDetails.show && contributorDetails.key === contributor.id"
                  class="rounded-sm contributor-details"
                  :style="{top: contributorDetailsTopStyle + 'px', left: contributorDetailsLeftStyle + 'px'}"
@@ -33,72 +39,19 @@
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         background:white;
     }
-
-    .contributor-icon {
-        cursor: default;
-        font-weight: bold;
-        text-align:center;
-        height: 35px;
-        width: 35px;
-        vertical-align: middle;
-        border: black solid 2px;
-    }
-
-    .contributor-initials {
-        margin: auto;
-    }
 </style>
 <script>
 
+import Avatar from "./Avatar.vue";
+
 export default {
+    components: {Avatar},
     props: {
         contributors: {
             type: Object
         },
-        bgColors: {
-            type: Array,
-            default: [
-                '#3c8dbc',
-                '#3d9970',
-                '#CBD900',
-                '#f012be',
-                '#d81b60',
-                '#007bff',
-                '#6610f2',
-                '#6f42c1',
-                '#e83e8c',
-                '#dc3545',
-                '#fd7e14',
-                '#ffc107',
-                '#28a745',
-                '#20c997',
-                '#17a2b8',
-                '#6c757d',
-                '#343a40',
-            ]
-        }
-    },
-    watch: {
-        contributors:{
-            handler(newValue) {
-                for (let item in newValue) {
-                    if (this.contributorStyles[item] !== undefined) {
-                        continue;
-                    }
-
-                    this.contributorStyles[item] = this.getStyleForContributor();
-                }
-            },
-            deep: true,
-        }
     },
     methods: {
-        getStyleForContributor: function() {
-            let randomBgColor = this.bgColors[Math.floor(Math.random() * this.bgColors.length)];
-            let fontColor = this.$textcolor(randomBgColor);
-
-            return "color:" + fontColor + "; background-color:" + randomBgColor + ";";
-        },
         contributorDetailsEntered: function (contributorKey) {
             this.contributorDetails.key = contributorKey;
             this.contributorDetails.show = true;

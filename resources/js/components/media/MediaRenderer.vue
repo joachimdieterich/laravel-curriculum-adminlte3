@@ -10,19 +10,18 @@
                 frameborder="0"
             ></iframe>
         </span>
-        <span v-else-if="mime(medium.mime_type) === 'external'">
-            <RenderUsage
-                :medium="medium"
-                :downloadable="downloadable"
-                :isCarousel="true"
-            />
-        </span>
-        <span v-else-if="mime(medium.mime_type) === 'img'">
-            <img
-                :src="'/media/' + medium.id"
-                width="100%"
-            />
-        </span>
+
+        <RenderUsage v-else-if="mime(medium.mime_type) === 'external'"
+            :medium="medium"
+            :downloadable="downloadable"
+            :isCarousel="true"
+        />
+
+        <img v-else-if="mime(medium.mime_type) === 'img'"
+            :src="'/media/' + medium.id"
+            width="100%"
+        />
+
         <span v-else>
             - Please download file -
         </span>

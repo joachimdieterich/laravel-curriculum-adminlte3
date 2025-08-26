@@ -48,7 +48,7 @@ export default {
         }
     },
     mounted() {
-        axios.get('/qrCodes/?url=' + this.href + '&size=' + this.size)
+        axios.get('/qrCodes/?url=' + encodeURIComponent(this.href) + '&size=' + this.size)
             .then(r => {
                 this.qrCode = r.data.image;
             })

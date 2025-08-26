@@ -16,6 +16,7 @@ curriculum is a learning platform where teachers can create topic-based learning
 - git
 - composer
 - npm
+- node (>=22.12.0)
 
 ### Step 1.
 

@@ -1,3 +1,20 @@
+## 2025-08-21
+- KanbanItemModal/KanbanStatusModal: fixed permissions not showing on create for non-kanban-owners
+- fixed authenticated users not being able to create/update/delete KanbanItem/-Status when accessing through token-link
+- Kanban: most icons are now hidden on print-view
+- Logbook/Map: removed import of unused 'MediumPreviewModal'
+- Objective: fixed content-tab ID not being unique
+- removed unused component 'KanbanTask'
+- updated vite to latest (requiring: node >=22.12.0)
+- updated tinyMCE to v8 (latest)
+- removed 'curriculummedia' as a plugin from tinyMCE
+- removed unused packages:
+  - `@activix/bootstrap-datetimepicker` and `vue3-datepicker`
+  - `@vue/cli-service` and `@vue/compat`
+  - `cypress-vite`
+  - `dompurify` and `vue-dompurify-html`
+  - `laravel-mix`
+
 ## 2025-08-15
 - IndexWidget: added accessibility logic
 - Groups: added scope for groups with default period_id

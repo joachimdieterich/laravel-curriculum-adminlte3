@@ -187,7 +187,7 @@ export default {
                     callbackId: this.component_id,
                     placeholder: this.trans('global.certificate.fields.body') + ' *',
                 },
-                " | customDateButton | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example link image media | insertFirstname insertLastname organizationTitle organizationStreet organizationPostcode organizationCity certificateDate | usersProgress",
+                " | customDateButton | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media code | insertFirstname insertLastname organizationTitle organizationStreet organizationPostcode organizationCity certificateDate | usersProgress",
                 "span[id|class|style|name|reference_type|reference_id|min_value]",
             ),
         }

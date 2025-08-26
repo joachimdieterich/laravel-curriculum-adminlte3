@@ -264,7 +264,18 @@ REVERB_SERVER_PORT="${REVERB_PORT}"
 WEBSOCKET_APP_ACTIVE=true
 ```
 
-Start Reverb-Server with `sudo php artisan reverb:start`
+Start Reverb-Server with `sudo php artisan reverb:start`.
+
+If you use another queue then **sync** you have to start a listener.
+
+You can do that with `php artisan queue:listen` to listen to the **default** queue.
+
+#### Know Issues
+When using the **sync**-queue, model events will be broadcasted/handled differently.
+For example, the **created** model event won't be either fired by **laravel** or handled by **echo**.
+An additional example would be the **update**-event of an model (e.g. Kanban). It will return old information if a model
+with relation (e.g. KanbanStaus) get updated.
+But IF you use the **database**-queue everything works perfect.
 
 Further information [laravel-websockets](https://laravel.com/docs/11.x/broadcasting)
 

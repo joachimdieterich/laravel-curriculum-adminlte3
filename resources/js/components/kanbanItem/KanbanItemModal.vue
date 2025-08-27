@@ -73,8 +73,8 @@
                                     }
                                 }"
                             />
-                            <!-- temporarily disabled -->
-                            <div v-if="false" class="btn-group d-flex ml-auto">
+
+                            <div class="btn-group d-flex ml-auto">
                                 <button v-if="form.media.length > 0"
                                     type="button"
                                     class="btn btn-default"

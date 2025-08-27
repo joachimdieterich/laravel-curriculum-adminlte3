@@ -15,7 +15,7 @@
             </li>
         </div>
         <div class="carousel-inner">
-            <button v-if="$userId == subscriptions[currentSlide].medium.owner_id"
+            <button v-if="$userId == subscriptions[currentSlide]?.medium.owner_id"
                 type="button"
                 class="btn btn-icon position-absolute text-danger pointer px-2"
                 style="top: 5px; right: 5px; z-index: 30;"
@@ -196,14 +196,10 @@ export default {
                 additional_data: true, // hack to skip setting medium_id of model to null
             })
             .then(res => {
-                this.subscriptions.splice(item, 1);
-                if (this.subscriptions.length <= 1) return;
-
-                if (this.currentSlide == 0) {
-                    $('#' + this.id).carousel('next');
-                } else {
-                    $('#' + this.id).carousel('prev');
-                }
+                this.subscriptions.splice(this.currentSlide, 1);
+                if (this.subscriptions.length === 0) return;
+                $('#' + this.id).carousel(0);
+                this.currentSlide = 0;
             })
             .catch(err => {
                 console.log(err.response);

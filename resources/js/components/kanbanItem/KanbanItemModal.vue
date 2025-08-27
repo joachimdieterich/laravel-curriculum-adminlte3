@@ -74,14 +74,22 @@
                                 }"
                             />
 
-                            <div class="btn-group d-flex ml-auto">
-                                <button v-if="form.media.length > 0"
+                            <div
+                                class="btn-group d-flex ml-auto"
+                                style="max-height: 100px;"
+                            >
+                                <button v-if="form.media_subscriptions.length > 0"
                                     type="button"
                                     class="btn btn-default"
                                 >
-                                    <div class="position-relative d-flex align-items-center">
-                                        <img class="img-size-64" style="border-radius: 10px;" src="/media/3" alt="default img">
-                                        <span v-if="form.media.length > 1 || true"
+                                    <span class="position-relative d-flex align-items-center h-100">
+                                        <img
+                                            :src="'/media/' + form.media_subscriptions[0].medium.id + '?preview=true'"
+                                            alt="default img"
+                                            class="img-size-64 h-100"
+                                            style="border-radius: 10px; object-fit: contain;"
+                                        />
+                                        <span v-if="form.media_subscriptions.length > 1 || true"
                                             class="position-absolute d-flex align-items-center justify-content-center text-black bg-white rounded-pill"
                                             style="right: -12px; height: 24px; width: 24px; box-shadow: 0px 0px 3px black;"
                                         >
@@ -89,10 +97,10 @@
                                                 class="fa fa-plus"
                                                 style="font-size: 14px;"
                                             >
-                                                <!-- {{ form.media.length - 1 }} -->3
+                                                {{ form.media_subscriptions.length - 1 }}
                                             </i>
                                         </span>
-                                    </div>
+                                    </span>
                                 </button>
                                 <button
                                     type="button"
@@ -258,7 +266,7 @@ export default {
                 order_id: 0,
                 owner_id: null,
                 color: '#f4f4f4',
-                media: [],
+                media_subscriptions: [],
                 due_date: '',
                 locked: false,
                 editable: true,
@@ -292,7 +300,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
@@ -306,6 +315,13 @@ export default {
                         this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
                     }
                 }
+            }
+        });
+
+        this.$eventHub.on('new-media', (media) => {
+            if (media?.id === this.component_id) {
+                // currently only single media selection is supported
+                this.form.media_subscriptions.push(media.selectedMedia[0]);
             }
         });
     },
@@ -352,9 +368,9 @@ export default {
             this.globalStore?.showModal('medium-modal', {
                 subscribable_id: this.method == 'post' ? this.form.kanban_id : this.form.id,
                 subscribable_type: this.method == 'post' ? 'App\\Kanban' : 'App\\KanbanItem',
-                subscribeSelected: false,
-                accept: 'image/*',
+                subscribeSelected: true,
                 public: true,
+                callback: 'new-media',
                 callbackId: this.component_id,
             });
         },

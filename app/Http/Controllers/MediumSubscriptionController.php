@@ -61,7 +61,11 @@ class MediumSubscriptionController extends Controller
         ]);
         $subscribe->save();
 
-        return $subscribe;
+        return MediumSubscription::where([
+            'medium_id' => $input['medium_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ])->with('medium')->first();
     }
 
     /**

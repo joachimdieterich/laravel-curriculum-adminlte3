@@ -117,7 +117,13 @@ class EdusharingMediaAdapter implements MediaInterface
 
         LogController::set(get_class($this).'@'.__FUNCTION__, null, 1);
 
-        return response()->json($medium);
+        return response()->json(
+            MediumSubscription::where([
+                ['medium_id', $medium->id],
+                ['subscribable_type', $input['subscribable_type'] ?? null],
+                ['subscribable_id', $input['subscribable_id'] ?? null],
+            ])->with('media')->get()
+        , 201);
     }
 
     public function show(Medium $medium)

@@ -335,7 +335,7 @@ export default {
                     subscribable_id: this.form.subscribable_id,
                     medium_id: medium.id
                 }).then((response) => {
-                    console.log(medium.id + 'subscribed');
+                    Object.assign(medium, response.data);
                 });
             });
         },

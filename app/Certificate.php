@@ -15,7 +15,7 @@ class Certificate extends Model
 
     protected $casts = [
         'global' => 'boolean',
-        'body' => CleanHtml::class,
+        'body' => 'string',
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
     ];

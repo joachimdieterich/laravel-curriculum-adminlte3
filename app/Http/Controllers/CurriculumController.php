@@ -382,12 +382,6 @@ class CurriculumController extends Controller
         //return redirect($curriculum->path());
     }
 
-    /**
-     * If $input['filepath'] is set and medium exists, id is return, else return is null
-     *
-     * @param  array  $input
-     * @return mixed
-     */
     public function enrol()
     {
         abort_unless(Gate::allows('course_create'), 403);
@@ -405,7 +399,7 @@ class CurriculumController extends Controller
             }
         }
 
-        return Curriculum::select('curricula.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
+        return Curriculum::select('curricula.id as curriculum_id', 'curriculum_subscriptions.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
             ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
             ->where('subscribable_id', request()->enrollment_list[0]['group_id'])
             ->where('subscribable_type', "App\Group")
@@ -595,14 +589,18 @@ class CurriculumController extends Controller
                     ['curriculum_id', '=', $curriculum->id],
                     ['organization_id', '=', auth()->user()->current_organization_id],
                 ])
-                    ->orWhere([
+                ->orWhere(function ($query) use ($curriculum) {
+                    $query->where([
                         ['curriculum_id', '=', $curriculum->id],
                         ['global', '=', 1],
-                    ])
-                    ->orWhere([
+                    ]);
+                })
+                ->orWhere(function ($query) {
+                    $query->where([
                         ['type', '=', 'group'],
                         ['global', '=', 1],
-                    ])
+                    ]);
+                })
             );
         }
     }

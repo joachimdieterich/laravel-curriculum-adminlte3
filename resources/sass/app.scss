@@ -102,6 +102,7 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
 }
 .fa-angle-up { transition: 0.4s transform ease; }
 .collapsed .fa-angle-up { transform: rotate3d(1, 0, 0, -180deg) !important; }
+.hide { opacity: 0; }
 .hide-scrollbars {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none; /* IE */

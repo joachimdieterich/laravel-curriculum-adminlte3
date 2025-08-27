@@ -1,3 +1,11 @@
+## 2025-08-27
+- LinkItem: fixed QR-Codes not rendering sometimes
+- Group: fixed adding a course not refering to the correct course-ID
+- RenderUsage: fixed positioning of image in Carousel
+- fixed Media not opening on-clik in Safari (event not trusted)
+- CertificateModal: added code-plugin
+- GenerateCertificateModal: fixed listing unavailable certificates
+
 ## 2025-08-21
 - KanbanItemModal/KanbanStatusModal: fixed permissions not showing on create for non-kanban-owners
 - fixed authenticated users not being able to create/update/delete KanbanItem/-Status when accessing through token-link

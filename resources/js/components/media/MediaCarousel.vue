@@ -32,11 +32,11 @@
                     id="link-wrapper"
                     class="d-flex align-items-center justify-content-center bg-light rounded-pill hide-lg"
                     :style="{ width: generatingLinks ? '50px' : '175px' }"
-                    @click="getURLs()"
                 >
                     <button v-if="!generatingLinks && !URLsLoaded"
                         type="button"
-                        class="btn btn-default bg-transparent border-0 w-100"
+                        class="btn btn-default bg-transparent rounded-pill border-0 w-100"
+                        @click="getURLs()"
                     >
                         <i class="fa fa-link"></i>
                         {{ trans('global.medium.generate_links') }}
@@ -46,12 +46,12 @@
                 </div>
                 <div v-if="currentViewLink && currentDownloadLink"
                     id="link-buttons"
-                    class="btn-group-vertical position-absolute d-flex flex-column bg-light rounded-pill hide"
+                    class="btn-group-vertical d-flex flex-column bg-light hide"
                 >
                     <button
                         type="button"
                         class="btn btn-light"
-                        style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;"
+                        @click="openLink(currentViewLink)"
                     >
                         <i class="fa fa-arrow-up-right-from-square"></i>
                         {{ trans('global.open') }}
@@ -59,7 +59,7 @@
                     <button
                         type="button"
                         class="btn btn-light"
-                        style="border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;"
+                        @click="openLink(currentDownloadLink)"
                     >
                         <i class="fa fa-download"></i>
                         {{ trans('global.download') }}
@@ -150,8 +150,8 @@ export default {
                 this.currentSlide++;
             }
         },
-        downloadMedium(item) {
-            this.$eventHub.emit('download', item.medium);
+        openLink(link) {
+            if (link) window.open(link, '_blank');
         },
         getURLs() {
             this.generatingLinks = true;
@@ -167,7 +167,7 @@ export default {
                 .then((response) => this.currentDownloadLink = response.data);
         },
         setURLs() {
-            const animationTime = 200; // should be shorter than the CSS transition
+            const animationTime = 300;
             const linkValidTime = 5000; // edusharing links are only valid for a couple of seconds
 
             // to activate the transitions, we need to implement the logic through timeouts
@@ -237,7 +237,18 @@ export default {
     transition: opacity 0.3s linear;
 
     & > #link-wrapper, & > #link-buttons {
-        transition: width 0.3s ease, opacity 0.3s linear;
+        transition: width 0.3s ease, opacity 0.3s linear, box-shadow 0.3s ease;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+
+        &:hover { box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.25); }
+    }
+    & > #link-buttons {
+        position: absolute;
+        z-index: 15;
+        border-radius: 1rem;
+
+        & > button:first-child { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+        & > button:last-child { border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem; }
     }
     &:hover > #link-wrapper, &.active > #link-wrapper { opacity: 1 !important; }
 }

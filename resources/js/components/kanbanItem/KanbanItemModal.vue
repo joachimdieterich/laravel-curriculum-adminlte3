@@ -84,12 +84,12 @@
                                 >
                                     <span class="position-relative d-flex align-items-center h-100">
                                         <img
-                                            :src="'/media/' + form.media_subscriptions[0].medium.id + '?preview=true'"
-                                            alt="default img"
+                                            :src="'/media/' + form.media_subscriptions[0].medium_id + '?preview=true'"
+                                            :alt="form.media_subscriptions[0].medium?.name ?? form.media_subscriptions[0].medium?.title ?? 'preview'"
                                             class="img-size-64 h-100"
                                             style="border-radius: 10px; object-fit: contain;"
                                         />
-                                        <span v-if="form.media_subscriptions.length > 1 || true"
+                                        <span v-if="form.media_subscriptions.length > 1"
                                             class="position-absolute d-flex align-items-center justify-content-center text-black bg-white rounded-pill"
                                             style="right: -12px; height: 24px; width: 24px; box-shadow: 0px 0px 3px black;"
                                         >
@@ -320,8 +320,7 @@ export default {
 
         this.$eventHub.on('new-media', (media) => {
             if (media?.id === this.component_id) {
-                // currently only single media selection is supported
-                this.form.media_subscriptions.push(media.selectedMedia[0]);
+                this.form.media_subscriptions.push(...media.selectedMedia);
             }
         });
     },

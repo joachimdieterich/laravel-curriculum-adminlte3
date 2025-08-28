@@ -116,6 +116,17 @@ export const useGlobalStore = defineStore('global', {
         setSelectedMedia(selection) {
             Object.assign(this.selectedMedia, selection);
         },
+        addSelectedMedia(selection) {
+            let index = this.selectedMedia.findIndex(
+                i => i.id === selection.id
+            );
+
+            if (index === -1) this.selectedMedia.push(selection);
+            else this.selectedMedia.splice(index, 1);
+        },
+        resetSelectedMedia() {
+            this.selectedMedia = [];
+        }
     },
     getters: {
         getItem(state) {

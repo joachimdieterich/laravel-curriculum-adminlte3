@@ -122,7 +122,7 @@ class EdusharingMediaAdapter implements MediaInterface
                 ['medium_id', $medium->id],
                 ['subscribable_type', $input['subscribable_type'] ?? null],
                 ['subscribable_id', $input['subscribable_id'] ?? null],
-            ])->with('media')->get()
+            ])->with('medium')->first()
         , 201);
     }
 
@@ -133,81 +133,81 @@ class EdusharingMediaAdapter implements MediaInterface
             return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
         }*/
         $params = $this->validateRequest();
+        $subscriptions = [];
+
         if (isset($params['model'])) {
             $class = 'App\\'.$params['model'];
-            $model = (new $class)::where('id', $params['model_id'] )->get()->first();
+            $model = (new $class)::find($params['model_id']);
 
-            if ($model->isAccessible() && ($model->medium_id == $medium->id)){
+            if ($model->isAccessible() AND $model->medium_id == $medium->id) {
                 $subscriptions = MediumSubscription::where('subscribable_type','App\\'.$params['model'])
                     ->where('subscribable_id',$params['model_id'])
                     ->where('medium_id', $medium->id)->get();
             }
-        } else {
-            $subscriptions = $medium->subscriptions;
         }
 
-        if (count($subscriptions) > 0)
+        if (count($subscriptions) === 0) $subscriptions = $medium->subscriptions;
+
+        // check if at least one subscription allows access
+        foreach ($subscriptions as $subscription)
         {
-            foreach ($subscriptions as $subscription)
+            if (!$this->checkIfUserHasSubscription($subscription) || $subscription->additional_data == null) continue;
+
+            $edusharing = new Edusharing;
+            if (request('download'))
             {
-                if (!$this->checkIfUserHasSubscription($subscription) || $subscription->additional_data == null) continue;
-
-                $edusharing = new Edusharing;
-                if (request('download'))
-                {
-                    $url = $edusharing->getRedirectUrl($subscription->additional_data, 'download', $subscription->owner_id);
-                    if (request()->wantsJson()) {
-                        return $url;
-                    } else {
-                        return redirect($url);
-                    }
+                $url = $edusharing->getRedirectUrl($subscription->additional_data, 'download', $subscription->owner_id);
+                if (request()->wantsJson()) {
+                    return $url;
+                } else {
+                    return redirect($url);
                 }
-                else if (request('content'))
-                {
-                    $url = $edusharing->getRedirectUrl($subscription->additional_data, 'content', $subscription->owner_id);
-                    if (request()->wantsJson()) {
-                        return $url;
-                    } else {
-                        return redirect($url);
-                    }
+            }
+            else if (request('content'))
+            {
+                $url = $edusharing->getRedirectUrl($subscription->additional_data, 'content', $subscription->owner_id);
+                if (request()->wantsJson()) {
+                    return $url;
+                } else {
+                    return redirect($url);
                 }
-                else if (request('preview'))
-                {
-                    $url = $edusharing->getPreview($subscription->additional_data, $subscription->owner_id);
+            }
+            else if (request('preview'))
+            {
+                $url = $edusharing->getPreview($subscription->additional_data, $subscription->owner_id);
 
-                    if ($url->content == "")
-                    {
-                        return redirect($url->info['redirect_url']);
-                    }
-                    else
-                    {
-                        return response($url->content)->header('Content-Type', 'image/png');
-                    }
+                if ($url->content == "")
+                {
+                    return redirect($url->info['redirect_url']);
                 }
                 else
                 {
-                    $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
-                    if (request()->wantsJson()) {
-                        return [
-                            'detailsSnippet' => $node['detailsSnippet'],
-                            'downloadUrl' => $node['node']['downloadUrl'],
-                            'preview' => $node['node']['preview'],
-                            'title' => $node['node']['title'],
-                            'name' => $node['node']['name'],
-                        ];
-                    } else {
-                        $url = $node['node']['preview']['url'];
-                        if (gettype($url) == 'string') {
-                            return redirect($url);
-                        } else { // sometimes the url attribute is another array
-                            return redirect($url['info']['redirect_url']);
-                        }
+                    return response($url->content)->header('Content-Type', 'image/png');
+                }
+            }
+            else
+            {
+                $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
+                if (request()->wantsJson()) {
+                    return [
+                        'detailsSnippet' => $node['detailsSnippet'],
+                        'downloadUrl' => $node['node']['downloadUrl'],
+                        'preview' => $node['node']['preview'],
+                        'title' => $node['node']['title'],
+                        'name' => $node['node']['name'],
+                    ];
+                } else {
+                    $url = $node['node']['preview']['url'];
+                    if (gettype($url) == 'string') {
+                        return redirect($url);
+                    } else { // sometimes the url attribute is another array
+                        return redirect($url['info']['redirect_url']);
                     }
                 }
             }
         }
 
-        abort(403, "No permission to view Edusharing media"); // user has no permission to access this file !
+        abort(403, "No permission to view Edusharing media");
     }
 
     public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs

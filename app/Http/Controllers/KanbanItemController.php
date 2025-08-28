@@ -44,16 +44,26 @@ class KanbanItemController extends Controller
             'owner_id'          => auth()->user()->id,
         ]);
 
+        if (isset($input['media_subscriptions']) AND count($input['media_subscriptions']) > 0) {
+            MediumSubscription::whereIn('medium_id', $input['media_subscriptions'])
+            ->where([
+                'subscribable_id'   => $input['kanban_status_id'],
+                'subscribable_type' => 'App\\KanbanStatus',
+            ])
+            ->update([
+                'subscribable_id'   => $kanbanItem->id,
+                'subscribable_type' => 'App\\KanbanItem',
+            ]);
+        }
+
         LogController::set(get_class($this).'@'.__FUNCTION__);
         Kanban::find($input['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
-
 
         if (request()->wantsJson()) {
 
             if (!pusher_event(new \App\Events\Kanbans\KanbanItemAddedEvent($kanbanItem)))
             {
-                return KanbanItem::where('id', $kanbanItem->id)
-                    ->with([
+                return KanbanItem::with([
                         'comments',
                         'comments.user',
                         'comments.likes',
@@ -61,7 +71,7 @@ class KanbanItemController extends Controller
                         'mediaSubscriptions.medium',
                         'owner',
                     ])
-                    ->get()->first();
+                    ->find($kanbanItem->id);
             }
         }
     }
@@ -297,6 +307,7 @@ class KanbanItemController extends Controller
             'order_id' => 'sometimes|required|integer',
             'kanban_id' => 'sometimes|required|integer',
             'kanban_status_id' => 'sometimes|required|integer',
+            'media_subscriptions' => 'sometimes|array',
             'color' => 'sometimes',
             'due_date' => 'sometimes',
             'locked' => 'sometimes|boolean',

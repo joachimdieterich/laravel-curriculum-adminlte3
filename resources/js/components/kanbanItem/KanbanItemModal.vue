@@ -78,14 +78,14 @@
                                 class="btn-group d-flex ml-auto"
                                 style="max-height: 100px;"
                             >
-                                <button v-if="form.media_subscriptions.length > 0"
+                                <button v-if="medium"
                                     type="button"
                                     class="btn btn-default"
                                 >
                                     <span class="position-relative d-flex align-items-center h-100">
                                         <img
-                                            :src="'/media/' + form.media_subscriptions[0].medium_id + '?preview=true'"
-                                            :alt="form.media_subscriptions[0].medium?.name ?? form.media_subscriptions[0].medium?.title ?? 'preview'"
+                                            :src="'/media/' + medium.id + '?preview=true'"
+                                            :alt="medium.name ?? medium.title ?? 'preview'"
                                             class="img-size-64 h-100"
                                             style="border-radius: 10px; object-fit: contain;"
                                         />
@@ -257,6 +257,7 @@ export default {
         return {
             component_id: this.$.uid,
             method: 'post',
+            medium: null,
             form: new Form({
                 id: '',
                 title: '',
@@ -308,6 +309,9 @@ export default {
                     this.form.populate(params.item);
                     this.method = params.method;
 
+                    if (this.form.media_subscriptions.length > 0) this.medium = this.form.media_subscriptions[0].medium;
+                    else this.medium = null; // needs to be reset
+
                     if (this.form.visible_from == null && this.form.visible_until != null) {
                         this.form.visible_date = [this.form.visible_until, null]; // second date needs to be null
                     } else {
@@ -319,9 +323,10 @@ export default {
         });
 
         this.$eventHub.on('new-media', (media) => {
-            if (media?.id === this.component_id) {
-                this.form.media_subscriptions.push(...media.selectedMedia);
-            }
+            if (media?.id !== this.component_id) return;
+
+            this.form.media_subscriptions.push(...media.selectedMedia);
+            if (this.medium === null) this.medium = media.selectedMedia[0].medium;
         });
     },
     methods: {
@@ -338,6 +343,7 @@ export default {
             if (this.method == 'patch') {
                 this.update();
             } else {
+                this.form.media_subscriptions = this.form.media_subscriptions.map(m => m.medium_id);
                 this.add();
             }
         },
@@ -365,8 +371,8 @@ export default {
         },
         openMediumModal() {
             this.globalStore?.showModal('medium-modal', {
-                subscribable_id: this.method == 'post' ? this.form.kanban_id : this.form.id,
-                subscribable_type: this.method == 'post' ? 'App\\Kanban' : 'App\\KanbanItem',
+                subscribable_id: this.method == 'post' ? this.form.kanban_status_id : this.form.id,
+                subscribable_type: this.method == 'post' ? 'App\\KanbanStatus' : 'App\\KanbanItem',
                 subscribeSelected: true,
                 public: true,
                 callback: 'new-media',

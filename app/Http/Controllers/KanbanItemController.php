@@ -188,7 +188,11 @@ class KanbanItemController extends Controller
 
         $kanbanItemForEvent = $kanbanItem;
 
-        $kanbanItem->mediaSubscriptions()->delete();
+        $kanbanItem->mediaSubscriptions->each(function (MediumSubscription $subscription) {
+            // hack to skip setting medium_id of model to null
+            if (is_null($subscription->additional_data)) $subscription->additional_data = true;
+            app(MediumSubscriptionController::class)->destroy($subscription);
+        });
         $kanbanItem->subscriptions()->delete();
         $kanbanItem->delete();
 

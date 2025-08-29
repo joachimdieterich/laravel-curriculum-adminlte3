@@ -321,12 +321,12 @@ export default {
                 }
             }
         });
-
+        // INFO: 'new-media' is just a placeholder
         this.$eventHub.on('new-media', (media) => {
             if (media?.id !== this.component_id) return;
 
             this.form.media_subscriptions.push(...media.selectedMedia);
-            if (this.medium === null) this.medium = media.selectedMedia[0].medium;
+            if (this.medium === null) this.medium = media.selectedMedia[0].medium ?? media.selectedMedia[0];
         });
     },
     methods: {

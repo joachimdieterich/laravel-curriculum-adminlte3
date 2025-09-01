@@ -201,6 +201,7 @@
         <Comments v-if="commentable"
             :websocket="websocket"
             :comments="item.comments"
+            :commentable="editable"
             :model="item"
             :kanban_owner_id="kanban_owner_id"
         />

@@ -73,24 +73,28 @@
             </div>
         </div>
 
-        <div class="input-group pb-3" v-if="commentable">
-            <input
-                type="text"
-                name="message"
-                class="form-control"
-                v-model.trim="form.comment"
-                :placeholder="trans('global.comment') + '...'"
-                @keyup.enter="sendComment()"
-            />
-            <span class="input-group-append">
-                <button
-                    class="btn btn-primary"
-                    :disabled="!form.comment"
-                    @click.prevent="sendComment()"
-                >
-                    <i class="far fa-paper-plane"></i>
-                </button>
-            </span>
+        <div class="pb-3" v-if="commentable">
+            <div class="input-group">
+                <input
+                    type="text"
+                    name="message"
+                    class="form-control"
+                    v-model.trim="form.comment"
+                    :placeholder="trans('global.comment') + '...'"
+                    @keyup.enter="sendComment()"
+                    @keyup="whisperTyping()"
+                />
+                <span class="input-group-append">
+                    <button
+                        class="btn btn-primary"
+                        :disabled="!form.comment"
+                        @click.prevent="sendComment()"
+                    >
+                        <i class="far fa-paper-plane"></i>
+                    </button>
+                </span>
+            </div>
+            <div class="font-weight-light text-secondary" v-if="typing"><small>Jemand schreibt...</small></div>
         </div>
     </div>
 </template>
@@ -130,7 +134,8 @@ export default {
                 model_id: this.model.id,
                 comment: '',
             }),
-            scrollHeight: this.$refs.scroll_container
+            websocketWhisperConnection: null,
+            typing: false
         }
     },
     methods: {
@@ -149,7 +154,7 @@ export default {
         },
         deleteComment(comment) {
             axios.delete('/kanbanItemComment/' + comment.id)
-                .then(res => {
+                .then(() => {
                     this.stopWebsocket(comment.id);
                 })
                 .catch(err => {
@@ -166,10 +171,11 @@ export default {
                 this.comments.forEach((comment) => {
                     this.startWebsocket(comment.id);
                 });
+                this.websocketWhisperConnection = this.startWhisperWebsocket(this.model.id)
             }
         },
         startWebsocket(id) {
-            this.$echo
+            return this.$echo
                 .join('App.KanbanItemComment.' + id)
                 .listen('.KanbanItemCommentUpdated', (payload) => {
                     const index = this.comments.findIndex(s => s.id === payload.model.id);
@@ -181,22 +187,34 @@ export default {
                     this.stopWebsocket(payload.model.id);
                 });
         },
+        startWhisperWebsocket(id) {
+            return this.$echo
+                .join('App.KanbanItemComment.Whisper.' + id)
+                .listenForWhisper('typing', (e) => {
+                    this.typing = e.typing;
+                });
+        },
         stopWebsockets() {
             if (this.websocket === true) {
                 this.comments.forEach((comment) => {
                     this.stopWebsocket(comment.id);
                 });
+
+                this.stopWhisperWebsocket();
             }
         },
         stopWebsocket(id) {
             this.$echo.leave('App.KanbanItemComment.' + id);
         },
-
-    },
-    mounted() {
-        this.comments.forEach(() => {
-            this.$refs.scroll_container.scrollTop = this.$refs.scroll_container.scrollTop + 120
-        });
+        stopWhisperWebsocket(id) {
+            this.$echo.leave('App.KanbanItemComment.Whisper.' + id);
+        },
+        whisperTyping() {
+            console.log('whisper');
+            this.websocketWhisperConnection.whisper('typing',{
+                'typing': this.form.comment !== ""
+            });
+        }
     },
     unmounted() {
         this.stopWebsockets();

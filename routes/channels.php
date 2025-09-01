@@ -20,6 +20,9 @@ Broadcast::channel('App.KanbanItem.{id}', function (User $user) {
 Broadcast::channel('App.KanbanItemComment.{id}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });
+Broadcast::channel('App.KanbanItemComment.Whisper.{id}', function (User $user) {
+    return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
+});
 Broadcast::channel('App.Kanban.{id}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });

@@ -2,7 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
+            @mouseup.self="close()"
         >
             <div class="modal-container">
                 <div class="modal-header">
@@ -13,7 +13,7 @@
                         type="button"
                         class="btn btn-icon text-secondary"
                         :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
+                        @click="close()"
                     >
                         <i class="fa fa-times"></i>
                     </button>
@@ -224,7 +224,7 @@
                             id="kanban-item-cancel"
                             type="button"
                             class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name);"
+                            @click="close()"
                         >
                             {{ trans('global.cancel') }}
                         </button>
@@ -330,6 +330,24 @@ export default {
         });
     },
     methods: {
+        close(forced = false) {
+            if (
+                !forced // check if modal has been manually closed
+                && this.method === 'post' // on create
+                && this.form.media_subscriptions.length > 0 // while media have been added
+            ) {
+                this.form.media_subscriptions.forEach(subscription => {
+                    axios.post('/mediumSubscriptions/destroy', {
+                        medium_id: subscription.medium_id,
+                        subscribable_id: subscription.subscribable_id,
+                        subscribable_type: subscription.subscribable_type,
+                        additional_data: true, // hack to skip setting medium_id of model to null
+                    });
+                });
+            }
+
+            this.globalStore.closeModal(this.$options.name);
+        },
         submit() {
             // parse dates to local time, so the server won't have to deal with timezones
             this.form.due_date = this.form.due_date?.toLocaleString() ?? null; // undefined will remove the field from the request
@@ -351,7 +369,7 @@ export default {
             axios.post('/kanbanItems', this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-item-added', r.data);
-                    this.globalStore?.closeModal(this.$options.name);
+                    this.close(true)
                 })
                 .catch(e => {
                     this.toast.error(this.errorMessage(e));
@@ -362,7 +380,7 @@ export default {
             axios.patch('/kanbanItems/' + this.form.id, this.form)
                 .then(r => {
                     this.$eventHub.emit('kanban-item-updated', r.data);
-                    this.globalStore?.closeModal(this.$options.name);
+                    this.close(true);
                 })
                 .catch(e => {
                     this.toast.error(this.errorMessage(e));

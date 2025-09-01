@@ -1053,6 +1053,9 @@ return [
             'visible_until' => 'visible until (date/time)',
         ],
     ],
+    'kanbanItemComment' => [
+        'typing' => "Someone's typing",
+    ],
     'kanbanStatus' => [
         'title' => 'Statuses',
         'title_singular' => 'Status',

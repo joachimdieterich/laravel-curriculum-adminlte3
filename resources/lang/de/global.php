@@ -1086,6 +1086,9 @@ return [
             'visible_until' => 'sichtbar bis (Datum/Uhrzeit)',
         ],
     ],
+    'kanbanItemComment' => [
+        'typing' => 'Jemand schreibt',
+    ],
     'kanbanStatus' => [
         'title' => 'Status',
         'title_singular' => 'Status',

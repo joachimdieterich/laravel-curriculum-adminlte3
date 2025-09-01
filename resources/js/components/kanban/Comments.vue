@@ -94,7 +94,7 @@
                     </button>
                 </span>
             </div>
-            <div class="font-weight-light text-secondary" v-if="typing"><small>Jemand schreibt...</small></div>
+            <div class="font-weight-light text-secondary" v-if="typing"><small>{{ trans('global.kanbanItemComment.typing') }}...</small></div>
         </div>
     </div>
 </template>

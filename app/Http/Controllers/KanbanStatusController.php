@@ -40,6 +40,7 @@ class KanbanStatusController extends Controller
             'visible_until' => $input['visible_until'] ?? NULL,
             'owner_id' => auth()->user()->id,
         ]);
+        Kanban::find($input['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
 
         if (request()->wantsJson()) {
             return $kanbanStatus;
@@ -100,7 +101,7 @@ class KanbanStatusController extends Controller
 
         if (request()->wantsJson()) {
             if ($update_kanban->count() !== 0 OR $new_statuses->count() !== 0 OR $new_items->count() !== 0) {
-                return ['message' => $kanban->withRelations($kanban)];
+                return ['message' => $kanban->withRelations()];
             } else {
                 return ['message' => 'uptodate'];
             }
@@ -184,6 +185,7 @@ class KanbanStatusController extends Controller
                 ]);
             }
         }
+        Kanban::find($status['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
 
         return KanbanStatus::with([
                 'items',
@@ -215,13 +217,18 @@ class KanbanStatusController extends Controller
 
     private function getStatusWithRelations(KanbanStatus $kanbanStatus): array
     {
-        return ['message' =>  $kanbanStatus
-            ->with(['items' => function ($query) use ($kanbanStatus) {
-                $query->where('kanban_id', $kanbanStatus->kanban_id)
-                    ->with(['owner', 'mediaSubscriptions.medium'])
-                    ->orderBy('order_id');
-            }, 'items.subscriptions', 'items.comments', 'items.comments.user',
-            ])->where('id', $kanbanStatus->id)->get()->first()
+        return [
+            'message' => $kanbanStatus
+                ->with([
+                    'items' => function ($query) use ($kanbanStatus) {
+                        $query->where('kanban_id', $kanbanStatus->kanban_id)
+                              ->with(['owner', 'mediaSubscriptions.medium'])
+                              ->orderBy('order_id');
+                    },
+                    'items.subscriptions',
+                    'items.comments',
+                    'items.comments.user',
+                ])->where('id', $kanbanStatus->id)->get()->first()
         ];
     }
 }

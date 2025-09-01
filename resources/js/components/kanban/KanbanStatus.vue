@@ -176,21 +176,48 @@ export default {
                     console.log(err.response);
                 });
         },
+        handleItemUpdated(updatedItem) {
+            let item = this.status.items.find(s => s.id === updatedItem.id);
+
+            Object.assign(item, updatedItem);
+
+            this.handleItemMoved();
+        },
+        handleItemDeleted(item) {
+            // Find the index of the status where we should delete the item
+            const itemIndex = this.status.items.findIndex(
+                i => i.id === item.id
+            );
+            if (itemIndex === -1) return;
+
+            this.status.items.splice(index, 1);
+        },
+        // Reorder items after update
+        handleItemMoved() {
+            let newItemsOrderTemp = [];
+
+            this.status.items.forEach((status) => {
+                newItemsOrderTemp.splice(status.order_id, 0, status);
+            });
+
+            this.status.items = newItemsOrderTemp;
+        },
         startWebsocket() {
             if (this.websocket === true) {
                 this.$echo
                     .join('App.KanbanStatus.' + this.status.id)
                     .listen('.KanbanStatusUpdated', (payload) => {
-                        this.$eventHub.emit('kanban-status-moved', payload.model);
                         this.$eventHub.emit('kanban-status-updated', payload.model);
-                    })
-                    .listen('.KanbanStatusCreated', (payload) => {
-                        this.$eventHub.emit('kanban-status-created', payload.model);
                     })
                     .listen('.KanbanStatusDeleted', (payload) => {
                         this.$eventHub.emit('kanban-status-deleted', payload.model);
                     })
                 ;
+            }
+        },
+        stopWebsocket() {
+            if (this.websocket === true) {
+                this.$echo.leave('App.KanbanStatus.' + this.status.id);
             }
         },
     },
@@ -213,6 +240,19 @@ export default {
                 || this.checkPermission('is_admin')
                 || this.$userId == this.status.owner_id;
         }
+
+        // ITEM Events
+        if (this.status !== null) {
+            this.$eventHub.on('kanban-item-updated-' + this.status.id, (item) => {
+                this.handleItemUpdated(item);
+            });
+            this.$eventHub.on('kanban-item-deleted-' + this.status.id, (item) => {
+                this.handleItemDeleted(item);
+            });
+        }
+    },
+    unmounted() {
+        this.stopWebsocket();
     },
     components: {
         ConfirmModal,

@@ -5,7 +5,11 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class KanbanStatus extends Model
 {
@@ -13,45 +17,52 @@ class KanbanStatus extends Model
 
     protected $guarded = [];
 
-    public function broadcastOn($event): array
+    protected $casts = [
+        'locked'        => 'boolean',
+        'editable'      => 'boolean',
+        'visibility'    => 'boolean',
+        'updated_at'    => 'datetime',
+        'created_at'    => 'datetime',
+        'visible_from'  => 'datetime',
+        'visible_until' => 'datetime',
+    ];
+
+    public function broadcastOn(): array
     {
         return [
             new PresenceChannel($this->broadcastChannel())
         ];
     }
 
-    protected $casts = [
-        'locked' => 'boolean',
-        'editable' => 'boolean',
-        'visibility' => 'boolean',
-        'updated_at' => 'datetime',
-        'created_at' => 'datetime',
-        'visible_from' => 'datetime',
-        'visible_until' => 'datetime',
-    ];
+    public function broadcastWith(): array
+    {
+        return [
+            'model' => $this->withRelations(),
+        ];
+    }
 
     /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param \DateTimeInterface $date
+     * @param DateTimeInterface $date
      * @return string
      */
-    protected function serializeDate(DateTimeInterface $date)
+    protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function items()
+    public function items(): HasMany|KanbanStatus
     {
         return $this->hasMany('App\KanbanItem')->orderBy('order_id');
     }
 
-    public function owner()
+    public function owner(): HasOne|KanbanStatus
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
 
-    public function kanban()
+    public function kanban(): HasOne|KanbanStatus
     {
         return $this->hasOne('App\Kanban', 'id', 'kanban_id');
     }
@@ -59,9 +70,9 @@ class KanbanStatus extends Model
     /**
      * Accessor that mimics Eloquent dynamic property.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
-    public function getEditorsAttribute()
+    public function getEditorsAttribute(): Collection
     {
         if (!$this->relationLoaded('editors')) {
             $layers = User::whereIn('id', $this->editors_ids)->get();
@@ -75,38 +86,55 @@ class KanbanStatus extends Model
     /**
      * Access editors relation query.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
-    public function editors()
+    public function editors(): Builder
     {
         return User::whereIn('id', $this->editors_ids);
     }
 
     /**
      * Accessor for editors_ids property.
-     *
-     * @return array
      */
-    public function getEditorsIdsAttribute($commaSeparatedIds)
+    public function getEditorsIdsAttribute($commaSeparatedIds): array
     {
-
         return explode(',', $commaSeparatedIds);
     }
 
     /**
      * Mutator for layer_ids property.
      *
-     * @param array|string|id $ids
+     * @param array|string $ids
      * @return void
      */
-    public function setEditorsIdsAttribute($ids)
+    public function setEditorsIdsAttribute($ids): void
     {
-        $this->attributes['editors_ids'] = is_string($ids) ? $ids : implode(',', array_filter($ids)); // array filter removes empty entries.
+        $this->attributes['editors_ids'] = is_string($ids) ? $ids : implode(
+            ',',
+            array_filter($ids)
+        ); // array filter removes empty entries.
     }
 
 
-    public function isAccessible()
+    public function isAccessible(): bool
     {
         return $this->kanban->isAccessible();
+    }
+
+    public function withRelations(): Model|null
+    {
+        return $this
+            ->with([
+                'items' => function ($query) {
+                    $query->where('kanban_id', $this->kanban_id)
+                        ->with(['owner', 'mediaSubscriptions.medium'])
+                        ->orderBy('order_id');
+                },
+                'items.subscriptions',
+                'items.comments',
+                'items.comments.likes',
+                'items.comments.user',
+                'items.likes',
+            ])->where('id', $this->id)->get()->first();
     }
 }

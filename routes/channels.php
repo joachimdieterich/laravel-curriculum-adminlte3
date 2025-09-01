@@ -14,6 +14,12 @@
 use App\User;
 use Illuminate\Support\Facades\Broadcast;
 
+Broadcast::channel('App.KanbanItem.{id}', function (User $user) {
+    return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
+});
+Broadcast::channel('App.KanbanItemComment.{id}', function (User $user) {
+    return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
+});
 Broadcast::channel('App.Kanban.{id}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });

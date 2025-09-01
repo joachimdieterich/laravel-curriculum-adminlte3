@@ -203,7 +203,7 @@ export default {
         add() {
             axios.post('/kanbanStatuses', this.form)
                 .then(r => {
-                    this.$eventHub.emit('kanban-status-created', r.data);
+                    this.$eventHub.emit('kanban-status-created-' + this.form.kanban_id, r.data);
                     this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {

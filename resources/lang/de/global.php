@@ -1051,7 +1051,7 @@ return [
         ],
     ],
     'kanban' => [
-        'contributor' => 'Bearbeiter',
+        'contributor' => 'Aktuelle Bearbeiter',
         'contributor_joined' => 'Bearbeiter dazu gekommen',
         'contributor_left' => 'Bearbeiter gegangen',
         'title' => 'Pinnwände',

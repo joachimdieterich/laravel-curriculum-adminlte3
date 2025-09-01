@@ -61,6 +61,7 @@
                             </a>
                             <Reaction
                                 :model="comment"
+                                :websocket="websocket"
                                 class="pull-right"
                                 reaction="like"
                                 url="/kanbanItemComments"
@@ -113,6 +114,10 @@ export default {
             type: Object,
             default: null,
         },
+        websocket: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -129,12 +134,9 @@ export default {
 
             axios.post('/kanbanItemComment', this.form)
                 .then(res => {
-                    this.$emit('addComment', res.data);
+                    this.startWebsocket(res.data.id);
+                    this.scrollDown();
                     this.form.comment = '';
-                    this.$nextTick(function() {
-                        let container = this.$refs.scroll_container;
-                        container.scrollTop = container.scrollHeight + 120;
-                    });
                 })
                 .catch(err => function () {
                     console.log(err);
@@ -143,15 +145,53 @@ export default {
         deleteComment(comment) {
             axios.delete('/kanbanItemComment/' + comment.id)
                 .then(res => {
-                    this.$emit('removeComment', comment);
+                    this.stopWebsocket(comment.id);
                 })
                 .catch(err => {
                     console.log(err.response);
                 });
         },
+        scrollDown() {
+            let container = this.$refs.scroll_container;
+            container.scrollTop = container.scrollHeight + 120;
+        },
+        startWebsockets() {
+            if (this.websocket === true) {
+                this.comments.forEach((comment) => {
+                    this.startWebsocket(comment.id);
+                });
+            }
+        },
+        startWebsocket(id) {
+            this.$echo
+                .join('App.KanbanItemComment.' + id)
+                .listen('.KanbanItemCommentUpdated', (payload) => {
+                    const index = this.comments.findIndex(s => s.id === payload.model.id);
+                    this.comments[index] = payload.model;
+                })
+                .listen('.KanbanItemCommentDeleted', (payload) => {
+                    let index = this.comments.indexOf(payload.model);
+                    this.item.comments.splice(index, 1);
+                    this.stopWebsocket(payload.model.id);
+                });
+        },
+        stopWebsockets() {
+            if (this.websocket === true) {
+                this.comments.forEach((comment) => {
+                    this.stopWebsocket(comment.id);
+                });
+            }
+        },
+        stopWebsocket(id) {
+            this.$echo.leave('App.KanbanItemComment.' + id);
+        },
+
     },
-    mounted() {
-        this.conversation = this.comments;
+    unmounted() {
+        this.stopWebsockets();
+    },
+    created() {
+        this.startWebsockets();
     },
 }
 </script>

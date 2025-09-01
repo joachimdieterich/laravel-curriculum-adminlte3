@@ -7,9 +7,11 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- *   @OA\Schema(
+ * @OA\Schema(
  *      required={"title"},
  *      @OA\Xml(name="Kanban"),
  *
@@ -34,112 +36,113 @@ class Kanban extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'commentable' => 'boolean',
-        'auto_refresh' => 'boolean',
+        'commentable'           => 'boolean',
+        'auto_refresh'          => 'boolean',
         'only_edit_owned_items' => 'boolean',
-        'collapse_items' => 'boolean',
-        'allow_copy' => 'boolean',
-        'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
+        'collapse_items'        => 'boolean',
+        'allow_copy'            => 'boolean',
+        'updated_at'            => 'datetime',
+        'created_at'            => 'datetime',
     ];
 
     public function broadcastOn($event): array
     {
         return [
-            new PresenceChannel($this->broadcastChannel())
+             new PresenceChannel($this->broadcastChannel())
         ];
     }
 
-    public function broadcastWith(string $event): array
+    public function broadcastWith(): array
     {
+
         return [
-            'model' => $this->withRelations($this),
+            'model' => $this->withRelations(),
         ];
     }
 
-        /**
+    /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param  \DateTimeInterface  $date
+     * @param DateTimeInterface $date
      * @return string
      */
-    protected function serializeDate(DateTimeInterface $date)
+    protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function path()
+    public function path(): string
     {
         return route('kanbans.show', $this->id);
     }
 
-    public function items()
+    public function items(): HasMany|Kanban
     {
-        return $this->hasMany('App\KanbanItem', 'kanban_id', 'id')->orderBy('order_id');
+        return $this->hasMany(KanbanItem::class);
     }
 
-    public function statuses()
+    public function statuses(): HasMany|Kanban
     {
         return $this->hasMany('App\KanbanStatus', 'kanban_id', 'id')->orderBy('order_id');
     }
 
-    public function withRelations(Kanban $kanban):Kanban|null
+    public function withRelations(): Kanban|null
     {
         return $this->with([
-            'owner' => function($query) {
+            'owner'          => function ($query) {
                 $query->select('id', 'firstname', 'lastname');
             },
-            'statuses.items' => function($query) use ($kanban) {
+            'statuses.items' => function ($query) {
                 $query->with([
                     'comments',
                     'comments.user',
                     'comments.likes',
                     'likes',
                     'mediaSubscriptions.medium',
-                    'owner' => function($query) {
+                    'owner' => function ($query) {
                         $query->select('id', 'username', 'firstname', 'lastname');
                     },
                 ])
-                    ->orderBy('order_id');
+                      ->orderBy('order_id');
             },
             'medium',
-        ])->find($kanban->id);
+        ])->find($this->id);
     }
 
-    public function subscriptions()
+    public function subscriptions(): HasMany|Kanban
     {
         return $this->hasMany(KanbanSubscription::class);
     }
 
-    public function medium()
+    public function medium(): HasOne|Kanban
     {
         return $this->hasOne('App\Medium', 'id', 'medium_id');
     }
 
-    public function userSubscriptions()
+    public function userSubscriptions(): HasMany|Kanban
     {
         return $this->hasMany(KanbanSubscription::class)
-            ->where('subscribable_type', 'App\User');
+                    ->where('subscribable_type', 'App\User');
     }
 
-    public function groupSubscriptions()
+    public function groupSubscriptions(): HasMany|Kanban
     {
         return $this->hasMany(KanbanSubscription::class)
-            ->where('subscribable_type', 'App\Group');
+                    ->where('subscribable_type', 'App\Group');
     }
 
-    public function organizationSubscriptions()
+    public function organizationSubscriptions(): HasMany|Kanban
     {
         return $this->hasMany(KanbanSubscription::class)
-            ->where('subscribable_type', 'App\Organization');
+                    ->where('subscribable_type', 'App\Organization');
     }
 
-    public function owner()
+    public function owner(): HasOne|Kanban
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
 
-    public function getBackgroundAttribute()
+    public function getBackgroundAttribute(): string
     {
         if ($this->color != null && $this->color != '#F4F4F4') {
             return $this->transformHexColorToRgba($this->color);
@@ -148,12 +151,20 @@ class Kanban extends Model
         return $this->transformHexColorToRgba('#F4F4F4');
     }
 
-    public function isAccessible()
+    public function isAccessible(): bool
     {
         if (
             auth()->user()->kanbans->contains('id', $this->id) // user enrolled
-            or $this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))->isNotEmpty() // user is enroled in group
-            or $this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id)->isNotEmpty() // user is enroled in organization
+            or $this->subscriptions->where('subscribable_type', "App\Group")->whereIn(
+                'subscribable_id',
+                auth()->user()->groups->pluck(
+                    'id'
+                )
+            )->isNotEmpty() // user is enroled in group
+            or $this->subscriptions->where('subscribable_type', "App\Organization")->whereIn(
+                'subscribable_id',
+                auth()->user()->current_organization_id
+            )->isNotEmpty() // user is enroled in organization
             or $this->owner_id == auth()->user()->id
             or is_admin()
         ) {
@@ -163,35 +174,41 @@ class Kanban extends Model
         }
     }
 
-    public function isEditable($user_id = null, $token = null)
+    public function isEditable($user_id = null, $token = null): bool
     {
-        if ($user_id == null)
-        {
+        if ($user_id == null) {
             $user_id = auth()->user()->id;
         }
         // check for subscriptions if not guest user
         if ($user_id != env('GUEST_USER')) {
-            $userSubscription = optional($this->userSubscriptions()
-                ->where('subscribable_id', $user_id)
-                ->first());
-            $groupSubscription = optional($this->groupSubscriptions()
-                ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
-                ->where('editable', 1)
-                ->first());
-            $organizationSubscription = optional($this->organizationSubscriptions()
-                ->whereIn('subscribable_id', auth()->user()->organizations->pluck('id'))
-                ->where('editable', 1)
-                ->first());
+            $userSubscription         = optional(
+                $this->userSubscriptions()
+                    ->where('subscribable_id', $user_id)
+                    ->first()
+            );
+            $groupSubscription        = optional(
+                $this->groupSubscriptions()
+                    ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
+                    ->where('editable', 1)
+                    ->first()
+            );
+            $organizationSubscription = optional(
+                $this->organizationSubscriptions()
+                    ->whereIn('subscribable_id', auth()->user()->organizations->pluck('id'))
+                    ->where('editable', 1)
+                    ->first()
+            );
         }
 
         if ($token != null) {
-            $tokenSubscription = optional($this->userSubscriptions()
-                ->where('sharing_token', $token)
-                ->first());
+            $tokenSubscription = optional(
+                $this->userSubscriptions()
+                     ->where('sharing_token', $token)
+                     ->first()
+            );
         }
 
-        if (
-            $userSubscription->editable ?? false // user enrolled
+        if ($userSubscription->editable ?? false // user enrolled
             or $tokenSubscription->editable ?? false // token has edit permission
             or $groupSubscription->editable ?? false // group enrolled
             or $organizationSubscription->editable ?? false // organization enrolled
@@ -204,10 +221,10 @@ class Kanban extends Model
         }
     }
 
-    private function transformHexColorToRgba($color, $opacity = .7)
+    private function transformHexColorToRgba($color, $opacity = .7): string
     {
         [$r, $g, $b] = sscanf($color, '#%02x%02x%02x');
 
-        return 'rgba('.$r.', '.$g.', '.$b.', '.$opacity.')';
+        return 'rgba(' . $r . ', ' . $g . ', ' . $b . ', ' . $opacity . ')';
     }
 }

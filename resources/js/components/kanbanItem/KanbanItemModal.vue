@@ -307,12 +307,12 @@ export default {
         update() {
             axios.patch('/kanbanItems/' + this.form.id, this.form)
                 .then(r => {
-                    this.$eventHub.emit('kanban-item-updated', r.data);
+                    this.$eventHub.emit('kanban-item-updated-' + r.data.kanban_status_id, r.data);
                     this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    this.toast.error(this.errorMessage(e));
                     console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },

@@ -44,7 +44,6 @@ class EventServiceProvider extends ServiceProvider
             Event::listen('*', function ($event, array $data) {
                 if ($event == 'Illuminate\\Log\\Events\\MessageLogged'){ return;}
                 Log::debug($event . ' invoked');
-                Log::debug(json_encode($data, JSON_PRETTY_PRINT));
             });
         }
     }

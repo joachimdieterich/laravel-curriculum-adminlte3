@@ -3,20 +3,21 @@
 namespace App;
 
 use DateTimeInterface;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Maize\Markable\Markable;
-use Maize\Markable\Models\Like;
 use Illuminate\Database\Eloquent\Model;
 use Mews\Purifier\Casts\CleanHtml;
 
 class KanbanItem extends Model
 {
+    use BroadcastsEvents;
     use Markable;
 
     protected $guarded = [];
 
     protected $casts = [
         'description' => CleanHtml::class, // cleans both when getting and setting the value
-        'created_at' => 'datetime:d.m.Y H:i',
         'locked' => 'boolean',
         'editable' => 'boolean',
         'replace_links' => 'boolean',
@@ -28,16 +29,47 @@ class KanbanItem extends Model
         'visible_until'  => 'datetime',
     ];
 
-    /*protected $dates = [
-        'updated_at',
-        'created_at',
-        'visible_from',
-        'visible_until',
-    ];*/
-
-    protected static $marks = [
+    protected static array $marks = [
         Like::class,
     ];
+
+    public function broadcastOn($event): array
+    {
+        $defaultChannels = [
+            new PresenceChannel($this->broadcastChannel())
+        ];
+
+        $diff = $this->getDirty();
+        $updatedAtColumnName = $this->getUpdatedAtColumn();
+
+        // If the only changed column is the updated_at (touch) just proceed normal
+        if (count($diff) == 1 && isset($diff[$updatedAtColumnName])) {
+            return $defaultChannels;
+        }
+
+        $diffWithoutUpdatedAtAndOrderId = array_filter($diff, function($key) use($updatedAtColumnName) {
+            return $key != $updatedAtColumnName && $key != 'order_id';
+        }, ARRAY_FILTER_USE_KEY);
+
+        // Only broadcast with real changes (order_id doesn't count)
+        if (count($diff) > 1 && count($diffWithoutUpdatedAtAndOrderId) == 0) {
+            return [];
+        }
+
+        return $defaultChannels;
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'model' => $this->with(
+                'comments',
+                    'comments.user',
+                    'comments.likes',
+                    'likes',
+            )->find($this->id),
+        ];
+    }
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -57,7 +89,7 @@ class KanbanItem extends Model
 
     public function kanban()
     {
-        return $this->belongsTo('App\Kanban', 'kanban_id', 'id');
+        return $this->belongsTo(Kanban::class);
     }
 
     public function comments()
@@ -95,7 +127,7 @@ class KanbanItem extends Model
 
     public function status()
     {
-        return $this->hasOne('App\KanbanStatus', 'id', 'kanban_status_id');
+        return $this->hasOne(KanbanStatus::class);
     }
 
     public function owner()

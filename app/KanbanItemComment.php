@@ -3,14 +3,15 @@
 namespace App;
 
 use DateTimeInterface;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Maize\Markable\Markable;
-use Maize\Markable\Models\Like;
 
 class KanbanItemComment extends Model
 {
-    use HasFactory, Markable;
+    use HasFactory, Markable, BroadcastsEvents;
 
     protected $casts = [
         'created_at' => 'datetime:d.m.Y H:i',
@@ -23,6 +24,22 @@ class KanbanItemComment extends Model
         Like::class,
     ];
 
+    public function broadcastOn($event): array
+    {
+        return [
+            new PresenceChannel($this->broadcastChannel())
+        ];
+    }
+
+    public function broadcastWith($event): array
+    {
+        return [
+            'model' => $this->with(
+                'user',
+                'likes',
+            )->find($this->id),
+        ];
+    }
 
     /**
      * Prepare a date for array / JSON serialization.

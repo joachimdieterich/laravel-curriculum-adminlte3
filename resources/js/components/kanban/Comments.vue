@@ -126,6 +126,7 @@ export default {
                 model_id: this.model.id,
                 comment: '',
             }),
+            scrollHeight: this.$refs.scroll_container
         }
     },
     methods: {
@@ -152,8 +153,9 @@ export default {
                 });
         },
         scrollDown() {
-            let container = this.$refs.scroll_container;
-            container.scrollTop = container.scrollHeight + 120;
+            this.$nextTick(() => {
+                this.$refs.scroll_container.scrollTop = this.$refs.scroll_container.scrollHeight;
+            });
         },
         startWebsockets() {
             if (this.websocket === true) {
@@ -187,12 +189,24 @@ export default {
         },
 
     },
+    mounted() {
+        this.comments.forEach(() => {
+            this.$refs.scroll_container.scrollTop = this.$refs.scroll_container.scrollTop + 120
+        });
+    },
     unmounted() {
         this.stopWebsockets();
     },
     created() {
         this.startWebsockets();
     },
+    watch: {
+        comments:{
+            handler() {
+                this.scrollDown();
+            },
+        }
+    }
 }
 </script>
 <style scoped>

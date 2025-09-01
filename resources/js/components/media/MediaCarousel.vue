@@ -202,8 +202,6 @@ export default {
                 medium_id: item.medium_id,
                 subscribable_id: item.subscribable_id,
                 subscribable_type: item.subscribable_type,
-                sharing_level_id: item.sharing_level_id,
-                visibility: item.visibility,
                 additional_data: true, // hack to skip setting medium_id of model to null
             })
             .then(res => {

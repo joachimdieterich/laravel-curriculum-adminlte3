@@ -1,24 +1,27 @@
 <template>
-    <div class="contributor-container d-inline-flex align-items-center" :id="component_id">
-        <div @mouseenter="contributorDetailsEntered(contributor.id)"
-             @mouseleave="contributorDetailsLeft()"
-             @mousemove="contributorDetailsMovement"
-             class="d-flex  rounded-circle align-items-center"
-             v-for="contributor of contributors"
-             :style="this.contributorStyles[contributor.id]"
-        >
-            <avatar data-toggle="tooltip"
-                    :title="contributor.firstname + ' ' + contributor.lastname"
-                    :username="contributor.firstname + ' ' + contributor.lastname"
-                    :firstname="contributor.firstname"
-                    :lastname="contributor.lastname"
-                    :size="35"
-            />
-            <div v-show="contributorDetails.show && contributorDetails.key === contributor.id"
-                 class="rounded-sm contributor-details"
-                 :style="{top: contributorDetailsTopStyle + 'px', left: contributorDetailsLeftStyle + 'px'}"
+    <div :id="component_id" v-if="show">
+        <h5 v-if="heading">{{ trans('global.kanban.contributor') }}</h5>
+        <div class="contributor-container d-inline-flex align-items-center">
+            <div @mouseenter="contributorDetailsEntered(contributor.id)"
+                 @mouseleave="contributorDetailsLeft()"
+                 @mousemove="contributorDetailsMovement"
+                 class="d-flex  rounded-circle align-items-center"
+                 v-for="contributor of contributors"
+                 :style="this.contributorStyles[contributor.id]"
             >
-                {{ contributor.firstname }} {{ contributor.lastname }}
+                <avatar data-toggle="tooltip"
+                        :title="contributor.firstname + ' ' + contributor.lastname"
+                        :username="contributor.firstname + ' ' + contributor.lastname"
+                        :firstname="contributor.firstname"
+                        :lastname="contributor.lastname"
+                        :size="35"
+                />
+                <div v-show="contributorDetails.show && contributorDetails.key === contributor.id"
+                     class="rounded-sm contributor-details"
+                     :style="{top: contributorDetailsTopStyle + 'px', left: contributorDetailsLeftStyle + 'px'}"
+                >
+                    {{ contributor.firstname }} {{ contributor.lastname }}
+                </div>
             </div>
         </div>
     </div>
@@ -50,6 +53,10 @@ export default {
         contributors: {
             type: Object
         },
+        heading: {
+            type: Boolean,
+            default: false
+        }
     },
     methods: {
         contributorDetailsEntered: function (contributorKey) {
@@ -84,6 +91,9 @@ export default {
         contributorDetailsTopStyle() {
             return this.contributorDetails.posY
         },
+        show() {
+            return Object.values(this.contributors).length > 1;
+        }
     },
 }
 </script>

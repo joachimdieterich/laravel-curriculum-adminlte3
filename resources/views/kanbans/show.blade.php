@@ -3,9 +3,7 @@
 @section('contributors')
     <div class="row">
         <div>
-            <div>
-                <h5>{{ trans('global.kanban.contributor') }}</h5>
-                <div id="contributors"></div>
+            <div id="contributors">
             </div>
         </div>
     </div>

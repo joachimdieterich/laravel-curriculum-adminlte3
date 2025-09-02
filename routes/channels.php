@@ -14,19 +14,19 @@
 use App\User;
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('App.KanbanItem.{id}', function (User $user) {
+Broadcast::channel('App.KanbanItem.{kanbanItemId}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });
-Broadcast::channel('App.KanbanItemComment.{id}', function (User $user) {
+Broadcast::channel('App.KanbanItemComments.{kanbanItemId}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });
-Broadcast::channel('App.KanbanItemComment.Whisper.{id}', function (User $user) {
+Broadcast::channel('App.KanbanItemComments.Whisper.{kanbanItemId}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });
-Broadcast::channel('App.Kanban.{id}', function (User $user) {
+Broadcast::channel('App.Kanban.{kanbanId}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });
-Broadcast::channel('App.KanbanStatus.{id}', function (User $user) {
+Broadcast::channel('App.KanbanStatus.{kanbanStatusId}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });
 

@@ -147,6 +147,7 @@ export default {
                     this.startWebsocket(res.data.id);
                     this.scrollDown();
                     this.form.comment = '';
+                    this.whisperTyping();
                 })
                 .catch(err => function () {
                     console.log(err);
@@ -168,15 +169,13 @@ export default {
         },
         startWebsockets() {
             if (this.websocket === true) {
-                this.comments.forEach((comment) => {
-                    this.startWebsocket(comment.id);
-                });
+                this.startWebsocket(this.model.id);
                 this.websocketWhisperConnection = this.startWhisperWebsocket(this.model.id)
             }
         },
         startWebsocket(id) {
             return this.$echo
-                .join('App.KanbanItemComment.' + id)
+                .join('App.KanbanItemComments.' + id)
                 .listen('.KanbanItemCommentUpdated', (payload) => {
                     const index = this.comments.findIndex(s => s.id === payload.model.id);
                     this.comments[index] = payload.model;
@@ -189,28 +188,24 @@ export default {
         },
         startWhisperWebsocket(id) {
             return this.$echo
-                .join('App.KanbanItemComment.Whisper.' + id)
+                .join('App.KanbanItemComments.Whisper.' + id)
                 .listenForWhisper('typing', (e) => {
                     this.typing = e.typing;
                 });
         },
         stopWebsockets() {
             if (this.websocket === true) {
-                this.comments.forEach((comment) => {
-                    this.stopWebsocket(comment.id);
-                });
-
+                this.stopWebsocket(this.model.id);
                 this.stopWhisperWebsocket();
             }
         },
         stopWebsocket(id) {
-            this.$echo.leave('App.KanbanItemComment.' + id);
+            this.$echo.leave('App.KanbanItemComments.' + id);
         },
         stopWhisperWebsocket(id) {
-            this.$echo.leave('App.KanbanItemComment.Whisper.' + id);
+            this.$echo.leave('App.KanbanItemComments.Whisper.' + id);
         },
         whisperTyping() {
-            console.log('whisper');
             this.websocketWhisperConnection.whisper('typing',{
                 'typing': this.form.comment !== ""
             });

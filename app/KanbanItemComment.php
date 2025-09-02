@@ -26,14 +26,17 @@ class KanbanItemComment extends Model
 
     public function broadcastOn($event): array
     {
+        $broadcastChannelName = str_replace('\\', '.', get_class($this)) . 's.' . $this->kanban_item_id;
+
         return [
-            new PresenceChannel($this->broadcastChannel())
+            new PresenceChannel($broadcastChannelName)
         ];
     }
 
     public function broadcastWith($event): array
     {
         return [
+            'id' => $this->id,
             'model' => $this->with(
                 'user',
                 'likes',

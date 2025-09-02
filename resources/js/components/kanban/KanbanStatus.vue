@@ -181,7 +181,7 @@ export default {
 
             Object.assign(item, updatedItem);
 
-            this.handleItemMoved();
+            this.handleItemMoved(this.status.items);
         },
         handleItemDeleted(item) {
             // Find the index of the status where we should delete the item
@@ -199,8 +199,6 @@ export default {
             newItems.forEach((status) => {
                 newItemsOrderTemp.splice(status.order_id, 0, status);
             });
-
-            console.log(newItemsOrderTemp);
 
             this.status.items = newItemsOrderTemp;
         },

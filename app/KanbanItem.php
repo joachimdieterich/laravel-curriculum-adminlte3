@@ -66,6 +66,7 @@ class KanbanItem extends Model
                 'comments',
                     'comments.user',
                     'comments.likes',
+                    'mediaSubscriptions.medium',
                     'likes',
             )->find($this->id),
         ];

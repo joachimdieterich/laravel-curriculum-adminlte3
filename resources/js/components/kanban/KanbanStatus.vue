@@ -193,12 +193,14 @@ export default {
             this.status.items.splice(index, 1);
         },
         // Reorder items after update
-        handleItemMoved() {
+        handleItemMoved(newItems) {
             let newItemsOrderTemp = [];
 
-            this.status.items.forEach((status) => {
+            newItems.forEach((status) => {
                 newItemsOrderTemp.splice(status.order_id, 0, status);
             });
+
+            console.log(newItemsOrderTemp);
 
             this.status.items = newItemsOrderTemp;
         },
@@ -207,10 +209,13 @@ export default {
                 this.$echo
                     .join('App.KanbanStatus.' + this.status.id)
                     .listen('.KanbanStatusUpdated', (payload) => {
-                        this.$eventHub.emit('kanban-status-updated', payload.model);
+                        this.$eventHub.emit('kanban-status-updated-' + this.status.kanban_id, payload.model);
+                        this.$nextTick(() => {
+                            this.handleItemMoved(payload.model.items)
+                        });
                     })
                     .listen('.KanbanStatusDeleted', (payload) => {
-                        this.$eventHub.emit('kanban-status-deleted', payload.model);
+                        this.$eventHub.emit('kanban-status-deleted-' + this.status.kanban_id, payload.model);
                     })
                 ;
             }

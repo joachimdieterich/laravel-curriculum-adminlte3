@@ -61,7 +61,7 @@
                             :kanban_owner_id="kanban.owner_id"
                             :only_edit_owned_items="kanban.only_edit_owned_items"
                             :key="status.id"
-                            :websocket="websocket"
+                            :websocket="websocket && kanban.auto_refresh"
                             filter=".ignore"
                         />
                         <div v-if="editable"
@@ -99,7 +99,7 @@
                                         :item="item"
                                         :width="itemWidth"
                                         :kanban_owner_id="kanban.owner_id"
-                                        :websocket="websocket"
+                                        :websocket="websocket && kanban.auto_refresh"
                                         filter=".ignore"
                                     />
                                 </span>
@@ -402,7 +402,7 @@ export default {
             this.kanban.statuses[statusIndex].items.push(newItem);
         },
         startWebsocket() {
-            if (this.websocket === true) {
+            if (this.websocket === true && this.kanban.auto_refresh === true) {
                 this.$echo
                     .join('App.Kanban.' + this.kanban.id)
                     .here((users) => {
@@ -422,7 +422,7 @@ export default {
             }
         },
         stopWebsocket() {
-            if (this.websocket === true) {
+            if (this.websocket === true && this.kanban.auto_refresh === true) {
                 this.$echo.leave('App.Kanban.' + this.kanban.id);
             }
         },

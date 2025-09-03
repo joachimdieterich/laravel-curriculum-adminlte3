@@ -1,6 +1,6 @@
 <template>
     <div
-        :id="id"
+        :id="component_id"
         class="carousel slide ignore"
         data-interval="false"
     >
@@ -9,20 +9,20 @@
         >
             <li v-for="(item, index) in subscriptions"
                 :class="{ 'active': index === 0 }"
-                :data-target="'#' + id"
+                :data-target="'#' + component_id"
                 :data-slide-to="index"
                 @click="setSlide(index)">
             </li>
         </div>
         <div class="carousel-inner">
-            <button v-if="$userId == subscriptions[currentSlide].medium.owner_id"
-                type="button"
-                class="btn btn-icon position-absolute text-danger pointer px-2"
-                style="top: 5px; right: 5px; z-index: 30;"
-                @click.prevent="unlinkMedium(subscriptions[currentSlide])"
+            <div
+                :id="'loading_' + component_id"
+                class="overlay position-absolute text-center rounded-0 w-100"
+                style="display: none; inset: 0;"
             >
-                <i class="fa fa-trash"></i>
-            </button>
+                <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                <span class="sr-only">{{ trans('global.loading') }}</span>
+            </div>
 
             <div
                 id="link-overlay"
@@ -41,8 +41,10 @@
                         <i class="fa fa-link"></i>
                         {{ trans('global.medium.generate_links') }}
                     </button>
-                    <i v-if="generatingLinks" class="fa fa-spinner fa-pulse p-2"></i>
-
+                    <span v-if="generatingLinks">
+                        <i class="fa fa-spinner fa-pulse p-2"></i>
+                        <span class="sr-only">{{ trans('global.loading') }}</span>
+                    </span>
                 </div>
                 <div v-if="currentViewLink && currentDownloadLink"
                     id="link-buttons"
@@ -67,6 +69,15 @@
                 </div>
             </div>
 
+            <button v-if="$userId == subscriptions[currentSlide]?.medium.owner_id"
+                type="button"
+                class="btn btn-icon position-absolute text-danger pointer px-2"
+                style="top: 5px; right: 5px; z-index: 30;"
+                @click.prevent="unlinkMedium(subscriptions[currentSlide])"
+            >
+                <i class="fa fa-trash"></i>
+            </button>
+
             <div v-for="(item, index) in subscriptions"
                 :class="{ 'active': index === 0 }"
                 class="carousel-item"
@@ -79,7 +90,7 @@
         </div>
 
         <a v-if="subscriptions.length > 1"
-            :href="'#' + id"
+            :href="'#' + component_id"
             class="carousel-control-prev"
             style="z-index: 20;"
             role="button"
@@ -91,7 +102,7 @@
             <span class="sr-only ignore">{{ trans('pagination.previous') }}</span>
         </a>
         <a v-if="subscriptions.length > 1"
-            :href="'#' + id"
+            :href="'#' + component_id"
             class="carousel-control-next"
             style="z-index: 20;"
             role="button"
@@ -121,16 +132,13 @@ export default {
     },
     data() {
         return {
-            id: null,
+            component_id: 'carousel_' + this.$.uid,
             currentSlide: 0,
             generatingLinks: false,
             currentViewLink: null,
             currentDownloadLink: null,
             errors: {},
         }
-    },
-    mounted() {
-        this.id = 'carousel_' + this.$.uid
     },
     methods: {
         setSlide(id) {
@@ -155,16 +163,18 @@ export default {
         },
         getURLs() {
             this.generatingLinks = true;
-            this.generateViewLink();
-            this.generateDownloadLink();
-        },
-        generateViewLink() {
-            axios.get('/media/' + this.subscriptions[this.currentSlide].medium.id + '?content=true')
-                .then((response) => this.currentViewLink = response.data);
-        },
-        generateDownloadLink() {
-            axios.get('/media/' + this.subscriptions[this.currentSlide].medium.id + '?download=true')
-                .then((response) => this.currentDownloadLink = response.data);
+            const medium = this.subscriptions[this.currentSlide].medium;
+
+            if (medium.adapter === 'local') {
+                this.currentViewLink = '/media/' + medium.id + '?content=true';
+                this.currentDownloadLink = '/media/' + medium.id + '?download=true';
+            } else {
+                // send requests for edusharing links
+                axios.get('/media/' + this.subscriptions[this.currentSlide].medium.id + '?content=true')
+                    .then((response) => this.currentViewLink = response.data);
+                axios.get('/media/' + this.subscriptions[this.currentSlide].medium.id + '?download=true')
+                    .then((response) => this.currentDownloadLink = response.data);
+            }
         },
         setURLs() {
             const animationTime = 300;
@@ -187,25 +197,22 @@ export default {
             }, animationTime);
         },
         unlinkMedium(item) { //id of external reference and value in db
+            $('#loading_' + this.component_id).show();
             axios.post('/mediumSubscriptions/destroy', {
                 medium_id: item.medium_id,
                 subscribable_id: item.subscribable_id,
                 subscribable_type: item.subscribable_type,
-                sharing_level_id: item.sharing_level_id,
-                visibility: item.visibility,
                 additional_data: true, // hack to skip setting medium_id of model to null
             })
             .then(res => {
-                this.subscriptions.splice(item, 1);
-                if (this.subscriptions.length <= 1) return;
-
-                if (this.currentSlide == 0) {
-                    $('#' + this.id).carousel('next');
-                } else {
-                    $('#' + this.id).carousel('prev');
-                }
+                $('#loading_' + this.component_id).hide();
+                this.subscriptions.splice(this.currentSlide, 1);
+                if (this.subscriptions.length === 0) return;
+                $('#' + this.component_id).carousel(0);
+                this.currentSlide = 0;
             })
             .catch(err => {
+                $('#loading_' + this.component_id).hide();
                 console.log(err.response);
             });
         },
@@ -250,6 +257,6 @@ export default {
         & > button:first-child { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
         & > button:last-child { border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem; }
     }
-    &:hover > #link-wrapper, &.active > #link-wrapper { opacity: 1 !important; }
+    &:hover > #link-wrapper, &:focus-within > #link-wrapper, &.active > #link-wrapper { opacity: 1 !important; }
 }
 </style>

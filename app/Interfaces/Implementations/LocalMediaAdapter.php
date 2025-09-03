@@ -90,7 +90,7 @@ class LocalMediaAdapter implements MediaInterface
     public function show(Medium $medium)
     {
         /* id link */
-        if (($medium->mime_type != 'url')) {
+        if ($medium->mime_type != 'url') {
             $path = storage_path('app'.$medium->path.$medium->medium_name);
             if (! file_exists($path)) {
                 abort(404, "File doesn't exist");
@@ -98,8 +98,10 @@ class LocalMediaAdapter implements MediaInterface
         }
 
         // Medium is public (sharing_level_id == 1) or user is owner
-        if (($medium->public) or ($medium->owner_id == auth()->user()->id) or is_admin()) {
-            return ($medium->mime_type != 'url') ? response()->file($path, ['Content-Disposition' => 'filename="'.$medium->medium_name.'"']) : redirect($medium->path); //return file or url
+        if ($medium->public or $medium->owner_id == auth()->user()->id or is_admin()) {
+            return $medium->mime_type != 'url'
+                ? response()->file($path, ['Content-Disposition' => 'filename="'.$medium->medium_name.'"'])
+                : redirect($medium->path); //return file or url
         }
 
         /* checkIfUserHasSubscription and visibility*/
@@ -240,6 +242,7 @@ class LocalMediaAdapter implements MediaInterface
                     return true;
                 }
                 break;
+            case 'App\Kanban':
             case "App\KanbanItem":
                 return true;
                 break;

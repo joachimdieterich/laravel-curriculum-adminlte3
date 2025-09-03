@@ -98,7 +98,7 @@ export default {
         this.$eventHub.on('medium-added', (data) => {
             if (this.component_id == data.id) {
                 this.showMediumModal = false;
-                this.$emit("selectedValue", data.selectedMedia[0].id); // TODO: select all files
+                this.$emit("selectedValue", data.selectedMedia[0].id ?? data.selectedMedia[0].medium_id); // TODO: select all files
             }
         });
     },

@@ -1,7 +1,7 @@
 //
 // Component: Direct Chat
 //
- 
+
 .direct-chat {
   .card-body {
     overflow-x: hidden;
@@ -53,7 +53,7 @@
 
 .direct-chat-text {
   @if $enable-rounded {
-    @include border-radius($border-radius-lg);
+    @include border-radius($border-radius-elg);
   }
 
   background: $direct-chat-default-msg-bg;

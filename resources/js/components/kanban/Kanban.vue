@@ -182,7 +182,7 @@
             <p class="h6">{{ trans('global.owner') }}: {{ initialKanban.owner.firstname + ' ' + initialKanban.owner.lastname }}</p>
         </Teleport>
         <Teleport to="#contributors">
-            <contributors-list :contributors="currentContributors" :heading="true"></contributors-list>
+            <contributors-list v-if="Object.values(currentContributors).length > 1" :contributors="currentContributors" :heading="true"></contributors-list>
         </Teleport>
     </div>
 </template>

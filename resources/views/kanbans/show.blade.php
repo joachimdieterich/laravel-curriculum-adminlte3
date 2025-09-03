@@ -1,12 +1,7 @@
 @extends((Auth::user()->id == env('GUEST_USER')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
 
 @section('contributors')
-    <div class="row">
-        <div>
-            <div id="contributors">
-            </div>
-        </div>
-    </div>
+    <div id="contributors"></div>
 @endsection
 @section('breadcrumb')
     @if (Auth::user()->id == env('GUEST_USER'))

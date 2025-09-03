@@ -1,28 +1,15 @@
 <template>
-    <div :id="component_id" v-if="show">
-        <h5 v-if="heading">{{ trans('global.kanban.contributor') }}</h5>
+    <div class="bg-light contributor-hover-box" :id="component_id" v-if="show">
         <div class="contributor-container d-inline-flex align-items-center">
-            <div @mouseenter="contributorDetailsEntered(contributor.id)"
-                 @mouseleave="contributorDetailsLeft()"
-                 @mousemove="contributorDetailsMovement"
-                 class="d-flex  rounded-circle align-items-center"
-                 v-for="contributor of contributors"
-                 :style="this.contributorStyles[contributor.id]"
-            >
-                <avatar data-toggle="tooltip"
-                        :title="contributor.firstname + ' ' + contributor.lastname"
-                        :username="contributor.firstname + ' ' + contributor.lastname"
-                        :firstname="contributor.firstname"
-                        :lastname="contributor.lastname"
-                        :size="35"
-                />
-                <div v-show="contributorDetails.show && contributorDetails.key === contributor.id"
-                     class="rounded-sm contributor-details"
-                     :style="{top: contributorDetailsTopStyle + 'px', left: contributorDetailsLeftStyle + 'px'}"
-                >
-                    {{ contributor.firstname }} {{ contributor.lastname }}
-                </div>
-            </div>
+            <avatar data-toggle="tooltip"
+                    :title="contributor.firstname + ' ' + contributor.lastname"
+                    :username="contributor.firstname + ' ' + contributor.lastname"
+                    :firstname="contributor.firstname"
+                    :lastname="contributor.lastname"
+                    class="contacts-list-img"
+                    :size="35"
+                    v-for="contributor of contributors"
+            />
         </div>
     </div>
 </template>
@@ -31,16 +18,21 @@
         gap: 4px;
     }
 
-    .contributor-details {
-        cursor: default;
-        position: absolute;
-        font-weight: normal;
-        padding: 0.5rem;
-        z-index: 9999;
-        color: black !important;
-        border-radius: 0.3rem;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        background:white;
+    .contributor-hover-box {
+        position: fixed;
+        bottom: 3em !important;
+        right: 3em  !important;
+        z-index: 1020;
+
+        padding: 0.25rem 0 0 0.25rem;
+        border-radius: 0.5rem;
+
+        opacity: 50%;
+    }
+
+    .contributor-hover-box:hover {
+        transition: all 0.5s ease;
+        opacity: 100%;
     }
 </style>
 <script>
@@ -58,20 +50,6 @@ export default {
             default: false
         }
     },
-    methods: {
-        contributorDetailsEntered: function (contributorKey) {
-            this.contributorDetails.key = contributorKey;
-            this.contributorDetails.show = true;
-        },
-        contributorDetailsLeft: function () {
-            this.contributorDetails.key = 0;
-            this.contributorDetails.show = false;
-        },
-        contributorDetailsMovement: function (e) {
-            this.contributorDetails.posX = e.x + 20;
-            this.contributorDetails.posY = e.y - 80;
-        }
-    },
     data() {
         return {
             component_id: this.$.uid,
@@ -85,12 +63,6 @@ export default {
         }
     },
     computed: {
-        contributorDetailsLeftStyle() {
-            return this.contributorDetails.posX
-        },
-        contributorDetailsTopStyle() {
-            return this.contributorDetails.posY
-        },
         show() {
             return Object.values(this.contributors).length > 1;
         }

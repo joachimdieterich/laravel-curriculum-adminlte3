@@ -10,9 +10,29 @@
         border-radius: 50%;
         padding: 0px !important;
 
-        &:hover { background-color: #dcdcdc; }
+        &:hover, &.highlight { background-color: #dcdcdc; }
         &:active, &[aria-expanded="true"] { background-color: #c0c0c0; }
         &.text-danger:hover { color: #a71d2a !important; }
+    }
+    &.btn-icon-alt {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        color: white;
+        height: 2rem;
+        width: 2rem;
+        border: 0;
+        border-radius: 50%;
+        padding: 0px !important;
+
+        &:hover, &.highlight { background-color: #dcdcdc; color: #212529; }
+        &:active, &[aria-expanded="true"] { background-color: #c0c0c0; }
+        &.text-danger:hover { color: #a71d2a !important; }
+    }
+    &.btn-icon-big {
+        height: 3rem !important;
+        width: 3rem !important;
     }
 
     &.text-secondary:hover { color: #494f54 !important; } // TODO: might be redundant, use 'link-muted' instead

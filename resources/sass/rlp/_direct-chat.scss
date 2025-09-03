@@ -170,6 +170,11 @@
    display: inline-block;
 }
 
+.contacts-list-img:first-child {
+    transition: all 0.5s ease;
+    margin-left: 0;
+}
+
 .contacts-list-img:not(:first-child) {
     transition: all 0.5s ease;
     margin-left: -25px;

@@ -16,7 +16,7 @@
             <img
                 :src="'/media/' + medium.id + '?preview=true'"
                 :alt="medium.title ?? medium.name"
-                class="position-relative"
+                class="position-relative user-select-none"
                 style="max-width: 90svw; max-height: 90svh;"
             >
         </div>

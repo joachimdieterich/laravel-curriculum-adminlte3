@@ -220,10 +220,10 @@
                         role="tab"
                         aria-labelledby="medium-nav-tab"
                     >
-                        <media
+                        <Media
                             subscribable_type="App\Curriculum"
                             :subscribable_id="curriculum.id"
-                            :public="1"
+                            :public="true"
                             format="list"
                         />
                     </div>
@@ -253,6 +253,7 @@
         <Teleport to="body">
             <MediumModal/>
             <MediumExportModal/>
+            <MediumPreviewModal/>
             <CurriculumModal/>
             <ContentModal/>
             <CertificateModal/>
@@ -296,13 +297,15 @@ import {useGlobalStore} from "../../store/global";
 import ContentModal from "../content/ContentModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MediumExportModal from "../media/MediumExportModal.vue";
+import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
     name: "Curriculum",
     components: {
-        MediumExportModal,
         MediumModal,
+        MediumExportModal,
+        MediumPreviewModal,
         ContentModal,
         GenerateCertificateModal,
         CertificateModal,

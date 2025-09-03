@@ -6,16 +6,16 @@
                 :class="css"
             >
                 <img v-if="typeof avatar_medium_id === 'number'"
-                    class="img-circle img-bordered-sm"
-                    :style="'width:' + size + ' !important;height:' + size + ' !important;'"
-                    :src="'/media/' + avatar_medium_id"
+                     class="img-circle img-bordered-sm"
+                     :style="'width:' + size + ' !important;height:' + size + ' !important;'"
+                     :src="'/media/' + avatar_medium_id"
                 />
                 <canvas v-else
-                    class="img-circle"
-                    :id="id"
-                    style="border-radius: 50%;"
-                    :width="size"
-                    :height="size"
+                        class="img-circle"
+                        :id="id"
+                        style="border-radius: 50%;"
+                        :width="size"
+                        :height="size"
                 ></canvas>
                 <span class="username">
                     <a href="#">{{ title }}</a>
@@ -24,24 +24,50 @@
             </div>
         </span>
         <div v-else
-            :style="'width:' + size + 'px; height:' + size + 'px;'"
+             @mouseenter="contributorDetailsEntered(user_id)"
+             @mouseleave="contributorDetailsLeft()"
+             @mousemove="contributorDetailsMovement"
+             @mousedown="contributorDetailsEntered(user_id)"
+             @touchstart="contributorDetailsEntered(user_id)"
+             @touchend="contributorDetailsLeft()"
+             @touchmove="contributorDetailsMovement"
+             :style="'width:' + size + 'px; height:' + size + 'px;'"
         >
             <img v-if="typeof avatar_medium_id === 'number'"
-                class="direct-chat-img"
-                :class="css"
-                :style="'width:' + size + 'px; height:' + size + 'px; float:none !important'"
-                :src="'/media/' + avatar_medium_id"
+                 class="direct-chat-img"
+                 :class="css"
+                 :style="'width:' + size + 'px; height:' + size + 'px; float:none !important'"
+                 :src="'/media/' + avatar_medium_id"
             />
             <canvas v-else
-                :id="id"
-                :class="css"
-                style="border-radius: 50%;"
-                :width="size"
-                :height="size"
+                    :id="id"
+                    :class="css"
+                    style="border-radius: 50%;"
+                    :width="size"
+                    :height="size"
             ></canvas>
+            <div v-show="contributorDetails.show && contributorDetails.key === user_id"
+                 class="rounded-sm contributor-details"
+                 :style="{top: contributorDetailsTopStyle + 'px', left: contributorDetailsLeftStyle + 'px'}"
+            >
+                {{ firstname }} {{ lastname }}
+            </div>
         </div>
     </span>
 </template>
+<style scoped>
+.contributor-details {
+    cursor: default;
+    position: fixed;
+    font-weight: normal;
+    padding: 0.5rem;
+    z-index: 9999;
+    color: black !important;
+    border-radius: 0.3rem;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background: white;
+}
+</style>
 <script>
 export default {
     props: {
@@ -93,9 +119,28 @@ export default {
             avatar_medium_id: null,
             colours: ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"],
             user: null,
+            contributorDetails: {
+                key: 0,
+                show: false,
+                posX: 0,
+                posY: 0
+            },
+            contributorStyles: {}
         };
     },
     methods: {
+        contributorDetailsEntered: function (contributorKey) {
+            this.contributorDetails.key = contributorKey;
+            this.contributorDetails.show = true;
+        },
+        contributorDetailsLeft: function () {
+            this.contributorDetails.key = 0;
+            this.contributorDetails.show = false;
+        },
+        contributorDetailsMovement: function (e) {
+            this.contributorDetails.posX = e.x - 80;
+            this.contributorDetails.posY = e.y - 80;
+        },
         setData() {
             let initials = "";
 
@@ -127,8 +172,8 @@ export default {
                 }
 
                 context.fillStyle = this.colours[colourIndex];
-                context.fillRect (0, 0, this.size, this.size);
-                context.font = (this.size/2.5) + "px Arial";
+                context.fillRect(0, 0, this.size, this.size);
+                context.font = (this.size / 2.5) + "px Arial";
                 context.textAlign = "center";
                 context.fillStyle = "#FFF";
                 context.fillText(initials, canvasCssWidth / 2, canvasCssHeight / 1.495);
@@ -152,5 +197,13 @@ export default {
                 });
         }
     },
+    computed: {
+        contributorDetailsLeftStyle() {
+            return this.contributorDetails.posX
+        },
+        contributorDetailsTopStyle() {
+            return this.contributorDetails.posY
+        },
+    }
 }
 </script>

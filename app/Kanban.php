@@ -78,7 +78,7 @@ class Kanban extends Model
 
     public function items(): HasMany|Kanban
     {
-        return $this->hasMany(KanbanItem::class);
+        return $this->hasMany(KanbanItem::class)->orderBy('order_id');
     }
 
     public function statuses(): HasMany|Kanban

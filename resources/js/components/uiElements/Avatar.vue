@@ -24,12 +24,11 @@
             </div>
         </span>
         <div v-else
-             @mouseenter="contributorDetailsEntered(user_id)"
-             @mouseleave="contributorDetailsLeft()"
+             @mouseenter="contributorDetailsEntered(user_id, $event)"
+             @mouseleave="contributorDetailsLeft"
              @mousemove="contributorDetailsMovement"
-             @mousedown="contributorDetailsEntered(user_id)"
-             @touchstart="contributorDetailsEntered(user_id)"
-             @touchend="contributorDetailsLeft()"
+             @touchstart="contributorDetailsEntered(user_id, $event);"
+             @touchend="contributorDetailsLeft"
              @touchmove="contributorDetailsMovement"
              :style="'width:' + size + 'px; height:' + size + 'px;'"
         >
@@ -129,17 +128,26 @@ export default {
         };
     },
     methods: {
-        contributorDetailsEntered: function (contributorKey) {
+        contributorDetailsEntered: function (contributorKey, e) {
             this.contributorDetails.key = contributorKey;
             this.contributorDetails.show = true;
+
+            this.contributorDetailsMovement(e);
         },
         contributorDetailsLeft: function () {
             this.contributorDetails.key = 0;
             this.contributorDetails.show = false;
         },
         contributorDetailsMovement: function (e) {
-            this.contributorDetails.posX = e.x - 80;
-            this.contributorDetails.posY = e.y - 80;
+            let x = e.x;
+            let y = e.y;
+
+            if (e.targetTouches) {
+                x = e.targetTouches[0].clientX;
+                y = e.targetTouches[0].clientY;
+            }
+            this.contributorDetails.posX = x - 80;
+            this.contributorDetails.posY = y - 80;
         },
         setData() {
             let initials = "";

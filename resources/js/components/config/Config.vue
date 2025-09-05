@@ -6,13 +6,14 @@
                     <div class="card-title">
                         <h5 class="m-0">
                             <i class="fa fa-university mr-1"></i>
-                            {{ this.config.key }}
+                            {{ config.key }}
                         </h5>
                     </div>
                     <div
                         v-permission="'config_edit'"
-                        class="card-tools pr-2">
-                        <a  @click="editConfig(config)">
+                        class="card-tools pr-2"
+                    >
+                        <a @click="editConfig(config)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
@@ -20,12 +21,14 @@
                 </div>
 
                 <div class="card-body">
-
-                    <strong><i class="fa fa-file-alt mr-1"></i>
+                    <strong>
+                        <i class="fa fa-file-alt mr-1"></i>
                         {{ trans('global.config.fields.value') }}
                     </strong>
-                    <p class="text-muted"
-                       v-dompurify-html="config.value"></p>
+                    <p
+                        class="text-muted"
+                        v-html="config.value"
+                    ></p>
                     <hr>
 
                     <strong>
@@ -40,24 +43,17 @@
                         <i class="fas fa-magnifying-glass mr-1"></i>
                         {{ trans('global.config.fields.referenceable_id') }}
                     </strong>
-                    <p class="text-muted">
-                        {{ config.referenceable_id }}
-                    </p>
+                    <p class="text-muted">{{ config.referenceable_id }}</p>
                     <hr>
                     <strong>
                         <i class="fas fa-magnifying-glass mr-1"></i>
                         {{ trans('global.config.fields.data_type') }}
                     </strong>
-                    <p class="text-muted">
-                        {{ config.data_type }}
-                    </p>
-
+                    <p class="text-muted">{{ config.data_type }}</p>
                 </div>
 
                 <div class="card-footer">
-                    <small class="float-right">
-                        {{ config.updated_at }}
-                    </small>
+                    <small class="float-right">{{ config.updated_at }}</small>
                 </div>
             </div>
         </div>
@@ -74,18 +70,18 @@ import ConfigModal from "../config/ConfigModal.vue";
 
 export default {
     name: "Config",
-    components:{
+    components: {
         ConfigModal
     },
     props: {
         config: {
-            default: null
+            default: null,
         },
         status_definitions: {
-            default: null
+            default: null,
         },
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -107,6 +103,6 @@ export default {
         editConfig(config){
             this.globalStore?.showModal('config-modal',config);
         },
-    }
+    },
 }
 </script>

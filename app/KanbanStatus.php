@@ -115,10 +115,14 @@ class KanbanStatus extends Model
         ); // array filter removes empty entries.
     }
 
-
     public function isAccessible(): bool
     {
         return $this->kanban->isAccessible();
+    }
+
+    public function isEditable($user = null, $sharing_token = null)
+    {
+        return $this->kanban->isEditable($user, $sharing_token);
     }
 
     public function withRelations(): Model|null

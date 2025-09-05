@@ -40,7 +40,7 @@
             v-permission="'medium_access'"
             :id="'map_marker_media_' + marker.id"
         >
-            <media
+            <Media
                 subscribable_type="App\MapMarker"
                 :subscribable_id="marker.id"
                 format="list"
@@ -49,7 +49,7 @@
 
         <div v-if="marker.address">
             <h5 class="pt-3">{{ trans('global.address') }}</h5>
-            <div v-dompurify-html="marker.address"></div>
+            {{ marker.address }}
         </div>
 
         <div v-if="marker.url">

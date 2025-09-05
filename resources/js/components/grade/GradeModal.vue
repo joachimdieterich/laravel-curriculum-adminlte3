@@ -158,7 +158,7 @@ export default {
             states: [],
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia autoresize",
+                    "autolink link autoresize",
                 ],
                 {
                     'callback': 'insertContent',

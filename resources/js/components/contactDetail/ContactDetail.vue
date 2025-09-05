@@ -1,7 +1,8 @@
 <template>
-    <div >
+    <div>
         <div v-if="user.contact_detail"
-            class="card">
+            class="card"
+        >
             <div class="card-header">
                 <div class="card-title">
                     <h5 class="m-0">
@@ -10,20 +11,26 @@
                     </h5>
                 </div>
                 <div v-if="$userId == contactDetail.owner_id"
-                     v-permission="'contactdetail_delete'"
-                     class="card-tools no-print">
-                    <a href="#"
-                       class="link-muted"
-                       @click="destroy()">
+                    v-permission="'contactdetail_delete'"
+                    class="card-tools no-print"
+                >
+                    <a
+                        href="#"
+                        class="link-muted"
+                        @click="destroy()"
+                    >
                         <i class="fas fa-trash text-danger"></i>
                     </a>
                 </div>
                 <div v-if="$userId == contactDetail.owner_id"
-                     v-permission="'contactdetail_edit'"
-                     class="card-tools mr-3 no-print">
-                    <a  href="#"
+                    v-permission="'contactdetail_edit'"
+                    class="card-tools mr-3 no-print"
+                >
+                    <a
+                        href="#"
                         class="link-muted"
-                        @click="edit()">
+                        @click="edit()"
+                    >
                         <i class="fas fa-pencil-alt"></i>
                     </a>
                 </div>
@@ -57,27 +64,30 @@
                 </strong>
                 <p
                     class="text-muted"
-                    v-dompurify-html="contactDetail.notes"></p>
+                    v-html="contactDetail.notes"
+                ></p>
             </div>
         </div>
         <div v-else>
-            <button
-                v-if="$userId == user.id"
+            <button v-if="$userId == user.id"
                 v-permission="'contactdetail_create'"
                 id="contactDetail-create"
                 class="btn btn-primary"
-                @click="create()">
+                @click="create()"
+            >
                 {{ trans('global.contactdetail.create') }}
             </button>
         </div>
 
         <div v-if="organization"
-             class="card-footer mt-2">
+            class="card-footer mt-2"
+        >
             <h5>{{ organization.title }}</h5>
 
             <hr>
 
-            <strong><i class="fa fa-map-marker mr-1"></i>
+            <strong>
+                <i class="fa fa-map-marker mr-1"></i>
                 {{ trans('global.place') }}
             </strong>
             <p class="text-muted">
@@ -104,27 +114,25 @@
 
 <script>
 import ContactModal from "./ContactModal.vue";
-import KanbanModal from "../kanban/KanbanModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "ContactDetail",
-    components:{
-        KanbanModal,
+    components: {
         ContactModal
     },
     props: {
         user: {
-            default: null
+            default: null,
         },
         contactDetail: {
-            default: null
+            default: null,
         },
         organization: {
-            default:null
-        }
+            default:null,
+        },
     },
-    setup () {
+    setup() {
         const globalStore = useGlobalStore();
         return {
             globalStore,
@@ -148,13 +156,13 @@ export default {
         });
     },
     methods: {
-        create(){
+        create() {
             this.globalStore?.showModal('contact-modal', {});
         },
-        edit(){
+        edit() {
             this.globalStore?.showModal('contact-modal', this.currentContactDetail);
         },
-        destroy(){
+        destroy() {
             axios.delete('/contactDetails/' + this.currentContactDetail.id)
                 .then(res => {
                     window.location.reload();
@@ -162,8 +170,7 @@ export default {
                 .catch(e => {
                     console.log(e);
                 });
-        }
-    }
+        },
+    },
 }
-
 </script>

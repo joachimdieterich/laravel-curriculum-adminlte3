@@ -62,7 +62,11 @@ class MediumSubscriptionController extends Controller
         $subscribe->save();
         $input['subscribable_type']::find($input['subscribable_id'])->touch(); //To get Sync after media upload working
 
-        return $subscribe;
+        return MediumSubscription::where([
+            'medium_id' => $input['medium_id'],
+            'subscribable_type' => $input['subscribable_type'],
+            'subscribable_id' => $input['subscribable_id'],
+        ])->with('medium')->first();
     }
 
     /**
@@ -106,27 +110,39 @@ class MediumSubscriptionController extends Controller
      */
     public function destroy(MediumSubscription $mediumSubscription)
     {
+        $this->handleDelete($mediumSubscription);
+        return response(null, 204);
     }
 
+    /**
+     * Custom function to delete a subscription (and the medium if needed)
+     * but based on the request data, not the actual model
+     *
+     * @param  \Illuminate\Http\Request  $request
+     */
     public function destroySubscription(Request $request)
     {
-        abort_unless(\Gate::allows('medium_delete'), 403);
         $input = $this->validateRequest();
+        $this->handleDelete($input);
+        return response(null, 204);
+    }
+
+    protected function handleDelete(mixed $model)
+    {
+        abort_unless(\Gate::allows('medium_delete'), 403);
 
         // if request didn't send additional_data (on models where only 1 medium can be attached)
-        if (!isset($input['additional_data'])) {
+        if (!isset($model['additional_data'])) {
             // remove the medium_id from the model, so deleting the medium doesn't cause a foreign key constraint error
-            $input['subscribable_type']::where('id', $input['subscribable_id'])->update(['medium_id' => null]);
+            $model['subscribable_type']::where('id', $model['subscribable_id'])->update(['medium_id' => null]);
         }
 
         // technically there could be more than 1 result, but in practice a model can only have 1 attached medium
         // also, for each edusharing-subscription a new medium is created, so these should always be unique (1:1)
         $query = MediumSubscription::where([
-            'medium_id' => $input['medium_id'],
-            'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
-            'sharing_level_id' => $input['sharing_level_id'],
-            'visibility' => $input['visibility'],
+            'medium_id' => $model['medium_id'],
+            'subscribable_type' => $model['subscribable_type'],
+            'subscribable_id' => $model['subscribable_id'],
         ]);
 
         $subscription = $query->first();
@@ -136,6 +152,7 @@ class MediumSubscriptionController extends Controller
             // additional-data is needed to delete the usage
             $additional_data = $subscription->additional_data;
             // subscription needs to be deleted before deleting the medium
+            // and it also needs to be deleted through a query (model->delete() will throw an error)
             $query->delete();
 
             if (isset($additional_data)) {
@@ -146,7 +163,7 @@ class MediumSubscriptionController extends Controller
                     $additional_data['usageId'],
                 );
                 // and then delete the medium-entry
-                Medium::find($input['medium_id'])->delete();
+                Medium::where('id', $model['medium_id'])->delete();
             }
 
             $input['subscribable_type']::find($input['subscribable_id'])->touch(); //To get Sync after media upload working

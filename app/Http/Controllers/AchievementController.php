@@ -56,12 +56,8 @@ class AchievementController extends Controller
                 ->where('referenceable_id', '=', $input['referenceable_id'])
                 ->where('referenceable_type', '=', $input['referenceable_type'])
                 ->with([
-                    'owner' => function($query) {
-                        $query->select('id', 'firstname', 'lastname');
-                    },
-                    'user' => function($query) {
-                        $query->select('id', 'firstname', 'lastname');
-                    },
+                    'owner:id,firstname,lastname',
+                    'user:id,firstname,lastname',
                 ])
                 ->get();
         }

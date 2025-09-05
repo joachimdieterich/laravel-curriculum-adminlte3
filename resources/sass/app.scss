@@ -26,8 +26,6 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
 
-@import '@activix/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css';
-
 // Select2
 @import 'select2/dist/css/select2.min.css';
 
@@ -104,6 +102,7 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
 }
 .fa-angle-up { transition: 0.4s transform ease; }
 .collapsed .fa-angle-up { transform: rotate3d(1, 0, 0, -180deg) !important; }
+.hide { opacity: 0; }
 .hide-scrollbars {
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none; /* IE */

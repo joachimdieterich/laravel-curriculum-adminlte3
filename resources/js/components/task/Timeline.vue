@@ -34,30 +34,33 @@
                 </a>
             </span>
             <!-- Time -->
-            <span class="pull-right "><i class="fa fa-link pr-1"></i> <span v-dompurify-html="subscription.created_at"></span></span>
+            <span class="pull-right">
+                <i class="fa fa-link pr-1"></i>
+                {{ subscription.created_at }}
+            </span>
         </div>
     </div>
 </template>
 
 <script>
-    export default {
-        props: ['task'],
-        data: function() {
-            return {
-              activity: null,
-            }
+export default {
+    props: ['task'],
+    data: function() {
+        return {
+            activity: null,
+        }
+    },
+    methods: {
+        loadData: function () {
+            axios.get('/tasks/' + this.task.id + '/activity').then(response => {
+                this.activity = response.data.activity;
+            }).catch(e => {
+                console.log(e);
+            });
         },
-        methods: {
-            loadData: function () {
-                axios.get('/tasks/'+this.task.id+'/activity').then(response => {
-                    this.activity = response.data.activity;
-                }).catch(e => {
-                    console.log(e);
-                });
-            },
-        },
-        created() {
-            this.loadData();
-        },
-    }
+    },
+    created() {
+        this.loadData();
+    },
+}
 </script>

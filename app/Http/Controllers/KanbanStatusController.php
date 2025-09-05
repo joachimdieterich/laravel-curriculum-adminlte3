@@ -22,7 +22,7 @@ class KanbanStatusController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((\Gate::allows('kanban_edit') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
+        abort_unless(\Gate::allows('kanban_edit') and Kanban::find($input['kanban_id'])->isEditable(null, $this->getCurrentToken()), 403);
 
         $order_id = DB::table('kanban_statuses')
             ->where('kanban_id', $input['kanban_id'])
@@ -56,7 +56,7 @@ class KanbanStatusController extends Controller
      */
     public function update(Request $request, KanbanStatus $kanbanStatus)
     {
-        abort_unless((\Gate::allows('kanban_edit') and  Kanban::find($kanbanStatus->kanban_id)->isAccessible()), 403);
+        abort_unless((\Gate::allows('kanban_edit') and $kanbanStatus->isEditable(null, $this->getCurrentToken())), 403);
 
         $input = $this->validateRequest();
 
@@ -131,7 +131,7 @@ class KanbanStatusController extends Controller
      */
     public function destroy(KanbanStatus $kanbanStatus)
     {
-        abort_unless((\Gate::allows('kanban_delete') and $kanbanStatus->isAccessible()), 403);
+        abort_unless((\Gate::allows('kanban_delete') and $kanbanStatus->isEditable(null, $this->getCurrentToken())), 403);
 
         $kanbanStatusForEvent = $kanbanStatus;
 
@@ -197,6 +197,13 @@ class KanbanStatusController extends Controller
                 'items.owner',
             ])
             ->find($statusCopy->id);
+    }
+
+    protected function getCurrentToken()
+    {
+        $url = parse_url(request()->headers->get('referer'), PHP_URL_QUERY);
+        parse_str($url ?? '', $query);
+        return $query['sharing_token'] ?? null;
     }
 
     protected function validateRequest()

@@ -214,4 +214,9 @@ class KanbanItem extends Model
     {
         return $this->kanban->isAccessible();
     }
+
+    public function isEditable($user = null, $sharing_token = null)
+    {
+        return $this->kanban->isEditable($user, $sharing_token);
+    }
 }

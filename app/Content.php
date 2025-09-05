@@ -14,7 +14,7 @@ class Content extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'content'    => CleanHtml::class, // cleans both when getting and setting the value
+        'content'    => CleanHtml::class,
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
     ];

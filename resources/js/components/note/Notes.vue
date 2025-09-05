@@ -109,6 +109,7 @@
                             id="note_content"
                             name="note_content"
                             class="form-control"
+                            licenseKey="gpl"
                             :init="tinyMCE"
                             :initial-value="form.content"
                         />
@@ -174,29 +175,36 @@
                                 </a>
                             </small>
                             </span>
-                            <span v-dompurify-html="item.content"></span>
+                            <span v-html="item.content"></span>
                         </span>
                         <span :class="'note_editor_placeholder_'+item.id"></span>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </template>
-
 <script>
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
 
 export default {
-    components:{
+    components: {
         Editor,
     },
     props: {
-        notable_type: { type: String },
-        notable_id: { type: Number },
-        show_tabs: { type: Boolean, default: true }
+        notable_type: {
+            type: String,
+            default: null,
+        },
+        notable_id: {
+            type: Number,
+            default: null,
+        },
+        show_tabs: {
+            type: Boolean,
+            default: true,
+        },
     },
     data() {
         return {
@@ -205,18 +213,18 @@ export default {
             requestUrl: '/notes',
             notes: {},
             form: new Form({
-                'id': '',
-                'title': '',
-                'content': '',
-                'notable_type': '' ,
-                'notable_id': '',
+                id: '',
+                title: '',
+                content: '',
+                notable_type: '' ,
+                notable_id: '',
             }),
             edit: false,
             hover: '',
             help: false,
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink link curriculummedia"
+                    "autolink", "link", "autoresize",
                 ],
                 {
                     'eventHubCallbackFunction': 'insertContent',
@@ -228,7 +236,6 @@ export default {
             notables: {},
         }
     },
-
     methods: {
         async load() {
             const params = '?json=true'+ (this.form.notable_type ? '&notable_type=' + this.form.notable_type : '') + (this.form.notable_id ? '&notable_id=' + this.form.notable_id : '') ;
@@ -264,8 +271,7 @@ export default {
                 //console.log('loading failed')
             }
         },
-
-        syncSelect2(){
+        syncSelect2() {
             $("#notable").select2({
                 dropdownParent: $("#notable").parent(),
                 allowClear: false
@@ -273,7 +279,6 @@ export default {
                 this.form.notable_id = e.params.data.id;
             }.bind(this));
         },
-
         submit() {
             var method = this.method.toLowerCase();
             this.form.content = tinyMCE.get('note_content').getContent();
@@ -294,14 +299,13 @@ export default {
 
             this.toggleEdit();
         },
-
-        toggleEdit(){
+        toggleEdit() {
             this.edit = !this.edit;
             if (this.edit === true){
                 this.loadNotables();
             }
         },
-        editNote(index){
+        editNote(index) {
             this.edit = true;
             this.method = 'patch';
             this.form.id = this.notes[index].id;
@@ -315,7 +319,7 @@ export default {
                 this.moveNoteEditor(this.form.id);
             })
         },
-        moveNoteEditor(id){
+        moveNoteEditor(id) {
             let editor = this.$el.getElementsByClassName('note_editor_selector')[0];
             let placeholder = this.$el.getElementsByClassName("note_editor_placeholder_" + id)[0];
             let hidePlaceholder = this.$el.getElementsByClassName("note_editor_hide_placeholder_" + id)[0];
@@ -332,7 +336,7 @@ export default {
                 }
             );
         },
-        loadNotes(type, id){
+        loadNotes(type, id) {
             if (type == 'all') {
                 this.form.notable_type = false;
                 this.form.notable_id = false;
@@ -350,9 +354,8 @@ export default {
 
             this.load();
         },
-
-        async destroy(id, index){
-            axios.delete("/notes/"+id)
+        async destroy(id, index) {
+            axios.delete("/notes/" + id)
                 .then(res => { // Tell the parent component we've added a new task and include it
                     this.notes.splice(index, 1);
                 })
@@ -365,12 +368,12 @@ export default {
         },
         formatTime(timestamp) {
             let time = timestamp;
-            if (this.timeFormatDiffForHumans === true){
+            if (this.timeFormatDiffForHumans === true) {
                 time = this.diffForHumans(timestamp);
             }
             return time;
         },
-        toggleTimestampFormatDiffForHumans(){
+        toggleTimestampFormatDiffForHumans() {
             this.timeFormatDiffForHumans = !this.timeFormatDiffForHumans;
         },
         showNote(item) {
@@ -382,15 +385,15 @@ export default {
                 show = true;
             }
 
-            if (typeof(item?.notable) !== 'undefined'){
-                if (item?.notable !== null){
-                    if (item?.notable_type === 'App\\User'){
+            if (typeof(item?.notable) !== 'undefined') {
+                if (item?.notable !== null) {
+                    if (item?.notable_type === 'App\\User') {
                         if (item?.notable.firstname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1
-                            || item?.notable.lastname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){
+                            || item?.notable.lastname.toLowerCase().indexOf(this.search.toLowerCase()) !== -1) {
                             show = true;
                         }
-                    } else if (item?.notable_type === 'App\\Group'){
-                        if (item?.notable.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1){
+                    } else if (item?.notable_type === 'App\\Group') {
+                        if (item?.notable.title.toLowerCase().indexOf(this.search.toLowerCase()) !== -1) {
                             show = true;
                         }
                     }
@@ -398,17 +401,16 @@ export default {
             }
             return show;
         },
-
     },
-    mounted(){
+    mounted() {
         this.form.notable_type = this.notable_type;
         this.form.notable_id = this.notable_id;
 
-        if (this.show_tabs === false){
+        if (this.show_tabs === false) {
             localStorage.removeItem('notes_notable_type');
             localStorage.removeItem('notes_notable_id');
         }
-        if (localStorage.getItem('notes_notable_type') != null &&  localStorage.getItem('notes_notable_type') != 'all'){
+        if (localStorage.getItem('notes_notable_type') != null &&  localStorage.getItem('notes_notable_type') != 'all') {
             this.form.notable_type = 'App\\' + localStorage.getItem('notes_notable_type');
         }
 

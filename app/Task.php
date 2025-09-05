@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Task extends Model
 {
@@ -13,18 +14,12 @@ class Task extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'description' => CleanHtml::class,
         'start_date' => 'datetime',
         'due_date'  => 'datetime',
         'updated_at'  => 'datetime',
         'created_at'  => 'datetime',
     ];
-
-    /*protected $dates = [
-        'start_date',
-        'due_date',
-        'updated_at',
-        'created_at',
-    ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

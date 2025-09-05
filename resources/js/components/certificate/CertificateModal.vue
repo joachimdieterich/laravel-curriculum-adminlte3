@@ -63,6 +63,7 @@
                                     id="body"
                                     name="body"
                                     class="form-control"
+                                    licenseKey="gpl"
                                     :init="tinyMCE"
                                     v-model="form.body"
                                 />
@@ -180,18 +181,13 @@ export default {
                 global: false,
             }),
             tinyMCE: this.$initTinyMCE(
-                [
-                    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-                    "searchreplace wordcount visualblocks visualchars code fullscreen",
-                    "insertdatetime media nonbreaking save table directionality",
-                    "emoticons template paste textpattern curriculummedia autoresize"
-                ],
+                null,
                 {
                     callback: 'insertContent',
                     callbackId: this.component_id,
                     placeholder: this.trans('global.certificate.fields.body') + ' *',
                 },
-                " | customDateButton | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | example link image media | insertFirstname insertLastname organizationTitle organizationStreet organizationPostcode organizationCity certificateDate | usersProgress",
+                " | customDateButton | insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media code | insertFirstname insertLastname organizationTitle organizationStreet organizationPostcode organizationCity certificateDate | usersProgress",
                 "span[id|class|style|name|reference_type|reference_id|min_value]",
             ),
         }

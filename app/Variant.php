@@ -3,10 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Variant extends Model
 {
     protected $guarded = [];
+
+    protected $casts = [
+        'description' => CleanHtml::class,
+    ];
 
     public function definition()
     {

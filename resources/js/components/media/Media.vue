@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div v-if="format =='list'">
+    <div v-if="format == 'list'">
         <table
             id="sidebar_media_datatable"
             class="table table-hover datatable media_table"
@@ -107,147 +107,152 @@
         <span class="bg-white text-center p-1 overflow-auto "
             style="position:absolute; bottom:0; height: 150px; width:100%;"
         >
-            <h6 class="events-heading pt-1 hyphens" v-dompurify-html="subscription.medium.title"></h6>
-            <p class=" text-muted small" v-dompurify-html="subscription.medium.description"></p>
+            <h6 class="events-heading pt-1 hyphens" v-html="subscription.medium.title"></h6>
+            <p class=" text-muted small" v-html="subscription.medium.description"></p>
         </span>
     </div>
 </div>
 </template>
-
 <script>
-    import License from '../uiElements/License.vue';
-    import {useGlobalStore} from "../../store/global";
+import License from '../uiElements/License.vue';
+import {useGlobalStore} from "../../store/global";
 
-    export default {
-        props: {
-            subscription: {},
-            subscribable_type: '',
-            subscribable_id: '',
-            public: {
-                default: 0
-            },
-            medium: {},
-            format: '',
-            url: {
-                type: String,
-                default: '/mediumSubscriptions'
-            },
+export default {
+    props: {
+        subscription: {
+            type: Object,
+            default: null,
         },
-        setup () { //use database store
-            const globalStore = useGlobalStore();
-            return {
-                globalStore
-            }
+        subscribable_type: {
+            type: String,
+            default: null,
         },
-        data() {
-            return {
-                component_id: this.$.uid,
-                subscriptions: {},
-                errors: {},
-                currentUser: {},
-                currentMedium: null,
-            }
+        subscribable_id: {
+            type: Number,
+            default: null,
         },
-        watch: { // reload if context change
-            subscribable_id: function(newVal, oldVal) {
-                if (newVal != oldVal){
-                    this.loader();
-                }
-            },
+        public: {
+            type: Boolean,
+            default: false,
         },
-        methods: {
-            loader() { //todo: remove duplicate in beforMount.
-                console.log('(re)load');
-                axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
-                    this.subscriptions = response.data.message;
-                }).catch(e => {
-                    console.log(e);
-                });
-            },
-            show(mediumObject) {
-                this.globalStore?.showModal('medium-preview-modal', mediumObject);
-            },
-            addMedia() {
-                this.globalStore?.showModal('medium-modal', {
-                    'subscribeSelected': true,
-                    'subscribable_type': this.subscribable_type,
-                    'subscribable_id': this.subscribable_id,
-                    'public': this.public,
-                    'callbackId': this.component_id
-                });
-            },
-            async unlinkMedium(subscription) { //id of external reference and value in db
-                try {
-                    await axios.post(this.url + '/destroy', subscription).data;
-                } catch (e) {
-                    console.log(e)
-                }
-                $("#medium_" + this.medium.id).hide();
-            },
-            href: function (id) {
-                return '/media/' + id;
-            },
-            iconCss(mimeType) {
-                switch (true) {
-                    case mimeType.startsWith("image"):
-                        return "fa fa-file-image";
-                    case mimeType.startsWith("video"):
-                        return "fa fa-file-video";
-                    case mimeType.startsWith("application/pdf"):
-                        return "fa fa-file-pdf";
-                    default:
-                        return "fa fa-file";
-                }
-            },
-            setArtefact(medium_id) {
-                axios.post('/artefacts', {
-                    subscribable_type: this.subscribable_type,
-                    subscribable_id: this.subscribable_id,
-                    medium_id: medium_id
-                }).then((response) => {
-                    this.loader();
-                    alert('Artefakt hinzugefügt!');
-
-                });
-            },
-            destroy(subscription) {
-                axios.post('/media/'+subscription.medium.id+'/destroy', {
-                        'subscribable_type': this.subscribable_type,
-                        'subscribable_id': this.subscribable_id
-                    })
-                    .then((response) => {
-                        this.loader();
-                    })
-                    .catch((e) => {
-                        console.log(e)
-                    });
-            },
-            /*destroyArtefact(medium_id) {
-                axios.post('/artefacts/destroy', {
-                    subscribable_type: this.subscribable_type,
-                    subscribable_id: this.subscribable_id,
-                    medium_id: medium_id
-                })
-                .then((response) => {
-                    this.loader();
-                });
-            },*/
+        medium: {
+            type: Object,
+            default: null,
         },
-        beforeMount() {
-            if (this.subscribable_type  != ''){
-                this.loader();
-            }
+        format: {
+            type: String,
+            default: null,
         },
-        mounted() {
-            this.$eventHub.on('medium-added', (e) => {
-                console.log('medium-added');
-                if (this.component_id == e.id) {
-                    this.loader();
-                }
+        url: {
+            type: String,
+            default: '/mediumSubscriptions',
+        },
+    },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore
+        }
+    },
+    data() {
+        return {
+            component_id: this.$.uid,
+            subscriptions: {},
+            currentUser: {},
+            currentMedium: null,
+        }
+    },
+    methods: {
+        loader() {
+            axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id)
+            .then(response => {
+                this.subscriptions = response.data.message;
+            }).catch(e => {
+                console.log(e);
             });
         },
-        components: {
-            License
-        }
+        show(mediumObject) {
+            this.globalStore?.showModal('medium-preview-modal', mediumObject);
+        },
+        addMedia() {
+            this.globalStore?.showModal('medium-modal', {
+                'subscribeSelected': true,
+                'subscribable_type': this.subscribable_type,
+                'subscribable_id': this.subscribable_id,
+                'public': this.public,
+                'callbackId': this.component_id
+            });
+        },
+        async unlinkMedium(subscription) { //id of external reference and value in db
+            try {
+                await axios.post(this.url + '/destroy', subscription).data;
+            } catch (e) {
+                console.log(e)
+            }
+            $("#medium_" + this.medium.id).hide();
+        },
+        href: function (id) {
+            return '/media/' + id;
+        },
+        iconCss(mimeType) {
+            switch (true) {
+                case mimeType.startsWith("image"):
+                    return "fa fa-file-image";
+                case mimeType.startsWith("video"):
+                    return "fa fa-file-video";
+                case mimeType.startsWith("application/pdf"):
+                    return "fa fa-file-pdf";
+                default:
+                    return "fa fa-file";
+            }
+        },
+        setArtefact(medium_id) {
+            axios.post('/artefacts', {
+                subscribable_type: this.subscribable_type,
+                subscribable_id: this.subscribable_id,
+                medium_id: medium_id
+            }).then((response) => {
+                this.loader();
+                alert('Artefakt hinzugefügt!');
+
+            });
+        },
+        destroy(subscription) {
+            axios.post('/mediumSubscriptions/destroy', {
+                medium_id: subscription.medium_id,
+                subscribable_id: subscription.subscribable_id,
+                subscribable_type: subscription.subscribable_type,
+                additional_data: true, // hack to skip setting medium_id of model to null
+            })
+            .then((response) => {
+                this.loader();
+            })
+            .catch((e) => {
+                console.log(e)
+            });
+        },
+        /*destroyArtefact(medium_id) {
+            axios.post('/artefacts/destroy', {
+                subscribable_type: this.subscribable_type,
+                subscribable_id: this.subscribable_id,
+                medium_id: medium_id
+            })
+            .then((response) => {
+                this.loader();
+            });
+        },*/
+    },
+    mounted() {
+        this.loader();
+
+        this.$eventHub.on('medium-added', (e) => {
+            if (this.component_id == e.id) {
+                this.loader();
+            }
+        });
+    },
+    components: {
+        License,
     }
+}
 </script>

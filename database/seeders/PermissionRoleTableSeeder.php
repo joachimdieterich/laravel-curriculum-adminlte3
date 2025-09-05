@@ -438,6 +438,11 @@ class PermissionRoleTableSeeder extends Seeder
             $guest_permission_list = [
                 'curriculum_show',
                 'navigator_show',
+                'kanban_create',
+                'kanban_show',
+                'kanban_edit',
+                'kanban_delete',
+                'videoconference_access',
             ];
 
             return in_array($permission->title, $guest_permission_list);

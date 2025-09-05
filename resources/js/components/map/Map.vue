@@ -49,7 +49,7 @@
 
                     <p v-if="map.description"
                         class="pt-2"
-                        v-dompurify-html="map.description"
+                        v-html="map.description"
                     ></p>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
@@ -129,7 +129,7 @@
 
                     <div v-if="currentMarker.BEZ_1_2.length > 2"
                         class="py-0 pre-formatted"
-                        v-dompurify-html="currentMarker.BEZ_1_2"
+                        v-html="currentMarker.BEZ_1_2"
                     ></div>
 
                     <div class="py-0 pt-2">
@@ -138,7 +138,7 @@
 
                     <div
                         class="py-0 pre-formatted text-justify"
-                        v-dompurify-html="currentMarker.BEMERKUNG"
+                        v-html="currentMarker.BEMERKUNG"
                     ></div>
 
                     <div class="py-0 pt-2"><strong>Termine</strong></div>
@@ -153,7 +153,7 @@
 
                     <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
 
-                    <div class="py-0 pre-formatted" v-dompurify-html="currentMarker.ARTIKEL_NR"></div>
+                    <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
 
                     <div class="py-0 pt-2">
                         <a
@@ -233,6 +233,7 @@ import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
 import MarkerView from "./MarkerView.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";
+import MediumPreviewModal from '../media/MediumPreviewModal.vue';
 import MarkerModal from "./MarkerModal.vue";
 import {useGlobalStore} from "../../store/global";
 import MapModal from "./MapModal.vue";
@@ -240,17 +241,16 @@ import Select2 from "../forms/Select2.vue";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
-import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 
 export default {
     components: {
-        MediumPreviewModal,
         Select2,
         MapModal,
         MarkerModal,
         MarkerView,
         ConfirmModal,
         MediumModal,
+        MediumPreviewModal,
     },
     props: {
         map: {
@@ -324,8 +324,6 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
-            console.log('Clustergroup');
-            console.log(this.clusterGroup);
         },
         async markerSearch() {
             $("#loading-events").show();

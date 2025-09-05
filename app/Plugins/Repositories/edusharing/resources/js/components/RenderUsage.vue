@@ -2,10 +2,8 @@
     <div class="position-relative">
         <img v-if="isCarousel"
             :src="'/media/' + medium.id + '?preview=true'"
-            class="pointer"
-            width="100%"
+            class="d-block mw-100 w-auto m-auto"
             :alt="medium.title ?? medium.medium_name"
-            @click="show()"
         >
         <div v-else
             class="nav-item-box-image-size h-100 w-100"

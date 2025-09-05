@@ -66,13 +66,6 @@ class KanbanController extends Controller
                             auth()->user()->id
                         );
                     }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\User')->where(
-                            'subscribable_id',
-                            auth()->user()->id
-                        );
-                    }
                 );
             })->orWhere('owner_id', auth()->user()->id);
 

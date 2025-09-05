@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Medium extends Model
 {
@@ -15,15 +16,12 @@ class Medium extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'title' => CleanHtml::class,
+        'description' => CleanHtml::class,
         'additional_data' => 'array',
         'updated_at' => 'datetime',
         'created_at'  => 'datetime',
     ];
-
-   /* protected $dates = [  --> change v.10
-        'updated_at',
-        'created_at',
-    ];*/
 
     /**
      * Prepare a date for array / JSON serialization.

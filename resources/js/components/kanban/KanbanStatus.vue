@@ -19,7 +19,7 @@
         >
             <div v-if="edit_rights || copy_rights || delete_rights"
                 :id="'kanbanStatusDropdown_' + status.id"
-                class="btn btn-flat py-0 pl-0 pull-left"
+                class="d-print-none btn btn-flat py-0 pl-0 pull-left"
                 data-toggle="dropdown"
                 aria-expanded="false"
             >
@@ -72,7 +72,7 @@
             <strong>{{ status.title }}</strong>
             <div v-if="$userId == kanban_owner_id
                     || (!status.locked || $userId == status.owner_id)"
-                class="handle ml-auto pointer"
+                class="handle d-print-none ml-auto pointer"
             >
                 <span class="position-relative">
                     <i v-if="editable"

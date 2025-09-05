@@ -10,6 +10,8 @@ class Achievement extends Model
 {
     use HasFactory;
     
+    protected $guarded = [];
+
     protected $casts = [
         'status' => 'string',
         'updated_at' => 'datetime',
@@ -40,6 +42,11 @@ class Achievement extends Model
     public function owner()
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
+    }
+
+    public function scale()
+    {
+        return $this->hasOne('App\AchievementScale', 'id', 'scale_id');
     }
 
     public static function booted() {

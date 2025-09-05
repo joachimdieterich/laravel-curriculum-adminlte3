@@ -84,7 +84,6 @@
 <script>
 import Form from "form-backend-validation";
 import Select2 from "../forms/Select2.vue";
-import DatePicker from "vue3-datepicker";
 
 export default {
     name: 'AgendaItemForm',
@@ -174,8 +173,7 @@ export default {
         });
     },
     components: {
-        DatePicker,
-        Select2
+        Select2,
     },
 }
 </script>

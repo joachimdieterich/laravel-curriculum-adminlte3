@@ -79,6 +79,7 @@ return [
     'waitForFile' => 'Datei wird erzeugt...',
     'areYouSure' => 'Sind Sie sicher?',
     'allRightsReserved' => 'Alle Rechte vorbehalten.',
+    'download' => 'Herunterladen',
     'downloadFile' => 'Datei herunterladen',
     'toggleNavigation' => 'Navigation umschalten',
     'toggle' => 'auf-/zuklappen',
@@ -205,6 +206,7 @@ return [
     'media' => [
         'title' => 'Medien',
         'title_singular' => 'Medium',
+        'add' => 'Medien hinzufügen',
         'create' => 'Medium erstellen',
         'link' => 'Medium verknüpfen',
     ],
@@ -685,6 +687,7 @@ return [
         'upload_helper' => 'Zum Hochladen Datei(en) hierher ziehen<br> oder klicken um Datei(en) auszuwählen',
         'no_media' => 'Es wurden noch keine Medien verknüpft.',
         'link' => 'Link',
+        'generate_links' => 'Links erzeugen',
         'fields' => [
             'path' => 'PFad',
             'path_helper' => '',

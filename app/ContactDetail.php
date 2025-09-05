@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Mews\Purifier\Casts\CleanHtml;
 
 class ContactDetail extends Model
 {
@@ -12,6 +13,10 @@ class ContactDetail extends Model
         'mobile',
         'notes',
         'owner_id',
+    ];
+
+    protected $casts = [
+        'notes' => CleanHtml::class,
     ];
 
     public function path()

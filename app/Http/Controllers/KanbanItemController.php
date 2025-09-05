@@ -20,7 +20,7 @@ class KanbanItemController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        abort_unless((Gate::allows('kanban_edit') and Kanban::find($input['kanban_id'])->isAccessible()), 403);
+        abort_unless(Gate::allows('kanban_edit') and Kanban::find($input['kanban_id'])->isEditable(null, $this->getCurrentToken()), 403);
 
         $order_id = DB::table('kanban_items')
             ->where('kanban_id', $input['kanban_id'])
@@ -44,12 +44,23 @@ class KanbanItemController extends Controller
             'owner_id'          => auth()->user()->id,
         ]);
 
+        if (isset($input['media_subscriptions']) AND count($input['media_subscriptions']) > 0) {
+            MediumSubscription::whereIn('medium_id', $input['media_subscriptions'])
+            ->where([
+                'subscribable_id'   => $input['kanban_status_id'],
+                'subscribable_type' => 'App\\KanbanStatus',
+            ])
+            ->update([
+                'subscribable_id'   => $kanbanItem->id,
+                'subscribable_type' => 'App\\KanbanItem',
+            ]);
+        }
+
         LogController::set(get_class($this).'@'.__FUNCTION__);
         Kanban::find($input['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
 
         if (request()->wantsJson()) {
-            return KanbanItem::where('id', $kanbanItem->id)
-                ->with([
+            return KanbanItem::with([
                     'comments',
                     'comments.user',
                     'comments.likes',
@@ -57,7 +68,7 @@ class KanbanItemController extends Controller
                     'mediaSubscriptions.medium',
                     'owner',
                 ])
-                ->get()->first();
+                    ->find($kanbanItem->id);
         }
     }
 
@@ -125,7 +136,7 @@ class KanbanItemController extends Controller
      */
     public function update(Request $request, KanbanItem $kanbanItem)
     {
-        abort_unless((Gate::allows('kanban_edit') and $kanbanItem->isAccessible()), 403);
+        abort_unless(Gate::allows('kanban_edit') and $kanbanItem->isEditable(null, $this->getCurrentToken()), 403);
 
         $input = $this->validateRequest();
 
@@ -168,13 +179,17 @@ class KanbanItemController extends Controller
      */
     public function destroy(KanbanItem $kanbanItem)
     {
-        abort_unless((Gate::allows('kanban_delete') and $kanbanItem->isAccessible()), 403);
+        abort_unless(Gate::allows('kanban_delete') and $kanbanItem->isEditable(null, $this->getCurrentToken()), 403);
 
         Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
 
         $kanbanItemForEvent = $kanbanItem;
 
-        $kanbanItem->mediaSubscriptions()->delete();
+        $kanbanItem->mediaSubscriptions->each(function (MediumSubscription $subscription) {
+            // hack to skip setting medium_id of model to null
+            if (is_null($subscription->additional_data)) $subscription->additional_data = true;
+            app(MediumSubscriptionController::class)->destroy($subscription);
+        });
         $kanbanItem->subscriptions()->delete();
         $kanbanItem->delete();
 
@@ -275,6 +290,12 @@ class KanbanItemController extends Controller
         }
     }
 
+    protected function getCurrentToken()
+    {
+        $url = parse_url(request()->headers->get('referer'), PHP_URL_QUERY);
+        parse_str($url ?? '', $query);
+        return $query['sharing_token'] ?? null;
+    }
 
     protected function validateRequest()
     {
@@ -284,6 +305,7 @@ class KanbanItemController extends Controller
             'order_id' => 'sometimes|required|integer',
             'kanban_id' => 'sometimes|required|integer',
             'kanban_status_id' => 'sometimes|required|integer',
+            'media_subscriptions' => 'sometimes|array',
             'color' => 'sometimes',
             'due_date' => 'sometimes',
             'locked' => 'sometimes|boolean',

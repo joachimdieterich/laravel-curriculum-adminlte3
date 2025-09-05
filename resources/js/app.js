@@ -4,7 +4,6 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 require('./bootstrap');
-require('@activix/bootstrap-datetimepicker');
 
 //vue
 import { createApp } from 'vue';
@@ -32,16 +31,6 @@ const app = createApp({});
 import mitt from 'mitt';
 app.config.globalProperties.$eventHub = mitt();
 
-import VueDOMPurifyHTML from 'vue-dompurify-html';
-app.use(VueDOMPurifyHTML, {
-    hooks: {
-        afterSanitizeAttributes: (currentNode) => {
-            if ('rel' in currentNode && currentNode.rel == 'noopener') {
-                currentNode.setAttribute('target', '_blank');
-            }
-        },
-    },
-});
 import { useGlobalStore } from "./store/global";
 import { createPinia } from "pinia";
 const pinia = createPinia();
@@ -365,11 +354,10 @@ app.config.globalProperties.$initTinyMCE = function(
 ) {
 
     const defaultPlugins = [
-        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-        "searchreplace wordcount visualblocks visualchars code fullscreen",
-        "insertdatetime media nonbreaking save table directionality",
-        "emoticons template paste textpattern curriculummedia",
-        "autoresize"
+        "advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "hr", "anchor", "pagebreak",
+        "searchreplace", "wordcount", "visualblocks", "visualchars", "code", "fullscreen",
+        "insertdatetime", "media", "nonbreaking", "save", "table", "directionality",
+        "emoticons", "template", "paste", "textpattern", "autoresize",
     ];
 
     return {
@@ -378,6 +366,7 @@ app.config.globalProperties.$initTinyMCE = function(
         ...attr,
         path_absolute : "/",
         selector: "textarea.my-editor",
+        promotion: false,
         branding: false,
         placeholder: attr?.placeholder ?? this.trans('global.description'),
         plugins: tinyMcePlugins ?? defaultPlugins,
@@ -552,45 +541,5 @@ $(document).ready(function () {
 
     moment.updateLocale('en', {
         week: {dow: 1} // Monday is the first day of the week
-    });
-
-    $('.date').datetimepicker({
-        format: 'YYYY-MM-DD',
-        locale: 'en'
-    });
-
-    $('.datetime').datetimepicker({
-        format: 'YYYY-MM-DD HH:mm:ss',
-        locale: 'en',
-        sideBySide: true
-    });
-
-    $('.timepicker').datetimepicker({
-        format: 'HH:mm:ss'
-    });
-
-    $('.select-all').click(function () {
-        let $select2 = $(this).parent().siblings('.select2');
-        $select2.find('option').prop('selected', 'selected');
-        $select2.trigger('change');
-    });
-    $('.deselect-all').click(function () {
-        let $select2 = $(this).parent().siblings('.select2');
-        $select2.find('option').prop('selected', '');
-        $select2.trigger('change');
-    });
-
-    $('.select2').select2();
-
-    $('.treeview').each(function () {
-        var shouldExpand = false;
-        $(this).find('li').each(function () {
-            if ($(this).hasClass('active')) {
-                shouldExpand = true;
-            }
-        });
-        if (shouldExpand) {
-            $(this).addClass('active');
-        }
     });
 });

@@ -111,7 +111,7 @@
                                             />
                                             <p v-if="isInitial">
                                                 <i class="fa fa-upload"></i><br>
-                                                <span v-dompurify-html="trans('global.medium.upload_helper')"></span>
+                                                {{ trans('global.medium.upload_helper') }}
                                             </p>
                                             <p v-if="isSaving">
                                                 {{ fileCount }} {{ trans('global.medium.upload') }}...
@@ -335,14 +335,13 @@ export default {
                     subscribable_id: this.form.subscribable_id,
                     medium_id: medium.id
                 }).then((response) => {
-                    console.log(medium.id + 'subscribed');
+                    Object.assign(medium, response.data);
                 });
             });
         },
         add() {
-            if (this.subscribeSelected) {
-                this.subscribe();
-            }
+            // creating additional subscription is only neccessary for local media
+            if (this.subscribeSelected && !this.postProcess) this.subscribe();
 
             this.$eventHub.emit(
                 this.callback, //default callback == 'medium-added'
@@ -357,7 +356,7 @@ export default {
             this.globalStore?.closeModal(this.$options.name);
         },
         reset() {
-            this.globalStore.setSelectedMedia(null);
+            this.globalStore.resetSelectedMedia();
             this.form.reset();
 
             this.currentStatus = STATUS_INITIAL;
@@ -374,15 +373,15 @@ export default {
             this.tab = tab;
 
             if (tab === 'media') {
-                const dt = $('#media-datatable').DataTable();
+                const datatable = $('#media-datatable').DataTable();
 
                 $('#media_search_datatable').on('keyup', function () {
-                    dt.search(this.search).draw();
+                    datatable.search(this.search).draw();
                 }.bind(this));
 
-                dt.on('select', () => {
-                    let selection = dt.rows('.selected').data().toArray();
-                    this.globalStore.setSelectedMedia(selection);
+                datatable.on('select deselect', (e, dt) => {
+                    let selection = datatable.rows({page: 'current'}).data()[dt[0][0]];
+                    this.globalStore.addSelectedMedia(selection);
                 });
             }
         },
@@ -401,7 +400,8 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
+            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
+                this.globalStore.lockModal(this.$options.name);
                 const params = state.modals[this.$options.name].params;
                 this.reset();
 

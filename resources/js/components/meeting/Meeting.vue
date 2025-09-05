@@ -1,69 +1,115 @@
 <template>
     <div class="row">
-
         <div class="col-sm-12 col-md-7">
-
-            <div class="card mb-2"
-                style="height:100%"
-                 :style="{ 'background': 'url(/media/' + meeting.medium_id + '?model=meeting&model_id=' + meeting.id +') top center no-repeat', 'background-size': 'cover', }">
-                <div class="card-img-overlay d-flex flex-column justify-content-end"
-                     style="padding:0 !important;min-height: 230px !important">
-                    <span class="p-3"
-                          style="background-color: rgba(0,0,0,0.5); "
-                          :style="{backgroundColor: meeting.color + ' !important'}">
-                        <h5 class="card-title text-white"
-                            v-dompurify-html="this.meeting.title"></h5>
-                        <p class="card-text text-white pb-2 pt-1"
-                           v-dompurify-html="this.meeting.subtitle">
-                        </p>
-                        <a class="text-white" > {{postDate()}}</a>
+            <div
+                class="card mb-2 h-100"
+                :style="{ 'background': 'url(/media/' + meeting.medium_id + '?model=meeting&model_id=' + meeting.id +') top center no-repeat', 'background-size': 'cover', }"
+            >
+                <div
+                    class="card-img-overlay d-flex flex-column justify-content-end p-0"
+                    style="min-height: 230px !important"
+                >
+                    <span
+                        class="p-3"
+                        style="background-color: rgba(0,0,0,0.5); "
+                        :style="{ backgroundColor: meeting.color + ' !important' }"
+                    >
+                        <h5 class="card-title text-white">{{ meeting.title }}</h5>
+                        <p class="card-text text-white pb-2 pt-1">{{ meeting.subtitle }}</p>
+                        <a class="text-white">{{ postDate() }}</a>
                     </span>
                 </div>
             </div>
         </div>
 
         <div class="col-sm-12 col-md-5">
-            <Livestream
-            :meeting="meeting"/>
+            <Livestream :meeting="meeting"/>
         </div>
     </div>
     <div class="row">
-<!--        Details-->
+        <!--Details-->
         <div class="col-12 pt-2">
             <div class="card card-primary card-outline card-outline-tabs">
                 <div class="card-header p-0 border-bottom-0">
-                    <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                    <ul
+                        id="custom-tabs-four-tab"
+                        class="nav nav-tabs"
+                        role="tablist"
+                    >
                         <li class="nav-item">
-                            <a class="nav-link active" id="custom-tabs-four-home-tab"
-                               data-toggle="pill" href="#custom-tabs-four-home" role="tab" aria-controls="custom-tabs-four-home"
-                               aria-selected="true">Veranstaltungsbeschreibung</a>
+                            <a
+                                id="custom-tabs-four-home-tab"
+                                href="#custom-tabs-four-home"
+                                class="nav-link active"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="custom-tabs-four-home"
+                                aria-selected="true"
+                            >
+                                Veranstaltungsbeschreibung
+                            </a>
                         </li>
                         <li v-if="meeting.info"
-                            class="nav-item" >
-                            <a class="nav-link" id="custom-tabs-four-profile-tab"
-                               data-toggle="pill" href="#custom-tabs-four-profile" role="tab"
-                               aria-controls="custom-tabs-four-profile" aria-selected="false">Organisatorisches</a>
+                            class="nav-item"
+                        >
+                            <a
+                                id="custom-tabs-four-profile-tab"
+                                href="#custom-tabs-four-profile"
+                                class="nav-link"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="custom-tabs-four-profile"
+                                aria-selected="false"
+                            >
+                                Organisatorisches
+                            </a>
                         </li>
                         <li
                             v-if="meeting.speakers"
-                            class="nav-item">
-                            <a class="nav-link" id="custom-tabs-four-messages-tab"
-                               data-toggle="pill" href="#custom-tabs-four-messages"
-                               role="tab" aria-controls="custom-tabs-four-messages" aria-selected="false">Referent:innen</a>
+                            class="nav-item"
+                        >
+                            <a
+                                id="custom-tabs-four-messages-tab"
+                                href="#custom-tabs-four-messages"
+                                class="nav-link"
+                                data-toggle="pill"
+                                role="tab"
+                                aria-controls="custom-tabs-four-messages"
+                                aria-selected="false"
+                            >
+                                Referent:innen
+                            </a>
                         </li>
                     </ul>
                 </div>
                 <div class="card-body">
-                    <div class="tab-content" id="custom-tabs-four-tabContent">
-                        <div class="tab-pane fade show active" id="custom-tabs-four-home" role="tabpanel" aria-labelledby="custom-tabs-four-home-tab"
-                             v-dompurify-html="this.meeting.description">
+                    <div
+                        id="custom-tabs-four-tabContent"
+                        class="tab-content"
+                    >
+                        <div
+                            id="custom-tabs-four-home"
+                            class="tab-pane fade show active"
+                            role="tabpanel"
+                            aria-labelledby="custom-tabs-four-home-tab"
+                            v-html="meeting.description"
+                        >
                         </div>
-                        <div class="tab-pane fade" id="custom-tabs-four-profile" role="tabpanel" aria-labelledby="custom-tabs-four-profile-tab"
-                             v-dompurify-html="this.meeting.info">
+                        <div
+                            id="custom-tabs-four-profile"
+                            class="tab-pane fade"
+                            role="tabpanel"
+                            aria-labelledby="custom-tabs-four-profile-tab"
+                            v-html="meeting.info"
+                        >
                         </div>
-                        <div class="tab-pane fade" id="custom-tabs-four-messages"
-                             role="tabpanel" aria-labelledby="custom-tabs-four-messages-tab"
-                             v-dompurify-html="this.meeting.speakers">
+                        <div
+                            id="custom-tabs-four-messages"
+                            class="tab-pane fade"
+                            role="tabpanel"
+                            aria-labelledby="custom-tabs-four-messages-tab"
+                            v-html="meeting.speakers"
+                        >
                         </div>
                     </div>
                 </div>

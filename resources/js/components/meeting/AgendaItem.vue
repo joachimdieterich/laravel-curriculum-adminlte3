@@ -52,10 +52,10 @@
                 <div class="p-2">
                     <img v-if="item.medium_id != null"
                         class="border pull-right mb-2"
-                        :src="'/media/'+item.medium_id"
+                        :src="'/media/' + item.medium_id"
                         width="200"
                     />
-                    <span v-dompurify-html="item.description"></span>
+                    <span v-html="item.description"></span>
                 </div>
                 <hr class="my-0 clearfix">
 

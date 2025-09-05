@@ -55,11 +55,11 @@
             <AbsenceModal/>
             <ContentModal/>
             <TaskModal/>
-            <MediumPreviewModal/>
             <SubscribeObjectiveModal/>
             <!-- <SetAchievementsModal/> -->
             <lms-modal/>
             <MediumModal/>
+            <MediumPreviewModal/>
             <LogbookModal/>
             <LogbookEntryModal/>
             <LogbookEntrySubjectModal/>
@@ -84,6 +84,7 @@
 </template>
 <script>
 import MediumModal from "../media/MediumModal.vue"
+import MediumPreviewModal from "../media/MediumPreviewModal.vue"
 import LogbookModal from "../logbook/LogbookModal.vue";
 import LogbookEntry from '../logbookEntry/LogbookEntry.vue';
 import LogbookPrintOptions from "./LogbookPrintOptions.vue";
@@ -92,7 +93,6 @@ import SubscribeModal from "../subscription/SubscribeModal.vue";
 import LmsModal from "../lms/LmsModal.vue";
 import ContentModal from "../content/ContentModal.vue";
 import {useGlobalStore} from "../../store/global";
-import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 // import SetAchievementsModal from "../plan/SetAchievementsModal.vue";
 import AbsenceModal from "../absence/AbsenceModal.vue";
@@ -107,13 +107,13 @@ export default {
         AbsenceModal,
         SubscribeObjectiveModal,
         // SetAchievementsModal,
-        MediumPreviewModal,
         ContentModal,
         LmsModal,
         LogbookModal,
         LogbookPrintOptions,
         LogbookEntry,
         MediumModal,
+        MediumPreviewModal,
         SubscribeModal,
         TaskModal,
     },

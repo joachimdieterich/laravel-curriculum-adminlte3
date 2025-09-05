@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\KanbanItem;
 use App\KanbanItemComment;
+use App\Like;
 use Illuminate\Http\Request;
-use Maize\Markable\Models\Like;
+use Maize\Markable\Exceptions\InvalidMarkValueException;
 
 class KanbanItemCommentController extends Controller
 {
@@ -20,6 +21,7 @@ class KanbanItemCommentController extends Controller
             'kanban_item_id' => $input['model_id'],
             'user_id' => Auth()->user()->id
         ]);
+        KanbanItem::find($input['model_id'])->touch('updated_at'); //To get Sync after media upload working
 
         if (request()->wantsJson()) {
             return $comment->with(['user', 'likes'])->find($comment->id);
@@ -42,16 +44,16 @@ class KanbanItemCommentController extends Controller
     /**
      * React to kanbanItem the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\KanbanItem  $kanbanItem
-     * @return \Illuminate\Http\Response
+     * @param Request           $request
+     * @param KanbanItemComment $kanbanItemComment
+     * @return array|void
+     * @throws InvalidMarkValueException
      */
     public function reaction(Request $request, KanbanItemComment $kanbanItemComment)
     {
         abort_unless( $kanbanItemComment->kanbanItem->isAccessible(), 403);
+        $this->validateRequest();
 
-        $input = $this->validateRequest();
-        //todo: use reaction_type 'like'...
         if (Like::has($kanbanItemComment, auth()->user())){
             Like::remove($kanbanItemComment, auth()->user()); // unmarks the $kanbanItem liked for the given user
         } else {
@@ -59,16 +61,13 @@ class KanbanItemCommentController extends Controller
         }
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanItemUpdatedEvent(KanbanItem::find($kanbanItemComment->kanban_item_id))))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' => KanbanItemComment::where('id', $kanbanItemComment->id)
-                        ->with([
-                            'likes',
-                        ])->get()->first(),
-                ];
-            }
+            return [
+                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                'message' => KanbanItemComment::where('id', $kanbanItemComment->id)
+                    ->with([
+                        'likes',
+                    ])->get()->first(),
+            ];
         }
     }
 

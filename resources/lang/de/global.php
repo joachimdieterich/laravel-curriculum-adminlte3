@@ -1054,6 +1054,9 @@ return [
         ],
     ],
     'kanban' => [
+        'contributor' => 'Aktuelle Bearbeiter',
+        'contributor_joined' => 'Bearbeiter dazu gekommen',
+        'contributor_left' => 'Bearbeiter gegangen',
         'title' => 'Pinnwände',
         'title_singular' => 'Pinnwand',
         'create' => 'Pinnwand erstellen',
@@ -1085,6 +1088,9 @@ return [
             'visible_from' => 'sichtbar ab (Datum/Uhrzeit)',
             'visible_until' => 'sichtbar bis (Datum/Uhrzeit)',
         ],
+    ],
+    'kanbanItemComment' => [
+        'typing' => 'Jemand schreibt',
     ],
     'kanbanStatus' => [
         'title' => 'Status',

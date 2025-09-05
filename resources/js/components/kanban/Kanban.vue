@@ -3,10 +3,10 @@
         id="kanban-container"
         class="kanban-container w-print-auto"
     >
-        <img v-if="currentKanban.medium_id"
+        <img v-if="kanban.medium_id"
             class="position-absolute p-0 h-100 w-100"
             style="object-fit: cover;"
-            :src="'/media/' + currentKanban.medium_id + '?preview=true'"
+            :src="'/media/' + kanban.medium_id + '?preview=true'"
             alt="background image"
         />
         <div
@@ -30,11 +30,11 @@
         <div
             id="kanban-wrapper"
             class="kanban-wrapper position-relative"
-            :style="'background-color: ' + currentKanban.color + 'B2;'"
+            :style="'background-color: ' + kanban.color + 'B2;'"
         >
             <!-- Columns (Statuses) -->
             <draggable
-                v-model="statuses"
+                v-model="kanban.statuses"
                 v-bind="columnDragOptions"
                 item-key="id"
                 handle=".handle"
@@ -61,6 +61,7 @@
                             :kanban_owner_id="kanban.owner_id"
                             :only_edit_owned_items="kanban.only_edit_owned_items"
                             :key="status.id"
+                            :websocket="websocket && kanban.auto_refresh"
                             filter=".ignore"
                         />
                         <div v-if="editable"
@@ -89,7 +90,7 @@
                                             || ($userId == kanban.owner_id)"
                                         :key="item.id"
                                         :editable="editable"
-                                        :commentable="currentKanban.commentable"
+                                        :commentable="kanban.commentable"
                                         :only_edit_owned_items="kanban.only_edit_owned_items"
                                         :collapse_items="kanban.collapse_items"
                                         :allow_copy="kanban.allow_copy"
@@ -98,8 +99,7 @@
                                         :item="item"
                                         :width="itemWidth"
                                         :kanban_owner_id="kanban.owner_id"
-                                        v-on:item-edit=""
-                                        v-on:sync="sync"
+                                        :websocket="websocket && kanban.auto_refresh"
                                         filter=".ignore"
                                     />
                                 </span>
@@ -121,7 +121,7 @@
         <Teleport to=".content">
             <KanbanModal/>
             <KanbanItemModal/>
-            <KanbanStatusModal :kanban="kanban"/>
+            <KanbanStatusModal :kanban="initialKanban"/>
             <MediumModal/>
             <SubscribeModal/>
             <ConfirmModal
@@ -148,7 +148,7 @@
             />
         </Teleport>
         <Teleport to="#customTitle">
-            <small>{{ kanban.title }}</small>
+            <small v-text="kanban.title"></small>
             <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                 type="button"
                 class="btn text-secondary px-2 mx-1"
@@ -156,7 +156,7 @@
             >
                 <i class="fa fa-pencil-alt"></i>
             </button>
-    
+
             <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                 type="button"
                 class="btn text-secondary px-2 mx-1"
@@ -164,14 +164,14 @@
             >
                 <i class="fa fa-share-alt"></i>
             </button>
-    
+
             <a
                 :href="'/export_csv/' + kanban.id"
                 class="btn text-secondary px-1 ml-2"
             >
                 <i class="fa fa-file-csv"></i>
             </a>
-    
+
             <a
                 :href="'/export_pdf/' + kanban.id"
                 class="btn text-secondary px-1 ml-1"
@@ -179,7 +179,10 @@
                 <i class="fa fa-file-pdf"></i>
             </a>
 
-            <p class="h6">{{ trans('global.owner') }}: {{ kanban.owner.firstname + ' ' + kanban.owner.lastname }}</p>
+            <p class="h6">{{ trans('global.owner') }}: {{ initialKanban.owner.firstname + ' ' + initialKanban.owner.lastname }}</p>
+        </Teleport>
+        <Teleport to="#contributors">
+            <contributors-list v-if="Object.values(currentContributors).length > 1" :contributors="currentContributors" :heading="true"></contributors-list>
         </Teleport>
     </div>
 </template>
@@ -194,10 +197,12 @@ import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
+import ContributorsList from "../uiElements/ContributorsList.vue";
+import {useToast} from "vue-toastification";
 
 export default {
     props: {
-        kanban: {
+        initialKanban: {
             type: Object,
             default: null,
         },
@@ -205,21 +210,23 @@ export default {
             type: Boolean,
             default: true,
         },
-        pusher: {
+        websocket: {
             type: Boolean,
             default: false,
         },
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
         return {
-            currentKanban: {},
-            statuses: [],
+            kanban: {},
+            currentContributors: {},
             newItem: 0, // track the ID of the status we want to add to
             newStatus: 0,
             itemWidth: 320,
@@ -227,9 +234,7 @@ export default {
             copy_id: null,
             show_item_copy: false,
             show_status_copy: false,
-            autoRefresh: false,
             refreshRate: 5000,
-            usersOnline: [],
         };
     },
     methods: {
@@ -249,7 +254,7 @@ export default {
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {
-                modelId: this.currentKanban.id,
+                modelId: this.kanban.id,
                 modelUrl: 'kanban',
                 shareWithUsers: true,
                 shareWithGroups: true,
@@ -267,38 +272,15 @@ export default {
 
             return now > from && now < until;
         },
-        sync() {
-            axios.get("/kanbanStatuses/" + this.currentKanban.id + "/checkSync")
-                .then(res => {
-                    if (res.data.message !== 'uptodate') {
-                        this.refreshRate = 5000;
-                        this.statuses = res.data.message.statuses;
-                    } else if (this.refreshRate < 10000) { // max refresh rate of 10 seconds
-                        // slow down refresh rate if no changes
-                        this.refreshRate += 1000;
-                    }
-                })
-                .catch(err => {
-                    console.log(err.response);
-                });
-        },
-        timer() {
-            setTimeout(() => {
-                if (this.autoRefresh){
-                    this.sync();
-                    this.timer()
-                }
-            }, this.refreshRate)
-        },
         syncStatusMoved(e) {
             if (e.oldIndex === e.newIndex) return; // no change
 
             const statusChanges = [];
             const start = e.oldIndex < e.newIndex ? e.oldIndex : e.newIndex;
             const end = e.oldIndex < e.newIndex ? e.newIndex : e.oldIndex;
-            
+
             for (let i = start; i <= end; i++) {
-                const status = this.statuses[i];
+                const status = this.kanban.statuses[i];
                 status.order_id = i;
                 statusChanges.push({
                     id: status.id,
@@ -312,7 +294,7 @@ export default {
             if (e.from === e.to && e.oldIndex === e.newIndex) return; // no change
 
             // get status from 'moved to'-position (data-attribtue)
-            const status = this.statuses.find(status => status.id == e.to.dataset.statusId);
+            const status = this.kanban.statuses.find(status => status.id == e.to.dataset.statusId);
             // find moved item based on newIndex
             const movedItem = status.items[e.newIndex];
             movedItem.order_id = e.newIndex;
@@ -344,7 +326,7 @@ export default {
                 }
 
                 // on 'moved from'-status, decrease order_id of all items after the original position
-                const oldStatus = this.statuses.find(status => status.id == e.from.dataset.statusId);
+                const oldStatus = this.kanban.statuses.find(status => status.id == e.from.dataset.statusId);
                 for (let i = e.oldIndex; i < oldStatus.items.length; i++) {
                     const item = oldStatus.items[i];
                     item.order_id = i;
@@ -365,7 +347,7 @@ export default {
         openItemModal(status_id) {
             this.globalStore?.showModal('kanban-item-modal', {
                 item: {
-                    kanban_id: this.currentKanban.id,
+                    kanban_id: this.kanban.id,
                     kanban_status_id: status_id,
                     color: this.kanban.statuses.find(s => s.id === status_id).color,
                 },
@@ -381,202 +363,94 @@ export default {
                 .then(response => this.handleItemAdded(response.data));
         },
         handleStatusAdded(newStatus) {
+            // if the status already exists do nothing
+            if (this.kanban.statuses.filter(s => s.id === newStatus.id).length !== 0) {
+                return;
+            }
+
             // add items to prevent error if item is created without reloading page
-            if (newStatus['items'] == undefined) newStatus['items'] = [];
-            this.statuses.push(newStatus);
+            if (newStatus['items'] == undefined) {}newStatus['items'] = [];
+            this.kanban.statuses.push(newStatus);
         },
         handleStatusUpdated(newStatus) {
-            let status = this.statuses.find(s => s.id === newStatus.id);
+            let status = this.kanban.statuses.find(s => s.id === newStatus.id);
 
             Object.assign(status, newStatus);
+
+            this.handleStatusMoved();
         },
         handleStatusDeleted(status) {
-            let index = this.statuses.indexOf(status);
-            this.statuses.splice(index, 1);
+            let index = this.kanban.statuses.findIndex(s => s.id === status.id);
+
+            this.kanban.statuses.splice(index, 1);
         },
-        /** unused | needed if websockets are active to update statuses
-        handleStatusMoved(newStatusOrder) {
+        handleStatusMoved() {
             let newStatusesOrderTemp = [];
 
-            newStatusOrder.forEach((status) => {
-                let statusIndex = this.statuses.findIndex(
-                    s => s.id === status.id
-                );
-                newStatusesOrderTemp.push(this.statuses[statusIndex]);
+            this.kanban.statuses.forEach((status) => {
+                newStatusesOrderTemp.splice(status.order_id, 0, status);
             });
-            this.statuses = newStatusesOrderTemp;
-        }, */
+
+            this.kanban.statuses = newStatusesOrderTemp;
+        },
         handleItemAdded(newItem) {
             // add an item to the correct column in our list
-            const statusIndex = this.statuses.findIndex(
+            const statusIndex = this.kanban.statuses.findIndex(
                 status => status.id === newItem.kanban_status_id
             );
             // Add newly created item to our column
-            this.statuses[statusIndex].items.push(newItem);
+            this.kanban.statuses[statusIndex].items.push(newItem);
         },
-        /** unused | needed if websockets are active to update items
-        handleItemMoved(columns) {
-            let newStatusOrder = [];
-
-            columns.forEach((status) => {
-                let statusIndex = this.statuses.findIndex(
-                    s => s.id === status.id
-                );
-
-                let newItemsOrder = [];
-                status.items.forEach((item) => {
-                    newItemsOrder.push(this.findItem(item));
-                });
-
-                let tempStatus = [];
-                for (const [key, value] of Object.entries(this.statuses[statusIndex])) {
-                    if (key !== 'items') {
-                        tempStatus[key] = value;
-                    } else {
-                        tempStatus['items'] = newItemsOrder;
-                    }
-                }
-                newStatusOrder.push(tempStatus);
-            })
-            this.statuses = newStatusOrder;
-        }, */
-        findItem(item) {
-            let foundItem = []
-            this.statuses.forEach((status) => {
-                status.items.forEach((i) => {
-                    if (i.id === item.id) {
-                        foundItem = i;
-                        return; // break early;
-                    }
-                })
-            });
-            return foundItem;
-        },
-        handleItemDeleted(item) {
-            // Find the index of the status where we should delete the item
-            const statusIndex = this.statuses.findIndex(
-                status => status.id === item.kanban_status_id
-            );
-
-            let index = this.statuses[statusIndex].items.findIndex(
-                i => i.id === item.id
-            );
-            this.statuses[statusIndex].items.splice(index, 1);
-        },
-        handleItemUpdated(updatedItem) {
-            // Find the index of the status where we should replace the item
-            const statusIndex = this.statuses.findIndex(
-                status => status.id === updatedItem.kanban_status_id
-            );
-            // Find the index of the item where we should replace the item
-            let item = this.statuses[statusIndex].items.find(
-                item => item.id === updatedItem.id
-            );
-
-            Object.assign(item, updatedItem);
-        },
-        handleItemCommentUpdated(updatedItem) {
-            // Find the index of the status where we should replace the item
-            const statusIndex = this.statuses.findIndex(
-                status => status.id === updatedItem.kanban_status_id
-            );
-            // Find the index of the item where we should replace the item
-            const itemIndex = this.statuses[statusIndex].items.findIndex(
-                item => item.id === updatedItem.id
-            );
-
-            // Add updated item to our column
-            this.statuses[statusIndex].items[itemIndex]['comments'] = updatedItem.comments;
-        },
-        startPusher() {
-            if (this.pusher === true) {
-                this.$echo.join('Presence.App.Kanban.' + this.kanban.id)
+        startWebsocket() {
+            if (this.websocket === true && this.kanban.auto_refresh === true) {
+                this.$echo
+                    .join('App.Kanban.' + this.kanban.id)
                     .here((users) => {
-                        this.usersOnline = [...users];
+                        for(let user of users) {
+                            this.currentContributors[user.id] = user;
+                        }
                     })
-                    .listen('.kanbanStatusAdded', (payload) => {
-                        this.handleStatusAdded(payload.message);
-                    })
-                    .listen('.kanbanStatusUpdated', (payload) => {
-                        this.handleStatusUpdated(payload.message);
-                    })
-                    .listen('.kanbanStatusMoved', (payload) => {
-                        this.handleStatusMoved(payload.message.statuses);
-                    })
-                    .listen('.kanbanStatusDeleted', (payload) => {
-                        this.handleStatusDeleted(payload.message);
-                    })
-                    .listen('.kanbanItemAdded', (payload) => {
-                        this.handleItemAdded(payload.message);
-                    })
-                    .listen('.kanbanItemUpdated', (payload) => {
-                        this.handleItemUpdated(payload.message);
-                    })
-                    .listen('.kanbanItemMoved', (payload) => {
-                        this.handleItemMoved(payload.message);
-                    })
-                    .listen('.kanbanItemReload', (payload) => {
-                        this.handleItemUpdated(payload.message);
-                    })
-                    .listen('.kanbanItemDeleted', (payload) => {
-                        this.handleItemDeleted(payload.message);
-                    })
-                    .listen('.kanbanColorUpdated', (payload) => {
-                        this.currentKanban.color = payload.message;
-                    })
-                    .listen('.kanbanItemCommentUpdated', (payload) => {
-                        //console.log('kanbanItemCommentUpdated');
-                        this.handleItemCommentUpdated(payload.message);
+                    .listen('.KanbanUpdated', (payload) => {
+                        this.$eventHub.emit('kanban-updated', payload.model);
                     })
                     .joining((user) => {
-                        this.usersOnline.push(user);
-                        //console.log({user}, 'joined');
+                        this.currentContributors[user.id] = user;
                     })
                     .leaving((user) => {
-                        //console.log({user}, 'leaving');
-                        this.usersOnline.filter((userOnline) => userOnline.id !== user.id);
+                        delete this.currentContributors[user.id];
                     });
             }
         },
-        isLocked(value) {
-            if (value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id) { //locked and not owner
-                return false;
-            } else {
-                return true;
+        stopWebsocket() {
+            if (this.websocket === true && this.kanban.auto_refresh === true) {
+                this.$echo.leave('App.Kanban.' + this.kanban.id);
             }
+        },
+        isLocked(value) {
+            return !(value.draggedContext.element.locked == true && this.$userId != value.draggedContext.element.owner_id);
         },
     },
     mounted() {
-        this.currentKanban = this.kanban;
+        this.kanban = this.initialKanban;
 
-        // Listen for the 'Kanban' event in the 'Presence.App.Kanban' presence channel
-        this.startPusher();
-        this.$eventHub.on('reload_kanban_board', () => {
-            this.sync()
-        });
+        this.startWebsocket();
+
+        // KANBAN Events
         this.$eventHub.on('kanban-updated', (updatedKanban) => {
-            Object.assign(this.currentKanban, updatedKanban);
+            this.kanban = updatedKanban;
         });
+
         // STATUS Events
-        this.$eventHub.on('kanban-status-added', (status) => {
+        this.$eventHub.on('kanban-status-created-' + this.kanban.id, (status) => {
             this.handleStatusAdded(status);
         });
-        this.$eventHub.on('kanban-status-updated', (status) => {
+        this.$eventHub.on('kanban-status-updated-' + this.kanban.id, (status) => {
             this.handleStatusUpdated(status);
         });
-        this.$eventHub.on('kanban-status-deleted', (status) => {
+        this.$eventHub.on('kanban-status-deleted-' + this.kanban.id, (status) => {
             this.handleStatusDeleted(status);
         });
-        // ITEM Events
-        this.$eventHub.on('kanban-item-added', (item) => {
-            this.handleItemAdded(item);
-        });
-        this.$eventHub.on('kanban-item-updated', (item) => {
-            this.handleItemUpdated(item);
-        });
-        this.$eventHub.on('kanban-item-deleted', (item) => {
-            this.handleItemDeleted(item);
-        });
+
         // COPY Events
         this.$eventHub.on('kanban-show-copy', data => {
             this.copy_id = data.id;
@@ -587,20 +461,13 @@ export default {
             }
         });
     },
-    created() {
-        this.statuses = this.kanban.statuses;
-
-        if (this.kanban.auto_refresh) {
-            this.autoRefresh = true;
-            this.timer();
-        } else {
-            this.autoRefresh = false;
-        }
+    unmounted() {
+        this.stopWebsocket();
     },
     computed: {
         textColor: function() {
-            if (this.currentKanban.color == "" || this.currentKanban.color == null) return;
-            return this.$textcolor(this.currentKanban.color, '#333333');
+            if (this.kanban.color == "" || this.kanban.color == null) return;
+            return this.$textcolor(this.kanban.color, '#333333');
         },
         columnDragOptions() {
             return {
@@ -621,7 +488,31 @@ export default {
             };
         },
     },
+    watch: {
+        currentContributors:{
+            handler(newValue, oldValue) {
+                if ((oldValue.length ?? 0) === 0) {
+                    return;
+                }
+
+                let joinedContributors = newValue.filter(x => !oldValue.includes(x) && x.id != this.$userId);
+                console.log('joinedContributors', joinedContributors);
+                for (let user of joinedContributors) {
+                    console.log(joinedContributors);
+                    this.toast.info(this.trans('global.kanban.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
+                }
+
+                let leftContributors = oldValue.filter(x => !newValue.includes(x) && x.id != this.$userId);
+                console.log('leftContributors', joinedContributors);
+                for (let user of leftContributors) {
+                    this.toast.info(this.trans('global.kanban.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
+                }
+            },
+            deep: true,
+        }
+    },
     components: {
+        ContributorsList,
         KanbanStatus,
         draggable,
         KanbanItem,
@@ -648,7 +539,7 @@ export default {
     overflow-y: clip;
 }
 .kanban-items-container { scroll-behavior: smooth; }
-.kanban-items-container > :last-child > .card { margin-bottom: 0px; }
+.kanban-items-container > :last-child > .card { margin-bottom: 0; }
 @media (max-width: 991px) {
     .kanban-container {
         width: 100vw;

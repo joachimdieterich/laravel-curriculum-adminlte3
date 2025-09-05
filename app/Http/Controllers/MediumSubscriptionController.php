@@ -60,6 +60,7 @@ class MediumSubscriptionController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
+        $input['subscribable_type']::find($input['subscribable_id'])->touch(); //To get Sync after media upload working
 
         return MediumSubscription::where([
             'medium_id' => $input['medium_id'],
@@ -164,6 +165,8 @@ class MediumSubscriptionController extends Controller
                 // and then delete the medium-entry
                 Medium::where('id', $model['medium_id'])->delete();
             }
+
+            $input['subscribable_type']::find($input['subscribable_id'])->touch(); //To get Sync after media upload working
         }
 
         return true;

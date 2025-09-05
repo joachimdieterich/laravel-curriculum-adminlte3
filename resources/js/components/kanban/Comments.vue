@@ -61,6 +61,7 @@
                             </a>
                             <Reaction
                                 :model="comment"
+                                :websocket="websocket"
                                 class="pull-right"
                                 reaction="like"
                                 url="/kanbanItemComments"
@@ -72,24 +73,28 @@
             </div>
         </div>
 
-        <div class="input-group pb-3">
-            <input
-                type="text"
-                name="message"
-                class="form-control"
-                v-model.trim="form.comment"
-                :placeholder="trans('global.comment') + '...'"
-                @keyup.enter="sendComment()"
-            />
-            <span class="input-group-append">
-                <button
-                    class="btn btn-primary"
-                    :disabled="!form.comment"
-                    @click.prevent="sendComment()"
-                >
-                    <i class="far fa-paper-plane"></i>
-                </button>
-            </span>
+        <div class="pb-3" v-if="commentable">
+            <div class="input-group">
+                <input
+                    type="text"
+                    name="message"
+                    class="form-control"
+                    v-model.trim="form.comment"
+                    :placeholder="trans('global.comment') + '...'"
+                    @keyup.enter="sendComment()"
+                    @keyup="whisperTyping()"
+                />
+                <span class="input-group-append">
+                    <button
+                        class="btn btn-primary"
+                        :disabled="!form.comment"
+                        @click.prevent="sendComment()"
+                    >
+                        <i class="far fa-paper-plane"></i>
+                    </button>
+                </span>
+            </div>
+            <div class="font-weight-light text-secondary" v-if="typing"><small>{{ trans('global.kanbanItemComment.typing') }}...</small></div>
         </div>
     </div>
 </template>
@@ -113,6 +118,14 @@ export default {
             type: Object,
             default: null,
         },
+        websocket: {
+            type: Boolean,
+            default: false,
+        },
+        commentable: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -121,6 +134,8 @@ export default {
                 model_id: this.model.id,
                 comment: '',
             }),
+            websocketWhisperConnection: null,
+            typing: false
         }
     },
     methods: {
@@ -129,12 +144,10 @@ export default {
 
             axios.post('/kanbanItemComment', this.form)
                 .then(res => {
-                    this.$emit('addComment', res.data);
+                    this.startWebsocket(res.data.id);
+                    this.scrollDown();
                     this.form.comment = '';
-                    this.$nextTick(function() {
-                        let container = this.$refs.scroll_container;
-                        container.scrollTop = container.scrollHeight + 120;
-                    });
+                    this.whisperTyping();
                 })
                 .catch(err => function () {
                     console.log(err);
@@ -142,17 +155,75 @@ export default {
         },
         deleteComment(comment) {
             axios.delete('/kanbanItemComment/' + comment.id)
-                .then(res => {
-                    this.$emit('removeComment', comment);
+                .then(() => {
+                    this.stopWebsocket(comment.id);
                 })
                 .catch(err => {
                     console.log(err.response);
                 });
         },
+        scrollDown() {
+            this.$nextTick(() => {
+                this.$refs.scroll_container.scrollTop = this.$refs.scroll_container.scrollHeight;
+            });
+        },
+        startWebsockets() {
+            if (this.websocket === true) {
+                this.startWebsocket(this.model.id);
+                this.websocketWhisperConnection = this.startWhisperWebsocket(this.model.id)
+            }
+        },
+        startWebsocket(id) {
+            return this.$echo
+                .join('App.KanbanItemComments.' + id)
+                .listen('.KanbanItemCommentUpdated', (payload) => {
+                    const index = this.comments.findIndex(s => s.id === payload.model.id);
+                    this.comments[index] = payload.model;
+                })
+                .listen('.KanbanItemCommentDeleted', (payload) => {
+                    let index = this.comments.indexOf(payload.model);
+                    this.item.comments.splice(index, 1);
+                    this.stopWebsocket(payload.model.id);
+                });
+        },
+        startWhisperWebsocket(id) {
+            return this.$echo
+                .join('App.KanbanItemComments.Whisper.' + id)
+                .listenForWhisper('typing', (e) => {
+                    this.typing = e.typing;
+                });
+        },
+        stopWebsockets() {
+            if (this.websocket === true) {
+                this.stopWebsocket(this.model.id);
+                this.stopWhisperWebsocket();
+            }
+        },
+        stopWebsocket(id) {
+            this.$echo.leave('App.KanbanItemComments.' + id);
+        },
+        stopWhisperWebsocket(id) {
+            this.$echo.leave('App.KanbanItemComments.Whisper.' + id);
+        },
+        whisperTyping() {
+            this.websocketWhisperConnection.whisper('typing',{
+                'typing': this.form.comment !== ""
+            });
+        }
     },
-    mounted() {
-        this.conversation = this.comments;
+    unmounted() {
+        this.stopWebsockets();
     },
+    created() {
+        this.startWebsockets();
+    },
+    watch: {
+        comments:{
+            handler() {
+                this.scrollDown();
+            },
+        }
+    }
 }
 </script>
 <style scoped>

@@ -39,6 +39,7 @@
                         @yield('breadcrumb')
                     </div>
                 </div>
+                @yield('contributors')
             </div>
         </section>
 

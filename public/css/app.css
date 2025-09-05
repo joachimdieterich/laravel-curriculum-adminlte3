@@ -28787,7 +28787,7 @@ table.dataTable thead .sorting_desc {
 }
 
 .direct-chat-text {
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   background: #d2d6de;
   border: 1px solid #d2d6de;
   color: #444;
@@ -28901,6 +28901,11 @@ table.dataTable thead .sorting_desc {
   float: left;
   width: 40px;
   display: inline-block;
+}
+
+.contacts-list-img:first-child {
+    transition: all 0.5s ease;
+    margin-left: 0;
 }
 
 .contacts-list-img:not(:first-child) {

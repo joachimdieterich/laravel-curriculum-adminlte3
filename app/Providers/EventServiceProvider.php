@@ -6,6 +6,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -38,5 +39,12 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+
+        if (env('APP.LOGGING.EVENTS', false)) {
+            Event::listen('*', function ($event, array $data) {
+                if ($event == 'Illuminate\\Log\\Events\\MessageLogged'){ return;}
+                Log::debug($event . ' invoked');
+            });
+        }
     }
 }

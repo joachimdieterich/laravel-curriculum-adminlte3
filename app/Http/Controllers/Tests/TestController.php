@@ -21,16 +21,4 @@ class TestController extends Controller
         }
         return $tests;
     }
-
-    public function reverb(Order $order)
-    {
-        OrderShipmentStatusUpdated::dispatch($order);
-//        Broadcast::on('order.shipped')->with(['order' => new Order()])->sendNow();
-    }
-
-    public function reverbView(Order $order)
-    {
-        return view('testReverb', ['order' => $order]);
-    }
-
 }

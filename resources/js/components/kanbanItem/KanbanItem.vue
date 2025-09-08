@@ -333,7 +333,7 @@ export default {
                     this.$eventHub.emit('kanban-item-deleted-' + this.item.kanban_status_id, this.item);
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
         edit() {
@@ -397,12 +397,12 @@ export default {
                 this.$echo
                     .join('App.KanbanItem.' + this.item.id)
                     .listen('.KanbanItemUpdated', (payload) => {
-                        this.$eventHub.emit('kanban-item-updated-' + this.item.kanban_status_id, payload.model);
+                        this.$eventHub.emit('kanban-item-updated', payload.model);
 
                         this.getEditors();
                     })
                     .listen('.KanbanItemDeleted', (payload) => {
-                        this.$eventHub.emit('kanban-item-deleted-' + this.item.kanban_status_id, payload.model);
+                        this.$eventHub.emit('kanban-item-deleted', payload.model);
                     })
                 ;
             }

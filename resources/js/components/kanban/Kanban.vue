@@ -393,14 +393,6 @@ export default {
 
             this.kanban.statuses = newStatusesOrderTemp;
         },
-        handleItemAdded(newItem) {
-            // add an item to the correct column in our list
-            const statusIndex = this.kanban.statuses.findIndex(
-                status => status.id === newItem.kanban_status_id
-            );
-            // Add newly created item to our column
-            this.kanban.statuses[statusIndex].items.push(newItem);
-        },
         startWebsocket() {
             if (this.websocket === true && this.kanban.auto_refresh === true) {
                 this.$echo
@@ -441,13 +433,13 @@ export default {
         });
 
         // STATUS Events
-        this.$eventHub.on('kanban-status-created-' + this.kanban.id, (status) => {
+        this.$eventHub.on('kanban-status-created', (status) => {
             this.handleStatusAdded(status);
         });
-        this.$eventHub.on('kanban-status-updated-' + this.kanban.id, (status) => {
+        this.$eventHub.on('kanban-status-updated', (status) => {
             this.handleStatusUpdated(status);
         });
-        this.$eventHub.on('kanban-status-deleted-' + this.kanban.id, (status) => {
+        this.$eventHub.on('kanban-status-deleted', (status) => {
             this.handleStatusDeleted(status);
         });
 
@@ -496,14 +488,11 @@ export default {
                 }
 
                 let joinedContributors = newValue.filter(x => !oldValue.includes(x) && x.id != this.$userId);
-                console.log('joinedContributors', joinedContributors);
                 for (let user of joinedContributors) {
-                    console.log(joinedContributors);
                     this.toast.info(this.trans('global.kanban.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
                 }
 
                 let leftContributors = oldValue.filter(x => !newValue.includes(x) && x.id != this.$userId);
-                console.log('leftContributors', joinedContributors);
                 for (let user of leftContributors) {
                     this.toast.info(this.trans('global.kanban.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
                 }

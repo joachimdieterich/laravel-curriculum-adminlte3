@@ -368,7 +368,7 @@ export default {
         add() {
             axios.post('/kanbanItems', this.form)
                 .then(r => {
-                    this.$eventHub.emit('kanban-item-added', r.data);
+                    this.$eventHub.emit('kanban-item-added-' + this.form.kanban_status_id, r.data);
                     this.close(true)
                 })
                 .catch(e => {

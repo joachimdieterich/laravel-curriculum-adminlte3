@@ -26,6 +26,10 @@ class KanbanItemComment extends Model
 
     public function broadcastOn($event): array
     {
+        if (!env('WEBSOCKET_APP_ACTIVE', false)) {
+            return [];
+        }
+
         $broadcastChannelName = str_replace('\\', '.', get_class($this)) . 's.' . $this->kanban_item_id;
 
         return [

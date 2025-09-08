@@ -3,7 +3,6 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +10,7 @@ use Mews\Purifier\Casts\CleanHtml;
 
 class Medium extends Model
 {
-    use HasFactory, BroadcastsEvents;
+    use HasFactory;
 
     protected $guarded = [];
 

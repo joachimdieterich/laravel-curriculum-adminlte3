@@ -76,6 +76,7 @@
         <div class="pb-3" v-if="commentable">
             <div class="input-group">
                 <input
+                    v-if="this.websocket === true"
                     type="text"
                     name="message"
                     class="form-control"
@@ -83,6 +84,15 @@
                     :placeholder="trans('global.comment') + '...'"
                     @keyup.enter="sendComment()"
                     @keyup="whisperTyping()"
+                />
+                <input
+                    v-else
+                    type="text"
+                    name="message"
+                    class="form-control"
+                    v-model.trim="form.comment"
+                    :placeholder="trans('global.comment') + '...'"
+                    @keyup.enter="sendComment()"
                 />
                 <span class="input-group-append">
                     <button
@@ -139,12 +149,20 @@ export default {
         }
     },
     methods: {
+        addComment(newComment) {
+            this.comments.push(newComment);
+        },
+        removeComment(comment) {
+            let index = this.comments.indexOf(comment);
+            this.comments.splice(index, 1);
+        },
         sendComment() {
             if (this.form.comment.trim().length === 0) return;
 
             axios.post('/kanbanItemComment', this.form)
                 .then(res => {
                     this.startWebsocket(res.data.id);
+                    this.addComment(res.data);
                     this.scrollDown();
                     this.form.comment = '';
                     this.whisperTyping();
@@ -157,6 +175,7 @@ export default {
             axios.delete('/kanbanItemComment/' + comment.id)
                 .then(() => {
                     this.stopWebsocket(comment.id);
+                    this.removeComment(comment)
                 })
                 .catch(err => {
                     console.log(err.response);
@@ -174,17 +193,23 @@ export default {
             }
         },
         startWebsocket(id) {
-            return this.$echo
-                .join('App.KanbanItemComments.' + id)
-                .listen('.KanbanItemCommentUpdated', (payload) => {
-                    const index = this.comments.findIndex(s => s.id === payload.model.id);
-                    this.comments[index] = payload.model;
-                })
-                .listen('.KanbanItemCommentDeleted', (payload) => {
-                    let index = this.comments.indexOf(payload.model);
-                    this.item.comments.splice(index, 1);
-                    this.stopWebsocket(payload.model.id);
-                });
+            if (this.websocket === true) {
+                return this.$echo
+                    .join('App.KanbanItemComments.' + id)
+                    .listen('.KanbanItemCommentUpdated', (payload) => {
+                        const index = this.comments.findIndex(s => s.id === payload.model.id);
+                        this.comments[index] = payload.model;
+                    })
+                    .listen('.KanbanItemCommentDeleted', (payload) => {
+                        let index = this.comments.indexOf(payload.model);
+                        if (index === -1) {
+                            return;
+                        }
+
+                        this.removeComment(payload.model);
+                        this.stopWebsocket(payload.model.id);
+                    });
+            }
         },
         startWhisperWebsocket(id) {
             return this.$echo
@@ -200,15 +225,21 @@ export default {
             }
         },
         stopWebsocket(id) {
-            this.$echo.leave('App.KanbanItemComments.' + id);
+            if (this.websocket === true) {
+                this.$echo.leave('App.KanbanItemComments.' + id);
+            }
         },
         stopWhisperWebsocket(id) {
-            this.$echo.leave('App.KanbanItemComments.Whisper.' + id);
+            if (this.websocket === true) {
+                this.$echo.leave('App.KanbanItemComments.Whisper.' + id);
+            }
         },
         whisperTyping() {
-            this.websocketWhisperConnection.whisper('typing',{
-                'typing': this.form.comment !== ""
-            });
+            if (this.websocket === true) {
+                this.websocketWhisperConnection.whisper('typing', {
+                    'typing': this.form.comment !== ""
+                });
+            }
         }
     },
     unmounted() {

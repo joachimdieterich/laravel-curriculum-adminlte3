@@ -3,7 +3,8 @@ import Pusher from 'pusher-js';
 
 let echo = {};
 
-const shouldConnectToWS = import.meta.env.VITE_WEBSOCKET_APP_ACTIVE == true;
+const shouldConnectToWS = import.meta.env.VITE_WEBSOCKET_APP_ACTIVE === "true";
+console.log(shouldConnectToWS);
 if (shouldConnectToWS === true) {
     window.Pusher = Pusher;
 

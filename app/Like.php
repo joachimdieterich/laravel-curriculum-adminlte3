@@ -3,15 +3,12 @@
 namespace App;
 
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Database\Eloquent\BroadcastsEvents;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Maize\Markable\Mark;
 use Maize\Markable\Models\Like as BasicLike;
 
 class Like extends BasicLike
 {
-//    use BroadcastsEvents;
 
     public function broadcastOn(): array
     {

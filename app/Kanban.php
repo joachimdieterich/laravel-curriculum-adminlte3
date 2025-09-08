@@ -47,6 +47,10 @@ class Kanban extends Model
 
     public function broadcastOn($event): array
     {
+        if (!env('WEBSOCKET_APP_ACTIVE', false)) {
+            return [];
+        }
+
         return [
              new PresenceChannel($this->broadcastChannel())
         ];
@@ -54,7 +58,6 @@ class Kanban extends Model
 
     public function broadcastWith(): array
     {
-
         return [
             'model' => $this->withRelations(),
         ];

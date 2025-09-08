@@ -35,6 +35,10 @@ class KanbanItem extends Model
 
     public function broadcastOn($event): array
     {
+        if (!env('WEBSOCKET_APP_ACTIVE', false)) {
+            return [];
+        }
+
         $defaultChannels = [
             new PresenceChannel($this->broadcastChannel())
         ];

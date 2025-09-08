@@ -172,9 +172,16 @@ export default {
         },
         delete() {
             axios.delete("/kanbanStatuses/" + this.status.id)
+                .then(() => {
+                    this.$eventHub.emit("kanban-status-deleted", this.status);
+                })
                 .catch(err => {
                     console.log(err.response);
                 });
+        },
+        handleItemAdded(newItem) {
+            // Add newly created item to our column
+            this.status.items.push(newItem);
         },
         handleItemUpdated(updatedItem) {
             let item = this.status.items.find(s => s.id === updatedItem.id);
@@ -190,7 +197,7 @@ export default {
             );
             if (itemIndex === -1) return;
 
-            this.status.items.splice(index, 1);
+            this.status.items.splice(itemIndex, 1);
         },
         // Reorder items after update
         handleItemMoved(newItems) {
@@ -207,13 +214,13 @@ export default {
                 this.$echo
                     .join('App.KanbanStatus.' + this.status.id)
                     .listen('.KanbanStatusUpdated', (payload) => {
-                        this.$eventHub.emit('kanban-status-updated-' + this.status.kanban_id, payload.model);
+                        this.$eventHub.emit('kanban-status-updated', payload.model);
                         this.$nextTick(() => {
                             this.handleItemMoved(payload.model.items)
                         });
                     })
                     .listen('.KanbanStatusDeleted', (payload) => {
-                        this.$eventHub.emit('kanban-status-deleted-' + this.status.kanban_id, payload.model);
+                        this.$eventHub.emit('kanban-status-deleted', payload.model);
                     })
                 ;
             }
@@ -246,6 +253,9 @@ export default {
 
         // ITEM Events
         if (this.status !== null) {
+            this.$eventHub.on('kanban-item-added-' + this.status.id, (item) => {
+                this.handleItemAdded(item);
+            });
             this.$eventHub.on('kanban-item-updated-' + this.status.id, (item) => {
                 this.handleItemUpdated(item);
             });

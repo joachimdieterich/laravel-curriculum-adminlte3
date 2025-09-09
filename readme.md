@@ -242,12 +242,15 @@ npm run test:cypress
 ```
 
 ### Websockets
-Add/Edit the following lines to .env
+Add/Edit the following lines to .env but beware:
 
+REVERB_APP_KEY needs to be equal to APP_KEY BUT without the format.
+
+If the APP_KEY is base64:diuertn2308ht320ng then REVERB_APP_KEY needs to be diuertn2308ht320ng
 ```
 BROADCAST_CONNECTION=reverb
 REVERB_APP_ID="${APP_NAME}"
-REVERB_APP_KEY="${APP_KEY}"
+REVERB_APP_KEY=
 REVERB_APP_SECRET=secret
 
 REVERB_HOST="${APP_HOSTNAME}"

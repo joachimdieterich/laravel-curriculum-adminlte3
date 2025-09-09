@@ -105,8 +105,7 @@ class Kanban extends Model
                     'owner' => function ($query) {
                         $query->select('id', 'username', 'firstname', 'lastname');
                     },
-                ])
-                      ->orderBy('order_id');
+                ])->orderBy('order_id');
             },
             'medium',
         ])->find($this->id);

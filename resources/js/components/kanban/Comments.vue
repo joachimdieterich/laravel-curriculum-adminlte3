@@ -76,17 +76,6 @@
         <div class="pb-3" v-if="commentable">
             <div class="input-group">
                 <input
-                    v-if="this.websocket === true"
-                    type="text"
-                    name="message"
-                    class="form-control"
-                    v-model.trim="form.comment"
-                    :placeholder="trans('global.comment') + '...'"
-                    @keyup.enter="sendComment()"
-                    @keyup="whisperTyping()"
-                />
-                <input
-                    v-else
                     type="text"
                     name="message"
                     class="form-control"
@@ -144,7 +133,6 @@ export default {
                 model_id: this.model.id,
                 comment: '',
             }),
-            websocketWhisperConnection: null,
             typing: false
         }
     },
@@ -161,11 +149,9 @@ export default {
 
             axios.post('/kanbanItemComment', this.form)
                 .then(res => {
-                    this.startWebsocket(res.data.id);
                     this.addComment(res.data);
                     this.scrollDown();
                     this.form.comment = '';
-                    this.whisperTyping();
                 })
                 .catch(err => function () {
                     console.log(err);
@@ -174,7 +160,6 @@ export default {
         deleteComment(comment) {
             axios.delete('/kanbanItemComment/' + comment.id)
                 .then(() => {
-                    this.stopWebsocket(comment.id);
                     this.removeComment(comment)
                 })
                 .catch(err => {
@@ -186,19 +171,17 @@ export default {
                 this.$refs.scroll_container.scrollTop = this.$refs.scroll_container.scrollHeight;
             });
         },
-        startWebsockets() {
-            if (this.websocket === true) {
-                this.startWebsocket(this.model.id);
-                this.websocketWhisperConnection = this.startWhisperWebsocket(this.model.id)
-            }
-        },
-        startWebsocket(id) {
+        startWebsocket() {
             if (this.websocket === true) {
                 return this.$echo
-                    .join('App.KanbanItemComments.' + id)
+                    .channel('App.KanbanItemComments.' + this.model.id)
                     .listen('.KanbanItemCommentUpdated', (payload) => {
                         const index = this.comments.findIndex(s => s.id === payload.model.id);
                         this.comments[index] = payload.model;
+                        console.log(payload.model);
+                    })
+                    .listen('.KanbanItemCommentCreated', (payload) => {
+                        this.comments.push(payload.model);
                     })
                     .listen('.KanbanItemCommentDeleted', (payload) => {
                         let index = this.comments.indexOf(payload.model);
@@ -211,42 +194,17 @@ export default {
                     });
             }
         },
-        startWhisperWebsocket(id) {
-            return this.$echo
-                .join('App.KanbanItemComments.Whisper.' + id)
-                .listenForWhisper('typing', (e) => {
-                    this.typing = e.typing;
-                });
-        },
-        stopWebsockets() {
+        stopWebsocket() {
             if (this.websocket === true) {
-                this.stopWebsocket(this.model.id);
-                this.stopWhisperWebsocket();
+                this.$echo.leave('App.KanbanItemComments.' + this.model.id);
             }
         },
-        stopWebsocket(id) {
-            if (this.websocket === true) {
-                this.$echo.leave('App.KanbanItemComments.' + id);
-            }
-        },
-        stopWhisperWebsocket(id) {
-            if (this.websocket === true) {
-                this.$echo.leave('App.KanbanItemComments.Whisper.' + id);
-            }
-        },
-        whisperTyping() {
-            if (this.websocket === true) {
-                this.websocketWhisperConnection.whisper('typing', {
-                    'typing': this.form.comment !== ""
-                });
-            }
-        }
     },
     unmounted() {
-        this.stopWebsockets();
+        this.stopWebsocket();
     },
     created() {
-        this.startWebsockets();
+        this.startWebsocket();
     },
     watch: {
         comments:{

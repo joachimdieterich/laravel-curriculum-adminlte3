@@ -3,7 +3,7 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +33,7 @@ class KanbanItemComment extends Model
         $broadcastChannelName = str_replace('\\', '.', get_class($this)) . 's.' . $this->kanban_item_id;
 
         return [
-            new PresenceChannel($broadcastChannelName)
+            new Channel($broadcastChannelName)
         ];
     }
 

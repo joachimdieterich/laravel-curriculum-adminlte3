@@ -149,7 +149,7 @@ export default {
             this.contributorDetails.posX = x - 80;
             this.contributorDetails.posY = y - 80;
         },
-        setData() {
+        drawCanvas() {
             let initials = "";
 
             if (this.firstname && this.lastname) {
@@ -162,9 +162,11 @@ export default {
 
             let charIndex = initials.charCodeAt(0) - 65;
             let colourIndex = charIndex % 19;
+
             this.$nextTick(() => {
                 let canvas = document.getElementById(this.id);
                 let context = canvas?.getContext("2d");
+                context.clearRect(0, 0, canvas.width, canvas.height);
 
                 let canvasWidth = this.size,
                     canvasHeight = this.size,
@@ -188,17 +190,28 @@ export default {
             });
         }
     },
+    watch: {
+        user_id: function() {
+            this.drawCanvas();
+        },
+        firstname: function() {
+            this.drawCanvas();
+        },
+        lastname: function() {
+            this.drawCanvas();
+        }
+    },
     mounted() {
         this.id = 'user-avatar' + this.$.uid;
         this.avatar_medium_id = this.medium_id;
 
         if (this.user_id == null && this.medium_id == null) {
-            this.setData();
+            this.drawCanvas();
         } else {
             axios.get('/users/' + this.user_id)
                 .then(response => {
                     this.user = response.data.user;
-                    this.setData();
+                    this.drawCanvas();
                 })
                 .catch(e => {
                     console.log(e);

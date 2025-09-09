@@ -3,7 +3,7 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Maize\Markable\Markable;
 use Illuminate\Database\Eloquent\Model;
@@ -40,7 +40,7 @@ class KanbanItem extends Model
         }
 
         $defaultChannels = [
-            new PresenceChannel($this->broadcastChannel())
+            new Channel($this->broadcastChannel())
         ];
 
         $diff = $this->getDirty();

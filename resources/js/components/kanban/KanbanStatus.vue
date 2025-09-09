@@ -212,7 +212,7 @@ export default {
         startWebsocket() {
             if (this.websocket === true) {
                 this.$echo
-                    .join('App.KanbanStatus.' + this.status.id)
+                    .channel('App.KanbanStatus.' + this.status.id)
                     .listen('.KanbanStatusUpdated', (payload) => {
                         this.$eventHub.emit('kanban-status-updated', payload.model);
                         this.$nextTick(() => {

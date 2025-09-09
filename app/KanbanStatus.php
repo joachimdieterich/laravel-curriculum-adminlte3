@@ -3,7 +3,7 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -34,7 +34,7 @@ class KanbanStatus extends Model
         }
 
         return [
-            new PresenceChannel($this->broadcastChannel())
+            new Channel($this->broadcastChannel())
         ];
     }
 

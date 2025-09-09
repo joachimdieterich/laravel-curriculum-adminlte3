@@ -321,8 +321,10 @@ class EdusharingMediaAdapter implements MediaInterface
                     return true;
                 }
                 break;
+            case "App\Kanban":
+            case "App\KanbanStatus":
             case "App\KanbanItem":
-                    return true; // media in kanban-items should always be accessible
+                    return true; // media in kanbans should always be accessible
                 break;
             default:
                 return $subscription->subscribable->isAccessible();

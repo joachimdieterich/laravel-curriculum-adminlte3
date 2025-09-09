@@ -407,9 +407,11 @@ export default {
                     })
                     .joining((user) => {
                         this.currentContributors[user.id] = user;
+                        this.toast.info(this.trans('global.kanban.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
                     })
                     .leaving((user) => {
                         delete this.currentContributors[user.id];
+                        this.toast.info(this.trans('global.kanban.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
                     });
             }
         },
@@ -479,26 +481,6 @@ export default {
                 disabled: !this.editable,
             };
         },
-    },
-    watch: {
-        currentContributors:{
-            handler(newValue, oldValue) {
-                if ((oldValue.length ?? 0) === 0) {
-                    return;
-                }
-
-                let joinedContributors = newValue.filter(x => !oldValue.includes(x) && x.id != this.$userId);
-                for (let user of joinedContributors) {
-                    this.toast.info(this.trans('global.kanban.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
-                }
-
-                let leftContributors = oldValue.filter(x => !newValue.includes(x) && x.id != this.$userId);
-                for (let user of leftContributors) {
-                    this.toast.info(this.trans('global.kanban.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
-                }
-            },
-            deep: true,
-        }
     },
     components: {
         ContributorsList,

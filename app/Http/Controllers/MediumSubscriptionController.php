@@ -166,7 +166,7 @@ class MediumSubscriptionController extends Controller
                 Medium::where('id', $model['medium_id'])->delete();
             }
 
-            $input['subscribable_type']::find($input['subscribable_id'])->touch(); //To get Sync after media upload working
+            $model['subscribable_type']::find($model['subscribable_id'])->touch(); //To get Sync after media upload working
         }
 
         return true;

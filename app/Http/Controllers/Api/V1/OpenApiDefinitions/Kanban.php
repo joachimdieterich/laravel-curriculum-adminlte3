@@ -164,14 +164,14 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      path="/v1/kanbans/{kanban}",
 *      operationId="deleteKanban",
 *      tags={"Kanban v1"},
-*      summary="Delete kanban by Id",
+*      summary="Delete kanban by ID",
 *      description="Delete a kanban object",
 *      security={
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
 *          name="kanban",
-*          description="Kanban Id",
+*          description="Kanban ID",
 *          required=true,
 *          in="path",
 *          @OA\Schema(
@@ -180,20 +180,16 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      ),
 *      @OA\Parameter(
 *          name="owner_cn",
-*          description="Owner Cn",
+*          description="common_name of Kanban-owner",
 *          required=true,
 *          in="path",
 *          @OA\Schema(
 *              type="string"
 *          )
 *      ),
-*
-*      @OA\Response(
-*          response=200,
-*          description="successful operation",
-*       ),
-*       @OA\Response(response=400, description="Bad request"),
-*
+*      @OA\Response(response=200, description="successful operation"),
+*      @OA\Response(response=400, description="Missing attribute [owner_cn]"),
+*      @OA\Response(response=403, description="common_name does not match Kanban-owner's common_name")
 * )
 *
 * @OA\Post(

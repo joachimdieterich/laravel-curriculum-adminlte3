@@ -77,15 +77,29 @@ class KanbansApiController extends Controller
 
     public function destroy(Kanban $kanban)
     {
+        if (!request()->has('owner_cn')) return response()->json('Missing attribute [owner_cn]', 400);
+
+        $owner_cn = request()->validate(['owner_cn' => 'required|string'])['owner_cn'];
+        $user_id = User::where('common_name', $owner_cn)->pluck('id')->first();
+
+        if ($kanban->owner_id !== $user_id) return response()->json("common_name does not match Kanban-owner's common_name", 403);
+
+        // delete medium if edusharing-medium
+        if ($kanban->medium_id) {
+            $medium = $kanban->medium;
+
+            if ($medium->adapter == 'edusharing') {
+                $medium->subscriptions()->delete();
+                $medium->delete();
+            }
+        }
 
         //delete relations
         $kanban->items()->delete();
         $kanban->statuses()->delete();
         $kanban->subscriptions()->delete();
 
-        if ($kanban->delete()) {
-            return ['message' => 'Successful deleted'];
-        }
+        if ($kanban->delete()) return response()->json(true);
     }
 
     public function enrol()

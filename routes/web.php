@@ -295,6 +295,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('eventSubscriptions', 'EventSubscriptionController');
 
+    /* Exams */
+    Route::get('exams_subscribed', 'Tests\ExamController@authUserIndexExams')->name('exams.index');
+    Route::get('exams', 'Tests\ExamController@index');
+    Route::post('exams', 'Tests\ExamController@create');
+    Route::get('exams/{exam}/edit', 'Tests\ExamController@show');
+
     Route::resource('glossar', 'GlossarController');
 
     Route::resource('grades', 'GradesController');
@@ -372,6 +378,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('progresses', 'ProgressController');
 
+    /* reference(Subscription)  */
+    Route::resource('references', 'ReferenceController');
+    Route::resource('referenceSubscriptions', 'ReferenceSubscriptionController');
+
     Route::resource('roles', 'RolesController');
 
     Route::resource('sharingLevels', 'SharingLevelController');
@@ -388,9 +398,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('trainings/{training}', 'TrainingController@show');
 
-    /* reference(Subscription)  */
-    Route::resource('references', 'ReferenceController');
-    Route::resource('referenceSubscriptions', 'ReferenceSubscriptionController');
+    /* Tests */
+    Route::get('tests', 'Tests\TestController@index');
 
     /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
@@ -408,14 +417,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('videoconferences/{videoconference}', 'VideoconferenceController@show');
     Route::get('videoconferences/{videoconference}/token', 'VideoconferenceController@getVideoconferenceByToken');
     Route::get('videoconferences/{videoconference}/startWithPw', 'VideoconferenceController@show');
-
-    /* Tests */
-    Route::get('tests', 'Tests\TestController@index');
-    /* Exams */
-    Route::get('exams_subscribed', 'Tests\ExamController@authUserIndexExams')->name('exams.index');
-    Route::get('exams', 'Tests\ExamController@index');
-    Route::post('exams', 'Tests\ExamController@create');
-    Route::get('exams/{exam}/edit', 'Tests\ExamController@show');
 });
 
 

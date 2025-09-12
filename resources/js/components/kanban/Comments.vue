@@ -217,4 +217,7 @@ export default {
 </script>
 <style scoped>
 .direct-chat-text:hover .text-danger { visibility: visible !important; }
+@media (max-width: 991px) {
+    .direct-chat-text .text-danger { visibility: visible !important; }
+}
 </style>

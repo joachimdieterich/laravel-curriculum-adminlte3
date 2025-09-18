@@ -26,6 +26,7 @@ class Authenticate extends Middleware
                     (
                         $request->has('sharing_token')
                         or str_starts_with($request->getRequestUri(), '/navigator')
+                        or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
                         or str_ends_with($request->getPathInfo(), 'startWithPw') // videoconference-link
                     )
                 ) {

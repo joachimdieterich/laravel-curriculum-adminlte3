@@ -22,10 +22,13 @@ class Authenticate extends Middleware
             } else {
                 // only redirect to SSO login if request isn't available to guests
                 if (
-                    $request->has('sharing_token')
-                    or str_starts_with($request->getRequestUri(), '/navigator')
-                    or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
-                    or str_ends_with($request->getPathInfo(), 'startWithPw') // videoconference-link
+                    !$request->has('forceSSO') and // TODO: temporary solution | remove after implementing OIDC
+                    (
+                        $request->has('sharing_token')
+                        or str_starts_with($request->getRequestUri(), '/navigator')
+                        or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
+                        or str_ends_with($request->getPathInfo(), 'startWithPw') // videoconference-link
+                    )
                 ) {
                     // set statistics for guest-authentication
                     LogController::set('guestLogin');

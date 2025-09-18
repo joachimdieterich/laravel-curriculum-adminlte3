@@ -49,16 +49,16 @@
                         @mouseleave="hover = false"
                     >
                         <div class="d-flex align-items-center pull-right">
-                            <a v-if="$userId == comment.user.id
+                            <button v-if="($userId == comment.user.id && $userId != 8)
                                     || $userId == model.owner_id
                                     || checkPermission('is_admin')
                                 "
-                                v-permission="'message_delete'"
-                                class="btn btn-flat text-danger px-2 py-1 mr-1 invisible"
+                                type="button"
+                                class="btn btn-icon text-danger px-2 py-1 mr-1 invisible"
                                 @click="deleteComment(comment)"
                             >
                                 <i class="fa fa-trash"></i>
-                            </a>
+                            </button>
                             <Reaction
                                 :model="comment"
                                 :websocket="websocket"
@@ -133,7 +133,7 @@ export default {
                 model_id: this.model.id,
                 comment: '',
             }),
-            typing: false
+            typing: false,
         }
     },
     methods: {
@@ -217,4 +217,7 @@ export default {
 </script>
 <style scoped>
 .direct-chat-text:hover .text-danger { visibility: visible !important; }
+@media (max-width: 991px) {
+    .direct-chat-text .text-danger { visibility: visible !important; }
+}
 </style>

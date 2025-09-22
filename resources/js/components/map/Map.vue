@@ -294,7 +294,11 @@ export default {
     },
     methods: {
         createMarker() {
-            this.globalStore?.showModal('map-marker-modal', { map_id: this.map.id });
+            this.globalStore?.showModal('map-marker-modal', {
+                map_id: this.map.id,
+                type_id: this.form.type_id,
+                category_id: this.form.category_id,
+            });
         },
         loader() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)

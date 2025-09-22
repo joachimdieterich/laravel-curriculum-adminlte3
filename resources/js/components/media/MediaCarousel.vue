@@ -26,6 +26,7 @@
 
             <div
                 id="link-overlay"
+                class="d-print-none"
                 @click.self="(e) => e.target.classList.toggle('active')"
             >
                 <div
@@ -71,7 +72,7 @@
 
             <button v-if="$userId == subscriptions[currentSlide]?.medium.owner_id"
                 type="button"
-                class="btn btn-icon position-absolute text-danger pointer px-2"
+                class="d-print-none btn btn-icon position-absolute text-danger pointer px-2"
                 style="top: 5px; right: 5px; z-index: 30;"
                 @click.prevent="unlinkMedium(subscriptions[currentSlide])"
             >
@@ -91,7 +92,7 @@
 
         <a v-if="subscriptions.length > 1"
             :href="'#' + component_id"
-            class="carousel-control-prev"
+            class="d-print-none carousel-control-prev"
             style="z-index: 20;"
             role="button"
             data-slide="prev"
@@ -99,11 +100,11 @@
             @click="prev()"
         >
             <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: drop-shadow(0 0 1px black);"></span>
-            <span class="sr-only ignore">{{ trans('pagination.previous') }}</span>
+            <span class="sr-only">{{ trans('pagination.previous') }}</span>
         </a>
         <a v-if="subscriptions.length > 1"
             :href="'#' + component_id"
-            class="carousel-control-next"
+            class="d-print-none carousel-control-next"
             style="z-index: 20;"
             role="button"
             data-slide="next"
@@ -111,7 +112,7 @@
             @click="next()"
         >
             <span class="carousel-control-next-icon" aria-hidden="true" style="filter: drop-shadow(0 0 1px black);"></span>
-            <span class="sr-only ignore">{{ trans('pagination.next') }}</span>
+            <span class="sr-only">{{ trans('pagination.next') }}</span>
         </a>
     </div>
 </template>

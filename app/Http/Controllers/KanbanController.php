@@ -372,11 +372,11 @@ class KanbanController extends Controller
             'title'                 => $kanban->title . '_' . date('Y.m.d_H:i:s'),
             'description'           => $kanban->description,
             'color'                 => $kanban->color,
-            'medium_id'             => $kanban->medium_id,
             'commentable'           => $kanban->commentable,
             'auto_refresh'          => $kanban->auto_refresh,
             'only_edit_owned_items' => $kanban->only_edit_owned_items,
             'allow_copy'            => $kanban->allow_copy,
+            'collapse_items'        => $kanban->collapse_items,
             'owner_id'              => auth()->user()->id,
         ]);
 
@@ -386,6 +386,7 @@ class KanbanController extends Controller
                 'title'      => $status->title,
                 'order_id'   => $status->order_id,
                 'kanban_id'  => $kanbanCopy->id,
+                'color'      => $status->color,
                 'locked'     => $kanbanCopy->locked ?? false,
                 'visibility' => $kanbanCopy->visibility ?? true,
                 'owner_id'   => auth()->user()->id,
@@ -399,21 +400,27 @@ class KanbanController extends Controller
                     'kanban_id'        => $kanbanCopy->id,
                     'kanban_status_id' => $statusCopy->id,
                     'color'            => $item->color,
+                    'visibility'       => $item->visibility,
+                    'visible_from'     => $item->visible_from,
+                    'visible_until'    => $item->visible_until,
                     'due_date'         => $item->due_date,
+                    'replace_links'    => $item->replace_links,
                     'owner_id'         => auth()->user()->id,
                 ]);
 
-                foreach ($item->mediaSubscriptions as $mediaSubscription) {
-                    MediumSubscription::Create([
-                        'medium_id'         => $mediaSubscription->medium_id,
-                        'subscribable_type' => $mediaSubscription->subscribable_type,
-                        'subscribable_id'   => $kanbanItemCopy->id,
-                        'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                        'visibility'        => $mediaSubscription->visibility,
-                        'additional_data'   => $mediaSubscription->additional_data,
-                        'owner_id'          => auth()->user()->id,
-                    ]);
-                }
+                // TODO: copied edusharing-media need newly created usages and media records
+                // INFO: is it even possible to create new usages, since we can't be sure that the user has access to the same media?
+                // foreach ($item->mediaSubscriptions as $mediaSubscription) {
+                //     MediumSubscription::create([
+                //         'medium_id'         => $mediaSubscription->medium_id,
+                //         'subscribable_type' => $mediaSubscription->subscribable_type,
+                //         'subscribable_id'   => $kanbanItemCopy->id,
+                //         'sharing_level_id'  => $mediaSubscription->sharing_level_id,
+                //         'visibility'        => $mediaSubscription->visibility,
+                //         'additional_data'   => $mediaSubscription->additional_data,
+                //         'owner_id'          => auth()->user()->id,
+                //     ]);
+                // }
             }
         }
 

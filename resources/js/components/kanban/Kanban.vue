@@ -360,7 +360,7 @@ export default {
         },
         copyItem() {
             axios.get('/kanbanItems/' + this.copy_id + '/copy')
-                .then(response => this.handleItemAdded(response.data));
+                .then(response => this.$eventHub.emit('kanban-item-added-' + response.data.kanban_status_id, response.data));
         },
         handleStatusAdded(newStatus) {
             // if the status already exists do nothing
@@ -369,7 +369,7 @@ export default {
             }
 
             // add items to prevent error if item is created without reloading page
-            if (newStatus['items'] == undefined) {}newStatus['items'] = [];
+            if (newStatus['items'] == undefined) newStatus['items'] = [];
             this.kanban.statuses.push(newStatus);
         },
         handleStatusUpdated(newStatus) {

@@ -14,7 +14,7 @@
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw position-absolute text-white"></i>
 
             <img
-                :src="'/media/' + medium.id + '?preview=true'"
+                :src="'/media/' + medium.id"
                 :alt="medium.title ?? medium.name"
                 class="position-relative user-select-none"
                 style="max-width: 90svw; max-height: 90svh;"

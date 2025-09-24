@@ -116,7 +116,6 @@ export default {
         Editor,
         Select2,
     },
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -138,12 +137,14 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink", "link", "autoresize",
+                    "autolink", "link", "lists", "autoresize",
                 ],
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
-                }
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link",
+                "",
             ),
         }
     },

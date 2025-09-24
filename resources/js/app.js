@@ -452,7 +452,7 @@ app.config.globalProperties.$initTinyMCE = function(
                             event.selectedMedia.forEach((subscription) => {
                                 html = html.concat(
                                     editor.insertContent(
-                                        '<img src="/media/' + (subscription.id ?? subscription.medium_id) + '?preview=true">',
+                                        '<img src="/media/' + (subscription.id ?? subscription.medium_id) + '" width=500>',
                                         { format: 'raw' }
                                     )
                                 );

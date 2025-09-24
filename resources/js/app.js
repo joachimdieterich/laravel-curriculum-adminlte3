@@ -449,10 +449,10 @@ app.config.globalProperties.$initTinyMCE = function(
                     app.config.globalProperties.$eventHub.on('insertContent', (event) => {
                         if (attr.callbackId == event.id) {
                             let html = '';
-                            globalStore.selectedMedia.forEach((media) => {
+                            event.selectedMedia.forEach((subscription) => {
                                 html = html.concat(
                                     editor.insertContent(
-                                        '<img src="/media/' + media.id + '?preview=true" width="500">',
+                                        '<img src="/media/' + (subscription.id ?? subscription.medium_id) + '?preview=true">',
                                         { format: 'raw' }
                                     )
                                 );

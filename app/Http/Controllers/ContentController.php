@@ -108,12 +108,13 @@ class ContentController extends Controller
          * - if not -> delete only content_subscription
          */
 
-        $content->mediaSubscriptions()
-            ->orWhere([ // new media subscriptions are connected through their subscribed model
-                ['subscribable_type', '=', $subscribable_type],
-                ['subscribable_id', '=', $subscribable_id],
-            ])
-            ->delete();
+        // TODO: this logic is flawed
+        // $content->mediaSubscriptions()
+        //     ->orWhere([ // new media subscriptions are connected through their subscribed model
+        //         ['subscribable_type', '=', $subscribable_type],
+        //         ['subscribable_id', '=', $subscribable_id],
+        //     ])
+        //     ->delete();
 
         if ($content->subscriptions()->count() <= 1) {
             ContentSubscription::where('subscribable_type', isset(request('subscribable')['content_subscriptions'][0]['subscribable_type'])

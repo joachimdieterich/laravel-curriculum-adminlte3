@@ -1207,6 +1207,7 @@ return [
         'share' => 'Zugriff verwalten/Teilen',
         'delete' => 'Videokonferenz löschen',
         'delete_helper' => 'Soll die Videokonferenz gelöscht werden?',
+        'access_denied' => 'Hinterlegtes Passwort (URL) ist nicht korrekt. Bitte überprüfen Sie den geteilten Link.',
         'enrol' => 'Videokonferenz verknüpfen',
         'expel_helper' => 'Gruppe aus Videokonferenz ausschreiben',
         'presentations' => 'Präsentationen',

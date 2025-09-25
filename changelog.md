@@ -1,4 +1,23 @@
-## 2025-08-27
+## 1.2.0 (2025-09-25)
+- preparations for WebSockets
+- updated axios to fix vulnerability
+- changed translation from KanbanStatus to "Spalte"
+- KanbanItem: added functionality to add (multiple) media on create
+- Kanban: added missing attributes on copyKanban/copyStatus/copyItem
+- Kanban: hide buttons from MediaCarousel and Comments on print
+- Kanban: Comments can now be deleted by Kanban-owner
+- Comments: always show delete-icon on smaller devices
+- tinyMCE: fixed media-button problems
+- Map: fixed created Marker not having the same type/category (thus not appearing after reload)
+- LogbookEntryModal: removed media-plugin from tinyMCE and added lists
+- rework of MediumPreviewModal
+- MediumPreviewModal: show media in original quality instead of preview
+- EdusharingMedia: added Kanban/KanbanStatus as always visible
+- Authenticate: implemented logic to force SSO on token-links
+- KanbanAPI: fixed delete-endpoint, validation/responses and documentation
+- MediaCarousel: added loading-overlay on delete
+
+## 1.1.1 (2025-08-27)
 - LinkItem: fixed QR-Codes not rendering sometimes
 - Group: fixed adding a course not refering to the correct course-ID
 - RenderUsage: fixed positioning of image in Carousel
@@ -6,7 +25,7 @@
 - CertificateModal: added code-plugin
 - GenerateCertificateModal: fixed listing unavailable certificates
 
-## 2025-08-21
+## 1.1.0 (2025-08-21)
 - KanbanItemModal/KanbanStatusModal: fixed permissions not showing on create for non-kanban-owners
 - fixed authenticated users not being able to create/update/delete KanbanItem/-Status when accessing through token-link
 - Kanban: most icons are now hidden on print-view
@@ -23,7 +42,7 @@
   - `dompurify` and `vue-dompurify-html`
   - `laravel-mix`
 
-## 2025-08-15
+## 1.0.4 (2025-08-15)
 - IndexWidget: added accessibility logic
 - Groups: added scope for groups with default period_id
 - changed modal-header structure
@@ -39,7 +58,7 @@
 - AchievementIndicator: show last-updated date in local date format
 - LinkItem: fixed links overflowing and special-chars being parsed to HTML
 
-## 2025-08-08
+## 1.0.3 (2025-08-08)
 - Kanban: fixed 'collapse-all'-toggle not working
 - KanbanItem: removed isAccessible-check on /editors-request (which was causing a 403 for guests)
 - fixed media not always being accessible on KanbanItems
@@ -48,7 +67,7 @@
 - RenderUsage: fixed overlay position
 - fixed topnav dropdown-menu positioning
 
-## 2025-08-06
+## 1.0.2 (2025-08-06)
 - Home: admins now only get their subscribed logbooks instead of all
 - added 'skip navigation'-button in Header for accessibility
 - restructured scss-files
@@ -61,7 +80,7 @@
 - MarkerModal: fixed some logic and form-field-types in controller
 - added seeder for MapMarkerCategory/-Type
 
-## 2025-07-23
+## 1.0.1 (2025-07-23)
 - Kanban: fixed bug where authenticated users didn't have access through a token-link
 - KanbanItem: fixed visible-from/-to logic
 - Exams: fixed exams not loading
@@ -70,7 +89,7 @@
 - Token: reset title-field on create
 - Curriculum: fixed reset_order_ids function
 
-## 2025-07-16
+## 1.0.0 (2025-07-16)
 - fixed tinyMCE-problems when setting up project
 - CertificateController: copied missing function from old version
 - KanbanModal: added toast-notifications

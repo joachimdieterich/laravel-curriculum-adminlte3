@@ -269,11 +269,11 @@ class VideoconferenceController extends Controller
 
         abort_unless((
             $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
-            OR $videoconference->moderatorPW == isset($input['moderatorPW'])? $input['moderatorPW'] : null
+            OR $videoconference->moderatorPW == isset($input['moderatorPW']) ? $input['moderatorPW'] : null
         )
         OR $videoconference->isAccessible()
         OR $token != null,
-        403);
+        403, 'global.videoconference.access_denied');
 
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
 
@@ -323,13 +323,13 @@ class VideoconferenceController extends Controller
         $moderatorPW =  $input['moderatorPW'] ?? '';
         $attendeePW = $input['attendeePW'] ?? $videoconference->attendeePW;
         abort_unless((
-                $videoconference->attendeePW == $attendeePW                 // start with attendeePW
+                $videoconference->attendeePW == $attendeePW   // start with attendeePW
                 OR
-                $videoconference->moderatorPW == $moderatorPW               // start with moderatorPW
+                $videoconference->moderatorPW == $moderatorPW // start with moderatorPW
             )
             OR
             $videoconference->isAccessible(),
-            403);
+            403, 'global.videoconference.access_denied');
 
         $userName = auth()->user()->fullName();
 

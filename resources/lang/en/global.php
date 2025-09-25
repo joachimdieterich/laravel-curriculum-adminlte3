@@ -1173,6 +1173,7 @@ return [
         'join' => 'Join videoconference',
         'delete' => 'Delete videoconference',
         'delete_helper' => 'Should the videoconference be deleted?',
+        'access_denied' => 'Given password (URL) is incorrect. Please check your shared link.',
         'enrol' => 'Enrol videoconference',
         'expel_helper' => 'Disconnect group from videoconference',
         'presentations' => 'Presentations',

@@ -266,10 +266,12 @@ class VideoconferenceController extends Controller
     public function show(Videoconference $videoconference, $editable = false, $token = null)
     {
         $input = $this->validateRequest();
+        $attendeePW = isset($input['attendeePW']) ? $input['attendeePW'] : null;
+        $moderatorPW = isset($input['moderatorPW']) ? $input['moderatorPW'] : null;
 
         abort_unless((
-            $videoconference->attendeePW == isset($input['attendeePW']) ? $input['attendeePW'] : null
-            OR $videoconference->moderatorPW == isset($input['moderatorPW']) ? $input['moderatorPW'] : null
+            $videoconference->attendeePW == $attendeePW
+            OR $videoconference->moderatorPW == $moderatorPW
         )
         OR $videoconference->isAccessible()
         OR $token != null,
@@ -277,15 +279,15 @@ class VideoconferenceController extends Controller
 
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
 
-        if ($this->isModerator($videoconference) OR ($videoconference->moderatorPW == (isset($input['moderatorPW']) ? $input['moderatorPW'] : null)))
+        if ($this->isModerator($videoconference) OR ($videoconference->moderatorPW == $moderatorPW))
         {
-            $videoconference->editable= true; //hack moderation flag
+            $videoconference->editable = true; //hack moderation flag
         }
         else
         {
-            $videoconference->editable= $editable;
+            $videoconference->editable = $editable;
         }
-        //dump($videoconference);
+
         return view('videoconference.show')
             ->with(compact('videoconference'));
     }

@@ -1,0 +1,10 @@
+@extends('layouts.master')
+@section('title')
+    Test
+@endsection
+@section('breadcrumb')
+    <breadcrumbs></breadcrumbs>
+@endsection
+@section('content')
+    <test-reverb></test-reverb>
+@endsection

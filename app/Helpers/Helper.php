@@ -556,15 +556,3 @@ if (! function_exists('limiter')) {
                 ->count() < $limit;
     }
 }
-
-if (! function_exists('pusher_event')) {
-    function pusher_event($event)
-    {
-        if (method_exists($event, 'broadcastWhen') && ! $event->broadcastWhen())
-        {
-            return false;
-        } else {
-            event($event);
-        }
-    }
-}

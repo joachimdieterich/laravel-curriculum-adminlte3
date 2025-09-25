@@ -1021,6 +1021,9 @@ return [
         ],
     ],
     'kanban' => [
+        'contributor' => 'Current Contributor',
+        'contributor_joined' => 'Contributor joined',
+        'contributor_left' => 'Contributor left',
         'title' => 'Kanban-Boards',
         'title_singular' => 'Kanban-Board',
         'create' => 'Create Kanban-Board',
@@ -1052,6 +1055,9 @@ return [
             'visible_from' => 'visible from (date/time)',
             'visible_until' => 'visible until (date/time)',
         ],
+    ],
+    'kanbanItemComment' => [
+        'typing' => "Someone's typing",
     ],
     'kanbanStatus' => [
         'title' => 'Statuses',

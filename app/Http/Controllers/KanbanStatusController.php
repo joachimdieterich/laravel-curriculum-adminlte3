@@ -16,8 +16,8 @@ class KanbanStatusController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return KanbanStatus|void
      */
     public function store(Request $request)
     {
@@ -40,21 +40,19 @@ class KanbanStatusController extends Controller
             'visible_until' => $input['visible_until'] ?? NULL,
             'owner_id' => auth()->user()->id,
         ]);
+        Kanban::find($input['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanStatusAddedEvent($kanbanStatus)))
-            {
-                return $kanbanStatus;
-            }
+            return $kanbanStatus;
         }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\KanbanStatus  $kanbanStatus
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param KanbanStatus $kanbanStatus
+     * @return KanbanStatus|void
      */
     public function update(Request $request, KanbanStatus $kanbanStatus)
     {
@@ -75,10 +73,7 @@ class KanbanStatusController extends Controller
         ]);
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanStatusUpdatedEvent($kanbanStatus)))
-            {
-                return $kanbanStatus;
-            }
+            return $kanbanStatus;
         }
     }
 
@@ -106,7 +101,7 @@ class KanbanStatusController extends Controller
 
         if (request()->wantsJson()) {
             if ($update_kanban->count() !== 0 OR $new_statuses->count() !== 0 OR $new_items->count() !== 0) {
-                return ['message' => (new KanbanController)->getKanbanWithRelations($kanban)];
+                return ['message' => $kanban->withRelations()];
             } else {
                 return ['message' => 'uptodate'];
             }
@@ -122,19 +117,17 @@ class KanbanStatusController extends Controller
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
         foreach ($request->statuses as $status) {
-            KanbanStatus::whereId($status['id'])->update([
-                'order_id' => $status['order_id'],
-            ]);
+            $kanbanStatus = KanbanStatus::find($status['id']);
+            $kanbanStatus->order_id = $status['order_id'];
+            $kanbanStatus->save();
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\KanbanStatus  $kanbanStatus
-     * @return \Illuminate\Http\Response
+     * @param KanbanStatus $kanbanStatus
+     * @return array|void
      */
     public function destroy(KanbanStatus $kanbanStatus)
     {
@@ -148,14 +141,10 @@ class KanbanStatusController extends Controller
         $kanbanStatus->delete();
 
         if (request()->wantsJson()) {
-            if (!pusher_event(new \App\Events\Kanbans\KanbanStatusDeletedEvent($kanbanStatusForEvent)))
-            {
-                return [
-                    'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                    'message' =>  $kanbanStatusForEvent
-                ];
-            }
-
+            return [
+                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
+                'message' =>  $kanbanStatusForEvent
+            ];
         }
     }
 
@@ -170,6 +159,7 @@ class KanbanStatusController extends Controller
             'order_id'  => $order_id + 1,
             'kanban_id' => $status['kanban_id'],
             'color'     => $status->color,
+            'visibility'=> $status->visibility,
             'owner_id'  => auth()->user()->id,
         ]);
 
@@ -181,21 +171,29 @@ class KanbanStatusController extends Controller
                 'kanban_id'         => $statusCopy->kanban_id,
                 'kanban_status_id'  => $statusCopy->id,
                 'color'             => $item->color,
+                'visibility'        => $item->visibility,
+                'visible_from'      => $item->visible_from,
+                'visible_until'     => $item->visible_until,
+                'due_date'          => $item->due_date,
+                'replace_links'     => $item->replace_links,
                 'owner_id'          => auth()->user()->id,
             ]);
 
-            foreach ($item->mediaSubscriptions as $mediaSubscription) {
-                MediumSubscription::Create([
-                    'medium_id'         => $mediaSubscription->medium_id,
-                    'subscribable_type' => $mediaSubscription->subscribable_type,
-                    'subscribable_id'   => $itemCopy->id,
-                    'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                    'visibility'        => $mediaSubscription->visibility,
-                    'additional_data'   => $mediaSubscription->additional_data,
-                    'owner_id'          => auth()->user()->id,
-                ]);
-            }
+            // TODO: copied edusharing-media need newly created usages and media records
+            // foreach ($item->mediaSubscriptions as $mediaSubscription) {
+            //     MediumSubscription::Create([
+            //         'medium_id'         => $mediaSubscription->medium_id,
+            //         'subscribable_type' => $mediaSubscription->subscribable_type,
+            //         'subscribable_id'   => $itemCopy->id,
+            //         'sharing_level_id'  => $mediaSubscription->sharing_level_id,
+            //         'visibility'        => $mediaSubscription->visibility,
+            //         'additional_data'   => $mediaSubscription->additional_data,
+            //         'owner_id'          => auth()->user()->id,
+            //     ]);
+            // }
         }
+
+        Kanban::find($status['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
 
         return KanbanStatus::with([
                 'items',
@@ -204,7 +202,7 @@ class KanbanStatusController extends Controller
                 'items.comments.likes',
                 'items.likes',
                 'items.mediaSubscriptions.medium',
-                'items.owner',
+                'items.owner:id,username,firstname,lastname',
             ])
             ->find($statusCopy->id);
     }
@@ -234,13 +232,18 @@ class KanbanStatusController extends Controller
 
     private function getStatusWithRelations(KanbanStatus $kanbanStatus): array
     {
-        return ['message' =>  $kanbanStatus
-            ->with(['items' => function ($query) use ($kanbanStatus) {
-                $query->where('kanban_id', $kanbanStatus->kanban_id)
-                    ->with(['owner', 'mediaSubscriptions.medium'])
-                    ->orderBy('order_id');
-            }, 'items.subscriptions', 'items.comments', 'items.comments.user',
-            ])->where('id', $kanbanStatus->id)->get()->first()
+        return [
+            'message' => $kanbanStatus
+                ->with([
+                    'items' => function ($query) use ($kanbanStatus) {
+                        $query->where('kanban_id', $kanbanStatus->kanban_id)
+                              ->with(['owner', 'mediaSubscriptions.medium'])
+                              ->orderBy('order_id');
+                    },
+                    'items.subscriptions',
+                    'items.comments',
+                    'items.comments.user',
+                ])->where('id', $kanbanStatus->id)->get()->first()
         ];
     }
 }

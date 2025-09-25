@@ -10,11 +10,20 @@ use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
+use LaravelIdea\Helper\App\_IH_User_QB;
+use Laravolt\Avatar\Avatar;
 
 /**
  *   @OA\Schema(
@@ -86,97 +95,102 @@ class User extends Authenticatable
     /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param  \DateTimeInterface  $date
+     * @param DateTimeInterface $date
      * @return string
      */
-    protected function serializeDate(DateTimeInterface $date)
+    protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function path()
+    public function path(): string
     {
-        return "/users/{$this->id}";
+        return "/users/$this->id";
     }
 
-    public function fullName()
+    public function fullName(): string
     {
-        return "{$this->firstname} {$this->lastname}";
+        return "$this->firstname $this->lastname";
     }
 
-    public function comments()
+    public function initials(): string
+    {
+        return strtoupper($this->firstname[0] . $this->lastname[0]);
+    }
+
+    public function comments(): HasMany
     {
         return $this->hasMany(KanbanItemComment::class);
     }
 
-    public function absences()
+    public function absences(): HasMany
     {
         return $this->hasMany('App\Absence', 'absent_user_id');
     }
 
-    public function achievements()
+    public function achievements(): HasMany
     {
         return $this->hasMany('App\Achievement');
     }
 
-    public function achievements_today()
+    public function achievements_today(): \Illuminate\Database\Eloquent\Collection
     {
         return $this->hasMany('App\Achievement')->whereDate('updated_at', Carbon::today())->get();
     }
 
-    public function artefacts()
+    public function artefacts(): HasMany
     {
         return $this->hasMany('App\Artefact');
     }
 
-    public function certificates()
+    public function certificates(): HasMany
     {
         return $this->hasMany('App\Certificate', 'owner_id');
     }
 
-    public function contactDetail()
+    public function contactDetail(): HasOne
     {
         return $this->hasOne('App\ContactDetail', 'owner_id');
     }
 
-    public function contentSubscriptions()
+    public function contentSubscriptions(): HasMany
     {
         return $this->hasMany('App\ContentSubscription', 'owner_id');
     }
 
-    public function ownsCurricula()
+    public function ownsCurricula(): HasMany
     {
         return $this->hasMany('App\Curriculum', 'owner_id');
     }
 
-    public function getEmailVerifiedAtAttribute($value)
+    public function getEmailVerifiedAtAttribute($value): ?string
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format').' '.config('panel.time_format')) : null;
     }
 
-    public function setEmailVerifiedAtAttribute($value)
+    public function setEmailVerifiedAtAttribute($value): void
     {
         $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('panel.date_format').' '.config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
     }
 
-    public function setPasswordAttribute($input)
+    public function setPasswordAttribute($input): void
     {
         if ($input) {
             $this->attributes['password'] = app('hash')->needsRehash($input) ? Hash::make($input) : $input;
         }
     }
 
-    public function sendPasswordResetNotification($token)
+    public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPassword($token));
     }
 
-    public function contents()
+    public function contents(): HasMany
     {
         return $this->hasMany(Content::class, 'owner_id')->latest('updated_at');
     }
 
-    public function currentGroups()
+    public function currentGroups(): BelongsToMany
     {
         return $this->belongsToMany('App\Group', 'group_user')
                     ->where('period_id', $this->current_period_id)
@@ -184,12 +198,12 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
-    public function groups()
+    public function groups(): BelongsToMany
     {
         return $this->belongsToMany('App\Group', 'group_user')->withTimestamps();
     }
 
-    public function groupsWithCurriculum($curriculum_id) //todo: used? -> better groups()->with('curricula')
+    public function groupsWithCurriculum($curriculum_id): Collection //todo: used? -> better groups()->with('curricula')
     {
         return DB::table('groups')
             ->join('group_user', 'groups.id', '=', 'group_user.group_id')
@@ -200,7 +214,7 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function curricula()
+    public function curricula(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\Curriculum',
@@ -212,7 +226,7 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function currentCurriculaEnrolments()
+    public function currentCurriculaEnrolments(): Collection
     {
         return DB::table('curricula')
             // ->distinct()
@@ -228,7 +242,7 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function currentGroupEnrolments()
+    public function currentGroupEnrolments(): BelongsToMany
     {
         return $this->belongsToMany('App\Group', 'group_user')
             ->select('groups.*', 'curriculum_subscriptions.id AS course_id', 'curriculum_subscriptions.curriculum_id')
@@ -240,12 +254,12 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    public function kanbanSubscription()
+    public function kanbanSubscription(): MorphMany
     {
         return $this->morphMany('App\KanbanSubscription', 'subscribable');
     }
 
-    public function meetings(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function meetings(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\Meeting',
@@ -257,12 +271,12 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function meetingSubscription()
+    public function meetingSubscription(): MorphMany
     {
         return $this->morphMany('App\MeetingSubscription', 'subscribable');
     }
 
-    public function kanbans()
+    public function kanbans(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\Kanban',
@@ -274,7 +288,7 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function lmsReferences()
+    public function lmsReferences(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\LmsReference',
@@ -286,12 +300,12 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function logbookSubscription()
+    public function logbookSubscription(): MorphMany
     {
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
     }
 
-    public function logbooks()
+    public function logbooks(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\Logbook',
@@ -303,12 +317,12 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function media()
+    public function media(): HasMany
     {
         return $this->hasMany('App\Medium', 'owner_id');
     }
 
-    public function plans()
+    public function plans(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\Plan',
@@ -320,7 +334,7 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function periods()
+    public function periods(): Collection
     {
         return DB::table('periods')
             ->select('periods.*', 'groups.organization_id AS organization_id')
@@ -331,7 +345,7 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function currentPeriods()
+    public function currentPeriods(): Collection
     {
         return DB::table('periods')
             ->select('periods.*', 'groups.organization_id AS organization_id')
@@ -343,17 +357,17 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function ownsPrerequisites()
+    public function ownsPrerequisites(): HasMany
     {
         return $this->hasMany('App\Prerequisites', 'owner_id');
     }
 
-    public function progresses()
+    public function progresses(): MorphMany
     {
         return $this->morphMany('App\Progress', 'associable');
     }
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'organization_role_users')
                 ->withPivot(['user_id', 'role_id', 'organization_id']);
@@ -362,14 +376,14 @@ class User extends Authenticatable
     /**
      * current role, based on current_organization_id organization_role_users
      */
-    public function role()
+    public function role(): ?Model
     {
         return $this->belongsToMany(Role::class, 'organization_role_users')
             ->withPivot(['user_id', 'role_id', 'organization_id'])
             ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
     }
 
-    public function unreadMessagesCount()
+    public function unreadMessagesCount(): int
     {
         return Thread::userUnreadMessagesCount($this->id);
     }
@@ -377,7 +391,7 @@ class User extends Authenticatable
     /**
      * permissions of the current role
      */
-    public function permissions()
+    public function permissions(): Collection
     {
         return DB::table('permissions')
             ->join('permission_role', 'permission_role.permission_id', '=', 'permissions.id')
@@ -387,7 +401,7 @@ class User extends Authenticatable
             ->get();
     }
 
-    public function tasks()
+    public function tasks(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\Task',
@@ -399,21 +413,18 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function organizations()
+    public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class, 'organization_role_users')
             ->withPivot(['user_id', 'role_id', 'organization_id']);
     }
 
-    /**
-     * @return OrganizationRoleUser
-     */
-    public function organizationRolesUsers()
+    public function organizationRolesUsers(): User|HasMany
     {
         return $this->hasMany(OrganizationRoleUser::class);
     }
 
-    public function status()
+    public function status(): HasOne
     {
         return $this->hasOne('App\StatusDefinition', 'status_definition_id', 'status_id');
     }
@@ -426,34 +437,34 @@ class User extends Authenticatable
                 ->get();
     }
 
-    public function users()
+    public function users(): User|_IH_User_QB|BelongsToMany
     {
         return (auth()->user()->role()->id == 1) ? User::select('id', 'username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id', 'username', 'firstname', 'lastname', 'deleted_at'); //todo, get all users of all organizations not only current
     }
 
     public function getAvatarAttribute()
     {
-        return ($this->medium_id !== null) ? '/media/'.$this->medium_id : (new \Laravolt\Avatar\Avatar)->create($this->fullName())->toBase64()->encoded;
+        return ($this->medium_id !== null) ? '/media/'.$this->medium_id : (new Avatar)->create($this->fullName())->toBase64()->encoded;
     }
 
-    public function mayAccessUser(User $user, $context = 'organization')
+    public function mayAccessUser(User $user, $context = 'organization'): bool
     {
         if (is_admin()) return true;
+
         switch ($context) {
             case 'organization':
                 return $user->organizations()->pluck('organizations.id')->contains($this->current_organization_id);
             //Todo: check for groups
-            break;
             default: return false;
         }
     }
 
-    public function scopeNoSharing($query)
+    public function scopeNoSharing($query): void
     {
         $query->whereNull('sharing_token');
     }
 
-    public function exams()
+    public function exams(): BelongsToMany
     {
         return $this->belongsToMany(
             Exam::class,
@@ -463,7 +474,7 @@ class User extends Authenticatable
             ->withPivot(['login_data', 'exam_completed_at']);
     }
 
-    public function videoconferences()
+    public function videoconferences(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\Videoconference',
@@ -475,7 +486,7 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function maps()
+    public function maps(): HasManyThrough
     {
         return $this->hasManyThrough(
             'App\Map',

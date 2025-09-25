@@ -24,34 +24,46 @@ class KanbansApiController extends Controller
 
     public function store()
     {
-        $user = User::where('common_name', request()->input('owner_cn'))->get()->first();
+        if (!request()->filled('owner_cn')) return response()->json('Missing/Empty attribute [owner_cn]', 400);
+        if (!request()->filled('title')) return response()->json('Missing/Empty attribute [title]', 400);
+        // if required attributes are missing it responds with a redirect
+        $input = request()->validate([
+            'owner_cn'      => 'required|string',
+            'title'         => 'required|string|max:191',
+            'description'   => 'nullable|string',
+            'color'         => 'nullable|string|max:7',
+            'editable'      => 'nullable|boolean',
+        ]);
 
-        $kanban = Kanban::firstOrCreate([
-            'title'             => request()->input('title'),
-            'description'       => request()->input('description'),
-            'color'             => request()->input('color') ?? '#2980B9',
-            'owner_id'          => $user->id,
+        $owner_id = User::where('common_name', $input['owner_cn'])->pluck('id')->first();
+
+        if (!$owner_id) return response()->json('owner_cn not found', 404);
+
+        $kanban = Kanban::create([
+            'title'         => $input['title'],
+            'description'   => $input['description'],
+            'color'         => $input['color'] ?? '#2980B9',
+            'owner_id'      => $owner_id,
         ]);
 
         //create tokenLink
         $token = Str::uuid();
 
         $subscribe =  KanbanSubscription::updateOrCreate([
-            'kanban_id' => $kanban->id,
+            'kanban_id'         => $kanban->id,
             'subscribable_type' => "App\User",
-            'subscribable_id' => User::find(env('GUEST_USER'))->id,
-            'sharing_token' => $token,
+            'subscribable_id'   => env('GUEST_USER'),
+            'sharing_token'     => $token,
         ], [
-            'due_date' => NULL,
-            'title' => 'edusharing',
-            'editable' => request()->input('editable') ?? false,
-            'owner_id' => $user->id,
+            'due_date'  => NULL,
+            'title'     => 'edusharing',
+            'editable'  => $input['editable'] ?? false,
+            'owner_id'  => $owner_id,
         ]);
         $subscribe->save();
 
-        // end create tokenLink
         $collection = collect($kanban);
-        $collection->put('sharing_link',  env('APP_URL').'/kanbans/'.$kanban->id.'/token?sharing_token='.$token);
+        $collection->put('sharing_link', env('APP_URL').'/kanbans/'.$kanban->id.'/token?sharing_token='.$token);
         $collection->put('editable',  $subscribe->editable);
 
         return $collection->all();
@@ -77,15 +89,29 @@ class KanbansApiController extends Controller
 
     public function destroy(Kanban $kanban)
     {
+        if (!request()->has('owner_cn')) return response()->json('Missing attribute [owner_cn]', 400);
+
+        $owner_cn = request()->validate(['owner_cn' => 'required|string'])['owner_cn'];
+        $user_id = User::where('common_name', $owner_cn)->pluck('id')->first();
+
+        if ($kanban->owner_id !== $user_id) return response()->json("common_name does not match Kanban-owner's common_name", 403);
+
+        // delete medium if edusharing-medium
+        if ($kanban->medium_id) {
+            $medium = $kanban->medium;
+
+            if ($medium->adapter == 'edusharing') {
+                $medium->subscriptions()->delete();
+                $medium->delete();
+            }
+        }
 
         //delete relations
         $kanban->items()->delete();
         $kanban->statuses()->delete();
         $kanban->subscriptions()->delete();
 
-        if ($kanban->delete()) {
-            return ['message' => 'Successful deleted'];
-        }
+        if ($kanban->delete()) return response()->json(true);
     }
 
     public function enrol()

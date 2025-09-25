@@ -49,18 +49,19 @@
                         @mouseleave="hover = false"
                     >
                         <div class="d-flex align-items-center pull-right">
-                            <a v-if="$userId == comment.user.id
+                            <button v-if="($userId == comment.user.id && $userId != 8)
                                     || $userId == model.owner_id
                                     || checkPermission('is_admin')
                                 "
-                                v-permission="'message_delete'"
-                                class="btn btn-flat text-danger px-2 py-1 mr-1 invisible"
+                                type="button"
+                                class="d-print-none btn btn-icon text-danger px-2 py-1 mr-1 invisible"
                                 @click="deleteComment(comment)"
                             >
                                 <i class="fa fa-trash"></i>
-                            </a>
+                            </button>
                             <Reaction
                                 :model="comment"
+                                :websocket="websocket"
                                 class="pull-right"
                                 reaction="like"
                                 url="/kanbanItemComments"
@@ -72,24 +73,29 @@
             </div>
         </div>
 
-        <div class="input-group pb-3">
-            <input
-                type="text"
-                name="message"
-                class="form-control"
-                v-model.trim="form.comment"
-                :placeholder="trans('global.comment') + '...'"
-                @keyup.enter="sendComment()"
-            />
-            <span class="input-group-append">
-                <button
-                    class="btn btn-primary"
-                    :disabled="!form.comment"
-                    @click.prevent="sendComment()"
-                >
-                    <i class="far fa-paper-plane"></i>
-                </button>
-            </span>
+        <div v-if="commentable"
+            class="d-print-none pb-3"
+        >
+            <div class="input-group">
+                <input
+                    type="text"
+                    name="message"
+                    class="form-control"
+                    v-model.trim="form.comment"
+                    :placeholder="trans('global.comment') + '...'"
+                    @keyup.enter="sendComment()"
+                />
+                <span class="input-group-append">
+                    <button
+                        class="btn btn-primary"
+                        :disabled="!form.comment"
+                        @click.prevent="sendComment()"
+                    >
+                        <i class="far fa-paper-plane"></i>
+                    </button>
+                </span>
+            </div>
+            <div class="font-weight-light text-secondary" v-if="typing"><small>{{ trans('global.kanbanItemComment.typing') }}...</small></div>
         </div>
     </div>
 </template>
@@ -113,6 +119,14 @@ export default {
             type: Object,
             default: null,
         },
+        websocket: {
+            type: Boolean,
+            default: false,
+        },
+        commentable: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -121,20 +135,25 @@ export default {
                 model_id: this.model.id,
                 comment: '',
             }),
+            typing: false,
         }
     },
     methods: {
+        addComment(newComment) {
+            this.comments.push(newComment);
+        },
+        removeComment(comment) {
+            let index = this.comments.indexOf(comment);
+            this.comments.splice(index, 1);
+        },
         sendComment() {
             if (this.form.comment.trim().length === 0) return;
 
             axios.post('/kanbanItemComment', this.form)
                 .then(res => {
-                    this.$emit('addComment', res.data);
+                    this.addComment(res.data);
+                    this.scrollDown();
                     this.form.comment = '';
-                    this.$nextTick(function() {
-                        let container = this.$refs.scroll_container;
-                        container.scrollTop = container.scrollHeight + 120;
-                    });
                 })
                 .catch(err => function () {
                     console.log(err);
@@ -142,19 +161,65 @@ export default {
         },
         deleteComment(comment) {
             axios.delete('/kanbanItemComment/' + comment.id)
-                .then(res => {
-                    this.$emit('removeComment', comment);
+                .then(() => {
+                    this.removeComment(comment)
                 })
                 .catch(err => {
                     console.log(err.response);
                 });
         },
+        scrollDown() {
+            this.$nextTick(() => {
+                this.$refs.scroll_container.scrollTop = this.$refs.scroll_container.scrollHeight;
+            });
+        },
+        startWebsocket() {
+            if (this.websocket === true) {
+                return this.$echo
+                    .channel('App.KanbanItemComments.' + this.model.id)
+                    .listen('.KanbanItemCommentUpdated', (payload) => {
+                        const index = this.comments.findIndex(s => s.id === payload.model.id);
+                        this.comments[index] = payload.model;
+                        console.log(payload.model);
+                    })
+                    .listen('.KanbanItemCommentCreated', (payload) => {
+                        this.comments.push(payload.model);
+                    })
+                    .listen('.KanbanItemCommentDeleted', (payload) => {
+                        let index = this.comments.indexOf(payload.model);
+                        if (index === -1) {
+                            return;
+                        }
+
+                        this.removeComment(payload.model);
+                        this.stopWebsocket(payload.model.id);
+                    });
+            }
+        },
+        stopWebsocket() {
+            if (this.websocket === true) {
+                this.$echo.leave('App.KanbanItemComments.' + this.model.id);
+            }
+        },
     },
-    mounted() {
-        this.conversation = this.comments;
+    unmounted() {
+        this.stopWebsocket();
     },
+    created() {
+        this.startWebsocket();
+    },
+    watch: {
+        comments:{
+            handler() {
+                this.scrollDown();
+            },
+        }
+    }
 }
 </script>
 <style scoped>
 .direct-chat-text:hover .text-danger { visibility: visible !important; }
+@media (max-width: 991px) {
+    .direct-chat-text .text-danger { visibility: visible !important; }
+}
 </style>

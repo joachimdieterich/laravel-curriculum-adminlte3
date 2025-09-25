@@ -242,47 +242,47 @@ npm run test:cypress
 ```
 
 ### Websockets
-Add/Edit the following lines to .env
+Add/Edit the following lines to .env but beware:
 
+REVERB_APP_KEY needs to be equal to APP_KEY BUT without the format.
+
+If the APP_KEY is base64:diuertn2308ht320ng then REVERB_APP_KEY needs to be diuertn2308ht320ng
 ```
-BROADCAST_DRIVER=pusher
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID="${APP_NAME}"
+REVERB_APP_KEY=
+REVERB_APP_SECRET=secret
 
-PUSHER_APP_ID=curriculumlive
-PUSHER_APP_KEY=curriculumlive_key
-PUSHER_APP_SECRET=curriculumlive_secret
-PUSHER_APP_CLUSTER=eu
+REVERB_HOST="${APP_HOSTNAME}"
+REVERB_PORT=6001
+REVERB_SCHEME=http
 
-#LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT="[path_to]/certificate.pem"
-#LARAVEL_WEBSOCKETS_SSL_LOCAL_PK="[path_to]/privateKey.pem"
+VITE_REVERB_APP_KEY="${REVERB_APP_KEY}"
+VITE_REVERB_SCHEME="${REVERB_SCHEME}"
+VITE_REVERB_HOST="${REVERB_HOST}"
+VITE_REVERB_PORT="${REVERB_PORT}"
 
-PUSHER_APP_ACTIVE=true
-PUSHER_APP_HOST=localhost
-PUSHER_APP_SCHEME=http
-PUSHER_APP_USE_TLS=true
-PUSHER_APP_FORCE_TLS=false
-PUSHER_APP_ENCRYPTED=true
-PUSHER_APP_DISABLE_STATS=true
-PUSHER_APP_WSPORT=6001
-PUSHER_APP_WSSPORT=6001
+REVERB_SERVER_HOST="${REVERB_HOST}"
+REVERB_SERVER_PORT="${REVERB_PORT}"
 
-MIX_PUSHER_APP_ACTIVE="${PUSHER_APP_ACTIVE}"
-MIX_PUSHER_APP_HOST="${PUSHER_APP_HOST}"
-MIX_PUSHER_APP_SCHEME="${PUSHER_APP_SCHEME}"
-MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
-MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
-MIX_PUSHER_APP_USE_TLS="${PUSHER_APP_USE_TLS}"
-MIX_PUSHER_APP_FORCE_TLS="${PUSHER_APP_FORCE_TLS}"
-MIX_PUSHER_APP_ENCRYPTED="${PUSHER_APP_ENCRYPTED}"
-MIX_PUSHER_APP_DISABLE_STATS="${PUSHER_APP_DISABLE_STATS}"
-MIX_PUSHER_APP_WSPORT="${PUSHER_APP_WSPORT}"
-MIX_PUSHER_APP_WSSPORT="${PUSHER_APP_WSSPORT}"
+WEBSOCKET_APP_ACTIVE=true
+VITE_WEBSOCKET_APP_ACTIVE="${WEBSOCKET_APP_ACTIVE}"
 ```
 
-If SSL certificate path `LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT` and `LARAVEL_WEBSOCKETS_SSL_LOCAL_PK` are only readable by root start websocket with sudo.
+Start Reverb-Server with `sudo php artisan reverb:start`.
 
-Start Websocket with `sudo php artisan websocket:serve`
+If you use another queue then **sync** you have to start a listener.
 
-Further information [laravel-websockets](https://beyondco.de/docs/laravel-websockets/getting-started/introduction)
+You can do that with `php artisan queue:listen` to listen to the **default** queue.
+
+#### Know Issues
+When using the **sync**-queue, model events will be broadcasted/handled differently.
+For example, the **created** model event won't be either fired by **laravel** or handled by **echo**.
+An additional example would be the **update**-event of an model (e.g. Kanban). It will return old information if a model
+with relation (e.g. KanbanStaus) get updated.
+But IF you use the **database**-queue everything works perfect.
+
+Further information [laravel-websockets](https://laravel.com/docs/11.x/broadcasting)
 
 ### Documentation
 Curriculum uses [saleem-hadad/larecipe](https://github.com/saleem-hadad/larecipe) to provide integrated project documentation. 

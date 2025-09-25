@@ -91,7 +91,6 @@ class MapMarkerController extends Controller
             'address' => $input['address'],
             'url' => $input['url'],
             'url_title' => $input['url_title'],
-            'owner_id' => auth()->user()->id,
         ]);
 
         $mapMarker->save();

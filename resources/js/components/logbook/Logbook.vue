@@ -59,6 +59,7 @@
             <!-- <SetAchievementsModal/> -->
             <lms-modal/>
             <MediumModal/>
+            <MediumPreviewModal/>
             <LogbookModal/>
             <LogbookEntryModal/>
             <LogbookEntrySubjectModal/>
@@ -83,6 +84,7 @@
 </template>
 <script>
 import MediumModal from "../media/MediumModal.vue"
+import MediumPreviewModal from "../media/MediumPreviewModal.vue"
 import LogbookModal from "../logbook/LogbookModal.vue";
 import LogbookEntry from '../logbookEntry/LogbookEntry.vue';
 import LogbookPrintOptions from "./LogbookPrintOptions.vue";
@@ -111,6 +113,7 @@ export default {
         LogbookPrintOptions,
         LogbookEntry,
         MediumModal,
+        MediumPreviewModal,
         SubscribeModal,
         TaskModal,
     },

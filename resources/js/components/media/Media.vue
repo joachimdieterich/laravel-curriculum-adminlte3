@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div v-if="format =='list'">
+    <div v-if="format == 'list'">
         <table
             id="sidebar_media_datatable"
             class="table table-hover datatable media_table"
@@ -113,24 +113,39 @@
     </div>
 </div>
 </template>
-
 <script>
 import License from '../uiElements/License.vue';
 import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
-        subscription: {},
-        subscribable_type: '',
-        subscribable_id: '',
-        public: {
-            default: 0
+        subscription: {
+            type: Object,
+            default: null,
         },
-        medium: {},
-        format: '',
+        subscribable_type: {
+            type: String,
+            default: null,
+        },
+        subscribable_id: {
+            type: Number,
+            default: null,
+        },
+        public: {
+            type: Boolean,
+            default: false,
+        },
+        medium: {
+            type: Object,
+            default: null,
+        },
+        format: {
+            type: String,
+            default: null,
+        },
         url: {
             type: String,
-            default: '/mediumSubscriptions'
+            default: '/mediumSubscriptions',
         },
     },
     setup() {
@@ -143,22 +158,14 @@ export default {
         return {
             component_id: this.$.uid,
             subscriptions: {},
-            errors: {},
             currentUser: {},
             currentMedium: null,
         }
     },
-    watch: { // reload if context change
-        subscribable_id: function(newVal, oldVal) {
-            if (newVal != oldVal){
-                this.loader();
-            }
-        },
-    },
     methods: {
-        loader() { //todo: remove duplicate in beforMount.
-            console.log('(re)load');
-            axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id).then(response => {
+        loader() {
+            axios.get(this.url + '?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id)
+            .then(response => {
                 this.subscriptions = response.data.message;
             }).catch(e => {
                 console.log(e);
@@ -211,16 +218,18 @@ export default {
             });
         },
         destroy(subscription) {
-            axios.post('/media/'+subscription.medium.id+'/destroy', {
-                    'subscribable_type': this.subscribable_type,
-                    'subscribable_id': this.subscribable_id
-                })
-                .then((response) => {
-                    this.loader();
-                })
-                .catch((e) => {
-                    console.log(e)
-                });
+            axios.post('/mediumSubscriptions/destroy', {
+                medium_id: subscription.medium_id,
+                subscribable_id: subscription.subscribable_id,
+                subscribable_type: subscription.subscribable_type,
+                additional_data: true, // hack to skip setting medium_id of model to null
+            })
+            .then((response) => {
+                this.loader();
+            })
+            .catch((e) => {
+                console.log(e)
+            });
         },
         /*destroyArtefact(medium_id) {
             axios.post('/artefacts/destroy', {
@@ -233,14 +242,10 @@ export default {
             });
         },*/
     },
-    beforeMount() {
-        if (this.subscribable_type  != ''){
-            this.loader();
-        }
-    },
     mounted() {
+        this.loader();
+
         this.$eventHub.on('medium-added', (e) => {
-            console.log('medium-added');
             if (this.component_id == e.id) {
                 this.loader();
             }

@@ -205,6 +205,7 @@
         <Teleport to="body">
             <MapModal/>
             <MediumModal/>
+            <MediumPreviewModal/>
             <MarkerModal :map="map"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
@@ -232,6 +233,7 @@ import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
 import MarkerView from "./MarkerView.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";
+import MediumPreviewModal from '../media/MediumPreviewModal.vue';
 import MarkerModal from "./MarkerModal.vue";
 import {useGlobalStore} from "../../store/global";
 import MapModal from "./MapModal.vue";
@@ -248,6 +250,7 @@ export default {
         MarkerView,
         ConfirmModal,
         MediumModal,
+        MediumPreviewModal,
     },
     props: {
         map: {
@@ -291,7 +294,11 @@ export default {
     },
     methods: {
         createMarker() {
-            this.globalStore?.showModal('map-marker-modal', { map_id: this.map.id });
+            this.globalStore?.showModal('map-marker-modal', {
+                map_id: this.map.id,
+                type_id: this.form.type_id,
+                category_id: this.form.category_id,
+            });
         },
         loader() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
@@ -321,8 +328,6 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
-            console.log('Clustergroup');
-            console.log(this.clusterGroup);
         },
         async markerSearch() {
             $("#loading-events").show();

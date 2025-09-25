@@ -33,6 +33,10 @@ export default {
             type: String,
             default: 'like',
         },
+        websocket: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -52,10 +56,32 @@ export default {
                 });
         },
         userHasReaction() {
+            if (this.likes === null || this.likes === undefined) {
+                console.log(this.likes);
+                console.log(this.model);
+                return;
+            }
+
             return this.likes.findIndex(l => l.user_id == this.$userId) != -1;
+        },
+        startWebsocket() {
+            if (this.websocket === true) {
+                this.likes.forEach((like) => {
+                    this.$echo
+                        .join('App.Reaction.' + this.model.id)
+                        .listen('.Liked', (payload) => {
+                            this.$eventHub.emit('kanban-item-commend-created', payload.model);
+                        })
+                        .listen('.Unliked', (payload) => {
+                            this.$eventHub.emit('kanban-item-commend-deleted', payload.model);
+                        });
+                });
+            }
         },
     },
     mounted() {
+        this.startWebsocket();
+
         this.likes = this.model.likes;
     },
     computed: {

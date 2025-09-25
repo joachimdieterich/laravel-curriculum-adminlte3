@@ -159,11 +159,11 @@
                 :firstname="item.owner.firstname"
                 :lastname="item.owner.lastname"
                 :size="25"
-                class="contacts-list-img"
+                class="contacts-list-img o"
                 data-toggle="tooltip"
             />
             <Avatar v-if="editors != null"
-                v-for="(editor_user, index) in editors"
+                v-for="(editor_user, index) in editorsWithoutOwner"
                 :key="item.id + '_editor_' + index"
                 :title="editor_user.firstname + ' ' + editor_user.lastname"
                 :username="editor_user.username"
@@ -199,11 +199,11 @@
         </div>
 
         <Comments v-if="commentable"
+            :websocket="websocket"
             :comments="item.comments"
+            :commentable="editable"
             :model="item"
             :kanban_owner_id="kanban_owner_id"
-            @addComment="addComment"
-            @removeComment="removeComment"
         />
 
         <Teleport to=".content">
@@ -273,6 +273,10 @@ export default {
             type: Number,
             default: null,
         },
+        websocket: {
+            type: Boolean,
+            default: false,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -292,6 +296,7 @@ export default {
             show_comments: false,
             expired: false, // due date expired
             editors: null,
+            editorsWithoutOwner: null,
         };
     },
     computed: {
@@ -325,10 +330,10 @@ export default {
         delete() {
             axios.delete("/kanbanItems/" + this.item.id)
                 .then(() => {
-                    this.$eventHub.emit("kanban-item-deleted", this.item);
+                    this.$eventHub.emit('kanban-item-deleted-' + this.item.kanban_status_id, this.item);
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
                 });
         },
         edit() {
@@ -336,13 +341,6 @@ export default {
                 item: this.item,
                 method: 'patch',
             });
-        },
-        addComment(newComment) {
-            this.item.comments.push(newComment);
-        },
-        removeComment(comment) {
-            let index = this.item.comments.indexOf(comment);
-            this.item.comments.splice(index, 1);
         },
         addMedia() {
             this.globalStore?.showModal('medium-modal', {
@@ -357,7 +355,7 @@ export default {
         reload() { //after media upload
             axios.get("/kanbanItems/" + this.item.id)
                 .then(res => {
-                    this.$eventHub.emit("kanban-item-updated", res.data.message);
+                    this.$eventHub.emit('kanban-item-updated-' + this.item.kanban_status_id, res.data.message);
                     //this.item = res.data.message;
                 })
                 .catch(err => {
@@ -367,10 +365,11 @@ export default {
         getEditors() { //after media upload
             // I don't know why the editors shouldn't be shown to guests
             if (this.$userId == null || this.$userId == 8) return;
- 
+
             axios.get("/kanbanItems/" + this.item.id + "/editors")
                 .then(res => {
                     this.editors = res.data;
+                    this.editorsWithoutOwner = this.editors.filter(e => e.id !== this.item.owner.id);
                 })
                 .catch(err => {
                     console.log(err.response);
@@ -393,8 +392,30 @@ export default {
 
             return date.toLocaleString([], dateFormat);
         },
+        startWebsocket() {
+            if (this.websocket === true) {
+                this.$echo
+                    .channel('App.KanbanItem.' + this.item.id)
+                    .listen('.KanbanItemUpdated', (payload) => {
+                        this.$eventHub.emit('kanban-item-updated-' + this.item.kanban_status_id, payload.model);
+
+                        this.getEditors();
+                    })
+                    .listen('.KanbanItemDeleted', (payload) => {
+                        this.$eventHub.emit('kanban-item-deleted-' + this.item.kanban_status_id, payload.model);
+                    })
+                ;
+            }
+        },
+        stopWebsocket() {
+            if (this.websocket === true) {
+                this.$echo.leave('App.KanbanItem.' + this.item.id);
+            }
+        },
     },
     mounted() {
+        this.startWebsocket();
+
         this.edit_rights =
             this.$userId == this.kanban_owner_id
             || this.checkPermission('is_admin')
@@ -409,7 +430,6 @@ export default {
             || this.$userId == this.item.owner_id;
 
         this.getEditors();
-        //this.due_date = this.item.due_date;
         this.$eventHub.on('filter', (filter) => {
             // always case insensitive
             const content = this.$el.innerText.toLowerCase();
@@ -429,6 +449,9 @@ export default {
         this.$nextTick(() => {
             MathJax.typeset();
         });
+    },
+    unmounted() {
+        this.stopWebsocket();
     },
     watch: {
         'item.description': function() {

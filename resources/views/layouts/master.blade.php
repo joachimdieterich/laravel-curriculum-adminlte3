@@ -60,6 +60,7 @@
                                 @yield('breadcrumb')
                             </div>
                         </div>
+                        @yield('contributors')
                     </div><!-- /.container-fluid -->
                 </section>
 

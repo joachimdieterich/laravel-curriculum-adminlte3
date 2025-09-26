@@ -81,6 +81,7 @@
                                 <button v-if="medium"
                                     type="button"
                                     class="btn btn-default"
+                                    @click="openPreviewModal()"
                                 >
                                     <span class="position-relative d-flex align-items-center h-100">
                                         <img
@@ -395,6 +396,11 @@ export default {
                 public: true,
                 callback: 'new-media',
                 callbackId: this.component_id,
+            });
+        },
+        openPreviewModal() {
+            this.globalStore?.showModal('medium-preview-modal', {
+                subscriptions: this.form.media_subscriptions,
             });
         },
     },

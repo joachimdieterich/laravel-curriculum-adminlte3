@@ -123,6 +123,7 @@
             <KanbanItemModal/>
             <KanbanStatusModal :kanban="initialKanban"/>
             <MediumModal/>
+            <MediumPreviewModal/>
             <SubscribeModal/>
             <ConfirmModal
                 :showConfirm="show_item_copy"
@@ -193,6 +194,7 @@ import KanbanItemModal from "../kanbanItem/KanbanItemModal.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import KanbanStatusModal from "./KanbanStatusModal.vue";
 import MediumModal from "../media/MediumModal.vue";
+import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -489,6 +491,7 @@ export default {
         KanbanItem,
         KanbanItemModal,
         MediumModal,
+        MediumPreviewModal,
         SubscribeModal,
         KanbanModal,
         KanbanStatusModal,

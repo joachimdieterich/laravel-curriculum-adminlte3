@@ -11,55 +11,45 @@
             >
                 <i class="fa fa-2x fa-close"></i>
             </button>
-            <div v-if="medium?.id">
-                <i class="fa fa-spinner fa-pulse fa-3x fa-fw position-absolute text-white"></i>
-                <img
-                    :src="'/media/' + medium.id"
-                    :alt="medium.title ?? medium.name"
-                    class="position-relative user-select-none"
-                    style="max-width: 90svw; max-height: 90svh;"
-                >
-            </div>
-            <div v-else-if="subscriptions.length"
-                class="w-100"
-            >
-                <div v-if="subscriptions.length > 1"
-                    class="position-absolute d-flex align-items-center"
-                    style="inset: 0"
-                >
-                    <!-- slider arrows left/right -->
-                    <button
-                        class="btn btn-icon-alt btn-icon-big highlight position-absolute"
-                        style="left: 1rem; z-index: 1;"
-                        @click="prev()"
-                    >
-                        <i class="fa fa-2x fa-angle-left"></i>
-                    </button>
-                    <button
-                        class="btn btn-icon-alt btn-icon-big highlight position-absolute"
-                        style="right: 1rem; z-index: 1;"
-                        @click="next()"
-                    >
-                        <i class="fa fa-2x fa-angle-right"></i>
-                    </button>
-                    <!-- preview gallery at bottom -->
-                </div>
+
+            <div class="w-100">
                 <div
                     :id="'carousel-' + component_id"
                     class="carousel slide"
                     data-interval="false"
                     data-touch="true"
                 >
+                    <div v-if="media.length > 1"
+                        class="position-absolute d-flex align-items-center"
+                        style="inset: 0"
+                    >
+                        <!-- slider arrows left/right -->
+                        <button
+                            class="btn btn-icon-alt btn-icon-big highlight position-absolute"
+                            style="left: 1rem; z-index: 1;"
+                            @click="prev()"
+                        >
+                            <i class="fa fa-2x fa-angle-left"></i>
+                        </button>
+                        <button
+                            class="btn btn-icon-alt btn-icon-big highlight position-absolute"
+                            style="right: 1rem; z-index: 1;"
+                            @click="next()"
+                        >
+                            <i class="fa fa-2x fa-angle-right"></i>
+                        </button>
+                        <!-- preview gallery at bottom -->
+                    </div>
                     <div class="carousel-inner d-flex align-items-center">
-                        <div v-for="(sub, index) in subscriptions"
+                        <div v-for="(medium, index) in media"
                             :class="{ 'active': index === 0 }"
                             class="carousel-item text-center"
                             style="min-height: 50px;"
                         >
                             <i class="fa fa-spinner fa-pulse fa-3x fa-fw position-absolute text-white"></i>
                             <img
-                                :src="'/media/' + sub.medium.id"
-                                :alt="sub.medium.title ?? sub.medium.name"
+                                :src="'/media/' + medium.id"
+                                :alt="medium.title ?? medium.name"
                                 class="position-relative user-select-none"
                                 style="max-width: 90svw; max-height: 90svh;"
                             >
@@ -84,8 +74,7 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            medium: {},
-            subscriptions: [],
+            media: [],
         }
     },
     methods: {
@@ -103,10 +92,9 @@ export default {
                 const params = state.modals[this.$options.name].params;
 
                 if (typeof (params) !== 'undefined') {
-                    this.medium = params.medium;
-                    this.subscriptions = params.subscriptions;
+                    this.media = params;
 
-                    if (this.subscriptions) {
+                    if (this.media.length > 1) {
                         // carousel needs to be initialized to activate swipe functionality
                         this.$nextTick(() => {
                             $('#carousel-' + this.component_id).carousel();

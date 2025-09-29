@@ -113,10 +113,8 @@ class MapController extends Controller
     {
         abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
 
-        $map = Map::where('id', $map->id)
-            ->with(['type', 'category'])
-            ->get()
-            ->first();
+        $map = Map::with(['type', 'category'])->find($map->id);
+
         return view('map.show')
             ->with(compact('map'));
     }

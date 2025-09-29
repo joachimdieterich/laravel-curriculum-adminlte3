@@ -11,8 +11,8 @@
                     <li><a href="#ll-layer" role="tab"><i class="fa fa-layer-group"></i></a></li>
                     <li><a href="#ll-marker" role="tab"><i class="fa fa-location-dot"></i></a></li>
                     <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li>
-                    <hr>
-                    <li>
+                    <hr v-permission="'map_create'"/>
+                    <li v-permission="'map_create'">
                         <a
                             role="tab"
                             class="pointer"
@@ -54,22 +54,36 @@
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
-                        <li v-for="marker in markers">
+                        <li v-for="marker in markers"
+                            class="d-flex align-items-center show-hidden-animate"
+                        >
                             <a
                                 class="text-decoration-none pointer"
+                                role="button"
+                                tabindex="0"
                                 @click="setCurrentMarker(marker)"
                             >
-                                <i class="fa fa-location-dot link-muted pr-2"></i>
-                                {{ marker.title }}
+                                <i class="fa fa-location-dot link-muted pr-2"></i> {{ marker.title }}
                             </a>
-                            <div class="tools">
-                                <a class="link-muted text-secondary px-1 pointer">
-                                    <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
-                                </a>
-                                <a class="link-muted text-danger ml-2 px-1 pointer">
-                                    <i class="fa fa-trash" @click="confirmItemDelete(marker)"></i>
-                                </a>
-                            </div>
+                            <span v-if="marker.owner_id == $userId || checkPermission('is_admin')"
+                                class="d-flex align-items-center ml-auto"
+                                style="height: 0px;"
+                            >
+                                <button
+                                    class="btn btn-icon d-print-none text-secondary px-1 hide-lg"
+                                    type="button"
+                                    @click="edit(marker)"
+                                >
+                                    <i class="fa fa-pencil-alt"></i>
+                                </button>
+                                <button
+                                    class="btn btn-icon d-print-none text-danger ml-2 px-1 hide-lg"
+                                    type="button"
+                                    @click="confirmItemDelete(marker)"
+                                >
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </span>
                         </li>
                     </ul>
                 </div>

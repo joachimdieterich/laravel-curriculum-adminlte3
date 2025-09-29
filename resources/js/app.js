@@ -236,6 +236,15 @@ app.config.globalProperties.errorMessage = (error, fallback = 'global.error.defa
     return msg;
 };
 
+// Custom filter
+app.config.globalProperties.formatDate = (value) => {
+    if (value) {
+        return window.moment(String(value)).format('DD.MM.YYYY [um] hh:mm')
+    }
+
+    return value;
+};
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

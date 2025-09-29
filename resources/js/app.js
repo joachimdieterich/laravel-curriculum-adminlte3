@@ -343,6 +343,10 @@ app.component('plan-achievements', defineAsyncComponent(() => import('./componen
 app.component('roles', defineAsyncComponent(() => import('./components/role/Roles.vue')));
 app.component('role', defineAsyncComponent(() => import('./components/role/Role.vue')));
 
+app.component('tag', defineAsyncComponent(() => import('./components/tag/Tag.vue')));
+app.component('tags', defineAsyncComponent(() => import('./components/tag/Tags.vue')));
+app.component('tag-card', defineAsyncComponent(() => import('./components/tag/TagCard.vue')));
+
 app.component('users', defineAsyncComponent(() => import('./components/user/Users.vue')));
 app.component('user', defineAsyncComponent(() => import('./components/user/User.vue')));
 

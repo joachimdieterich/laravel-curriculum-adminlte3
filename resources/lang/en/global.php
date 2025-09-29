@@ -67,6 +67,7 @@ return [
     'generate' => 'Generate',
     'share' => 'Share',
     'pleaseSelect' => 'Please select',
+    'pleaseSelectOptional' => 'Please select (optional)',
     'loading' => 'Loading...',
     'waitForFile' => 'Generating file...',
     'areYouSure' => 'Are you sure?',
@@ -324,8 +325,6 @@ return [
     'first_name' => 'First name',
     'last_name' => 'Last name',
     'phone' => 'Phone',
-    'tags' => 'Tags',
-    'tag' => 'Tag',
     'photo' => 'Photo',
     'statuses' => 'Statuses',
     'attachment' => 'Attachment',
@@ -421,6 +420,22 @@ return [
         'title_singular' => 'Permission',
         'create' => 'Create Permission',
         'edit' => 'Edit Permission',
+    ],
+    'tag' => [
+        'types' => [
+            'App\\Kanban' => 'Kanban',
+            'App\\Role' => 'Role',
+            'App\\User' => 'User',
+            'App\\Permission' => 'Permission',
+        ],
+        'title' => 'Tags',
+        'title_singular' => 'Tag',
+        'no_tags' => 'No tags present',
+        'create' => 'Crate tag',
+        'edit' => 'Edit tag',
+        'type' => 'Typ',
+        'delete' => 'Delete tag',
+        'delete_helper' => 'Should the tag be deleted and its corresponded data?',
     ],
     'organization_management' => 'Organizations',
     'organization' => [
@@ -1299,4 +1314,7 @@ return [
         'delete' => 'Delete level',
         'delete_helper' => 'Should level be deleted?',
     ],
+    'system_config' => [
+        'title' => 'System configuration'
+    ]
 ];

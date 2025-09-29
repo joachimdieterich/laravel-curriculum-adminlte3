@@ -392,6 +392,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('subjects', 'SubjectController');
 
+    /*** Tags ***/
+    Route::get('tags/list', 'TagsController@list');
+    Route::get('tags/type', 'TagsController@type');
+    Route::resource('tags', 'TagsController');
+
     Route::resource('tasks', 'TaskController');
 
     Route::get('terminalObjectives/{terminalObjective}', 'TerminalObjectiveController@show');

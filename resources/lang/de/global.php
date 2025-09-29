@@ -75,6 +75,7 @@ return [
     'generate' => 'erzeugen',
     'share' => 'Teilen',
     'pleaseSelect' => 'Bitte wählen ',
+    'pleaseSelectOptional' => 'Bitte wählen (Optional)',
     'loading' => 'Wird geladen...',
     'waitForFile' => 'Datei wird erzeugt...',
     'areYouSure' => 'Sind Sie sicher?',
@@ -337,8 +338,6 @@ return [
     'firstname' => 'Vorname',
     'lastname' => 'Nachname',
     'phone' => 'Telefon',
-    'tags' => 'Tags',
-    'tag' => 'Tag',
     'photo' => 'Foto',
     'statuses' => 'Status',
     'attachment' => 'Anhang',
@@ -439,6 +438,25 @@ return [
         'delete' => 'Berechtigung löschen',
         'delete_helper' => 'Soll die Berechtigung sowie die zugehörigen Daten gelöscht werden?',
 
+    ],
+    'tag' => [
+        'types' => [
+            'App\\Kanban' => 'Pinnwand',
+            'App\\Role' => 'Rolle',
+            'App\\User' => 'Benutzer',
+            'App\\Permission' => 'Berechtigung',
+        ],
+        'type' => [
+            'title' => 'Typen',
+            'title_singular' => 'Typ',
+        ],
+        'title' => 'Tags',
+        'title_singular' => 'Tag',
+        'no_tags' => 'Keine Tags vorhanden',
+        'create' => 'Tag erstellen',
+        'edit' => 'Tag bearbeiten',
+        'delete' => 'Tag löschen',
+        'delete_helper' => 'Soll der Tag sowie die zugehörigen Daten gelöscht werden?',
     ],
     'organization_management' => 'Organisationsverwaltung',
     'organization' => [
@@ -1348,4 +1366,7 @@ return [
         'delete' => 'Niveau löschen',
         'delete_helper' => 'Soll das Niveau gelöscht werden?',
     ],
+    'system_config' => [
+        'title' => 'Systemkonfiguration'
+    ]
 ];

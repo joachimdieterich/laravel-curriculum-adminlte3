@@ -39,6 +39,7 @@
         "mews/purifier": "^3.4",
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
         "select2/select2": "^4.0",
+        "spatie/laravel-tags": "^4.10",
         "yajra/laravel-datatables-oracle": "~11.0"
     },
     "require-dev": {

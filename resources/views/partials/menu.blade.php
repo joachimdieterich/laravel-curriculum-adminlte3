@@ -419,6 +419,29 @@
                         </li>
                     @endcan
                 @endcanany
+                @canany(['tags_access', 'is_admin'] )
+                    <li
+                        class="nav-header user-select-none"
+                        role="menuitem"
+                    >
+                        {{ trans('global.system_config.title') }}
+                    </li>
+
+                    <li
+                        class="nav-item"
+                        role="menuitem"
+                    >
+                        <a
+                            href="{{ route("tags.index") }}"
+                            class="nav-link {{ request()->is('tags') || request()->is('tags/*') ? 'active' : '' }}"
+                        >
+                            <i class="fa fa-tag"></i>
+                            <p>
+                                <span>{{ trans('global.tag.title') }}</span>
+                            </p>
+                        </a>
+                    </li>
+                @endcanany
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

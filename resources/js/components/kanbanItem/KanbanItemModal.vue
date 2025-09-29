@@ -399,9 +399,7 @@ export default {
             });
         },
         openPreviewModal() {
-            this.globalStore?.showModal('medium-preview-modal', {
-                subscriptions: this.form.media_subscriptions,
-            });
+            this.globalStore?.showModal('medium-preview-modal', this.form.media_subscriptions.map(s => s.medium) );
         },
     },
     computed: {

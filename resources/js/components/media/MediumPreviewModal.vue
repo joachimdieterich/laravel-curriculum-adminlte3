@@ -11,7 +11,23 @@
             >
                 <i class="fa fa-2x fa-close"></i>
             </button>
-
+            <!-- preview gallery at bottom | needs to be before the high resolution images to load first -->
+            <div v-if="media.length > 1"
+                class="position-absolute d-flex"
+                style="bottom: 1rem; gap: 1rem; z-index: 1;"
+            >
+                <button v-for="(medium, index) in media"
+                    class="gallery-item d-flex align-items-center justify-content-center bg-white border-0"
+                    :class="{ 'active': index === currentSlide }"
+                    @click="slideTo(index)"
+                >
+                    <img
+                        :src="'/media/' + medium.id + '?preview=true&maxWidth=100&maxHeight=100'"
+                        :alt="medium.title ?? medium.name"
+                        style="max-height: 100px; max-width: 100px;"
+                    >
+                </button>
+            </div>
             <div class="w-100">
                 <div
                     :id="'carousel-' + component_id"
@@ -56,23 +72,6 @@
                     </div>
                 </div>
             </div>
-            <!-- preview gallery at bottom -->
-            <div v-if="media.length > 1"
-                class="position-absolute d-flex"
-                style="bottom: 1rem; gap: 1rem; z-index: 1;"
-            >
-                <button v-for="(medium, index) in media"
-                    class="gallery-item d-flex align-items-center justify-content-center bg-white border-0"
-                    :class="{ 'active': index === currentSlide }"
-                    @click="slideTo(index)"
-                >
-                    <img
-                        :src="'/media/' + medium.id + '?preview=true&maxWidth=100&maxHeight=100'"
-                        :alt="medium.title ?? medium.name"
-                        style="max-height: 100px; max-width: 100px;"
-                    >
-                </button>
-            </div>
         </div>
     </Transition>
 </template>
@@ -112,24 +111,22 @@ export default {
     mounted() {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params;
+            if (!state.modals[this.$options.name].show) return;
+            
+            const params = state.modals[this.$options.name].params;
+            if (params === undefined) return;
 
-                if (typeof (params) !== 'undefined') {
-                    this.media = params;
-
-                    if (this.media.length > 1) {
-                        // carousel needs to be initialized to activate swipe functionality
-                        this.$nextTick(() => {
-                            $('#carousel-' + this.component_id).carousel();
-                            $('#carousel-' + this.component_id).on('slide.bs.carousel', e => {
-                                this.currentSlide = e.to;
-                                this.sliding = true;
-                            });
-                            $('#carousel-' + this.component_id).on('slid.bs.carousel', e => { this.sliding = false; });
-                        });
-                    }
-                }
+            this.media = params;
+            if (this.media.length > 1) {
+                // carousel needs to be initialized to activate swipe functionality
+                this.$nextTick(() => {
+                    $('#carousel-' + this.component_id).carousel();
+                    $('#carousel-' + this.component_id).on('slide.bs.carousel', e => {
+                        this.currentSlide = e.to;
+                        this.sliding = true;
+                    });
+                    $('#carousel-' + this.component_id).on('slid.bs.carousel', e => { this.sliding = false; });
+                });
             }
         });
     },

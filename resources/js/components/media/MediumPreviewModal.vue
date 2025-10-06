@@ -17,14 +17,15 @@
                 style="bottom: 1rem; gap: 1rem; z-index: 1;"
             >
                 <button v-for="(medium, index) in media"
-                    class="gallery-item d-flex align-items-center justify-content-center bg-white border-0"
+                    class="gallery-item d-flex align-items-center justify-content-center bg-white p-1 border-0"
                     :class="{ 'active': index === currentSlide }"
                     @click="slideTo(index)"
                 >
                     <img
-                        :src="'/media/' + medium.id + '?preview=true&maxWidth=100&maxHeight=100'"
+                        :src="'/media/' + medium.id + '?preview=true&maxWidth=92&maxHeight=92'"
                         :alt="medium.title ?? medium.name"
-                        style="max-height: 100px; max-width: 100px;"
+                        class="mh-100 mw-100 rounded"
+                        style="box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);"
                     >
                 </button>
             </div>

@@ -14,7 +14,10 @@
                 @click="setSlide(index)">
             </li>
         </div>
-        <div class="carousel-inner">
+        <div
+            class="carousel-inner pointer"
+            @click="openGallery()"
+        >
             <div
                 :id="'loading_' + component_id"
                 class="overlay position-absolute text-center rounded-0 w-100"
@@ -22,52 +25,6 @@
             >
                 <i class="fa fa-spinner fa-pulse fa-fw"></i>
                 <span class="sr-only">{{ trans('global.loading') }}</span>
-            </div>
-
-            <div
-                id="link-overlay"
-                class="d-print-none"
-                @click.self="(e) => e.target.classList.toggle('active')"
-            >
-                <div
-                    id="link-wrapper"
-                    class="d-flex align-items-center justify-content-center bg-light rounded-pill hide-lg"
-                    :style="{ width: generatingLinks ? '50px' : '175px' }"
-                >
-                    <button v-if="!generatingLinks && !URLsLoaded"
-                        type="button"
-                        class="btn btn-default bg-transparent rounded-pill border-0 w-100"
-                        @click="getURLs()"
-                    >
-                        <i class="fa fa-link"></i>
-                        {{ trans('global.medium.generate_links') }}
-                    </button>
-                    <span v-if="generatingLinks">
-                        <i class="fa fa-spinner fa-pulse p-2"></i>
-                        <span class="sr-only">{{ trans('global.loading') }}</span>
-                    </span>
-                </div>
-                <div v-if="currentViewLink && currentDownloadLink"
-                    id="link-buttons"
-                    class="btn-group-vertical d-flex flex-column bg-light hide"
-                >
-                    <button
-                        type="button"
-                        class="btn btn-light"
-                        @click="openLink(currentViewLink)"
-                    >
-                        <i class="fa fa-arrow-up-right-from-square"></i>
-                        {{ trans('global.open') }}
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-light"
-                        @click="openLink(currentDownloadLink)"
-                    >
-                        <i class="fa fa-download"></i>
-                        {{ trans('global.download') }}
-                    </button>
-                </div>
             </div>
 
             <button v-if="$userId == subscriptions[currentSlide]?.medium.owner_id"
@@ -119,6 +76,7 @@
 
 <script>
 import MediaRenderer from './MediaRenderer.vue';
+import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -131,14 +89,16 @@ export default {
             default: null,
         },
     },
+    setup() {
+        const globalStore = useGlobalStore();
+        return {
+            globalStore,
+        }
+    },
     data() {
         return {
             component_id: 'carousel_' + this.$.uid,
             currentSlide: 0,
-            generatingLinks: false,
-            currentViewLink: null,
-            currentDownloadLink: null,
-            errors: {},
         }
     },
     methods: {
@@ -158,44 +118,6 @@ export default {
             } else {
                 this.currentSlide++;
             }
-        },
-        openLink(link) {
-            if (link) window.open(link, '_blank');
-        },
-        getURLs() {
-            this.generatingLinks = true;
-            const medium = this.subscriptions[this.currentSlide].medium;
-
-            if (medium.adapter === 'local') {
-                this.currentViewLink = '/media/' + medium.id + '?content=true';
-                this.currentDownloadLink = '/media/' + medium.id + '?download=true';
-            } else {
-                // send requests for edusharing links
-                axios.get('/media/' + this.subscriptions[this.currentSlide].medium.id + '?content=true')
-                    .then((response) => this.currentViewLink = response.data);
-                axios.get('/media/' + this.subscriptions[this.currentSlide].medium.id + '?download=true')
-                    .then((response) => this.currentDownloadLink = response.data);
-            }
-        },
-        setURLs() {
-            const animationTime = 300;
-            const linkValidTime = 5000; // edusharing links are only valid for a couple of seconds
-
-            // to activate the transitions, we need to implement the logic through timeouts
-            setTimeout(() => { // first we hide the loading-indicator
-                const buttons = document.getElementById('link-buttons'); // element doesn't exist before
-                this.generatingLinks = false;
-                buttons.classList.remove('hide');
-
-                setTimeout(() => { // then we show the actual links
-                    buttons.classList.add('hide');
-
-                    setTimeout(() => { // after the links aren't valid anymore, we reset everything
-                        this.currentViewLink = null;
-                        this.currentDownloadLink = null;
-                    }, animationTime);
-                }, linkValidTime);
-            }, animationTime);
         },
         unlinkMedium(item) { //id of external reference and value in db
             $('#loading_' + this.component_id).show();
@@ -217,15 +139,11 @@ export default {
                 console.log(err.response);
             });
         },
-    },
-    computed: {
-        URLsLoaded() {
-            return this.currentViewLink !== null && this.currentDownloadLink !== null;
-        },
-    },
-    watch: {
-        URLsLoaded(loaded) {
-            if (loaded) this.setURLs();
+        openGallery() {
+            this.globalStore.showModal('medium-preview-modal', {
+                media: this.subscriptions.map(s => s.medium),
+                initialSlide: this.currentSlide,
+            });
         },
     },
     components: {
@@ -233,31 +151,3 @@ export default {
     },
 }
 </script>
-<style scoped>
-#link-overlay {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    transition: opacity 0.3s linear;
-
-    & > #link-wrapper, & > #link-buttons {
-        transition: width 0.3s ease, opacity 0.3s linear, box-shadow 0.3s ease;
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
-
-        &:hover { box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.25); }
-    }
-    & > #link-buttons {
-        position: absolute;
-        z-index: 15;
-        border-radius: 1rem;
-
-        & > button:first-child { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
-        & > button:last-child { border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem; }
-    }
-    &:hover > #link-wrapper, &:focus-within > #link-wrapper, &.active > #link-wrapper { opacity: 1 !important; }
-}
-</style>

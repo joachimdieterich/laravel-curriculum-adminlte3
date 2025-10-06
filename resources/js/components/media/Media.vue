@@ -172,7 +172,7 @@ export default {
             });
         },
         show(mediumObject) {
-            this.globalStore?.showModal('medium-preview-modal', [mediumObject]);
+            this.globalStore?.showModal('medium-preview-modal', { media: [mediumObject] });
         },
         addMedia() {
             this.globalStore?.showModal('medium-modal', {

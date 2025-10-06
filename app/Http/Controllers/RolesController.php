@@ -40,6 +40,9 @@ class RolesController extends Controller
             ->addColumn('permissions', function ($roles) {
                 return $roles->permissions->pluck('id')->toArray();
             })
+            ->addColumn('tags', function ($roles) {
+                return $roles->tags->toArray();
+            })
             ->addColumn('check', '')
             ->setRowId('id')
             ->setRowAttr([
@@ -54,6 +57,7 @@ class RolesController extends Controller
 
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
+        $role->tags()->sync($request->input('tags', []));
 
         Cache::forget('roles'); //cache should update next time
 
@@ -69,6 +73,7 @@ class RolesController extends Controller
 
         $role->update($request->all());
         $role->permissions()->sync($request->input('permissions', []));
+        $role->tags()->sync($request->input('tags', []));
 
         Cache::forget('roles'); //cache should update next time
 
@@ -82,6 +87,8 @@ class RolesController extends Controller
         abort_unless(\Gate::allows('role_show'), 403);
 
         $role->load('permissions');
+        $role->load('tags');
+
         return view('roles.show')
             ->with(compact('role'));
     }

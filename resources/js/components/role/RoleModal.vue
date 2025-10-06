@@ -47,14 +47,34 @@
                                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                             </div>
                             <Select2
+                                v-permission="'tag_access'"
+                                id="tags"
+                                name="tags"
+                                url="/tags"
+                                model="tags"
+                                :additional_query_param="{'type': 'App\\Role'}"
+                                :label="trans('global.tag.title')"
+                                :multiple="true"
+                                :selected="getSelectedTags()"
+                                @selectedValue="(id) => {
+                                    this.form.tags = id;
+                                }"
+                                @cleared="() => {
+                                    this.form.tags = [];
+                                }"
+                            />
+                            <Select2
                                 id="permissions"
                                 name="permissions"
                                 url="/permissions"
                                 model="permission"
                                 :multiple="true"
-                                :selected="getSelected()"
+                                :selected="getSelectedPermissions()"
                                 @selectedValue="(id) => {
                                     this.form.permissions = id;
+                                }"
+                                @cleared="() => {
+                                    this.form.permissions = [];
                                 }"
                             />
                         </div>
@@ -113,6 +133,7 @@ export default {
                 id:'',
                 title: '',
                 permissions: '',
+                tags: [],
             }),
         }
     },
@@ -144,12 +165,23 @@ export default {
                     console.log(e.response);
                 });
         },
-        getSelected() {
-            if (this.form.permissions[0]?.title){
-                return this.form.permissions.map(p => p.id);
-            } else {
-                return this.form.permissions;
+        getSelectedPermissions(permissions) {
+            let base = permissions ?? this.form.permissions;
+
+            if (base[0]?.title){
+                return base.map(p => p.id);
             }
+
+            return base;
+        },
+        getSelectedTags(tags) {
+            let base = tags ?? this.form.tags;
+
+            if (base[0]?.name){
+                return base.map(t => t.id);
+            }
+
+            return base;
         },
     },
     mounted() {
@@ -159,6 +191,8 @@ export default {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
+                    params.permissions = this.getSelectedPermissions(params.permissions);
+                    params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
                     if (this.form.id !== '') {
                         this.method = 'patch';

@@ -31,7 +31,7 @@
                 type="button"
                 class="d-print-none btn btn-icon position-absolute text-danger pointer px-2"
                 style="top: 5px; right: 5px; z-index: 30;"
-                @click.prevent="unlinkMedium(subscriptions[currentSlide])"
+                @click.stop="unlinkMedium(subscriptions[currentSlide])"
             >
                 <i class="fa fa-trash"></i>
             </button>

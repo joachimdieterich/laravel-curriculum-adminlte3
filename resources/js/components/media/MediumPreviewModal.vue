@@ -41,7 +41,7 @@
                     </div>
                     <div v-if="(currentViewLink && currentDownloadLink) || true"
                         id="link-buttons"
-                        class="btn-group-vertical d-flex flex-column bg-light hide"
+                        class="btn-group-vertical d-flex flex-column bg-light text-nowrap hide"
                     >
                         <button
                             type="button"

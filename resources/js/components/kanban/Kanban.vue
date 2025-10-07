@@ -6,7 +6,7 @@
         <img v-if="kanban.medium_id"
             class="position-absolute p-0 h-100 w-100"
             style="object-fit: cover;"
-            :src="'/media/' + kanban.medium_id + '?preview=true'"
+            :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
             alt="background image"
         />
         <div

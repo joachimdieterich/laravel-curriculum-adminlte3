@@ -1,3 +1,13 @@
+## 1.2.1 (2025-10-06)
+- Videoconference: fixed abort-condition and messages
+- MapMarker: allow delete by admins
+- MapMarker: fixed logic for showing edit/delete icon
+- MediumPreviewModal: further improvements/overhaul and style changes
+- MediaCarousel: now opens MediumPreviewModal when clicking on image
+- MediaCarousel: moved 'create-links' overlay to MediumPreviewModal
+- added option to load Edusharing-media in lower/higher quality
+- Kanban: now loads background image in highest resolution
+
 ## 1.2.0 (2025-09-25)
 - preparations for WebSockets
 - updated axios to fix vulnerability

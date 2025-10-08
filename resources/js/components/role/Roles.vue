@@ -133,21 +133,20 @@ export default {
         this.$eventHub.on('role-updated', (role) => {
             this.update(role);
         });
-
-        this.$eventHub.on('filter', (filter) => {
-            dt.search(filter).draw();
-        });
     },
     methods: {
         editRole(role) {
             this.globalStore?.showModal('role-modal', role);
         },
         loaderEvent() {
-            this.dt = $('#role-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.roles = this.dt.rows({page: 'current'}).data().toArray();
+            const dt = $('#role-datatable').DataTable();
+            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
+                this.roles = dt.rows({page: 'current'}).data().toArray();
 
                 $('#role-content').insertBefore('#role-datatable-wrapper');
+            });
+            this.$eventHub.on('filter', (filter) => {
+                dt.search(filter).draw();
             });
         },
         confirmItemDelete(role) {

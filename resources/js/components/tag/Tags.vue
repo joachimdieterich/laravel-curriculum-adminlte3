@@ -133,21 +133,21 @@ export default {
         this.$eventHub.on('tag-updated', (tag) => {
             this.update(tag);
         });
-
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
-        });
     },
     methods: {
         editTag(tag) {
             this.globalStore?.showModal('tag-modal', tag);
         },
         loaderEvent() {
-            this.dt = $('#tag-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes
-                this.tags = this.dt.rows({page: 'current'}).data().toArray();
+            const dt = $('#tag-datatable').DataTable();
+            dt.on('draw.dt', () => { // checks if the datatable-data changes
+                this.tags = dt.rows({page: 'current'}).data().toArray();
 
                 $('#tag-content').insertBefore('#tag-datatable-wrapper');
+            });
+
+            this.$eventHub.on('filter', (filter) => {
+                dt.search(filter).draw();
             });
         },
         confirmItemDelete(tag) {

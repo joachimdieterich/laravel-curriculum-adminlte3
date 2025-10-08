@@ -6,7 +6,9 @@ use App\Http\Requests\Tags\StoreTagRequest;
 use App\Http\Requests\Tags\UpdateTagRequest;
 use App\Services\Tag\TagService;
 use App\Tag;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\App;
 use Yajra\DataTables\DataTables;
 
 class TagsController extends Controller
@@ -36,23 +38,20 @@ class TagsController extends Controller
         return view('tags.index');
     }
 
-    public function list()
+    public function list(DataTables $dt): JsonResponse
     {
         abort_unless(\Gate::allows('tag_access'), 403);
 
-        $tags = Tag::select([
-            'id',
-            'name',
-        ]);
+        $locale = App::currentLocale();
 
-        return DataTables::of($tags)
-            ->addColumn('translation', function ($tags) {
-                return $tags->translation;
+        return $dt->eloquent(Tag::select([
+            'id',
+            "name->{$locale} as translation",
+        ]))
+            ->filterColumn('translation', function (Builder $query, $keyword) use ($locale) {
+                $query->orWhere("name->{$locale}", 'LIKE', "%{$keyword}%");
             })
             ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make();
     }
 

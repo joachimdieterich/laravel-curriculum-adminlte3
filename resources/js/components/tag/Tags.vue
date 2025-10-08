@@ -1,6 +1,8 @@
 <template >
     <div class="row">
-        <div class="col-md-12 m-0">
+        <div id="tag-content"
+             class="col-md-12 m-0"
+        >
             <IndexWidget
                 v-permission="'tag_create'"
                 modelName="Tag"
@@ -133,7 +135,7 @@ export default {
         });
 
         this.$eventHub.on('filter', (filter) => {
-            dt.search(filter).draw();
+            this.dt.search(filter).draw();
         });
     },
     methods: {
@@ -141,9 +143,9 @@ export default {
             this.globalStore?.showModal('tag-modal', tag);
         },
         loaderEvent() {
-            const dt = $('#tag-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.tags = dt.rows({page: 'current'}).data().toArray();
+            this.dt = $('#tag-datatable').DataTable();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes
+                this.tags = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#tag-content').insertBefore('#tag-datatable-wrapper');
             });

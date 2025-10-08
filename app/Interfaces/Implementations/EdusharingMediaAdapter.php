@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Plugins\Repositories\edusharing;
+namespace App\Interfaces\Implementations;
 
 use App\Http\Controllers\LogController;
 use App\Interfaces\MediaInterface;
 use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
-
+use App\Plugins\Repositories\edusharing\Edusharing;
+use EduSharingApiClient\EduSharingAuthHelper;
+use EduSharingApiClient\EduSharingHelperBase;
 
 class EdusharingMediaAdapter implements MediaInterface
 {
@@ -20,7 +22,7 @@ class EdusharingMediaAdapter implements MediaInterface
     {
         $edusharing = new Edusharing;
 
-        return $edusharing->getSearchQueriesV2('-home-',$request);
+        return $edusharing->getSearchQueriesV2('-home-', $request);
 
     }
 
@@ -93,7 +95,7 @@ class EdusharingMediaAdapter implements MediaInterface
                         $input['external_id'],
                     );
             }
-            catch (Exception $e)
+            catch (\Exception $e)
             {
                 dump($e->getMessage());
             }

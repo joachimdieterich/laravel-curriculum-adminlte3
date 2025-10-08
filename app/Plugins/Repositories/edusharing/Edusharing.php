@@ -5,6 +5,7 @@ namespace App\Plugins\Repositories\edusharing;
 use App\Plugins\Repositories\RepositoryPlugin;
 use App\RepositorySubscription;
 use App\User;
+use EduSharingApiClient\Usage;
 
 /**
  * Description of plugin
@@ -37,13 +38,13 @@ class Edusharing extends RepositoryPlugin
 
     function helperBase($owner_id = null)
     {
-        $base = new EduSharingHelperBase(
+        $base = new \EduSharingApiClient\EduSharingHelperBase(
             env('EDUSHARING_REPO_URL', ''),
             env('EDUSHARING_PRIV_KEY', ''),
             env('EDUSHARING_APP_ID', ''),
         );
 
-        $authHelper = new EduSharingAuthHelper($base);
+        $authHelper = new \EduSharingApiClient\EduSharingAuthHelper($base);
 
         if ($owner_id == null)
         {
@@ -62,6 +63,18 @@ class Edusharing extends RepositoryPlugin
         return $base;
     }
 
+    function helperConfig()
+    {
+        $urlHandling = new \EduSharingApiClient\UrlHandling(true);
+
+        return new \EduSharingApiClient\EduSharingNodeHelperConfig($urlHandling);
+    }
+
+    function getNodeHelper($owner_id = null)
+    {
+        return new \EduSharingApiClient\EduSharingNodeHelper($this->helperBase($owner_id), $this->helperConfig());
+    }
+
     public function createUsage(
         string $subscribable_type,
         string $subscribable_id,
@@ -69,7 +82,7 @@ class Edusharing extends RepositoryPlugin
         string $nodeVersion = null
     )
     {
-        $nodeHelper = new EduSharingNodeHelper($this->helperBase());
+        $nodeHelper = $this->getNodeHelper();
         return $nodeHelper->createUsage(
             $this->accessToken,
             $subscribable_type, //course_id
@@ -84,7 +97,7 @@ class Edusharing extends RepositoryPlugin
         string $usageId
     )
     {
-        $nodeHelper = new EduSharingNodeHelper($this->helperBase());
+        $nodeHelper = $this->getNodeHelper();
         return $nodeHelper->deleteUsage(
             $nodeId,
             $usageId
@@ -93,7 +106,7 @@ class Edusharing extends RepositoryPlugin
 
     public function getNodeByUsage($usage, $owner_id)
     {
-        $nodeHelper = new EduSharingNodeHelper($this->helperBase($owner_id));
+        $nodeHelper = $this->getNodeHelper($owner_id);
 
         return $nodeHelper->getNodeByUsage(
             new Usage(
@@ -108,7 +121,7 @@ class Edusharing extends RepositoryPlugin
 
     public function getRedirectUrl($usage, $mode, $owner_id)
     {
-        $nodeHelper = new EduSharingNodeHelper($this->helperBase($owner_id));
+        $nodeHelper = $this->getNodeHelper($owner_id);
 
         return $nodeHelper->getRedirectUrl(
             $mode,
@@ -124,7 +137,7 @@ class Edusharing extends RepositoryPlugin
 
     public function getPreview($usage, $owner_id)
     {
-        $nodeHelper = new EduSharingNodeHelper($this->helperBase($owner_id));
+        $nodeHelper = $this->getNodeHelper($owner_id);
 
         return $nodeHelper->getPreview(
             new Usage(

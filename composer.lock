@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "37f9f339289ee489163f0b79c58f9d47",
+    "content-hash": "b27cc2437f25411b456ba0f7aa05c9ec",
     "packages": [
         {
             "name": "aacotroneo/laravel-saml2",
@@ -1990,6 +1990,53 @@
                 }
             ],
             "time": "2024-10-09T13:47:03+00:00"
+        },
+        {
+            "name": "edu-sharing/auth-plugin",
+            "version": "10.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/edu-sharing/php-auth-plugin.git",
+                "reference": "3d59766c8e5c14db79788e69d2bad93a11afe25d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/edu-sharing/php-auth-plugin/zipball/3d59766c8e5c14db79788e69d2bad93a11afe25d",
+                "reference": "3d59766c8e5c14db79788e69d2bad93a11afe25d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "php": ">= 8.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^12"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "EduSharingApiClient\\": "src/EduSharing"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Torsten Simon",
+                    "email": "simon@edu-sharing.net"
+                }
+            ],
+            "description": "Plugin to provide authentification via Auth By App with a edu-sharing repository",
+            "support": {
+                "issues": "https://github.com/edu-sharing/php-auth-plugin/issues",
+                "source": "https://github.com/edu-sharing/php-auth-plugin/tree/10.0"
+            },
+            "time": "2025-08-07T08:55:34+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -15243,6 +15290,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "edu-sharing/auth-plugin": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,

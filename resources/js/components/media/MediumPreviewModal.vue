@@ -39,7 +39,7 @@
                             <span class="sr-only">{{ trans('global.loading') }}</span>
                         </span>
                     </div>
-                    <div v-if="(currentViewLink && currentDownloadLink) || true"
+                    <div v-if="(currentViewLink && currentDownloadLink)"
                         id="link-buttons"
                         class="btn-group-vertical d-flex flex-column bg-light text-nowrap hide"
                     >

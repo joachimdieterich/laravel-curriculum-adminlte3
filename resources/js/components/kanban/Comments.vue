@@ -73,9 +73,7 @@
             </div>
         </div>
 
-        <div v-if="commentable"
-            class="d-print-none pb-3"
-        >
+        <div class="d-print-none pb-3">
             <div class="input-group">
                 <input
                     type="text"
@@ -120,10 +118,6 @@ export default {
             default: null,
         },
         websocket: {
-            type: Boolean,
-            default: false,
-        },
-        commentable: {
             type: Boolean,
             default: false,
         },

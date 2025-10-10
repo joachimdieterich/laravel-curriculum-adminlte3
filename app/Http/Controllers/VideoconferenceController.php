@@ -273,8 +273,7 @@ class VideoconferenceController extends Controller
             $videoconference->attendeePW == $attendeePW
             OR $videoconference->moderatorPW == $moderatorPW
         )
-        OR $videoconference->isAccessible()
-        OR $token != null,
+        OR $videoconference->isAccessible($token),
         403, 'global.videoconference.access_denied');
 
         $videoconference = $videoconference->withoutRelations(['subscriptions'])->load(['media.license', 'owner']);
@@ -322,15 +321,14 @@ class VideoconferenceController extends Controller
     public function start(Videoconference $videoconference)
     {
         $input = $this->validateRequest();
+        $token = $input['sharing_token'] ?? null;
         $moderatorPW =  $input['moderatorPW'] ?? '';
         $attendeePW = $input['attendeePW'] ?? $videoconference->attendeePW;
         abort_unless((
                 $videoconference->attendeePW == $attendeePW   // start with attendeePW
-                OR
-                $videoconference->moderatorPW == $moderatorPW // start with moderatorPW
+                OR $videoconference->moderatorPW == $moderatorPW // start with moderatorPW
             )
-            OR
-            $videoconference->isAccessible(),
+            OR $videoconference->isAccessible($token),
             403, 'global.videoconference.access_denied');
 
         $userName = auth()->user()->fullName();
@@ -599,6 +597,7 @@ class VideoconferenceController extends Controller
     {
         return request()->validate([
             'id' => 'sometimes|nullable|integer',
+            'sharing_token' => 'sometimes|string',
             'meetingID' => 'sometimes',
             'meetingName' => 'sometimes',
             'attendeePW' => 'sometimes',

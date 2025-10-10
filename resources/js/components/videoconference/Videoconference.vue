@@ -247,19 +247,27 @@ export default {
             this.timerCount= 10;
             this.timerEnabled = true;
 
-            if (this.videoconference.owner_id == this.$userId ||
+            if ( // owner or moderator
+                this.videoconference.owner_id == this.$userId ||
                 this.urlParamModeratorPW === this.videoconference.moderatorPW ||
                 this.videoconference.anyoneCanStart === true ||
-                this.videoconference.editable === true){
+                this.videoconference.editable === true
+            ) {
+                // has permission to start
                 window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName + '&moderatorPW=' + this.urlParamModeratorPW + '&attendeePW=' + this.urlParamAttendeePW;
-            } else {
+            } else { // join as attendee
                 axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')
                     .then(response => {
                         if (response.data.videoconference == false) {
                             this.loadingMessage = 'Konferenz ist noch nicht gestartet. Neuer Verbindungsversuch in ';
                         } else {
                             this.timerEnabled = false;
-                            window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName + '&moderatorPW=&attendeePW=' + this.urlParamAttendeePW;
+                            // send token to verify access
+                            const token = new URLSearchParams(window.location.search).get('sharing_token');
+                            window.location = '/videoconferences/' + this.videoconference.id +
+                                '/start?userName=' + this.form.userName +
+                                '&moderatorPW=&attendeePW=' + this.urlParamAttendeePW +
+                                '&sharing_token=' + token;
                         }
                     })
                     .catch(e => {

@@ -1111,7 +1111,7 @@ return [
         'title_singular' => 'Vorwissen',
         'create' => 'Vorwissen verknüpfen',
         'edit' => 'Vorwissen (Verknüpfung) bearbeiten',
-        'delete' => 'Vorwissen  (Verknüpfung) löschen',
+        'delete' => 'Vorwissen (Verknüpfung) löschen',
     ],
     'artefact' => [
         'title' => 'Artefakte',

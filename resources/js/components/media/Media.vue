@@ -58,10 +58,10 @@
 
     <div v-else
         v-for="subscription in subscriptions"
-        v-bind:id="'medium_'+subscription.medium.id"
-        class="box box-objective pointer my-1"
-        style="height: 300px !important; min-width: 200px !important; padding: 0; background-size: 100%,50%;"
-        :style="{'background-image':'url('+href(subscription.medium.id)+')'}"
+        :id="'medium_' + subscription.medium.id"
+        class="box box-objective pointer p-0 my-1"
+        style="height: 300px !important; min-width: 200px !important; background-size: 100%, 50%;"
+        :style="{ 'background-image': 'url(/media/' + subscription.medium.id + ')' }"
         @click="show(subscription.medium)"
     >
         <div class="symbol"
@@ -190,9 +190,6 @@ export default {
                 console.log(e)
             }
             $("#medium_" + this.medium.id).hide();
-        },
-        href: function (id) {
-            return '/media/' + id;
         },
         iconCss(mimeType) {
             switch (true) {

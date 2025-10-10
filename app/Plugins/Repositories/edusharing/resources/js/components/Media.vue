@@ -84,7 +84,7 @@
                             id="delete-navigator-item"
                             class="btn btn-danger btn-sm pull-right"
                             type="submit"
-                            @click.stop="unlinkMedium(subscription);"
+                            @click.stop="confirmDelete(subscription);"
                         >
                             <small><i class="fa fa-unlink"></i></small>
                         </button>
@@ -154,11 +154,24 @@
                 </span>
             </div>
         </div>
+
+    <ConfirmModal
+        :showConfirm="showConfirm"
+        :title="trans('global.medium.delete_subscription')"
+        :description="trans('global.medium.delete_subscription_helper')"
+        css="primary"
+        @close="showConfirm = false"
+        @confirm="() => {
+            showConfirm = false;
+            unlinkMedium();
+        }"
+    />
     </div>
 </template>
 <script>
-import {useGlobalStore} from "../../../../../../../resources/js/store/global.js";
 import RenderUsage from "./RenderUsage.vue";
+import ConfirmModal from "../../../../../../../resources/js/components/uiElements/ConfirmModal.vue";
+import {useGlobalStore} from "../../../../../../../resources/js/store/global.js";
 
 export default {
     props: {
@@ -176,8 +189,9 @@ export default {
             commonName: null,
             page: 0,
             maxItems: 50,
-            errors: {},
             currentTab: 1,
+            showConfirm: false,
+            currentSubscription: null,
         }
     },
     setup() {
@@ -227,12 +241,16 @@ export default {
                 }
             } catch(error) {
                 $("#loading").hide();
-                //this.errors = error.response.data.errors;
             }
 
             $("#loading").hide();
         },
-        async unlinkMedium(mediumSubscription) { //(id, value) { //id of external reference and value in db
+        confirmDelete(mediumSubscription) {
+            this.currentSubscription = mediumSubscription;
+            this.showConfirm = true;
+        },
+        async unlinkMedium() { //(id, value) { //id of external reference and value in db
+            const mediumSubscription = this.currentSubscription;
             axios.delete('/media/' + mediumSubscription.medium_id, {
                 data: {
                     subscribable_type: mediumSubscription.subscribable_type,
@@ -310,6 +328,7 @@ export default {
     },
     components: {
         RenderUsage,
+        ConfirmModal,
     },
 }
 </script>

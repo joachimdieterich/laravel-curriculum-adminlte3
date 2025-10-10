@@ -20,7 +20,7 @@
         "cmgmyr/messenger": "^2.20",
         "darkaonline/l5-swagger": "^8.3",
         "doctrine/dbal": "^3.0",
-        "edu-sharing/auth-plugin": "10.0.x-dev",
+        "edu-sharing/auth-plugin": "10.0.1",
         "guzzlehttp/guzzle": "^7.4",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",

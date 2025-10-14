@@ -5,7 +5,7 @@
             @mouseup.self="globalStore.closeModal($options.name)"
         >
             <button
-                class="btn btn-icon-alt btn-icon-big highlight position-absolute"
+                class="btn btn-icon-alt btn-icon-big position-absolute bg-white"
                 style="top: 1rem; right: 1rem; z-index: 1;"
                 @click="globalStore.closeModal($options.name)"
             >

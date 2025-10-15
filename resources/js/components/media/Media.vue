@@ -239,6 +239,12 @@ export default {
             });
         },*/
     },
+    watch: {
+        subscribable_id() {
+            this.subscriptions = {};
+            this.loader();
+        },
+    },
     mounted() {
         this.loader();
 

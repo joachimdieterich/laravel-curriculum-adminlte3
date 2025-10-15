@@ -3,11 +3,33 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
  * @OA\Get(
- *   path="v1/achievements/{id}",
+ *   path="v1/achievements",
  *   tags={"Achievement v1"},
- *   summary="Summary",
- *   @OA\Response(response=200, description="successful operation"),
- *   @OA\Response(response=404, description="Not Found")
+ *   summary="Get achievements from a single Enabling-Objective",
+ *   security={
+ *       {"passport": {"*"}},
+ *   },
+ *   @OA\Parameter(
+ *     name="referenceable_id",
+ *     description="ID of the referenced object, e.g. an EnablingObjective",
+ *     required=true,
+ *     in="query",
+ *     @OA\Schema(type="integer", format="int64")
+ *   ),
+ *   @OA\Parameter(
+ *     name="scale",
+ *     description="Title of the achievement scale, e.g. 'moodle'",
+ *     required=true,
+ *     in="query",
+ *     @OA\Schema(type="string")
+ *   ),
+ *   @OA\Response(
+ *     response=200,
+ *     description="successful operation",
+ *     @OA\JsonContent(ref="#/components/schemas/Achievement")
+ *   ),
+ *   @OA\Response(response=400, description="Missing required fields"),
+ *   @OA\Response(response=404, description="Scale not found")
  * ),
  * @OA\Post(
  *   path="v1/achievements",

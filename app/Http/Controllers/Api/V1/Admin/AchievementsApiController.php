@@ -66,8 +66,31 @@ class AchievementsApiController extends Controller
             ])
             ->first();
 }
-    public function show(Achievement $achievement)
+    public function getAchievements()
     {
+        $input = request()->all();
 
+        if (
+            !isset($input['referenceable_id'])
+            or !isset($input['scale'])
+        ) {
+            return response()->json('Missing required fields', 400);
+        }
+
+        $scale_id = AchievementScale::where('title', strtolower($input['scale']))->pluck('id')->first();
+
+        if (!$scale_id) return response()->json('Scale not found: ' . $input['scale'], 404);
+        
+        return Achievement::select('id', 'referenceable_type', 'referenceable_id', 'user_id', 'owner_id', 'status')
+            ->where([
+                'referenceable_id' => $input['referenceable_id'],
+                'referenceable_type' => 'App\\EnablingObjective',
+                'scale_id' => $scale_id,
+            ])
+            ->with([
+                'owner:id,firstname,lastname',
+                'user:id,firstname,lastname',
+            ])
+            ->get();
     }
 }

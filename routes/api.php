@@ -84,6 +84,7 @@ Route::group([
     Route::apiResource('states', 'StatesApiController');
 
     Route::apiResource('achievements', 'AchievementsApiController');
+    Route::get('achievements', 'AchievementsApiController@getAchievements');
 
     Route::get('moodle/getModelTypes', 'MoodleApiController@getModelTypes');
     Route::get('moodle/curricula', 'MoodleApiController@getCurricula');

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
-use App\Permission;
 use App\Role;
+use App\Tag;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\DataTables;
 
@@ -37,6 +37,11 @@ class RolesController extends Controller
         ]);
 
         return DataTables::of($roles)
+            ->filter(function ($query) {
+                if (request()->has('tags')) {
+                    $query->withAllTags(Tag::select()->whereIn('id', request('tags'))->get());
+                }
+            })
             ->addColumn('permissions', function ($roles) {
                 return $roles->permissions->pluck('id')->toArray();
             })

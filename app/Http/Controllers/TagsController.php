@@ -51,6 +51,9 @@ class TagsController extends Controller
             ->filterColumn('translation', function (Builder $query, $keyword) use ($locale) {
                 $query->orWhere("name->{$locale}", 'LIKE', "%{$keyword}%");
             })
+            ->filterColumn('user_id', function (Builder $query) {
+                $query->where('user_id', auth()->user()->id);
+            })
             ->setRowId('id')
             ->make();
     }

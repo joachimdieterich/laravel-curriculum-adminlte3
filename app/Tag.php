@@ -41,25 +41,38 @@ class Tag extends \Spatie\Tags\Tag
         });
     }
 
+    public function scopeContaining(Builder $query, string $name, $locale = null, ?User $currentUser = null): Builder
+    {
+        $locale      = $locale ?? static::getLocale();
+        $currentUser = $currentUser ?? auth()->user();
+
+        return $query->where('user_id', '=', $currentUser->id)
+            ->whereRaw(
+                'lower(' . $this->getQuery()->getGrammar()->wrap('name->' . $locale) . ') like ?',
+                ['%' . mb_strtolower($name) . '%']
+            );
+    }
+
     /**
      * @return array{count: int, result: Collection}
      */
     public function fromParamForSelect2(
         string $name,
         string $type,
-        ?string $locale = null,
         array $get = ['id', 'text'],
-        bool $withGlobalType = true
+        bool $withGlobalType = true,
+        ?User $currentUser = null,
     ): array {
-        $locale = $locale ?? static::getLocale();
+        $locale      = static::getLocale();
+        $currentUser = $currentUser ?? auth()->user();
 
         return self::withoutEvents(
-            function () use ($locale, $name, $type, $get, $withGlobalType) {
+            function () use ($locale, $name, $type, $get, $withGlobalType, $currentUser) {
                 $builder = $this->scopeContaining(
-                    static::select('id', "name->{$locale} as text"),
+                    static::select(['id', "name->{$locale} as text"]),
                     $name,
                     $locale
-                )->where('type', $type);
+                )->where('type', $type)->where('user_id', $currentUser->id);
 
                 if ($withGlobalType) {
                     $builder->orWhereNull('type');
@@ -83,7 +96,7 @@ class Tag extends \Spatie\Tags\Tag
         return self::withoutEvents(
             function () use ($locale, $selected, $get) {
                 $builder = $this
-                    ->select('id', "name->{$locale} as title")
+                    ->select(['id', "name->{$locale} as title"])
                     ->whereIn('id', $selected);
 
                 return [

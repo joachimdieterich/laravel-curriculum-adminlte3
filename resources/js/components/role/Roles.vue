@@ -62,7 +62,6 @@
                 id="role-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
                 :search="search"
                 width="100%"
                 style="display: none;"
@@ -99,6 +98,7 @@ export default {
     props: {},
     setup() {
         const globalStore = useGlobalStore();
+        globalStore.setItem('searchTagModelContext', 'App\\Role');
         return {
             globalStore,
         }
@@ -112,13 +112,14 @@ export default {
             url: '/roles/list',
             errors: {},
             currentRole: {},
+            selectedTags: [],
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'permissions', data: 'permissions' },
+                { title: 'tags', data: 'tags' }
             ],
-            options : this.$dtOptions,
         }
     },
     mounted() {
@@ -134,6 +135,22 @@ export default {
             this.update(role);
         });
     },
+    computed: {
+        options: function() {
+            let options = this.$dtOptions;
+
+            options.ajax = {
+                url: '/roles/list',
+                data: (d) => {
+                    d.tags = this.selectedTags;
+
+                    return d;
+                },
+            };
+
+            return options;
+        }
+    },
     methods: {
         editRole(role) {
             this.globalStore?.showModal('role-modal', role);
@@ -146,7 +163,8 @@ export default {
                 $('#role-content').insertBefore('#role-datatable-wrapper');
             });
             this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
+                this.selectedTags = filter.tags;
+                dt.search(filter.searchString).draw();
             });
         },
         confirmItemDelete(role) {

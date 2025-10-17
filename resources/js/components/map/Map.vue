@@ -32,13 +32,24 @@
                 >
                     <h1 class="sidebar-header pr-2 mb-3">
                         {{ map.title }}
-                        <a v-if="map.owner_id == $userId || checkPermission('is_admin')"
-                            v-permission="'map_edit'"
-                            class="pull-right link-muted text-light pointer"
-                            @click="editMap(map)"
+                        <span v-if="map.owner_id == $userId || checkPermission('is_admin')"
+                            class="d-flex pull-right"
                         >
-                            <i class="fas fa-pencil-alt p-2"></i>
-                        </a>
+                            <a
+                                v-permission="'map_edit'"
+                                class="link-muted text-white pointer"
+                                @click="editMap(map)"
+                            >
+                                <i class="fas fa-pencil-alt p-2 mx-1"></i>
+                            </a>
+                            <a
+                                v-permission="'map_edit'"
+                                class="link-muted text-white pointer"
+                                @click="share()"
+                            >
+                                <i class="fa fa-share-alt p-2 mx-1"></i>
+                            </a>
+                        </span>
                     </h1>
                     <span class="pb-2">
                         <h5>{{ map.subtitle }}</h5>
@@ -489,6 +500,17 @@ export default {
         },
         edit(marker) {
             this.globalStore?.showModal('map-marker-modal', marker);
+        },
+        share() {
+            this.globalStore?.showModal('subscribe-modal', {
+                modelId: this.map.id,
+                modelUrl: 'map',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
+            });
         },
         processClick(lat,lon) {
             console.log("You clicked the map at LAT: " + lat + " and LONG: " + lon );

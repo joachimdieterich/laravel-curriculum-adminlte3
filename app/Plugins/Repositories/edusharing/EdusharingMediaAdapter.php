@@ -321,6 +321,7 @@ class EdusharingMediaAdapter implements MediaInterface
                     return true;
                 }
                 break;
+            case "App\MapMarker":
             case "App\Kanban":
             case "App\KanbanStatus":
             case "App\KanbanItem":

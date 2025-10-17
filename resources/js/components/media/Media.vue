@@ -43,7 +43,7 @@
                 </tr>
 
                 <tr>
-                    <td v-if="url == '/mediumSubscriptions'"
+                    <td v-if="url == '/mediumSubscriptions' && (editable || checkPermission('is_admin'))"
                         v-permission="'medium_create'"
                         class="py-2 link-muted text-sm pointer"
                         @click="addMedia()"
@@ -146,6 +146,10 @@ export default {
         url: {
             type: String,
             default: '/mediumSubscriptions',
+        },
+        editable: {
+            type: Boolean,
+            default: true,
         },
     },
     setup() {

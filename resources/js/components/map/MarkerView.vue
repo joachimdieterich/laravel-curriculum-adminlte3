@@ -43,6 +43,7 @@
             <Media
                 subscribable_type="App\MapMarker"
                 :subscribable_id="marker.id"
+                :editable="marker.owner_id == $userId"
                 format="list"
             />
         </div>

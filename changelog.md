@@ -1,3 +1,12 @@
+## 1.2.2 (2025-10-17)
+- KanbanItem: allow Comments by guests
+- ObjectiveMedia: added ConfirmModal for deletion
+- TerminalObjectives: fixed 'delete-objective' not sending delete-request
+Videoconference: fixed issue where users accessing through token-links didn't have access
+- MediumPreviewModal: highlighted close-button to make it more visible
+- MapMarker: fixed MediumSubscriptions not updating when viewing another Marker
+- AchievementsApiController: created 'get'-endpoint, overhauled 'store'-endpoint and added documentation
+
 ## 1.2.1 (2025-10-06)
 - Videoconference: fixed abort-condition and messages
 - MapMarker: allow delete by admins

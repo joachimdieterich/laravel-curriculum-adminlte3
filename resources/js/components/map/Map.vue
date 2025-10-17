@@ -37,17 +37,17 @@
                         >
                             <a
                                 v-permission="'map_edit'"
-                                class="link-muted text-white pointer"
+                                class="link-muted text-white pointer mx-1"
                                 @click="editMap(map)"
                             >
-                                <i class="fas fa-pencil-alt p-2 mx-1"></i>
+                                <i class="fas fa-pencil-alt p-2"></i>
                             </a>
                             <a
                                 v-permission="'map_edit'"
-                                class="link-muted text-white pointer"
+                                class="link-muted text-white pointer mx-1"
                                 @click="share()"
                             >
-                                <i class="fa fa-share-alt p-2 mx-1"></i>
+                                <i class="fa fa-share-alt p-2"></i>
                             </a>
                         </span>
                     </h1>

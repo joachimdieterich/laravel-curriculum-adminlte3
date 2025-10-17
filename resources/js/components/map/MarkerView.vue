@@ -37,7 +37,6 @@
 
         <h5 class="pt-3 clearfix">{{ trans('global.medium.title') }}</h5>
         <div v-if="marker.id != null"
-            v-permission="'medium_access'"
             :id="'map_marker_media_' + marker.id"
         >
             <Media

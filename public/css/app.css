@@ -20950,7 +20950,7 @@ body,
 }
 .layout-navbar-fixed.sidebar-mini.sidebar-collapse .wrapper .brand-link, .layout-navbar-fixed.sidebar-mini-md.sidebar-collapse .wrapper .brand-link {
   height: calc(3.5rem);
-  width: 4.6rem;
+  width: 4.4rem;
 }
 .layout-navbar-fixed.sidebar-mini.sidebar-collapse .wrapper .brand-link.text-sm, .layout-navbar-fixed.sidebar-mini-md.sidebar-collapse .wrapper .brand-link.text-sm {
   height: calc(2.93725rem);
@@ -21082,7 +21082,7 @@ body:not(.layout-fixed).layout-navbar-fixed.text-sm .wrapper .main-sidebar {
 .layout-navbar-fixed .wrapper.sidebar-collapse .brand-link {
   height: calc(3.5rem);
   transition: width 0.3s ease-in-out;
-  width: 4.6rem;
+  width: 4.4rem;
 }
 .text-sm .layout-navbar-fixed .wrapper.sidebar-collapse .brand-link, .layout-navbar-fixed .wrapper.sidebar-collapse .brand-link.text-sm {
   height: calc(2.93725rem);
@@ -21205,7 +21205,7 @@ body:not(.layout-fixed).layout-navbar-fixed.text-sm .wrapper .main-sidebar {
   .layout-sm-navbar-fixed .wrapper.sidebar-collapse .brand-link {
     height: calc(3.5rem);
     transition: width 0.3s ease-in-out;
-    width: 4.6rem;
+    width: 4.4rem;
   }
   .text-sm .layout-sm-navbar-fixed .wrapper.sidebar-collapse .brand-link, .layout-sm-navbar-fixed .wrapper.sidebar-collapse .brand-link.text-sm {
     height: calc(2.93725rem);
@@ -21329,7 +21329,7 @@ body:not(.layout-fixed).layout-navbar-fixed.text-sm .wrapper .main-sidebar {
   .layout-md-navbar-fixed .wrapper.sidebar-collapse .brand-link {
     height: calc(3.5rem);
     transition: width 0.3s ease-in-out;
-    width: 4.6rem;
+    width: 4.4rem;
   }
   .text-sm .layout-md-navbar-fixed .wrapper.sidebar-collapse .brand-link, .layout-md-navbar-fixed .wrapper.sidebar-collapse .brand-link.text-sm {
     height: calc(2.93725rem);
@@ -21453,7 +21453,7 @@ body:not(.layout-fixed).layout-navbar-fixed.text-sm .wrapper .main-sidebar {
   .layout-lg-navbar-fixed .wrapper.sidebar-collapse .brand-link {
     height: calc(3.5rem);
     transition: width 0.3s ease-in-out;
-    width: 4.6rem;
+    width: 4.4rem;
   }
   .text-sm .layout-lg-navbar-fixed .wrapper.sidebar-collapse .brand-link, .layout-lg-navbar-fixed .wrapper.sidebar-collapse .brand-link.text-sm {
     height: calc(2.93725rem);
@@ -21577,7 +21577,7 @@ body:not(.layout-fixed).layout-navbar-fixed.text-sm .wrapper .main-sidebar {
   .layout-xl-navbar-fixed .wrapper.sidebar-collapse .brand-link {
     height: calc(3.5rem);
     transition: width 0.3s ease-in-out;
-    width: 4.6rem;
+    width: 4.4rem;
   }
   .text-sm .layout-xl-navbar-fixed .wrapper.sidebar-collapse .brand-link, .layout-xl-navbar-fixed .wrapper.sidebar-collapse .brand-link.text-sm {
     height: calc(2.93725rem);

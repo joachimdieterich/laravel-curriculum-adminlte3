@@ -2,7 +2,7 @@
     <transition name="drop-down-modal">
         <div v-if="show"
              :style="modalCss"
-             class="modal"
+             class="drop-down-modal"
              @click.self="$emit('close')">
             <div class="card">
                 <div v-if="showTitle" class="card-header d-flex justify-content-between align-items-center">
@@ -68,7 +68,7 @@ export default {
     box-shadow: 1px 1px 1px 1px lightgray;
     border-radius: 0.5rem;
 }
-.modal {
+.drop-down-modal {
     position: absolute;
     top: 100%;
     left: 0;

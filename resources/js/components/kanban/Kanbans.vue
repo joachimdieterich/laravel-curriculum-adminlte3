@@ -265,6 +265,7 @@ export default {
     setup() {
         const toast = useToast();
         const globalStore = useGlobalStore();
+        globalStore.setItem('searchTagModelContext', 'App\\Kanban')
         return {
             globalStore,
             toast,

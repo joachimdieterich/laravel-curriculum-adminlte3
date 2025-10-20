@@ -13,7 +13,8 @@
                 model="tags"
                 :label="trans('global.tag.title')"
                 :multiple="true"
-                @selectedValue="(idArray) => {this.$emit('tagSelectionChange', idArray);}"
+                :selected="selectedTags"
+                @selectedValue="(idArray) => {this.$emit('tagSelectionChange', idArray); this.selectedTags = idArray;}"
                 @cleared="() => {this.$emit('tagSelectionChange', []);}"
             />
         </template>
@@ -30,11 +31,12 @@ export default {
     components: {Select2, DropDownModal},
     mounted() {
         this.globalStore = useGlobalStore();
-        this.searchTagModelContext = this.globalStore.getItem('searchTagModelContext');
+        this.searchTagModelContext = this.globalStore.getItem('searchTagModelContext') ?? console.error('No searchTagModelContext is defined in the global store.');
     },
     data() {
         return {
-            searchTagModelContext: null
+            searchTagModelContext: null,
+            selectedTags: [],
         }
     },
     props: {

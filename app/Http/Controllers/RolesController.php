@@ -41,7 +41,7 @@ class RolesController extends Controller
                 if (request()->has('tags')) {
                     $query->withAllTags(Tag::select()->whereIn('id', request('tags'))->get());
                 }
-            })
+            }, true)
             ->addColumn('permissions', function ($roles) {
                 return $roles->permissions->pluck('id')->toArray();
             })

@@ -74,7 +74,7 @@
                         @click="slideTo(index)"
                     >
                         <img
-                            :src="'/media/' + medium.id + '?preview=true&maxWidth=92&maxHeight=92'"
+                            :src="'/media/' + medium.id + '?preview=true&size=200'"
                             :alt="medium.title ?? medium.name"
                             class="mh-100 mw-100 rounded"
                             style="box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);"
@@ -121,7 +121,7 @@
                         >
                             <i class="fa fa-spinner fa-pulse fa-3x fa-fw position-absolute text-white"></i>
                             <img
-                                :src="'/media/' + medium.id + '?preview=true&maxWidth=null&maxHeight=null'"
+                                :src="'/media/' + medium.id + '?preview=true&size=max'"
                                 :alt="medium.title ?? medium.name"
                                 class="position-relative user-select-none"
                                 style="max-width: 90svw; max-height: 90svh;"

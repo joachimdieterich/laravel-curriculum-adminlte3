@@ -138,6 +138,21 @@ class Edusharing extends RepositoryPlugin
     public function getPreview($usage, $owner_id)
     {
         $nodeHelper = $this->getNodeHelper($owner_id);
+        $size = \EduSharingApiClient\PreviewSize::SIZE_400_PX;
+
+        switch (request()->input('size')) {
+            case 'max':
+                $size = \EdusharingApiClient\PreviewSize::SIZE_MAX;
+                break;
+            case '200':
+                $size = \EdusharingApiClient\PreviewSize::SIZE_200_PX;
+                break;
+            case '300':
+                $size = \EdusharingApiClient\PreviewSize::SIZE_300_PX;
+                break;
+            default:
+                break;
+        }
 
         return $nodeHelper->getPreview(
             new Usage(
@@ -146,7 +161,8 @@ class Edusharing extends RepositoryPlugin
                 $usage['containerId'],
                 $usage['resourceId'],
                 $usage['usageId'],
-            )
+            ),
+            $size,
         );
     }
 

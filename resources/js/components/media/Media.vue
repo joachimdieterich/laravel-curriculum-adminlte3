@@ -176,7 +176,11 @@ export default {
             });
         },
         show(mediumObject) {
-            this.globalStore?.showModal('medium-preview-modal', { media: [mediumObject] });
+            if (mediumObject.mime_type === 'application/pdf') {
+                window.open('/media/' + mediumObject.id, '_blank');
+            } else {
+                this.globalStore?.showModal('medium-preview-modal', { media: [mediumObject] });
+            }
         },
         addMedia() {
             this.globalStore?.showModal('medium-modal', {

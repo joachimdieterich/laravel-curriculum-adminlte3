@@ -41,10 +41,10 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *   },
  *   @OA\Parameter(
  *     name="user_common_name",
- *     description="Common name of the user who achieved this",
+ *     description="Common names of the users who achieved this",
  *     required=true,
  *     in="query",
- *     @OA\Schema(type="string")
+ *     @OA\Schema(type="array", @OA\Items(type="string"))
  *   ),
  *   @OA\Parameter(
  *     name="owner_common_name",
@@ -54,18 +54,11 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *     @OA\Schema(type="string")
  *   ),
  *   @OA\Parameter(
- *     name="referenceable_type",
- *     description="Type of the referenced object, e.g. 'App\EnablingObjective'",
- *     required=true,
- *     in="query",
- *     @OA\Schema(type="string")
- *   ),
- *   @OA\Parameter(
  *     name="referenceable_id",
- *     description="ID of the referenced object",
+ *     description="ID's of the referenced objects",
  *     required=true,
  *     in="query",
- *     @OA\Schema(type="integer", format="int64")
+ *     @OA\Schema(type="array", @OA\Items(type="integer"))
  *   ),
  *   @OA\Parameter(
  *     name="scale",
@@ -86,7 +79,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *     description="successful operation",
  *     @OA\JsonContent(ref="#/components/schemas/Achievement")
  *   ),
- *   @OA\Response(response=400, description="Missing required fields"),
+ *   @OA\Response(response=400, description="Missing required fields | Invalid data format, arrays expected for referenceable_id and user_common_name"),
  *   @OA\Response(response=404, description="common_name or scale not found")
  * )
  */

@@ -183,7 +183,7 @@ export default {
                 'subscribeSelected': true,
                 'subscribable_type': this.subscribable_type,
                 'subscribable_id': this.subscribable_id,
-                'public': this.public,
+                'public': this.public ? 1 : 0,
                 'callbackId': this.component_id
             });
         },

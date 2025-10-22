@@ -43,6 +43,7 @@
                 subscribable_type="App\MapMarker"
                 :subscribable_id="marker.id"
                 :editable="marker.owner_id == $userId"
+                public="true"
                 format="list"
             />
         </div>

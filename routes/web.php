@@ -395,6 +395,7 @@ Route::group(['middleware' => 'auth'], function () {
     /*** Tags ***/
     Route::get('tags/list', 'TagsController@list');
     Route::get('tags/type', 'TagsController@type');
+    Route::post('tags/attach', 'TagsController@attach');
     Route::resource('tags', 'TagsController');
 
     Route::resource('tasks', 'TaskController');

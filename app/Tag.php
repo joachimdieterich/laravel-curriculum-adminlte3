@@ -61,22 +61,22 @@ class Tag extends \Spatie\Tags\Tag
         string $type,
         array $get = ['id', 'text'],
         bool $withGlobalType = true,
-        ?User $currentUser = null,
     ): array {
         $locale      = static::getLocale();
-        $currentUser = $currentUser ?? auth()->user();
 
         return self::withoutEvents(
-            function () use ($locale, $name, $type, $get, $withGlobalType, $currentUser) {
+            function () use ($locale, $name, $type, $get, $withGlobalType) {
                 $builder = $this->scopeContaining(
                     static::select(['id', "name->{$locale} as text"]),
                     $name,
                     $locale
-                )->where('type', $type)->where('user_id', $currentUser->id);
+                )->where(function ($builder) use($withGlobalType, $type) {
+                    $builder->where('type', $type);
 
-                if ($withGlobalType) {
-                    $builder->orWhereNull('type');
-                }
+                    if ($withGlobalType) {
+                        $builder->orWhereNull('type');
+                    }
+                });
 
                 return [
                     'count'  => $builder->count(),
@@ -105,5 +105,46 @@ class Tag extends \Spatie\Tags\Tag
                 ];
             }
         );
+    }
+
+    public static function findOrCreateFromString(
+        string $name,
+        ?string $type = null,
+        ?string $locale = null,
+        ?User $currentUser = null
+    ) {
+        $currentUser = $currentUser ?? auth()->user();
+        $locale      = $locale ?? static::getLocale();
+
+        $tag = static::findFromString($name, $type, $locale);
+
+        if (!$tag) {
+            $tag = static::create([
+                'name'    => [$locale => $name],
+                'type'    => $type,
+                'user_id' => $currentUser->id,
+            ]);
+        }
+
+        return $tag;
+    }
+
+    public static function findFromString(
+        string $name,
+        ?string $type = null,
+        ?string $locale = null,
+        ?User $currentUser = null
+    ): Tag|null {
+        $currentUser = $currentUser ?? auth()->user();
+        $locale      = $locale ?? static::getLocale();
+
+        return static::query()
+            ->where('type', $type)
+            ->where('user_id', '=', $currentUser->id)
+            ->where(function ($query) use ($name, $locale) {
+                $query->where("name->{$locale}", $name)
+                    ->orWhere("slug->{$locale}", $name);
+            })
+            ->first();
     }
 }

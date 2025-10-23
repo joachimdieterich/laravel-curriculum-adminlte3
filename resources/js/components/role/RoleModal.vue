@@ -46,23 +46,20 @@
                                 />
                                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                             </div>
-                            <Select2
-                                v-permission="'tag_access'"
-                                id="tags"
-                                name="tags"
-                                url="/tags"
-                                model="tags"
-                                :additional_query_param="{'type': 'App\\Role'}"
-                                :label="trans('global.tag.title')"
-                                :multiple="true"
-                                :selected="getSelectedTags()"
-                                @selectedValue="(id) => {
-                                    this.form.tags = id;
+                            <tag-multiselect
+                                type="App\Role"
+                                :model-id="this.form.id"
+                                :selectedTags="this.selectedTags"
+                                @selectedValue="(data) => {
+                                    this.$emit('selectedValue', data);
                                 }"
-                                @cleared="() => {
-                                    this.form.tags = [];
+                                @cleared="(data) => {
+                                    this.$emit('cleared', data);
                                 }"
-                            />
+                                @tag-added="(tag) => {
+                                    this.updateSelectedTags(tag);
+                                }"
+                            ></tag-multiselect>
                             <Select2
                                 id="permissions"
                                 name="permissions"
@@ -108,10 +105,12 @@
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import TagMultiselect from "../tag/TagMultiselect.vue";
 
 export default {
     name: 'role-modal',
     components: {
+        TagMultiselect,
         Select2,
     },
     props: {
@@ -135,6 +134,8 @@ export default {
                 permissions: '',
                 tags: [],
             }),
+            params: {},
+            selectedTags: []
         }
     },
     methods: {
@@ -174,15 +175,18 @@ export default {
 
             return base;
         },
-        getSelectedTags(tags) {
-            let base = tags ?? this.form.tags;
-
-            if (base[0]?.name){
-                return base.map(t => t.id);
+        updateSelectedTags(newTag) {
+            if (newTag !== undefined) {
+                this.form.tags.push(newTag)
             }
 
-            return base;
-        },
+            let base = this.form.tags;
+            if (base[0]?.name){
+                base = base.map(t => t.id);
+            }
+
+            this.selectedTags = base;
+        }
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
@@ -190,10 +194,11 @@ export default {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
+                this.params = params;
                 if (typeof (params) !== 'undefined') {
                     params.permissions = this.getSelectedPermissions(params.permissions);
-                    params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
+                    this.updateSelectedTags();
                     if (this.form.id !== '') {
                         this.method = 'patch';
                     } else {

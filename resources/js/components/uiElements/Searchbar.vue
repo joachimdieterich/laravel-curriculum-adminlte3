@@ -138,7 +138,7 @@ export default {
 #extended-search-button {
     z-index: 9;
     right: 0;
-    padding-left: 48px;
+    padding-left: 47px;
 }
 .search-field {
     padding-right: 9rem;

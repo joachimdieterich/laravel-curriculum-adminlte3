@@ -31,7 +31,10 @@ export default {
     components: {Select2, DropDownModal},
     mounted() {
         this.globalStore = useGlobalStore();
-        this.searchTagModelContext = this.globalStore.getItem('searchTagModelContext') ?? console.error('No searchTagModelContext is defined in the global store.');
+        this.searchTagModelContext = this.globalStore.getItem('searchTagModelContext');
+        if (this.searchTagModelContext === null) {
+            console.error('No searchTagModelContext is defined in the global store.')
+        }
     },
     data() {
         return {
@@ -57,6 +60,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-</style>

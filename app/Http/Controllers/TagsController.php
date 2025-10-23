@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Tags\AttachTagRequest;
 use App\Http\Requests\Tags\StoreTagRequest;
 use App\Http\Requests\Tags\UpdateTagRequest;
+use App\Role;
 use App\Services\Tag\TagService;
 use App\Tag;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\App;
 use Yajra\DataTables\DataTables;
@@ -64,6 +67,22 @@ class TagsController extends Controller
             $request->get('name'),
             $request->get('type'),
         );
+
+        if (request()->wantsJson()) {
+            return $tag;
+        }
+    }
+
+    public function attach(AttachTagRequest $request)
+    {
+        $tag = Tag::findOrCreate(
+            $request->get('name'),
+            $request->get('type'),
+        );
+
+        /** @var Role $role */
+        $role = ($request->get('type'))::findOrFail($request->get('taggable_id'));
+        $role->attachTag($tag);
 
         if (request()->wantsJson()) {
             return $tag;

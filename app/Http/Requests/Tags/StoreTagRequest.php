@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Tags;
 
+use App\Rules\ModelExits;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,7 +17,7 @@ class StoreTagRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'type' => 'nullable|string',
+            'type' => ['nullable', 'string', new ModelExits()],
         ];
     }
 }

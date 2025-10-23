@@ -15,11 +15,14 @@
                     {{ trans('global.' + model + '.title_singular') }}
                 </span>
                 <span v-if="multiple">
+                    <slot name="buttons"></slot>
                     <span class="btn btn-info btn-xs deselect-all pull-right" @click="deselectAll">
                         {{ trans("global.deselect_all") }}
                     </span>
                 </span>
             </label>
+
+            <slot name="pre-dropdown"></slot>
 
             <select
                 :name="id + '[]'"
@@ -243,6 +246,10 @@ export default {
         list: function() {
             this.loader();
         },
+        selected: function() {
+            this.loader();
+            this.componentInstance.trigger('change');
+        },
     },
     mounted() {
         this.loader();
@@ -250,6 +257,9 @@ export default {
 }
 </script>
 <style>
+.additional-button {
+    margin-left: 1em;
+}
 .select2-container .select2-selection--single {
     min-height: 38px;
     height: auto!important;

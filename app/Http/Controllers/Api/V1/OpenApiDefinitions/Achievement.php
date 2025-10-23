@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 
 /**
  * @OA\Get(
- *   path="v1/achievements",
+ *   path="/v1/achievements",
  *   tags={"Achievement v1"},
  *   summary="Get achievements from a single Enabling-Objective",
  *   security={
@@ -11,10 +11,10 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *   },
  *   @OA\Parameter(
  *     name="referenceable_id",
- *     description="ID of the referenced object, e.g. an EnablingObjective",
+ *     description="ID's of the referenced enabling-objectives",
  *     required=true,
  *     in="query",
- *     @OA\Schema(type="integer", format="int64")
+ *     @OA\Schema(type="array", @OA\Items(type="integer"))
  *   ),
  *   @OA\Parameter(
  *     name="scale",
@@ -23,16 +23,22 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *     in="query",
  *     @OA\Schema(type="string")
  *   ),
+ *   @OA\Parameter(
+ *     name="user_common_name",
+ *     description="(optional) Only get achievements from given users",
+ *     in="query",
+ *     @OA\Schema(type="array", @OA\Items(type="string"))
+ *   ),
  *   @OA\Response(
  *     response=200,
  *     description="successful operation",
  *     @OA\JsonContent(ref="#/components/schemas/Achievement")
  *   ),
- *   @OA\Response(response=400, description="Missing required fields"),
- *   @OA\Response(response=404, description="Scale not found")
+ *   @OA\Response(response=400, description="Missing required fields | Invalid data format, expected array for referenceable_id and user_common_name"),
+ *   @OA\Response(response=404, description="common_name or scale not found")
  * ),
  * @OA\Post(
- *   path="v1/achievements",
+ *   path="/v1/achievements",
  *   operationId="storeAchievement",
  *   tags={"Achievement v1"},
  *   summary="Create or update an achievement",
@@ -55,7 +61,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *   ),
  *   @OA\Parameter(
  *     name="referenceable_id",
- *     description="ID's of the referenced objects",
+ *     description="ID's of the referenced enabling-objectives",
  *     required=true,
  *     in="query",
  *     @OA\Schema(type="array", @OA\Items(type="integer"))
@@ -69,7 +75,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *   ),
  *   @OA\Parameter(
  *     name="status",
- *     description="Status value, e.g. '50' for 50%",
+ *     description="Status value (max. 2 chars)",
  *     required=true,
  *     in="query",
  *     @OA\Schema(type="string")
@@ -79,7 +85,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *     description="successful operation",
  *     @OA\JsonContent(ref="#/components/schemas/Achievement")
  *   ),
- *   @OA\Response(response=400, description="Missing required fields | Invalid data format, arrays expected for referenceable_id and user_common_name"),
+ *   @OA\Response(response=400, description="Missing required fields | Invalid data format, expected array for referenceable_id and user_common_name"),
  *   @OA\Response(response=404, description="common_name or scale not found")
  * )
  */

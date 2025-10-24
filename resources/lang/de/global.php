@@ -691,7 +691,7 @@ return [
         'delete_subscription_helper' => 'Soll die Verknüpfung des Mediums mit dem Curriculum aufgehoben werden?',
         'no_media' => 'Es wurden noch keine Medien verknüpft.',
         'link' => 'Link',
-        'generate_links' => 'Links erzeugen',
+        'generate_links' => 'Öffnen oder Herunterladen',
         'fields' => [
             'path' => 'PFad',
             'path_helper' => '',

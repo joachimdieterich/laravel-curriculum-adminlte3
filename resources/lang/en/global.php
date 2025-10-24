@@ -661,7 +661,7 @@ return [
         'upload_helper' => 'Drag your file(s) here to begin<br> or click to browse',
         'no_media' => 'Nothing here yet.',
         'link' => 'Link',
-        'generate_links' => 'Generate links',
+        'generate_links' => 'Open or download',
         'fields' => [
             'path' => 'Path',
             'path_helper' => '',

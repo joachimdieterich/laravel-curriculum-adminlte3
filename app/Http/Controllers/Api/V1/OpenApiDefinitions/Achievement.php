@@ -32,7 +32,10 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *   @OA\Response(
  *     response=200,
  *     description="successful operation",
- *     @OA\JsonContent(ref="#/components/schemas/Achievement")
+ *     @OA\JsonContent(
+ *       @OA\Property(property="id", type="integer", example=1),
+ *       @OA\Property(property="achievements", type="array", @OA\Items(anyOf={@OA\Schema(ref="#/components/schemas/Achievement")})),
+ *     )
  *   ),
  *   @OA\Response(response=400, description="Missing required fields | Invalid data format, expected array for referenceable_id and user_common_name"),
  *   @OA\Response(response=404, description="common_name or scale not found")
@@ -83,7 +86,10 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *   @OA\Response(
  *     response=200,
  *     description="successful operation",
- *     @OA\JsonContent(ref="#/components/schemas/Achievement")
+ *     @OA\JsonContent(
+ *       @OA\Property(property="id", type="integer", example=1),
+ *       @OA\Property(property="achievements", type="array", @OA\Items(anyOf={@OA\Schema(ref="#/components/schemas/Achievement")})),
+ *     )
  *   ),
  *   @OA\Response(response=400, description="Missing required fields | Invalid data format, expected array for referenceable_id and user_common_name"),
  *   @OA\Response(response=404, description="common_name or scale not found")

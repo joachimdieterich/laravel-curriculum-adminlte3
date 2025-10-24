@@ -13,11 +13,19 @@ class StoreTagRequest extends FormRequest
         return Gate::allows('tag_create');
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'global' => $this->global ?? false
+        ]);
+    }
+
     public function rules(): array
     {
         return [
             'name' => 'required|string',
-            'type' => ['nullable', 'string', new ModelExits()],
+            'type' => ['string', new ModelExits()],
+            'global' => ['boolean'],
         ];
     }
 }

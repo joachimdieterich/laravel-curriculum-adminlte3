@@ -9,7 +9,6 @@ use App\Role;
 use App\Services\Tag\TagService;
 use App\Tag;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\App;
 use Yajra\DataTables\DataTables;
@@ -65,7 +64,7 @@ class TagsController extends Controller
     {
         $tag = Tag::findOrCreate(
             $request->get('name'),
-            $request->get('type'),
+            $request->get('global') ? null : $request->get('type'),
         );
 
         if (request()->wantsJson()) {
@@ -77,7 +76,7 @@ class TagsController extends Controller
     {
         $tag = Tag::findOrCreate(
             $request->get('name'),
-            $request->get('type'),
+            $request->get('global') ? null : $request->get('type'),
         );
 
         /** @var Role $role */

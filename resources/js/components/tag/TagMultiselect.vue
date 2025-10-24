@@ -8,7 +8,7 @@
         :additional_query_param="typeParameter"
         :label="trans('global.tag.title')"
         :multiple="true"
-        :selected="selectedTags"
+        :selected="selectedTagsAsArray"
         @selectedValue="(data) => {
             this.$emit('selectedValue', data);
         }"
@@ -93,6 +93,9 @@ export default defineComponent({
         };
     },
     computed: {
+        selectedTagsAsArray: function () {
+            return this.selectedTags.map(t => t.id);
+        },
         typeParameter: function () {
             return {
                 'type': this.type,
@@ -101,23 +104,25 @@ export default defineComponent({
         form: function() {
             let type = this.type;
 
-            if (this.tag.global === true) {
-                type = null;
-            }
-
             return {
                 'name': this.tag.name,
                 'type': type,
+                'global': this.tag.global,
                 'taggable_id': this.modelId,
             };
         }
     },
     methods: {
+        resetNewTagForm() {
+            this.showNewTagForm = false;
+            this.tag.name = '';
+            this.tag.global = false;
+        },
         submit() {
             axios.post('/tags/attach', this.form)
                  .then(r => {
                      this.$emit("tag-added", r.data);
-                     this.showNewTagForm = false;
+                     this.resetNewTagForm();
                  })
                  .catch(e => {
                      this.toast.error(this.errorMessage(e));

@@ -9,7 +9,7 @@
                 id="tag-search"
                 name="tag-search"
                 url="/tags"
-                :additional_query_param="this.typeParameter"
+                :additional_query_param="this.typeParameter()"
                 model="tags"
                 :label="trans('global.tag.title')"
                 :multiple="true"
@@ -31,10 +31,6 @@ export default {
     components: {Select2, DropDownModal},
     mounted() {
         this.globalStore = useGlobalStore();
-        this.searchTagModelContext = this.globalStore.getItem('searchTagModelContext');
-        if (this.searchTagModelContext === null) {
-            console.error('No searchTagModelContext is defined in the global store.')
-        }
     },
     data() {
         return {
@@ -48,14 +44,22 @@ export default {
             required: true
         },
     },
+    methods: {
+        typeParameter() {
+            let searchTagModelContext = this.globalStore.getItem('searchTagModelContext');
+            if (searchTagModelContext === null) {
+                console.log(2);
+                console.error('No searchTagModelContext is defined in the global store.')
+            }
+
+            return {
+                'type': searchTagModelContext,
+            };
+        },
+    },
     computed: {
         close: function() {
             return this.id + '-close';
-        },
-        typeParameter: function () {
-            return {
-                'type': this.searchTagModelContext,
-            };
         },
     }
 }

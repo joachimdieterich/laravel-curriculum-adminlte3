@@ -75,7 +75,7 @@ class EdusharingMediaAdapter implements MediaInterface
             'city'          => $input['city']           ?? '',
             'date'          => date('Y-m-d_H-i-s'),
             'size'          => $input['size']           ?? 0,
-            'mime_type'     => $input['mime_type']      ?? 'edusharing',
+            'mime_type'     => $input['mimetype']       ?? 'edusharing',
             'license_id'    => $input['license_id']     ?? 1,
             'public'        => $input['public']         ?? 1,   //default is public --> permission check over edusharing
 
@@ -350,10 +350,9 @@ class EdusharingMediaAdapter implements MediaInterface
             'medium_name' => 'sometimes|string|nullable',
             'model' => 'sometimes',
             'model_id' => 'sometimes',
-
             'title' => 'sometimes',
             'size' => 'sometimes',
-            'mime_type' => 'sometimes',
+            'mimetype' => 'sometimes',
             'description' => 'sometimes',
             'author' => 'sometimes',
             'publisher' => 'sometimes',

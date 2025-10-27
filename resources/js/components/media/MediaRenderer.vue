@@ -27,9 +27,14 @@
             frameborder="0"
         ></iframe>
     </span>
+
+    <div v-if="mime === 'document'">
+        <LinkOverlay :medium="medium"/>
+    </div>
 </template>
 <script>
 import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage.vue"
+import LinkOverlay from "./LinkOverlay.vue";
 
 export default {
     props: {
@@ -86,7 +91,8 @@ export default {
         },
     },
     components: {
-        RenderUsage
+        RenderUsage,
+        LinkOverlay,
     },
 }
 </script>

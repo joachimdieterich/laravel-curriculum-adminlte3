@@ -1,31 +1,32 @@
 <template>
-    <div>
-        <span v-if="mime(medium.mime_type) === 'embed'"
-            style="height: 500px"
-        >
-            <iframe
-                :src="'/media/' + medium.id"
-                :height="height"
-                :width="width"
-                frameborder="0"
-            ></iframe>
-        </span>
+    <img v-if="mime === 'img' || mime === 'document'"
+        :src="'/media/' + medium.id + '?preview=true&size=max'"
+        :alt="medium.title ?? medium.medium_name"
+        class="d-block mw-100 m-auto"
+    />
 
-        <RenderUsage v-else-if="mime(medium.mime_type) === 'external'"
-            :medium="medium"
-            :downloadable="downloadable"
-            :isCarousel="true"
-        />
+    <RenderUsage v-else-if="mime === 'external'"
+        :medium="medium"
+        :isCarousel="true"
+    />
+    
+    <img v-else-if="mime === 'learning-app'"
+        :src="'/media/' + medium.id + '?preview=true&size=max'"
+        :alt="medium.title ?? medium.medium_name"
+        class="d-block mw-100 m-auto"
+        @click.stop="open(medium.path)"
+    />
 
-        <img v-else-if="mime(medium.mime_type) === 'img'"
+    <span v-else-if="mime === 'embed'"
+        style="height: 500px"
+    >
+        <iframe
             :src="'/media/' + medium.id"
-            width="100%"
-        />
-
-        <span v-else>
-            - Please download file -
-        </span>
-    </div>
+            :height="height"
+            :width="width"
+            frameborder="0"
+        ></iframe>
+    </span>
 </template>
 <script>
 import RenderUsage from "../../../../app/Plugins/Repositories/edusharing/resources/js/components/RenderUsage.vue"
@@ -54,9 +55,14 @@ export default {
         },
     },
     methods: {
-        mime(type) {
-            switch (type) {
-                //Images use <img>
+        open(link) {
+            window.open(link, '_blank');
+        },
+    },
+    computed: {
+        mime() {
+            switch (this.medium.mime_type) {
+                // Images use <img>
                 case 'image/jpg' :
                 case 'image/jpeg':
                 case 'image/png':
@@ -66,14 +72,16 @@ export default {
                 case 'image/ico':
                 case 'image/svg':
                     return 'img';
-                    break;
-                case 'edusharing':
+                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': // .docx
+                case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': // .xlsx
+                case 'application/vnd.openxmlformats-officedocument.presentationml.presentation': // .pptx
+                    return 'document';
+                case 'application/xhtml+xml':
+                    return 'learning-app';
+                case 'edusharing': // legacy support or fallback if no mimetype was set on external media
                     return 'external';
-                    break;
-                // default use <embed>
                 default:
                     return 'embed';
-                    break;
             }
         },
     },

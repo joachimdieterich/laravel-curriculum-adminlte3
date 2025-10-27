@@ -51,13 +51,13 @@
                                 :model-id="this.form.id"
                                 :selectedTags="this.selectedTags"
                                 @selectedValue="(data) => {
-                                    this.$emit('selectedValue', data);
+                                    this.form.tags = data;
                                 }"
-                                @cleared="(data) => {
-                                    this.$emit('cleared', data);
+                                @cleared="() => {
+                                    this.form.tags = [];
                                 }"
-                                @tag-added="(tag) => {
-                                    this.updateSelectedTags(tag);
+                                @tag-attached="(tag) => {
+                                    this.updateSelectedTags(tag.id);
                                 }"
                             ></tag-multiselect>
                             <Select2

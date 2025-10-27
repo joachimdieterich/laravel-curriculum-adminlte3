@@ -78,12 +78,12 @@ class RolesController extends Controller
 
         $role->update($request->all());
         $role->permissions()->sync($request->input('permissions', []));
-        $role->tags()->sync($request->collect('tags')->pluck('name')->pluck(app()->getLocale())->toArray());
+        $role->tags()->sync($request->input('tags'));
 
         Cache::forget('roles'); //cache should update next time
 
         if (request()->wantsJson()) {
-            return $role;
+            return $role->load(['tags', 'permissions']);
         }
     }
 

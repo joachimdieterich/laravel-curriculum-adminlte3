@@ -8,7 +8,7 @@
         :additional_query_param="typeParameter"
         :label="trans('global.tag.title')"
         :multiple="true"
-        :selected="selectedTagsAsArray"
+        :selected="selectedTags"
         @selectedValue="(data) => {
             this.$emit('selectedValue', data);
         }"
@@ -76,7 +76,7 @@ export default defineComponent({
             default: [],
         }
     },
-    emits: ['selectedValue', 'cleared', 'tag-added'],
+    emits: ['selectedValue', 'cleared', 'tag-attached'],
     setup() {
         const toast = useToast();
         return {
@@ -93,15 +93,12 @@ export default defineComponent({
         };
     },
     computed: {
-        selectedTagsAsArray: function () {
-            return this.selectedTags.map(t => t.id);
-        },
         typeParameter: function () {
             return {
                 'type': this.type,
             };
         },
-        form: function() {
+        attachForm: function() {
             let type = this.type;
 
             return {
@@ -119,9 +116,9 @@ export default defineComponent({
             this.tag.global = false;
         },
         submit() {
-            axios.post('/tags/attach', this.form)
+            axios.post('/tags/attach', this.attachForm)
                  .then(r => {
-                     this.$emit("tag-added", r.data);
+                     this.$emit("tag-attached", r.data);
                      this.resetNewTagForm();
                  })
                  .catch(e => {

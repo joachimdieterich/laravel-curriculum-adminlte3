@@ -28,7 +28,9 @@
         ></iframe>
     </span>
 
-    <div v-if="mime === 'document'">
+    <div v-if="mime === 'document'"
+        class="position-absolute inset d-flex justify-content-center"
+    >
         <LinkOverlay :medium="medium"/>
     </div>
 </template>
@@ -67,7 +69,6 @@ export default {
     computed: {
         mime() {
             switch (this.medium.mime_type) {
-                // Images use <img>
                 case 'image/jpg' :
                 case 'image/jpeg':
                 case 'image/png':
@@ -77,12 +78,14 @@ export default {
                 case 'image/ico':
                 case 'image/svg':
                     return 'img';
+                // documents should get a link-overlay for download/view
+                case 'application/pdf':
                 case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': // .docx
                 case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': // .xlsx
                 case 'application/vnd.openxmlformats-officedocument.presentationml.presentation': // .pptx
                     return 'document';
                 case 'application/xhtml+xml':
-                    return 'learning-app';
+                    return 'learning-app'; // learning-apps can be directly opened via 'path'-attribute
                 case 'edusharing': // legacy support or fallback if no mimetype was set on external media
                     return 'external';
                 default:

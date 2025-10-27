@@ -78,7 +78,7 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
     from { background: yellow; }
     to { background: transparent; }
 }
-
+.inset { inset: 0; }
 .p-margin-0 p { margin-bottom: 0px !important; }
 .pointer { cursor: pointer; }
 .pull-right { float: right !important; }

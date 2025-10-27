@@ -29,10 +29,6 @@ export default {
             type: Object,
             default: null,
         },
-        downloadable: {
-            type: Boolean,
-            default: true,
-        },
         isCarousel: {
             type: Boolean,
             default: false,

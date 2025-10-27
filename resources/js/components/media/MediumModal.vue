@@ -387,6 +387,7 @@ export default {
         },
         externalAdd(form) {
             this.postProcess = true;
+            console.log(form); // TODO: keep for testing | remove in PROD
             axios.post('/media?repository=edusharing', form)
                 .then((response) => {
                     this.globalStore.setSelectedMedia([response.data]);

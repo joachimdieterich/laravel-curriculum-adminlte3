@@ -62,7 +62,7 @@ class RolesController extends Controller
 
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
-        $role->tags()->sync($request->collect('tags')->pluck('name')->pluck(app()->getLocale())->toArray());
+        $role->tags()->sync($request->input('tags'));
 
         Cache::forget('roles'); //cache should update next time
 

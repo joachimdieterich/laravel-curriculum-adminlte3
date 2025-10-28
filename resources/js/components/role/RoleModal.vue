@@ -175,17 +175,19 @@ export default {
 
             return base;
         },
+        getSelectedTags(tags) {
+            if (tags[0]?.name){
+                return tags.map(p => p.id);
+            }
+
+            return tags;
+        },
         updateSelectedTags(newTag) {
             if (newTag !== undefined) {
                 this.form.tags.push(newTag)
             }
 
-            let base = this.form.tags;
-            if (base[0]?.name){
-                base = base.map(t => t.id);
-            }
-
-            this.selectedTags = base;
+            this.selectedTags = this.getSelectedTags(this.form.tags);
         }
     },
     mounted() {
@@ -197,6 +199,7 @@ export default {
                 this.params = params;
                 if (typeof (params) !== 'undefined') {
                     params.permissions = this.getSelectedPermissions(params.permissions);
+                    params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
                     this.updateSelectedTags();
                     if (this.form.id !== '') {

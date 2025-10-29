@@ -26,7 +26,7 @@
                                type="checkbox"
                                v-model="tag.global"
                         />
-                        <label class="custom-control-label ml-2" for="global">
+                        <label class="custom-control-label ml-2" for="global" data-toggle="tooltip" :title="trans('global.tag.create_global_question_explanation', {'context': '\'' + trans('global.tag.types.' + type) +  '\''})">
                             {{ trans('global.tag.create_global_question') }}
                         </label>
                     </span>

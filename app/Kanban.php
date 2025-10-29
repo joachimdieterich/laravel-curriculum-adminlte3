@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Tags\HasTags;
 
 /**
  * @OA\Schema(
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Kanban extends Model
 {
-    use BroadcastsEvents;
+    use BroadcastsEvents, HasTags;
 
     protected $guarded = [];
 
@@ -108,6 +109,7 @@ class Kanban extends Model
                 ])->orderBy('order_id');
             },
             'medium',
+            'tags'
         ])->find($this->id);
     }
 

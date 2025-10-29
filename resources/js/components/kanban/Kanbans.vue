@@ -277,15 +277,15 @@ export default {
             kanbans: null,
             showConfirm: false,
             showCopy: false,
-            url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
             errors: {},
             currentKanban: {},
+            selectedTags: [],
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
+                { title: 'tags', data: 'tags' }
             ],
-            options : this.$dtOptions,
             filter: 'all',
             dt: null,
         }
@@ -308,10 +308,23 @@ export default {
 
             Object.assign(kanban, updatedKanban);
         });
+    },
+    computed: {
+        options: function() {
+            let options = this.$dtOptions;
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
-        });
+            options.ajax = {
+                url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
+                data: (d) => {
+                    console.log(d);
+                    d.tags = this.selectedTags;
+
+                    return d;
+                },
+            };
+
+            return options;
+        }
     },
     methods: {
         setFilter(filter) {
@@ -341,6 +354,11 @@ export default {
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
                 this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
+            });
+
+            this.$eventHub.on('filter', (filter) => {
+                this.selectedTags = filter.tags;
+                this.dt.search(filter.searchString).draw();
             });
         },
         confirmItemDelete(kanban) {

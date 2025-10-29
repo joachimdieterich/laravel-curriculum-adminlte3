@@ -8,6 +8,7 @@ use App\KanbanStatus;
 use App\KanbanSubscription;
 use App\MediumSubscription;
 use App\Organization;
+use App\Tag;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Gate;
@@ -78,7 +79,8 @@ class KanbanController extends Controller
 
     public function userKanbans($withOwned = true)
     {
-        $userCanSee = auth()->user()->kanbans;
+        $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
+        $userCanSee = auth()->user()->kanbans()->withAllTags($tags)->get();
 
         //tokenuser? only return subscriptions
         if (auth()->user()->sharing_token !== null) {
@@ -86,13 +88,13 @@ class KanbanController extends Controller
         }
 
         foreach (auth()->user()->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->kanbans);
+            $userCanSee = $userCanSee->merge($group->kanbans()->withAllTags($tags));
         }
-        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans;
+        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans()->withAllTags($tags);
         $userCanSee   = $userCanSee->merge($organization);
 
         if ($withOwned) {
-            $owned      = Kanban::where('owner_id', auth()->user()->id)->get();
+            $owned      = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get();
             $userCanSee = $userCanSee->merge($owned);
         }
 
@@ -102,6 +104,9 @@ class KanbanController extends Controller
     public function list(Request $request)
     {
         abort_unless(Gate::allows('kanban_access'), 403);
+
+        $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
+
         if (request()->has(['group_id'])) {
             $request  = request()->validate(
                 [
@@ -118,16 +123,17 @@ class KanbanController extends Controller
                         }
                     );
                 });
+            $kanbans->withAllTags($tags)->get();
         } else {
-            switch ($request->filter) {
+            switch ($request->shared_with_me) {
                 case 'owner':
-                    $kanbans = Kanban::where('owner_id', auth()->user()->id)->get();
+                    $kanbans = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get();
                     break;
                 case 'shared_with_me':
                     $kanbans = $this->userKanbans(false);
                     break;
                 case 'shared_by_me':
-                    $kanbans = Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
+                    $kanbans = Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get();
                     break;
                 case 'all':
                 default:
@@ -136,8 +142,10 @@ class KanbanController extends Controller
             }
         }
 
-
         return empty($kanbans) ? '' : DataTables::of($kanbans)
+            ->addColumn('tags', function ($kanbans) {
+                return $kanbans->tags->toArray();
+            })
             ->setRowId('id')
             ->make(true);
     }
@@ -175,6 +183,7 @@ class KanbanController extends Controller
             'allow_copy'            => $new_kanban['allow_copy'],
             'owner_id'              => auth()->user()->id,
         ]);
+        $kanban->tags()->sync($request->input('tags'));
 
         LogController::set(get_class($this) . '@' . __FUNCTION__);
         if (request()->wantsJson()) {
@@ -251,6 +260,7 @@ class KanbanController extends Controller
             'allow_copy'            => $input['allow_copy'],
             'owner_id'              => is_admin() ? $input['owner_id'] : $kanban->owner_id,
         ]);
+        $kanban->tags()->sync($request->input('tags'));
 
         if (request()->wantsJson()) {
             return $kanban->withRelations();
@@ -283,6 +293,7 @@ class KanbanController extends Controller
         $kanban->items()->delete();
         $kanban->statuses()->delete();
         $kanban->subscriptions()->delete();
+        $kanban->syncTags([]);
 
         return $kanban->delete();
     }

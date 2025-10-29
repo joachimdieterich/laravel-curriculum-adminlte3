@@ -38,7 +38,7 @@
                                     v-text="form.errors.title[0]"
                                 ></p>
                             </div>
-        
+
                             <div class="form-group">
                                 <textarea
                                     id="description"
@@ -54,15 +54,31 @@
                                 ></p>
                             </div>
 
-                            <Select2 v-if="checkPermission('is_admin')"
-                                id="user_id"
-                                css="mb-0 mt-3"
-                                :label="trans('global.change_owner')"
-                                model="User"
-                                url="/users"
-                                :selected="form.owner_id"
-                                @selectedValue="(id) => this.form.owner_id = id[0]"
-                            />
+                            <div class="form-group">
+                                <Select2 v-if="checkPermission('is_admin')"
+                                    id="user_id"
+                                    css="mb-0 mt-3"
+                                    :label="trans('global.change_owner')"
+                                    model="User"
+                                    url="/users"
+                                    :selected="form.owner_id"
+                                    @selectedValue="(id) => this.form.owner_id = id[0]"
+                                />
+                            </div>
+                            <tag-multiselect
+                                type="App\Kanban"
+                                :model-id="this.form.id"
+                                :selectedTags="this.selectedTags"
+                                @selectedValue="(data) => {
+                                    this.form.tags = data;
+                                }"
+                                @cleared="() => {
+                                    this.form.tags = [];
+                                }"
+                                @tag-attached="(tag) => {
+                                    this.updateSelectedTags(tag.id);
+                                }"
+                            ></tag-multiselect>
                         </div>
                     </div>
 
@@ -89,7 +105,7 @@
                                         }
                                     }"
                                 />
-        
+
                                 <MediumForm v-if="form.id"
                                     :id="'medium_form' + component_id"
                                     :medium_id="form.medium_id"
@@ -118,7 +134,7 @@
                         >
                             <span class="card-title">{{ trans('global.permissions') }}</span>
                         </div>
-    
+
                         <div class="card-body">
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
@@ -225,10 +241,12 @@ import axios from "axios";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
+import TagMultiselect from "../tag/TagMultiselect.vue";
 
 export default {
     name: 'kanban-modal',
     components: {
+        TagMultiselect,
         Select2,
         MediumForm,
     },
@@ -262,7 +280,9 @@ export default {
                 only_edit_owned_items: false,
                 collapse_items: false,
                 allow_copy: true,
+                tags: [],
             }),
+            selectedTags: []
         }
     },
     computed: {
@@ -301,6 +321,20 @@ export default {
                     console.log(e.response);
                 });
         },
+        getSelectedTags(tags) {
+            if (tags[0]?.name){
+                return tags.map(p => p.id);
+            }
+
+            return tags;
+        },
+        updateSelectedTags(newTag) {
+            if (newTag !== undefined) {
+                this.form.tags.push(newTag)
+            }
+
+            this.selectedTags = this.getSelectedTags(this.form.tags);
+        }
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
@@ -310,7 +344,9 @@ export default {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
+                    params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
+                    this.updateSelectedTags();
                     if (this.form.id !== '') {
                         this.method = 'patch';
                     } else {

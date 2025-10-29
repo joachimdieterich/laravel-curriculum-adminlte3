@@ -13,8 +13,7 @@
                 model="tags"
                 :label="trans('global.tag.title')"
                 :multiple="true"
-                :selected="selectedTags"
-                @selectedValue="(idArray) => {this.$emit('tagSelectionChange', idArray); this.selectedTags = idArray;}"
+                @selectedValue="(idArray) => {this.$emit('tagSelectionChange', idArray);}"
                 @cleared="() => {this.$emit('tagSelectionChange', []);}"
             />
         </template>
@@ -35,7 +34,6 @@ export default {
     data() {
         return {
             searchTagModelContext: null,
-            selectedTags: [],
         }
     },
     props: {
@@ -48,7 +46,6 @@ export default {
         typeParameter() {
             let searchTagModelContext = this.globalStore.getItem('searchTagModelContext');
             if (searchTagModelContext === null) {
-                console.log(2);
                 console.error('No searchTagModelContext is defined in the global store.')
             }
 

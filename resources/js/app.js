@@ -50,10 +50,20 @@ import _ from 'lodash'; //needed to get
 /**
  * search for key in language file
  * @param {String} key
+ * @param {Object} replacements
  * @returns translated String or key if not found
  */
-app.config.globalProperties.trans = (key) => {
-    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
+app.config.globalProperties.trans = (key, replacements) => {
+    let translatedString = _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
+    if (replacements !== undefined && replacements.length === 0) {
+        return translatedString;
+    }
+
+    $.each(replacements, function (key, replacementString) {
+        translatedString = translatedString.replace(':' + key, replacementString);
+    });
+
+    return translatedString;
 };
 
 import VSwatches from 'vue3-swatches';

@@ -1,5 +1,5 @@
 <template>
-    <img v-if="mime === 'img' || mime === 'document'"
+    <img v-if="mime === 'image' || mime === 'video' || mime === 'audio' || mime === 'application'"
         :src="'/media/' + medium.id + '?preview=true&size=max'"
         :alt="medium.title ?? medium.medium_name"
         class="d-block mw-100 m-auto"
@@ -28,8 +28,8 @@
         ></iframe>
     </span>
 
-    <div v-if="mime === 'document'"
-        class="position-absolute inset d-flex justify-content-center"
+    <div v-if="mime === 'video' || mime === 'audio' || mime === 'application'"
+        class="position-absolute inset d-print-none d-flex justify-content-center"
     >
         <LinkOverlay :medium="medium"/>
     </div>
@@ -68,24 +68,18 @@ export default {
     },
     computed: {
         mime() {
-            switch (this.medium.mime_type) {
-                case 'image/jpg' :
-                case 'image/jpeg':
-                case 'image/png':
-                case 'image/gif':
-                case 'image/bmp':
-                case 'image/tiff':
-                case 'image/ico':
-                case 'image/svg':
-                    return 'img';
+            switch (this.medium.mime_type.split('/')[0]) {
+                case 'image':
+                    return 'image';
+                case 'video':
+                    return 'video';
+                case 'audio':
+                    return 'audio';
                 // documents should get a link-overlay for download/view
-                case 'application/pdf':
-                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': // .docx
-                case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': // .xlsx
-                case 'application/vnd.openxmlformats-officedocument.presentationml.presentation': // .pptx
-                    return 'document';
-                case 'application/xhtml+xml':
-                    return 'learning-app'; // learning-apps can be directly opened via 'path'-attribute
+                case 'application':
+                    // learning-apps can be directly opened via 'path'-attribute
+                    if (this.medium.mime_type === 'application/xhtml+xml') return 'learning-app'
+                    else return 'application';
                 case 'edusharing': // legacy support or fallback if no mimetype was set on external media
                     return 'external';
                 default:

@@ -44,7 +44,6 @@
     </div>
 </template>
 <script>
-
 export default {
     props: {
         medium: {
@@ -122,7 +121,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.25rem;
     transition: opacity 0.3s linear;
 
     & > .link-wrapper, & > .link-buttons {

@@ -13,7 +13,7 @@
             </button>
             <div
                 class="position-absolute d-flex flex-column"
-                style="bottom: 1rem; gap: 1rem; z-index: 1;"
+                style="bottom: 1rem; gap: 2rem; z-index: 1;"
             >
                 <LinkOverlay
                     :medium="media[currentSlide]"

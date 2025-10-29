@@ -2,12 +2,12 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask align-items-center justify-content-center"
-            @mouseup.self="globalStore.closeModal($options.name)"
+            @mouseup.self="close()"
         >
             <button
                 class="btn btn-icon-alt btn-icon-big position-absolute bg-white"
                 style="top: 1rem; right: 1rem; z-index: 1;"
-                @click="globalStore.closeModal($options.name)"
+                @click="close()"
             >
                 <i class="fa fa-2x fa-close"></i>
             </button>
@@ -113,6 +113,10 @@ export default {
         }
     },
     methods: {
+        close() {
+            this.globalStore.closeModal(this.$options.name);
+            this.stopSlide = false;
+        },
         prev() {
             if (this.sliding) return;
             $('#carousel-' + this.component_id).carousel('prev');

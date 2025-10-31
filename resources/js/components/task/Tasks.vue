@@ -123,13 +123,12 @@ export default {
             showConfirm: false,
             url: this.subscribable_type && this.subscribable_id
                 ? '/taskSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id
-                : '/tasks/list?filter=' + this.filter,
+                : '/tasks/list',
             currentTask: {},
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
-                { title: 'subscriptions', data: 'subscriptions'},
             ],
             options : this.$dtOptions,
             dt: null,

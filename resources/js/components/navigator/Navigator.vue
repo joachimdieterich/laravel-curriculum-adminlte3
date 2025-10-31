@@ -220,7 +220,7 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
 
         this.loaderEvent();
 

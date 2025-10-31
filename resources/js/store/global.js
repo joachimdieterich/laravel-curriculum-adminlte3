@@ -49,6 +49,7 @@ export const useGlobalStore = defineStore('global', {
             'videoconference-modal' : {},*/
         },
         media: [],
+        showSearchbar: false,
         mediumModalParams: {
             show: false,
             currentStatus: 0, // == STATUS_INITIAL

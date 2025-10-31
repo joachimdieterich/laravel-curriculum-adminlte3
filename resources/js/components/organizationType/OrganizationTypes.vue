@@ -125,7 +125,7 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
 
         this.loaderEvent();
 
@@ -138,7 +138,7 @@ export default {
 
             Object.assign(type, updatedType);
         });
-        
+
         this.$eventHub.on('filter', (filter) => {
             this.dt.search(filter).draw();
         });

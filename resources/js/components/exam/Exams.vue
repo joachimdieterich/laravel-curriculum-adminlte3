@@ -237,7 +237,7 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
 
         this.loaderEvent();
 
@@ -262,12 +262,12 @@ export default {
     methods: {
         urlOnLoad() {
             let url = '/exams/list';
-            
+
             if (this.subscribable_id) {
                 let filter = this.checkPermission('is_teacher') ? 'all' : 'student'; // this.filter isn't defined at this point
                 url += '?group_id=' + this.subscribable_id + '&filter=' + filter;
             }
-    
+
             return url;
         },
         getLoginUrl(exam) {

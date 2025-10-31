@@ -291,7 +291,7 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
 
         this.loaderEvent();
 
@@ -316,7 +316,6 @@ export default {
             options.ajax = {
                 url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
                 data: (d) => {
-                    console.log(d);
                     d.tags = this.selectedTags;
 
                     return d;

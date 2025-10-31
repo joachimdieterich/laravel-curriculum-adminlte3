@@ -193,7 +193,6 @@
                 id="kanban-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
                 width="100%"
                 style="display: none;"
             />
@@ -265,7 +264,6 @@ export default {
     setup() {
         const toast = useToast();
         const globalStore = useGlobalStore();
-        globalStore.setItem('searchTagModelContext', 'App\\Kanban')
         return {
             globalStore,
             toast,
@@ -292,6 +290,7 @@ export default {
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
+        this.globalStore['searchTagModelContext'] =  'App\\Kanban';
 
         this.loaderEvent();
 

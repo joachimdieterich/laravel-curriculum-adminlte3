@@ -98,7 +98,7 @@ export default {
     props: {},
     setup() {
         const globalStore = useGlobalStore();
-        globalStore.setItem('searchTagModelContext', 'App\\Role');
+        globalStore['searchTagModelContext'] = 'App\\Role';
         return {
             globalStore,
         }

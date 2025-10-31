@@ -50,6 +50,7 @@ export const useGlobalStore = defineStore('global', {
         },
         media: [],
         showSearchbar: false,
+        searchTagModelContext: null,
         mediumModalParams: {
             show: false,
             currentStatus: 0, // == STATUS_INITIAL

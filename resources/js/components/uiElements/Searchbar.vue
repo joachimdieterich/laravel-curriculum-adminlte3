@@ -1,7 +1,8 @@
 <template>
     <div
         id="searchbar"
-        class="d-none input-group mx-3"
+        class="input-group mx-3"
+        :class="{'d-none': !showSearchbar}"
     >
         <input
             id="searchbar_input"
@@ -16,6 +17,7 @@
             <button v-if="filter.searchString.length > 0"
                 id="clearSearch"
                 class="btn position-absolute d-flex align-items-center h-100"
+                :class="{'non-extend-clear-search': searchTagModelContext === null}"
                 type="button"
                 @click="clearSearch()"
             >
@@ -24,6 +26,7 @@
             <button
                 id="searchButton"
                 class="btn position-absolute d-flex align-items-center rounded-pill h-100 border-0"
+                :class="{'non-extend-search-button': searchTagModelContext === null}"
                 type="button"
                 @click="prepareEvent()"
             >
@@ -49,9 +52,17 @@
 </template>
 <script>
 import SearchbarDropDownModal from "./SearchbarDropDownModal.vue";
+import {useGlobalStore} from "../../store/global.js";
 
 export default {
     components: {SearchbarDropDownModal},
+    setup () {
+        const globalStore = useGlobalStore();
+
+        return {
+            globalStore,
+        };
+    },
     data() {
         return {
             filter: {
@@ -61,6 +72,8 @@ export default {
             filtered: false,
             timer: null,
             showTagModal: false,
+            showSearchbar: false,
+            searchTagModelContext: null
         }
     },
     methods: {
@@ -95,10 +108,14 @@ export default {
         },
         toggleModal() {
             this.showTagModal = !this.showTagModal;
-        }
+        },
     },
     computed: {
         extendedSearchButtonClasses() {
+            if (this.searchTagModelContext === null) {
+                return 'd-none';
+            }
+
             let color = ' non-active-extended-search-button';
             if (this.showTagModal) {
                 color = ' active-extended-search-button';
@@ -108,9 +125,15 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.on('showSearchbar', () => this.$el.classList.remove('d-none'));
+        this.showSearchbar = this.globalStore['showSearchbar'];
     },
     watch: {
+        'globalStore.showSearchbar': function (newValue) {
+            this.showSearchbar = newValue;
+        },
+        'globalStore.searchTagModelContext': function (newValue) {
+            this.searchTagModelContext = newValue;
+        },
         'filter.searchString': function() { this.prepareEvent(); },
         'filter.tags': function() { this.prepareEvent(); }
     }
@@ -128,6 +151,12 @@ export default {
     overflow: hidden;
     text-align: left;
     transition: width 0.2s ease-out;
+}
+.non-extend-search-button {
+    right: 0 !important;
+}
+.non-extend-clear-search {
+    right: 40px !important;
 }
 .non-active-extended-search-button {
     background-color: #EAF099;

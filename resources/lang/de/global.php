@@ -450,7 +450,7 @@ return [
             'title' => 'Typen',
             'title_singular' => 'Typ',
         ],
-        'create_global_question' => 'Bereichsübergreifend?',
+        'global' => 'Bereichsübergreifend',
         'create_global_question_explanation' => 'Wird ein Tag bereichsübergreifend angelegt, kann er auch außerhalb von :context verwendet werden.',
         'name' => 'Tag-Name',
         'title' => 'Tags',

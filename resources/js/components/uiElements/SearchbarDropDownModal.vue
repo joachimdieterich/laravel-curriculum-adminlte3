@@ -13,8 +13,9 @@
                 model="tags"
                 :label="trans('global.tag.title')"
                 :multiple="true"
-                @selectedValue="(idArray) => {this.$emit('tagSelectionChange', idArray);}"
-                @cleared="() => {this.$emit('tagSelectionChange', []);}"
+                :selected="selectedTags"
+                @selectedValue="(idArray) => {selectedTagsBuffer = idArray; this.$emit('tagSelectionChange', idArray);}"
+                @cleared="() => {selectedTagsBuffer = []; this.$emit('tagSelectionChange', []);}"
             />
         </template>
     </DropDownModal>
@@ -28,12 +29,18 @@ import {useGlobalStore} from "../../store/global.js";
 export default {
     name: 'SearchbarDropDownModal',
     components: {Select2, DropDownModal},
-    mounted() {
-        this.globalStore = useGlobalStore();
+    setup () {
+        const globalStore = useGlobalStore();
+
+        return {
+            globalStore,
+        };
     },
     data() {
         return {
             searchTagModelContext: null,
+            selectedTags: [],
+            selectedTagsBuffer: [],
         }
     },
     props: {
@@ -44,7 +51,7 @@ export default {
     },
     methods: {
         typeParameter() {
-            let searchTagModelContext = this.globalStore.getItem('searchTagModelContext');
+            let searchTagModelContext = this.globalStore['searchTagModelContext'];
             if (searchTagModelContext === null) {
                 console.error('No searchTagModelContext is defined in the global store.')
             }
@@ -54,9 +61,12 @@ export default {
             };
         },
     },
-    computed: {
-        close: function() {
-            return this.id + '-close';
+    watch: {
+        'globalStore.searchTagModelContext': function (newValue) {
+            this.searchTagModelContext = newValue;
+        },
+        show: function () {
+            this.selectedTags = this.selectedTagsBuffer;
         },
     }
 }

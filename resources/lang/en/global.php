@@ -428,7 +428,7 @@ return [
             'App\\User' => 'User',
             'App\\Permission' => 'Permission',
         ],
-        'create_global_question' => 'Cross-sector?',
+        'global' => 'Cross-sector',
         'create_global_question_explanation' => 'If a tag is created cross-sector, it can also be used outside of :context.',
         'name' => 'Tag name',
         'title' => 'Tags',

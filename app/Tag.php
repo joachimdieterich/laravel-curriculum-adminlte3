@@ -28,6 +28,12 @@ class Tag extends \Spatie\Tags\Tag
         });
     }
 
+    public static function getTypesWithGlobal(): SupportCollection
+    {
+        /** @noinspection DynamicInvocationViaScopeResolutionInspection */
+        return static::groupBy(['type'])->orderBy('type')->pluck('type');
+    }
+
     public static function getTypes(): SupportCollection
     {
         /** @noinspection DynamicInvocationViaScopeResolutionInspection */

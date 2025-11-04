@@ -1,5 +1,36 @@
-<template >
+<template>
     <div class="row">
+        <div class="col-md-12 ">
+            <ul class="nav nav-pills py-2"
+                role="tablist"
+            >
+                <li class="nav-item pointer">
+                    <a id="tags-filter-all"
+                       class="nav-link"
+                       :class="{'active': filter === null}"
+                       data-toggle="pill"
+                       role="tab"
+                       @click="selectFilter(null)"
+                    >
+                        <i class="fas fa-columns pr-2"></i>
+                        {{ trans('global.all') }} {{ trans('global.tag.title') }}
+                    </a>
+                </li>
+                <li class="nav-item pointer"
+                    v-for="typeObject in typeList"
+                >
+                    <a class="nav-link"
+                       :class="{'active': filter == typeObject.type}"
+                       role="tab"
+                       data-toggle="pill"
+                       @click="selectFilter(typeObject.type)"
+                    >
+                        <i class="fas fa-columns pr-2"></i>
+                        {{ typeObject.label }}
+                    </a>
+                </li>
+            </ul>
+        </div>
         <div id="tag-content"
              class="col-md-12 m-0"
         >
@@ -23,7 +54,7 @@
                 </template>
 
                 <template v-slot:dropdown
-                    v-permission="'tag_edit, tag_delete'"
+                          v-permission="'tag_edit, tag_delete'"
                 >
                     <div
                         class="dropdown-menu dropdown-menu-right"
@@ -62,7 +93,6 @@
                 id="tag-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
                 :search="search"
                 width="100%"
                 style="display: none;"
@@ -94,6 +124,8 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import TagModal from "./TagModal.vue";
 import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
+
 DataTable.use(DataTablesCore);
 
 export default {
@@ -101,28 +133,31 @@ export default {
     props: {},
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
         return {
+            filter: null,
             component_id: this.$.uid,
             tags: null,
             search: '',
             showConfirm: false,
-            url: '/tags/list',
             errors: {},
             currentTag: {},
+            typeList: [],
+            testVar: true,
             columns: [
-                { title: 'id', data: 'id' },
-                { title: 'name', data: 'translation', searchable: true },
+                {title: 'id', data: 'id'},
+                {title: 'name', data: 'translation', searchable: true},
             ],
-            options : this.$dtOptions,
         }
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
 
         this.loaderEvent();
 
@@ -134,21 +169,40 @@ export default {
             this.update(tag);
         });
     },
+    computed: {
+        options: function() {
+            let options = this.$dtOptions;
+
+            options.ajax = {
+                url: '/tags/list',
+                data: (d) => {
+                    console.log(d);
+                    d.filter = this.filter;
+
+                    return d;
+                },
+            };
+
+            return options;
+        },
+    },
     methods: {
         editTag(tag) {
             this.globalStore?.showModal('tag-modal', tag);
         },
         loaderEvent() {
-            const dt = $('#tag-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes
-                this.tags = dt.rows({page: 'current'}).data().toArray();
+            this.dt = $('#tag-datatable').DataTable();
+            this.dt.on('draw.dt', () => { // checks if the datatable-data changes
+                this.tags = this.dt.rows({page: 'current'}).data().toArray();
 
                 $('#tag-content').insertBefore('#tag-datatable-wrapper');
             });
 
             this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
+                this.dt.search(filter).draw();
             });
+
+            this.updateTypeList();
         },
         confirmItemDelete(tag) {
             this.currentTag = tag;
@@ -161,14 +215,29 @@ export default {
                     this.tags.splice(index, 1);
                 })
                 .catch(err => {
-                    console.log(err.response);
+                    console.log(err);
+                    this.toast.error(this.trans('global.expel_error'));
                 });
         },
         update(updatedTag) {
             const tag = this.tags.find(r => r.id === updatedTag.id);
 
             Object.assign(tag, updatedTag);
-        }
+        },
+        updateTypeList() {
+            axios.get('/tags/type?data_only=true')
+                .then((response) => {
+                    this.typeList = response.data;
+                })
+                .catch((err) => {
+                    console.log(err);
+                    this.toast.error(this.trans('global.code_500'));
+                });
+        },
+        selectFilter(type) {
+            this.filter = type;
+            this.dt.draw();
+        },
     },
     components: {
         ConfirmModal,

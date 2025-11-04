@@ -125,7 +125,7 @@ class KanbanController extends Controller
                 });
             $kanbans->withAllTags($tags)->get();
         } else {
-            switch ($request->shared_with_me) {
+            switch ($request->filter) {
                 case 'owner':
                     $kanbans = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get();
                     break;

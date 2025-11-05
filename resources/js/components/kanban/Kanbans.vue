@@ -112,6 +112,10 @@
                     <i class="fa fa-2x fa-columns"></i>
                 </template>
 
+                <template v-slot:additional-button>
+                    <favourite :model="kanban" url="/kanbans" :is-favourited="kanban.is_favourited"></favourite>
+                </template>
+
                 <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-right"
@@ -242,6 +246,8 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
+import Reaction from "../reaction/Reaction.vue";
+import Favourite from "../tag/Favourite.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -401,6 +407,8 @@ export default {
         },
     },
     components: {
+        Favourite,
+        Reaction,
         SubscribeModal,
         SubscribeKanbanModal,
         MediumModal,

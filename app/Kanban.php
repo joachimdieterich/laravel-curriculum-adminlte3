@@ -3,7 +3,7 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Broadcasting\Channel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +46,8 @@ class Kanban extends Model
         'created_at'            => 'datetime',
     ];
 
+    protected $appends = ['is_favourited'];
+
     public function broadcastOn($event): array
     {
         if (!env('WEBSOCKET_APP_ACTIVE', false)) {
@@ -73,6 +75,13 @@ class Kanban extends Model
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    public function isFavourited(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->hasTag(trans('global.tag.favourite')),
+        );
     }
 
     public function path(): string

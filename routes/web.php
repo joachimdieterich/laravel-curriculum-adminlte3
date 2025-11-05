@@ -106,6 +106,7 @@ Route::withoutMiddleware('auth')->group(function() {
     /*** Kanbans ***/
     Route::get('kanbans/list', 'KanbanController@list');
     Route::get('kanbans/{kanban}/copy', 'KanbanController@copyKanban');
+    Route::post('kanbans/{kanban}/favourite', 'KanbanController@favouriteKanban');
     Route::get('export_csv/{kanban}', 'KanbanController@exportKanbanCsv');
     Route::get('export_pdf/{kanban}', 'KanbanController@exportKanbanPdf');
     Route::resource('kanbans', 'KanbanController');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
@@ -125,21 +126,12 @@ class KanbanController extends Controller
                 });
             $kanbans->withAllTags($tags)->get();
         } else {
-            switch ($request->filter) {
-                case 'owner':
-                    $kanbans = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get();
-                    break;
-                case 'shared_with_me':
-                    $kanbans = $this->userKanbans(false);
-                    break;
-                case 'shared_by_me':
-                    $kanbans = Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get();
-                    break;
-                case 'all':
-                default:
-                    $kanbans = $this->userKanbans();
-                    break;
-            }
+            $kanbans = match ($request->filter) {
+                'owner'          => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
+                'shared_with_me' => $this->userKanbans(false),
+                'shared_by_me'   => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
+                default          => $this->userKanbans(),
+            };
         }
 
         return empty($kanbans) ? '' : DataTables::of($kanbans)
@@ -345,6 +337,17 @@ class KanbanController extends Controller
         $pdf = PDF::loadView('exports.kanban.pdf', ['kanban' => $kanban])->setPaper('a4', 'landscape');
 
         return $pdf->download($kanban->title . '.pdf');
+    }
+
+    public function favouriteKanban(Kanban $kanban, FavouriteModelRequest $request)
+    {
+        if ($request->input('favourite')) {
+            $kanban->attachTag(trans('global.tag.favourite'));
+        } else {
+            $kanban->detachTag(trans('global.tag.favourite'));
+        }
+
+        return response(null, 204);
     }
 
     private function transformHexColorToRgba($color)

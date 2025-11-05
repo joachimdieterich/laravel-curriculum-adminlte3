@@ -422,6 +422,9 @@ return [
         'edit' => 'Edit Permission',
     ],
     'tag' => [
+        'add_favourite' => 'Add favourite',
+        'remove_favourite' => 'Remove favourite',
+        'favourite' => 'Favourite',
         'types' => [
             'App\\Kanban' => 'Kanban',
             'App\\Role' => 'Role',

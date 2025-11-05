@@ -303,7 +303,7 @@ export default {
                 { title: 'description', data: 'description', searchable: true },
                 { title: 'tags', data: 'tags' }
             ],
-            filter: 'all',
+            filter: 'favourite',
             dt: null,
         }
     },

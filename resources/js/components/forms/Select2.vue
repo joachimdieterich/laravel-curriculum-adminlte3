@@ -148,7 +148,6 @@ export default {
                 type: 'select2:clear',
                 params: {}
             });
-            // this.componentInstance.val(null).trigger('change');
         },
         formatText(icon) {
             return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
@@ -156,6 +155,7 @@ export default {
         loader() {
             if (this.list === null) { // ajax
                 this.componentInstance = $('#' + this.id).select2({
+                    language: window.select2Translation,
                     placeholder: this.placeholder,
                     dropdownParent: $('#' + this.id).parent(),
                     allowClear: this.allowClear,
@@ -183,6 +183,7 @@ export default {
                 });
             } else { // this.list is set
                 this.componentInstance = $('#' + this.id).select2({
+                    language: window.select2Translation,
                     placeholder: this.placeholder,
                     dropdownParent: $('#' + this.id).parent(),
                     allowClear: this.allowClear,
@@ -246,9 +247,12 @@ export default {
         list: function() {
             this.loader();
         },
-        selected: function() {
-            this.loader();
-            this.componentInstance.trigger('change');
+        selected: {
+            handler() {
+                this.loader();
+                this.componentInstance.trigger('change');
+            },
+            deep: true
         },
     },
     mounted() {

@@ -45,7 +45,7 @@ export default {
                 return;
             }
 
-            axios.post(this.url + "/" + this.model.id + "/favourite", {
+            axios.post(this.url + "/" + this.model.id + "/favour", {
                 favourite: newValue,
             })
                 .catch(err => {

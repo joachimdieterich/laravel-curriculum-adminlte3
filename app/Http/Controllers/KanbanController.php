@@ -342,7 +342,7 @@ class KanbanController extends Controller
         return $pdf->download($kanban->title . '.pdf');
     }
 
-    public function favouriteKanban(Kanban $kanban, FavouriteModelRequest $request)
+    public function favourKanban(Kanban $kanban, FavouriteModelRequest $request)
     {
         if ($request->input('favourite')) {
             $kanban->attachTag(trans('global.tag.favourite.singular'));

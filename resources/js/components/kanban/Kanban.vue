@@ -6,7 +6,7 @@
         <img v-if="kanban.medium_id"
             class="position-absolute p-0 h-100 w-100"
             style="object-fit: cover;"
-            :src="'/media/' + kanban.medium_id + '?preview=true'"
+            :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
             alt="background image"
         />
         <div
@@ -123,6 +123,7 @@
             <KanbanItemModal/>
             <KanbanStatusModal :kanban="initialKanban"/>
             <MediumModal/>
+            <MediumPreviewModal/>
             <SubscribeModal/>
             <ConfirmModal
                 :showConfirm="show_item_copy"
@@ -193,6 +194,7 @@ import KanbanItemModal from "../kanbanItem/KanbanItemModal.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import KanbanStatusModal from "./KanbanStatusModal.vue";
 import MediumModal from "../media/MediumModal.vue";
+import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -360,7 +362,7 @@ export default {
         },
         copyItem() {
             axios.get('/kanbanItems/' + this.copy_id + '/copy')
-                .then(response => this.handleItemAdded(response.data));
+                .then(response => this.$eventHub.emit('kanban-item-added-' + response.data.kanban_status_id, response.data));
         },
         handleStatusAdded(newStatus) {
             // if the status already exists do nothing
@@ -369,7 +371,7 @@ export default {
             }
 
             // add items to prevent error if item is created without reloading page
-            if (newStatus['items'] == undefined) {}newStatus['items'] = [];
+            if (newStatus['items'] == undefined) newStatus['items'] = [];
             this.kanban.statuses.push(newStatus);
         },
         handleStatusUpdated(newStatus) {
@@ -489,6 +491,7 @@ export default {
         KanbanItem,
         KanbanItemModal,
         MediumModal,
+        MediumPreviewModal,
         SubscribeModal,
         KanbanModal,
         KanbanStatusModal,

@@ -33,48 +33,46 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      operationId="createKanban",
 *      tags={"Kanban v1"},
 *      summary="Create new kanban",
-*      description="Returns a the new kanban object",
+*      description="Returns the new kanban object",
 *      security={
 *           {"passport": {"*"}},
 *      },
-*      @OA\RequestBody(
-*       required=true,
-*       @OA\MediaType(
-*           mediaType="application/x-www-form-urlencoded",
-*           @OA\Schema(
-*               type="object",
-*               required={"title, owner_cn"},
-*               @OA\Property(
-*                   property="title",
-*                   description="Kanban title",
-*                   type="string"
-*               ),
-*               @OA\Property(
-*                   property="description",
-*                   description="Kanban description",
-*                   type="string"
-*               ),
-*               @OA\Property(
-*                   property="color",
-*                   description="Color",
-*                   type="string"
-*               ),
-*               @OA\Property(
-*                   property="owner_cn",
-*                   description="Owner Cn",
-*                   type="string"
-*               )
-*           )
-*       )
-*   ),
-*
+*      @OA\Parameter(
+*          name="owner_cn",
+*          description="common_name of Kanban-owner",
+*          required=true,
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="title",
+*          description="Kanban title",
+*          required=true,
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="description",
+*          description="Kanban description",
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="color",
+*          description="Color",
+*          example="#2980B9",
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="editable",
+*          description="Return the token-link with edit-rights",
+*          example="0 or 1",
+*          in="query"
+*      ),
 *      @OA\Response(
 *          response=200,
 *          description="successful operation",
 *          @OA\JsonContent(ref="#/components/schemas/Kanban"),
 *       ),
-*       @OA\Response(response=400, description="Bad request"),
-*
+*       @OA\Response(response=400, description="Missing/Empty attribute [owner_cn] or [title]"),
+*       @OA\Response(response=404, description="owner_cn not found"),
 * )
 *
 * @OA\Put(
@@ -182,7 +180,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *          name="owner_cn",
 *          description="common_name of Kanban-owner",
 *          required=true,
-*          in="path",
+*          in="query",
 *          @OA\Schema(
 *              type="string"
 *          )

@@ -304,12 +304,14 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink", "link", "autoresize",
+                    "autolink", "link", "autoresize", "code",
                 ],
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
-                }
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | link code",
+                "",
             ),
         }
     },

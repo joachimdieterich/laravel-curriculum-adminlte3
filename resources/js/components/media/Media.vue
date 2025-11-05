@@ -18,7 +18,7 @@
                         ></i>
                         {{ subscription.medium.title }}
                         <span class="pull-right">
-                            <i v-if="$userId == subscription.owner_id"
+                            <i v-if="$userId == subscription.owner_id || checkPermission('is_admin')"
                                 v-permission="'medium_delete'"
                                 class="fa fa-trash text-danger"
                                 @click.stop="destroy(subscription)"
@@ -43,7 +43,7 @@
                 </tr>
 
                 <tr>
-                    <td v-if="url == '/mediumSubscriptions'"
+                    <td v-if="url == '/mediumSubscriptions' && (editable || checkPermission('is_admin'))"
                         v-permission="'medium_create'"
                         class="py-2 link-muted text-sm pointer"
                         @click="addMedia()"
@@ -58,10 +58,10 @@
 
     <div v-else
         v-for="subscription in subscriptions"
-        v-bind:id="'medium_'+subscription.medium.id"
-        class="box box-objective pointer my-1"
-        style="height: 300px !important; min-width: 200px !important; padding: 0; background-size: 100%,50%;"
-        :style="{'background-image':'url('+href(subscription.medium.id)+')'}"
+        :id="'medium_' + subscription.medium.id"
+        class="box box-objective pointer p-0 my-1"
+        style="height: 300px !important; min-width: 200px !important; background-size: 100%, 50%;"
+        :style="{ 'background-image': 'url(/media/' + subscription.medium.id + ')' }"
         @click="show(subscription.medium)"
     >
         <div class="symbol"
@@ -82,30 +82,31 @@
         </div>
 
         <i v-if="subscription.medium.mime_type === 'pdf'" class="far fa-file-pdf text-primary text-center pt-2"
-            style="position:absolute; top: 0; height: 150px !important; width: 100%; font-size:800%;"
+            style="position: absolute; top: 0; height: 150px !important; width: 100%; font-size:800%;"
         ></i>
         <i v-if="subscription.medium.mime_type === 'url'" class="fa fa-link text-primary text-center pt-2"
-            style="position:absolute; top: 0; height: 150px !important; width: 100%; font-size:800%;"
+            style="position: absolute; top: 0; height: 150px !important; width: 100%; font-size:800%;"
         ></i>
         <span
             v-permission="'medium_delete'"
             class="p-1 pointer_hand"
             accesskey=""
-            style="position:absolute; top:0; height: 30px; width:100%;"
+            style="position: absolute; top: 0; height: 30px; width:100%;"
         >
             <button
-                :id="'delete-medium'+subscription.medium.id"
+                :id="'delete-medium' + subscription.medium.id"
                 type="submit"
                 class="btn btn-danger btn-sm pull-right"
-                v-on:click.stop="unlinkMedium(subscription);"
+                @click.stop="unlinkMedium(subscription);"
             >
                 <small>
                     <i class="fa fa-unlink"></i>
                 </small>
             </button>
         </span>
-        <span class="bg-white text-center p-1 overflow-auto "
-            style="position:absolute; bottom:0; height: 150px; width:100%;"
+        <span
+            class="bg-white text-center p-1 overflow-auto "
+            style="position: absolute; bottom: 0; height: 150px; width:100%;"
         >
             <h6 class="events-heading pt-1 hyphens" v-html="subscription.medium.title"></h6>
             <p class=" text-muted small" v-html="subscription.medium.description"></p>
@@ -147,6 +148,10 @@ export default {
             type: String,
             default: '/mediumSubscriptions',
         },
+        editable: {
+            type: Boolean,
+            default: true,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -172,14 +177,18 @@ export default {
             });
         },
         show(mediumObject) {
-            this.globalStore?.showModal('medium-preview-modal', mediumObject);
+            if (mediumObject.mime_type === 'application/pdf') {
+                window.open('/media/' + mediumObject.id, '_blank');
+            } else {
+                this.globalStore?.showModal('medium-preview-modal', { media: [mediumObject] });
+            }
         },
         addMedia() {
             this.globalStore?.showModal('medium-modal', {
                 'subscribeSelected': true,
                 'subscribable_type': this.subscribable_type,
                 'subscribable_id': this.subscribable_id,
-                'public': this.public,
+                'public': this.public ? 1 : 0,
                 'callbackId': this.component_id
             });
         },
@@ -190,9 +199,6 @@ export default {
                 console.log(e)
             }
             $("#medium_" + this.medium.id).hide();
-        },
-        href: function (id) {
-            return '/media/' + id;
         },
         iconCss(mimeType) {
             switch (true) {
@@ -241,6 +247,12 @@ export default {
                 this.loader();
             });
         },*/
+    },
+    watch: {
+        subscribable_id() {
+            this.subscriptions = {};
+            this.loader();
+        },
     },
     mounted() {
         this.loader();

@@ -177,18 +177,13 @@
 
                             <div class="card-body pb-0">
                                 <v-swatches
-                                    :swatch-size="49"
-                                    :trigger-style="{}"
-                                    popover-to="right"
-                                    v-model="this.form.color"
+                                    style="height: 42px;"
+                                    :swatches="$swatches"
+                                    row-length="5"
+                                    popover-y="top"
+                                    v-model="form.color"
                                     show-fallback
                                     fallback-input-type="color"
-                                    @input="(id) => {
-                                        if(id.isInteger) {
-                                            this.form.color = id;
-                                        }
-                                    }"
-                                    :max-height="300"
                                 />
 
                                 <MediumForm

@@ -67,11 +67,6 @@
                                 v-model="form.color"
                                 show-fallback
                                 fallback-input-type="color"
-                                @input="(id) => {
-                                    if (id.isInteger) {
-                                        this.form.color = id;
-                                    }
-                                }"
                             />
 
                             <div
@@ -81,6 +76,7 @@
                                 <button v-if="medium"
                                     type="button"
                                     class="btn btn-default"
+                                    @click="openPreviewModal()"
                                 >
                                     <span class="position-relative d-flex align-items-center h-100">
                                         <img
@@ -396,6 +392,9 @@ export default {
                 callback: 'new-media',
                 callbackId: this.component_id,
             });
+        },
+        openPreviewModal() {
+            this.globalStore?.showModal('medium-preview-modal', { media: this.form.media_subscriptions.map(s => s.medium) });
         },
     },
     computed: {

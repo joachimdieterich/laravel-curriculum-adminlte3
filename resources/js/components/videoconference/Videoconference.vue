@@ -24,17 +24,20 @@
                     </h5>
                     <hr class="bg-gray mt-0">
                     <div v-if="loading"
-                         class=" text-center ">
+                        class="text-center"
+                    >
                         <i class="fas fa-2x fa-spinner fa-spin"></i>
                         <p> {{ loadingMessage }} {{ timerCount }}</p>
-
-                        <button @click="toggleTimer()"
-                                class="btn btn-primary pt-2">
+                        <button
+                            class="btn btn-primary pt-2"
+                            @click="toggleTimer()"
+                        >
                             {{ trans('global.cancel') }}
                         </button>
                     </div>
                     <div v-else
-                    class="row">
+                        class="row"
+                    >
                         <div class="col-6">
                             {{ videoconference.owner.firstname }} {{ videoconference.owner.lastname }} (Initiator)
                         </div>
@@ -47,23 +50,29 @@
                                 v-model.trim="form.userName"
                                 placeholder="Bitte Vor- und Nachnamen eingeben..."
                             />
-                            <span class="input-group-append"
-                                  v-if="form.userName"
-                                  @click="startVideoconference()">
-                                <button
-                                    v-if="isRunning"
-                                    type="button" class="btn btn-info">
+                            <span v-if="form.userName"
+                                class="input-group-append"
+                                @click="startVideoconference()"
+                            >
+                                <button v-if="isRunning"
+                                    type="button"
+                                    class="btn btn-info"
+                                >
                                     {{ trans('global.videoconference.join') }}
                                 </button>
-                                <button
-                                    v-else
-                                    type="button" class="btn btn-primary">
+                                <button v-else
+                                    type="button"
+                                    class="btn btn-primary"
+                                >
                                     {{ trans('global.videoconference.start') }}
                                 </button>
                             </span>
                         </div> <!-- guestName -->
 
-                        <div v-if="videoconference.owner_id == this.$userId || videoconference.moderatorPW == this.urlParamModeratorPW"
+                        <div v-if="videoconference.owner_id == $userId
+                            || videoconference.moderatorPW == urlParamModeratorPW
+                            || checkPermission('is_admin')
+                            "
                             class="d-flex pt-4 w-100"
                         >
                             <a
@@ -90,12 +99,12 @@
             v-permission="'is_admin'"
             class="col-12"
         >
-            <div v-if="videoconference.owner_id == $userId"
+            <div v-if="videoconference.owner_id == $userId || checkPermission('is_admin')"
                 class="col-12"
             >
                 <h5 class="pt-4">{{ trans('global.videoconference.presentations') }}</h5>
                 <hr class="bg-gray mt-0">
-                <media
+                <Media
                     ref="videoconferenceMedia"
                     :subscribable_id="videoconference.id"
                     subscribable_type="App\Videoconference"
@@ -238,19 +247,27 @@ export default {
             this.timerCount= 10;
             this.timerEnabled = true;
 
-            if (this.videoconference.owner_id == this.$userId ||
+            if ( // owner or moderator
+                this.videoconference.owner_id == this.$userId ||
                 this.urlParamModeratorPW === this.videoconference.moderatorPW ||
                 this.videoconference.anyoneCanStart === true ||
-                this.videoconference.editable === true){
+                this.videoconference.editable === true
+            ) {
+                // has permission to start
                 window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName + '&moderatorPW=' + this.urlParamModeratorPW + '&attendeePW=' + this.urlParamAttendeePW;
-            } else {
+            } else { // join as attendee
                 axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')
                     .then(response => {
                         if (response.data.videoconference == false) {
                             this.loadingMessage = 'Konferenz ist noch nicht gestartet. Neuer Verbindungsversuch in ';
                         } else {
                             this.timerEnabled = false;
-                            window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName + '&moderatorPW=&attendeePW=' + this.urlParamAttendeePW;
+                            // send token to verify access
+                            const token = new URLSearchParams(window.location.search).get('sharing_token');
+                            window.location = '/videoconferences/' + this.videoconference.id +
+                                '/start?userName=' + this.form.userName +
+                                '&moderatorPW=&attendeePW=' + this.urlParamAttendeePW +
+                                '&sharing_token=' + token;
                         }
                     })
                     .catch(e => {

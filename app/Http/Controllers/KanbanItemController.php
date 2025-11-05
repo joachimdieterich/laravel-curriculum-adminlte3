@@ -215,23 +215,28 @@ class KanbanItemController extends Controller
             'kanban_id'         => $item->kanban_id,
             'kanban_status_id'  => $item->kanban_status_id,
             'color'             => $item->color,
+            'visibility'        => $item->visibility,
+            'visible_from'      => $item->visible_from,
+            'visible_until'     => $item->visible_until,
+            'due_date'          => $item->due_date,
+            'replace_links'     => $item->replace_links,
             'owner_id'          => auth()->user()->id,
         ]);
 
-        foreach ($item->mediaSubscriptions as $mediaSubscription) {
-            MediumSubscription::Create([
-                'medium_id'         => $mediaSubscription->medium_id,
-                'subscribable_id'   => $itemCopy->id,
-                'subscribable_type' => $mediaSubscription->subscribable_type,
-                'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                'visibility'        => $mediaSubscription->visibility,
-                'additional_data'   => $mediaSubscription->additional_data,
-                'owner_id'          => auth()->user()->id,
-            ]);
-        }
+        // TODO: copied edusharing-media need newly created usages and media records
+        // foreach ($item->mediaSubscriptions as $mediaSubscription) {
+        //     MediumSubscription::Create([
+        //         'medium_id'         => $mediaSubscription->medium_id,
+        //         'subscribable_id'   => $itemCopy->id,
+        //         'subscribable_type' => $mediaSubscription->subscribable_type,
+        //         'sharing_level_id'  => $mediaSubscription->sharing_level_id,
+        //         'visibility'        => $mediaSubscription->visibility,
+        //         'additional_data'   => $mediaSubscription->additional_data,
+        //         'owner_id'          => auth()->user()->id,
+        //     ]);
+        // }
 
         KanbanStatus::find($item->kanban_status_id)->touch('updated_at'); //To get Sync after media upload working
-
 
         return KanbanItem::with([
                 'comments',
@@ -239,7 +244,7 @@ class KanbanItemController extends Controller
                 'comments.likes',
                 'likes',
                 'mediaSubscriptions.medium',
-                'owner',
+                'owner:id,username,firstname,lastname',
             ])
             ->find($itemCopy->id);
     }

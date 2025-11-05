@@ -11,8 +11,8 @@
                     <li><a href="#ll-layer" role="tab"><i class="fa fa-layer-group"></i></a></li>
                     <li><a href="#ll-marker" role="tab"><i class="fa fa-location-dot"></i></a></li>
                     <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li>
-                    <hr>
-                    <li>
+                    <hr v-permission="'map_create'"/>
+                    <li v-permission="'map_create'">
                         <a
                             role="tab"
                             class="pointer"
@@ -32,13 +32,24 @@
                 >
                     <h1 class="sidebar-header pr-2 mb-3">
                         {{ map.title }}
-                        <a v-if="map.owner_id == $userId || checkPermission('is_admin')"
-                            v-permission="'map_edit'"
-                            class="pull-right link-muted text-light pointer"
-                            @click="editMap(map)"
+                        <span v-if="map.owner_id == $userId || checkPermission('is_admin')"
+                            class="d-flex pull-right"
                         >
-                            <i class="fas fa-pencil-alt p-2"></i>
-                        </a>
+                            <a
+                                v-permission="'map_edit'"
+                                class="link-muted text-white pointer mx-1"
+                                @click="editMap(map)"
+                            >
+                                <i class="fas fa-pencil-alt p-2"></i>
+                            </a>
+                            <a
+                                v-permission="'map_edit'"
+                                class="link-muted text-white pointer mx-1"
+                                @click="share()"
+                            >
+                                <i class="fa fa-share-alt p-2"></i>
+                            </a>
+                        </span>
                     </h1>
                     <span class="pb-2">
                         <h5>{{ map.subtitle }}</h5>
@@ -54,22 +65,36 @@
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
-                        <li v-for="marker in markers">
+                        <li v-for="marker in markers"
+                            class="d-flex align-items-center show-hidden-animate"
+                        >
                             <a
                                 class="text-decoration-none pointer"
+                                role="button"
+                                tabindex="0"
                                 @click="setCurrentMarker(marker)"
                             >
-                                <i class="fa fa-location-dot link-muted pr-2"></i>
-                                {{ marker.title }}
+                                <i class="fa fa-location-dot link-muted pr-2"></i> {{ marker.title }}
                             </a>
-                            <div class="tools">
-                                <a class="link-muted text-secondary px-1 pointer">
-                                    <i class="fa fa-pencil-alt" @click="edit(marker)"></i>
-                                </a>
-                                <a class="link-muted text-danger ml-2 px-1 pointer">
-                                    <i class="fa fa-trash" @click="confirmItemDelete(marker)"></i>
-                                </a>
-                            </div>
+                            <span v-if="marker.owner_id == $userId || checkPermission('is_admin')"
+                                class="d-flex align-items-center ml-auto"
+                                style="height: 0px;"
+                            >
+                                <button
+                                    class="btn btn-icon d-print-none text-secondary px-1 hide-lg"
+                                    type="button"
+                                    @click="edit(marker)"
+                                >
+                                    <i class="fa fa-pencil-alt"></i>
+                                </button>
+                                <button
+                                    class="btn btn-icon d-print-none text-danger ml-2 px-1 hide-lg"
+                                    type="button"
+                                    @click="confirmItemDelete(marker)"
+                                >
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </span>
                         </li>
                     </ul>
                 </div>
@@ -294,7 +319,11 @@ export default {
     },
     methods: {
         createMarker() {
-            this.globalStore?.showModal('map-marker-modal', { map_id: this.map.id });
+            this.globalStore?.showModal('map-marker-modal', {
+                map_id: this.map.id,
+                type_id: this.form.type_id,
+                category_id: this.form.category_id,
+            });
         },
         loader() {
             axios.get('/mapMarkers?type_id=' + this.form.type_id + '&category_id=' + this.form.category_id)
@@ -471,6 +500,17 @@ export default {
         },
         edit(marker) {
             this.globalStore?.showModal('map-marker-modal', marker);
+        },
+        share() {
+            this.globalStore?.showModal('subscribe-modal', {
+                modelId: this.map.id,
+                modelUrl: 'map',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
+            });
         },
         processClick(lat,lon) {
             console.log("You clicked the map at LAT: " + lat + " and LONG: " + lon );

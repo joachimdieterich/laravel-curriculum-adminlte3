@@ -19,7 +19,10 @@
                     </button>
                 </div>
 
-                <div class="modal-body">
+                <div
+                    class="modal-body"
+                    :style="{ 'overflow': showExtendedSettings ? 'auto' : 'visible' }"
+                >
                     <div class="card">
                         <div
                             class="card-header border-bottom"
@@ -210,17 +213,13 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <v-swatches
-                                    :swatch-size="49"
-                                    :trigger-style="{}"
                                     style="height: 42px;"
-                                    popover-to="right"
+                                    :swatches="$swatches"
+                                    row-length="5"
+                                    popover-y="top"
                                     v-model="form.bannerColor"
                                     show-fallback
                                     fallback-input-type="color"
-                                    @input="(id) => {
-                                        this.form.bannerColor = id;
-                                    }"
-                                    :max-height="300"
                                 />
         
                                 <MediumForm v-if="form.id"

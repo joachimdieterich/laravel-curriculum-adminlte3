@@ -91,7 +91,6 @@ class MapMarkerController extends Controller
             'address' => $input['address'],
             'url' => $input['url'],
             'url_title' => $input['url_title'],
-            'owner_id' => auth()->user()->id,
         ]);
 
         $mapMarker->save();
@@ -109,7 +108,9 @@ class MapMarkerController extends Controller
      */
     public function destroy(MapMarker $mapMarker)
     {
-        abort_unless((\Gate::allows('map_delete') and $mapMarker->owner_id === auth()->user()->id), 403);
+        abort_unless(\Gate::allows('map_delete')
+            and ($mapMarker->owner_id === auth()->user()->id or is_admin())
+        , 403);
 
         $mapMarker->mediaSubscriptions()->delete();
         $mapMarker->subscriptions()->delete();

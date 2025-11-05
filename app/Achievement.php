@@ -6,6 +6,17 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *   required={"referenceable_id","scale","status","user_common_name","owner_common_name"},
+ *   @OA\Xml(name="Achievement"),
+ *   
+ *   @OA\Property( property="id", type="integer"),
+ *   @OA\Property( property="referenceable_id", type="integer" ),
+ *   @OA\Property( property="user", type="string", example="common_name" ),
+ *   @OA\Property( property="status", type="string", example="50" )
+ * )
+ */
 class Achievement extends Model
 {
     use HasFactory;

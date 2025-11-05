@@ -99,11 +99,6 @@
                                     v-model="form.color"
                                     show-fallback
                                     fallback-input-type="color"
-                                    @input="(id) => {
-                                        if (id.isInteger) {
-                                            this.form.color = id;
-                                        }
-                                    }"
                                 />
 
                                 <MediumForm v-if="form.id"

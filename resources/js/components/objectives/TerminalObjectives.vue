@@ -192,7 +192,14 @@ export default {
                 });
         },
         delete() {
-            this.removeObjective(this.delete_objective);
+            axios.delete('/' + (this.delete_objective.terminal_objective_id === undefined ? 'terminal' : 'enabling') + 'Objectives/' + this.delete_objective.id)
+                .then(response => {
+                    this.removeObjective(this.delete_objective);
+                })
+                .catch(e => {
+                    this.toast.error(this.errorMessage(e));
+                    console.log(e);
+                });
         },
         externalEvent: function(ids) {
             this.reloadEnablingObjectives(ids);

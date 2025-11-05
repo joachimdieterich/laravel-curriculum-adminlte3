@@ -41,6 +41,11 @@
 @media (min-width: 992px) {
     .vuehover { display: none; }
     .hide-lg { opacity: 0; }
+    .show-hidden:hover .hide-lg { opacity: 1; }
+    .show-hidden-animate {
+        & .hide-lg { transition: opacity 0.3s ease; }
+        &:hover .hide-lg { opacity: 1; }
+    }
     li:hover .vuehover,
     tr:hover .vuehover {
         display: block;

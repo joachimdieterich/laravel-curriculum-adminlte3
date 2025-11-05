@@ -54,7 +54,7 @@
                                     || checkPermission('is_admin')
                                 "
                                 type="button"
-                                class="btn btn-icon text-danger px-2 py-1 mr-1 invisible"
+                                class="d-print-none btn btn-icon text-danger px-2 py-1 mr-1 invisible"
                                 @click="deleteComment(comment)"
                             >
                                 <i class="fa fa-trash"></i>
@@ -73,7 +73,7 @@
             </div>
         </div>
 
-        <div class="pb-3" v-if="commentable">
+        <div class="d-print-none pb-3">
             <div class="input-group">
                 <input
                     type="text"
@@ -118,10 +118,6 @@ export default {
             default: null,
         },
         websocket: {
-            type: Boolean,
-            default: false,
-        },
-        commentable: {
             type: Boolean,
             default: false,
         },

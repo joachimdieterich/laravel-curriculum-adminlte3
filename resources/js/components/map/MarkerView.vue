@@ -37,12 +37,13 @@
 
         <h5 class="pt-3 clearfix">{{ trans('global.medium.title') }}</h5>
         <div v-if="marker.id != null"
-            v-permission="'medium_access'"
             :id="'map_marker_media_' + marker.id"
         >
             <Media
                 subscribable_type="App\MapMarker"
                 :subscribable_id="marker.id"
+                :editable="marker.owner_id == $userId"
+                public="true"
                 format="list"
             />
         </div>

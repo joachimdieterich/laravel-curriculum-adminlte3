@@ -7,6 +7,19 @@
             >
                 <li class="nav-item pointer">
                     <a
+                        id="kanban-filter-favourite"
+                        class="nav-link "
+                        :class="filter === 'favourite' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('favourite')"
+                    >
+                        <i class="fas fa-heart pr-2"></i>
+                        {{ trans('global.tag.favourite.plural') }}
+                    </a>
+                </li>
+                <li class="nav-item pointer">
+                    <a
                         id="kanban-filter-all"
                         class="nav-link "
                         :class="filter === 'all' ? 'active' : ''"

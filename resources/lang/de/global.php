@@ -442,7 +442,10 @@ return [
     'tag' => [
         'add_favourite' => 'Favorit hinzufügen',
         'remove_favourite' => 'Favorit entfernen',
-        'favourite' => 'Favorit',
+        'favourite' => [
+            'singular' => 'Favorit',
+            'plural' => 'Favoriten',
+        ],
         'types' => [
             'App\\Kanban' => 'Pinnwand',
             'App\\Role' => 'Rolle',

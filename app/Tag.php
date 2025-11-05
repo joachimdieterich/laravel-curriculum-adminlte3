@@ -12,7 +12,7 @@ class Tag extends \Spatie\Tags\Tag
     protected static function booted(): void
     {
         static::created(static function (Tag $tag) {
-            if ($tag->translation ?? null) {
+            if ($tag->translation ?? null || empty($tag->getTranslations('name'))) {
                 return;
             }
 
@@ -20,7 +20,7 @@ class Tag extends \Spatie\Tags\Tag
         });
 
         static::retrieved(static function (Tag $tag) {
-            if ($tag->translation ?? null) {
+            if ($tag->translation ?? null || empty($tag->getTranslations('name'))) {
                 return;
             }
 

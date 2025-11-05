@@ -14,6 +14,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Gate;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -78,9 +79,10 @@ class KanbanController extends Controller
         return $kanbans;
     }
 
-    public function userKanbans($withOwned = true)
+    public function userKanbans($withOwned = true, ?array $searchTags = [])
     {
-        $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
+        $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
+        /** @var Collection $userCanSee */
         $userCanSee = auth()->user()->kanbans()->withAllTags($tags)->get();
 
         //tokenuser? only return subscriptions
@@ -128,9 +130,10 @@ class KanbanController extends Controller
         } else {
             $kanbans = match ($request->filter) {
                 'owner'          => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
-                'shared_with_me' => $this->userKanbans(false),
+                'shared_with_me' => $this->userKanbans(false, request('tags')),
                 'shared_by_me'   => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
-                default          => $this->userKanbans(),
+                'favourite'      => $this->userKanbans(searchTags: [Tag::findFromString(trans('global.tag.favourite.singular'))->id]),
+                default          => $this->userKanbans(searchTags: request('tags')),
             };
         }
 
@@ -342,9 +345,9 @@ class KanbanController extends Controller
     public function favouriteKanban(Kanban $kanban, FavouriteModelRequest $request)
     {
         if ($request->input('favourite')) {
-            $kanban->attachTag(trans('global.tag.favourite'));
+            $kanban->attachTag(trans('global.tag.favourite.singular'));
         } else {
-            $kanban->detachTag(trans('global.tag.favourite'));
+            $kanban->detachTag(trans('global.tag.favourite.singular'));
         }
 
         return response(null, 204);

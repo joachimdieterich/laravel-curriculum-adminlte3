@@ -424,7 +424,10 @@ return [
     'tag' => [
         'add_favourite' => 'Add favourite',
         'remove_favourite' => 'Remove favourite',
-        'favourite' => 'Favourite',
+        'favourite' => [
+            'singular' => 'Favourite',
+            'plural' => 'Favourites',
+        ],
         'types' => [
             'App\\Kanban' => 'Kanban',
             'App\\Role' => 'Role',

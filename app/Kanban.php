@@ -80,7 +80,7 @@ class Kanban extends Model
     public function isFavourited(): Attribute
     {
         return new Attribute(
-            get: fn () => $this->hasTag(trans('global.tag.favourite')),
+            get: fn () => $this->hasTag(trans('global.tag.favourite.singular')),
         );
     }
 

@@ -268,7 +268,7 @@ class KanbanController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Kanban $kanban
-     * @return Response
+     * @return bool|null
      */
     public function destroy(Kanban $kanban)
     {

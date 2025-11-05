@@ -386,7 +386,6 @@ return [
     'inbox' => 'Posteingang',
     'recipient' => 'Empfänger',
     'message_subject' => 'Betreff',
-    'message' => 'Nachricht',
     'comment' => 'Kommentar',
     'commentable' => 'Kommentare aktivieren',
     'show_comments' => 'Kommentare anzeigen',

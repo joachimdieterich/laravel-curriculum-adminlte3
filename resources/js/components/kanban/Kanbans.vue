@@ -405,11 +405,12 @@ export default {
                         this.toast.success(response.data);
                     })
                     .catch(e => {
+                        console.log(e);
                         this.toast.error(trans('global.expel_error'));
                     });
             }  else {
                 axios.delete('/kanbans/' + this.currentKanban.id)
-                    .then(res => {
+                    .then(() => {
                         let index = this.kanbans.indexOf(this.currentKanban);
                         this.kanbans.splice(index, 1);
                     })

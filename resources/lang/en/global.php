@@ -373,7 +373,6 @@ return [
     'inbox' => 'Inbox',
     'recipient' => 'Recipient',
     'message_subject' => 'Subject',
-    'message' => 'Message',
     'comment' => 'Comment',
     'commentable' => 'commentable',
     'show_comments' => 'Show comments',

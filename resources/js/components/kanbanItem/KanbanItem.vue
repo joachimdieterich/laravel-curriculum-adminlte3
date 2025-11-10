@@ -181,7 +181,7 @@
                     data-toggle="collapse"
                     :data-target="'#comments_' + item.id"
                     aria-expanded="false"
-                    @click="show_comments = !show_comments"
+                    @click="toggleComments()"
                 >
                     <i class="far fa-comments"></i>
                     <span v-if="item.comments.length > 0"
@@ -373,6 +373,12 @@ export default {
                 .catch(err => {
                     console.log(err.response);
                 });
+        },
+        toggleComments() {
+            // scroll comments into view if opening and at bottom of kanban column
+            if (this.show_comments = !this.show_comments && this.$el.parentElement.nextElementSibling === null) {
+                setTimeout(() => this.$el.querySelector('.card-footer').scrollIntoView(), 333);
+            }
         },
         postDate() {
             if (this.item.due_date == null) return undefined;

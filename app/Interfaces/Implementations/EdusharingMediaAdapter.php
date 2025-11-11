@@ -84,37 +84,12 @@ class EdusharingMediaAdapter implements MediaInterface
 
         if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null'))
         {
-            //create usage
-            try {
-                $edusharing = new Edusharing;
-
-                $usage = $edusharing
-                    ->createUsage(
-                        $input['subscribable_type'],
-                        $input['subscribable_id'],
-                        $input['external_id'],
-                    );
-            }
-            catch (\Exception $e)
-            {
-                dump($e->getMessage());
-            }
-
-
-            //subscribe
-            $subscribe = MediumSubscription::updateOrCreate(
-                [
-                    'medium_id'         => $medium->id,
-                    'subscribable_type' => $input['subscribable_type'],
-                    'subscribable_id'   => $input['subscribable_id'],
-                ],
-                [
-                    'sharing_level_id'  => 1,
-                    'visibility'        => 1,
-                    'additional_data'   => $usage ?? '',
-                    'owner_id'          => auth()->user()->id,
-                ]);
-            $subscribe->save();
+            $this->createUsage(
+                $medium->id,
+                $input['subscribable_type'],
+                $input['subscribable_id'],
+                $input['external_id'],
+            );
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__, null, 1);
@@ -297,6 +272,32 @@ class EdusharingMediaAdapter implements MediaInterface
         {
             return ['message' => true];
         }
+    }
+
+    public function createUsage(int $medium_id, string $subscribable_type, int $subscribable_id, string $external_id)
+    {
+        try {
+            $edusharing = new Edusharing;
+            $usage = $edusharing->createUsage($subscribable_type, $subscribable_id, $external_id);
+        }
+        catch (\Exception $e)
+        {
+            dump($e->getMessage());
+        }
+
+        $subscribe = MediumSubscription::updateOrCreate(
+            [
+                'medium_id'         => $medium_id,
+                'subscribable_type' => $subscribable_type,
+                'subscribable_id'   => $subscribable_id,
+            ],
+            [
+                'sharing_level_id'  => 1,
+                'visibility'        => 1,
+                'additional_data'   => $usage ?? '',
+                'owner_id'          => auth()->user()->id,
+            ]);
+        $subscribe->save();
     }
 
     public function checkIfUserHasSubscription($subscription)

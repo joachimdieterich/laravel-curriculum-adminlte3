@@ -137,10 +137,12 @@ class MediumSubscriptionController extends Controller
             $model['subscribable_type']::where('id', $model['subscribable_id'])->update(['medium_id' => null]);
         }
 
-        // technically there could be more than 1 result, but in practice a model can only have 1 attached medium
-        // also, for each edusharing-subscription a new medium is created, so these should always be unique (1:1)
-        $query = MediumSubscription::where([
-            'medium_id' => $model['medium_id'],
+        // most Medium-subscriptions are unique (1:1), but if models get copied (e.g. kanban-items)
+        // there can be multiple subscriptions for the same medium_id
+        $query = MediumSubscription::where('medium_id', $model['medium_id']);
+        $unique = $query->count() === 1;
+
+        if (!$unique) $query = $query->where([
             'subscribable_type' => $model['subscribable_type'],
             'subscribable_id' => $model['subscribable_id'],
         ]);
@@ -163,7 +165,7 @@ class MediumSubscriptionController extends Controller
                     $additional_data['usageId'],
                 );
                 // and then delete the medium-entry
-                Medium::where('id', $model['medium_id'])->delete();
+                if ($unique) Medium::where('id', $model['medium_id'])->delete();
             }
 
             $model['subscribable_type']::find($model['subscribable_id'])->touch(); //To get Sync after media upload working

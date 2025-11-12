@@ -179,18 +179,28 @@ class KanbanStatusController extends Controller
                 'owner_id'          => auth()->user()->id,
             ]);
 
-            // TODO: copied edusharing-media need newly created usages and media records
-            // foreach ($item->mediaSubscriptions as $mediaSubscription) {
-            //     MediumSubscription::Create([
-            //         'medium_id'         => $mediaSubscription->medium_id,
-            //         'subscribable_type' => $mediaSubscription->subscribable_type,
-            //         'subscribable_id'   => $itemCopy->id,
-            //         'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-            //         'visibility'        => $mediaSubscription->visibility,
-            //         'additional_data'   => $mediaSubscription->additional_data,
-            //         'owner_id'          => auth()->user()->id,
-            //     ]);
-            // }
+            foreach ($item->mediaSubscriptions as $mediaSubscription) {
+                $usage = $mediaSubscription->additional_data;
+                // if Medium is external, we need to create a seperate Usage for the new subscription
+                if (!is_null($usage)) {
+                    app(\App\Interfaces\Implementations\EdusharingMediaAdapter::class)->createUsage(
+                        $mediaSubscription->medium_id,
+                        'App\\KanbanItem',
+                        $itemCopy->id,
+                        $usage["nodeId"]
+                    );
+                } else { // local Media can simply be re-subscribed
+                    MediumSubscription::Create([
+                        'medium_id'         => $mediaSubscription->medium_id,
+                        'subscribable_type' => $mediaSubscription->subscribable_type,
+                        'subscribable_id'   => $itemCopy->id,
+                        'sharing_level_id'  => $mediaSubscription->sharing_level_id,
+                        'visibility'        => $mediaSubscription->visibility,
+                        'additional_data'   => $mediaSubscription->additional_data,
+                        'owner_id'          => auth()->user()->id,
+                    ]);
+                }
+            }
         }
 
         Kanban::find($status['kanban_id'])->touch('updated_at'); //To get Sync after media upload working

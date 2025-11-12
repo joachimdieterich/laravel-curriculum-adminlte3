@@ -1,5 +1,5 @@
 <template>
-    <div class="position-relative">
+    <div class="position-relative d-flex" style="min-height: 100px;">
         <img v-if="isCarousel"
             :src="'/media/' + medium.id + '?preview=true'"
             class="d-block mw-100 w-auto m-auto"

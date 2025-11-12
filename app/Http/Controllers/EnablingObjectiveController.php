@@ -116,7 +116,7 @@ class EnablingObjectiveController extends Controller
         foreach ($enablingObjective->contents as $content) {
             (new ContentController)->destroy($content, 'App\EnablingObjective', $enablingObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
-        
+
         // decrease order-id of each objective with a higher order-id by 1
         EnablingObjective::where('terminal_objective_id', $enablingObjective->terminal_objective_id)
             ->where('order_id', '>', $enablingObjective->order_id)

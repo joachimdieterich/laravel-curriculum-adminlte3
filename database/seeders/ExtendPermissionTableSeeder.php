@@ -8,10 +8,13 @@ use Illuminate\Database\Seeder;
 
 class ExtendPermissionTableSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        $id = Permission::orderBy('id', 'desc')->first()->id;
-        $now = Carbon::now();
+        $lastId = Permission::orderBy('id', 'desc')->first()->id;
+        $now    = Carbon::now();
+
+        $existingPermissions = Permission::all()->pluck('title')->toArray();
+
         $titles = [
             'assignment_access',
             'assignment_create',
@@ -28,22 +31,25 @@ class ExtendPermissionTableSeeder extends Seeder
             'tool_edit',
             'tool_show',
             'tool_delete',
-
+            'tag_access',
+            'tag_create',
+            'tag_edit',
+            'tag_show',
+            'tag_delete',
         ];
-        $permissions = [];
 
-        foreach ($titles as $title) {
-            $id += 1;
-            $permission = [
-                'id' => $id,
-                'title' => $title,
+        $permissions = [];
+        foreach (collect($titles)->diff($existingPermissions)->toArray() as $title) {
+            $lastId += 1;
+
+            $permissions[] = [
+                'id'         => $lastId,
+                'title'      => $title,
                 'created_at' => $now,
                 'updated_at' => $now,
-
             ];
-
-            array_push($permissions, $permission);
         }
+
         Permission::insert($permissions);
     }
 }

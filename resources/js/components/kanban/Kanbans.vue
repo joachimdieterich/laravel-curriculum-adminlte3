@@ -7,6 +7,19 @@
             >
                 <li class="nav-item pointer">
                     <a
+                        id="kanban-filter-favourite"
+                        class="nav-link "
+                        :class="filter === 'favourite' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('favourite')"
+                    >
+                        <i class="fas fa-heart pr-2"></i>
+                        {{ trans('global.tag.favourite.plural') }}
+                    </a>
+                </li>
+                <li class="nav-item pointer">
+                    <a
                         id="kanban-filter-all"
                         class="nav-link "
                         :class="filter === 'all' ? 'active' : ''"
@@ -112,6 +125,10 @@
                     <i class="fa fa-2x fa-columns"></i>
                 </template>
 
+                <template v-slot:additional-button>
+                    <favourite :model="kanban" url="/kanbans" :is-favourited="kanban.is_favourited"></favourite>
+                </template>
+
                 <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-right"
@@ -193,7 +210,6 @@
                 id="kanban-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
                 width="100%"
                 style="display: none;"
             />
@@ -243,6 +259,8 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
+import Reaction from "../reaction/Reaction.vue";
+import Favourite from "../tag/Favourite.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -276,21 +294,22 @@ export default {
             kanbans: null,
             showConfirm: false,
             showCopy: false,
-            url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
             errors: {},
             currentKanban: {},
+            selectedTags: [],
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
+                { title: 'tags', data: 'tags' }
             ],
-            options : this.$dtOptions,
-            filter: 'all',
+            filter: 'favourite',
             dt: null,
         }
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
+        this.globalStore['searchTagModelContext'] =  'App\\Kanban';
 
         this.loaderEvent();
 
@@ -307,10 +326,22 @@ export default {
 
             Object.assign(kanban, updatedKanban);
         });
+    },
+    computed: {
+        options: function() {
+            let options = this.$dtOptions;
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
-        });
+            options.ajax = {
+                url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
+                data: (d) => {
+                    d.tags = this.selectedTags;
+
+                    return d;
+                },
+            };
+
+            return options;
+        }
     },
     methods: {
         setFilter(filter) {
@@ -341,6 +372,11 @@ export default {
                 this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
             });
+
+            this.$eventHub.on('filter', (filter) => {
+                this.selectedTags = filter.tags;
+                this.dt.search(filter.searchString).draw();
+            });
         },
         confirmItemDelete(kanban) {
             this.currentKanban = kanban;
@@ -369,11 +405,12 @@ export default {
                         this.toast.success(response.data);
                     })
                     .catch(e => {
+                        console.log(e);
                         this.toast.error(trans('global.expel_error'));
                     });
             }  else {
                 axios.delete('/kanbans/' + this.currentKanban.id)
-                    .then(res => {
+                    .then(() => {
                         let index = this.kanbans.indexOf(this.currentKanban);
                         this.kanbans.splice(index, 1);
                     })
@@ -384,6 +421,8 @@ export default {
         },
     },
     components: {
+        Favourite,
+        Reaction,
         SubscribeModal,
         SubscribeKanbanModal,
         MediumModal,

@@ -62,7 +62,6 @@
                 id="role-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
                 :search="search"
                 width="100%"
                 style="display: none;"
@@ -99,6 +98,7 @@ export default {
     props: {},
     setup() {
         const globalStore = useGlobalStore();
+        globalStore['searchTagModelContext'] = 'App\\Role';
         return {
             globalStore,
         }
@@ -112,17 +112,18 @@ export default {
             url: '/roles/list',
             errors: {},
             currentRole: {},
+            selectedTags: [],
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'permissions', data: 'permissions' },
+                { title: 'tags', data: 'tags' }
             ],
-            options : this.$dtOptions,
         }
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
 
         this.loaderEvent();
 
@@ -133,10 +134,22 @@ export default {
         this.$eventHub.on('role-updated', (role) => {
             this.update(role);
         });
-        
-        this.$eventHub.on('filter', (filter) => {
-            dt.search(filter).draw();
-        });
+    },
+    computed: {
+        options: function() {
+            let options = this.$dtOptions;
+
+            options.ajax = {
+                url: '/roles/list',
+                data: (d) => {
+                    d.tags = this.selectedTags;
+
+                    return d;
+                },
+            };
+
+            return options;
+        }
     },
     methods: {
         editRole(role) {
@@ -148,6 +161,10 @@ export default {
                 this.roles = dt.rows({page: 'current'}).data().toArray();
 
                 $('#role-content').insertBefore('#role-datatable-wrapper');
+            });
+            this.$eventHub.on('filter', (filter) => {
+                this.selectedTags = filter.tags;
+                dt.search(filter.searchString).draw();
             });
         },
         confirmItemDelete(role) {

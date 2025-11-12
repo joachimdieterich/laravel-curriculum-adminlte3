@@ -14,7 +14,7 @@
                         role="tab"
                         @click="setFilter('all')"
                     >
-                        <i class="fas fa-th pr-2"></i> 
+                        <i class="fas fa-th pr-2"></i>
                         {{ trans('global.all') }} {{ trans('global.logbook.title') }}
                     </a>
                 </li>
@@ -331,7 +331,7 @@ export default {
         },
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
 
         this.loaderEvent();
 

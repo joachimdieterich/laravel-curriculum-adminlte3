@@ -74,7 +74,7 @@
                         <template v-slot:icon>
                             <i class="fas fa-user"></i>
                         </template>
-    
+
                         <template v-slot:dropdown>
                             <div
                                 class="dropdown-menu dropdown-menu-right"
@@ -107,7 +107,7 @@
                                         </span>
                                     </button>
                                 </div>
-    
+
                                 <div v-else
                                     v-permission="'group_enrolment'"
                                 >
@@ -125,7 +125,7 @@
                                 </div>
                             </div>
                         </template>
-    
+
                         <template v-slot:content>
                             <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                                 <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
@@ -250,7 +250,7 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.emit('showSearchbar', true);
+        this.globalStore['showSearchbar'] = true;
         this.adminTools = !this.subscribable && this.checkPermission('is_admin');
 
         this.loaderEvent();

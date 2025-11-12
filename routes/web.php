@@ -106,6 +106,7 @@ Route::withoutMiddleware('auth')->group(function() {
     /*** Kanbans ***/
     Route::get('kanbans/list', 'KanbanController@list');
     Route::get('kanbans/{kanban}/copy', 'KanbanController@copyKanban');
+    Route::post('kanbans/{kanban}/favour', 'KanbanController@favourKanban');
     Route::get('export_csv/{kanban}', 'KanbanController@exportKanbanCsv');
     Route::get('export_pdf/{kanban}', 'KanbanController@exportKanbanPdf');
     Route::resource('kanbans', 'KanbanController');
@@ -391,6 +392,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('statusdefinitions', 'StatusDefinitionController');
 
     Route::resource('subjects', 'SubjectController');
+
+    /*** Tags ***/
+    Route::get('tags/list', 'TagsController@list');
+    Route::get('tags/type', 'TagsController@type');
+    Route::post('tags/attach', 'TagsController@attach');
+    Route::resource('tags', 'TagsController');
 
     Route::resource('tasks', 'TaskController');
 

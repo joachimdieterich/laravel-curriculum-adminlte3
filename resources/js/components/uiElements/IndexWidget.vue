@@ -72,6 +72,9 @@
                 </slot>
             </div>
 
+            <div class="position-absolute additional-buttons">
+                <slot name="additional-button"></slot>
+            </div>
             <div v-if="(item.owner_id == $userId && !showSubscribable)
                     || (item.allow_copy && (modelName != 'Plan' || checkPermission('is_teacher')))
                     || (checkPermission('is_teacher') && (showSubscribable || modelName == 'Exam'))
@@ -248,6 +251,10 @@ export default {
 }
 </script>
 <style>
+.additional-buttons {
+    top: 1px;
+    right: 20px;
+}
 .not-allowed {
     cursor: not-allowed;
     filter: opacity(50%);

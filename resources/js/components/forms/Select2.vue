@@ -15,14 +15,14 @@
                     {{ trans('global.' + model + '.title_singular') }}
                 </span>
                 <span v-if="multiple">
-                    <span class="btn btn-info btn-xs deselect-all pull-right">
+                    <slot name="buttons"></slot>
+                    <span class="btn btn-info btn-xs deselect-all pull-right" @click="deselectAll">
                         {{ trans("global.deselect_all") }}
-                    </span>
-                    <span class="btn btn-info btn-xs select-all pull-right mr-1">
-                        {{ trans("global.select_all") }}
                     </span>
                 </span>
             </label>
+
+            <slot name="pre-dropdown"></slot>
 
             <select
                 :name="id + '[]'"
@@ -129,15 +129,27 @@ export default {
             type: String,
             default: '',
         },
+        additional_query_param: {
+            type: Object,
+            default: {},
+        },
     },
     data() {
         return {
             componentId: this.$.uid,
             componentInstance: null,
-            currentSelection: []
+            currentSelection: [],
+            values1: []
         }
     },
     methods: {
+        deselectAll() {
+            this.componentInstance.trigger({
+                type: 'select2:clear',
+                params: {}
+            });
+            // this.componentInstance.val(null).trigger('change');
+        },
         formatText(icon) {
             return $('<span class="' + $(icon.element).data('class') + '"><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
         },
@@ -153,10 +165,15 @@ export default {
                         url: this.url,
                         dataType: 'json',
                         data: function(params) {
-                            return {
+                            let query = {
                                 term: params.term || this.term,
                                 page: params.page || 1
-                            }
+                            };
+                            Object.keys(this.additional_query_param).forEach(parameterName => {
+                                query[parameterName] = this.additional_query_param[parameterName];
+                            })
+
+                            return query;
                         }.bind(this),
                         cache: true,
                     },
@@ -175,36 +192,33 @@ export default {
             this.componentInstance.on("select2:select", function(e) {
                 this.$emit("selectedValue", this.componentInstance.select2("data").map(i => i['id']));
             }.bind(this))
+            .on("select2:clear", function() {
+                this.$emit("cleared");
+                this.componentInstance.val(null).trigger('change');
+            }.bind(this))
             .on("select2:unselect", function(e) {
                 this.$emit("selectedValue", this.componentInstance.select2("data").map(i => i[this.option_id]));
                 // prevent toggling the dropdown after removing an option
                 e.params.originalEvent.stopPropagation();
-            }.bind(this))
-            .on("select2:open", function(e) {
-                // if (!this.multiple) {
-                //     this.componentInstance.val(null).trigger('change'); //reset selection, only if not multiple = true
-                // }
             }.bind(this));
-                // .val(this.selected).trigger('change'); //wont work for ajax -> data isn't present yet
 
             if (typeof this.selected === 'object' || this.selected !== false) {
                 let selectedParam = '';
                 this.componentInstance.val(null).trigger('change'); //reset selection
-                switch (typeof (this.selected)) {
-                    case 'string':
-                    case 'number': selectedParam = encodeURIComponent(this.selected);
-                        break;
-                    case 'array': selectedParam = encodeURIComponent(this.selected.join());
-                        break;
-                    case 'object': selectedParam = encodeURIComponent(this.selected);
-                    break;
-                    default:
-                        console.log(typeof this.selected);
-                        console.log(this.selected);
-                        break;
+
+                if (typeof (this.selected) === 'string'
+                    || typeof (this.selected) === 'number'
+                    || typeof (this.selected) === 'object'
+                ) {
+                    selectedParam = encodeURIComponent(this.selected);
+                } else if(typeof (this.selected) === 'array') {
+                    selectedParam = encodeURIComponent(this.selected.join());
+                } else {
+                    console.log(typeof this.selected);
+                    console.log(this.selected);
                 }
 
-                if (this.url !== '' && selectedParam != '') {
+                if (this.url !== '' && selectedParam != '' && selectedParam !== null) {
                     // cut off parameters for this request
                     axios.get(this.url.split('?')[0] + "?selected=" + selectedParam)
                         .then((res) => {
@@ -232,6 +246,10 @@ export default {
         list: function() {
             this.loader();
         },
+        selected: function() {
+            this.loader();
+            this.componentInstance.trigger('change');
+        },
     },
     mounted() {
         this.loader();
@@ -239,6 +257,9 @@ export default {
 }
 </script>
 <style>
+.additional-button {
+    margin-left: 1em;
+}
 .select2-container .select2-selection--single {
     min-height: 38px;
     height: auto!important;

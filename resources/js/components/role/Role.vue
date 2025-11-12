@@ -13,7 +13,7 @@
                         v-permission="'organization_edit'"
                         class="card-tools pr-2"
                     >
-                        <a @click="editRole(this.currentRole)">
+                        <a @click="editRole(this.currentRole)" role="button">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
@@ -54,6 +54,10 @@
             </div>
         </div>
 
+        <tag-card
+            :tags="role.tags"
+        ></tag-card>
+
         <Teleport to="body">
             <RoleModal/>
         </Teleport>
@@ -62,11 +66,13 @@
 <script>
 import RoleModal from "../role/RoleModal.vue";
 import {useGlobalStore} from "../../store/global";
+import TagCard from "../tag/TagCard.vue";
 
 export default {
     name: "role",
     components: {
         RoleModal,
+        TagCard,
     },
     props: {
         role: {
@@ -90,7 +96,7 @@ export default {
 
         this.$eventHub.on('role-updated', (role) => {
             this.currentRole = role;
-            window.location.reload(); //reloaad to get permissions
+            window.location.reload(); //reload to get permissions
         });
     },
     methods: {

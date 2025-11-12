@@ -148,7 +148,9 @@
                     localStorage.setItem('menu_toggle_class', 'sidebar-collapse');
                 }
             }
+        </script>
 
+        <script type="module">
             if (localStorage.getItem('menu_toggle_class') === 'sidebar-collapse') {
                 $("body").addClass('sidebar-collapse');
             }

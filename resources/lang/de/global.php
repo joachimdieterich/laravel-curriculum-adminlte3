@@ -75,6 +75,7 @@ return [
     'generate' => 'erzeugen',
     'share' => 'Teilen',
     'pleaseSelect' => 'Bitte wählen ',
+    'pleaseSelectOptional' => 'Bitte wählen (Optional)',
     'loading' => 'Wird geladen...',
     'waitForFile' => 'Datei wird erzeugt...',
     'areYouSure' => 'Sind Sie sicher?',
@@ -337,8 +338,6 @@ return [
     'firstname' => 'Vorname',
     'lastname' => 'Nachname',
     'phone' => 'Telefon',
-    'tags' => 'Tags',
-    'tag' => 'Tag',
     'photo' => 'Foto',
     'statuses' => 'Status',
     'attachment' => 'Anhang',
@@ -387,7 +386,6 @@ return [
     'inbox' => 'Posteingang',
     'recipient' => 'Empfänger',
     'message_subject' => 'Betreff',
-    'message' => 'Nachricht',
     'comment' => 'Kommentar',
     'commentable' => 'Kommentare aktivieren',
     'show_comments' => 'Kommentare anzeigen',
@@ -439,6 +437,35 @@ return [
         'delete' => 'Berechtigung löschen',
         'delete_helper' => 'Soll die Berechtigung sowie die zugehörigen Daten gelöscht werden?',
 
+    ],
+    'tag' => [
+        'add_favourite' => 'Favorit hinzufügen',
+        'remove_favourite' => 'Favorit entfernen',
+        'favourite' => [
+            'singular' => 'Favorit',
+            'plural' => 'Favoriten',
+        ],
+        'types' => [
+            'App\\Kanban' => 'Pinnwand',
+            'App\\Role' => 'Rolle',
+            'App\\User' => 'Benutzer',
+            'App\\Permission' => 'Berechtigung',
+        ],
+        'type' => [
+            'title' => 'Typen',
+            'title_singular' => 'Typ',
+        ],
+        'global' => 'Bereichsübergreifend',
+        'create_global_question_explanation' => 'Wird ein Tag bereichsübergreifend angelegt, kann er auch außerhalb von :context verwendet werden.',
+        'name' => 'Tag-Name',
+        'title' => 'Tags',
+        'title_singular' => 'Tag',
+        'create_new_title' => 'Neuen Tag anheften',
+        'no_tags' => 'Keine Tags vorhanden',
+        'create' => 'Tag erstellen',
+        'edit' => 'Tag bearbeiten',
+        'delete' => 'Tag löschen',
+        'delete_helper' => 'Soll der Tag sowie die zugehörigen Daten gelöscht werden?',
     ],
     'organization_management' => 'Organisationsverwaltung',
     'organization' => [
@@ -1353,4 +1380,7 @@ return [
         'delete' => 'Niveau löschen',
         'delete_helper' => 'Soll das Niveau gelöscht werden?',
     ],
+    'system_config' => [
+        'title' => 'Systemkonfiguration'
+    ]
 ];

@@ -67,6 +67,7 @@ return [
     'generate' => 'Generate',
     'share' => 'Share',
     'pleaseSelect' => 'Please select',
+    'pleaseSelectOptional' => 'Please select (optional)',
     'loading' => 'Loading...',
     'waitForFile' => 'Generating file...',
     'areYouSure' => 'Are you sure?',
@@ -324,8 +325,6 @@ return [
     'first_name' => 'First name',
     'last_name' => 'Last name',
     'phone' => 'Phone',
-    'tags' => 'Tags',
-    'tag' => 'Tag',
     'photo' => 'Photo',
     'statuses' => 'Statuses',
     'attachment' => 'Attachment',
@@ -374,7 +373,6 @@ return [
     'inbox' => 'Inbox',
     'recipient' => 'Recipient',
     'message_subject' => 'Subject',
-    'message' => 'Message',
     'comment' => 'Comment',
     'commentable' => 'commentable',
     'show_comments' => 'Show comments',
@@ -421,6 +419,32 @@ return [
         'title_singular' => 'Permission',
         'create' => 'Create Permission',
         'edit' => 'Edit Permission',
+    ],
+    'tag' => [
+        'add_favourite' => 'Add favourite',
+        'remove_favourite' => 'Remove favourite',
+        'favourite' => [
+            'singular' => 'Favourite',
+            'plural' => 'Favourites',
+        ],
+        'types' => [
+            'App\\Kanban' => 'Kanban',
+            'App\\Role' => 'Role',
+            'App\\User' => 'User',
+            'App\\Permission' => 'Permission',
+        ],
+        'global' => 'Cross-sector',
+        'create_global_question_explanation' => 'If a tag is created cross-sector, it can also be used outside of :context.',
+        'name' => 'Tag name',
+        'title' => 'Tags',
+        'title_singular' => 'Tag',
+        'create_new_title' => 'Attach new tag',
+        'no_tags' => 'No tags present',
+        'create' => 'Crate tag',
+        'edit' => 'Edit tag',
+        'type' => 'Typ',
+        'delete' => 'Delete tag',
+        'delete_helper' => 'Should the tag be deleted and its corresponded data?',
     ],
     'organization_management' => 'Organizations',
     'organization' => [
@@ -1300,4 +1324,7 @@ return [
         'delete' => 'Delete level',
         'delete_helper' => 'Should level be deleted?',
     ],
+    'system_config' => [
+        'title' => 'System configuration'
+    ]
 ];

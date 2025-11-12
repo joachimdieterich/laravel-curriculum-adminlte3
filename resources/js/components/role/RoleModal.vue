@@ -46,15 +46,32 @@
                                 />
                                 <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
                             </div>
+                            <tag-multiselect
+                                type="App\Role"
+                                :model-id="this.form.id"
+                                :selectedTags="this.selectedTags"
+                                @selectedValue="(data) => {
+                                    this.form.tags = data;
+                                }"
+                                @cleared="() => {
+                                    this.form.tags = [];
+                                }"
+                                @tag-attached="(tag) => {
+                                    this.updateSelectedTags(tag.id);
+                                }"
+                            ></tag-multiselect>
                             <Select2
                                 id="permissions"
                                 name="permissions"
                                 url="/permissions"
                                 model="permission"
                                 :multiple="true"
-                                :selected="getSelected()"
+                                :selected="getSelectedPermissions()"
                                 @selectedValue="(id) => {
                                     this.form.permissions = id;
+                                }"
+                                @cleared="() => {
+                                    this.form.permissions = [];
                                 }"
                             />
                         </div>
@@ -88,10 +105,12 @@
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
+import TagMultiselect from "../tag/TagMultiselect.vue";
 
 export default {
     name: 'role-modal',
     components: {
+        TagMultiselect,
         Select2,
     },
     props: {
@@ -113,7 +132,10 @@ export default {
                 id:'',
                 title: '',
                 permissions: '',
+                tags: [],
             }),
+            params: {},
+            selectedTags: []
         }
     },
     methods: {
@@ -144,13 +166,29 @@ export default {
                     console.log(e.response);
                 });
         },
-        getSelected() {
-            if (this.form.permissions[0]?.title){
-                return this.form.permissions.map(p => p.id);
-            } else {
-                return this.form.permissions;
+        getSelectedPermissions(permissions) {
+            let base = permissions ?? this.form.permissions;
+
+            if (base[0]?.title){
+                return base.map(p => p.id);
             }
+
+            return base;
         },
+        getSelectedTags(tags) {
+            if (tags[0]?.name){
+                return tags.map(p => p.id);
+            }
+
+            return tags;
+        },
+        updateSelectedTags(newTag) {
+            if (newTag !== undefined) {
+                this.form.tags.push(newTag)
+            }
+
+            this.selectedTags = this.getSelectedTags(this.form.tags);
+        }
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
@@ -158,8 +196,12 @@ export default {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
                 this.form.reset();
+                this.params = params;
                 if (typeof (params) !== 'undefined') {
+                    params.permissions = this.getSelectedPermissions(params.permissions);
+                    params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
+                    this.updateSelectedTags();
                     if (this.form.id !== '') {
                         this.method = 'patch';
                     } else {

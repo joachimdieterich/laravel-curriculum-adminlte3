@@ -12,7 +12,7 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 
 .dataTable td, .dataTable th {
     padding: 5px;
-} 
+}
 .dataTable tbody tr {
     border-bottom: 1px solid lightgray;
 }
@@ -162,6 +162,10 @@ textarea { min-height: 150px; }
     color: #dc3545;
     font-size: 0.8rem;
     width: min-content;
+}
+.error-block-wide {
+    @extend .error-block;
+    width: unset;
 }
 // TinyMCE
 .tox.tox-tinymce-aux,

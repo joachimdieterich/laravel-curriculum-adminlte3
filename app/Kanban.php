@@ -3,12 +3,13 @@
 namespace App;
 
 use DateTimeInterface;
-use Illuminate\Broadcasting\Channel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Tags\HasTags;
 
 /**
  * @OA\Schema(
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Kanban extends Model
 {
-    use BroadcastsEvents;
+    use BroadcastsEvents, HasTags;
 
     protected $guarded = [];
 
@@ -44,6 +45,8 @@ class Kanban extends Model
         'updated_at'            => 'datetime',
         'created_at'            => 'datetime',
     ];
+
+    protected $appends = ['is_favourited'];
 
     public function broadcastOn($event): array
     {
@@ -72,6 +75,13 @@ class Kanban extends Model
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    public function isFavourited(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->hasTag(trans('global.tag.favourite.singular')),
+        );
     }
 
     public function path(): string
@@ -108,6 +118,7 @@ class Kanban extends Model
                 ])->orderBy('order_id');
             },
             'medium',
+            'tags'
         ])->find($this->id);
     }
 

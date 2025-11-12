@@ -8,6 +8,7 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/sass/app.scss', 'resources/js/app.js'],
+            refresh: ['resources/sass/app.scss'],
         }),
         vue({
             template: {

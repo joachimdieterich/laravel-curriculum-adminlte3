@@ -57,8 +57,6 @@ export default {
         },
         userHasReaction() {
             if (this.likes === null || this.likes === undefined) {
-                console.log(this.likes);
-                console.log(this.model);
                 return;
             }
 

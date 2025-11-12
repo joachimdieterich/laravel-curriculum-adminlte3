@@ -50,10 +50,20 @@ import _ from 'lodash'; //needed to get
 /**
  * search for key in language file
  * @param {String} key
+ * @param {Object} replacements
  * @returns translated String or key if not found
  */
-app.config.globalProperties.trans = (key) => {
-    return _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
+app.config.globalProperties.trans = (key, replacements) => {
+    let translatedString = _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
+    if (replacements !== undefined && replacements.length === 0) {
+        return translatedString;
+    }
+
+    $.each(replacements, function (key, replacementString) {
+        translatedString = translatedString.replace(':' + key, replacementString);
+    });
+
+    return translatedString;
 };
 
 import VSwatches from 'vue3-swatches';
@@ -236,6 +246,15 @@ app.config.globalProperties.errorMessage = (error, fallback = 'global.error.defa
     return msg;
 };
 
+// Custom filter
+app.config.globalProperties.formatDate = (value) => {
+    if (value) {
+        return window.moment(String(value)).format('DD.MM.YYYY [um] hh:mm')
+    }
+
+    return value;
+};
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -333,6 +352,10 @@ app.component('plan-achievements', defineAsyncComponent(() => import('./componen
 
 app.component('roles', defineAsyncComponent(() => import('./components/role/Roles.vue')));
 app.component('role', defineAsyncComponent(() => import('./components/role/Role.vue')));
+
+app.component('tag', defineAsyncComponent(() => import('./components/tag/Tag.vue')));
+app.component('tags', defineAsyncComponent(() => import('./components/tag/Tags.vue')));
+app.component('tag-card', defineAsyncComponent(() => import('./components/tag/TagCard.vue')));
 
 app.component('users', defineAsyncComponent(() => import('./components/user/Users.vue')));
 app.component('user', defineAsyncComponent(() => import('./components/user/User.vue')));

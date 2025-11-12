@@ -387,8 +387,8 @@ class KanbanController extends Controller
                 'order_id'   => $status->order_id,
                 'kanban_id'  => $kanbanCopy->id,
                 'color'      => $status->color,
-                'locked'     => $kanbanCopy->locked ?? false,
-                'visibility' => $kanbanCopy->visibility ?? true,
+                'locked'     => $status->locked ?? false,
+                'visibility' => $status->visibility ?? true,
                 'owner_id'   => auth()->user()->id,
             ]);
 

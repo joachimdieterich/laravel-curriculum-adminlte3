@@ -181,24 +181,7 @@ class KanbanItemController extends Controller
     {
         abort_unless(Gate::allows('kanban_delete') and $kanbanItem->isEditable(null, $this->getCurrentToken()), 403);
 
-        Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
-
-        $kanbanItemForEvent = $kanbanItem;
-
-        $kanbanItem->mediaSubscriptions->each(function (MediumSubscription $subscription) {
-            // hack to skip setting medium_id of model to null
-            if (is_null($subscription->additional_data)) $subscription->additional_data = true;
-            app(MediumSubscriptionController::class)->destroy($subscription);
-        });
-        $kanbanItem->subscriptions()->delete();
-        $kanbanItem->delete();
-
-        if (request()->wantsJson()) {
-            return [
-                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                'message' =>  $kanbanItemForEvent
-            ];
-        }
+        $kanbanItem->delete(); // further deletion logic handled in booted()-function
     }
 
     public function copyItem(KanbanItem $item)

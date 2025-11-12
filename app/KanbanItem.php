@@ -223,4 +223,15 @@ class KanbanItem extends Model
     {
         return $this->kanban->isEditable($user, $sharing_token);
     }
+    protected static function booted()
+    {
+        static::deleting(function (KanbanItem $item) {
+            $item->mediaSubscriptions->each(function (MediumSubscription $subscription) {
+                // hack to skip setting medium_id of model to null
+                if (is_null($subscription->additional_data)) $subscription->additional_data = true;
+                // can't call delete()-function of MediumSubscription-model (in general)
+                app(\App\Http\Controllers\MediumSubscriptionController::class)->destroy($subscription);
+            });
+        });
+    }
 }

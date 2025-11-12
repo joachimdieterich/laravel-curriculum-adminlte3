@@ -133,19 +133,7 @@ class KanbanStatusController extends Controller
     {
         abort_unless((\Gate::allows('kanban_delete') and $kanbanStatus->isEditable(null, $this->getCurrentToken())), 403);
 
-        $kanbanStatusForEvent = $kanbanStatus;
-
-        $kanbanStatus->items()->delete();
-        Kanban::find($kanbanStatus->kanban_id)->touch('updated_at'); //To get Sync working
-
-        $kanbanStatus->delete();
-
-        if (request()->wantsJson()) {
-            return [
-                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                'message' =>  $kanbanStatusForEvent
-            ];
-        }
+        $kanbanStatus->delete(); // further deletion logic handled in booted()-function
     }
 
     public function copyStatus(KanbanStatus $status, Request $request)

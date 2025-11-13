@@ -223,7 +223,6 @@ class KanbanItemController extends Controller
                     'subscribable_type' => $mediaSubscription->subscribable_type,
                     'sharing_level_id'  => $mediaSubscription->sharing_level_id,
                     'visibility'        => $mediaSubscription->visibility,
-                    'additional_data'   => null,
                     'owner_id'          => auth()->user()->id,
                 ]);
             }

@@ -184,7 +184,6 @@ class KanbanStatusController extends Controller
                         'subscribable_id'   => $itemCopy->id,
                         'sharing_level_id'  => $mediaSubscription->sharing_level_id,
                         'visibility'        => $mediaSubscription->visibility,
-                        'additional_data'   => $mediaSubscription->additional_data,
                         'owner_id'          => auth()->user()->id,
                     ]);
                 }

@@ -269,22 +269,7 @@ class KanbanController extends Controller
     {
         abort_unless((Gate::allows('kanban_delete') and $kanban->isAccessible()), 403);
 
-        // delete medium if edusharing-medium
-        if ($kanban->medium_id) {
-            $medium = $kanban->medium;
-
-            if ($medium->adapter == 'edusharing') {
-                $medium->subscriptions()->delete();
-                $medium->delete();
-            }
-        }
-
-        // delete relations
-        $kanban->items()->delete();
-        $kanban->statuses()->delete();
-        $kanban->subscriptions()->delete();
-
-        return $kanban->delete();
+        $kanban->delete();
     }
 
     public function exportKanbanCsv(Kanban $kanban)

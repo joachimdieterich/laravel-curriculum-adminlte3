@@ -182,16 +182,14 @@ class KanbanItemController extends Controller
         abort_unless(Gate::allows('kanban_delete') and $kanbanItem->isEditable(null, $this->getCurrentToken()), 403);
 
         $kanbanItem->delete(); // further deletion logic handled in booted()-function
+        KanbanStatus::find($kanbanItem->kanban_status_id)->touch('updated_at'); // to trigger add-event for websockets
     }
 
     public function copyItem(KanbanItem $item)
     {
-        $order_id = DB::table('kanban_items')
-            ->where('kanban_id', $item->kanban_id)
-            ->where('kanban_status_id', $item->kanban_status_id)
-            ->max('order_id');
+        $order_id = KanbanItem::where('kanban_status_id', $item->kanban_status_id)->max('order_id');
 
-        $itemCopy = KanbanItem::Create([
+        $itemCopy = KanbanItem::create([
             'title'             => '[Kopie] ' . $item->title,
             'description'       => $item->description,
             'order_id'          => $order_id + 1,
@@ -207,28 +205,22 @@ class KanbanItemController extends Controller
         ]);
 
         foreach ($item->mediaSubscriptions as $mediaSubscription) {
+            // if Medium is external, we need to copy the usage
             $usage = $mediaSubscription->additional_data;
-            // if Medium is external, we need to create a seperate Usage for the new subscription
-            if (!is_null($usage)) {
-                app(\App\Interfaces\Implementations\EdusharingMediaAdapter::class)->createUsage(
-                    $mediaSubscription->medium_id,
-                    'App\\KanbanItem',
-                    $itemCopy->id,
-                    $usage["nodeId"]
-                );
-            } else { // local Media can simply be re-subscribed
-                MediumSubscription::Create([
-                    'medium_id'         => $mediaSubscription->medium_id,
-                    'subscribable_id'   => $itemCopy->id,
-                    'subscribable_type' => $mediaSubscription->subscribable_type,
-                    'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                    'visibility'        => $mediaSubscription->visibility,
-                    'owner_id'          => auth()->user()->id,
-                ]);
-            }
+            if (!is_null($usage)) $usage["isCopy"] = true; // set flag so this subscription doesn't have access to delete the usage
+
+            MediumSubscription::create([
+                'medium_id'         => $mediaSubscription->medium_id,
+                'subscribable_id'   => $itemCopy->id,
+                'subscribable_type' => $mediaSubscription->subscribable_type,
+                'sharing_level_id'  => $mediaSubscription->sharing_level_id,
+                'visibility'        => $mediaSubscription->visibility,
+                'additional_data'   => $usage,
+                'owner_id'          => auth()->user()->id,
+            ]);
         }
 
-        KanbanStatus::find($item->kanban_status_id)->touch('updated_at'); //To get Sync after media upload working
+        KanbanStatus::find($item->kanban_status_id)->touch('updated_at'); // to trigger add-event for websockets
 
         return KanbanItem::with([
                 'comments',

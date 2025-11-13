@@ -111,7 +111,6 @@ class MediumSubscriptionController extends Controller
     public function destroy(MediumSubscription $mediumSubscription)
     {
         $this->handleDelete($mediumSubscription);
-        return response(null, 204);
     }
 
     /**
@@ -124,7 +123,6 @@ class MediumSubscriptionController extends Controller
     {
         $input = $this->validateRequest();
         $this->handleDelete($input);
-        return response(null, 204);
     }
 
     protected function handleDelete(mixed $model)
@@ -149,29 +147,27 @@ class MediumSubscriptionController extends Controller
 
         $subscription = $query->first();
 
-        // if subscription doesn't exist => curriculum-media attached to a model->medium_id
+        // if subscription doesn't exist => local-media attached to a model->medium_id
         if (isset($subscription)) {
-            // additional-data is needed to delete the usage
-            $additional_data = $subscription->additional_data;
+            $usage = $subscription->additional_data;
             // subscription needs to be deleted before deleting the medium
             // and it also needs to be deleted through a query (model->delete() will throw an error)
             $query->delete();
-
-            if (isset($additional_data)) {
-                // delete the usage
+            // copied subscriptions don't have access to delete the usage
+            if (isset($usage) and $usage["isCopy"] !== true) {
                 $edusharing = new Edusharing;
                 $edusharing->deleteUsage(
-                    $additional_data['nodeId'],
-                    $additional_data['usageId'],
+                    $usage['nodeId'],
+                    $usage['usageId'],
                 );
                 // and then delete the medium-entry
                 if ($unique) Medium::where('id', $model['medium_id'])->delete();
             }
 
-            $model['subscribable_type']::find($model['subscribable_id'])->touch(); //To get Sync after media upload working
+            $model['subscribable_type']::find($model['subscribable_id'])->touch(); // to trigger update-event for websockets
         }
 
-        return true;
+        return response(null, 204);
     }
 
     protected function validateRequest()

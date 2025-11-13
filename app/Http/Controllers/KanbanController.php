@@ -364,7 +364,7 @@ class KanbanController extends Controller
         return $this->show($kanban, $input['sharing_token']);
     }
 
-    public function copyKanban(Kanban $kanban, Request $request)
+    public function copyKanban(Kanban $kanban)
     {
         abort_unless(Gate::allows('kanban_create') and $kanban->allow_copy, 403);
 
@@ -382,7 +382,7 @@ class KanbanController extends Controller
 
         $statuses = $kanban->statuses;
         foreach ($statuses as $status) {
-            $statusCopy = KanbanStatus::Create([
+            $statusCopy = KanbanStatus::create([
                 'title'      => $status->title,
                 'order_id'   => $status->order_id,
                 'kanban_id'  => $kanbanCopy->id,
@@ -393,7 +393,7 @@ class KanbanController extends Controller
             ]);
 
             foreach ($status->items as $item) {
-                $kanbanItemCopy = KanbanItem::Create([
+                $itemCopy = KanbanItem::create([
                     'title'            => $item->title,
                     'description'      => $item->description,
                     'order_id'         => $item->order_id,
@@ -408,19 +408,21 @@ class KanbanController extends Controller
                     'owner_id'         => auth()->user()->id,
                 ]);
 
-                // TODO: copied edusharing-media need newly created usages and media records
-                // INFO: is it even possible to create new usages, since we can't be sure that the user has access to the same media?
-                // foreach ($item->mediaSubscriptions as $mediaSubscription) {
-                //     MediumSubscription::create([
-                //         'medium_id'         => $mediaSubscription->medium_id,
-                //         'subscribable_type' => $mediaSubscription->subscribable_type,
-                //         'subscribable_id'   => $kanbanItemCopy->id,
-                //         'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                //         'visibility'        => $mediaSubscription->visibility,
-                //         'additional_data'   => $mediaSubscription->additional_data,
-                //         'owner_id'          => auth()->user()->id,
-                //     ]);
-                // }
+                foreach ($item->mediaSubscriptions as $mediaSubscription) {
+                    // if Medium is external, we need to copy the usage
+                    $usage = $mediaSubscription->additional_data;
+                    if (!is_null($usage)) $usage["isCopy"] = true; // set flag so this subscription doesn't have access to delete the usage
+
+                    MediumSubscription::create([
+                        'medium_id'         => $mediaSubscription->medium_id,
+                        'subscribable_id'   => $itemCopy->id,
+                        'subscribable_type' => $mediaSubscription->subscribable_type,
+                        'sharing_level_id'  => $mediaSubscription->sharing_level_id,
+                        'visibility'        => $mediaSubscription->visibility,
+                        'additional_data'   => $usage,
+                        'owner_id'          => auth()->user()->id,
+                    ]);
+                }
             }
         }
 

@@ -259,7 +259,6 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
-import Reaction from "../reaction/Reaction.vue";
 import Favourite from "../tag/Favourite.vue";
 DataTable.use(DataTablesCore);
 
@@ -422,7 +421,6 @@ export default {
     },
     components: {
         Favourite,
-        Reaction,
         SubscribeModal,
         SubscribeKanbanModal,
         MediumModal,

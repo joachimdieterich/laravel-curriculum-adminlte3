@@ -223,6 +223,7 @@ export default {
                     // cut off parameters for this request
                     axios.get(this.url.split('?')[0] + "?selected=" + selectedParam)
                         .then((res) => {
+                            console.log(res.data);
                             res.data.forEach((entry) => {
                                 let label = entry[this.option_label];
                                 if ((typeof label) === 'undefined') {

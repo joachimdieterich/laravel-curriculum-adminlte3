@@ -12,7 +12,6 @@ class TagService
 {
     public function getEntriesForSelect2ByModel(
         array $selected,
-        string $type,
         string $term = '',
         int $page = 1,
         Tag $model = new Tag(),
@@ -20,7 +19,7 @@ class TagService
         if (!empty($selected)) {
             $entries = $model->fromIdListForSelect2($selected);
         } else {
-            $entries = $model->fromParamForSelect2($term, $type);
+            $entries = $model->fromParamForSelect2($term);
         }
 
         $entries["result"]->map(
@@ -44,45 +43,6 @@ class TagService
 
         $results = array(
             "results"    => $entries["result"],
-            "pagination" => array(
-                "more" => $morePages
-            )
-        );
-
-        return response()->json($results);
-    }
-
-    public function formatCollectionForSelect2ByModel(
-        Collection $collection,
-        ?Collection $keyCollection = null,
-        int $page = 1,
-    ): JsonResponse {
-        $resultCount = 25;
-        $offset      = ($page - 1) * $resultCount;
-
-        $endCount  = $offset + $resultCount;
-        $morePages = $collection->count() > $endCount;
-
-        if ($keyCollection !== null) {
-            $remappedCollection = $collection->map(static function (string $value, int $key) use ($keyCollection) {
-                $obj       = new stdClass();
-                $obj->id   = $keyCollection[$key];
-                $obj->text = $value;
-
-                return $obj;
-            });
-        } else {
-            $remappedCollection = $collection->map(static function (string $value, int $key) {
-                $obj       = new stdClass();
-                $obj->id   = $key;
-                $obj->text = $value;
-
-                return $obj;
-            });
-        }
-
-        $results = array(
-            "results"    => $remappedCollection,
             "pagination" => array(
                 "more" => $morePages
             )

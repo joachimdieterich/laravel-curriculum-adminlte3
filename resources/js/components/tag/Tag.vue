@@ -11,11 +11,6 @@
                     </div>
                 </div>
 
-                <div class="card-body">
-                    <p v-if="this.tag.type === null">Typ: Global</p>
-                    <p v-else>Typ: {{ trans('global.tag.types.' + this.tag.type)}}</p>
-                </div>
-
                 <div class="card-footer">
                     <small class="float-right">
                         {{ this.formatDate(this.tag.updated_at) }}

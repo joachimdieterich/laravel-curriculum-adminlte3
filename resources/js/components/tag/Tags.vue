@@ -4,31 +4,6 @@
             <ul class="nav nav-pills py-2"
                 role="tablist"
             >
-                <li class="nav-item pointer">
-                    <a id="tags-filter-all"
-                       class="nav-link"
-                       :class="{'active': filter === null}"
-                       data-toggle="pill"
-                       role="tab"
-                       @click="selectFilter(null)"
-                    >
-                        <i class="fas fa-columns pr-2"></i>
-                        {{ trans('global.all') }} {{ trans('global.tag.title') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer"
-                    v-for="typeObject in typeList"
-                >
-                    <a class="nav-link"
-                       :class="{'active': filter == typeObject.type}"
-                       role="tab"
-                       data-toggle="pill"
-                       @click="selectFilter(typeObject.type)"
-                    >
-                        <i class="fas fa-columns pr-2"></i>
-                        {{ typeObject.label }}
-                    </a>
-                </li>
             </ul>
         </div>
         <div id="tag-content"
@@ -141,14 +116,12 @@ export default {
     },
     data() {
         return {
-            filter: null,
             component_id: this.$.uid,
             tags: null,
             search: '',
             showConfirm: false,
             errors: {},
             currentTag: {},
-            typeList: [],
             testVar: true,
             columns: [
                 {title: 'id', data: 'id'},
@@ -175,12 +148,6 @@ export default {
 
             options.ajax = {
                 url: '/tags/list',
-                data: (d) => {
-                    console.log(d);
-                    d.filter = this.filter;
-
-                    return d;
-                },
             };
 
             return options;
@@ -202,7 +169,6 @@ export default {
                 this.dt.search(filter).draw();
             });
 
-            this.updateTypeList();
         },
         confirmItemDelete(tag) {
             this.currentTag = tag;
@@ -215,7 +181,6 @@ export default {
                     this.tags.splice(index, 1);
                 })
                 .catch(err => {
-                    console.log(err);
                     this.toast.error(this.trans('global.expel_error'));
                 });
         },
@@ -223,20 +188,6 @@ export default {
             const tag = this.tags.find(r => r.id === updatedTag.id);
 
             Object.assign(tag, updatedTag);
-        },
-        updateTypeList() {
-            axios.get('/tags/type?data_only=true')
-                .then((response) => {
-                    this.typeList = response.data;
-                })
-                .catch((err) => {
-                    console.log(err);
-                    this.toast.error(this.trans('global.code_500'));
-                });
-        },
-        selectFilter(type) {
-            this.filter = type;
-            this.dt.draw();
         },
     },
     components: {

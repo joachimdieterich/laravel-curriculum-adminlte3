@@ -5,7 +5,6 @@
         name="tags"
         url="/tags"
         model="tags"
-        :additional_query_param="typeParameter"
         :label="trans('global.tag.title')"
         :multiple="true"
         :selected="selectedTags"
@@ -19,25 +18,15 @@
         <template v-slot:pre-dropdown>
             <inline-modal :open="showNewTagForm" classes="mb-1">
                 <div class="input-group">
-                    <input id="name" name="name" class="form-control tag-name" type="text" v-model="tag.name" :placeholder="trans('global.tag.name') + ' *'">
-                    <span class="custom-control custom-switch custom-switch-on-green my-auto">
-                        <input id="global"
-                               class="custom-control-input pt-1"
-                               type="checkbox"
-                               v-model="tag.global"
-                        />
-                        <label class="custom-control-label ml-2" for="global" data-toggle="tooltip" :title="trans('global.tag.create_global_question_explanation', {'context': '\'' + trans('global.tag.types.' + type) +  '\''})">
-                            {{ trans('global.tag.global') }}?
-                        </label>
-                    </span>
-                        <button
-                            id="tag-save"
-                            class="btn btn-primary ml-2"
-                            :disabled="!tag.name"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
+                    <input id="name" name="name" class="form-control" type="text" v-model="tag.name" :placeholder="trans('global.tag.name') + ' *'">
+                    <button
+                        id="tag-save"
+                        class="btn btn-primary tag-save-button"
+                        :disabled="!tag.name"
+                        @click="submit()"
+                    >
+                        {{ trans('global.save') }}
+                    </button>
                 </div>
             </inline-modal>
         </template>
@@ -63,7 +52,7 @@ export default defineComponent({
         type: {
             required: true,
             type: String,
-            title: "The type of the tag and model"
+            title: "The type of the tagged model"
         },
         modelId: {
             required: true,
@@ -88,23 +77,14 @@ export default defineComponent({
             showNewTagForm: false,
             tag: {
                 name: '',
-                global: false,
             }
         };
     },
     computed: {
-        typeParameter: function () {
-            return {
-                'type': this.type,
-            };
-        },
         attachForm: function() {
-            let type = this.type;
-
             return {
                 'name': this.tag.name,
-                'type': type,
-                'global': this.tag.global,
+                'type': this.type,
                 'taggable_id': this.modelId,
             };
         }
@@ -131,7 +111,9 @@ export default defineComponent({
 </script>
 
 <style>
-    .tag-name {
-        border-radius: 0.25rem !important;
+    .tag-save-button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-left: -1px;
     }
 </style>

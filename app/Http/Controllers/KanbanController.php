@@ -132,8 +132,9 @@ class KanbanController extends Controller
                 'owner'          => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
                 'shared_with_me' => $this->userKanbans(false, request('tags')),
                 'shared_by_me'   => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
+                'all'            => $this->userKanbans(searchTags: request('tags')),
                 'favourite'      => $this->userKanbans(searchTags: [Tag::findFromString(trans('global.tag.favourite.singular'))->id]),
-                default          => $this->userKanbans(searchTags: request('tags')),
+                default          => $this->userKanbans(searchTags: [Tag::findFromString(trans('global.tag.favourite.singular'))->id]),
             };
         }
 

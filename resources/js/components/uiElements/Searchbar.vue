@@ -17,7 +17,7 @@
             <button v-if="filter.searchString.length > 0"
                 id="clearSearch"
                 class="btn position-absolute d-flex align-items-center h-100"
-                :class="{'non-extend-clear-search': searchTagModelContext === null}"
+                :class="{'non-extend-clear-search': searchTagModelContext === null || !checkPermission('tag_access')}"
                 type="button"
                 @click="clearSearch()"
             >
@@ -26,7 +26,7 @@
             <button
                 id="searchButton"
                 class="btn position-absolute d-flex align-items-center rounded-pill h-100 border-0"
-                :class="{'non-extend-search-button': searchTagModelContext === null}"
+                :class="{'non-extend-search-button': searchTagModelContext === null || !checkPermission('tag_access')}"
                 type="button"
                 @click="prepareEvent()"
             >
@@ -112,7 +112,7 @@ export default {
     },
     computed: {
         extendedSearchButtonClasses() {
-            if (this.searchTagModelContext === null) {
+            if (this.searchTagModelContext === null || !this.checkPermission('tag_access')) {
                 return 'd-none';
             }
 

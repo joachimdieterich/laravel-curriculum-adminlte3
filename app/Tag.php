@@ -5,7 +5,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as SupportCollection;
 
 class Tag extends \Spatie\Tags\Tag
 {
@@ -26,24 +25,13 @@ class Tag extends \Spatie\Tags\Tag
 
             $tag->translation = $tag->getTranslations('name')[$tag->getLocale()];
         });
-    }
 
-    public static function getTypesWithGlobal(): SupportCollection
-    {
-        /** @noinspection DynamicInvocationViaScopeResolutionInspection */
-        return static::groupBy(['type'])->orderBy('type')->pluck('type');
-    }
+        static::saving(static function (Tag $tag) {
+            if (!isset($tag->translation)) {
+                return;
+            }
 
-    public static function getTypes(): SupportCollection
-    {
-        /** @noinspection DynamicInvocationViaScopeResolutionInspection */
-        return static::groupBy(['type'])->whereNotNull('type')->orderBy('type')->pluck('type');
-    }
-
-    public static function getTranslatedTypes(): SupportCollection
-    {
-        return self::getTypes()->map(static function (?string $type) {
-            return trans('global.tag.types.' . $type);
+            unset($tag->translation);
         });
     }
 
@@ -64,25 +52,17 @@ class Tag extends \Spatie\Tags\Tag
      */
     public function fromParamForSelect2(
         string $name,
-        string $type,
         array $get = ['id', 'text'],
-        bool $withGlobalType = true,
     ): array {
-        $locale      = static::getLocale();
+        $locale = static::getLocale();
 
         return self::withoutEvents(
-            function () use ($locale, $name, $type, $get, $withGlobalType) {
+            function () use ($locale, $name, $get) {
                 $builder = $this->scopeContaining(
                     static::select(['id', "name->{$locale} as text"]),
                     $name,
                     $locale
-                )->where(function ($builder) use($withGlobalType, $type) {
-                    $builder->where('type', $type);
-
-                    if ($withGlobalType) {
-                        $builder->orWhereNull('type');
-                    }
-                });
+                );
 
                 return [
                     'count'  => $builder->count(),

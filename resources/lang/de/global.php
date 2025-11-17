@@ -445,18 +445,7 @@ return [
             'singular' => 'Favorit',
             'plural' => 'Favoriten',
         ],
-        'types' => [
-            'App\\Kanban' => 'Pinnwand',
-            'App\\Role' => 'Rolle',
-            'App\\User' => 'Benutzer',
-            'App\\Permission' => 'Berechtigung',
-        ],
-        'type' => [
-            'title' => 'Typen',
-            'title_singular' => 'Typ',
-        ],
         'global' => 'Bereichsübergreifend',
-        'create_global_question_explanation' => 'Wird ein Tag bereichsübergreifend angelegt, kann er auch außerhalb von :context verwendet werden.',
         'name' => 'Tag-Name',
         'title' => 'Tags',
         'title_singular' => 'Tag',

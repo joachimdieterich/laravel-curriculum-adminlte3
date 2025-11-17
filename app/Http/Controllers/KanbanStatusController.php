@@ -40,7 +40,7 @@ class KanbanStatusController extends Controller
             'visible_until' => $input['visible_until'] ?? NULL,
             'owner_id' => auth()->user()->id,
         ]);
-        Kanban::find($input['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
+        Kanban::find($input['kanban_id'])->touch('updated_at');
 
         if (request()->wantsJson()) {
             return $kanbanStatus;
@@ -193,7 +193,7 @@ class KanbanStatusController extends Controller
             // }
         }
 
-        Kanban::find($status['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
+        Kanban::find($status['kanban_id'])->touch('updated_at');
 
         return KanbanStatus::with([
                 'items',

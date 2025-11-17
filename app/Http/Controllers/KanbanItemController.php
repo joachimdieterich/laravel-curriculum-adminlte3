@@ -57,7 +57,7 @@ class KanbanItemController extends Controller
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
-        Kanban::find($input['kanban_id'])->touch('updated_at'); //To get Sync after media upload working
+        Kanban::find($input['kanban_id'])->touch('updated_at');
 
         if (request()->wantsJson()) {
             return KanbanItem::with([
@@ -91,7 +91,7 @@ class KanbanItemController extends Controller
         }
 
         foreach ($kanbanStatusToTouch as $kanbanStatusToTouchId) {
-            KanbanStatus::find($kanbanStatusToTouchId)->touch('updated_at'); //To get Sync after media upload working
+            KanbanStatus::find($kanbanStatusToTouchId)->touch('updated_at');
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
@@ -181,7 +181,7 @@ class KanbanItemController extends Controller
     {
         abort_unless(Gate::allows('kanban_delete') and $kanbanItem->isEditable(null, $this->getCurrentToken()), 403);
 
-        Kanban::find($kanbanItem->kanban_id)->touch('updated_at'); //To get Sync after media upload working
+        Kanban::find($kanbanItem->kanban_id)->touch('updated_at');
 
         $kanbanItemForEvent = $kanbanItem;
 
@@ -236,7 +236,7 @@ class KanbanItemController extends Controller
         //     ]);
         // }
 
-        KanbanStatus::find($item->kanban_status_id)->touch('updated_at'); //To get Sync after media upload working
+        KanbanStatus::find($item->kanban_status_id)->touch('updated_at');
 
         return KanbanItem::with([
                 'comments',

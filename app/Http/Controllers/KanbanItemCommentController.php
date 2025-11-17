@@ -21,7 +21,7 @@ class KanbanItemCommentController extends Controller
             'kanban_item_id' => $input['model_id'],
             'user_id' => Auth()->user()->id
         ]);
-        KanbanItem::find($input['model_id'])->touch('updated_at'); //To get Sync after media upload working
+        KanbanItem::find($input['model_id'])->touch('updated_at');
 
         if (request()->wantsJson()) {
             return $comment->with(['user', 'likes'])->find($comment->id);

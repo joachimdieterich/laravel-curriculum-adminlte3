@@ -22,7 +22,6 @@ class TagsController extends Controller
         if (request()->wantsJson()) {
             $input = request()->validate([
                 'selected' => 'sometimes|nullable',
-                'type'     => 'sometimes|string|nullable',
                 'term'     => 'sometimes|string|max:255|nullable',
                 'page'     => 'sometimes|integer',
             ]);
@@ -31,7 +30,6 @@ class TagsController extends Controller
 
             return $service->getEntriesForSelect2ByModel(
                 $selected !== null ? explode(",", $input['selected'] ?? '') : [],
-                $input['type'] ?? '',
                 $input['term'] ?? '',
                 $input['page'] ?? 1,
             );
@@ -48,14 +46,8 @@ class TagsController extends Controller
 
         $builder = Tag::select([
             "id",
-            "type",
             "name->{$locale} as translation",
         ])->where('user_id', auth()->user()->id);
-
-        $filter = request()->input('filter');
-        if ($filter) {
-            $builder->where("type", $filter == 'global' ? null : $filter);
-        }
 
         $data = $dt->eloquent($builder)
             ->filterColumn('translation', function (Builder $query, $keyword) use ($locale) {
@@ -70,7 +62,6 @@ class TagsController extends Controller
     {
         $tag = Tag::findOrCreate(
             $request->get('name'),
-            $request->get('global') ? null : $request->get('type'),
         );
 
         if (request()->wantsJson()) {
@@ -82,7 +73,6 @@ class TagsController extends Controller
     {
         $tag = Tag::findOrCreate(
             $request->get('name'),
-            $request->get('global') ? null : $request->get('type'),
         );
 
         /** @var Role $role */
@@ -96,11 +86,9 @@ class TagsController extends Controller
 
     public function update(UpdateTagRequest $request, Tag $tag)
     {
-        $tag->update($request->all());
+        $tag->update($request->all(['name']));
 
-        if (request()->wantsJson()) {
-            return $tag;
-        }
+        return $tag->refresh();
     }
 
     public function show(Tag $tag)
@@ -120,33 +108,5 @@ class TagsController extends Controller
         if (request()->wantsJson()) {
             return ['message' => $return];
         }
-    }
-
-    public function type(TagService $tagService): JsonResponse
-    {
-        abort_unless(\Gate::allows('tag_access'), 403);
-
-        if (request()->data_only) {
-            $result = [];
-
-            if (Tag::getTypesWithGlobal()->contains(null)) {
-                $result[] = [
-                    'label' => trans('global.tag.global'),
-                    'type' => 'global',
-                ];
-            }
-
-            $tagType = Tag::getTypes();
-            foreach (Tag::getTranslatedTypes() as $index => $translatedType) {
-                $result[] = [
-                    'label' => $translatedType,
-                    'type' => $tagType->pull($index),
-                ];
-            }
-
-            return response()->json($result);
-        }
-
-        return $tagService->formatCollectionForSelect2ByModel(Tag::getTranslatedTypes(), Tag::getTypes());
     }
 }

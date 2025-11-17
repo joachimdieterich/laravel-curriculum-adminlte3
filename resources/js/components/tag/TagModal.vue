@@ -37,22 +37,11 @@
                                     type="text"
                                     class="form-control"
                                     v-model="form.name"
-                                    :readonly="this.method == 'patch'"
                                     placeholder="Name *"
                                     required
                                 />
                                 <p class="error-block-wide" v-if="form.errors.errors.name" v-text="form.errors.errors.name[0]"></p>
                             </div>
-                            <Select2 id="user_id"
-                                     css="mb-0 mt-3"
-                                     :label="trans('global.tag.type.title_singular')"
-                                     model="type"
-                                     url="/tags/type"
-                                     :selected="form.type"
-                                     :placeholder="trans('global.pleaseSelectOptional')"
-                                     :read-only="method === 'patch'"
-                                     @selectedValue="(type) => this.form.type = type[0]"
-                            />
                         </div>
                     </div>
                 </div>
@@ -90,11 +79,6 @@ export default {
     components: {
         Select2,
     },
-    props: {
-        params: {
-            type: Object,
-        },
-    },
     setup() { //use database store
         const globalStore = useGlobalStore();
         return {
@@ -108,7 +92,6 @@ export default {
             form: new Form({
                 id:'',
                 name: '',
-                type: null,
             }),
         }
     },
@@ -146,6 +129,7 @@ export default {
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
+                params['name'] = params.translation ?? '';
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);

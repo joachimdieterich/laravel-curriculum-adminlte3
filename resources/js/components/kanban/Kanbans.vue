@@ -31,19 +31,6 @@
                         {{ trans('global.all') }} {{ trans('global.kanban.title') }}
                     </a>
                 </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="custom-filter-by-organization"
-                        class="nav-link"
-                        :class="filter === 'by_organization' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('by_organization')"
-                    >
-                        <i class="fas fa-university pr-2"></i>
-                        {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
-                    </a>
-                </li>
                 <li
                     v-permission="'kanban_create'"
                     class="nav-item pointer"

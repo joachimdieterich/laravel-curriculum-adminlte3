@@ -128,13 +128,20 @@ class KanbanController extends Controller
                 });
             $kanbans->withAllTags($tags)->get();
         } else {
+            $favKanbans = new Collection();
+
+            $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
+            if ($favTag !== null) {
+                $favKanbans = $this->userKanbans(searchTags: [$favTag->id]);
+            }
+
             $kanbans = match ($request->filter) {
-                'owner'          => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
-                'shared_with_me' => $this->userKanbans(false, request('tags')),
-                'shared_by_me'   => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
-                'all'            => $this->userKanbans(searchTags: request('tags')),
-                'favourite'      => $this->userKanbans(searchTags: [Tag::findFromString(trans('global.tag.favourite.singular'))->id]),
-                default          => $this->userKanbans(searchTags: [Tag::findFromString(trans('global.tag.favourite.singular'))->id]),
+                'owner'           => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
+                'shared_with_me'  => $this->userKanbans(false, request('tags')),
+                'shared_by_me'    => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
+                'all'             => $this->userKanbans(searchTags: request('tags')),
+                'favourite'       => $favKanbans,
+                default           => $favKanbans,
             };
         }
 

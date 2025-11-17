@@ -177,10 +177,10 @@ class LocalMediaAdapter implements MediaInterface
     {
         abort_unless(\Gate::allows('medium_edit'), 403);
 
-        if ($medium->owner_id === auth()->user()->id) {
+        if ($medium->owner_id === auth()->user()->id or is_admin()) {
             $medium->update($this->validateRequest());
 
-            return response()->json(['message' => $medium]);
+            return response()->json($medium);
         } else {
             return response()->json(['errors' => 'Only file-owner can edit'], 403);
         }
@@ -207,18 +207,7 @@ class LocalMediaAdapter implements MediaInterface
                 ->delete();
         }
 
-        if ($medium->subscriptions()->count() <= 1) {
-            if ($medium->mime_type != 'url')
-            {
-                Storage::disk(config('filesystems.default'))->delete($medium->path.$medium->medium_name);
-            }
-
-            $medium->delete();
-        }
-        // axios call?
-        if (request()->wantsJson()) {
-            return ['message' => true];
-        }
+        if (request()->wantsJson()) return true;
     }
 
     public function checkIfUserHasSubscription($subscription)

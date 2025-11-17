@@ -48,7 +48,7 @@
                 v-permission="'external_medium_create, is_teacher'"
                 :id="'media-add'"
                 class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important; border-style: solid !important;"
+                style="min-width: 200px !important; border-color: #F2F4F5; border-style: solid !important;"
                 @click="addMedia()"
             >
                 <a>
@@ -66,29 +66,59 @@
             <!-- Media uploaded from Curriculum -->
             <div v-for="subscription in filteredMedia"
                 class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important;"
+                style="min-width: 200px !important; border-color: #F2F4F5;"
             >
                 <a class="text-decoration-none">
                     <RenderUsage :medium="subscription.medium"/>
                     <span>
                         <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
                             {{ subscription.medium.title ?? subscription.medium.name }}
+                            <p class="text-muted small mt-1" v-html="subscription.medium.description"></p>
                         </span>
                     </span>
-                    <span v-if="subscription.medium.owner_id == $userId"
-                        v-permission="'medium_delete'"
-                        class="position-absolute w-100 p-1 pointer"
-                        style="top: 0;"
+
+                    <div v-if="subscription.owner_id == $userId"
+                        class="btn btn-flat position-absolute pull-right"
+                        style="top: 0; right: 0; background-color: transparent;"
+                        data-toggle="dropdown"
+                        aria-expanded="false"
                     >
-                        <button
-                            id="delete-navigator-item"
-                            class="btn btn-danger btn-sm pull-right"
-                            type="submit"
-                            @click.stop="confirmDelete(subscription);"
+                        <i
+                            class="fa fa-ellipsis-v"
+                            :style="'color:' + (screenWidth > 990 ? $textcolor('#F2F4F5') : '#000')"
+                        ></i>
+                        <div
+                            class="dropdown-menu dropdown-menu-right"
+                            style="z-index: 1050;"
+                            x-placement="left-start"
                         >
-                            <small><i class="fa fa-unlink"></i></small>
-                        </button>
-                    </span>
+                            <button
+                                id="edit-medium-item"
+                                class="dropdown-item py-1 text-secondary"
+                                type="button"
+                                @click.prevent="edit(subscription.medium);"
+                            >
+                                <span>
+                                    <i class="fa fa-pencil mr-2"></i>
+                                    {{ trans('global.medium.edit') }}
+                                </span>
+                            </button>
+
+                            <hr class="my-1">
+
+                            <button
+                                id="delete-medium-item"
+                                class="dropdown-item py-1 text-red"
+                                type="button"
+                                @click.prevent="confirmDelete(subscription);"
+                            >
+                                <span>
+                                    <i class="fa fa-unlink mr-2"></i>
+                                    {{ trans('global.medium.delete_subscription') }}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </a>
             </div>
     
@@ -96,6 +126,7 @@
             <div v-for="medium in filteredExternalMedia"
                 :id="medium.node_id"
                 class="box box-objective nav-item-box-image pointer my-1 pull-left"
+                style="min-width: 200px !important; border-color: #F2F4F5;"
                 @click="show(medium)"
             >
                 <a class="text-decoration-none">
@@ -155,21 +186,25 @@
             </div>
         </div>
 
-    <ConfirmModal
-        :showConfirm="showConfirm"
-        :title="trans('global.medium.delete_subscription')"
-        :description="trans('global.medium.delete_subscription_helper')"
-        css="primary"
-        @close="showConfirm = false"
-        @confirm="() => {
-            showConfirm = false;
-            unlinkMedium();
-        }"
-    />
+        <Teleport to="body">
+            <MediumEditModal/>
+        </Teleport>
+        <ConfirmModal
+            :showConfirm="showConfirm"
+            :title="trans('global.medium.delete_subscription')"
+            :description="trans('global.medium.delete_subscription_helper')"
+            css="primary"
+            @close="showConfirm = false"
+            @confirm="() => {
+                showConfirm = false;
+                unlinkMedium();
+            }"
+        />
     </div>
 </template>
 <script>
 import RenderUsage from "./RenderUsage.vue";
+import MediumEditModal from "../../../../../../../resources/js/components/media/MediumEditModal.vue";
 import ConfirmModal from "../../../../../../../resources/js/components/uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../../../../../../resources/js/store/global.js";
 
@@ -264,13 +299,13 @@ export default {
                     console.log(err);
                 });
         },
-        subscribable_type() {
-            var reference_class = 'App\\TerminalObjective';
-            if (typeof this.model.terminal_objective === 'object') {
-                reference_class = 'App\\EnablingObjective';
-            }
-
-            return reference_class;
+        subscribable_type() { // can't be computed property
+            return typeof this.model.terminal_objective === 'object'
+                ? 'App\\EnablingObjective'
+                : 'App\\TerminalObjective';
+        },
+        edit(medium) {
+            this.globalStore.showModal('medium-edit-modal', medium);
         },
         show(medium) {
             window.open(medium.path, '_blank');
@@ -313,6 +348,10 @@ export default {
                 this.loader();
             }
         });
+        this.$eventHub.on('medium-updated', (updatedMedium) => {
+            let subscription = this.media.find(m => m.medium_id === updatedMedium.id);
+            Object.assign(subscription.medium, updatedMedium)
+        });
     },
     computed: {
         filteredMedia: function() {
@@ -325,10 +364,14 @@ export default {
                 ? this.externalMedia
                 : this.externalMyMedia;
         },
+        screenWidth() {
+            return window.innerWidth;
+        }
     },
     components: {
         RenderUsage,
         ConfirmModal,
+        MediumEditModal,
     },
 }
 </script>

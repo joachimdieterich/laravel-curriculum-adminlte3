@@ -242,13 +242,13 @@ class EdusharingMediaAdapter implements MediaInterface
 
     public function update(Request $request, Medium $medium)
     {
-        abort_unless(\Gate::allows('medium_edit'), 403);
+        abort_unless(\Gate::allows('external_medium_edit'), 403);
 
-        if ($medium->owner_id === auth()->user()->id)
+        if ($medium->owner_id === auth()->user()->id or is_admin())
         {
             $medium->update($this->validateRequest());
 
-            return response()->json(['message' => $medium]);
+            return response()->json($medium);
         }
         else
         {

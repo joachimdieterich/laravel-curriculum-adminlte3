@@ -317,7 +317,7 @@ export default {
                 });
         },
         getSelectedTags(tags) {
-            if (tags[0]?.name){
+            if (tags && tags[0] && tags[0]?.name){
                 return tags.map(p => p.id);
             }
 

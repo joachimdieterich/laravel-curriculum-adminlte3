@@ -16,19 +16,21 @@
         }"
     >
         <template v-slot:pre-dropdown>
-            <inline-modal :open="showNewTagForm" classes="mb-1">
-                <div class="input-group">
-                    <input id="name" name="name" class="form-control" type="text" v-model="tag.name" :placeholder="trans('global.tag.name') + ' *'">
-                    <button
-                        id="tag-save"
-                        class="btn btn-primary tag-save-button"
-                        :disabled="!tag.name"
-                        @click="submit()"
-                    >
-                        {{ trans('global.save') }}
-                    </button>
-                </div>
-            </inline-modal>
+            <drop-down-modal :show-title="false" :show-footer="false" :show="showNewTagForm" classes="mb-1" modal-class="mb-2" modal-css="position: relativ;">
+                <template v-slot:body>
+                    <div class="input-group">
+                        <input id="name" name="name" class="form-control" type="text" v-model="tag.name" :placeholder="trans('global.tag.name') + ' *'">
+                        <button
+                            id="tag-save"
+                            class="btn btn-primary tag-save-button"
+                            :disabled="!tag.name"
+                            @click="submit()"
+                        >
+                            {{ trans('global.save') }}
+                        </button>
+                    </div>
+                </template>
+            </drop-down-modal>
         </template>
         <template v-slot:buttons>
             <span class="btn btn-info btn-xs additional-button pull-right" @click="showNewTagForm = !showNewTagForm">
@@ -41,13 +43,13 @@
 <script>
 import {defineComponent} from 'vue'
 import Select2 from "../forms/Select2.vue";
-import InlineModal from "../uiElements/InlineModal.vue";
 import axios from "axios";
 import {useToast} from "vue-toastification";
+import DropDownModal from "../uiElements/DropDownModal.vue";
 
 export default defineComponent({
     name: "TagMultiselect",
-    components: {InlineModal, Select2},
+    components: {DropDownModal, Select2},
     props: {
         type: {
             required: true,

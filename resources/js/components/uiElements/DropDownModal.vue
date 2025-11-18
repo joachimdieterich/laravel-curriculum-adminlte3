@@ -2,7 +2,7 @@
     <transition name="drop-down-modal">
         <div v-if="show"
              :style="modalCss"
-             class="drop-down-modal"
+             :class="modalClass"
              @click.self="$emit('close')">
             <div class="card">
                 <div v-if="showTitle" class="card-header d-flex justify-content-between align-items-center">
@@ -16,7 +16,7 @@
                         <p>Please add your text or HTML-Elements.</p>
                     </slot>
                 </div>
-                <div v-if="showTitle" class="card-footer">
+                <div v-if="showFooter" class="card-footer">
                     <slot name="footer">
                         <button class="btn btn-secondary" @click="$emit(close)">Schließen</button>
                     </slot>
@@ -53,6 +53,10 @@ export default {
         modalCss: {
             type: String,
             default: ''
+        },
+        modalClass: {
+            type: String,
+            default: 'drop-down-modal'
         },
     },
     computed: {

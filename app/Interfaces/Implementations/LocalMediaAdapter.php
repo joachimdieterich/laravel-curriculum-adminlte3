@@ -14,6 +14,11 @@ use Yajra\DataTables\DataTables;
 
 class LocalMediaAdapter implements MediaInterface
 {
+    public static function __set_state(array $an_array): object
+    {
+        return new self();
+    }
+
     /**
      * Display a listing of the resource.
      *

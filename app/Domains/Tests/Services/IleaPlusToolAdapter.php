@@ -18,6 +18,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IleaPlusToolAdapter implements TestToolkitInterface
 {
+    public static function __set_state(array $an_array): object
+    {
+        return new self();
+    }
+
     protected function ileaPlusReportClient()
     {
         return new Client(['base_uri' => config('test_tools.tools.ilea_plus.report_base_url')]);

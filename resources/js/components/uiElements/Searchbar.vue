@@ -38,7 +38,13 @@
                 type="button"
                 @click="toggleModal"
             >
-                <span class="fa fa-filter"></span>
+                <span class="fa fa-filter">
+                    <span v-if="filter.tags.length > 0"
+                          class="tag-count bg-info"
+                    >
+                        {{ filter.tags.length }}
+                    </span>
+                </span>
             </button>
         </div>
         <SearchbarDropDownModal
@@ -140,6 +146,21 @@ export default {
 }
 </script>
 <style scoped>
+.tag-count {
+    position: absolute;
+    border-radius: 100%;
+    text-align: center;
+    font-weight: bold;
+    background-color: red;
+    color: white;
+    top: 0;
+    right: 0;
+
+    height: 18px;
+    width: 18px;
+    line-height: 16px;
+    font-size: 9px !important;
+}
 #searchButton {
     background-color: #EAF099;
     z-index: 10;

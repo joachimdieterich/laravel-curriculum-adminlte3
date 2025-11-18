@@ -48,8 +48,8 @@
                             </div>
                             <tag-multiselect
                                 type="App\Role"
-                                :model-id="this.form.id"
-                                :selectedTags="this.selectedTags"
+                                :model-id="form.id"
+                                :selectedTags="selectedTags"
                                 @selectedValue="(data) => {
                                     this.form.tags = data;
                                 }"
@@ -66,9 +66,9 @@
                                 url="/permissions"
                                 model="permission"
                                 :multiple="true"
-                                :selected="getSelectedPermissions()"
-                                @selectedValue="(id) => {
-                                    this.form.permissions = id;
+                                :selected="selectedPermissions"
+                                @selectedValue="(permissions) => {
+                                    this.form.permissions = permissions;
                                 }"
                                 @cleared="() => {
                                     this.form.permissions = [];
@@ -135,7 +135,8 @@ export default {
                 tags: [],
             }),
             params: {},
-            selectedTags: []
+            selectedTags: [],
+            selectedPermissions: []
         }
     },
     methods: {
@@ -167,13 +168,11 @@ export default {
                 });
         },
         getSelectedPermissions(permissions) {
-            let base = permissions ?? this.form.permissions;
-
-            if (base[0]?.title){
-                return base.map(p => p.id);
+            if (permissions[0]?.title){
+                return permissions.map(p => p.id);
             }
 
-            return base;
+            return permissions;
         },
         getSelectedTags(tags) {
             if (tags[0]?.name){
@@ -199,6 +198,7 @@ export default {
                 this.params = params;
                 if (typeof (params) !== 'undefined') {
                     params.permissions = this.getSelectedPermissions(params.permissions);
+                    this.selectedPermissions = params.permissions
                     params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
                     this.updateSelectedTags();

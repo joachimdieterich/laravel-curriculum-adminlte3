@@ -77,6 +77,7 @@ class MediumSubscriptionController extends Controller
      */
     public function show(MediumSubscription $mediumSubscription)
     {
+        abort(404);
     }
 
     /**
@@ -87,7 +88,7 @@ class MediumSubscriptionController extends Controller
      */
     public function edit(MediumSubscription $mediumSubscription)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -99,7 +100,31 @@ class MediumSubscriptionController extends Controller
      */
     public function update(Request $request, MediumSubscription $mediumSubscription)
     {
-        //
+        abort(404);
+    }
+    
+    public function updateAdditionalData(Request $request)
+    {
+        $input = $this->validateRequest();
+
+        $query = MediumSubscription::where([
+            'medium_id' => $request->medium_id,
+            'subscribable_type' => $request->subscribable_type,
+            'subscribable_id' => $request->subscribable_id,
+        ]);
+        $mediumSubscription = $query->firstOrFail();
+
+        abort_unless(
+            \Gate::allows('external_medium_edit')
+            and ($mediumSubscription->owner_id == auth()->user()->id or is_admin())
+        , 403);
+
+        if (isset($input['additional_data'])) {
+            $mediumSubscription->additional_data = $input['additional_data'];
+            $query->update(['additional_data' => $input['additional_data']]);
+        }
+
+        return $mediumSubscription->additional_data;
     }
 
     /**

@@ -18,15 +18,26 @@
                     </button>
                 </div>
 
-                <div class="modal-body">
+                <div
+                    class="modal-body"
+                    style="overflow: visible;"
+                >
                     <div class="card">
                         <div class="card-body">
-                            <div class="form-group">
-                                <label for="medium-title">{{ trans('global.title') }}</label>
+                            <div class="form-group d-flex align-items-center">
+                                <v-swatches
+                                    style="height: 42px;"
+                                    :swatches="$swatches"
+                                    row-length="5"
+                                    popover-y="top"
+                                    v-model="form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                />
                                 <input
                                     id="medium-title"
                                     type="text"
-                                    class="form-control"
+                                    class="form-control ml-3"
                                     :placeholder="trans('global.medium.title_singular') + ' ' + trans('global.title')"
                                     v-model.trim="form.title"
                                 />
@@ -80,8 +91,12 @@ export default {
             form: new Form({
                 id: null,
                 title: '',
+                color: '#F2F4F5',
                 description: '',
             }),
+            subscribable_type: null,
+            subscribable_id: null,
+            additional_data: null,
         }
     },
     setup() {
@@ -93,8 +108,25 @@ export default {
     methods: {
         submit() {
             axios.patch('/media/' + this.form.id, this.form)
-                .then(response => {
-                    this.$eventHub.emit('medium-updated', response.data);
+                .then(async (response) => {
+                    let subscription_data;
+                    // only update color-attribute if it was actually changed
+                    if (this.form.color !== (this.additional_data?.color ?? '#F2F4F5')) {
+                        await axios.post('/mediumSubscriptions/updateAdditionalData', {
+                            medium_id: this.form.id,
+                            subscribable_type: this.subscribable_type,
+                            subscribable_id: this.subscribable_id,
+                            additional_data: {
+                                ...this.additional_data,
+                                color: this.form.color,
+                            },
+                        }).then(res => subscription_data = res.data);
+                    }
+
+                    this.$eventHub.emit('medium-updated', {
+                        medium: response.data,
+                        additional_data: subscription_data,
+                    });
                     this.globalStore?.closeModal(this.$options.name);
                 })
                 .catch(error => {
@@ -107,10 +139,16 @@ export default {
         this.globalStore.$subscribe((mutation, state) => {
             if (!state.modals[this.$options.name].show) return;
 
-            const params = state.modals[this.$options.name].params;
+            const subscription = state.modals[this.$options.name].params;
+            const medium = subscription.medium;
+
+            this.subscribable_type = subscription.subscribable_type;
+            this.subscribable_id = subscription.subscribable_id;
+            this.additional_data = subscription.additional_data;
             
             this.form.reset();
-            if (params !== undefined && params !== null) this.form.populate(params);
+            if (medium !== undefined && medium !== null) this.form.populate(medium);
+            if (this.additional_data) this.form.color = this.additional_data.color ?? '#F2F4F5';
         });
     },
 };

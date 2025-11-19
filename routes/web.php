@@ -155,6 +155,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');
     Route::post('mediumSubscriptions/destroy', 'MediumSubscriptionController@destroySubscription');
+    Route::post('mediumSubscriptions/updateAdditionalData', 'MediumSubscriptionController@updateAdditionalData');
     Route::resource('mediumSubscriptions', 'MediumSubscriptionController');
 // N
     /*** Navigators ***/

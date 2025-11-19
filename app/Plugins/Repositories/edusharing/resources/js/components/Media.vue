@@ -66,7 +66,8 @@
             <!-- Media uploaded from Curriculum -->
             <div v-for="subscription in filteredMedia"
                 class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important; border-color: #F2F4F5;"
+                style="min-width: 200px !important;"
+                :style="{ 'border-color': borderColor(subscription) }"
             >
                 <a class="text-decoration-none">
                     <RenderUsage :medium="subscription.medium"/>
@@ -96,7 +97,7 @@
                                 id="edit-medium-item"
                                 class="dropdown-item py-1 text-secondary"
                                 type="button"
-                                @click.prevent="edit(subscription.medium);"
+                                @click.prevent="edit(subscription);"
                             >
                                 <span>
                                     <i class="fa fa-pencil mr-2"></i>
@@ -304,8 +305,11 @@ export default {
                 ? 'App\\EnablingObjective'
                 : 'App\\TerminalObjective';
         },
-        edit(medium) {
-            this.globalStore.showModal('medium-edit-modal', medium);
+        borderColor(subscription) {
+            return subscription.additional_data?.color ?? '#F2F4F5';
+        },
+        edit(subscription) {
+            this.globalStore.showModal('medium-edit-modal', subscription);
         },
         show(medium) {
             window.open(medium.path, '_blank');
@@ -348,9 +352,10 @@ export default {
                 this.loader();
             }
         });
-        this.$eventHub.on('medium-updated', (updatedMedium) => {
-            let subscription = this.media.find(m => m.medium_id === updatedMedium.id);
-            Object.assign(subscription.medium, updatedMedium)
+        this.$eventHub.on('medium-updated', (data) => {
+            let subscription = this.media.find(m => m.medium_id === data.medium.id);
+            subscription.additional_data = data.additional_data ?? subscription.additional_data;
+            Object.assign(subscription.medium, data.medium);
         });
     },
     computed: {

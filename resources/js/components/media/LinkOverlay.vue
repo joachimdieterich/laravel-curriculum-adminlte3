@@ -50,6 +50,10 @@ export default {
             type: Object,
             default: null,
         },
+        loadOnMount: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -58,6 +62,9 @@ export default {
             currentViewLink: null,
             currentDownloadLink: null,
         }
+    },
+    mounted() {
+        if (this.loadOnMount) this.getURLs();
     },
     methods: {
         open(link) {

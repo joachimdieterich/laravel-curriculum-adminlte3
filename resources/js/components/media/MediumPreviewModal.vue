@@ -17,6 +17,7 @@
             >
                 <LinkOverlay
                     :medium="media[currentSlide]"
+                    :loadOnMount="true"
                     @generating="bool => stopSlide = bool"
                 />
                 <!-- preview gallery at bottom | needs to be before the high resolution images to load first -->
@@ -140,6 +141,7 @@ export default {
 
             this.media = params.media;
             if (this.media.length > 1) {
+                this.currentSlide = params.initialSlide ?? 0;
                 // carousel needs to be initialized to activate swipe functionality
                 this.$nextTick(() => {
                     $('#carousel-' + this.component_id).carousel();

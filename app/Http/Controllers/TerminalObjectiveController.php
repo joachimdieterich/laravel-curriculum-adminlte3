@@ -49,13 +49,21 @@ class TerminalObjectiveController extends Controller
     {
         abort_unless($terminalObjective->isAccessible(), 403);
 
-        $objective = TerminalObjective::where('id', $terminalObjective->id)
-            ->with(['curriculum', 'curriculum.subject', 'variants',
-                'enablingObjectives',
-                'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable', ])
-            ->get()->first();
+        $objective = TerminalObjective::with(
+            [
+                'curriculum:id,title,owner_id,subject_id',
+                'curriculum.subject:id,title',
+                'enablingObjectives' => function ($query) {
+                    $query->select('id', 'title', 'visibility', 'terminal_objective_id', 'level_id')
+                        ->without('terminalObjective');
+                },
+                'variants',
+                'referenceSubscriptions.siblings.referenceable',
+                'quoteSubscriptions.siblings.quotable',
+            ])
+            ->find($terminalObjective->id);
 
-        $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
+        $repository = Config::where('key', 'repository')->first() ?? 'false';
         $editable = $objective->curriculum->isEditable();
 
         return view('objectives.show')

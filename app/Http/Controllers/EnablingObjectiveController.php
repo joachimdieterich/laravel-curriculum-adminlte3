@@ -57,16 +57,27 @@ class EnablingObjectiveController extends Controller
     {
         abort_unless($enablingObjective->isAccessible(), 403);
 
-        $objective = EnablingObjective::where('id', $enablingObjective->id)
-            ->with(['curriculum', 'curriculum.subject', 'terminalObjective.type', 'variants', 'variants.definition',
-                'referenceSubscriptions.siblings.referenceable', 'quoteSubscriptions.siblings.quotable',
+        $objective = EnablingObjective::with(
+            [
+                'curriculum:id,title,owner_id,subject_id',
+                'curriculum.subject:id,title',
+                'terminalObjective:id,title,description,color,curriculum_id,objective_type_id,visibility',
+                'terminalObjective.type:id,title',
+                'terminalObjective.enablingObjectives' => function ($query) {
+                    $query->select('id', 'title', 'visibility', 'terminal_objective_id', 'level_id')
+                        ->without('terminalObjective');
+                },
+                'variants',
+                'variants.definition',
+                'referenceSubscriptions.siblings.referenceable',
+                'quoteSubscriptions.siblings.quotable',
                 'achievements' => function ($query) {
                     $query->where('user_id', auth()->user()->id)->with(['owner', 'user']);
                 },
             ])
-            ->get()->first();
+            ->find($enablingObjective->id);
 
-        $repository = Config::where('key', 'repository')->get()->first() ?? 'false';
+        $repository = Config::where('key', 'repository')->first() ?? 'false';
         $editable = $objective->curriculum->isEditable();
 
         return view('objectives.show')

@@ -1,14 +1,14 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header">
+            <div class="card bg-transparent">
+                <div class="card-header bg-white">
                     <span v-html="currentObjective.title" class="p-margin-0"></span>
                 </div>
 
-                <div class="card-body p-0 my-1">
+                <div class="card-body p-0">
                     <ul
-                        class="nav nav-tabs px-2"
+                        class="nav nav-tabs px-2 my-1"
                         role="tablist"
                     >
                         <!-- 1 Description -->
@@ -215,7 +215,7 @@
                         </li>
                     </ul>
 
-                    <div class="tab-content my-1">
+                    <div class="tab-content bg-white">
                         <!-- 1 Description -->
                         <div
                             id="description"
@@ -247,21 +247,15 @@
                             role="tabpanel"
                             aria-labelledby="objectives-tab"
                         >
-                            <div v-if="type === 'enabling'"
-                                class="objectives"
-                            >
-                                <ObjectiveBox
+                            <div class="objectives">
+                                <ObjectiveBox v-if="type === 'enabling'"
                                     type="terminal"
                                     :objective="objective.terminal_objective"
                                 />
-                            </div>
-                            <div v-else
-                                class="objectives"
-                            >
-                                <ObjectiveBox v-for="enablingObjective in objective.enabling_objectives"
+                                <ObjectiveBox v-for="enablingObjective in enablingObjectives"
                                     type="enabling"
                                     :objective="enablingObjective"
-                                    :color="objective.color"
+                                    :color="objective.color ?? objective.terminal_objective.color"
                                 />
                             </div>
                         </div>
@@ -608,6 +602,13 @@ export default {
         },
         loadLmsPlugin() {
             this.$refs.LmsPlugin.loaderEvent();
+        },
+    },
+    computed: {
+        enablingObjectives() {
+            return this.type === 'enabling'
+                ? this.objective.terminal_objective.enabling_objectives
+                : this.objective.enabling_objectives;
         },
     },
 }

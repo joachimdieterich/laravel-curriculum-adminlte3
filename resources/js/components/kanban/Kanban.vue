@@ -236,7 +236,6 @@ export default {
             copy_id: null,
             show_item_copy: false,
             show_status_copy: false,
-            refreshRate: 5000,
         };
     },
     methods: {
@@ -427,6 +426,8 @@ export default {
         },
     },
     mounted() {
+        this.globalStore['showSearchbar'] = true;
+
         this.kanban = this.initialKanban;
 
         this.startWebsocket();

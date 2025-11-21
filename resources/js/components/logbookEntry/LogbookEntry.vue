@@ -426,7 +426,7 @@ export default {
                 this.$el.querySelector('.username').innerText + ' '
                 + this.$el.querySelector('[id^="logbook_description"]').innerText
             ).toLowerCase();
-            const search = filter.toLowerCase();
+            const search = filter.searchString.toLowerCase();
 
             this.$el.style.display = content.includes(search)
                 ? 'flex'

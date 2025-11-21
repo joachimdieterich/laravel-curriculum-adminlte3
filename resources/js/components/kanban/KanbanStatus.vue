@@ -1,6 +1,7 @@
 <template>
     <div
         class="kanban-header"
+        v-show="newStatus || showWithSearch(status.title)"
         :style="{ backgroundColor: status?.color }"
     >
         <div v-if="newStatus"
@@ -14,6 +15,7 @@
             </span>
         </div>
         <div v-else
+             v-show="showWithSearch(status.title)"
             class="d-flex align-items-center"
             :style="'color:' + $textcolor(status.color)"
         >
@@ -152,6 +154,8 @@ export default {
             edit_rights: false,
             copy_rights: false,
             delete_rights: false,
+            searchFilter: '',
+            forceShow: false,
         }
     },
     methods: {
@@ -230,9 +234,20 @@ export default {
                 this.$echo.leave('App.KanbanStatus.' + this.status.id);
             }
         },
+        showWithSearch: function (stringComparedToSearch) {
+            if (!this.searchFilter) {
+                return true;
+            }
+
+            return stringComparedToSearch.includes(this.searchFilter) || this.forceShow;
+        },
     },
     mounted() {
         this.startWebsocket();
+
+        this.$eventHub.on('filter', (filter) => {
+            this.searchFilter = filter.searchString.toLowerCase();
+        });
 
         if (this.newStatus) {
             this.method = 'post';
@@ -253,6 +268,9 @@ export default {
 
         // ITEM Events
         if (this.status !== null) {
+            this.$eventHub.on('kanban-status-force-show-' + this.status.id, (forceShow) => {
+                this.forceShow = forceShow;
+            });
             this.$eventHub.on('kanban-item-added-' + this.status.id, (item) => {
                 this.handleItemAdded(item);
             });

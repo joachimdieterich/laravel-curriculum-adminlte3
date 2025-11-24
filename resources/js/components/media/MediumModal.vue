@@ -243,6 +243,8 @@ export default {
             method: 'post',
             tab: 'external',
             progressBar: false,
+            subscribable_type: null,
+            subscribable_id: null,
             form: new Form({
                 path: '',
                 thumb_path: '',
@@ -331,8 +333,8 @@ export default {
         subscribe() {
             this.globalStore.selectedMedia.forEach((medium) => {
                 axios.post('/mediumSubscriptions', {
-                    subscribable_type: this.form.subscribable_type,
-                    subscribable_id: this.form.subscribable_id,
+                    subscribable_type: this.subscribable_type,
+                    subscribable_id: this.subscribable_id,
                     medium_id: medium.id
                 }).then((response) => {
                     Object.assign(medium, response.data);
@@ -410,6 +412,8 @@ export default {
                 this.callback = params.callback ?? this.callback;
                 this.callbackId = params.callbackId;
                 this.accept = params.accept;
+                this.subscribable_type = params.subscribable_type;
+                this.subscribable_id = params.subscribable_id;
                 this.currentStatus = STATUS_INITIAL;
 
                 this.form.populate(params);

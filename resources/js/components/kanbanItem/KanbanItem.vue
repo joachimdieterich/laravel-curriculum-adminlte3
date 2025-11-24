@@ -424,7 +424,7 @@ export default {
                 return true;
             }
 
-            let show = stringComparedToSearch.includes(this.searchFilter);
+            let show = stringComparedToSearch.toLowerCase().includes(this.searchFilter.toLowerCase());
             this.$eventHub.emit('kanban-status-force-show-' + this.item.kanban_status_id, show);
 
             return show;

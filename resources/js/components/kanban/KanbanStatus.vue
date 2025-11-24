@@ -239,7 +239,7 @@ export default {
                 return true;
             }
 
-            return stringComparedToSearch.includes(this.searchFilter) || this.forceShow;
+            return stringComparedToSearch.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.forceShow;
         },
     },
     mounted() {

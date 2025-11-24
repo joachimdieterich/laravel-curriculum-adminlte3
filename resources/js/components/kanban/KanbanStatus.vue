@@ -239,8 +239,6 @@ export default {
                 return true;
             }
 
-            console.log(this.forcedToShow());
-
             return stringComparedToSearch.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.forcedToShow();
         },
         forcedToShow: function () {

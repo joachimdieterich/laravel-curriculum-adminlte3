@@ -155,7 +155,7 @@ export default {
             copy_rights: false,
             delete_rights: false,
             searchFilter: '',
-            forceShow: false,
+            forceShow: {},
         }
     },
     methods: {
@@ -239,8 +239,17 @@ export default {
                 return true;
             }
 
-            return stringComparedToSearch.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.forceShow;
+            return stringComparedToSearch.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.forcedToShow();
         },
+        forcedToShow: function () {
+            for (let key in this.forceShow) {
+                if (this.forceShow[key] == true) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     },
     mounted() {
         this.startWebsocket();
@@ -269,7 +278,7 @@ export default {
         // ITEM Events
         if (this.status !== null) {
             this.$eventHub.on('kanban-status-force-show-' + this.status.id, (forceShow) => {
-                this.forceShow = forceShow;
+                this.forceShow[forceShow.kanbanItemId] = forceShow.show;
             });
             this.$eventHub.on('kanban-item-added-' + this.status.id, (item) => {
                 this.handleItemAdded(item);

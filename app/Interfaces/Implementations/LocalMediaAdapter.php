@@ -282,7 +282,7 @@ class LocalMediaAdapter implements MediaInterface
             'size'          => $file->getSize(),
             'mime_type'     => $file->getMimeType(),
             'license_id'    => $input['license_id']     ?? 2,
-            'public'        => $input['public']         ?? 0,   //default not public
+            'public'        => (int) ($input['public']         ?? 0),   //default not public
 
             'owner_id' => auth()->user()->id,
         ]);

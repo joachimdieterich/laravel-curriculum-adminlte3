@@ -1,5 +1,6 @@
 <template>
     <div
+        v-show="showWithSearch(item.title) || showWithSearch(item.description)"
         :id="'item-' + item.id"
         class="card"
         :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
@@ -296,6 +297,7 @@ export default {
             expired: false, // due date expired
             editors: null,
             editorsWithoutOwner: null,
+            searchFilter: '',
         };
     },
     computed: {
@@ -417,6 +419,16 @@ export default {
                 this.$echo.leave('App.KanbanItem.' + this.item.id);
             }
         },
+        showWithSearch: function (stringComparedToSearch) {
+            if (!this.searchFilter) {
+                return true;
+            }
+
+            let show = stringComparedToSearch.includes(this.searchFilter);
+            this.$eventHub.emit('kanban-status-force-show-' + this.item.kanban_status_id, show);
+
+            return show;
+        },
     },
     mounted() {
         this.startWebsocket();
@@ -435,14 +447,9 @@ export default {
             || this.$userId == this.item.owner_id;
 
         this.getEditors();
-        this.$eventHub.on('filter', (filter) => {
-            // always case insensitive
-            const content = this.$el.innerText.toLowerCase();
-            const search = filter.toLowerCase();
 
-            this.$el.style.display = content.includes(search)
-                ? 'flex'
-                : 'none';
+        this.$eventHub.on('filter', (filter) => {
+            this.searchFilter = filter.searchString.toLowerCase();
         });
 
         this.$eventHub.on('medium-added', (e) => {

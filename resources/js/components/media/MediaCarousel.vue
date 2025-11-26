@@ -14,10 +14,7 @@
                 @click="setSlide(index)">
             </li>
         </div>
-        <div
-            class="carousel-inner pointer"
-            @click="openGallery()"
-        >
+        <div class="carousel-inner pointer">
             <div
                 :id="'loading_' + component_id"
                 class="overlay position-absolute text-center rounded-0 w-100"
@@ -137,12 +134,6 @@ export default {
             .catch(err => {
                 $('#loading_' + this.component_id).hide();
                 console.log(err.response);
-            });
-        },
-        openGallery() {
-            this.globalStore.showModal('medium-preview-modal', {
-                media: this.subscriptions.map(s => s.medium),
-                initialSlide: this.currentSlide,
             });
         },
     },

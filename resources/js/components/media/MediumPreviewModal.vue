@@ -15,11 +15,6 @@
                 class="position-absolute d-flex flex-column"
                 style="bottom: 1rem; gap: 2rem; z-index: 1;"
             >
-                <LinkOverlay
-                    :medium="media[currentSlide]"
-                    :loadOnMount="true"
-                    @generating="bool => stopSlide = bool"
-                />
                 <!-- preview gallery at bottom | needs to be before the high resolution images to load first -->
                 <div v-if="media.length > 1"
                     class="d-flex"
@@ -29,7 +24,6 @@
                         type="button"
                         class="gallery-item btn d-flex align-items-center justify-content-center bg-white p-1 border-0"
                         :class="{ 'active': index === currentSlide }"
-                        :disabled="stopSlide"
                         @click="slideTo(index)"
                     >
                         <img
@@ -57,7 +51,6 @@
                             type="button"
                             class="btn btn-icon-alt btn-icon-big highlight position-absolute"
                             style="left: 1rem; z-index: 1;"
-                            :disabled="stopSlide"
                             @click="prev()"
                         >
                             <i class="fa fa-2x fa-angle-left"></i>
@@ -66,7 +59,6 @@
                             type="button"
                             class="btn btn-icon-alt btn-icon-big highlight position-absolute"
                             style="right: 1rem; z-index: 1;"
-                            :disabled="stopSlide"
                             @click="next()"
                         >
                             <i class="fa fa-2x fa-angle-right"></i>
@@ -93,7 +85,6 @@
     </Transition>
 </template>
 <script>
-import LinkOverlay from "./LinkOverlay.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -109,14 +100,12 @@ export default {
             component_id: this.$.uid,
             media: [],
             currentSlide: 0,
-            stopSlide: false, // visual lock to prevent sliding while generating links
             sliding: false, // prevent multiple slide events at the same time
         }
     },
     methods: {
         close() {
             this.globalStore.closeModal(this.$options.name);
-            this.stopSlide = false;
         },
         prev() {
             if (this.sliding) return;
@@ -155,9 +144,6 @@ export default {
                 });
             }
         });
-    },
-    components: {
-        LinkOverlay,
     },
 }
 </script>

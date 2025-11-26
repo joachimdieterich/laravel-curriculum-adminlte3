@@ -10,13 +10,13 @@
                 :for="id"
                 :class="[(typeof classLeft != 'undefined') ? classLeft : 'p-0 col-sm-12' ]"
             >
-                <span v-if="label != ''">{{ label }}</span>
+                <span v-if="label != ''" :class="{'full-line': buttonNewLine}">{{ label }}</span>
                 <span v-else>
                     {{ trans('global.' + model + '.title_singular') }}
                 </span>
                 <span v-if="multiple">
                     <slot name="buttons"></slot>
-                    <span class="btn btn-info btn-xs deselect-all pull-right" @click="deselectAll">
+                    <span class="btn btn-info deselect-all pull-right" :class="buttonSizeClass" @click="deselectAll">
                         {{ trans("global.deselect_all") }}
                     </span>
                 </span>
@@ -133,6 +133,14 @@ export default {
             type: Object,
             default: {},
         },
+        buttonSizeClass: {
+            type: String,
+            default: 'btn-xs'
+        },
+        buttonNewLine: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
@@ -261,8 +269,12 @@ export default {
 }
 </script>
 <style>
+.full-line {
+    width: 100%;
+    display: inline-block;
+}
 .additional-button {
-    margin-left: 1em;
+    margin-right: 1em;
 }
 .select2-container .select2-selection--single {
     min-height: 38px;

@@ -455,6 +455,7 @@ return [
         'edit' => 'Tag bearbeiten',
         'delete' => 'Tag löschen',
         'delete_helper' => 'Soll der Tag sowie die zugehörigen Daten gelöscht werden?',
+        'please_select' => 'Bestehenden Tag auswählen'
     ],
     'organization_management' => 'Organisationsverwaltung',
     'organization' => [

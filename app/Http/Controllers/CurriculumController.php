@@ -6,15 +6,17 @@ use App\Certificate;
 use App\Curriculum;
 use App\CurriculumSubscription;
 use App\CurriculumType;
+use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Medium;
 use App\Organization;
+use App\Tag;
 use App\User;
 use App\VariantDefinition;
 use Carbon\Carbon;
 use Gate;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class CurriculumController extends Controller
@@ -67,26 +69,26 @@ class CurriculumController extends Controller
         }
     }
 
-    public function userCurricula($withOwned = true, $user = null)
+    public function userCurricula($withOwned = true, $user = null, ?array $searchTags = [])
     {
-        if ($user == null)
-        {
+        $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
+
+        if ($user == null) {
             $user = auth()->user();
         }
-        $userCanSee = $user->curricula;
+        $userCanSee = $user->curricula()->withAllTags($tags)->get();
 
         foreach ($user->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->curricula);
+            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags));
         }
-        $organization = Organization::find($user->current_organization_id)->curricula;
-        $userCanSee = $userCanSee->merge($organization);
+        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags);
+        $userCanSee   = $userCanSee->merge($organization);
 
-        if ($withOwned)
-        {
-            $owned = Curriculum::where('owner_id', $user->id)->get();
+        if ($withOwned) {
+            $owned      = Curriculum::where('owner_id', $user->id)->withAllTags($tags)->get();
             $userCanSee = $userCanSee->merge($owned);
             // global curricula are visible for all users, but shouldn't be shown on 'shared with me'
-            $global = Curriculum::where('type_id', 1)->get();
+            $global     = Curriculum::where('type_id', 1)->withAllTags($tags)->get();
             $userCanSee = $userCanSee->merge($global);
         }
 
@@ -97,22 +99,28 @@ class CurriculumController extends Controller
     {
         abort_unless(Gate::allows('curriculum_access'), 403);
 
-        switch ($request->filter)
-        {
-            case 'owner':            $curricula = Curriculum::where('owner_id', auth()->user()->id)->get();
-                break;
-            case 'shared_with_me':   $curricula = $this->userCurricula(false);
-                break;
-            case 'shared_by_me':     $curricula = Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
-                break;
-            case 'by_organization':  $curricula = Organization::find(auth()->user()->current_organization_id)->curricula;
-                break;
-            case 'all':
-            default:                 $curricula = $this->userCurricula();
-                break;
+        $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
+
+        $favCurricula = new Collection();
+        $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
+        if ($favTag !== null) {
+            $favCurricula = $this->userCurricula(searchTags: [$favTag->id]);
         }
 
+        $curricula = match ($request->filter) {
+            'owner'           => Curriculum::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
+            'shared_with_me'  => $this->userCurricula(false, request('tags')),
+            'shared_by_me'    => Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
+            'by_organization' => Organization::find(auth()->user()->current_organization_id)->curricula()->withAllTags($tags)->get(),
+            'all'             => $this->userCurricula(searchTags: request('tags')),
+            'favourite'       => $favCurricula,
+            default           => $this->userCurricula(searchTags: request('tags')),
+        };
+
         return empty($curricula) ? '' : DataTables::of($curricula)
+            ->addColumn('tags', function ($curricula) {
+                return $curricula->tags->toArray();
+            })
             ->setRowId('id')
             ->make(true);
     }
@@ -163,6 +171,7 @@ class CurriculumController extends Controller
             'archived'              =>  $input['archived'] ?? false,
             'owner_id'              => auth()->user()->id,
         ]);
+        $curriculum->tags()->sync($request->input('tags'));
 
         switch ($curriculum->type_id) {
             case 2: // organization
@@ -375,11 +384,11 @@ class CurriculumController extends Controller
             'archived'              =>  $input['archived'] ?? false,
             'owner_id'              => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
+        $curriculum->tags()->sync($request->input('tags'));
 
         if (request()->wantsJson()) {
             return $curriculum;
         }
-        //return redirect($curriculum->path());
     }
 
     public function enrol()
@@ -475,6 +484,7 @@ class CurriculumController extends Controller
             (new ContentController)->destroy($content, 'App\Curriculum', $curriculum->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
 
+        $curriculum->syncTags([]);
         $return = $curriculum->delete();
 
         //delete unused media
@@ -486,6 +496,17 @@ class CurriculumController extends Controller
         if (request()->wantsJson()) {
             return $return;
         }
+    }
+
+    public function favourCurriculum(Curriculum $curriculum, FavouriteModelRequest $request)
+    {
+        if ($request->input('favourite')) {
+            $curriculum->attachTag(trans('global.tag.favourite.singular'));
+        } else {
+            $curriculum->detachTag(trans('global.tag.favourite.singular'));
+        }
+
+        return response(null, 204);
     }
 
     public function resetOrderIds(Curriculum $curriculum)
@@ -501,7 +522,7 @@ class CurriculumController extends Controller
 
             $terminalObjective->update(['order_id' => $t]);
             $t++;
-            
+
             $e = 0;
             foreach ($terminalObjective->enablingObjectives as $enablingObjective) {
                 $enablingObjective->update(['order_id' => $e]);

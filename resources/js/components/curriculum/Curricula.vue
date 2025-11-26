@@ -7,6 +7,19 @@
             >
                 <li class="nav-item pointer">
                     <a
+                        id="curriculum-filter-favourite"
+                        class="nav-link "
+                        :class="filter === 'favourite' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('favourite')"
+                    >
+                        <i class="fas fa-heart pr-2"></i>
+                        {{ trans('global.tag.favourite.plural') }}
+                    </a>
+                </li>
+                <li class="nav-item pointer">
+                    <a
                         id="curriculum-filter-all"
                         class="nav-link "
                         :class="filter === 'all' ? 'active' : ''"
@@ -86,7 +99,7 @@
             <IndexWidget v-if="checkPermission('curriculum_create')
                     && (
                         (filter === 'all' && !this.subscribable_type && !this.subscribable_id)
-                        || filter  === 'owner'
+                        || filter  === 'owner' || filter === 'favourite'
                     )"
                 key="curriculumCreate"
                 modelName="Curriculum"
@@ -115,6 +128,10 @@
                     <i v-else
                         class="fa fa-user"
                     ></i>
+                </template>
+
+                <template v-slot:additional-button>
+                    <favourite :model="curriculum" url="/curricula" :is-favourited="curriculum.is_favourited"></favourite>
                 </template>
 
                 <template v-slot:owner>
@@ -196,7 +213,6 @@
                 id="curriculum-datatable"
                 :columns="columns"
                 :options="options"
-                :ajax="url"
                 width="100%"
                 style="display: none;"
             />
@@ -233,6 +249,7 @@ import CurriculumModal from "./CurriculumModal.vue";
 import {useGlobalStore} from "../../store/global";
 import OwnerModal from "../user/OwnerModal.vue";
 import {useToast} from "vue-toastification";
+import Favourite from "../tag/Favourite.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -260,17 +277,33 @@ export default {
             curricula: [],
             subscriptions: {},
             showConfirm: false,
-            url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id : '/curricula/list',
             errors: {},
             currentCurriculum: {},
+            selectedTags: [],
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
+                { title: 'tags', data: 'tags' }
             ],
-            options : this.$dtOptions,
-            filter: 'all',
+            filter: 'favourite',
             dt: null,
+        }
+    },
+    computed: {
+        options: function() {
+            let options = this.$dtOptions;
+
+            options.ajax = {
+                url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id : '/curricula/list',
+                data: (d) => {
+                    d.tags = this.selectedTags;
+
+                    return d;
+                },
+            };
+
+            return options;
         }
     },
     methods: {
@@ -288,7 +321,6 @@ export default {
                 model_url: 'curricula',
                 owner_id: curriculum.owner_id,
             });
-            //window.location = "/curricula/" + curriculum.id + "/editOwner";
         },
         shareCurriculum(curriculum){
             this.globalStore?.showModal(
@@ -350,6 +382,7 @@ export default {
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
+        this.globalStore['searchTagModelContext'] =  'App\\Curriculum';
 
         this.loaderEvent();
 
@@ -368,7 +401,8 @@ export default {
         });
 
         this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+            this.selectedTags = filter.tags;
+            this.dt.search(filter.searchString).draw();
         });
 
         this.$eventHub.on('owner-updated', (owner) => {
@@ -377,6 +411,7 @@ export default {
         });
     },
     components: {
+        Favourite,
         OwnerModal,
         IndexWidget,
         MediumModal,

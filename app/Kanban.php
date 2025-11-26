@@ -4,7 +4,6 @@ namespace App;
 
 use App\Services\Tag\HasTags;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
@@ -75,13 +74,6 @@ class Kanban extends Model
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
-    }
-
-    public function isFavourited(): Attribute
-    {
-        return new Attribute(
-            get: fn () => $this->hasTag(trans('global.tag.favourite.singular')),
-        );
     }
 
     public function path(): string
@@ -239,16 +231,5 @@ class Kanban extends Model
         [$r, $g, $b] = sscanf($color, '#%02x%02x%02x');
 
         return 'rgba(' . $r . ', ' . $g . ', ' . $b . ', ' . $opacity . ')';
-    }
-
-    public function tags(?User $currentUser = null)
-    {
-        $currentUser = $currentUser ?? auth()->user();
-
-        return $this
-            ->morphToMany(self::getTagClassName(), $this->getTaggableMorphName(), $this->getTaggableTableName())
-            ->using($this->getPivotModelClassName())
-            ->where('user_id', $currentUser->id)
-            ->ordered();
     }
 }

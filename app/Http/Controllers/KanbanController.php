@@ -7,7 +7,6 @@ use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
 use App\KanbanSubscription;
-use App\MediumSubscription;
 use App\Organization;
 use App\Tag;
 use Barryvdh\DomPDF\Facade\Pdf;

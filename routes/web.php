@@ -42,6 +42,7 @@ Route::withoutMiddleware('auth')->group(function() {
     /*** Curricula ***/
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
+    Route::post('curricula/{curriculum}/favour', 'CurriculumController@favourCurriculum');
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/references', 'CurriculumController@references');

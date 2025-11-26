@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Services\Tag\HasTags;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,7 @@ use Mews\Purifier\Casts\CleanHtml;
  */
 class Curriculum extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTags;
 
     protected $guarded = [];
 
@@ -55,6 +56,8 @@ class Curriculum extends Model
         'organization_type_id' => 1,
         'type_id' => 4,  //= user
     ];
+
+    protected $appends = ['is_favourited'];
 
     protected $with = ['owner:id,firstname,lastname'];
 
@@ -287,6 +290,17 @@ class Curriculum extends Model
         } else {
             return false;
         }
+    }
+
+    public function tags(?User $currentUser = null)
+    {
+        $currentUser = $currentUser ?? auth()->user();
+
+        return $this
+            ->morphToMany(self::getTagClassName(), $this->getTaggableMorphName(), $this->getTaggableTableName())
+            ->using($this->getPivotModelClassName())
+            ->where('user_id', $currentUser->id)
+            ->ordered();
     }
 
     public static function booted() {

@@ -141,45 +141,39 @@ class KanbanStatusController extends Controller
     {
         $order_id = KanbanStatus::where('kanban_id', $status->kanban_id)->max('order_id');
 
-        $statusCopy = KanbanStatus::create([
+        $statusCopy = $status->replicate()->fill([
             'title'     => '[Kopie] ' . $status->title,
             'order_id'  => $order_id + 1,
-            'kanban_id' => $status['kanban_id'],
-            'color'     => $status->color,
-            'visibility'=> $status->visibility,
             'owner_id'  => auth()->user()->id,
         ]);
+        $statusCopy->save();
 
         foreach ($status->items as $item) {
-            $itemCopy = KanbanItem::create([
-                'title'             => $item->title,
-                'description'       => $item->description,
-                'order_id'          => $item->order_id,
+            $itemCopy = $item->replicate()->fill([
                 'kanban_id'         => $statusCopy->kanban_id,
                 'kanban_status_id'  => $statusCopy->id,
-                'color'             => $item->color,
-                'visibility'        => $item->visibility,
-                'visible_from'      => $item->visible_from,
-                'visible_until'     => $item->visible_until,
-                'due_date'          => $item->due_date,
-                'replace_links'     => $item->replace_links,
+                'editors_ids'       => [],
                 'owner_id'          => auth()->user()->id,
             ]);
+            $itemCopy->save();
 
-            foreach ($item->mediaSubscriptions as $mediaSubscription) {
+            foreach ($item->mediaSubscriptions as $mediumSubscription) {
+                $usage = null;
                 // if Medium is external, we need to copy the usage
-                $usage = $mediaSubscription->additional_data;
-                if (!is_null($usage)) $usage["isCopy"] = true; // set flag so this subscription doesn't have access to delete the usage
+                if (!is_null($mediumSubscription->additional_data)) {
+                    $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                        'App\\KanbanItem',
+                        $itemCopy->id,
+                        $mediumSubscription->additional_data['nodeId'],
+                        $mediumSubscription->medium()->pluck('owner_id')->first()
+                    );
+                }
 
-                MediumSubscription::create([
-                    'medium_id'         => $mediaSubscription->medium_id,
-                    'subscribable_type' => $mediaSubscription->subscribable_type,
+                $mediumSubscription->replicate()->fill([
                     'subscribable_id'   => $itemCopy->id,
-                    'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                    'visibility'        => $mediaSubscription->visibility,
-                    'additional_data'   => $usage,
                     'owner_id'          => auth()->user()->id,
-                ]);
+                    'additional_data'   => $usage,
+                ])->save();
             }
         }
 

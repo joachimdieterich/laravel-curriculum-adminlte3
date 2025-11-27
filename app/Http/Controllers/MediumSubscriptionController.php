@@ -153,12 +153,13 @@ class MediumSubscriptionController extends Controller
             // subscription needs to be deleted before deleting the medium
             // and it also needs to be deleted through a query (model->delete() will throw an error)
             $query->delete();
-            // copied subscriptions don't have access to delete the usage
-            if (isset($usage) and !isset($usage["isCopy"])) {
+
+            if (isset($usage)) {
                 $edusharing = new Edusharing;
                 $edusharing->deleteUsage(
                     $usage['nodeId'],
                     $usage['usageId'],
+                    $subscription->medium()->pluck('owner_id')->first()
                 );
                 // and then delete the medium-entry
                 if ($unique) Medium::where('id', $model['medium_id'])->delete();

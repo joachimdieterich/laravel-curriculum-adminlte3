@@ -353,60 +353,45 @@ class KanbanController extends Controller
     {
         abort_unless(Gate::allows('kanban_create') and $kanban->allow_copy, 403);
 
-        $kanbanCopy = Kanban::create([
-            'title'                 => $kanban->title . '_' . date('Y.m.d_H:i:s'),
-            'description'           => $kanban->description,
-            'color'                 => $kanban->color,
-            'commentable'           => $kanban->commentable,
-            'auto_refresh'          => $kanban->auto_refresh,
-            'only_edit_owned_items' => $kanban->only_edit_owned_items,
-            'allow_copy'            => $kanban->allow_copy,
-            'collapse_items'        => $kanban->collapse_items,
-            'owner_id'              => auth()->user()->id,
+        $kanbanCopy = $kanban->replicate()->fill([
+            'title'    => $kanban->title . date(' [Y.m.d_H:i:s]'),
+            'owner_id' => auth()->user()->id,
         ]);
+        $kanbanCopy->save();
 
-        $statuses = $kanban->statuses;
-        foreach ($statuses as $status) {
-            $statusCopy = KanbanStatus::create([
-                'title'      => $status->title,
-                'order_id'   => $status->order_id,
-                'kanban_id'  => $kanbanCopy->id,
-                'color'      => $status->color,
-                'locked'     => $status->locked ?? false,
-                'visibility' => $status->visibility ?? true,
-                'owner_id'   => auth()->user()->id,
+        foreach ($kanban->statuses as $status) {
+            $statusCopy = $status->replicate()->fill([
+                'kanban_id' => $kanbanCopy->id,
+                'owner_id'  => auth()->user()->id,
             ]);
+            $statusCopy->save();
 
             foreach ($status->items as $item) {
-                $itemCopy = KanbanItem::create([
-                    'title'            => $item->title,
-                    'description'      => $item->description,
-                    'order_id'         => $item->order_id,
-                    'kanban_id'        => $kanbanCopy->id,
+                $itemCopy = $item->replicate()->fill([
                     'kanban_status_id' => $statusCopy->id,
-                    'color'            => $item->color,
-                    'visibility'       => $item->visibility,
-                    'visible_from'     => $item->visible_from,
-                    'visible_until'    => $item->visible_until,
-                    'due_date'         => $item->due_date,
-                    'replace_links'    => $item->replace_links,
+                    'kanban_id'        => $kanbanCopy->id,
+                    'editors_ids'      => [],
                     'owner_id'         => auth()->user()->id,
                 ]);
+                $itemCopy->save();
 
-                foreach ($item->mediaSubscriptions as $mediaSubscription) {
-                    // if Medium is external, we need to copy the usage
-                    $usage = $mediaSubscription->additional_data;
-                    if (!is_null($usage)) $usage["isCopy"] = true; // set flag so this subscription doesn't have access to delete the usage
+                foreach ($item->mediaSubscriptions as $mediumSubscription) {
+                    $usage = null;
+                    // if Medium is external, we need to create a new usage
+                    if (!is_null($mediumSubscription->additional_data)) {
+                        $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                            'App\\KanbanItem',
+                            $itemCopy->id,
+                            $mediumSubscription->additional_data['nodeId'],
+                            $mediumSubscription->medium()->pluck('owner_id')->first()
+                        );
+                    }
 
-                    MediumSubscription::create([
-                        'medium_id'         => $mediaSubscription->medium_id,
+                    $mediumSubscription->replicate()->fill([
                         'subscribable_id'   => $itemCopy->id,
-                        'subscribable_type' => $mediaSubscription->subscribable_type,
-                        'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                        'visibility'        => $mediaSubscription->visibility,
-                        'additional_data'   => $usage,
                         'owner_id'          => auth()->user()->id,
-                    ]);
+                        'additional_data'   => $usage,
+                    ])->save();
                 }
             }
         }

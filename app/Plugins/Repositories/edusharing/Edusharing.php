@@ -52,7 +52,7 @@ class Edusharing extends RepositoryPlugin
         }
         else
         {
-            $common_name =  User::where('id', $owner_id)->get()->first()->common_name; //get ticket for $owner_id
+            $common_name =  User::select('common_name')->find($owner_id)->common_name; //get ticket for $owner_id
         }
 
         if (!is_guest()) {
@@ -79,25 +79,25 @@ class Edusharing extends RepositoryPlugin
         string $subscribable_type,
         string $subscribable_id,
         string $nodeId,
-        string $nodeVersion = null
+        ?int $owner_id = null,
     )
     {
-        $nodeHelper = $this->getNodeHelper();
+        $nodeHelper = $this->getNodeHelper($owner_id);
         return $nodeHelper->createUsage(
             $this->accessToken,
-            $subscribable_type, //course_id
-            $subscribable_id, //resourceId
-            $nodeId, //$nodeId
-            $nodeVersion
+            $subscribable_type,
+            $subscribable_id,
+            $nodeId
         );
     }
 
     public function deleteUsage(
         string $nodeId,
-        string $usageId
+        string $usageId,
+        ?int $owner_id = null,
     )
     {
-        $nodeHelper = $this->getNodeHelper();
+        $nodeHelper = $this->getNodeHelper($owner_id);
         return $nodeHelper->deleteUsage(
             $nodeId,
             $usageId

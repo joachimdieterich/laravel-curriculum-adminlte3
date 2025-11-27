@@ -189,35 +189,31 @@ class KanbanItemController extends Controller
     {
         $order_id = KanbanItem::where('kanban_status_id', $item->kanban_status_id)->max('order_id');
 
-        $itemCopy = KanbanItem::create([
-            'title'             => '[Kopie] ' . $item->title,
-            'description'       => $item->description,
-            'order_id'          => $order_id + 1,
-            'kanban_id'         => $item->kanban_id,
-            'kanban_status_id'  => $item->kanban_status_id,
-            'color'             => $item->color,
-            'visibility'        => $item->visibility,
-            'visible_from'      => $item->visible_from,
-            'visible_until'     => $item->visible_until,
-            'due_date'          => $item->due_date,
-            'replace_links'     => $item->replace_links,
-            'owner_id'          => auth()->user()->id,
+        $itemCopy = $item->replicate()->fill([
+            'title'         => '[Kopie] ' . $item->title,
+            'order_id'      => $order_id + 1,
+            'editors_ids'   => [],
+            'owner_id'      => auth()->user()->id,
         ]);
+        $itemCopy->save();
 
-        foreach ($item->mediaSubscriptions as $mediaSubscription) {
+        foreach ($item->mediaSubscriptions as $mediumSubscription) {
+            $usage = null;
             // if Medium is external, we need to copy the usage
-            $usage = $mediaSubscription->additional_data;
-            if (!is_null($usage)) $usage["isCopy"] = true; // set flag so this subscription doesn't have access to delete the usage
+            if (!is_null($mediumSubscription->additional_data)) {
+                $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                    'App\\KanbanItem',
+                    $itemCopy->id,
+                    $mediumSubscription->additional_data['nodeId'],
+                    $mediumSubscription->medium()->pluck('owner_id')->first()
+                );
+            }
 
-            MediumSubscription::create([
-                'medium_id'         => $mediaSubscription->medium_id,
+            $mediumSubscription->replicate()->fill([
                 'subscribable_id'   => $itemCopy->id,
-                'subscribable_type' => $mediaSubscription->subscribable_type,
-                'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                'visibility'        => $mediaSubscription->visibility,
-                'additional_data'   => $usage,
                 'owner_id'          => auth()->user()->id,
-            ]);
+                'additional_data'   => $usage,
+            ])->save();
         }
 
         KanbanStatus::find($item->kanban_status_id)->touch('updated_at'); // to trigger add-event for websockets

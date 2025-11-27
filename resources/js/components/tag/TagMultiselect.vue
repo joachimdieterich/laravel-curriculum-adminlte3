@@ -5,6 +5,9 @@
         name="tags"
         url="/tags"
         model="tags"
+        button-size-class="btn-sm"
+        :button-new-line="true"
+        :placeholder="trans('global.tag.please_select')"
         :label="trans('global.tag.title')"
         :multiple="true"
         :selected="selectedTags"
@@ -33,7 +36,7 @@
             </drop-down-modal>
         </template>
         <template v-slot:buttons>
-            <span class="btn btn-info btn-xs additional-button pull-right" @click="showNewTagForm = !showNewTagForm">
+            <span class="btn btn-info btn-sm additional-button" @click="showNewTagForm = !showNewTagForm">
                 {{ trans("global.tag.create_new_title") }}
             </span>
         </template>

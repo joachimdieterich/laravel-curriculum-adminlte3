@@ -437,6 +437,7 @@ return [
         'edit' => 'Edit tag',
         'delete' => 'Delete tag',
         'delete_helper' => 'Should the tag be deleted and its corresponded data?',
+        'please_select' => 'Choose existing tag'
     ],
     'organization_management' => 'Organizations',
     'organization' => [

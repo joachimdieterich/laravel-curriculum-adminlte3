@@ -178,8 +178,8 @@ class Organization extends Model
     public function curricula()
     {
         return $this->hasManyThrough(
-            'App\Curriculum',
-            'App\CurriculumSubscription',
+            Curriculum::class,
+            CurriculumSubscription::class,
             'subscribable_id',
             'id',
             'id',

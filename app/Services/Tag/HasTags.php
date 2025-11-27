@@ -3,6 +3,7 @@
 namespace App\Services\Tag;
 
 use App\User;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 trait HasTags
 {
@@ -17,5 +18,12 @@ trait HasTags
             ->using($this->getPivotModelClassName())
             ->where('user_id', $currentUser->id)
             ->ordered();
+    }
+
+    public function isFavourited(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->hasTag(trans('global.tag.favourite.singular')),
+        );
     }
 }

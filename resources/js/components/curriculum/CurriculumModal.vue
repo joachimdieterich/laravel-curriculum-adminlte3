@@ -98,6 +98,20 @@
                                             @selectedValue="(id) => this.form.owner_id = id[0]"
                                         />
                                     </div>
+                                    <tag-multiselect
+                                        type="App\Kanban"
+                                        :model-id="this.form.id"
+                                        :selectedTags="this.selectedTags"
+                                        @selectedValue="(data) => {
+                                            this.form.tags = data;
+                                        }"
+                                                @cleared="() => {
+                                            this.form.tags = [];
+                                        }"
+                                                @tag-attached="(tag) => {
+                                            this.updateSelectedTags(tag.id);
+                                        }"
+                                    ></tag-multiselect>
                                     <div class="form-group">
                                         <label for="author">
                                             {{ trans('global.curriculum.fields.author') }}
@@ -253,7 +267,7 @@
                                             show-fallback
                                             fallback-input-type="color"
                                         />
-        
+
                                         <MediumForm v-if="form.id"
                                             :id="'medium_form' + component_id"
                                             :medium_id="form.medium_id"
@@ -362,10 +376,12 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import axios from "axios";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
+import TagMultiselect from "../tag/TagMultiselect.vue";
 
 export default {
     name: 'curriculum-modal',
     components: {
+        TagMultiselect,
         Editor,
         MediumForm,
         Select2,
@@ -403,7 +419,9 @@ export default {
                 owner_id: '',
                 type_id: 4,
                 archived: false,
+                tags: [],
             }),
+            selectedTags: [],
             tinyMCE: this.$initTinyMCE(
                 [
                     "autolink", "link", "lists", "autoresize",
@@ -462,6 +480,20 @@ export default {
                     console.log(e.response);
                 });
         },
+        getSelectedTags(tags) {
+            if (tags && tags[0] && tags[0]?.name){
+                return tags.map(p => p.id);
+            }
+
+            return tags;
+        },
+        updateSelectedTags(newTag) {
+            if (newTag !== undefined) {
+                this.form.tags.push(newTag)
+            }
+
+            this.selectedTags = this.getSelectedTags(this.form.tags);
+        }
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
@@ -472,7 +504,9 @@ export default {
 
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
+                    params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
+                    this.updateSelectedTags();
                     if (this.form.id !== '') {
                         this.form.description = this.$decodeHTMLEntities(this.$decodeHtml(this.form.description));
                         this.method = 'patch';

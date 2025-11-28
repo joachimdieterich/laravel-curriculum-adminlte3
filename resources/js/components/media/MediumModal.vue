@@ -96,7 +96,7 @@
                                         >
                                             {{ message }}
                                         </div>
-                                        <div class="dropbox text-secondary p-0 m-1">
+                                        <div class="dropbox text-secondary p-1 m-1">
                                             <input
                                                 id="file"
                                                 name="file"
@@ -111,7 +111,7 @@
                                             />
                                             <p v-if="isInitial">
                                                 <i class="fa fa-upload"></i><br>
-                                                {{ trans('global.medium.upload_helper') }}
+                                                <div v-html="trans('global.medium.upload_helper')"></div>
                                             </p>
                                             <p v-if="isSaving">
                                                 {{ fileCount }} {{ trans('global.medium.upload') }}...

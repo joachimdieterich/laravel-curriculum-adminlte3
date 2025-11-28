@@ -63,6 +63,8 @@ class NavigatorController extends Controller
             'navigator_id' => $navigator->id,
         ]);
 
+        $navigator->url = '/navigatorViews/' . $navigator_view->id;
+
         if (request()->wantsJson()) {
             return $navigator;
         }

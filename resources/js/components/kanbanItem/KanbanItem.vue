@@ -78,7 +78,7 @@
                                 v-permission="'kanban_delete'"
                                 class="dropdown-item py-1 text-red"
                                 :name="'kanbanItemDelete_' + index"
-                                @click="confirmItemDelete()"
+                                @click="confirmDeletion()"
                             >
                                 <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.kanbanItem.delete') }}
@@ -204,21 +204,6 @@
             :model="item"
             :kanban_owner_id="kanban_owner_id"
         />
-
-        <Teleport to=".content">
-            <ConfirmModal
-                :showConfirm="showConfirm"
-                :title="trans('global.kanbanItem.delete')"
-                :description="trans('global.kanbanItem.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.delete();
-                }"
-            />
-        </Teleport>
     </div>
 </template>
 <script>
@@ -226,7 +211,6 @@ import MediaCarousel from '../media/MediaCarousel.vue';
 import Avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
 import Comments from '../kanban/Comments.vue';
-import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
 import {useGlobalStore} from "../../store/global";
 
@@ -286,7 +270,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            showConfirm: false,
             currentItem : {},
             edit_rights: false,
             copy_rights: false,
@@ -322,18 +305,11 @@ export default {
                 type: 'item',
             });
         },
-        confirmItemDelete(item) {
-            this.currentItem = item;
-            this.showConfirm = true;
-        },
-        delete() {
-            axios.delete("/kanbanItems/" + this.item.id)
-                .then(() => {
-                    this.$eventHub.emit('kanban-item-deleted-' + this.item.kanban_status_id, this.item);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+        confirmDeletion() {
+            this.$eventHub.emit('kanban-show-delete', {
+                id: [this.item.id, this.item.kanban_status_id],
+                type: 'item',
+            });
         },
         edit() {
             this.globalStore?.showModal('kanban-item-modal', {
@@ -465,7 +441,6 @@ export default {
         Reaction,
         MediaCarousel,
         Avatar,
-        ConfirmModal,
     },
 }
 </script>

@@ -78,8 +78,7 @@
                             item-key="id"
                             handle=".handle"
                             :data-status-id="status.id"
-                            class="kanban-items-container d-flex flex-column hide-scrollbars"
-                            style="overflow-y: scroll;"
+                            class="kanban-items-container d-flex flex-column hide-scrollbars overflow-auto"
                             :move="isLocked"
                             @end="syncItemMoved"
                         >
@@ -136,6 +135,13 @@
                 }"
             />
             <ConfirmModal
+                :showConfirm="show_item_delete"
+                :title="trans('global.kanbanItem.delete')"
+                :description="trans('global.kanbanItem.delete_helper')"
+                @close="show_item_delete = false"
+                @confirm="showItemUndo()"
+            />
+            <ConfirmModal
                 :showConfirm="show_status_copy"
                 :title="trans('global.kanbanStatus.copy')"
                 :description="trans('global.kanbanStatus.copy_helper')"
@@ -145,6 +151,13 @@
                     this.show_status_copy = false;
                     this.copyStatus();
                 }"
+            />
+            <ConfirmModal
+                :showConfirm="show_status_delete"
+                :title="trans('global.kanbanStatus.delete')"
+                :description="trans('global.kanbanStatus.delete_helper')"
+                @close="show_status_delete = false"
+                @confirm="showStatusUndo()"
             />
         </Teleport>
         <Teleport to="#customTitle">
@@ -232,8 +245,12 @@ export default {
             itemWidth: 320,
             item: null,
             copy_id: null,
+            delete_id: null,
+            stopDeletion: false,
             show_item_copy: false,
+            show_item_delete: false,
             show_status_copy: false,
+            show_status_delete: false,
             refreshRate: 5000,
         };
     },
@@ -362,6 +379,29 @@ export default {
             axios.get('/kanbanItems/' + this.copy_id + '/copy')
                 .then(response => this.$eventHub.emit('kanban-item-added-' + response.data.kanban_status_id, response.data));
         },
+        showItemUndo() {
+            this.show_item_delete = false;
+
+            const item_id = this.delete_id[0];
+            const status_id = this.delete_id[1];
+
+            this.toast.info('PLACEHOLDER: Karte wiederherstellen', {
+                onClick: () => this.undoDeletion(),
+                onClose: () => this.deleteItem(item_id, status_id),
+            });
+        },
+        deleteItem(item_id, status_id) {
+            if (this.stopDeletion) {
+                this.stopDeletion = false;
+                return;
+            }
+            axios.delete('/kanbanItems/' + item_id)
+                .then(() => this.$eventHub.emit('kanban-item-deleted-' + status_id, item_id));
+        },
+        undoDeletion() {
+            this.stopDeletion = true;
+            document.getElementById('deletion'); // TODO
+        },
         handleStatusAdded(newStatus) {
             // if the status already exists do nothing
             if (this.kanban.statuses.filter(s => s.id === newStatus.id).length !== 0) {
@@ -445,13 +485,21 @@ export default {
             this.handleStatusDeleted(status);
         });
 
-        // COPY Events
+        // Confirmation Events
         this.$eventHub.on('kanban-show-copy', data => {
             this.copy_id = data.id;
             if (data.type == 'item') {
                 this.show_item_copy = true;
             } else if (data.type == 'status') {
                 this.show_status_copy = true;
+            }
+        });
+        this.$eventHub.on('kanban-show-delete', data => {
+            this.delete_id = data.id; // for items it's an array [status_id, item_id]
+            if (data.type == 'item') {
+                this.show_item_delete = true;
+            } else if (data.type == 'status') {
+                this.show_status_delete = true;
             }
         });
     },

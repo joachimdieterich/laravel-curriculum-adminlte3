@@ -1,7 +1,7 @@
 <template>
     <div
         :id="'item-' + item.id"
-        class="card"
+        class="card collapse show"
         :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
         tabindex="-1"
     >

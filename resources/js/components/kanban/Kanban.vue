@@ -209,6 +209,7 @@ import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import ToastNotification from "../uiElements/ToastNotification.vue";
 import {useGlobalStore} from "../../store/global";
 import ContributorsList from "../uiElements/ContributorsList.vue";
 import {useToast} from "vue-toastification";
@@ -381,12 +382,24 @@ export default {
         },
         showItemUndo() {
             this.show_item_delete = false;
-
+            
             const item_id = this.delete_id[0];
             const status_id = this.delete_id[1];
+            $('#item-' + item_id).collapse('hide');
 
-            this.toast.info('PLACEHOLDER: Karte wiederherstellen', {
-                onClick: () => this.undoDeletion(),
+            const notification = {
+                component: ToastNotification,
+                props: {
+                    message: this.trans('global.kanbanItem.deleted'),
+                    buttonText: this.trans('global.undo'),
+                },
+                listeners: {
+                    'button-clicked': () => this.undoDeletion(item_id),
+                },
+            };
+
+            this.toast.info(notification, {
+                closeOnClick: false,
                 onClose: () => this.deleteItem(item_id, status_id),
             });
         },
@@ -398,9 +411,9 @@ export default {
             axios.delete('/kanbanItems/' + item_id)
                 .then(() => this.$eventHub.emit('kanban-item-deleted-' + status_id, item_id));
         },
-        undoDeletion() {
+        undoDeletion(item_id) {
             this.stopDeletion = true;
-            document.getElementById('deletion'); // TODO
+            $('#item-' + item_id).collapse('show');
         },
         handleStatusAdded(newStatus) {
             // if the status already exists do nothing
@@ -566,7 +579,7 @@ export default {
     }
 }
 div[id^="item"], span[id^="status"] {
-    transition: opacity 0.25s linear;
+    transition: height 0.5s ease-out, margin 0.5s ease-out, opacity 0.25s linear;
     &:hover, &:focus { opacity: 1 !important; }
 }
 </style>

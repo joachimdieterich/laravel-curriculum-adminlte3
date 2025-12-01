@@ -64,6 +64,7 @@ return [
     'open' => 'open',
     'cancel' => 'Cancel',
     'close' => 'Close',
+    'undo' => 'Undo',
     'generate' => 'Generate',
     'share' => 'Share',
     'pleaseSelect' => 'Please select',
@@ -1047,6 +1048,7 @@ return [
         'edit' => 'Edit item',
         'delete' => 'Delete item',
         'delete_helper' => 'Should this item and its associated data be deleted?',
+        'deleted' => 'Item deleted!',
         'due_date' => 'Due-Date',
         'expired' => 'Expired',
         'fields' => [
@@ -1068,6 +1070,7 @@ return [
         'copy_helper' => 'Do you want to copy this status and its associated items?',
         'delete' => 'Delete status',
         'delete_helper' => 'Should this status and its associated items be deleted?',
+        'deleted' => 'Status deleted!',
         'fields' => [
             'order_id' => 'Order ID',
             'kanban_id' => 'Kanban ID',

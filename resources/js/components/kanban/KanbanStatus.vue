@@ -199,7 +199,7 @@ export default {
                         });
                     })
                     .listen('.KanbanStatusDeleted', (payload) => {
-                        this.$eventHub.emit('kanban-status-deleted', payload.model);
+                        this.$eventHub.emit('kanban-status-deleted', payload.model.id);
                     })
                 ;
             }

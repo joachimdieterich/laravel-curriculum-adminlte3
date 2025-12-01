@@ -377,7 +377,7 @@ export default {
                         this.getEditors();
                     })
                     .listen('.KanbanItemDeleted', (payload) => {
-                        this.$eventHub.emit('kanban-item-deleted-' + this.item.kanban_status_id, payload.model);
+                        this.$eventHub.emit('kanban-item-deleted-' + this.item.kanban_status_id, payload.model.id);
                     })
                 ;
             }

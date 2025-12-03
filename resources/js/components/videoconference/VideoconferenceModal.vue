@@ -65,9 +65,7 @@
                                     option_label="BBB_SERVER_NAME"
                                     selected="form.server"
                                     :placeholder="trans('global.videoconference.fields.server')"
-                                    @selectedValue="(id) => {
-                                        this.form.server = id;
-                                    }"
+                                    @selectedValue="id => form.server = id[0]"
                                 />
 
                                 <div class="form-group">

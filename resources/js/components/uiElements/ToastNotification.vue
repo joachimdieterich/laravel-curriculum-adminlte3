@@ -3,7 +3,7 @@
         <span>{{ message }}</span>
         <button
             type="button"
-            class="btn btn-default ml-3"
+            class="btn btn-default rounded-pill ml-3"
             @click="$emit('button-clicked'); $emit('close-toast')"
         >
             {{ buttonText }}

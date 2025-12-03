@@ -47,7 +47,7 @@
                     <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
                         :id="'status-' + status.id"
                         :key="'drag_status_' + status.id"
-                        class="collapse show"
+                        class="d-flex flex-column collapse show mh-100"
                         :style="{
                             width:  itemWidth + 'px',
                             opacity: !status.visibility ? '0.7' : '1'
@@ -384,7 +384,9 @@ export default {
             this.show_status_delete = false;
             
             const status_id = this.delete_id;
-            $('#status-' + status_id).collapse('hide');
+            const elem = $('#status-' + status_id);
+            elem.collapse('hide');
+            elem[0].classList.remove('d-flex');
 
             const notification = {
                 component: ToastNotification,
@@ -412,7 +414,9 @@ export default {
         },
         undoStatusDeletion(status_id) {
             this.stopDeletion = true;
-            $('#status-' + status_id).collapse('show');
+            const elem = $('#status-' + status_id);
+            elem.collapse('show');
+            elem[0].classList.add('d-flex');
         },
         copyItem() {
             axios.get('/kanbanItems/' + this.copy_id + '/copy')

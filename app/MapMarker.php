@@ -5,7 +5,6 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Mews\Purifier\Casts\CleanHtml;
 
 class MapMarker extends Model
 {
@@ -94,4 +93,16 @@ class MapMarker extends Model
         }
     }
 
+    protected static function booted()
+    {
+        static::deleting(function ($mapMarker) {
+            $mapMarker->subscriptions->each->delete();
+            $mapMarker->mediaSubscriptions->each(function (MediumSubscription $subscription) {
+                // hack to skip setting medium_id of model to null
+                if (is_null($subscription->additional_data)) $subscription->additional_data = true;
+                // can't call delete()-function of MediumSubscription-model (in general)
+                app(\App\Http\Controllers\MediumSubscriptionController::class)->destroy($subscription);
+            });
+        });
+    }
 }

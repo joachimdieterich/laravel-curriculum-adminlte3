@@ -93,8 +93,6 @@ class MapMarkerController extends Controller
             'url_title' => $input['url_title'],
         ]);
 
-        $mapMarker->save();
-
         if (request()->wantsJson()) {
             return $mapMarker;
         }
@@ -112,13 +110,7 @@ class MapMarkerController extends Controller
             and ($mapMarker->owner_id === auth()->user()->id or is_admin())
         , 403);
 
-        $mapMarker->mediaSubscriptions()->delete();
-        $mapMarker->subscriptions()->delete();
-
-        $return = $mapMarker->delete();
-        if (request()->wantsJson()) {
-            return [ $return];
-        }
+        $mapMarker->delete();
     }
 
     protected function validateRequest()

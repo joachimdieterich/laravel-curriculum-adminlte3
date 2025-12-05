@@ -168,11 +168,7 @@ class MapController extends Controller
     {
         abort_unless((\Gate::allows('map_delete') and $map->isAccessible()), 403);
 
-        $return = $map->delete();
-        if (request()->wantsJson()) {
-            return [$return];
-        }
-
+        $map->delete();
     }
 
     public function getMapByToken(Map $map, Request $request)

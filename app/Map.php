@@ -48,7 +48,7 @@ class Map extends Model
 
     public function markers()
     {
-        return $this->hasMany(MapMarker::class,'category_id', 'category_id')->where('type_id', $this->type_id);
+        return $this->hasMany(MapMarker::class);
 
     }
 
@@ -72,5 +72,13 @@ class Map extends Model
         } else {
             return false;
         }
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function ($map) {
+            $map->subscriptions->each->delete();
+            $map->markers->each->delete();
+        });
     }
 }

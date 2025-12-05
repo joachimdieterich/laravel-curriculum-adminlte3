@@ -1031,6 +1031,7 @@ return [
         'edit' => 'Edit Kanban-Board',
         'copy' => 'Copy Kanban-Board',
         'copy_helper' => 'Do you want to copy this Kanban-Board',
+        'copy_note' => 'Note: Copying the Kanban-Board does not copy any content or files (e.g. images or PDFs), but only the access rights to them. The files remain the sole property of their respective owners.',
         'enrol' => 'Connect Kanban-Board',
         'expel_helper' => 'Disconnect group from Kanban-Board',
         'only_edit_owned_items' => 'Users are only allowed to edit owned items',

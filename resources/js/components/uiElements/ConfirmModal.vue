@@ -6,26 +6,24 @@
         >
             <div
                 class="modal-container"
-                style="border-top-left-radius: 5px; border-top-right-radius: 5px;"
+                style="border-top-left-radius: 5px; border-top-right-radius: 5px; max-width: 75vh;"
             >
                 <div
-                    class="card-header"
+                    class="modal-header"
                     :class="'bg-' + css"
                 >
-                    <h3 class="card-title">{{ title }}</h3>
-                    <div class="card-tools">
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="$emit('close')"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+                    <span class="card-title">{{ title }}</span>
+                    <button
+                        type="button"
+                        class="btn btn-icon-alt"
+                        @click="$emit('close')"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="card">
-                        <div class="card-body">{{ description }}</div>
+                        <div class="card-body" v-html="description"></div>
                     </div>
                 </div>
                 <div class="card-footer">

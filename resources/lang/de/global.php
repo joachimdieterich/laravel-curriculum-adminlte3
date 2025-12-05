@@ -1068,6 +1068,7 @@ return [
         'edit' => 'Pinnwand bearbeiten',
         'copy' => 'Pinnwand kopieren',
         'copy_helper' => 'Wollen Sie die Pinnwand kopieren?',
+        'copy_note' => 'Hinweis: Mit der Kopie der Pinnwand werden keine Inhalte bzw. Dateien (z.B. Bilder oder PDFs) mitkopiert, sondern nur die Zugriffsrechte darauf. Die Dateien bleiben weiter in der alleinigen Verfügung der jeweiligen Eigentümer:innen.',
         'enrol' => 'Pinnwand verknüpfen',
         'expel_helper' => 'Gruppe aus Pinnwand ausschreiben',
         'only_edit_owned_items' => 'Nutzer können nur selbst erstellte Spalten/Karten bearbeiten.',

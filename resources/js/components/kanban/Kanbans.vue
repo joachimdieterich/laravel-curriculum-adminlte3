@@ -214,7 +214,7 @@
             <ConfirmModal v-if="!subscribable"
                 :showConfirm="showCopy"
                 :title="trans('global.kanban.copy')"
-                :description="trans('global.kanban.copy_helper')"
+                :description="trans('global.kanban.copy_helper') + '</br>' + trans('global.kanban.copy_note')"
                 css='primary'
                 @close="showCopy = false"
                 @confirm="copy()"

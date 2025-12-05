@@ -1,22 +1,21 @@
 <template>
     <div>
-        <h1 class="sidebar-header d-flex mb-3">
-            {{ marker.title }}
+        <div class="sidebar-header d-flex align-items-center pr-0">
+            <span class="line-clamp">{{ marker.title }}</span>
             <span v-if="marker.owner_id == $userId || checkPermission('is_admin')"
                 v-permission="'map_edit'"
-                class="card-tools ml-auto pl-2"
+                class="d-flex pull-right ml-auto mr-1"
             >
-                <a @click="editMarker(marker)" >
-                    <i class="fa fa-pencil-alt"></i>
-                </a>
-                <a
-                    v-permission="'is_admin'"
-                    @click="shareMarker(marker)"
+                <button
+                    type="button"
+                    class="btn btn-icon-alt mx-1"
+                    :title="trans('global.marker.edit')"
+                    @click="editMarker(marker)"
                 >
-                    <i class="ml-3 fa fa-share-alt"></i>
-                </a>
+                    <i class="fas fa-pencil-alt p-2"></i>
+                </button>
             </span>
-        </h1>
+        </div>
         <div>
             <span v-for="tag in tag_array"
                 class="right badge badge-primary mr-2"
@@ -31,7 +30,7 @@
         </div>
 
         <div v-if="marker.description">
-            <h5 class="pt-3">{{ trans('global.description') }}</h5>
+            <div class="h5 pt-3 pb-2 m-0">{{ trans('global.description') }}</div>
             <div v-html="marker.description"></div>
         </div>
 
@@ -43,7 +42,7 @@
                 subscribable_type="App\MapMarker"
                 :subscribable_id="marker.id"
                 :editable="marker.owner_id == $userId"
-                public="true"
+                :public="true"
                 format="list"
             />
         </div>

@@ -30,38 +30,39 @@
                     id="ll-home"
                     class="sidebar-pane active"
                 >
-                    <h1 class="sidebar-header pr-2 mb-3">
-                        {{ map.title }}
+                    <div class="sidebar-header d-flex align-items-center pr-0">
+                        <span class="line-clamp">{{ map.title }}</span>
                         <span v-if="map.owner_id == $userId || checkPermission('is_admin')"
-                            class="d-flex pull-right"
+                            v-permission="'map_edit'"
+                            class="d-flex pull-right ml-auto mr-1"
                         >
-                            <a
-                                v-permission="'map_edit'"
-                                class="link-muted text-white pointer mx-1"
+                            <button
+                                type="button"
+                                class="btn btn-icon-alt mx-1"
+                                :title="trans('global.map.edit')"
                                 @click="editMap(map)"
                             >
                                 <i class="fas fa-pencil-alt p-2"></i>
-                            </a>
-                            <a
-                                v-permission="'map_edit'"
-                                class="link-muted text-white pointer mx-1"
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-icon-alt mx-1"
+                                :title="trans('global.map.share')"
                                 @click="share()"
                             >
                                 <i class="fa fa-share-alt p-2"></i>
-                            </a>
+                            </button>
                         </span>
-                    </h1>
+                    </div>
                     <span class="pb-2">
-                        <h5>{{ map.subtitle }}</h5>
-                        <span class="right badge badge-primary">
-                            {{ map.type.title }}
-                        </span>
+                        <div class="h5 mt-2">{{ map.subtitle }}</div>
+                        <span class="right badge badge-primary">{{ map.type.title }}</span>
                     </span>
 
-                    <p v-if="map.description"
-                        class="pt-2"
+                    <div v-if="map.description"
+                        class="py-2 p-margin-0"
                         v-html="map.description"
-                    ></p>
+                    ></div>
 
                     <h5 class="pt-2">{{ trans('global.entries') }}</h5>
                     <ul class="todo-list">
@@ -100,9 +101,7 @@
                 </div>
 
                 <div class="sidebar-pane" id="ll-layer">
-                    <h1 class="sidebar-header mb-3">
-                        Ebenen
-                    </h1>
+                    <h1 class="sidebar-header">Ebenen</h1>
 
                     <Select2
                         :id="'mapMarkerType' + component_id"
@@ -142,7 +141,7 @@
                     id="ll-marker"
                     class="sidebar-pane"
                 >
-                    <h1 class="sidebar-header  mb-3">
+                    <h1 class="sidebar-header">
                         {{ currentMarker.ARTIKEL }}
                     </h1>
 
@@ -201,9 +200,7 @@
                 </div>
 
                 <div class="sidebar-pane" id="ll-search">
-                    <h1 class="sidebar-header mb-3">
-                        {{ currentMarker?.title }}
-                    </h1>
+                    <h1 class="sidebar-header">{{ currentMarker?.title }}</h1>
 
                     <div
                         class="form-group"

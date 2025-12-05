@@ -2,7 +2,6 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="modal-header">
@@ -288,13 +287,13 @@ export default {
             }),
             tinyMCE: this.$initTinyMCE(
                 [
-                    "autolink", "link", "autoresize",
+                    "autolink", "link", "autoresize", "code",
                 ],
                 {
                     'callback': 'insertContent',
                     'callbackId': this.component_id
                 },
-                null,
+                "bold underline italic | alignleft aligncenter alignright alignjustify | link code",
                 ''
             ),
         }

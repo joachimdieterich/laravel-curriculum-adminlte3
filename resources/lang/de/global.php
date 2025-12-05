@@ -71,6 +71,7 @@ return [
     'cancel' => 'Abbrechen',
     'ok' => 'OK',
     'close' => 'Schließen',
+    'undo' => 'Rückgängig machen',
     'preview' => 'Vorschau',
     'generate' => 'erzeugen',
     'share' => 'Teilen',
@@ -1084,6 +1085,7 @@ return [
         'edit' => 'Pinnwand bearbeiten',
         'copy' => 'Pinnwand kopieren',
         'copy_helper' => 'Wollen Sie die Pinnwand kopieren?',
+        'copy_note' => 'Hinweis: Mit der Kopie der Pinnwand werden keine Inhalte bzw. Dateien (z.B. Bilder oder PDFs) mitkopiert, sondern nur die Zugriffsrechte darauf. Die Dateien bleiben weiter in der alleinigen Verfügung der jeweiligen Eigentümer:innen.',
         'enrol' => 'Pinnwand verknüpfen',
         'expel_helper' => 'Gruppe aus Pinnwand ausschreiben',
         'only_edit_owned_items' => 'Nutzer können nur selbst erstellte Spalten/Karten bearbeiten.',
@@ -1101,6 +1103,7 @@ return [
         'copy_helper' => 'Wollen Sie die Karte kopieren?',
         'delete' => 'Karte löschen',
         'delete_helper' => 'Soll die Karte sowie die zugehörigen Daten gelöscht werden?',
+        'deleted' => 'Karte wurde gelöscht!',
         'due_date' => 'Fälligkeitsdatum',
         'expired' => 'abgelaufen',
         'fields' => [
@@ -1122,6 +1125,7 @@ return [
         'copy_helper' => 'Wollen Sie die Spalte sowie die zugehörigen Karten kopieren?',
         'delete' => 'Spalte löschen',
         'delete_helper' => 'Soll die Spalte sowie die zugehörigen Karten gelöscht werden?',
+        'deleted' => 'Spalte wurde gelöscht!',
         'fields' => [
             'order_id' => 'Order ID',
             'kanban_id' => 'Kanban ID',

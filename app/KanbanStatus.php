@@ -145,4 +145,12 @@ class KanbanStatus extends Model
                 'items.likes',
             ])->where('id', $this->id)->get()->first();
     }
+
+    protected static function booted()
+    {
+        static::deleting(function (KanbanStatus $kanbanStatus) {
+            // each item needs to be deleted separately to trigger its booted function
+            $kanbanStatus->items->each->delete();
+        });
+    }
 }

@@ -281,23 +281,7 @@ class KanbanController extends Controller
     {
         abort_unless((Gate::allows('kanban_delete') and $kanban->isAccessible()), 403);
 
-        // delete medium if edusharing-medium
-        if ($kanban->medium_id) {
-            $medium = $kanban->medium;
-
-            if ($medium->adapter == 'edusharing') {
-                $medium->subscriptions()->delete();
-                $medium->delete();
-            }
-        }
-
-        // delete relations
-        $kanban->items()->delete();
-        $kanban->statuses()->delete();
-        $kanban->subscriptions()->delete();
-        $kanban->syncTags([]);
-
-        return $kanban->delete();
+        $kanban->delete();
     }
 
     public function exportKanbanCsv(Kanban $kanban)
@@ -388,63 +372,50 @@ class KanbanController extends Controller
         return $this->show($kanban, $input['sharing_token']);
     }
 
-    public function copyKanban(Kanban $kanban, Request $request)
+    public function copyKanban(Kanban $kanban)
     {
         abort_unless(Gate::allows('kanban_create') and $kanban->allow_copy, 403);
 
-        $kanbanCopy = Kanban::create([
-            'title'                 => $kanban->title . '_' . date('Y.m.d_H:i:s'),
-            'description'           => $kanban->description,
-            'color'                 => $kanban->color,
-            'commentable'           => $kanban->commentable,
-            'auto_refresh'          => $kanban->auto_refresh,
-            'only_edit_owned_items' => $kanban->only_edit_owned_items,
-            'allow_copy'            => $kanban->allow_copy,
-            'collapse_items'        => $kanban->collapse_items,
-            'owner_id'              => auth()->user()->id,
+        $kanbanCopy = $kanban->replicate()->fill([
+            'title'    => $kanban->title . date(' [Y.m.d_H:i:s]'),
+            'owner_id' => auth()->user()->id,
         ]);
+        $kanbanCopy->save();
 
-        $statuses = $kanban->statuses;
-        foreach ($statuses as $status) {
-            $statusCopy = KanbanStatus::Create([
-                'title'      => $status->title,
-                'order_id'   => $status->order_id,
-                'kanban_id'  => $kanbanCopy->id,
-                'color'      => $status->color,
-                'locked'     => $kanbanCopy->locked ?? false,
-                'visibility' => $kanbanCopy->visibility ?? true,
-                'owner_id'   => auth()->user()->id,
+        foreach ($kanban->statuses as $status) {
+            $statusCopy = $status->replicate()->fill([
+                'kanban_id' => $kanbanCopy->id,
+                'owner_id'  => auth()->user()->id,
             ]);
+            $statusCopy->save();
 
             foreach ($status->items as $item) {
-                $kanbanItemCopy = KanbanItem::Create([
-                    'title'            => $item->title,
-                    'description'      => $item->description,
-                    'order_id'         => $item->order_id,
-                    'kanban_id'        => $kanbanCopy->id,
+                $itemCopy = $item->replicate()->fill([
                     'kanban_status_id' => $statusCopy->id,
-                    'color'            => $item->color,
-                    'visibility'       => $item->visibility,
-                    'visible_from'     => $item->visible_from,
-                    'visible_until'    => $item->visible_until,
-                    'due_date'         => $item->due_date,
-                    'replace_links'    => $item->replace_links,
+                    'kanban_id'        => $kanbanCopy->id,
+                    'editors_ids'      => [],
                     'owner_id'         => auth()->user()->id,
                 ]);
+                $itemCopy->save();
 
-                // TODO: copied edusharing-media need newly created usages and media records
-                // INFO: is it even possible to create new usages, since we can't be sure that the user has access to the same media?
-                // foreach ($item->mediaSubscriptions as $mediaSubscription) {
-                //     MediumSubscription::create([
-                //         'medium_id'         => $mediaSubscription->medium_id,
-                //         'subscribable_type' => $mediaSubscription->subscribable_type,
-                //         'subscribable_id'   => $kanbanItemCopy->id,
-                //         'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-                //         'visibility'        => $mediaSubscription->visibility,
-                //         'additional_data'   => $mediaSubscription->additional_data,
-                //         'owner_id'          => auth()->user()->id,
-                //     ]);
-                // }
+                foreach ($item->mediaSubscriptions as $mediumSubscription) {
+                    $usage = null;
+                    // if Medium is external, we need to create a new usage
+                    if (!is_null($mediumSubscription->additional_data)) {
+                        $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                            'App\\KanbanItem',
+                            $itemCopy->id,
+                            $mediumSubscription->additional_data['nodeId'],
+                            $mediumSubscription->medium()->pluck('owner_id')->first()
+                        );
+                    }
+
+                    $mediumSubscription->replicate()->fill([
+                        'subscribable_id'   => $itemCopy->id,
+                        'owner_id'          => auth()->user()->id,
+                        'additional_data'   => $usage,
+                    ])->save();
+                }
             }
         }
 

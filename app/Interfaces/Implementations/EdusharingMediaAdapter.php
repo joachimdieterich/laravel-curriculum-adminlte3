@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Plugins\Repositories\edusharing;
+namespace App\Interfaces\Implementations;
 
 use App\Http\Controllers\LogController;
 use App\Interfaces\MediaInterface;
 use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
-
+use App\Plugins\Repositories\edusharing\Edusharing;
+use EduSharingApiClient\EduSharingAuthHelper;
+use EduSharingApiClient\EduSharingHelperBase;
 
 class EdusharingMediaAdapter implements MediaInterface
 {
@@ -25,7 +27,7 @@ class EdusharingMediaAdapter implements MediaInterface
     {
         $edusharing = new Edusharing;
 
-        return $edusharing->getSearchQueriesV2('-home-',$request);
+        return $edusharing->getSearchQueriesV2('-home-', $request);
 
     }
 
@@ -78,7 +80,7 @@ class EdusharingMediaAdapter implements MediaInterface
             'city'          => $input['city']           ?? '',
             'date'          => date('Y-m-d_H-i-s'),
             'size'          => $input['size']           ?? 0,
-            'mime_type'     => $input['mime_type']      ?? 'edusharing',
+            'mime_type'     => $input['mimetype']       ?? 'edusharing',
             'license_id'    => $input['license_id']     ?? 1,
             'public'        => $input['public']         ?? 1,   //default is public --> permission check over edusharing
 
@@ -87,37 +89,12 @@ class EdusharingMediaAdapter implements MediaInterface
 
         if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null'))
         {
-            //create usage
-            try {
-                $edusharing = new Edusharing;
-
-                $usage = $edusharing
-                    ->createUsage(
-                        $input['subscribable_type'],
-                        $input['subscribable_id'],
-                        $input['external_id'],
-                    );
-            }
-            catch (Exception $e)
-            {
-                dump($e->getMessage());
-            }
-
-
-            //subscribe
-            $subscribe = MediumSubscription::updateOrCreate(
-                [
-                    'medium_id'         => $medium->id,
-                    'subscribable_type' => $input['subscribable_type'],
-                    'subscribable_id'   => $input['subscribable_id'],
-                ],
-                [
-                    'sharing_level_id'  => 1,
-                    'visibility'        => 1,
-                    'additional_data'   => $usage ?? '',
-                    'owner_id'          => auth()->user()->id,
-                ]);
-            $subscribe->save();
+            $this->createUsage(
+                $medium->id,
+                $input['subscribable_type'],
+                $input['subscribable_id'],
+                $input['external_id'],
+            );
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__, null, 1);
@@ -302,6 +279,32 @@ class EdusharingMediaAdapter implements MediaInterface
         }
     }
 
+    public function createUsage(int $medium_id, string $subscribable_type, int $subscribable_id, string $external_id)
+    {
+        try {
+            $edusharing = new Edusharing;
+            $usage = $edusharing->createUsage($subscribable_type, $subscribable_id, $external_id);
+        }
+        catch (\Exception $e)
+        {
+            dump($e->getMessage());
+        }
+
+        $subscribe = MediumSubscription::updateOrCreate(
+            [
+                'medium_id'         => $medium_id,
+                'subscribable_type' => $subscribable_type,
+                'subscribable_id'   => $subscribable_id,
+            ],
+            [
+                'sharing_level_id'  => 1,
+                'visibility'        => 1,
+                'additional_data'   => $usage ?? '',
+                'owner_id'          => auth()->user()->id,
+            ]);
+        $subscribe->save();
+    }
+
     public function checkIfUserHasSubscription($subscription)
     {
         switch ($subscription->subscribable_type) {
@@ -353,10 +356,9 @@ class EdusharingMediaAdapter implements MediaInterface
             'medium_name' => 'sometimes|string|nullable',
             'model' => 'sometimes',
             'model_id' => 'sometimes',
-
             'title' => 'sometimes',
             'size' => 'sometimes',
-            'mime_type' => 'sometimes',
+            'mimetype' => 'sometimes',
             'description' => 'sometimes',
             'author' => 'sometimes',
             'publisher' => 'sometimes',

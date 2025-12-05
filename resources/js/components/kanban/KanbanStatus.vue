@@ -62,7 +62,7 @@
                                 v-permission="'kanban_delete'"
                                 name="kanbanStatusDelete"
                                 class="dropdown-item py-1 text-red"
-                                @click="confirmItemDelete()"
+                                @click="confirmDeletion()"
                             >
                                 <i class="fa fa-trash mr-2"></i>
                                 {{ trans('global.kanbanStatus.delete') }}
@@ -87,23 +87,9 @@
                 </span>
             </div>
         </div>
-
-        <Teleport to=".content">
-            <ConfirmModal
-                :showConfirm="showConfirm"
-                :title="trans('global.kanbanStatus.delete')"
-                :description="trans('global.kanbanStatus.delete_helper')"
-                @close="this.showConfirm = false"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.delete();
-                }"
-            />
-        </Teleport>
     </div>
 </template>
 <script>
-import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -147,7 +133,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            showConfirm: false,
             url: '',
             method: 'patch',
             event: '',
@@ -171,17 +156,11 @@ export default {
                 type: 'status',
             });
         },
-        confirmItemDelete() {
-            this.showConfirm = true;
-        },
-        delete() {
-            axios.delete("/kanbanStatuses/" + this.status.id)
-                .then(() => {
-                    this.$eventHub.emit("kanban-status-deleted", this.status);
-                })
-                .catch(err => {
-                    console.log(err.response);
-                });
+        confirmDeletion() {
+            this.$eventHub.emit('kanban-show-delete', {
+                id: this.status.id,
+                type: 'status',
+            });
         },
         handleItemAdded(newItem) {
             // Add newly created item to our column
@@ -194,10 +173,10 @@ export default {
 
             this.handleItemMoved(this.status.items);
         },
-        handleItemDeleted(item) {
+        handleItemDeleted(id) {
             // Find the index of the status where we should delete the item
             const itemIndex = this.status.items.findIndex(
-                i => i.id === item.id
+                item => item.id === id
             );
             if (itemIndex === -1) return;
 
@@ -224,7 +203,7 @@ export default {
                         });
                     })
                     .listen('.KanbanStatusDeleted', (payload) => {
-                        this.$eventHub.emit('kanban-status-deleted', payload.model);
+                        this.$eventHub.emit('kanban-status-deleted', payload.model.id);
                     })
                 ;
             }
@@ -286,16 +265,13 @@ export default {
             this.$eventHub.on('kanban-item-updated-' + this.status.id, (item) => {
                 this.handleItemUpdated(item);
             });
-            this.$eventHub.on('kanban-item-deleted-' + this.status.id, (item) => {
-                this.handleItemDeleted(item);
+            this.$eventHub.on('kanban-item-deleted-' + this.status.id, (id) => {
+                this.handleItemDeleted(id);
             });
         }
     },
     unmounted() {
         this.stopWebsocket();
-    },
-    components: {
-        ConfirmModal,
     },
 }
 </script>

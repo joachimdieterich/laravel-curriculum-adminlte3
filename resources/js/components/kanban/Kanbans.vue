@@ -211,26 +211,16 @@
                 :showConfirm="showConfirm"
                 :title="trans('global.kanban.' + delete_label_field)"
                 :description="trans('global.kanban.' + delete_label_field +'_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
             <ConfirmModal v-if="!subscribable"
                 :showConfirm="showCopy"
                 :title="trans('global.kanban.copy')"
-                :description="trans('global.kanban.copy_helper')"
+                :description="trans('global.kanban.copy_helper') + '</br>' + trans('global.kanban.copy_note')"
                 css='primary'
-                @close="() => {
-                    this.showCopy = false;
-                }"
-                @confirm="() => {
-                    this.showCopy = false;
-                    this.copy();
-                }"
+                @close="showCopy = false"
+                @confirm="copy()"
             />
         </Teleport>
     </div>
@@ -375,7 +365,13 @@ export default {
         copy() {
             axios.get('/kanbans/' + this.currentKanban.id + '/copy')
                 .then(response => {
+                    this.showCopy = false;
                     this.kanbans.push(response.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                    this.showCopy = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         destroy() {
@@ -386,22 +382,27 @@ export default {
                     subscribable_id : this.subscribable_id,
                 })
                     .then(response => {
+                        this.showConfirm = false;
                         let index = this.kanbans.indexOf(this.currentKanban);
                         this.kanbans.splice(index, 1);
                         this.toast.success(response.data);
                     })
                     .catch(e => {
                         console.log(e);
+                        this.showConfirm = false;
                         this.toast.error(trans('global.expel_error'));
                     });
             }  else {
                 axios.delete('/kanbans/' + this.currentKanban.id)
                     .then(() => {
+                        this.showConfirm = false;
                         let index = this.kanbans.indexOf(this.currentKanban);
                         this.kanbans.splice(index, 1);
                     })
-                    .catch(err => {
-                        console.log(err.response);
+                    .catch(e => {
+                        console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(this.errorMessage(e));
                     });
             }
         },

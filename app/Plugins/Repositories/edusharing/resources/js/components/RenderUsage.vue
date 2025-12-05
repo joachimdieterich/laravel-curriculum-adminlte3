@@ -1,25 +1,23 @@
 <template>
-    <div class="position-relative">
-        <img v-if="isCarousel"
-            :src="'/media/' + medium.id + '?preview=true'"
-            class="d-block mw-100 w-auto m-auto"
-            :alt="medium.title ?? medium.medium_name"
-        >
-        <div v-else
-            class="nav-item-box-image-size h-100 w-100"
-            :style="{'background': 'url(/media/' + medium.id + '?preview=true) center no-repeat'}"
-            :alt="medium.title"
-            @click="show()"
-        ></div>
+    <img v-if="isCarousel"
+        :src="'/media/' + medium.id + '?preview=true'"
+        class="d-block mw-100 w-auto m-auto"
+        :alt="medium.title ?? medium.medium_name"
+    >
+    <div v-else
+        class="nav-item-box-image-size h-100 w-100"
+        :style="{'background': 'url(/media/' + medium.id + '?preview=true) center no-repeat'}"
+        :alt="medium.title"
+        @click="show()"
+    ></div>
 
-        <div
-            :id="'loading_' + medium.id"
-            class="overlay position-absolute text-center w-100"
-            style="inset: 0;"
-        >
-            <i class="fa fa-spinner fa-pulse fa-fw"></i>
-            <span class="sr-only">Loading...</span>
-        </div>
+    <div
+        :id="'loading_' + medium.id"
+        class="overlay position-absolute text-center w-100"
+        style="inset: 0;"
+    >
+        <i class="fa fa-spinner fa-pulse fa-fw"></i>
+        <span class="sr-only">Loading...</span>
     </div>
 </template>
 <script>
@@ -28,10 +26,6 @@ export default {
         medium: {
             type: Object,
             default: null,
-        },
-        downloadable: {
-            type: Boolean,
-            default: true,
         },
         isCarousel: {
             type: Boolean,

@@ -64,6 +64,7 @@ return [
     'open' => 'open',
     'cancel' => 'Cancel',
     'close' => 'Close',
+    'undo' => 'Undo',
     'generate' => 'Generate',
     'share' => 'Share',
     'pleaseSelect' => 'Please select',
@@ -1047,6 +1048,7 @@ return [
         'edit' => 'Edit Kanban-Board',
         'copy' => 'Copy Kanban-Board',
         'copy_helper' => 'Do you want to copy this Kanban-Board',
+        'copy_note' => 'Note: Copying the Kanban-Board does not copy any content or files (e.g. images or PDFs), but only the access rights to them. The files remain the sole property of their respective owners.',
         'enrol' => 'Connect Kanban-Board',
         'expel_helper' => 'Disconnect group from Kanban-Board',
         'only_edit_owned_items' => 'Users are only allowed to edit owned items',
@@ -1064,6 +1066,7 @@ return [
         'edit' => 'Edit item',
         'delete' => 'Delete item',
         'delete_helper' => 'Should this item and its associated data be deleted?',
+        'deleted' => 'Item deleted!',
         'due_date' => 'Due-Date',
         'expired' => 'Expired',
         'fields' => [
@@ -1085,6 +1088,7 @@ return [
         'copy_helper' => 'Do you want to copy this status and its associated items?',
         'delete' => 'Delete status',
         'delete_helper' => 'Should this status and its associated items be deleted?',
+        'deleted' => 'Status deleted!',
         'fields' => [
             'order_id' => 'Order ID',
             'kanban_id' => 'Kanban ID',

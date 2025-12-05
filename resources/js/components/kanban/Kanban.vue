@@ -47,7 +47,7 @@
                     <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
                         :id="'status-' + status.id"
                         :key="'drag_status_' + status.id"
-                        class="d-flex flex-column h-100"
+                        class="d-flex flex-column collapse show mh-100"
                         :style="{
                             width:  itemWidth + 'px',
                             opacity: !status.visibility ? '0.7' : '1'
@@ -66,10 +66,14 @@
                         />
                         <div v-if="editable"
                             :id="'kanbanItemCreateButton_' + index"
-                            class="btn btn-flat p-1 my-1 mx-auto"
-                            @click="openItemModal(status.id)"
+                            class="my-1 w-100 text-center"
                         >
-                            <i class="d-print-none text-white fa fa-2x fa-plus-circle"></i>
+                            <button
+                                class="btn btn-flat p-1"
+                                @click="openItemModal(status.id)"
+                            >
+                                <i class="d-print-none text-white fa fa-2x fa-plus-circle"></i>
+                            </button>
                         </div>
                         <div v-else class="py-2"></div>
                         <draggable
@@ -78,8 +82,7 @@
                             item-key="id"
                             handle=".handle"
                             :data-status-id="status.id"
-                            class="kanban-items-container d-flex flex-column hide-scrollbars"
-                            style="overflow-y: scroll;"
+                            class="kanban-items-container d-flex flex-column hide-scrollbars overflow-auto"
                             :move="isLocked"
                             @end="syncItemMoved"
                         >
@@ -123,7 +126,6 @@
             <KanbanItemModal/>
             <KanbanStatusModal :kanban="initialKanban"/>
             <MediumModal/>
-            <MediumPreviewModal/>
             <SubscribeModal/>
             <ConfirmModal
                 :showConfirm="show_item_copy"
@@ -137,6 +139,13 @@
                 }"
             />
             <ConfirmModal
+                :showConfirm="show_item_delete"
+                :title="trans('global.kanbanItem.delete')"
+                :description="trans('global.kanbanItem.delete_helper')"
+                @close="show_item_delete = false"
+                @confirm="showItemUndoNotification()"
+            />
+            <ConfirmModal
                 :showConfirm="show_status_copy"
                 :title="trans('global.kanbanStatus.copy')"
                 :description="trans('global.kanbanStatus.copy_helper')"
@@ -146,6 +155,13 @@
                     this.show_status_copy = false;
                     this.copyStatus();
                 }"
+            />
+            <ConfirmModal
+                :showConfirm="show_status_delete"
+                :title="trans('global.kanbanStatus.delete')"
+                :description="trans('global.kanbanStatus.delete_helper')"
+                @close="show_status_delete = false"
+                @confirm="showStatusUndoNotification()"
             />
         </Teleport>
         <Teleport to="#customTitle">
@@ -194,10 +210,10 @@ import KanbanItemModal from "../kanbanItem/KanbanItemModal.vue";
 import KanbanStatus from "./KanbanStatus.vue";
 import KanbanStatusModal from "./KanbanStatusModal.vue";
 import MediumModal from "../media/MediumModal.vue";
-import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
+import ToastNotification from "../uiElements/ToastNotification.vue";
 import {useGlobalStore} from "../../store/global";
 import ContributorsList from "../uiElements/ContributorsList.vue";
 import {useToast} from "vue-toastification";
@@ -234,8 +250,12 @@ export default {
             itemWidth: 320,
             item: null,
             copy_id: null,
+            delete_id: null,
+            stopDeletion: false,
             show_item_copy: false,
+            show_item_delete: false,
             show_status_copy: false,
+            show_status_delete: false,
         };
     },
     methods: {
@@ -359,9 +379,82 @@ export default {
             axios.get('/kanbanStatuses/' + this.copy_id + '/copy')
                 .then(response => this.handleStatusAdded(response.data));
         },
+        showStatusUndoNotification() {
+            this.show_status_delete = false;
+            
+            const status_id = this.delete_id;
+            const elem = $('#status-' + status_id);
+            elem.collapse('hide');
+            elem[0].classList.remove('d-flex');
+
+            const notification = {
+                component: ToastNotification,
+                props: {
+                    message: this.trans('global.kanbanStatus.deleted'),
+                    buttonText: this.trans('global.undo'),
+                },
+                listeners: {
+                    'button-clicked': () => this.undoStatusDeletion(status_id),
+                },
+            };
+
+            this.toast.info(notification, {
+                closeOnClick: false,
+                onClose: () => this.deleteStatus(status_id),
+            });
+        },
+        deleteStatus(status_id) {
+            if (this.stopDeletion) {
+                this.stopDeletion = false;
+                return;
+            }
+            axios.delete('/kanbanStatuses/' + status_id)
+                .then(() => this.handleStatusDeleted(status_id));
+        },
+        undoStatusDeletion(status_id) {
+            this.stopDeletion = true;
+            const elem = $('#status-' + status_id);
+            elem.collapse('show');
+            elem[0].classList.add('d-flex');
+        },
         copyItem() {
             axios.get('/kanbanItems/' + this.copy_id + '/copy')
                 .then(response => this.$eventHub.emit('kanban-item-added-' + response.data.kanban_status_id, response.data));
+        },
+        showItemUndoNotification() {
+            this.show_item_delete = false;
+            
+            const item_id = this.delete_id[0];
+            const status_id = this.delete_id[1];
+            $('#item-' + item_id).collapse('hide');
+
+            const notification = {
+                component: ToastNotification,
+                props: {
+                    message: this.trans('global.kanbanItem.deleted'),
+                    buttonText: this.trans('global.undo'),
+                },
+                listeners: {
+                    'button-clicked': () => this.undoDeletion(item_id),
+                },
+            };
+
+            this.toast.info(notification, {
+                closeOnClick: false,
+                onClose: () => this.deleteItem(item_id, status_id),
+            });
+        },
+        deleteItem(item_id, status_id) {
+            if (this.stopDeletion) {
+                this.stopDeletion = false;
+                return;
+            }
+            axios.delete('/kanbanItems/' + item_id)
+                .then(() => this.$eventHub.emit('kanban-item-deleted-' + status_id, item_id));
+        },
+        undoDeletion(item_id) {
+            this.stopDeletion = true;
+            $('#item-' + item_id).collapse('show');
         },
         handleStatusAdded(newStatus) {
             // if the status already exists do nothing
@@ -380,9 +473,8 @@ export default {
 
             this.handleStatusMoved();
         },
-        handleStatusDeleted(status) {
-            let index = this.kanban.statuses.findIndex(s => s.id === status.id);
-
+        handleStatusDeleted(status_id) {
+            let index = this.kanban.statuses.findIndex(s => s.id === status_id);
             this.kanban.statuses.splice(index, 1);
         },
         handleStatusMoved() {
@@ -444,17 +536,25 @@ export default {
         this.$eventHub.on('kanban-status-updated', (status) => {
             this.handleStatusUpdated(status);
         });
-        this.$eventHub.on('kanban-status-deleted', (status) => {
-            this.handleStatusDeleted(status);
+        this.$eventHub.on('kanban-status-deleted', (status_id) => {
+            this.handleStatusDeleted(status_id);
         });
 
-        // COPY Events
+        // Confirmation Events
         this.$eventHub.on('kanban-show-copy', data => {
             this.copy_id = data.id;
             if (data.type == 'item') {
                 this.show_item_copy = true;
             } else if (data.type == 'status') {
                 this.show_status_copy = true;
+            }
+        });
+        this.$eventHub.on('kanban-show-delete', data => {
+            this.delete_id = data.id; // for items it's an array [item_id, status_id]
+            if (data.type == 'item') {
+                this.show_item_delete = true;
+            } else if (data.type == 'status') {
+                this.show_status_delete = true;
             }
         });
     },
@@ -492,7 +592,6 @@ export default {
         KanbanItem,
         KanbanItemModal,
         MediumModal,
-        MediumPreviewModal,
         SubscribeModal,
         KanbanModal,
         KanbanStatusModal,
@@ -522,7 +621,7 @@ export default {
     }
 }
 div[id^="item"], span[id^="status"] {
-    transition: opacity 0.25s linear;
+    transition: height 0.5s ease-out, opacity 0.25s linear;
     &:hover, &:focus { opacity: 1 !important; }
 }
 </style>

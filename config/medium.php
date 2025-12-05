@@ -1,7 +1,7 @@
 <?php
 
 use App\Interfaces\Implementations\LocalMediaAdapter;
-use App\Plugins\Repositories\edusharing\EdusharingMediaAdapter;
+use App\Interfaces\Implementations\EdusharingMediaAdapter;
 
 return [
 

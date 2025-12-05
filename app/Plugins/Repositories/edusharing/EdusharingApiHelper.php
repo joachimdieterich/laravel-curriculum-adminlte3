@@ -1,7 +1,7 @@
 <?php
 namespace App\Plugins\Repositories\edusharing;
 
-use Exception;
+use EduSharingApiClient\EduSharingHelperAbstract;
 
 class EduSharingApiHelper extends EduSharingHelperAbstract  {
 
@@ -20,13 +20,13 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         $nodeId
     )
     {
-        if(!is_guest()){
+        if (!is_guest()) {
             $headers = $this->getSignatureHeaders($ticket);
             $headers[] = $this->getRESTAuthenticationHeader($ticket);
         }
 
         $curl = $this->base->handleCurlRequest(
-            $this->repoUrl.'/rest/rendering/v1/details/'.$repository.'/'.$nodeId,
+            $this->base->baseUrl . '/rest/rendering/v1/details/' . $repository . '/' . $nodeId,
             [
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
@@ -56,7 +56,7 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         $headers = $this->getSignatureHeaders($ticket);
         $headers[] = $this->getRESTAuthenticationHeader($ticket);
         $curl = $this->base->handleCurlRequest(
-            $this->repoUrl.'/rest/search/v1/custom/'.$repository.'?'.http_build_query($params),
+            $this->base->baseUrl . '/rest/search/v1/custom/' . $repository . '?' . http_build_query($params),
             [
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
@@ -90,7 +90,7 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         $headers[] = $this->getRESTAuthenticationHeader($ticket);
 
         $curl = $this->base->handleCurlRequest(
-            $this->repoUrl.'/rest/node/v1/nodes/'.$repository.'/'.$parentId.'/children?'.http_build_query($params),
+            $this->base->baseUrl . '/rest/node/v1/nodes/' . $repository . '/' . $parentId . '/children?' . http_build_query($params),
             [
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
@@ -118,15 +118,16 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
     )
     {
         switch ($params['filter']) {
-            case '3':  $filter = 'cm:creator';                             //user_files
+            case '3':  //user_files
+                $filter = 'cm:creator';
                 $filter_value = auth()->user()->common_name;
                 break;
-            case '2':                                                      // shared_files
-            case '1':                                                      // public_files
-            default:   $filter = '';
+            case '2': // shared_files
+            case '1': // public_files
+            default:
+                $filter = '';
                 $filter_value = '';
                 break;
-
         }
         if ($filter != '')
         {
@@ -166,10 +167,7 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
             ];
         }
 
-        //dump(json_encode ( $postFields ));
-        //dump($this->repoUrl . '/rest/search/v1/queries/' . $repository.'/-default-/curriculum?'.http_build_query($params));
-
-        if(!is_guest()) {
+        if (!is_guest()) {
             $headers = $this->getSignatureHeaders($ticket);
             $headers[] = $this->getRESTAuthenticationHeader($ticket);
         } else {
@@ -187,7 +185,7 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
         }
 
         $curl = $this->base->handleCurlRequest(
-            $this->base->baseUrl.'/rest/search/v1/queries/'.$repository.'/-default-/curriculum?'.http_build_query($params),
+            $this->base->baseUrl . '/rest/search/v1/queries/' . $repository . '/-default-/curriculum?' . http_build_query($params),
             [
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => json_encode($postFields),
@@ -201,5 +199,4 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
 
         return json_decode($curl->content, true);
     }
-
 }

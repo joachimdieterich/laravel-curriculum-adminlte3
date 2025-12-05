@@ -1,6 +1,21 @@
 <template>
-    <div>
-        <span v-if="mime(medium.mime_type) === 'embed'"
+    <div
+        class="d-flex align-items-center justify-content-center"
+        style="min-height: 100px;"
+        @click="open()"
+    >
+        <img v-if="mime === 'image' || mime === 'video' || mime === 'audio' || mime === 'application'"
+            :src="'/media/' + medium.id + '?preview=true&size=max'"
+            :alt="medium.title ?? medium.medium_name"
+            class="d-block mw-100 m-auto"
+        />
+    
+        <RenderUsage v-else-if="mime === 'edusharing'"
+            :medium="medium"
+            :isCarousel="true"
+        />
+    
+        <span v-else
             style="height: 500px"
         >
             <iframe
@@ -9,21 +24,6 @@
                 :width="width"
                 frameborder="0"
             ></iframe>
-        </span>
-
-        <RenderUsage v-else-if="mime(medium.mime_type) === 'external'"
-            :medium="medium"
-            :downloadable="downloadable"
-            :isCarousel="true"
-        />
-
-        <img v-else-if="mime(medium.mime_type) === 'img'"
-            :src="'/media/' + medium.id"
-            width="100%"
-        />
-
-        <span v-else>
-            - Please download file -
         </span>
     </div>
 </template>
@@ -44,41 +44,19 @@ export default {
             type: Number,
             default: 600,
         },
-        edit: {
-            type: Boolean,
-            default: false,
-        },
-        downloadable: {
-            type: Boolean,
-            default: true,
-        },
     },
     methods: {
-        mime(type) {
-            switch (type) {
-                //Images use <img>
-                case 'image/jpg' :
-                case 'image/jpeg':
-                case 'image/png':
-                case 'image/gif':
-                case 'image/bmp':
-                case 'image/tiff':
-                case 'image/ico':
-                case 'image/svg':
-                    return 'img';
-                    break;
-                case 'edusharing':
-                    return 'external';
-                    break;
-                // default use <embed>
-                default:
-                    return 'embed';
-                    break;
-            }
+        open() {
+            window.open('/media/' + this.medium.id + '?content=true', '_blank');
+        },
+    },
+    computed: {
+        mime() {
+            return this.medium.mime_type.split('/')[0];
         },
     },
     components: {
-        RenderUsage
+        RenderUsage,
     },
 }
 </script>

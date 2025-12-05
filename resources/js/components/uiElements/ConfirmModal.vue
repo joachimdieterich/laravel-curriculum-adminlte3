@@ -6,26 +6,24 @@
         >
             <div
                 class="modal-container"
-                style="border-top-left-radius: 5px; border-top-right-radius: 5px;"
+                style="border-top-left-radius: 5px; border-top-right-radius: 5px; max-width: 75vh;"
             >
                 <div
-                    class="card-header"
-                    :class="'bg-' + this.css"
+                    class="modal-header"
+                    :class="'bg-' + css"
                 >
-                    <h3 class="card-title">{{ this.title }}</h3>
-                    <div class="card-tools">
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="$emit('close')"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+                    <span class="card-title">{{ title }}</span>
+                    <button
+                        type="button"
+                        class="btn btn-icon-alt"
+                        @click="$emit('close')"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="card">
-                        <div class="card-body">{{ this.description }}</div>
+                        <div class="card-body" v-html="description"></div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -36,14 +34,16 @@
                             class="btn btn-default"
                             @click="$emit('close')"
                         >
-                            {{ this.cancel_label }}
+                            {{ cancel_label }}
                         </button>
                         <button
                             id="confirm-save"
                             class="btn btn-primary ml-3"
-                            @click="$emit('confirm');"
+                            :disabled="processing"
+                            @click="processing = true; $emit('confirm');"
                         >
-                            {{ this.ok_label }}
+                            <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
+                            <span v-else>{{ ok_label }}</span>
                         </button>
                     </span>
                 </div>
@@ -54,7 +54,6 @@
 <script>
 export default {
     name: 'confirm-modal',
-    components: {},
     props: {
         showConfirm: {
             type: Boolean,
@@ -84,9 +83,13 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
+            processing: false,
         }
     },
-    methods: {},
-    mounted() {},
+    watch: {
+        showConfirm(newValue) {
+            if (!newValue) this.processing = false;
+        },
+    },
 }
 </script>

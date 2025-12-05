@@ -133,67 +133,51 @@ class KanbanStatusController extends Controller
     {
         abort_unless((\Gate::allows('kanban_delete') and $kanbanStatus->isEditable(null, $this->getCurrentToken())), 403);
 
-        $kanbanStatusForEvent = $kanbanStatus;
-
-        $kanbanStatus->items()->delete();
-        Kanban::find($kanbanStatus->kanban_id)->touch('updated_at'); //To get Sync working
-
-        $kanbanStatus->delete();
-
-        if (request()->wantsJson()) {
-            return [
-                'user' => auth()->user()->only(['id', 'firstname', 'lastname']),
-                'message' =>  $kanbanStatusForEvent
-            ];
-        }
+        $kanbanStatus->delete(); // further deletion logic handled in booted()-function
+        Kanban::find($kanbanStatus->kanban_id)->touch('updated_at'); // to trigger delete-event for websockets
     }
 
     public function copyStatus(KanbanStatus $status, Request $request)
     {
-        $order_id = DB::table('kanban_statuses')
-            ->where('kanban_id', $status->kanban_id)
-            ->max('order_id');
+        $order_id = KanbanStatus::where('kanban_id', $status->kanban_id)->max('order_id');
 
-        $statusCopy = KanbanStatus::Create([
+        $statusCopy = $status->replicate()->fill([
             'title'     => '[Kopie] ' . $status->title,
             'order_id'  => $order_id + 1,
-            'kanban_id' => $status['kanban_id'],
-            'color'     => $status->color,
-            'visibility'=> $status->visibility,
             'owner_id'  => auth()->user()->id,
         ]);
+        $statusCopy->save();
 
         foreach ($status->items as $item) {
-            $itemCopy = KanbanItem::Create([
-                'title'             => $item->title,
-                'description'       => $item->description,
-                'order_id'          => $item->order_id,
+            $itemCopy = $item->replicate()->fill([
                 'kanban_id'         => $statusCopy->kanban_id,
                 'kanban_status_id'  => $statusCopy->id,
-                'color'             => $item->color,
-                'visibility'        => $item->visibility,
-                'visible_from'      => $item->visible_from,
-                'visible_until'     => $item->visible_until,
-                'due_date'          => $item->due_date,
-                'replace_links'     => $item->replace_links,
+                'editors_ids'       => [],
                 'owner_id'          => auth()->user()->id,
             ]);
+            $itemCopy->save();
 
-            // TODO: copied edusharing-media need newly created usages and media records
-            // foreach ($item->mediaSubscriptions as $mediaSubscription) {
-            //     MediumSubscription::Create([
-            //         'medium_id'         => $mediaSubscription->medium_id,
-            //         'subscribable_type' => $mediaSubscription->subscribable_type,
-            //         'subscribable_id'   => $itemCopy->id,
-            //         'sharing_level_id'  => $mediaSubscription->sharing_level_id,
-            //         'visibility'        => $mediaSubscription->visibility,
-            //         'additional_data'   => $mediaSubscription->additional_data,
-            //         'owner_id'          => auth()->user()->id,
-            //     ]);
-            // }
+            foreach ($item->mediaSubscriptions as $mediumSubscription) {
+                $usage = null;
+                // if Medium is external, we need to copy the usage
+                if (!is_null($mediumSubscription->additional_data)) {
+                    $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                        'App\\KanbanItem',
+                        $itemCopy->id,
+                        $mediumSubscription->additional_data['nodeId'],
+                        $mediumSubscription->medium()->pluck('owner_id')->first()
+                    );
+                }
+
+                $mediumSubscription->replicate()->fill([
+                    'subscribable_id'   => $itemCopy->id,
+                    'owner_id'          => auth()->user()->id,
+                    'additional_data'   => $usage,
+                ])->save();
+            }
         }
 
-        Kanban::find($status['kanban_id'])->touch('updated_at');
+        Kanban::find($status['kanban_id'])->touch('updated_at'); // to trigger add-event for websockets
 
         return KanbanStatus::with([
                 'items',

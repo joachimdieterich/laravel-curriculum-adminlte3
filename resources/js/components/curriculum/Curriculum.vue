@@ -253,7 +253,6 @@
         <Teleport to="body">
             <MediumModal/>
             <MediumExportModal/>
-            <MediumPreviewModal/>
             <CurriculumModal/>
             <ContentModal/>
             <CertificateModal/>
@@ -297,7 +296,6 @@ import {useGlobalStore} from "../../store/global";
 import ContentModal from "../content/ContentModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MediumExportModal from "../media/MediumExportModal.vue";
-import MediumPreviewModal from "../media/MediumPreviewModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -305,7 +303,6 @@ export default {
     components: {
         MediumModal,
         MediumExportModal,
-        MediumPreviewModal,
         ContentModal,
         GenerateCertificateModal,
         CertificateModal,

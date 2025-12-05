@@ -247,6 +247,7 @@ class Kanban extends Model
             }
             // each status needs to be deleted separately to trigger its booted functions
             $kanban->statuses->each->delete();
+            $kanban->syncTags([]);
         });
     }
 }

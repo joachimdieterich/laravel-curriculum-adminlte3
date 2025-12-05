@@ -111,7 +111,7 @@
                                             />
                                             <p v-if="isInitial">
                                                 <i class="fa fa-upload"></i><br>
-                                                <div v-html="trans('global.medium.upload_helper')"></div>
+                                                <span v-html="trans('global.medium.upload_helper')"></span>
                                             </p>
                                             <p v-if="isSaving">
                                                 {{ fileCount }} {{ trans('global.medium.upload') }}...

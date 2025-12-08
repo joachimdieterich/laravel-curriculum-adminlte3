@@ -17,6 +17,7 @@
     
         <span v-else
             style="height: 500px"
+            :mime="medium.mime_type"
         >
             <iframe
                 :src="'/media/' + medium.id"

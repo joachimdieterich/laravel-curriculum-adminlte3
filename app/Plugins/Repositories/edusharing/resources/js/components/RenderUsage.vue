@@ -3,6 +3,7 @@
         :src="'/media/' + medium.id + '?preview=true'"
         class="d-block mw-100 w-auto m-auto"
         :alt="medium.title ?? medium.medium_name"
+        :mime="medium.mime_type"
     >
     <div v-else
         class="nav-item-box-image-size h-100 w-100"

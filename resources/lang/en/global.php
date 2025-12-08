@@ -428,6 +428,10 @@ return [
             'singular' => 'Favourite',
             'plural' => 'Favourites',
         ],
+        'filter' => [
+            'title' => 'Filter by tags',
+            'negative_title' => 'Exclude tags',
+        ],
         'global' => 'Cross-sector',
         'name' => 'Tag name',
         'title' => 'Tags',

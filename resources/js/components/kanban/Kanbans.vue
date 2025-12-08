@@ -273,6 +273,7 @@ export default {
             errors: {},
             currentKanban: {},
             selectedTags: [],
+            selectedNegativeTags: [],
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
@@ -311,6 +312,7 @@ export default {
                 url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
                 data: (d) => {
                     d.tags = this.selectedTags;
+                    d.negativeTags = this.selectedNegativeTags;
 
                     return d;
                 },
@@ -351,6 +353,8 @@ export default {
 
             this.$eventHub.on('filter', (filter) => {
                 this.selectedTags = filter.tags;
+                this.selectedNegativeTags = filter.negativeTags;
+
                 this.dt.search(filter.searchString).draw();
             });
         },

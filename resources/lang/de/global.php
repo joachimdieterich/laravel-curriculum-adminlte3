@@ -446,6 +446,10 @@ return [
             'singular' => 'Favorit',
             'plural' => 'Favoriten',
         ],
+        'filter' => [
+            'title' => 'Nach Tags filtern',
+            'negative_title' => 'Tags ausschließen',
+        ],
         'global' => 'Bereichsübergreifend',
         'name' => 'Tag-Name',
         'title' => 'Tags',

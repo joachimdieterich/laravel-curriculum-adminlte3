@@ -12,7 +12,7 @@
     ></div>
 
     <div
-        :id="'loading_' + medium.id"
+        :id="'loading_' + component_id"
         class="overlay position-absolute text-center w-100"
         style="inset: 0;"
     >
@@ -32,38 +32,47 @@ export default {
             default: false,
         },
     },
+    data() {
+        return {
+            component_id: this.$.uid,
+        }
+    },
     methods: {
         show() {
-            $("#loading_" + this.medium.id).show();
+            this.toggleLoadingIndicator();
             if (this.medium.adapter == 'local') {
                 window.location.assign('/media/' + this.medium.id + '?download=true');
             } else {
                 axios.get('/media/' + this.medium.id + '?content=true')
                     .then((response) => {
                         window.open(response.data, '_blank');
-                        $("#loading_" + this.medium.id).hide();
+                        this.toggleLoadingIndicator();
                     })
                     .catch((error) => {
                         console.log(error);
-                        $("#loading_" + this.medium.id).hide();
+                        this.toggleLoadingIndicator();
                     });
             }
         },
+        toggleLoadingIndicator() {
+            // initial state => visible
+            $("#loading_" + this.component_id).toggle();
+        },
     },
     mounted() {
-        $("#loading_" + this.medium.id).hide();
+        this.toggleLoadingIndicator();
 
         this.$eventHub.on('download', (medium) => {
             if (this.medium.id == medium.id) {
-                $("#loading_" + this.medium.id).show();
+                this.toggleLoadingIndicator();
                 axios.get('/media/' + this.medium.id + '?download=true')
                     .then((response) => {
                         window.open(response.data, '_blank');
-                        $("#loading_" + this.medium.id).hide();
+                        this.toggleLoadingIndicator();
                     })
                     .catch((error) => {
                         console.log(error);
-                        $("#loading_" + this.medium.id).hide();
+                        this.toggleLoadingIndicator();
                     });
             }
         });

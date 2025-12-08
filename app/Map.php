@@ -49,7 +49,6 @@ class Map extends Model
     public function markers()
     {
         return $this->hasMany(MapMarker::class);
-
     }
 
     public function subscriptions()

@@ -148,14 +148,7 @@ class MapController extends Controller
             'owner_id'      => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
 
-        $map->save();
-        if (request()->wantsJson())
-        {
-            return $map;
-        }
-        else {
-            return redirect(route('maps.show', ['map' => $map]));
-        }
+        return $map;
     }
 
     /**

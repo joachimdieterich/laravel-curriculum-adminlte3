@@ -55,14 +55,13 @@
                             </div>
 
                             <div class="form-group">
-                                <Editor
+                                <textarea
                                     id="description"
                                     name="description"
-                                    class="form-control"
-                                    licenseKey="gpl"
-                                    :init="tinyMCE"
-                                    v-model="form.description"
-                                />
+                                    :placeholder="trans('global.description')"
+                                    class="form-control description"
+                                    v-model.trim="form.description"
+                                ></textarea>
                             </div>
 
                             <Select2 v-if="checkPermission('is_admin')"
@@ -245,7 +244,6 @@
 import Form from 'form-backend-validation';
 import MediumForm from "../media/MediumForm.vue";
 import axios from "axios";
-import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
@@ -253,7 +251,6 @@ import {useToast} from "vue-toastification";
 export default {
     name: 'map-modal',
     components: {
-        Editor,
         MediumForm,
         Select2,
     },
@@ -285,17 +282,6 @@ export default {
                 color: '#F2C511',
                 medium_id: '',
             }),
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink", "link", "autoresize", "code",
-                ],
-                {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                },
-                "bold underline italic | alignleft aligncenter alignright alignjustify | link code",
-                ''
-            ),
         }
     },
     computed: {

@@ -65,13 +65,13 @@
                                 </span>
                             </div>
 
-                            <Editor
-                                :id="'description' + component_id"
-                                :name="'description' + component_id"
-                                licenseKey="gpl"
-                                :init="tinyMCE"
-                                v-model="form.description"
-                            />
+                            <textarea
+                                id="description"
+                                name="description"
+                                :placeholder="trans('global.description')"
+                                class="form-control description"
+                                v-model.trim="form.description"
+                            ></textarea>
                             <!-- currently not in use -->
                             <!-- <div class="form-group">
                                 <VueDatePicker
@@ -207,7 +207,6 @@
 <script>
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import Editor from '@tinymce/tinymce-vue';
 import MediumForm from "../media/MediumForm.vue";
 import {useGlobalStore} from "../../store/global";
 import VueDatePicker from "@vuepic/vue-datepicker";
@@ -247,17 +246,6 @@ export default {
                 end: false,
             },
             search: '',
-            tinyMCE: this.$initTinyMCE(
-                [
-                    "autolink", "link", "lists", "code", "autoresize",
-                ],
-                {
-                    'callback': 'insertContent',
-                    'callbackId': this.component_id
-                },
-                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link code",
-                ""
-            ),
         }
     },
     methods: {
@@ -332,7 +320,6 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     this.form.date = [new Date(this.form.begin) ?? '', new Date(this.form.end) ?? ''];
-                    this.form.description = this.$decodeHTMLEntities(params.description);
 
                     if (this.form.id != '') {
                         this.method = 'patch';
@@ -346,7 +333,6 @@ export default {
     components: {
         VueDatePicker,
         Select2,
-        Editor,
         MediumForm,
     },
 }

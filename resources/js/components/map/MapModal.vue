@@ -344,6 +344,7 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     this.form.border_url = this.$decodeHTMLEntities(params.border_url);
+                    this.form.description = this.$decodeHTMLEntities(params.description);
 
                     if (this.form.id !== '') {
                         this.method = 'patch';

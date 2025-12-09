@@ -65,11 +65,6 @@
             </a>
         </div>
 
-<!--        <SubscribableList v-if="marker.id"
-            url="/mapMarkerSubscriptions?map_marker_id"
-            :model_id="marker.id"
-        />-->
-
         <Teleport to="body">
             <SubscribeModal/>
         </Teleport>
@@ -77,7 +72,6 @@
 </template>
 <script>
 import Media from '../media/Media.vue';
-import SubscribableList from "../subscription/SubscribableList.vue";
 import tokens from "../subscription/Tokens.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import {useGlobalStore} from "../../store/global.js";
@@ -87,13 +81,16 @@ export default {
     components: {
         SubscribeModal,
         tokens,
-        SubscribableList,
         Media,
     },
     props: {
         marker: {
             type: Object,
             default: null,
+        },
+        editable: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {

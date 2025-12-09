@@ -73,6 +73,37 @@ class Map extends Model
         }
     }
 
+    public function isEditable($user_id = null, $token = null): bool
+    {
+        if ($token !== null) {
+            return $this->subscriptions()->where('sharing_token', $token)->pluck('editable')->first();
+        }
+        if ($user_id == null) {
+            $user_id = auth()->user()->id;
+        }
+        if ($user_id == $this->owner_id || is_admin()) return true;
+        if ($user_id == env('GUEST_USER')) return false; // guests currently don't have edit rights
+
+        return $this->subscriptions()->where('editable', 1)
+            ->where(function ($query) use ($user_id) {
+                // user subscription with edit rights
+                $query->where([
+                    'subscribable_type' => 'App\User',
+                    'subscribable_id' => $user_id,
+                ])
+                // group subscription with edit rights
+                ->orWhere(function ($query) use ($user_id) {
+                    $query->where('subscribable_type', 'App\Group')
+                        ->whereIn('subscribable_id', User::find($user_id)->groups()->pluck('groups.id'));
+                })
+                // organization subscription with edit rights
+                ->orWhere(function ($query) use ($user_id) {
+                    $query->where('subscribable_type', 'App\Organization')
+                        ->whereIn('subscribable_id', User::find($user_id)->organizations()->pluck('organizations.id'));
+                });
+            })->count() > 0;
+    }
+
     protected static function booted()
     {
         static::deleting(function ($map) {

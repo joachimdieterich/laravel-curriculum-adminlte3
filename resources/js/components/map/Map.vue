@@ -1,21 +1,55 @@
 <template>
-    <div id="outermap">
+    <div id="outermap" class="h-100">
         <div
             id="sidebar"
-            class="sidebar"
+            class="sidebar border-0"
         >
             <!-- navigation tabs -->
-            <div class="sidebar-tabs">
-                <ul role="tablist">
-                    <li><a href="#ll-home" role="tab"><i class="fa fa-bars"></i></a></li>
-                    <li><a href="#ll-layer" role="tab"><i class="fa fa-layer-group"></i></a></li>
-                    <li><a href="#ll-marker" role="tab"><i class="fa fa-location-dot"></i></a></li>
-                    <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li>
-                    <hr v-permission="'map_create'"/>
-                    <li v-permission="'map_create'">
+            <div class="sidebar-tabs bg-transparent">
+                <ul role="tablist" class="bg-white">
+                    <li class="active">
                         <a
+                            id="home-nav-tab"
+                            href="#ll-home"
                             role="tab"
+                            data-toggle="tab"
+                            aria-controls="ll-home"
+                            aria-selected="true"
+                        >
+                            <i class="fa fa-bars"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            id="layer-nav-tab"
+                            href="#ll-layer"
+                            role="tab"
+                            data-toggle="tab"
+                            aria-controls="ll-layer"
+                            aria-selected="false"
+                        >
+                            <i class="fa fa-layer-group"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            id="marker-nav-tab"
+                            href="#ll-marker"
+                            role="tab"
+                            data-toggle="tab"
+                            aria-controls="ll-marker"
+                            aria-selected="false"
+                        >
+                            <i class="fa fa-location-dot"></i>
+                        </a>
+                    </li>
+                    <!-- <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li> -->
+                    <hr v-if="editable"/>
+                    <li v-if="editable">
+                        <a
+                            role="button"
                             class="pointer"
+
                             @click="createMarker()"
                         >
                             <i class="fa fa-plus"></i>
@@ -29,6 +63,8 @@
                 <div
                     id="ll-home"
                     class="sidebar-pane active"
+                    role="tabpanel"
+                    aria-labelledby="home-nav-tab"
                 >
                     <div class="sidebar-header d-flex align-items-center pr-0">
                         <span class="line-clamp">{{ map.title }}</span>
@@ -54,6 +90,7 @@
                             </button>
                         </span>
                     </div>
+
                     <span class="pb-2">
                         <div class="h5 mt-2">{{ map.subtitle }}</div>
                         <span class="right badge badge-primary">{{ map.type.title }}</span>
@@ -77,7 +114,7 @@
                             >
                                 <i class="fa fa-location-dot link-muted pr-2"></i> {{ marker.title }}
                             </a>
-                            <span v-if="marker.owner_id == $userId || checkPermission('is_admin')"
+                            <span v-if="editable"
                                 class="d-flex align-items-center ml-auto"
                                 style="height: 0px;"
                             >
@@ -100,7 +137,12 @@
                     </ul>
                 </div>
 
-                <div class="sidebar-pane" id="ll-layer">
+                <div
+                    id="ll-layer"
+                    class="sidebar-pane"
+                    role="tabpanel"
+                    aria-labelledby="layer-nav-tab"
+                >
                     <h1 class="sidebar-header">Ebenen</h1>
 
                     <Select2
@@ -131,75 +173,77 @@
                     </button>
                 </div>
 
-                <div v-if="currentMarker?.ARTIKEL == undefined"
+                <div v-if="currentMarker"
                     id="ll-marker"
                     class="sidebar-pane"
+                    role="tabpanel"
+                    aria-labelledby="marker-nav-tab"
                 >
-                    <MarkerView v-if="currentMarker" :marker="currentMarker"/>
-                </div>
-                <div v-else
-                    id="ll-marker"
-                    class="sidebar-pane"
-                >
-                    <h1 class="sidebar-header">
-                        {{ currentMarker.ARTIKEL }}
-                    </h1>
-
-                    <div v-if="currentMarker.BEZ_1_2.length > 2"
-                        class="py-0 pt-2"
-                    >
-                        <strong>Untertitel</strong>
+                    <div v-if="currentMarker.ARTIKEL == undefined">
+                        <MarkerView
+                            :marker="currentMarker"
+                            :editable="editable"
+                        />
                     </div>
-
-                    <div v-if="currentMarker.BEZ_1_2.length > 2"
-                        class="py-0 pre-formatted"
-                        v-html="currentMarker.BEZ_1_2"
-                    ></div>
-
-                    <div class="py-0 pt-2">
-                        <strong>{{ trans('global.description') }}</strong>
-                    </div>
-
-                    <div
-                        class="py-0 pre-formatted text-justify"
-                        v-html="currentMarker.BEMERKUNG"
-                    ></div>
-
-                    <div class="py-0 pt-2"><strong>Termine</strong></div>
-
-                    <div class="py-0 pre-formatted">
-                        <div v-for="termin in currentMarker.termine">
-                            {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
-                            <br/>
-                            {{ termin.VO_ORT }}
+                    <div v-else>
+                        <h1 class="sidebar-header">{{ currentMarker.ARTIKEL }}</h1>
+    
+                        <div v-if="currentMarker.BEZ_1_2.length > 2"
+                            class="py-0 pt-2"
+                        >
+                            <strong>Untertitel</strong>
+                        </div>
+    
+                        <div v-if="currentMarker.BEZ_1_2.length > 2"
+                            class="py-0 pre-formatted"
+                            v-html="currentMarker.BEZ_1_2"
+                        ></div>
+    
+                        <div class="py-0 pt-2">
+                            <strong>{{ trans('global.description') }}</strong>
+                        </div>
+    
+                        <div
+                            class="py-0 pre-formatted text-justify"
+                            v-html="currentMarker.BEMERKUNG"
+                        ></div>
+    
+                        <div class="py-0 pt-2"><strong>Termine</strong></div>
+    
+                        <div class="py-0 pre-formatted">
+                            <div v-for="termin in currentMarker.termine">
+                                {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
+                                <br/>
+                                {{ termin.VO_ORT }}
+                            </div>
+                        </div>
+    
+                        <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
+    
+                        <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
+    
+                        <div class="py-0 pt-2">
+                            <a
+                                :href="currentMarker.LINK_DETAIL"
+                                class="btn btn-default"
+                                target="_blank"
+                            >
+                                <i class="fa fa-info"></i> Details/Anmeldung
+                            </a>
+    
+                            <a
+                                :href="currentMarker.LINK_DETAIL + '&print=1'"
+                                class="btn btn-default"
+                                target="_blank"
+                                @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
+                            >
+                                <i class="fa fa-print"></i> Drucken
+                            </a>
                         </div>
                     </div>
-
-                    <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-
-                    <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
-
-                    <div class="py-0 pt-2">
-                        <a
-                            :href="currentMarker.LINK_DETAIL"
-                            class="btn btn-default"
-                            target="_blank"
-                        >
-                            <i class="fa fa-info"></i> Details/Anmeldung
-                        </a>
-
-                        <a
-                            :href="currentMarker.LINK_DETAIL + '&print=1'"
-                            class="btn btn-default"
-                            target="_blank"
-                            @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
-                        >
-                            <i class="fa fa-print"></i> Drucken
-                        </a>
-                    </div>
                 </div>
 
-                <div class="sidebar-pane" id="ll-search">
+                <!-- <div class="sidebar-pane" id="ll-search">
                     <h1 class="sidebar-header">{{ currentMarker?.title }}</h1>
 
                     <div
@@ -218,11 +262,11 @@
                         />
                         <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
-        <div id="map" class="sidebar-map"></div>
+        <div id="map" class="sidebar-map h-100"></div>
 
         <Teleport to="body">
             <MapModal/>
@@ -276,6 +320,10 @@ export default {
             type: Object,
             default: null,
         },
+        editable: {
+            type: Boolean,
+            default: false,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -297,8 +345,8 @@ export default {
             namesGroup: {},
             currentPositionMarker: null,
             markers: {},
-            leafletMarkers:[],
-            currentMarker:{},
+            leafletMarkers: [],
+            currentMarker: null,
             clusterGroup: {},
             form: new Form({
                 type_id: '',
@@ -348,19 +396,19 @@ export default {
                     console.log(err);
                 });
         },
-        async markerSearch() {
-            $("#loading-events").show();
-            try {
-                this.events = (await axios.post('/eventSubscriptions/getEvents', {
-                    search: this.search,
-                    page: 1,
-                    plugin: 'evewa'
-                })).data.events.data;
-            } catch (error) {
-                console.log(error);
-            }
-            this.refreshMap();
-        },
+        // async markerSearch() {
+        //     $("#loading-events").show();
+        //     try {
+        //         this.events = (await axios.post('/eventSubscriptions/getEvents', {
+        //             search: this.search,
+        //             page: 1,
+        //             plugin: 'evewa'
+        //         })).data.events.data;
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        //     this.refreshMap();
+        // },
         getBorder() {
             axios.get(this.map.border_url)
                  .then(res => {
@@ -627,7 +675,7 @@ export default {
         });
 
         this.$eventHub.on('marker-updated', (updatedMarker) => {
-            let marker = this.markers.find(m => m.id === this.currentMarker.id);
+            let marker = this.markers.find(m => m.id === updatedMarker.id);
             Object.assign(marker, updatedMarker);
         });
 
@@ -690,19 +738,23 @@ export default {
     },
 }
 </script>
-<style >
+<style>
 @import "leaflet/dist/leaflet.css";
 @import "sidebar-v2/css/leaflet-sidebar.css";
 @import "leaflet.markercluster/dist/MarkerCluster.css";
 @import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 @import "leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
-#map, #outermap {
-    height: 100%;
-}
 .sidebar {
     z-index: 1000 !important;
     height: 83% !important;
     margin-top: 67px;
     margin-left: 17px;
+
+    & > .sidebar-tabs > ul, & > .sidebar-tabs > ul > li:last-child {
+        border-bottom-left-radius: 4px;
+    }
+    &.collapsed > .sidebar-tabs > ul, &.collapsed > .sidebar-tabs > ul > li:last-child {
+        border-bottom-right-radius: 4px;
+    }
 }
 </style>

@@ -428,6 +428,10 @@ return [
             'singular' => 'Favourite',
             'plural' => 'Favourites',
         ],
+        'hidden' => [
+            'singular' => 'Hidden',
+            'plural' => 'Hidden',
+        ],
         'filter' => [
             'title' => 'Filter by tags',
             'negative_title' => 'Exclude tags',
@@ -444,6 +448,8 @@ return [
         'delete_helper' => 'Should the tag be deleted and its corresponded data?',
         'please_select' => 'Choose existing tag'
     ],
+    'hide' => 'Hide',
+    'remove_hide' => 'Unhide',
     'organization_management' => 'Organizations',
     'organization' => [
         'title' => 'Organizations',

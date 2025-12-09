@@ -1,18 +1,18 @@
 <template>
     <tag-marker
         :url="url"
-        :title-active="trans('global.remove_favourite')"
-        :title-inactive="trans('global.add_favourite')"
-        text-active=""
-        text-inactive=""
-        fa-icon-active="fa fa-heart"
-        fa-icon-inactive="far fa-heart"
-        :is-marked="isFavourited"
+        :title-active="trans('global.remove_hide')"
+        :title-inactive="trans('global.hide')"
+        :text-active="trans('global.remove_hide')"
+        :text-inactive="trans('global.hide')"
+        fa-icon-active="fa fa-eye"
+        fa-icon-inactive="fa fa-eye-slash"
+        :is-marked="isHidden"
         :model="model"
-        :button-class="{'btn': true, 'btn-icon': true, 'px-2': true, 'py-1': true}"
-        icon-class=""
+        :button-class="{'dropdown-item': true, 'text-secondary': true}"
+        :icon-class="{'mr-2': true}"
         @mark-status-changed="(newModel) => {
-            this.$emit('favour-status-changed', newModel)
+            this.$emit('hide-status-changed', newModel)
         }"
     />
 </template>
@@ -20,9 +20,9 @@
 import TagMarker from "./TagMarker.vue";
 
 export default {
-    name: "Favourite",
+    name: "Hide",
     components: {TagMarker},
-    emits: ['favour-status-changed'],
+    emits: ['hide-status-changed'],
     props: {
         url: {
             type: String,
@@ -33,9 +33,9 @@ export default {
             type: Object,
             required: true,
         },
-        isFavourited: {
+        isHidden: {
             type: Boolean,
-            title: "If the model is already favourited"
+            title: "If the model is already hidden"
         },
     },
 }

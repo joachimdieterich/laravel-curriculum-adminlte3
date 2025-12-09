@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Tags\FavouriteModelRequest;
+use App\Http\Requests\Tags\HideModelRequest;
 use App\Kanban;
-use App\KanbanItem;
-use App\KanbanStatus;
 use App\KanbanSubscription;
 use App\Organization;
 use App\Tag;
@@ -335,13 +334,24 @@ class KanbanController extends Controller
 
     public function favourKanban(Kanban $kanban, FavouriteModelRequest $request)
     {
-        if ($request->input('favourite')) {
+        if ($request->input('mark')) {
             $kanban->attachTag(trans('global.tag.favourite.singular'));
         } else {
             $kanban->detachTag(trans('global.tag.favourite.singular'));
         }
 
-        return response(null, 204);
+        return response($kanban);
+    }
+
+    public function hideKanban(Kanban $kanban, HideModelRequest $request)
+    {
+        if ($request->input('mark')) {
+            $kanban->attachTag(trans('global.tag.hidden.singular'));
+        } else {
+            $kanban->detachTag(trans('global.tag.hidden.singular'));
+        }
+
+        return response($kanban);
     }
 
     private function transformHexColorToRgba($color)

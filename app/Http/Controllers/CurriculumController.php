@@ -7,6 +7,7 @@ use App\Curriculum;
 use App\CurriculumSubscription;
 use App\CurriculumType;
 use App\Http\Requests\Tags\FavouriteModelRequest;
+use App\Http\Requests\Tags\HideModelRequest;
 use App\Medium;
 use App\Organization;
 use App\Tag;
@@ -500,13 +501,25 @@ class CurriculumController extends Controller
 
     public function favourCurriculum(Curriculum $curriculum, FavouriteModelRequest $request)
     {
-        if ($request->input('favourite')) {
+        if ($request->input('mark')) {
             $curriculum->attachTag(trans('global.tag.favourite.singular'));
         } else {
             $curriculum->detachTag(trans('global.tag.favourite.singular'));
         }
 
-        return response(null, 204);
+        return response($curriculum);
+    }
+
+    public function hideCurriculum(Curriculum $curriculum, HideModelRequest $request)
+    {
+        if ($request->input('mark')) {
+            $curriculum->attachTag(trans('global.tag.hidden.singular'));
+        } else {
+            $curriculum->detachTag(trans('global.tag.hidden.singular'));
+        }
+
+
+        return response($curriculum);
     }
 
     public function resetOrderIds(Curriculum $curriculum)

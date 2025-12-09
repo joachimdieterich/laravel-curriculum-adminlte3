@@ -26,4 +26,11 @@ trait HasTags
             get: fn () => $this->hasTag(trans('global.tag.favourite.singular')),
         );
     }
+
+    public function isHidden(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->hasTag(trans('global.tag.hidden.singular')),
+        );
+    }
 }

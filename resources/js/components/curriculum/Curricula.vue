@@ -108,7 +108,7 @@
                 :label="trans('global.curriculum.create')"
             />
 
-            <IndexWidget v-for="curriculum in curricula"
+            <IndexWidget v-for="(curriculum, index) in curricula"
                 :id="curriculum.id"
                 :key="'curriculumIndex' + curriculum.id"
                 :model="curriculum"
@@ -131,7 +131,14 @@
                 </template>
 
                 <template v-slot:additional-button>
-                    <favourite :model="curriculum" url="/curricula" :is-favourited="curriculum.is_favourited"></favourite>
+                    <favourite
+                        url="/curricula/[id]/favour"
+                        :model="curriculum"
+                        :is-favourited="curriculum.is_favourited"
+                        @mark-status-changed="(newCurricula) => {
+                            curricula[index] = newCurricula;
+                        }"
+                    />
                 </template>
 
                 <template v-slot:owner>
@@ -164,6 +171,15 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
+                        <hide
+                            url="/curricula/[id]/hide"
+                            :model="curriculum"
+                            :is-hidden="curriculum.is_hidden"
+                            @mark-status-changed="(newCurriculum) => {
+                                curricula[index] = newCurriculum;
+                            }"
+                        />
+
                         <button
                             v-permission="'curriculum_edit'"
                             :name="'curriculum-edit_' + curriculum.id"
@@ -250,6 +266,7 @@ import {useGlobalStore} from "../../store/global";
 import OwnerModal from "../user/OwnerModal.vue";
 import {useToast} from "vue-toastification";
 import Favourite from "../tag/Favourite.vue";
+import Hide from "../tag/Hide.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -411,6 +428,7 @@ export default {
         });
     },
     components: {
+        Hide,
         Favourite,
         OwnerModal,
         IndexWidget,

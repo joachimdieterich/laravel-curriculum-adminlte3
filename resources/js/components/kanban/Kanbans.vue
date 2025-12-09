@@ -101,7 +101,7 @@
                 </template>
             </IndexWidget>
 
-            <IndexWidget v-for="kanban in kanbans"
+            <IndexWidget v-for="(kanban, index) in kanbans"
                 :key="'kanbanIndex' + kanban.id"
                 :model="kanban"
                 modelName="Kanban"
@@ -113,7 +113,14 @@
                 </template>
 
                 <template v-slot:additional-button>
-                    <favourite :model="kanban" url="/kanbans" :is-favourited="kanban.is_favourited"></favourite>
+                    <favourite
+                        url="/kanbans/[id]/favour"
+                        :model="kanban"
+                        :is-favourited="kanban.is_favourited"
+                        @mark-status-changed="(newKanban) => {
+                            kanbans[index] = newKanban;
+                        }"
+                    />
                 </template>
 
                 <template v-slot:dropdown>
@@ -140,6 +147,15 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
+                        <hide
+                            url="/kanbans/[id]/hide"
+                            :model="kanban"
+                            :is-hidden="kanban.is_hidden"
+                            @mark-status-changed="(newKanban) => {
+                                kanbans[index] = newKanban;
+                            }"
+                        />
+
                         <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'kanban_edit'"
                             :name="'edit-kanban-' + kanban.id"
@@ -236,6 +252,7 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
+import Hide from "../tag/Hide.vue";
 import Favourite from "../tag/Favourite.vue";
 DataTable.use(DataTablesCore);
 
@@ -412,6 +429,7 @@ export default {
         },
     },
     components: {
+        Hide,
         Favourite,
         SubscribeModal,
         SubscribeKanbanModal,

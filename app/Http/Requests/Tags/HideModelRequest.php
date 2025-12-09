@@ -4,7 +4,7 @@ namespace App\Http\Requests\Tags;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FavouriteModelRequest extends FormRequest
+class HideModelRequest extends FormRequest
 {
     public function rules(): array
     {

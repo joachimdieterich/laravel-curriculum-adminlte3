@@ -37,7 +37,7 @@
                         <a
                             id="content-nav-tab"
                             class="nav-link link-muted"
-                            data-toggle="pill"
+                            data-toggle="tab"
                             href="#content-tab"
                             @click="loaderEvent()"
                         >
@@ -54,7 +54,7 @@
                         <a
                             id="curriculm-nav-tab"
                             class="nav-link link-muted"
-                            data-toggle="pill"
+                            data-toggle="tab"
                             href="#curriculm-tab"
                         >
                             <i class="fas fa-th pr-2"></i>
@@ -70,7 +70,7 @@
                         <a
                             id="medium-nav-tab"
                             class="nav-link link-muted"
-                            data-toggle="pill"
+                            data-toggle="tab"
                             href="#medium-tab"
                         >
                             <i class="fa fa-folder-open pr-2"></i>
@@ -86,7 +86,7 @@
                         <a v-if="curriculum.glossar != null"
                             id="glossar-nav-tab"
                             class="nav-link link-muted"
-                            data-toggle="pill"
+                            data-toggle="tab"
                             href="#glossar-tab"
                         >
                             <i class="fa fa-book-open pr-2"></i>
@@ -149,7 +149,7 @@
                         <a
                             id="description-nav-tab"
                             class="nav-link link-muted"
-                            data-toggle="pill"
+                            data-toggle="tab"
                             href="#description-tab"
                         >
                             <i class="fa fa-info"></i>

@@ -354,7 +354,6 @@ export default {
                 type_id: '',
                 category_id: '',
             }),
-            zoom: 10,
             marker: null,
             showConfirm: false,
         }
@@ -372,29 +371,42 @@ export default {
                 .then(res => {
                     this.markers = res.data;
                     this.currentMarker = this.markers[0];
-                    this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
-
-                    this.markers.forEach((marker) => {
-                        this.clusterGroup.addLayer(
-                            this.generateMarker(
-                                marker.latitude,
-                                marker.longitude,
-                                marker,
-                                marker.title,
-                                marker.teaser_text ?? '',
-                                'll-marker',
-                                marker.type.css_icon,
-                                marker.type.color,
-                                marker.category.shape,
-                                'fa'
-                            )
-                        ); // add marker to the clustergroup
-                    });
-                    this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
+                    this.generateClusterGroup();
                 })
                 .catch(err => {
                     console.log(err);
                 });
+        },
+        generateClusterGroup() {
+            this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
+
+            this.markers.forEach((marker) => {
+                this.clusterGroup.addLayer( // add marker to the clustergroup
+                    this.generateMarker(
+                        marker.latitude,
+                        marker.longitude,
+                        marker,
+                        marker.title,
+                        marker.teaser_text ?? '',
+                        'll-marker',
+                        marker.type.css_icon,
+                        marker.type.color,
+                        marker.category.shape,
+                        'fa'
+                    )
+                );
+            });
+
+            // show list of all clustered markers on hover
+            this.clusterGroup.on('clustermouseover', (e) => {
+                let titles = e.layer.getAllChildMarkers().map(m => m.options.title).sort().join('<br/>');
+                e.layer.bindPopup(titles).openPopup();
+            });
+            this.clusterGroup.on('clustermouseout', (e) => {
+                e.layer.closePopup();
+            });
+
+            this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
         // async markerSearch() {
         //     $("#loading-events").show();
@@ -411,8 +423,8 @@ export default {
         // },
         getBorder() {
             axios.get(this.map.border_url)
-                 .then(res => {
-                     this.processNominatimReply(res.data);
+                .then(res => {
+                    this.processNominatimReply(res.data);
                 })
                 .catch(err => {
                     console.log(err);
@@ -465,12 +477,12 @@ export default {
             });
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
-        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix) {
-            var svgMarker = L.ExtraMarkers.icon({
-                icon: icon,
-                markerColor: markerColor,
-                shape: 'circle',
-                prefix: 'fa',
+        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape = 'circle', prefix = 'fa') {
+            let svgMarker = L.ExtraMarkers.icon({
+                icon,
+                markerColor,
+                shape,
+                prefix,
                 svg: true
             });
 
@@ -480,11 +492,11 @@ export default {
                 'title': title // accessibility
             })
                 .bindPopup('<b>'+ title + '</b></br>' + description)
-                .addTo(this.mapCanvas).on('click', function(e) {
-                this.currentMarker = entry;
-                this.sidebar.open(sidebar_target);
-            }.bind(this, sidebar_target));
-
+                .on('click', () => {
+                    this.currentMarker = entry;
+                    this.sidebar.open(sidebar_target);
+                });
+            
             this.leafletMarkers.push(leafletMarker);
 
             return leafletMarker;
@@ -499,6 +511,7 @@ export default {
         setCurrentMarker(marker) {
             this.currentMarker = marker;
             this.sidebar.open('ll-marker');
+            this.leafletMarkers.find(m => m.options.id === marker.id).openPopup();
         },
         syncSelect2() {
             $("#type_id").select2({
@@ -684,17 +697,10 @@ export default {
             window.location.reload();
         });
 
-        if (this.map.zoom) {
-            this.zoom = this.map.zoom;
-        }
-        if (this.map.type_id) {
-            this.form.type_id = this.map.type_id;
-        }
-        if (this.map.category_id) {
-            this.form.category_id = this.map.category_id;
-        }
+        this.form.type_id = this.map.type_id;
+        this.form.category_id = this.map.category_id;
 
-        this.mapCanvas = L.map('map').setView([this.map.latitude, this.map.longitude], this.zoom);
+        this.mapCanvas = L.map('map').setView([this.map.latitude, this.map.longitude], this.map.zoom);
 
         // default icon-url throws an error (apparently a common problem)
         // so we need to rebind the file-locations
@@ -709,12 +715,10 @@ export default {
         L.Icon.Default.prototype.options.shadowUrl = markerShadowUrl;
         L.Icon.Default.imagePath = ""; // necessary to avoid Leaflet adds some prefix to image path.
 
-
         // set OpenStreetMaps as tile-distributor
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.mapCanvas);
-
 
         this.sidebar = L.control.sidebar('sidebar').addTo(this.mapCanvas);
 
@@ -722,7 +726,10 @@ export default {
 
         this.getBorder();
 
-        this.loader();
+        this.markers = this.map.markers;
+        this.currentMarker = this.markers[0];
+
+        this.generateClusterGroup();
 
         /* //  click to set position > wip on distance search
         this.mapCanvas.on('click', function(e){

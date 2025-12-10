@@ -352,8 +352,6 @@ export default {
                 type_id: '',
                 category_id: '',
             }),
-            initialLatitude: '49.314908280766346',
-            initialLongitude: '8.413913138283617',
             zoom: 10,
             marker: null,
             showConfirm: false,
@@ -684,12 +682,6 @@ export default {
             window.location.reload();
         });
 
-        if (this.map.initialLatitude) {
-            this.initialLatitude = this.map.initialLatitude;
-        }
-        if (this.map.initialLongitude) {
-            this.initialLongitude = this.map.initialLongitude;
-        }
         if (this.map.zoom) {
             this.zoom = this.map.zoom;
         }
@@ -700,7 +692,7 @@ export default {
             this.form.category_id = this.map.category_id;
         }
 
-        this.mapCanvas = L.map('map').setView([this.initialLatitude, this.initialLongitude], this.zoom);
+        this.mapCanvas = L.map('map').setView([this.map.latitude, this.map.longitude], this.zoom);
 
         // default icon-url throws an error (apparently a common problem)
         // so we need to rebind the file-locations

@@ -173,72 +173,74 @@
                     </button>
                 </div>
 
-                <div v-if="currentMarker"
+                <div
                     id="ll-marker"
                     class="sidebar-pane"
                     role="tabpanel"
                     aria-labelledby="marker-nav-tab"
                 >
-                    <div v-if="currentMarker.ARTIKEL == undefined">
-                        <MarkerView
-                            :marker="currentMarker"
-                            :editable="editable"
-                        />
-                    </div>
-                    <div v-else>
-                        <h1 class="sidebar-header">{{ currentMarker.ARTIKEL }}</h1>
-    
-                        <div v-if="currentMarker.BEZ_1_2.length > 2"
-                            class="py-0 pt-2"
-                        >
-                            <strong>Untertitel</strong>
+                    <div v-if="currentMarker">
+                        <div v-if="currentMarker.ARTIKEL == undefined">
+                            <MarkerView
+                                :marker="currentMarker"
+                                :editable="editable"
+                            />
                         </div>
-    
-                        <div v-if="currentMarker.BEZ_1_2.length > 2"
-                            class="py-0 pre-formatted"
-                            v-html="currentMarker.BEZ_1_2"
-                        ></div>
-    
-                        <div class="py-0 pt-2">
-                            <strong>{{ trans('global.description') }}</strong>
-                        </div>
-    
-                        <div
-                            class="py-0 pre-formatted text-justify"
-                            v-html="currentMarker.BEMERKUNG"
-                        ></div>
-    
-                        <div class="py-0 pt-2"><strong>Termine</strong></div>
-    
-                        <div class="py-0 pre-formatted">
-                            <div v-for="termin in currentMarker.termine">
-                                {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
-                                <br/>
-                                {{ termin.VO_ORT }}
+                        <div v-else>
+                            <h1 class="sidebar-header">{{ currentMarker.ARTIKEL }}</h1>
+        
+                            <div v-if="currentMarker.BEZ_1_2.length > 2"
+                                class="py-0 pt-2"
+                            >
+                                <strong>Untertitel</strong>
                             </div>
-                        </div>
-    
-                        <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-    
-                        <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
-    
-                        <div class="py-0 pt-2">
-                            <a
-                                :href="currentMarker.LINK_DETAIL"
-                                class="btn btn-default"
-                                target="_blank"
-                            >
-                                <i class="fa fa-info"></i> Details/Anmeldung
-                            </a>
-    
-                            <a
-                                :href="currentMarker.LINK_DETAIL + '&print=1'"
-                                class="btn btn-default"
-                                target="_blank"
-                                @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
-                            >
-                                <i class="fa fa-print"></i> Drucken
-                            </a>
+        
+                            <div v-if="currentMarker.BEZ_1_2.length > 2"
+                                class="py-0 pre-formatted"
+                                v-html="currentMarker.BEZ_1_2"
+                            ></div>
+        
+                            <div class="py-0 pt-2">
+                                <strong>{{ trans('global.description') }}</strong>
+                            </div>
+        
+                            <div
+                                class="py-0 pre-formatted text-justify"
+                                v-html="currentMarker.BEMERKUNG"
+                            ></div>
+        
+                            <div class="py-0 pt-2"><strong>Termine</strong></div>
+        
+                            <div class="py-0 pre-formatted">
+                                <div v-for="termin in currentMarker.termine">
+                                    {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
+                                    <br/>
+                                    {{ termin.VO_ORT }}
+                                </div>
+                            </div>
+        
+                            <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
+        
+                            <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
+        
+                            <div class="py-0 pt-2">
+                                <a
+                                    :href="currentMarker.LINK_DETAIL"
+                                    class="btn btn-default"
+                                    target="_blank"
+                                >
+                                    <i class="fa fa-info"></i> Details/Anmeldung
+                                </a>
+        
+                                <a
+                                    :href="currentMarker.LINK_DETAIL + '&print=1'"
+                                    class="btn btn-default"
+                                    target="_blank"
+                                    @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
+                                >
+                                    <i class="fa fa-print"></i> Drucken
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -266,7 +268,7 @@
             </div>
         </div>
 
-        <div id="map" class="sidebar-map h-100"></div>
+        <div id="map" class="sidebar-map user-select-none h-100"></div>
 
         <Teleport to="body">
             <MapModal/>

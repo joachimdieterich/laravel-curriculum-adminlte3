@@ -2,7 +2,6 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
-            @mouseup.self="close()"
         >
             <div class="modal-container">
                 <div class="modal-header">

@@ -33,6 +33,11 @@ class MapMarker extends Model
         'created_at'  => 'datetime',
     ];
 
+    protected $with = [
+        'type:id,title,color,css_icon',
+        'category:id,title,color,shape',
+    ];
+
     /**
      * Prepare a date for array / JSON serialization.
      *

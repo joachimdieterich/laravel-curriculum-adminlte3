@@ -31,6 +31,12 @@ class Map extends Model
         'description' => CleanHtml::class,
     ];
 
+    protected $with = [
+        'type:id,title',
+        'category:id,title',
+        'markers',
+    ];
+
     public function path()
     {
         return "/videoconferences/{$this->id}";
@@ -48,7 +54,7 @@ class Map extends Model
 
     public function markers()
     {
-        return $this->hasMany(MapMarker::class);
+        return $this->hasMany(MapMarker::class)->orderBy('title');
     }
 
     public function subscriptions()

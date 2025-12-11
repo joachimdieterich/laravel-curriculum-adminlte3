@@ -32,10 +32,6 @@
                                     :placeholder="trans('global.title') + ' *'"
                                     required
                                 />
-                                <p v-if="form.errors.title"
-                                    class="help-block"
-                                    v-text="form.errors.title[0]"
-                                ></p>
                             </div>
 
                             <div class="form-group">
@@ -48,10 +44,6 @@
                                     :placeholder="trans('global.marker.fields.teaser_text')"
                                     required
                                 />
-                                <p v-if="form.errors?.teaser_text"
-                                    class="help-block"
-                                    v-text="form.errors?.teaser_text[0]"
-                                ></p>
                             </div>
 
                             <div class="form-group">
@@ -78,53 +70,13 @@
                                 />
                             </div>
 
-                            <div class="form-group">
-                                <label for="author">
-                                    {{ trans('global.marker.fields.author') }}
-                                </label>
-                                <input
-                                    id="author"
-                                    name="author"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.author"
-                                    :placeholder="trans('global.marker.fields.author')"
-                                    required
-                                />
-                                <p v-if="form.errors?.author"
-                                    class="help-block"
-                                    v-text="form.errors?.author[0]"
-                                ></p>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="tags">
-                                    {{ trans('global.marker.fields.tags') }}
-                                </label>
-                                <input
-                                    id="tags"
-                                    name="tags"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.tags"
-                                    :placeholder="trans('global.marker.fields.tags')"
-                                    required
-                                />
-                                <p v-if="form.errors?.tags"
-                                    class="help-block"
-                                    v-text="form.errors?.tags[0]"
-                                ></p>
-                            </div>
-
                             <Select2
                                 id="map_marker_type"
                                 name="map_marker_type"
                                 url="/mapMarkerTypes"
                                 model="mapMarkerType"
                                 :selected="form.type_id"
-                                @selectedValue="(id) => {
-                                    this.form.type_id = id[0];
-                                }"
+                                @selectedValue="(id) => this.form.type_id = id[0]"
                             />
 
                             <Select2
@@ -133,15 +85,11 @@
                                 url="/mapMarkerCategories"
                                 model="mapMarkerCategory"
                                 :selected="form.category_id"
-                                @selectedValue="(id) => {
-                                    this.form.category_id = id[0];
-                                }"
+                                @selectedValue="(id) => this.form.category_id = id[0]"
                             />
 
                             <div class="form-group">
-                                <label for="latitude">
-                                    {{ trans('global.marker.fields.latitude') }} *
-                                </label>
+                                <label for="latitude">{{ trans('global.marker.fields.latitude') }} *</label>
                                 <input
                                     id="latitude"
                                     name="latitude"
@@ -151,16 +99,10 @@
                                     :placeholder="trans('global.marker.fields.latitude')"
                                     required
                                 />
-                                <p v-if="form.errors?.latitude"
-                                    class="help-block"
-                                    v-text="form.errors?.latitude[0]"
-                                ></p>
                             </div>
 
                             <div class="form-group">
-                                <label for="longitude">
-                                    {{ trans('global.marker.fields.longitude') }} *
-                                </label>
+                                <label for="longitude">{{ trans('global.marker.fields.longitude') }} *</label>
                                 <input
                                     id="longitude"
                                     name="longitude"
@@ -170,16 +112,36 @@
                                     :placeholder="trans('global.marker.fields.longitude')"
                                     required
                                 />
-                                <p v-if="form.errors?.longitude"
-                                    class="help-block"
-                                    v-text="form.errors?.longitude[0]"
-                                ></p>
+                            </div>
+
+                            <div v-if="checkPermission('is_admin')" class="form-group">
+                                <label for="tags">{{ trans('global.tag.title') }}</label>
+                                <input
+                                    id="tags"
+                                    name="tags"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.tags"
+                                    :placeholder="trans('global.tag.title')"
+                                    required
+                                />
                             </div>
 
                             <div class="form-group">
-                                <label for="address">
-                                    {{ trans('global.address') }}
-                                </label>
+                                <label for="author">{{ trans('global.marker.fields.author') }}</label>
+                                <input
+                                    id="author"
+                                    name="author"
+                                    type="text"
+                                    class="form-control"
+                                    v-model.trim="form.author"
+                                    :placeholder="trans('global.marker.fields.author')"
+                                    required
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">{{ trans('global.address') }}</label>
                                 <input
                                     id="address"
                                     name="address"
@@ -189,16 +151,10 @@
                                     :placeholder="trans('global.address')"
                                     required
                                 />
-                                <p v-if="form.errors?.address"
-                                    class="help-block"
-                                    v-text="form.errors?.address[0]"
-                                ></p>
                             </div>
         
                             <div class="form-group">
-                                <label for="url">
-                                    {{ trans('global.url') }}
-                                </label>
+                                <label for="url">{{ trans('global.url') }}</label>
                                 <input
                                     id="url"
                                     name="url"
@@ -207,16 +163,10 @@
                                     v-model.trim="form.url"
                                     :placeholder="trans('global.url')"
                                 />
-                                <p v-if="form.errors?.url"
-                                    class="help-block"
-                                    v-text="form.errors?.url[0]"
-                                ></p>
                             </div>
 
                             <div>
-                                <label for="url_title">
-                                    {{ trans('global.url_title') }}
-                                </label>
+                                <label for="url_title">{{ trans('global.url_title') }}</label>
                                 <input
                                     id="url_title"
                                     name="url_title"
@@ -225,10 +175,6 @@
                                     v-model.trim="form.url_title"
                                     :placeholder="trans('global.url_title')"
                                 />
-                                <p v-if="form.errors?.url_title"
-                                    class="help-block"
-                                    v-text="form.errors?.url_title[0]"
-                                ></p>
                             </div>
                         </div>
                     </div>

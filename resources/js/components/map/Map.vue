@@ -111,6 +111,8 @@
                                 role="button"
                                 tabindex="0"
                                 @click="setCurrentMarker(marker)"
+                                @mouseover="showMarkerPopup(marker)"
+                                @mouseout="hideMarkerPopup(marker)"
                             >
                                 <i class="fa fa-location-dot link-muted pr-2"></i> {{ marker.title }}
                             </a>
@@ -399,7 +401,7 @@ export default {
 
             // show list of all clustered markers on hover
             this.clusterGroup.on('clustermouseover', (e) => {
-                let titles = e.layer.getAllChildMarkers().map(m => m.options.title).sort().join('<br/>');
+                let titles = e.layer.getAllChildMarkers().map(m => m.options.title).sort().join('<hr class="my-2"/>');
                 e.layer.bindPopup(titles).openPopup();
             });
             this.clusterGroup.on('clustermouseout', (e) => {
@@ -453,6 +455,25 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+        },
+        showMarkerPopup(marker) {
+            let leafletMarker = this.leafletMarkers.find(m => m.options.id === marker.id);
+            // check if marker is clustered
+            if (leafletMarker._zIndex == undefined) {
+                this.clusterGroup.getVisibleParent(leafletMarker)
+                    .bindPopup('<b>' + marker.title + '</b><br/>' + (marker.teaser_text ?? ''))
+                    .openPopup();
+            } else {
+                leafletMarker.openPopup();
+            }
+        },
+        hideMarkerPopup(marker) {
+            let leafletMarker = this.leafletMarkers.find(m => m.options.id === marker.id);
+            if (leafletMarker._zIndex == undefined) {
+                this.clusterGroup.getVisibleParent(leafletMarker).closePopup();
+            } else {
+                leafletMarker.closePopup();
+            }
         },
         processNominatimReply(data) {
             data.features.forEach(function(feature) {

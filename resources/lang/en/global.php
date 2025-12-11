@@ -1053,7 +1053,7 @@ return [
         'expel_helper' => 'Disconnect group from Kanban-Board',
         'only_edit_owned_items' => 'Users are only allowed to edit owned items',
         'collapse_items' => 'Collapse item-content by default',
-        'allow_copy' => 'Allow copying kanban',
+        'allow_copy' => 'Allow others to copy this Kanban-Board',
         'delete' => 'Delete Kanban-Board',
         'delete_helper' => 'Should Kanban-Board be deleted?',
     ],

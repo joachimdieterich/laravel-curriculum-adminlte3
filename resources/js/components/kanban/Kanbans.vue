@@ -140,7 +140,7 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                        <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_edit'"
                             :name="'edit-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
@@ -150,7 +150,7 @@
                             {{ trans('global.kanban.edit') }}
                         </button>
 
-                        <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                        <button v-if="ownerOrAdmin(kanban)"
                             :name="'kanban-share_' + kanban.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="shareKanban(kanban)"
@@ -159,7 +159,7 @@
                             {{ trans('global.kanban.share') }}
                         </button>
 
-                        <button v-if="kanban.allow_copy"
+                        <button v-if="ownerOrAdmin(kanban) || kanban.allow_copy"
                             :name="'copy-kanban-' + kanban.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmKanbanCopy(kanban)"
@@ -168,11 +168,9 @@
                             {{ trans('global.kanban.copy') }}
                         </button>
 
-                        <hr v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                            class="my-1"
-                        />
+                        <hr v-if="ownerOrAdmin(kanban)" class="my-1"/>
 
-                        <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                        <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_delete'"
                             :id="'delete-kanban-' + kanban.id"
                             type="submit"
@@ -353,6 +351,9 @@ export default {
                 this.selectedTags = filter.tags;
                 this.dt.search(filter.searchString).draw();
             });
+        },
+        ownerOrAdmin(kanban) {
+            return kanban.owner_id == this.$userId || this.checkPermission('is_admin');
         },
         confirmItemDelete(kanban) {
             this.currentKanban = kanban;

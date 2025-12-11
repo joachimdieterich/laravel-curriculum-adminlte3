@@ -408,6 +408,30 @@ export default {
 
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
+        generateMarker(lat, lon, entry, title, teaser_text, sidebar_target, icon, markerColor, shape = 'circle', prefix = 'fa') {
+            let svgMarker = L.ExtraMarkers.icon({
+                icon,
+                markerColor,
+                shape,
+                prefix,
+                svg: true
+            });
+
+            let leafletMarker = L.marker([lat, lon], {
+                'id': entry.id,
+                'icon': svgMarker,
+                'title': title // accessibility
+            })
+                .bindPopup('<b>' + title + '</b><br/>' + teaser_text)
+                .on('click', () => {
+                    this.currentMarker = entry;
+                    this.sidebar.open(sidebar_target);
+                });
+            
+            this.leafletMarkers.push(leafletMarker);
+
+            return leafletMarker;
+        },
         // async markerSearch() {
         //     $("#loading-events").show();
         //     try {
@@ -476,30 +500,6 @@ export default {
                     });
             });
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
-        },
-        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape = 'circle', prefix = 'fa') {
-            let svgMarker = L.ExtraMarkers.icon({
-                icon,
-                markerColor,
-                shape,
-                prefix,
-                svg: true
-            });
-
-            let leafletMarker = L.marker([lat, lon], {
-                'id': entry.id,
-                'icon': svgMarker,
-                'title': title // accessibility
-            })
-                .bindPopup('<b>'+ title + '</b></br>' + description)
-                .on('click', () => {
-                    this.currentMarker = entry;
-                    this.sidebar.open(sidebar_target);
-                });
-            
-            this.leafletMarkers.push(leafletMarker);
-
-            return leafletMarker;
         },
         dateforHumans(begin, end = null) {
             if (end === begin || end === null){

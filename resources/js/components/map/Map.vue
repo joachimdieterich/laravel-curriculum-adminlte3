@@ -105,6 +105,8 @@
                     <ul class="todo-list">
                         <li v-for="marker in markers"
                             class="d-flex align-items-center show-hidden-animate"
+                            @mouseover="showMarkerPopup(marker)"
+                            @mouseleave="hideMarkerPopup(marker)"
                         >
                             <i class="fa fa-location-dot pr-2"></i>
                             <button
@@ -112,8 +114,6 @@
                                 type="button"
                                 tabindex="0"
                                 @click="setCurrentMarker(marker)"
-                                @mouseover="showMarkerPopup(marker)"
-                                @mouseout="hideMarkerPopup(marker)"
                             >
                                 {{ marker.title }}
                             </button>
@@ -460,7 +460,7 @@ export default {
         showMarkerPopup(marker) {
             let leafletMarker = this.leafletMarkers.find(m => m.options.id === marker.id);
             // check if marker is clustered
-            if (leafletMarker._zIndex == undefined) {
+            if (leafletMarker._map == undefined) {
                 this.clusterGroup.getVisibleParent(leafletMarker)
                     .bindPopup('<b>' + marker.title + '</b><br/>' + (marker.teaser_text ?? ''))
                     .openPopup();
@@ -470,7 +470,7 @@ export default {
         },
         hideMarkerPopup(marker) {
             let leafletMarker = this.leafletMarkers.find(m => m.options.id === marker.id);
-            if (leafletMarker._zIndex == undefined) {
+            if (leafletMarker._map == undefined) {
                 this.clusterGroup.getVisibleParent(leafletMarker).closePopup();
             } else {
                 leafletMarker.closePopup();

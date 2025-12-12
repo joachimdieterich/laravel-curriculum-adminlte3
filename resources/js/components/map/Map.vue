@@ -106,16 +106,17 @@
                         <li v-for="marker in markers"
                             class="d-flex align-items-center show-hidden-animate"
                         >
-                            <a
-                                class="text-decoration-none pointer"
-                                role="button"
+                            <i class="fa fa-location-dot pr-2"></i>
+                            <button
+                                class="btn btn-link p-0 text-decoration-none"
+                                type="button"
                                 tabindex="0"
                                 @click="setCurrentMarker(marker)"
                                 @mouseover="showMarkerPopup(marker)"
                                 @mouseout="hideMarkerPopup(marker)"
                             >
-                                <i class="fa fa-location-dot link-muted pr-2"></i> {{ marker.title }}
-                            </a>
+                                {{ marker.title }}
+                            </button>
                             <span v-if="editable"
                                 class="d-flex align-items-center ml-auto"
                                 style="height: 0px;"

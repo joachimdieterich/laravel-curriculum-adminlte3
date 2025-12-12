@@ -408,6 +408,7 @@ return [
     'import_data' => 'Import data',
     'imported_rows_to_table' => 'Imported :rows rows to :table table',
     'import' => 'Import',
+    'select' => 'Select',
     'select_all' => 'Select all',
     'deselect_all' => 'Deselect all',
     'team-management' => 'Teams',
@@ -1288,6 +1289,7 @@ return [
         'edit' => 'Edit map',
         'delete' => 'Delete map',
         'delete_helper' => 'Should map be deleted?',
+        'click_for_coordinates' => 'Click position on the map',
         'fields' => [
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -1307,6 +1309,7 @@ return [
         'fields' => [
             'teaser_text' => 'Teaser',
             'author' => 'Contact person',
+            'coordinates' => 'Coordinates',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'link' => 'Link',

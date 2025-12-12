@@ -276,7 +276,11 @@
         <Teleport to="body">
             <MapModal/>
             <MediumModal/>
-            <MarkerModal :map="map"/>
+            <MarkerModal
+                :map="map"
+                :clickedCoordinates="clickedCoordinates"
+                @setCoordinates="showClearMap()"
+            />
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.marker.delete')"
@@ -304,12 +308,13 @@ import MarkerView from "./MarkerView.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MarkerModal from "./MarkerModal.vue";
-import {useGlobalStore} from "../../store/global";
 import MapModal from "./MapModal.vue";
 import Select2 from "../forms/Select2.vue";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+import { useGlobalStore } from "../../store/global";
+import { useToast } from 'vue-toastification';
 
 export default {
     components: {
@@ -332,8 +337,10 @@ export default {
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
@@ -359,6 +366,7 @@ export default {
             }),
             marker: null,
             showConfirm: false,
+            clickedCoordinates: null,
         }
     },
     methods: {
@@ -475,6 +483,37 @@ export default {
             } else {
                 leafletMarker.closePopup();
             }
+        },
+        showClearMap() {
+            let markerElements = $('.leaflet-marker-pane, .leaflet-shadow-pane');
+
+            // hide markers from map
+            markerElements.each((index, element) => element.classList.add('d-none'));
+
+            const message = this.trans('global.map.click_for_coordinates');
+            // add toast-notification to inform user
+            const toast = this.toast.info(message + '\nLatitude:\nLongitude:', {
+                timeout: false,
+                closeButton: false,
+                closeOnClick: false,
+            });
+            // update coordinates in toast-notification
+            this.mapCanvas.on('mousemove', (e) => {
+                this.toast.update(toast, {
+                    content: message + '\nLatitude: ' + e.latlng.lat.toFixed(5) + '\nLongitude: ' + e.latlng.lng.toFixed(5),
+                });
+            })
+
+            // click to set position
+            this.mapCanvas.on('click', (e) => {
+                this.clickedCoordinates = e.latlng;
+                // show markers again
+                markerElements.each((index, element) => element.classList.remove('d-none'));
+                // only trigger event once
+                this.mapCanvas.off('click');
+                this.mapCanvas.off('mouseover')
+                this.toast.dismiss(toast);
+            });
         },
         processNominatimReply(data) {
             data.features.forEach(function(feature) {
@@ -753,11 +792,10 @@ export default {
 
         this.generateClusterGroup();
 
-        /* //  click to set position > wip on distance search
-        this.mapCanvas.on('click', function(e){
-            this.processClick(e.latlng.lat, e.latlng.lng);
-        }.bind(this));
-        */
+        //  click to set position > wip on distance search
+        // this.mapCanvas.on('click', function(e) {
+        //     this.processClick(e.latlng.lat, e.latlng.lng);
+        // }.bind(this));
     },
 }
 </script>

@@ -89,29 +89,40 @@
                             />
 
                             <div class="form-group">
-                                <label for="latitude">{{ trans('global.marker.fields.latitude') }} *</label>
-                                <input
-                                    id="latitude"
-                                    name="latitude"
-                                    type="number"
-                                    class="form-control"
-                                    v-model.trim="form.latitude"
-                                    :placeholder="trans('global.marker.fields.latitude')"
-                                    required
-                                />
-                            </div>
+                                <label>{{ trans('global.marker.fields.coordinates') }}</label>
+                                <div
+                                    class="d-flex align-items-center"
+                                    style="gap: 0.5rem;"
+                                >
+                                    <button
+                                        class="btn btn-default text-nowrap"
+                                        @click="triggerEvent()"
+                                    >
+                                        <i class="fa fa-location"></i>
+                                        {{ trans('global.select') }}
+                                    </button>
 
-                            <div class="form-group">
-                                <label for="longitude">{{ trans('global.marker.fields.longitude') }} *</label>
-                                <input
-                                    id="longitude"
-                                    name="longitude"
-                                    type="number"
-                                    class="form-control"
-                                    v-model.trim="form.longitude"
-                                    :placeholder="trans('global.marker.fields.longitude')"
-                                    required
-                                />
+                                    <span class="input-group">
+                                        <input
+                                            id="latitude"
+                                            name="latitude"
+                                            type="number"
+                                            class="form-control"
+                                            v-model.trim="form.latitude"
+                                            placeholder="Latitude"
+                                            required
+                                        />
+                                        <input
+                                            id="longitude"
+                                            name="longitude"
+                                            type="number"
+                                            class="form-control"
+                                            v-model.trim="form.longitude"
+                                            placeholder="Longitude"
+                                            required
+                                        />
+                                    </span>
+                                </div>
                             </div>
 
                             <div v-if="checkPermission('is_admin')" class="form-group">
@@ -220,7 +231,11 @@ export default {
     props: {
         map: {
             type: Object
-        }
+        },
+        clickedCoordinates: {
+            type: Object,
+            default: null,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -289,6 +304,13 @@ export default {
                     console.log(e);
                 });
         },
+        triggerEvent() {
+            this.$emit('setCoordinates');
+            // trigger closing-animation
+            this.$el.classList.add('modal-leave-to');
+            // actually hide the modal-layer, so the map underneath can be clicked
+            setTimeout(() => this.$el.classList.add('d-none'), 300);
+        },
     },
     mounted() {
         this.globalStore.registerModal(this.$options.name);
@@ -307,6 +329,17 @@ export default {
                 }
             }
         });
+    },
+    watch: {
+        clickedCoordinates(newValue) {
+            if (newValue) {
+                this.form.latitude = newValue.lat;
+                this.form.longitude = newValue.lng;
+                // 're-open' the modal
+                this.$el.classList.remove('d-none');
+                setTimeout(() => this.$el.classList.remove('modal-leave-to'), 10);
+            }
+        }
     },
 }
 </script>

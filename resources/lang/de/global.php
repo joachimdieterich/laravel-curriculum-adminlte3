@@ -1327,6 +1327,7 @@ return [
         'edit' => 'Landkarte bearbeiten',
         'delete' => 'Landkarte löschen',
         'delete_helper' => 'Soll die Landkarte gelöscht werden?',
+        'click_for_coordinates' => 'Position auf der Karte auswählen',
         'fields' => [
             'latitude' => 'Latitude (geografische Breite)',
             'longitude' => 'Longitude (geografische Länge)',
@@ -1348,6 +1349,7 @@ return [
         'fields' => [
             'teaser_text' => 'Kurzbeschreibung',
             'author' => 'Ansprechperson',
+            'coordinates' => 'Koordinaten',
             'latitude' => 'Latitude (geografische Breite)',
             'longitude' => 'Longitude (geografische Länge)',
             'link' => 'Link',

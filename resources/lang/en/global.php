@@ -48,6 +48,9 @@ return [
     'edit' => 'Edit',
     'locked' => 'locked',
     'replace_links' => 'Replace links with QR-Codes',
+    'movable' => 'movable',
+    'editable' => 'editable',
+    'visible' => 'visible',
     'delete' => 'delete',
     'forceDelete' => 'Delete dataset permanently',
     'errors' => [

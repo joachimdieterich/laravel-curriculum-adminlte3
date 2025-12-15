@@ -138,58 +138,58 @@
 
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
-                                    :id="'locked_'+ form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.locked"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light pointer"
-                                    :for="'locked_'+ form.id"
-                                >
-                                    {{ trans('global.locked') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'editable_'+ form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.editable"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light pointer"
-                                    :for="'editable_'+ form.id"
-                                >
-                                    {{ trans('global.editable') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'replace_links_'+ form.id"
+                                    :id="'replace_links_' + form.id"
                                     class="custom-control-input pt-1"
                                     type="checkbox"
                                     v-model="form.replace_links"
                                 />
                                 <label
                                     class="custom-control-label font-weight-light pointer"
-                                    :for="'replace_links_'+ form.id"
+                                    :for="'replace_links_' + form.id"
                                 >
                                     {{ trans('global.replace_links') }}
                                 </label>
                             </span>
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
-                                    :id="'visibility_'+ form.id"
+                                    :id="'movable_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.movable"
+                                />
+                                <label
+                                    class="custom-control-label font-weight-light pointer"
+                                    :for="'movable_' + form.id"
+                                >
+                                    {{ trans('global.movable') }}
+                                </label>
+                            </span>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'editable_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.editable"
+                                />
+                                <label
+                                    class="custom-control-label font-weight-light pointer"
+                                    :for="'editable_' + form.id"
+                                >
+                                    {{ trans('global.editable') }}
+                                </label>
+                            </span>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
+                                    :id="'visibility_' + form.id"
                                     class="custom-control-input pt-1"
                                     type="checkbox"
                                     v-model="form.visibility"
                                 />
                                 <label
                                     class="custom-control-label font-weight-light pointer"
-                                    :for="'visibility_'+ form.id"
+                                    :for="'visibility_' + form.id"
                                 >
-                                    {{ trans('global.visibility') }}
+                                    {{ trans('global.visible') }}
                                 </label>
                             </span>
 
@@ -264,7 +264,8 @@ export default {
                 color: '#f4f4f4',
                 media_subscriptions: [],
                 due_date: '',
-                locked: false,
+                movable: true, // replaces 'locked' to match shown translation
+                locked: false, // actual value that gets sent to backend
                 editable: true,
                 replace_links: false,
                 visibility: true,
@@ -303,6 +304,7 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params.item);
                     this.method = params.method;
+                    this.form.movable = !this.form.locked;
 
                     if (this.form.media_subscriptions.length > 0) this.medium = this.form.media_subscriptions[0].medium;
                     else this.medium = null; // needs to be reset
@@ -344,6 +346,7 @@ export default {
             this.globalStore.closeModal(this.$options.name);
         },
         submit() {
+            this.form.locked = !this.form.movable;
             // parse dates to local time, so the server won't have to deal with timezones
             this.form.due_date = this.form.due_date?.toLocaleString() ?? null; // undefined will remove the field from the request
             if (this.form.visible_date[1] === null) {

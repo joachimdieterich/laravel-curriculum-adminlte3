@@ -53,7 +53,9 @@ return [
     'edit' => 'Bearbeiten',
     'locked' => 'verschieben verhindern',
     'replace_links' => 'Links durch QR-Codes ersetzen',
+    'movable' => 'verschiebbar',
     'editable' => 'editierbar',
+    'visible' => 'sichtbar',
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen',
     'error' => [

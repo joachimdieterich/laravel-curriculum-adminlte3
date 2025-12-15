@@ -76,6 +76,20 @@
                         <div class="card-body">
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
+                                    :id="'movable_' + form.id"
+                                    class="custom-control-input pt-1"
+                                    type="checkbox"
+                                    v-model="form.movable"
+                                />
+                                <label
+                                    class="custom-control-label font-weight-light"
+                                    :for="'movable_' + form.id"
+                                >
+                                    {{ trans('global.movable') }}
+                                </label>
+                            </span>
+                            <span class="custom-control custom-switch custom-switch-on-green">
+                                <input
                                     :id="'editable_' + form.id"
                                     class="custom-control-input pt-1"
                                     type="checkbox"
@@ -90,20 +104,6 @@
                             </span>
                             <span class="custom-control custom-switch custom-switch-on-green">
                                 <input
-                                    :id="'locked_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.locked"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light"
-                                    :for="'locked_' + form.id"
-                                >
-                                    {{ trans('global.locked') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
                                     :id="'visibility_' + form.id"
                                     class="custom-control-input pt-1"
                                     type="checkbox"
@@ -113,7 +113,7 @@
                                     class="custom-control-label font-weight-light"
                                     :for="'visibility_' + form.id"
                                 >
-                                    {{ trans('global.visibility') }}
+                                    {{ trans('global.visible') }}
                                 </label>
                             </span>
                         </div>
@@ -172,7 +172,8 @@ export default {
                 title: '',
                 kanban_id: this.kanban.id,
                 owner_id: null,
-                locked: false,
+                movable: true, // replaces 'locked' to match shown translation
+                locked: false, // actual value that gets sent to backend
                 editable: true,
                 visibility: true,
                 visible_from: null,
@@ -183,6 +184,8 @@ export default {
     },
     methods: {
         submit() {
+            this.form.locked = !this.form.movable;
+
             if (this.method == 'patch') {
                 this.update();
             } else {
@@ -229,6 +232,7 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params.status);
                     this.method = params.method;
+                    this.form.movable = !this.form.locked;
                 }
             }
         });

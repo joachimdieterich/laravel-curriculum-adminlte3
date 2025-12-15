@@ -285,13 +285,8 @@
                 :showConfirm="showConfirm"
                 :title="trans('global.marker.delete')"
                 :description="trans('global.marker.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -346,25 +341,23 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            mapCanvas: [],
+            mapCanvas: {}, // actual rendered map
             events: {},
             sidebar: {},
             search: 'digiWerkzeug',
-            searchCircle: null,
-            searchDistance: 20000,
-            foundMarkers: [],
+            // searchCircle: null,
+            // searchDistance: 20000,
+            // foundMarkers: [],
             bordersGroup: {},
-            namesGroup: {},
-            currentPositionMarker: null,
-            markers: {},
-            leafletMarkers: [],
+            // currentPositionMarker: null,
+            markers: [], // contains information for the markers (stored in DB)
+            leafletMarkers: [], // actual positions/layers of the markers on the map
             currentMarker: null,
-            clusterGroup: {},
+            clusterGroup: {}, // layer of 'markercluster'-plugin, which is wrapped around all markers
             form: new Form({
                 type_id: '',
                 category_id: '',
             }),
-            marker: null,
             showConfirm: false,
             clickedCoordinates: null,
         }
@@ -433,7 +426,7 @@ export default {
                 'icon': svgMarker,
                 'title': title // accessibility
             })
-                .bindPopup('<b>' + title + '</b><br/>' + teaser_text)
+                .bindPopup('<b>' + title + '</b><br/>' + (teaser_text ?? ''))
                 .on('click', () => {
                     this.currentMarker = entry;
                     this.sidebar.open(sidebar_target);
@@ -597,18 +590,22 @@ export default {
             this.showConfirm = true;
         },
         destroy() {
+            this.showConfirm = false;
+
             axios.delete("/mapMarkers/" + this.currentMarker.id)
                 .then(() => {
-                    let index = this.markers.findIndex(
-                        i => i.id === this.currentMarker.id
-                    );
+                    // the index of both arrays should be the same, but its better to check both just to be safe
+                    let index = this.markers.findIndex(i => i.id === this.currentMarker.id);
+                    let leafletIndex = this.leafletMarkers.findIndex(i => i.options.id === this.currentMarker.id)
+                    // first remove the actual marker from the map
+                    this.clusterGroup.removeLayer(this.leafletMarkers[leafletIndex]);
+                    // then remove its entry in out marker-arrays
                     this.markers.splice(index, 1);
-
-                    this.clusterGroup.clearLayers(); // clear layers, then reload
-                    this.loader();
+                    this.leafletMarkers.splice(leafletIndex, 1);
                 })
-                .catch(err => {
-                    console.log(err);
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         editMap(currentMap) {

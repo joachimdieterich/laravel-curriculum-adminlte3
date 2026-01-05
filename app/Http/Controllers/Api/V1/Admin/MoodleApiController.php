@@ -57,7 +57,7 @@ class MoodleApiController extends Controller
 
         //return $user->first()->curricula(['curricula.id', 'curricula.title']);
 
-        return Curriculum::where('type_id', 1)->orWhere('owner_id', $user_id)->select(['curricula.id', 'curricula.title'])->get();
+        return Curriculum::select('id', 'title')->without('owner')->where('type_id', 1)->orWhere('owner_id', $user_id)->get()->makeHidden(['is_favourited']);
     }
 
     public function getTerminalObjectives(\App\Curriculum $curriculum,Request $request)

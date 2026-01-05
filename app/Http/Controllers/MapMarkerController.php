@@ -23,8 +23,7 @@ class MapMarkerController extends Controller
                     'type_id' => $input['type_id'],
                     'category_id' => $input['category_id'],
                 ])
-                ->with(['type', 'category'])
-                ->orderBy('type_id')
+                ->orderBy('title')
                 ->get();
         } else {
             return MapMarker::orderBy('type_id')->get();

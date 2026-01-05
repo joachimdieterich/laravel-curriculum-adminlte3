@@ -53,7 +53,9 @@ return [
     'edit' => 'Bearbeiten',
     'locked' => 'verschieben verhindern',
     'replace_links' => 'Links durch QR-Codes ersetzen',
+    'movable' => 'verschiebbar',
     'editable' => 'editierbar',
+    'visible' => 'sichtbar',
     'delete' => 'löschen',
     'forceDelete' => 'Datensatz endgültig löschen',
     'error' => [
@@ -1098,9 +1100,9 @@ return [
         'copy_note' => 'Hinweis: Mit der Kopie der Pinnwand werden keine Inhalte bzw. Dateien (z.B. Bilder oder PDFs) mitkopiert, sondern nur die Zugriffsrechte darauf. Die Dateien bleiben weiter in der alleinigen Verfügung der jeweiligen Eigentümer:innen.',
         'enrol' => 'Pinnwand verknüpfen',
         'expel_helper' => 'Gruppe aus Pinnwand ausschreiben',
-        'only_edit_owned_items' => 'Nutzer können nur selbst erstellte Spalten/Karten bearbeiten.',
+        'only_edit_owned_items' => 'Nutzende können nur selbst erstellte Spalten/Karten bearbeiten',
         'collapse_items' => 'Karteninhalte standardmäßig einklappen',
-        'allow_copy' => 'Pinnwand darf kopiert werden.',
+        'allow_copy' => 'Pinnwand darf von anderen kopiert werden',
         'delete' => 'Pinnwand löschen',
         'delete_helper' => 'Soll die Pinnwand sowie die zugehörigen Daten gelöscht werden?',
     ],
@@ -1337,6 +1339,7 @@ return [
         'edit' => 'Landkarte bearbeiten',
         'delete' => 'Landkarte löschen',
         'delete_helper' => 'Soll die Landkarte gelöscht werden?',
+        'click_for_coordinates' => 'Position auf der Karte auswählen',
         'fields' => [
             'latitude' => 'Latitude (geografische Breite)',
             'longitude' => 'Longitude (geografische Länge)',
@@ -1358,6 +1361,7 @@ return [
         'fields' => [
             'teaser_text' => 'Kurzbeschreibung',
             'author' => 'Ansprechperson',
+            'coordinates' => 'Koordinaten',
             'latitude' => 'Latitude (geografische Breite)',
             'longitude' => 'Longitude (geografische Länge)',
             'link' => 'Link',

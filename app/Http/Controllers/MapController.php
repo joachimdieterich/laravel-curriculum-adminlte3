@@ -113,10 +113,10 @@ class MapController extends Controller
     {
         abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
 
-        $map = Map::with(['type', 'category'])->find($map->id);
+        $editable = $map->isEditable(auth()->user()->id, $token);
 
         return view('map.show')
-            ->with(compact('map'));
+            ->with(compact('map', 'editable'));
     }
 
 
@@ -148,14 +148,7 @@ class MapController extends Controller
             'owner_id'      => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
 
-        $map->save();
-        if (request()->wantsJson())
-        {
-            return $map;
-        }
-        else {
-            return redirect(route('maps.show', ['map' => $map]));
-        }
+        return $map;
     }
 
     /**

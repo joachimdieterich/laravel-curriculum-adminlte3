@@ -294,12 +294,12 @@ class Curriculum extends Model
 
     public function tags(?User $currentUser = null)
     {
-        $currentUser = $currentUser ?? auth()->user();
+        $currentUser = $currentUser ?? auth()->user()?->id;
 
         return $this
             ->morphToMany(self::getTagClassName(), $this->getTaggableMorphName(), $this->getTaggableTableName())
             ->using($this->getPivotModelClassName())
-            ->where('user_id', $currentUser->id)
+            ->where('user_id', $currentUser)
             ->ordered();
     }
 

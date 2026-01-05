@@ -74,7 +74,7 @@
                                 @selectedValue="(id) => this.form.owner_id = id[0]"
                             />
 
-                            <div class="form-group">
+                            <div v-if="checkPermission('is_admin')" class="form-group">
                                 <label for="tags">
                                     {{ trans('global.map.fields.tags') }}
                                 </label>
@@ -112,7 +112,7 @@
                                 }"
                             />
 
-                            <div class="form-group">
+                            <div v-if="checkPermission('is_admin')" class="form-group">
                                 <label for="border_url">
                                     {{ trans('global.map.fields.border_url') }}
                                 </label>
@@ -128,7 +128,7 @@
                                 <p class="help-block" v-if="form.errors?.border_url" v-text="form.errors?.border_url[0]"></p>
                             </div>
 
-                            <div class="form-group">
+                            <div v-if="checkPermission('is_admin')" class="form-group">
                                 <label for="latitude">
                                     {{ trans('global.map.fields.latitude') }}
                                 </label>
@@ -143,7 +143,7 @@
                                 <p class="help-block" v-if="form.errors?.latitude" v-text="form.errors?.latitude[0]"></p>
                             </div>
 
-                            <div class="form-group">
+                            <div v-if="checkPermission('is_admin')" class="form-group">
                                 <label for="longitude">
                                     {{ trans('global.map.fields.longitude') }}
                                 </label>
@@ -158,8 +158,8 @@
                                 <p class="help-block" v-if="form.errors?.longitude" v-text="form.errors?.longitude[0]"></p>
                             </div>
 
-                            <div>
-                                <label for="zone">
+                            <div v-if="checkPermission('is_admin')">
+                                <label for="zoom">
                                     {{ trans('global.map.fields.zoom') }}
                                 </label>
                                 <input
@@ -279,8 +279,8 @@ export default {
                 type_id: 2,
                 category_id: 2,
                 border_url: '',
-                latitude: 49,
-                longitude: 8,
+                latitude: '49.9551389',
+                longitude: '6.31027777',
                 zoom: 10,
                 color: '#F2C511',
                 medium_id: '',
@@ -344,6 +344,7 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     this.form.border_url = this.$decodeHTMLEntities(params.border_url);
+                    this.form.description = this.$decodeHTMLEntities(params.description);
 
                     if (this.form.id !== '') {
                         this.method = 'patch';

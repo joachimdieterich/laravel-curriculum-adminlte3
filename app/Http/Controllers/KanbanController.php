@@ -384,7 +384,11 @@ class KanbanController extends Controller
 
     public function copyKanban(Kanban $kanban)
     {
-        abort_unless(Gate::allows('kanban_create') and $kanban->allow_copy, 403);
+        abort_unless(
+            (Gate::allows('kanban_create') and $kanban->allow_copy)
+            || $kanban->owner_id == auth()->user()->id
+            || is_admin()
+        , 403);
 
         $kanbanCopy = $kanban->replicate()->fill([
             'title'    => $kanban->title . date(' [Y.m.d_H:i:s]'),

@@ -1,12 +1,7 @@
 @extends('layouts.contentonly')
-@section('title')
-
-@endsection
-@section('breadcrumb')
-@endsection
 @section('content')
     <leaflet-map
         :map="{{ $map }}"
+        :editable="{{ $editable ? 'true' : 'false' }}"
     ></leaflet-map>
 @endsection
-

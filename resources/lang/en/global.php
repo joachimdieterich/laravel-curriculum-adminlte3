@@ -48,6 +48,9 @@ return [
     'edit' => 'Edit',
     'locked' => 'locked',
     'replace_links' => 'Replace links with QR-Codes',
+    'movable' => 'movable',
+    'editable' => 'editable',
+    'visible' => 'visible',
     'delete' => 'delete',
     'forceDelete' => 'Delete dataset permanently',
     'errors' => [
@@ -408,6 +411,7 @@ return [
     'import_data' => 'Import data',
     'imported_rows_to_table' => 'Imported :rows rows to :table table',
     'import' => 'Import',
+    'select' => 'Select',
     'select_all' => 'Select all',
     'deselect_all' => 'Deselect all',
     'team-management' => 'Teams',
@@ -1063,7 +1067,7 @@ return [
         'expel_helper' => 'Disconnect group from Kanban-Board',
         'only_edit_owned_items' => 'Users are only allowed to edit owned items',
         'collapse_items' => 'Collapse item-content by default',
-        'allow_copy' => 'Allow copying kanban',
+        'allow_copy' => 'Allow others to copy this Kanban-Board',
         'delete' => 'Delete Kanban-Board',
         'delete_helper' => 'Should Kanban-Board be deleted?',
     ],
@@ -1298,6 +1302,7 @@ return [
         'edit' => 'Edit map',
         'delete' => 'Delete map',
         'delete_helper' => 'Should map be deleted?',
+        'click_for_coordinates' => 'Click position on the map',
         'fields' => [
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
@@ -1317,6 +1322,7 @@ return [
         'fields' => [
             'teaser_text' => 'Teaser',
             'author' => 'Contact person',
+            'coordinates' => 'Coordinates',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'link' => 'Link',

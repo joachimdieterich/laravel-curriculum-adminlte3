@@ -1,21 +1,55 @@
 <template>
-    <div id="outermap">
+    <div id="outermap" class="h-100">
         <div
             id="sidebar"
-            class="sidebar"
+            class="sidebar border-0"
         >
             <!-- navigation tabs -->
-            <div class="sidebar-tabs">
-                <ul role="tablist">
-                    <li><a href="#ll-home" role="tab"><i class="fa fa-bars"></i></a></li>
-                    <li><a href="#ll-layer" role="tab"><i class="fa fa-layer-group"></i></a></li>
-                    <li><a href="#ll-marker" role="tab"><i class="fa fa-location-dot"></i></a></li>
-                    <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li>
-                    <hr v-permission="'map_create'"/>
-                    <li v-permission="'map_create'">
+            <div class="sidebar-tabs bg-transparent">
+                <ul role="tablist" class="bg-white">
+                    <li class="active">
                         <a
+                            id="home-nav-tab"
+                            href="#ll-home"
                             role="tab"
+                            data-toggle="tab"
+                            aria-controls="ll-home"
+                            aria-selected="true"
+                        >
+                            <i class="fa fa-bars"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            id="layer-nav-tab"
+                            href="#ll-layer"
+                            role="tab"
+                            data-toggle="tab"
+                            aria-controls="ll-layer"
+                            aria-selected="false"
+                        >
+                            <i class="fa fa-layer-group"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            id="marker-nav-tab"
+                            href="#ll-marker"
+                            role="tab"
+                            data-toggle="tab"
+                            aria-controls="ll-marker"
+                            aria-selected="false"
+                        >
+                            <i class="fa fa-location-dot"></i>
+                        </a>
+                    </li>
+                    <!-- <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li> -->
+                    <hr v-if="editable"/>
+                    <li v-if="editable">
+                        <a
+                            role="button"
                             class="pointer"
+
                             @click="createMarker()"
                         >
                             <i class="fa fa-plus"></i>
@@ -29,6 +63,8 @@
                 <div
                     id="ll-home"
                     class="sidebar-pane active"
+                    role="tabpanel"
+                    aria-labelledby="home-nav-tab"
                 >
                     <div class="sidebar-header d-flex align-items-center pr-0">
                         <span class="line-clamp">{{ map.title }}</span>
@@ -54,6 +90,7 @@
                             </button>
                         </span>
                     </div>
+
                     <span class="pb-2">
                         <div class="h5 mt-2">{{ map.subtitle }}</div>
                         <span class="right badge badge-primary">{{ map.type.title }}</span>
@@ -68,16 +105,19 @@
                     <ul class="todo-list">
                         <li v-for="marker in markers"
                             class="d-flex align-items-center show-hidden-animate"
+                            @mouseover="showMarkerPopup(marker)"
+                            @mouseleave="hideMarkerPopup(marker)"
                         >
-                            <a
-                                class="text-decoration-none pointer"
-                                role="button"
+                            <i class="fa fa-location-dot pr-2"></i>
+                            <button
+                                class="btn btn-link p-0 text-decoration-none"
+                                type="button"
                                 tabindex="0"
                                 @click="setCurrentMarker(marker)"
                             >
-                                <i class="fa fa-location-dot link-muted pr-2"></i> {{ marker.title }}
-                            </a>
-                            <span v-if="marker.owner_id == $userId || checkPermission('is_admin')"
+                                {{ marker.title }}
+                            </button>
+                            <span v-if="editable"
                                 class="d-flex align-items-center ml-auto"
                                 style="height: 0px;"
                             >
@@ -100,7 +140,12 @@
                     </ul>
                 </div>
 
-                <div class="sidebar-pane" id="ll-layer">
+                <div
+                    id="ll-layer"
+                    class="sidebar-pane"
+                    role="tabpanel"
+                    aria-labelledby="layer-nav-tab"
+                >
                     <h1 class="sidebar-header">Ebenen</h1>
 
                     <Select2
@@ -131,75 +176,79 @@
                     </button>
                 </div>
 
-                <div v-if="currentMarker?.ARTIKEL == undefined"
+                <div
                     id="ll-marker"
                     class="sidebar-pane"
+                    role="tabpanel"
+                    aria-labelledby="marker-nav-tab"
                 >
-                    <MarkerView v-if="currentMarker" :marker="currentMarker"/>
-                </div>
-                <div v-else
-                    id="ll-marker"
-                    class="sidebar-pane"
-                >
-                    <h1 class="sidebar-header">
-                        {{ currentMarker.ARTIKEL }}
-                    </h1>
-
-                    <div v-if="currentMarker.BEZ_1_2.length > 2"
-                        class="py-0 pt-2"
-                    >
-                        <strong>Untertitel</strong>
-                    </div>
-
-                    <div v-if="currentMarker.BEZ_1_2.length > 2"
-                        class="py-0 pre-formatted"
-                        v-html="currentMarker.BEZ_1_2"
-                    ></div>
-
-                    <div class="py-0 pt-2">
-                        <strong>{{ trans('global.description') }}</strong>
-                    </div>
-
-                    <div
-                        class="py-0 pre-formatted text-justify"
-                        v-html="currentMarker.BEMERKUNG"
-                    ></div>
-
-                    <div class="py-0 pt-2"><strong>Termine</strong></div>
-
-                    <div class="py-0 pre-formatted">
-                        <div v-for="termin in currentMarker.termine">
-                            {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
-                            <br/>
-                            {{ termin.VO_ORT }}
+                    <div v-if="currentMarker">
+                        <div v-if="currentMarker.ARTIKEL == undefined">
+                            <MarkerView
+                                :marker="currentMarker"
+                                :editable="editable"
+                            />
+                        </div>
+                        <div v-else>
+                            <h1 class="sidebar-header">{{ currentMarker.ARTIKEL }}</h1>
+        
+                            <div v-if="currentMarker.BEZ_1_2.length > 2"
+                                class="py-0 pt-2"
+                            >
+                                <strong>Untertitel</strong>
+                            </div>
+        
+                            <div v-if="currentMarker.BEZ_1_2.length > 2"
+                                class="py-0 pre-formatted"
+                                v-html="currentMarker.BEZ_1_2"
+                            ></div>
+        
+                            <div class="py-0 pt-2">
+                                <strong>{{ trans('global.description') }}</strong>
+                            </div>
+        
+                            <div
+                                class="py-0 pre-formatted text-justify"
+                                v-html="currentMarker.BEMERKUNG"
+                            ></div>
+        
+                            <div class="py-0 pt-2"><strong>Termine</strong></div>
+        
+                            <div class="py-0 pre-formatted">
+                                <div v-for="termin in currentMarker.termine">
+                                    {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
+                                    <br/>
+                                    {{ termin.VO_ORT }}
+                                </div>
+                            </div>
+        
+                            <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
+        
+                            <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
+        
+                            <div class="py-0 pt-2">
+                                <a
+                                    :href="currentMarker.LINK_DETAIL"
+                                    class="btn btn-default"
+                                    target="_blank"
+                                >
+                                    <i class="fa fa-info"></i> Details/Anmeldung
+                                </a>
+        
+                                <a
+                                    :href="currentMarker.LINK_DETAIL + '&print=1'"
+                                    class="btn btn-default"
+                                    target="_blank"
+                                    @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
+                                >
+                                    <i class="fa fa-print"></i> Drucken
+                                </a>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-
-                    <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
-
-                    <div class="py-0 pt-2">
-                        <a
-                            :href="currentMarker.LINK_DETAIL"
-                            class="btn btn-default"
-                            target="_blank"
-                        >
-                            <i class="fa fa-info"></i> Details/Anmeldung
-                        </a>
-
-                        <a
-                            :href="currentMarker.LINK_DETAIL + '&print=1'"
-                            class="btn btn-default"
-                            target="_blank"
-                            @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
-                        >
-                            <i class="fa fa-print"></i> Drucken
-                        </a>
-                    </div>
                 </div>
 
-                <div class="sidebar-pane" id="ll-search">
+                <!-- <div class="sidebar-pane" id="ll-search">
                     <h1 class="sidebar-header">{{ currentMarker?.title }}</h1>
 
                     <div
@@ -218,27 +267,26 @@
                         />
                         <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
-        <div id="map" class="sidebar-map"></div>
+        <div id="map" class="sidebar-map user-select-none h-100"></div>
 
         <Teleport to="body">
             <MapModal/>
             <MediumModal/>
-            <MarkerModal :map="map"/>
+            <MarkerModal
+                :map="map"
+                :clickedCoordinates="clickedCoordinates"
+                @setCoordinates="showClearMap()"
+            />
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.marker.delete')"
                 :description="trans('global.marker.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -255,12 +303,13 @@ import MarkerView from "./MarkerView.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MarkerModal from "./MarkerModal.vue";
-import {useGlobalStore} from "../../store/global";
 import MapModal from "./MapModal.vue";
 import Select2 from "../forms/Select2.vue";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+import { useGlobalStore } from "../../store/global";
+import { useToast } from 'vue-toastification';
 
 export default {
     components: {
@@ -276,39 +325,41 @@ export default {
             type: Object,
             default: null,
         },
+        editable: {
+            type: Boolean,
+            default: false,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
+        const toast = useToast();
         return {
             globalStore,
+            toast,
         }
     },
     data() {
         return {
             component_id: this.$.uid,
-            mapCanvas: [],
+            mapCanvas: {}, // actual rendered map
             events: {},
             sidebar: {},
             search: 'digiWerkzeug',
-            searchCircle: null,
-            searchDistance: 20000,
-            foundMarkers: [],
+            // searchCircle: null,
+            // searchDistance: 20000,
+            // foundMarkers: [],
             bordersGroup: {},
-            namesGroup: {},
-            currentPositionMarker: null,
-            markers: {},
-            leafletMarkers:[],
-            currentMarker:{},
-            clusterGroup: {},
+            // currentPositionMarker: null,
+            markers: [], // contains information for the markers (stored in DB)
+            leafletMarkers: [], // actual positions/layers of the markers on the map
+            currentMarker: null,
+            clusterGroup: {}, // layer of 'markercluster'-plugin, which is wrapped around all markers
             form: new Form({
                 type_id: '',
                 category_id: '',
             }),
-            initialLatitude: '49.314908280766346',
-            initialLongitude: '8.413913138283617',
-            zoom: 10,
-            marker: null,
             showConfirm: false,
+            clickedCoordinates: null,
         }
     },
     methods: {
@@ -324,51 +375,138 @@ export default {
                 .then(res => {
                     this.markers = res.data;
                     this.currentMarker = this.markers[0];
-                    this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
-
-                    this.markers.forEach((marker) => {
-                        this.clusterGroup.addLayer(
-                            this.generateMarker(
-                                marker.latitude,
-                                marker.longitude,
-                                marker,
-                                marker.title,
-                                marker.teaser_text ?? '',
-                                'll-marker',
-                                marker.type.css_icon,
-                                marker.type.color,
-                                marker.category.shape,
-                                'fa'
-                            )
-                        ); // add marker to the clustergroup
-                    });
-                    this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
+                    this.generateClusterGroup();
                 })
                 .catch(err => {
                     console.log(err);
                 });
         },
-        async markerSearch() {
-            $("#loading-events").show();
-            try {
-                this.events = (await axios.post('/eventSubscriptions/getEvents', {
-                    search: this.search,
-                    page: 1,
-                    plugin: 'evewa'
-                })).data.events.data;
-            } catch (error) {
-                console.log(error);
-            }
-            this.refreshMap();
+        generateClusterGroup() {
+            this.clusterGroup = L.markerClusterGroup(); // create the new clustergroup
+
+            this.markers.forEach((marker) => {
+                this.clusterGroup.addLayer( // add marker to the clustergroup
+                    this.generateMarker(
+                        marker.latitude,
+                        marker.longitude,
+                        marker,
+                        marker.title,
+                        marker.teaser_text ?? '',
+                        'll-marker',
+                        marker.type.css_icon,
+                        marker.type.color,
+                        marker.category.shape,
+                        'fa'
+                    )
+                );
+            });
+
+            // show list of all clustered markers on hover
+            this.clusterGroup.on('clustermouseover', (e) => {
+                let titles = e.layer.getAllChildMarkers().map(m => m.options.title).sort().join('<hr class="my-2"/>');
+                e.layer.bindPopup(titles).openPopup();
+            });
+            this.clusterGroup.on('clustermouseout', (e) => {
+                e.layer.closePopup();
+            });
+
+            this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
+        generateMarker(lat, lon, entry, title, teaser_text, sidebar_target, icon, markerColor, shape = 'circle', prefix = 'fa') {
+            let svgMarker = L.ExtraMarkers.icon({
+                icon,
+                markerColor,
+                shape,
+                prefix,
+                svg: true
+            });
+
+            let leafletMarker = L.marker([lat, lon], {
+                'id': entry.id,
+                'icon': svgMarker,
+                'title': title // accessibility
+            })
+                .bindPopup('<b>' + title + '</b><br/>' + (teaser_text ?? ''))
+                .on('click', () => {
+                    this.currentMarker = entry;
+                    this.sidebar.open(sidebar_target);
+                });
+            
+            this.leafletMarkers.push(leafletMarker);
+
+            return leafletMarker;
+        },
+        // async markerSearch() {
+        //     $("#loading-events").show();
+        //     try {
+        //         this.events = (await axios.post('/eventSubscriptions/getEvents', {
+        //             search: this.search,
+        //             page: 1,
+        //             plugin: 'evewa'
+        //         })).data.events.data;
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        //     this.refreshMap();
+        // },
         getBorder() {
             axios.get(this.map.border_url)
-                 .then(res => {
-                     this.processNominatimReply(res.data);
+                .then(res => {
+                    this.processNominatimReply(res.data);
                 })
                 .catch(err => {
                     console.log(err);
                 });
+        },
+        showMarkerPopup(marker) {
+            let leafletMarker = this.leafletMarkers.find(m => m.options.id === marker.id);
+            // check if marker is clustered
+            if (leafletMarker._map == undefined) {
+                this.clusterGroup.getVisibleParent(leafletMarker)
+                    .bindPopup('<b>' + marker.title + '</b><br/>' + (marker.teaser_text ?? ''))
+                    .openPopup();
+            } else {
+                leafletMarker.openPopup();
+            }
+        },
+        hideMarkerPopup(marker) {
+            let leafletMarker = this.leafletMarkers.find(m => m.options.id === marker.id);
+            if (leafletMarker._map == undefined) {
+                this.clusterGroup.getVisibleParent(leafletMarker).closePopup();
+            } else {
+                leafletMarker.closePopup();
+            }
+        },
+        showClearMap() {
+            let markerElements = $('.leaflet-marker-pane, .leaflet-shadow-pane');
+
+            // hide markers from map
+            markerElements.each((index, element) => element.classList.add('d-none'));
+
+            const message = this.trans('global.map.click_for_coordinates');
+            // add toast-notification to inform user
+            const toast = this.toast.info(message + '\nLatitude:\nLongitude:', {
+                timeout: false,
+                closeButton: false,
+                closeOnClick: false,
+            });
+            // update coordinates in toast-notification
+            this.mapCanvas.on('mousemove', (e) => {
+                this.toast.update(toast, {
+                    content: message + '\nLatitude: ' + e.latlng.lat.toFixed(5) + '\nLongitude: ' + e.latlng.lng.toFixed(5),
+                });
+            })
+
+            // click to set position
+            this.mapCanvas.on('click', (e) => {
+                this.clickedCoordinates = e.latlng;
+                // show markers again
+                markerElements.each((index, element) => element.classList.remove('d-none'));
+                // only trigger event once
+                this.mapCanvas.off('click');
+                this.mapCanvas.off('mouseover')
+                this.toast.dismiss(toast);
+            });
         },
         processNominatimReply(data) {
             data.features.forEach(function(feature) {
@@ -417,30 +555,6 @@ export default {
             });
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
-        generateMarker(lat, lon, entry, title, description, sidebar_target, icon, markerColor, shape, prefix) {
-            var svgMarker = L.ExtraMarkers.icon({
-                icon: icon,
-                markerColor: markerColor,
-                shape: 'circle',
-                prefix: 'fa',
-                svg: true
-            });
-
-            let leafletMarker = L.marker([lat, lon], {
-                'id': entry.id,
-                'icon': svgMarker,
-                'title': title // accessibility
-            })
-                .bindPopup('<b>'+ title + '</b></br>' + description)
-                .addTo(this.mapCanvas).on('click', function(e) {
-                this.currentMarker = entry;
-                this.sidebar.open(sidebar_target);
-            }.bind(this, sidebar_target));
-
-            this.leafletMarkers.push(leafletMarker);
-
-            return leafletMarker;
-        },
         dateforHumans(begin, end = null) {
             if (end === begin || end === null){
                 return moment(begin).locale('de').format('LL');
@@ -451,6 +565,7 @@ export default {
         setCurrentMarker(marker) {
             this.currentMarker = marker;
             this.sidebar.open('ll-marker');
+            this.leafletMarkers.find(m => m.options.id === marker.id).openPopup();
         },
         syncSelect2() {
             $("#type_id").select2({
@@ -475,18 +590,22 @@ export default {
             this.showConfirm = true;
         },
         destroy() {
+            this.showConfirm = false;
+
             axios.delete("/mapMarkers/" + this.currentMarker.id)
                 .then(() => {
-                    let index = this.markers.findIndex(
-                        i => i.id === this.currentMarker.id
-                    );
+                    // the index of both arrays should be the same, but its better to check both just to be safe
+                    let index = this.markers.findIndex(i => i.id === this.currentMarker.id);
+                    let leafletIndex = this.leafletMarkers.findIndex(i => i.options.id === this.currentMarker.id)
+                    // first remove the actual marker from the map
+                    this.clusterGroup.removeLayer(this.leafletMarkers[leafletIndex]);
+                    // then remove its entry in out marker-arrays
                     this.markers.splice(index, 1);
-
-                    this.clusterGroup.clearLayers(); // clear layers, then reload
-                    this.loader();
+                    this.leafletMarkers.splice(leafletIndex, 1);
                 })
-                .catch(err => {
-                    console.log(err);
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         editMap(currentMap) {
@@ -627,7 +746,7 @@ export default {
         });
 
         this.$eventHub.on('marker-updated', (updatedMarker) => {
-            let marker = this.markers.find(m => m.id === this.currentMarker.id);
+            let marker = this.markers.find(m => m.id === updatedMarker.id);
             Object.assign(marker, updatedMarker);
         });
 
@@ -636,23 +755,10 @@ export default {
             window.location.reload();
         });
 
-        if (this.map.initialLatitude) {
-            this.initialLatitude = this.map.initialLatitude;
-        }
-        if (this.map.initialLongitude) {
-            this.initialLongitude = this.map.initialLongitude;
-        }
-        if (this.map.zoom) {
-            this.zoom = this.map.zoom;
-        }
-        if (this.map.type_id) {
-            this.form.type_id = this.map.type_id;
-        }
-        if (this.map.category_id) {
-            this.form.category_id = this.map.category_id;
-        }
+        this.form.type_id = this.map.type_id;
+        this.form.category_id = this.map.category_id;
 
-        this.mapCanvas = L.map('map').setView([this.initialLatitude, this.initialLongitude], this.zoom);
+        this.mapCanvas = L.map('map').setView([this.map.latitude, this.map.longitude], this.map.zoom);
 
         // default icon-url throws an error (apparently a common problem)
         // so we need to rebind the file-locations
@@ -667,12 +773,10 @@ export default {
         L.Icon.Default.prototype.options.shadowUrl = markerShadowUrl;
         L.Icon.Default.imagePath = ""; // necessary to avoid Leaflet adds some prefix to image path.
 
-
         // set OpenStreetMaps as tile-distributor
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.mapCanvas);
-
 
         this.sidebar = L.control.sidebar('sidebar').addTo(this.mapCanvas);
 
@@ -680,29 +784,35 @@ export default {
 
         this.getBorder();
 
-        this.loader();
+        this.markers = this.map.markers;
+        this.currentMarker = this.markers[0];
 
-        /* //  click to set position > wip on distance search
-        this.mapCanvas.on('click', function(e){
-            this.processClick(e.latlng.lat, e.latlng.lng);
-        }.bind(this));
-        */
+        this.generateClusterGroup();
+
+        //  click to set position > wip on distance search
+        // this.mapCanvas.on('click', function(e) {
+        //     this.processClick(e.latlng.lat, e.latlng.lng);
+        // }.bind(this));
     },
 }
 </script>
-<style >
+<style>
 @import "leaflet/dist/leaflet.css";
 @import "sidebar-v2/css/leaflet-sidebar.css";
 @import "leaflet.markercluster/dist/MarkerCluster.css";
 @import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 @import "leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
-#map, #outermap {
-    height: 100%;
-}
 .sidebar {
     z-index: 1000 !important;
     height: 83% !important;
     margin-top: 67px;
     margin-left: 17px;
+
+    & > .sidebar-tabs > ul, & > .sidebar-tabs > ul > li:last-child {
+        border-bottom-left-radius: 4px;
+    }
+    &.collapsed > .sidebar-tabs > ul, &.collapsed > .sidebar-tabs > ul > li:last-child {
+        border-bottom-right-radius: 4px;
+    }
 }
 </style>

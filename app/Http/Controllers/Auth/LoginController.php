@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Aacotroneo\Saml2\Saml2Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;

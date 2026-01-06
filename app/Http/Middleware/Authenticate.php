@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\LogController;

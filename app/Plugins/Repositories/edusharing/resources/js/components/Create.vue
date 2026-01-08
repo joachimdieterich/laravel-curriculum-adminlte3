@@ -1,62 +1,22 @@
 <template>
-    <div class="d-flex flex-wrap justify-content-center">
-        <ul
-            class="nav nav-pills row text-center pb-2"
-            style="flex-basis: 100%;"
+    <div class="d-flex flex-column align-items-center justify-content-center p-2">
+        <button
+            class="btn btn-lg m-1"
+            style="color: #6c757d;"
+            @click="openUploadWindow()"
         >
-            <li class="nav-item small col-6 p-0">
-                <a
-                    href="#edusharing_new"
-                    class="nav-link show active"
-                    data-toggle="tab"
-                >
-                    <i class="fa fa-upload pr-1"></i>
-                    Medien (in die Cloud) hochladen
-                </a>
-            </li>
-
-            <li class="nav-item small col-6 p-0">
-                <a
-                    href="#edusharing_link"
-                    class="nav-link show"
-                    data-toggle="tab"
-                >
-                    <i class="fa fa-add pr-1"></i>
-                    Medien aus der Cloud verknüpfen
-                </a>
-            </li>
-        </ul>
-
-        <div
-            class="tab-content"
-            style="flex-basis: 100%;"
+            <i class="fa fa-upload pr-1"></i>
+            {{ trans('global.medium.upload_cloud') }}
+        </button>
+        <span>- {{ trans('global.or') }} -</span>
+        <button
+            class="btn btn-lg m-1"
+            style="color: #6c757d;"
+            @click="openCloudWindow()"
         >
-            <div
-                id="edusharing_new"
-                class="tab-pane col-12 active p-0"
-            >
-                <iframe
-                    id="eduSharingNewFrame"
-                    :src="this.uploadIframeUrl"
-                    :width="this.width"
-                    :height="this.height"
-                    style="height: 60vh;"
-                    frameborder="0"
-                ></iframe>
-            </div>
-            <div
-                id="edusharing_link"
-                class="tab-pane col-12 p-0"
-            >
-                <iframe
-                    id="eduSharingLinkFrame"
-                    :src="this.cloudIframeUrl"
-                    :width="this.width"
-                    :height="this.height"
-                    frameborder="0"
-                ></iframe>
-            </div>
-        </div>
+            <i class="fa fa-add pr-1"></i>
+            {{ trans('global.medium.connect_cloud') }}
+        </button>
     </div>
 </template>
 <script>
@@ -67,13 +27,27 @@ export default {
     data() {
         return {
             component_id: this._uid,
-            width: "100%",
-            height: "650",
-            uploadIframeUrl: '',
-            cloudIframeUrl: '',
+            uploadURL: '',
+            cloudURL: '',
+            uploadWindow: null,
+            cloudWindow: null,
         };
     },
     methods: {
+        openUploadWindow() {
+            if (this.uploadWindow && !this.uploadWindow.closed) {
+                this.uploadWindow.focus();
+                return;
+            }
+            this.uploadWindow = window.open(this.uploadURL, 'edusharing_upload');
+        },
+        openCloudWindow() {
+            if (this.cloudWindow && !this.cloudWindow.closed) {
+                this.cloudWindow.focus();
+                return;
+            }
+            window.open(this.cloudURL, 'edusharing_cloud');
+        },
         receiveMessage(event) {
             let data = event.data.data;
 
@@ -134,8 +108,8 @@ export default {
     mounted() {
         axios.get('/media/create?repository=edusharing')
             .then(response => {
-                this.uploadIframeUrl = response.data.uploadIframeUrl;
-                this.cloudIframeUrl  = response.data.cloudIframeUrl;
+                this.uploadURL = response.data.uploadIframeUrl;
+                this.cloudURL  = response.data.cloudIframeUrl;
             })
             .catch(e => {
                 console.log(e);
@@ -145,6 +119,11 @@ export default {
     },
     unmounted() {
         window.removeEventListener("message", this.receiveMessage);
+        if (this.uploadWindow && !this.uploadWindow.closed) this.uploadWindow.close();
+        if (this.cloudWindow && !this.cloudWindow.closed) this.cloudWindow.close();
     },
 }
 </script>
+<style scoped>
+.btn:hover { color: #007bff !important; }
+</style>

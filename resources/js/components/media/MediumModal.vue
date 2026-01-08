@@ -174,7 +174,7 @@
                                     <RepositoryPluginCreate :model="form"/>
                                     <div 
                                         :id="'loading_' + component_id"
-                                        class="position-absolute inset d-flex align-items-center justify-content-center overlay w-100 h-100"
+                                        class="overlay d-flex align-items-center justify-content-center w-100 h-100"
                                     >
                                         <i class="fa fa-spinner fa-pulse fa-fw"></i>
                                         <span>Fertigstellen...</span>

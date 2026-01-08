@@ -157,7 +157,11 @@ textarea { min-height: 150px; }
     &.show:hover { cursor: default; }
 }
 .dropdown-item { padding: 0.25rem 1rem !important; }
-.overlay { background-color: rgba(255, 255, 255, 0.9) !important; }
+.overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+}
 .error-block {
     color: #dc3545;
     font-size: 0.8rem;

@@ -202,25 +202,39 @@ class MoodleApiController extends Controller
         return $response;
     }
 
-    public function enrolUsers(Request $request) {
+    public function enrolUsers(Request $request)
+    {
         $input = $this->validateRequest();
-        // validate that required fields are present
-        if (empty($input['users'])) abort(400, 'No users (common_name) provided');
-        if (empty($input['kanbans']) and empty($input['curricula'])) abort(400, 'At least one model needs to be provided (kanbans or curricula)');
-
-        // parse fields to arrays if they are strings
-        if (gettype($input['users']) == 'string') $input['users'] = json_decode($input['users'], true);
-        if (!empty($input['kanbans']) and gettype($input['kanbans']) == 'string') $input['kanbans'] = json_decode($input['kanbans'], true);
-        if (!empty($input['curricula']) and gettype($input['curricula']) == 'string') $input['curricula'] = json_decode($input['curricula'], true);
-
-        $users = User::select('id', 'common_name')->whereIn('common_name', $input['users'])->get();
-        // if not every common_name has a corresponding user, return those
-        if (count($users) != count($input['users'])) {
-            $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
-            abort(400, 'Users with common names ['.implode(', ', $missing).'] not found');
-        }
-
+        [$input, $users] = $this->checkEnrolExpelInput($input);
         $create_count = 0;
+
+        if (!empty($input['groups'])) {
+            // enrol users to groups
+            $groups = Group::select('id', 'common_name')->whereIn('common_name', $input['groups'])->get();
+            // if not every common_name has a corresponding group
+            if (count($groups) != count($input['groups'])) {
+                $missing = array_diff($input['groups'], $groups->pluck('common_name')->toArray());
+                foreach ($missing as $common_name) {
+                    // create new group
+                    $new_group = Group::create([
+                        'title' => $common_name,
+                        'common_name' => $common_name,
+                        'grade_id' => 999, // default grade
+                        'period_id' => 1, // default period
+                        'organization_id' => 1, // default organization
+                    ]);
+
+                    $groups->push($new_group);
+                }
+            }
+
+            foreach ($groups as $group) {
+                foreach ($users as $user) {
+                    $group->users()->syncWithoutDetaching($user->id);
+                    $create_count++;
+                }
+            }
+        }
 
         if (!empty($input['kanbans'])) {
             // create subscriptions for kanbans
@@ -268,25 +282,18 @@ class MoodleApiController extends Controller
         return $create_count;
     }
 
-    public function expelUsers(Request $request) {
+    public function expelUsers(Request $request)
+    {
         $input = $this->validateRequest();
-        // validate that required fields are present
-        if (empty($input['users'])) abort(400, 'No users (common_name) provided');
-        if (empty($input['kanbans']) and empty($input['curricula'])) abort(400, 'At least one model needs to be provided (kanbans or curricula)');
-
-        // parse fields to arrays if they are strings
-        if (gettype($input['users']) == 'string') $input['users'] = json_decode($input['users'], true);
-        if (!empty($input['kanbans']) and gettype($input['kanbans']) == 'string') $input['kanbans'] = json_decode($input['kanbans'], true);
-        if (!empty($input['curricula']) and gettype($input['curricula']) == 'string') $input['curricula'] = json_decode($input['curricula'], true);
-
-        $users = User::select('id', 'common_name')->whereIn('common_name', $input['users'])->get();
-        // if not every common_name has a corresponding user, return those
-        if (count($users) != count($input['users'])) {
-            $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
-            abort(400, 'Users with common names ['.implode(', ', $missing).'] not found');
-        }
-
+        [$input, $users] = $this->checkEnrolExpelInput($input);
         $delete_count = 0;
+
+        if (!empty($input['groups'])) {
+            $groups = Group::select('id')->whereIn('common_name', $input['groups'])->get();
+            foreach ($groups as $group) { // missing groups can be ignored
+                $delete_count += $group->users()->detach($users->pluck('id')->toArray());
+            }
+        }
 
         if (!empty($input['kanbans'])) {
             foreach ($input['kanbans'] as $kanban_id) {
@@ -321,12 +328,35 @@ class MoodleApiController extends Controller
         return $delete_count;
     }
 
+    protected function checkEnrolExpelInput(array $input)
+    {
+        // validate that required fields are present
+        if (empty($input['users'])) abort(400, 'No users (common_name) provided');
+        if (empty($input['kanbans']) and empty($input['curricula']) and empty($input['groups']))
+            abort(400, 'At least one model needs to be provided (kanbans/curricula/groups)');
+
+        // parse fields to arrays if they are strings
+        if (gettype($input['users']) == 'string') $input['users'] = json_decode($input['users'], true);
+        if (!empty($input['groups']) and gettype($input['groups']) == 'string') $input['groups'] = json_decode($input['groups'], true);
+        if (!empty($input['kanbans']) and gettype($input['kanbans']) == 'string') $input['kanbans'] = json_decode($input['kanbans'], true);
+        if (!empty($input['curricula']) and gettype($input['curricula']) == 'string') $input['curricula'] = json_decode($input['curricula'], true);
+
+        $users = User::select('id', 'common_name')->whereIn('common_name', $input['users'])->get();
+        // if not every common_name has a corresponding user, return those
+        if (count($users) != count($input['users'])) {
+            $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
+            abort(400, 'Users with common names ['.implode(', ', $missing).'] not found');
+        }
+
+        return [$input, $users];
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'common_name' => 'sometimes|string',
             'users' => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
-            'groups' => 'sometimes|array',
+            'groups' => is_array(request()->input('groups')) ? 'sometimes|array' : 'sometimes|string',
             'curricula' => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',
             'logbooks' => 'sometimes|array',
             'kanbans' => is_array(request()->input('kanbans')) ? 'sometimes|array' : 'sometimes|string',

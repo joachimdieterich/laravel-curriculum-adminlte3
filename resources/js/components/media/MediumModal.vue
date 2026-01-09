@@ -172,7 +172,7 @@
                                     class="position-relative tab-pane active show"
                                 >
                                     <RepositoryPluginCreate :model="form"/>
-                                    <div 
+                                    <div v-if="postProcess"
                                         :id="'loading_' + component_id"
                                         class="overlay d-flex align-items-center justify-content-center w-100 h-100"
                                     >

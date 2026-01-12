@@ -10,7 +10,7 @@
         :is-marked="isFavourited"
         :model="model"
         :button-class="{'btn': true, 'btn-icon': true, 'px-2': true, 'py-1': true}"
-        icon-class=""
+        :icon-class="{}"
         @mark-status-changed="(newModel) => {
             this.$emit('favour-status-changed', newModel)
         }"

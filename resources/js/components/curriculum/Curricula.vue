@@ -228,7 +228,7 @@
             <DataTable
                 id="curriculum-datatable"
                 :columns="columns"
-                :options="options"
+                :options="dtOptions(this.subscribable_id ? ('/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id) : '/curricula/list')"
                 width="100%"
                 style="display: none;"
             />
@@ -267,6 +267,7 @@ import OwnerModal from "../user/OwnerModal.vue";
 import {useToast} from "vue-toastification";
 import Favourite from "../tag/Favourite.vue";
 import Hide from "../tag/Hide.vue";
+import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -281,9 +282,12 @@ export default {
         },
     },
     setup() {
+        const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
         const toast = useToast();
         const globalStore = useGlobalStore();
+
         return {
+            selectedTags, selectedNegativeTags, dtOptions,
             globalStore,
             toast,
         }
@@ -296,7 +300,6 @@ export default {
             showConfirm: false,
             errors: {},
             currentCurriculum: {},
-            selectedTags: [],
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
@@ -305,22 +308,6 @@ export default {
             ],
             filter: 'favourite',
             dt: null,
-        }
-    },
-    computed: {
-        options: function() {
-            let options = this.$dtOptions;
-
-            options.ajax = {
-                url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id : '/curricula/list',
-                data: (d) => {
-                    d.tags = this.selectedTags;
-
-                    return d;
-                },
-            };
-
-            return options;
         }
     },
     methods: {
@@ -419,6 +406,7 @@ export default {
 
         this.$eventHub.on('filter', (filter) => {
             this.selectedTags = filter.tags;
+            this.selectedNegativeTags = filter.negativeTags;
             this.dt.search(filter.searchString).draw();
         });
 

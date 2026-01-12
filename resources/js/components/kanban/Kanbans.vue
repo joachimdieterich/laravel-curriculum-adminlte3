@@ -210,7 +210,7 @@
             <DataTable
                 id="kanban-datatable"
                 :columns="columns"
-                :options="options"
+                :options="dtOptions(this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list')"
                 width="100%"
                 style="display: none;"
             />
@@ -252,6 +252,7 @@ import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
 import Hide from "../tag/Hide.vue";
 import Favourite from "../tag/Favourite.vue";
+import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -272,9 +273,12 @@ export default {
         subscribable_id: '',
     },
     setup() {
+        const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
         const toast = useToast();
         const globalStore = useGlobalStore();
+
         return {
+            selectedTags, selectedNegativeTags, dtOptions,
             globalStore,
             toast,
         }
@@ -287,8 +291,6 @@ export default {
             showCopy: false,
             errors: {},
             currentKanban: {},
-            selectedTags: [],
-            selectedNegativeTags: [],
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
@@ -318,23 +320,6 @@ export default {
 
             Object.assign(kanban, updatedKanban);
         });
-    },
-    computed: {
-        options: function() {
-            let options = this.$dtOptions;
-
-            options.ajax = {
-                url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
-                data: (d) => {
-                    d.tags = this.selectedTags;
-                    d.negativeTags = this.selectedNegativeTags;
-
-                    return d;
-                },
-            };
-
-            return options;
-        }
     },
     methods: {
         setFilter(filter) {

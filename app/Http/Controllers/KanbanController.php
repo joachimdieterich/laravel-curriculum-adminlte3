@@ -77,11 +77,12 @@ class KanbanController extends Controller
         return $kanbans;
     }
 
-    public function userKanbans($withOwned = true, ?array $searchTags = [])
+    public function userKanbans($withOwned = true, ?array $searchTags = [], ?array $negativeSearchTags = [])
     {
         $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
+        $negativeTags = Tag::select()->whereIn('id', $negativeSearchTags ?? [])->get();
         /** @var Collection $userCanSee */
-        $userCanSee = auth()->user()->kanbans()->withAllTags($tags)->get();
+        $userCanSee = auth()->user()->kanbans()->withAllTags($tags)->withoutTags($negativeTags)->get();
 
         //tokenuser? only return subscriptions
         if (auth()->user()->sharing_token !== null) {
@@ -89,13 +90,13 @@ class KanbanController extends Controller
         }
 
         foreach (auth()->user()->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->kanbans()->withAllTags($tags));
+            $userCanSee = $userCanSee->merge($group->kanbans()->withAllTags($tags)->withoutTags($negativeTags));
         }
-        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans()->withAllTags($tags);
+        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans()->withAllTags($tags)->withoutTags($negativeTags);
         $userCanSee   = $userCanSee->merge($organization);
 
         if ($withOwned) {
-            $owned      = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get();
+            $owned      = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get();
             $userCanSee = $userCanSee->merge($owned);
         }
 
@@ -107,6 +108,7 @@ class KanbanController extends Controller
         abort_unless(Gate::allows('kanban_access'), 403);
 
         $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
+        $negativeTags = Tag::select()->whereIn('id', request('negativeTags') ?? [])->get();
 
         if (request()->has(['group_id'])) {
             $request  = request()->validate(
@@ -124,7 +126,7 @@ class KanbanController extends Controller
                         }
                     );
                 });
-            $kanbans->withAllTags($tags)->get();
+            $kanbans->withAllTags($tags)->withoutTags($negativeTags)->get();
         } else {
             $favKanbans = new Collection();
 
@@ -134,10 +136,10 @@ class KanbanController extends Controller
             }
 
             $kanbans = match ($request->filter) {
-                'owner'           => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
-                'shared_with_me'  => $this->userKanbans(false, request('tags')),
-                'shared_by_me'    => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
-                'all'             => $this->userKanbans(searchTags: request('tags')),
+                'owner'           => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get(),
+                'shared_with_me'  => $this->userKanbans(false, request('tags'), request('negativeTags')),
+                'shared_by_me'    => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->withoutTags($negativeTags)->get(),
+                'all'             => $this->userKanbans(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
                 'favourite'       => $favKanbans,
                 default           => $favKanbans,
             };

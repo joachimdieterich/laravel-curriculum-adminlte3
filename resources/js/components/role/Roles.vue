@@ -61,7 +61,7 @@
             <DataTable
                 id="role-datatable"
                 :columns="columns"
-                :options="options"
+                :options="dtOptions('/roles/list')"
                 :search="search"
                 width="100%"
                 style="display: none;"
@@ -92,14 +92,18 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
+import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 DataTable.use(DataTablesCore);
 
 export default {
     props: {},
     setup() {
+        const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
         const globalStore = useGlobalStore();
         globalStore['searchTagModelContext'] = 'App\\Role';
+
         return {
+            selectedTags, selectedNegativeTags, dtOptions,
             globalStore,
         }
     },
@@ -112,7 +116,6 @@ export default {
             url: '/roles/list',
             errors: {},
             currentRole: {},
-            selectedTags: [],
             columns: [
                 { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
@@ -135,22 +138,6 @@ export default {
             this.update(role);
         });
     },
-    computed: {
-        options: function() {
-            let options = this.$dtOptions;
-
-            options.ajax = {
-                url: '/roles/list',
-                data: (d) => {
-                    d.tags = this.selectedTags;
-
-                    return d;
-                },
-            };
-
-            return options;
-        }
-    },
     methods: {
         editRole(role) {
             this.globalStore?.showModal('role-modal', role);
@@ -164,6 +151,7 @@ export default {
             });
             this.$eventHub.on('filter', (filter) => {
                 this.selectedTags = filter.tags;
+                this.selectedNegativeTags = filter.negativeTags;
                 dt.search(filter.searchString).draw();
             });
         },
@@ -173,7 +161,7 @@ export default {
         },
         destroy() {
             axios.delete('/roles/' + this.currentRole.id)
-                .then(res => {
+                .then(() => {
                     let index = this.roles.indexOf(this.currentRole);
                     this.roles.splice(index, 1);
                 })

@@ -492,25 +492,10 @@ app.config.globalProperties.$initTinyMCE = function(
 };
 
 /**
- * Global Datatable options
+ * Global values
  */
-app.config.globalProperties.$dtOptions = {
-    dom: 'tilpr',
-    pageLength: 10,
-    serverSide: true,
-    processing: true,
-    language: {
-        url: '/datatables/i18n/German.json',
-        paginate: {
-            "first":      '<i class="fa fa-angle-double-left"></id>',
-            "last":       '<i class="fa fa-angle-double-right"></id>',
-            "next":       '<i class="fa fa-angle-right"></id>',
-            "previous":   '<i class="fa fa-angle-left"></id>',
-        },
-    },
-    select: 'multiple',
-};
-
+import {globalValues} from "./globalValues.js";
+app.config.globalProperties.$dtOptions = globalValues.dtOptions;
 app.directive('hide-if-permission', function (el, binding) {
     if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
         el.style.display = 'none';

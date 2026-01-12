@@ -107,7 +107,6 @@ export default {
         },
         fireEvent() {
             this.filtered = true;
-            console.log(this.filter);
             this.$eventHub.emit('filter', this.filter);
         },
         clearSearch() {

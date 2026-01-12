@@ -70,26 +70,27 @@ class CurriculumController extends Controller
         }
     }
 
-    public function userCurricula($withOwned = true, $user = null, ?array $searchTags = [])
+    public function userCurricula($withOwned = true, $user = null, ?array $searchTags = [], ?array $negativeSearchTags = [])
     {
         $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
+        $negativeTags = Tag::select()->whereIn('id', $negativeSearchTags ?? [])->get();
 
         if ($user == null) {
             $user = auth()->user();
         }
-        $userCanSee = $user->curricula()->withAllTags($tags)->get();
+        $userCanSee = $user->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get();
 
         foreach ($user->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags));
+            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags)->withoutTags($negativeTags));
         }
-        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags);
+        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags);
         $userCanSee   = $userCanSee->merge($organization);
 
         if ($withOwned) {
-            $owned      = Curriculum::where('owner_id', $user->id)->withAllTags($tags)->get();
+            $owned      = Curriculum::where('owner_id', $user->id)->withAllTags($tags)->withoutTags($negativeTags)->get();
             $userCanSee = $userCanSee->merge($owned);
             // global curricula are visible for all users, but shouldn't be shown on 'shared with me'
-            $global     = Curriculum::where('type_id', 1)->withAllTags($tags)->get();
+            $global     = Curriculum::where('type_id', 1)->withAllTags($tags)->withoutTags($negativeTags)->get();
             $userCanSee = $userCanSee->merge($global);
         }
 
@@ -101,6 +102,7 @@ class CurriculumController extends Controller
         abort_unless(Gate::allows('curriculum_access'), 403);
 
         $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
+        $negativeTags = Tag::select()->whereIn('id', request('negativeTags') ?? [])->get();
 
         $favCurricula = new Collection();
         $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
@@ -109,13 +111,13 @@ class CurriculumController extends Controller
         }
 
         $curricula = match ($request->filter) {
-            'owner'           => Curriculum::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
-            'shared_with_me'  => $this->userCurricula(false, request('tags')),
-            'shared_by_me'    => Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
-            'by_organization' => Organization::find(auth()->user()->current_organization_id)->curricula()->withAllTags($tags)->get(),
-            'all'             => $this->userCurricula(searchTags: request('tags')),
+            'owner'           => Curriculum::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get(),
+            'shared_with_me'  => $this->userCurricula(false, searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
+            'shared_by_me'    => Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->withoutTags($negativeTags)->get(),
+            'by_organization' => Organization::find(auth()->user()->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get(),
+            'all'             => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
             'favourite'       => $favCurricula,
-            default           => $this->userCurricula(searchTags: request('tags')),
+            default           => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
         };
 
         return empty($curricula) ? '' : DataTables::of($curricula)

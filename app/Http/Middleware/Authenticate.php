@@ -21,20 +21,28 @@ class Authenticate extends Middleware
                 env('OIDC_CLIENT_SECRET')
             );
 
-            /*** Basic Client authentication ***/
-            // $oidc->setCertPath('/path/to/my.cert'); // only needed for private_key_jwt client authentication
-            // $oidc->setCodeChallengeMethod('S256'); // PKCE | if set, certificate isn't needed
+            // store current URL to redirect back after login
+            if (!isset($_SESSION['redirect_to'])) $_SESSION['redirect_to'] = URL::full();
+            // $oidc->setCodeChallengeMethod('S256'); // PKCE
             $oidc->authenticate();
-            $userinfo = $oidc->requestUserInfo();
-            // dd($userinfo);
 
-            /*** Request Client-Credentials Token ***/
-            // $oidc->providerConfigParam(['token_endpoint' => env('OIDC_RLP_IDP_TOKEN_ENDPOINT')]);
-            // $oidc->addScope(['profile']);
-            // this assumes success (to validate check if the access_token property is there and a valid JWT)
-            // $clientCredentialsToken = $oidc->requestClientCredentialsToken()->access_token;
-            // dd($clientCredentialsToken);
+            try {
+                $userinfo = $oidc->requestUserInfo();
+                // dd($userinfo);
+                // login user by common_name
+                // Auth::login(\App\User::select('id')->where('common_name', $userinfo->common_name)->firstOrFail(), true);
+            } catch (\Throwable $th) {
+                // if user not authenticated, login as guest user
+                // Auth::loginUsingId((env('GUEST_USER')), true);
+                throw $th; // for debugging
+            }
 
+            // since the user got redirected back after authentication, redirect to the originally requested URL
+            // if (isset($_REQUEST['code'])) {
+            //     $redirect = $_SESSION['redirect_to'];
+            //     unset($_SESSION['redirect_to']);
+            //     return redirect($redirect);
+            // }
 
             /*** old SAML2-Auth ***/
             // check if user is already authenticated at IDP

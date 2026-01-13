@@ -27,7 +27,7 @@ export default {
         url: {
             type: String,
             required: true,
-            title: "Url to attach/detach tag to a model. E.g. /kanbans/[id]/favour. The [id] is important and reserved for the modelID."
+            title: "Url to attach/detach tag to a model. E.g. /kanbans/[id]/hide. The [id] is important and reserved for the modelID."
         },
         model: {
             type: Object,

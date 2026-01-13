@@ -72,6 +72,12 @@ class CurriculumController extends Controller
 
     public function userCurricula($withOwned = true, $user = null, ?array $searchTags = [], ?array $negativeSearchTags = [])
     {
+        // Wenn nicht explizit nach den "Verstecken"-Tag gesucht wird, ihn standardmäßig als Negativ-Tag eintragen
+        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
+        if ($hiddenTag !== null && !in_array($hiddenTag->id, $searchTags ?? [])) {
+            $negativeSearchTags[] = $hiddenTag->id;
+        }
+
         $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
         $negativeTags = Tag::select()->whereIn('id', $negativeSearchTags ?? [])->get();
 
@@ -97,6 +103,30 @@ class CurriculumController extends Controller
         return $userCanSee->unique();
     }
 
+    private function favCurricula()
+    {
+        $favCurricula = new Collection();
+
+        $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
+        if ($favTag !== null) {
+            $favCurricula = $this->userCurricula(searchTags: [$favTag->id]);
+        }
+
+        return $favCurricula;
+    }
+
+    private function hiddenCurricula()
+    {
+        $hiddenCurricula = new Collection();
+
+        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
+        if ($hiddenTag !== null) {
+            $hiddenCurricula = $this->userCurricula(searchTags: [$hiddenTag->id]);
+        }
+
+        return $hiddenCurricula;
+    }
+
     public function list(Request $request)
     {
         abort_unless(Gate::allows('curriculum_access'), 403);
@@ -116,7 +146,8 @@ class CurriculumController extends Controller
             'shared_by_me'    => Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->withoutTags($negativeTags)->get(),
             'by_organization' => Organization::find(auth()->user()->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get(),
             'all'             => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
-            'favourite'       => $favCurricula,
+            'favourite'       => $this->favCurricula(),
+            'hidden'          => $this->hiddenCurricula(),
             default           => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
         };
 

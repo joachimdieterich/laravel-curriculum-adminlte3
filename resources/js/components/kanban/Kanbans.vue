@@ -8,7 +8,7 @@
                 <li class="nav-item pointer">
                     <a
                         id="kanban-filter-favourite"
-                        class="nav-link "
+                        class="nav-link"
                         :class="filter === 'favourite' ? 'active' : ''"
                         data-toggle="pill"
                         role="tab"
@@ -16,6 +16,17 @@
                     >
                         <i class="fas fa-heart pr-2"></i>
                         {{ trans('global.tag.favourite.plural') }}
+                    </a>
+                    <a
+                        id="kanban-filter-hidden"
+                        class="nav-link"
+                        :class="filter === 'hidden' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('hidden')"
+                    >
+                        <i class="fas fa-eye-slash pr-2"></i>
+                        {{ trans('global.tag.hidden.plural') }}
                     </a>
                 </li>
                 <li class="nav-item pointer">

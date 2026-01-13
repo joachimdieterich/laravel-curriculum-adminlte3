@@ -20,6 +20,19 @@
                 </li>
                 <li class="nav-item pointer">
                     <a
+                        id="curriculum-filter-hidden"
+                        class="nav-link "
+                        :class="filter === 'hidden' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('hidden')"
+                    >
+                        <i class="fas fa-eye-slash pr-2"></i>
+                        {{ trans('global.tag.hidden.plural') }}
+                    </a>
+                </li>
+                <li class="nav-item pointer">
+                    <a
                         id="curriculum-filter-all"
                         class="nav-link "
                         :class="filter === 'all' ? 'active' : ''"

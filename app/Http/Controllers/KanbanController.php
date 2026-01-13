@@ -79,6 +79,12 @@ class KanbanController extends Controller
 
     public function userKanbans($withOwned = true, ?array $searchTags = [], ?array $negativeSearchTags = [])
     {
+        // Wenn nicht explizit nach den "Verstecken"-Tag gesucht wird, ihn standardmäßig als Negativ-Tag eintragen
+        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
+        if ($hiddenTag !== null && !in_array($hiddenTag->id, $searchTags ?? [])) {
+            $negativeSearchTags[] = $hiddenTag->id;
+        }
+
         $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
         $negativeTags = Tag::select()->whereIn('id', $negativeSearchTags ?? [])->get();
         /** @var Collection $userCanSee */
@@ -101,6 +107,30 @@ class KanbanController extends Controller
         }
 
         return $userCanSee->unique();
+    }
+
+    private function favKanbans()
+    {
+        $favKanbans = new Collection();
+
+        $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
+        if ($favTag !== null) {
+            $favKanbans = $this->userKanbans(searchTags: [$favTag->id]);
+        }
+
+        return $favKanbans;
+    }
+
+    private function hiddenKanbans()
+    {
+        $hiddenKanbans = new Collection();
+
+        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
+        if ($hiddenTag !== null) {
+            $hiddenKanbans = $this->userKanbans(searchTags: [$hiddenTag->id]);
+        }
+
+        return $hiddenKanbans;
     }
 
     public function list(Request $request)
@@ -128,20 +158,14 @@ class KanbanController extends Controller
                 });
             $kanbans->withAllTags($tags)->withoutTags($negativeTags)->get();
         } else {
-            $favKanbans = new Collection();
-
-            $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
-            if ($favTag !== null) {
-                $favKanbans = $this->userKanbans(searchTags: [$favTag->id]);
-            }
-
             $kanbans = match ($request->filter) {
                 'owner'           => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get(),
                 'shared_with_me'  => $this->userKanbans(false, request('tags'), request('negativeTags')),
                 'shared_by_me'    => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->withoutTags($negativeTags)->get(),
                 'all'             => $this->userKanbans(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
-                'favourite'       => $favKanbans,
-                default           => $favKanbans,
+                'hidden'          => $this->hiddenKanbans(),
+                'favourite'       => $this->favKanbans(),
+                default           => $this->favKanbans(),
             };
         }
 

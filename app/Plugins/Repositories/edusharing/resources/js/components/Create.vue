@@ -1,6 +1,7 @@
 <template>
     <div class="d-flex flex-column align-items-center justify-content-center p-2">
         <button
+            id="upload-button"
             class="btn btn-lg m-1"
             style="color: #6c757d;"
             @click="openUploadWindow()"
@@ -10,6 +11,7 @@
         </button>
         <span>- {{ trans('global.or') }} -</span>
         <button
+            id="cloud-button"
             class="btn btn-lg m-1"
             style="color: #6c757d;"
             @click="openCloudWindow()"
@@ -20,6 +22,11 @@
     </div>
 </template>
 <script>
+// variables need to be outside of the component
+// else closing a window will throw a security error
+let uploadWindow = null;
+let cloudWindow = null;
+
 export default {
     props: {
         model: {},
@@ -33,16 +40,44 @@ export default {
     },
     methods: {
         openUploadWindow() {
-            window.open(this.uploadURL, 'edusharing_upload');
+            // in local environments fetching the URLs might take some time
+            // so we wait until the URL is fetched, to not open a blank window
+            if (this.uploadURL === '') {
+                document.getElementById('upload-button').disabled = true;
+                let waiting = setInterval(() => {
+                    if (this.uploadURL !== '') {
+                        clearInterval(waiting);
+                        document.getElementById('upload-button').disabled = false;
+                        uploadWindow = window.open(this.uploadURL, 'edusharing_upload');
+                    }
+                }, 100);
+            } else {
+                // focus the window if already opened, instead of reloading the page
+                if (uploadWindow && !uploadWindow.closed) uploadWindow.focus();
+                else uploadWindow = window.open(this.uploadURL, 'edusharing_upload');
+            }
         },
         openCloudWindow() {
-            window.open(this.cloudURL, 'edusharing_cloud');
+            if (this.cloudURL === '') {
+                document.getElementById('cloud-button').disabled = true;
+                let waiting = setInterval(() => {
+                    if (this.cloudURL !== '') {
+                        clearInterval(waiting);
+                        document.getElementById('cloud-button').disabled = false;
+                        cloudWindow = window.open(this.cloudURL, 'edusharing_cloud');
+                    }
+                }, 100);
+            } else {
+                if (cloudWindow && !cloudWindow.closed) cloudWindow.focus();
+                else cloudWindow = window.open(this.cloudURL, 'edusharing_cloud');
+            }
         },
         receiveMessage(event) {
             if (event.data.event === 'APPLY_NODE') {
                 setTimeout(() => { this.emitEvent(event.data.data); }, 250);
-
-                window.removeEventListener("message", this.receiveMessage);
+                // close the tabs to also show the loading indicator
+                if (!uploadWindow.closed) uploadWindow.close();
+                if (!cloudWindow.closed) cloudWindow.close();
             }
         },
         emitEvent(data) {
@@ -103,10 +138,12 @@ export default {
                 console.log(e);
             });
 
-        window.addEventListener("message", this.receiveMessage, false);
+        window.addEventListener("message", this.receiveMessage);
     },
     unmounted() {
         window.removeEventListener("message", this.receiveMessage);
+        if (uploadWindow && !uploadWindow.closed) uploadWindow.close();
+        if (cloudWindow && !cloudWindow.closed) cloudWindow.close();
     },
 }
 </script>

@@ -29,30 +29,18 @@ export default {
             component_id: this._uid,
             uploadURL: '',
             cloudURL: '',
-            uploadWindow: null,
-            cloudWindow: null,
         };
     },
     methods: {
         openUploadWindow() {
-            if (this.uploadWindow && !this.uploadWindow.closed) {
-                this.uploadWindow.focus();
-                return;
-            }
-            this.uploadWindow = window.open(this.uploadURL, 'edusharing_upload');
+            window.open(this.uploadURL, 'edusharing_upload');
         },
         openCloudWindow() {
-            if (this.cloudWindow && !this.cloudWindow.closed) {
-                this.cloudWindow.focus();
-                return;
-            }
             window.open(this.cloudURL, 'edusharing_cloud');
         },
         receiveMessage(event) {
-            let data = event.data.data;
-
             if (event.data.event === 'APPLY_NODE') {
-                setTimeout(() => { this.emitEvent(data); }, 250);
+                setTimeout(() => { this.emitEvent(event.data.data); }, 250);
 
                 window.removeEventListener("message", this.receiveMessage);
             }
@@ -119,8 +107,6 @@ export default {
     },
     unmounted() {
         window.removeEventListener("message", this.receiveMessage);
-        if (this.uploadWindow && !this.uploadWindow.closed) this.uploadWindow.close();
-        if (this.cloudWindow && !this.cloudWindow.closed) this.cloudWindow.close();
     },
 }
 </script>

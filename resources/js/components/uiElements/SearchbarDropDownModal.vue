@@ -18,11 +18,11 @@
                 @cleared="() => {selectedTagsBuffer = []; this.$emit('tagSelectionChange', []);}"
             />
             <Select2
-                id="negativ-tag-search"
-                name="negativ-tag-search"
+                id="negative-tag-search"
+                name="negative-tag-search"
                 url="/tags"
                 :additional_query_param="this.typeParameter()"
-                model="negativ-tags"
+                model="negative-tags"
                 :label="trans('global.tag.filter.negative_title')"
                 :multiple="true"
                 :selected="selectedNegativeTags"

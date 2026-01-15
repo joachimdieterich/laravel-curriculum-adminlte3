@@ -14,62 +14,46 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
-        // Telescope::night();
-
         $this->hideSensitiveRequestDetails();
 
         // Add Telescope tag status
-        Telescope::tag(function (IncomingEntry $entry) {
+        Telescope::tag(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
                 return [$entry->content['response_status']];
             }
 
             return [];
         });
-//        Telescope::filter(function (IncomingEntry $entry) {
-//            if ($this->app->isLocal()) {
-//                return true;
-//            }
-//
-//            return $entry->isReportableException() ||
-//                   $entry->isFailedJob() ||
-//                   $entry->isScheduledTask() ||
-//                   $entry->hasMonitoredTag();
-//        });
-        // Fix ReflectionException: Class env does not exist #347
-        // see:
-        // https://github.com/laravel/telescope/issues/347#issuecomment-523550515
-        // Disable the filter while in local or testing environment.
-            /*$disableFilter = $this->app->environment(['local', 'testing', 'production']);
-            Telescope::filter(function (IncomingEntry $entry) use ($disableFilter) {
-                if ($disableFilter) {
+
+        Telescope::filter(static function (IncomingEntry $entry) {
+            if ($entry->type === 'request') {
+                // Request mit einer Ladezeit von über 1 Sekunde NICHT rausfiltern
+                if($entry->content['duration'] >= 1000) {
                     return true;
                 }
 
-                return $entry->isReportableException() ||
-                    $entry->isFailedRequest() ||
-                    $entry->isFailedJob() ||
-                    $entry->isScheduledTask() ||
-                    $entry->hasMonitoredTag();
-            });*/
+                $statusFilterArray = explode(',', env("TELESCOPE_STATUS_FILTER", "200, 302"));
+                if (!in_array($entry->content['response_status'], $statusFilterArray)) {
+                    return true;
+                }
+            }
 
-        Telescope::filter(function (IncomingEntry $entry) {
-            if($entry->type == 'request' && !in_array($entry->content['response_status'],  explode(',', env("TELESCOPE_STATUS_FILTER", "200, 302")))){
+            $statusFilterShowTypeArray = explode(
+                ',',
+                env("TELESCOPE_STATUS_FILTER_SHOW_TYPE", "dump,query")
+            );
+            //store specific types
+            if (in_array($entry->type, $statusFilterShowTypeArray)) {
                 return true;
             }
-            else if (in_array($entry->type, explode(',', env("TELESCOPE_STATUS_FILTER_SHOW_TYPE", "dump,query")))) //store specific types
-            {
-                return true;
-            }
-            else {
-                return $entry->isReportableException() ||
-                    $entry->isFailedRequest() ||
-                    $entry->isFailedJob() ||
-                    $entry->isScheduledTask() ||
-                    $entry->hasMonitoredTag();
-            }
+
+            return $entry->isReportableException() ||
+                   $entry->isFailedRequest() ||
+                   $entry->isFailedJob() ||
+                   $entry->isScheduledTask() ||
+                   $entry->hasMonitoredTag();
         });
     }
 
@@ -78,7 +62,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      *
      * @return void
      */
-    protected function hideSensitiveRequestDetails()
+    protected function hideSensitiveRequestDetails(): void
     {
         if ($this->app->isLocal()) {
             return;

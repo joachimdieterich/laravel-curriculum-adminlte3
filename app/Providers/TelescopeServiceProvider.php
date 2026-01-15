@@ -30,7 +30,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         Telescope::filter(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
                 // Request mit einer Ladezeit von über 1 Sekunde NICHT rausfiltern
-                if($entry->content['duration'] >= 1000) {
+                if($entry->content['duration'] >= env("TELESCOPE_REQUEST_DURATION_FILTER", 1000)) {
                     return true;
                 }
 

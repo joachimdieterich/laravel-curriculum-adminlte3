@@ -5,8 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Jumbojett\OpenIDConnectClient;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\LogController;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
@@ -22,29 +20,13 @@ class Authenticate extends Middleware
             );
 
             session_start();
-            // store current URL to redirect back after login
+            // store current URL to redirect back after authentication-callback
             if (!isset($_SESSION['redirect_to'])) $_SESSION['redirect_to'] = URL::full();
             // $oidc->setCodeChallengeMethod('S256'); // PKCE
+
+            // this will call the authorization endpoint and redirect to our OIDC-handling route
+            $oidc->setRedirectURL(env('APP_URL') . '/oidc');
             $oidc->authenticate();
-
-            try {
-                $common_name = $oidc->requestUserInfo('sub');
-                // login user by common_name
-                Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
-            } catch (\Throwable $th) {
-                // if user not authenticated, login as guest user
-                // if ($page_allows_guest) ...loginAsGuest
-                // else return redirect($to_idp_login_page);
-                // Auth::loginUsingId((env('GUEST_USER')), true);
-                throw $th; // for debugging
-            }
-
-            // since the user got redirected back after authentication, redirect to the originally requested URL
-            if (isset($_REQUEST['code'])) {
-                $redirect = $_SESSION['redirect_to'];
-                unset($_SESSION['redirect_to']);
-                return redirect($redirect);
-            }
         }
         // needed to redirect to login-page in local environment
         Middleware::authenticate($request, $guards);

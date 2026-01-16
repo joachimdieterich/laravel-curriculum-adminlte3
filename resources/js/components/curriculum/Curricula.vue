@@ -349,6 +349,11 @@ export default {
             this.dt = $('#curriculum-datatable').DataTable();
 
             this.dt.on('draw.dt', () => {
+                let newFilter = this.dt.ajax.json().newFilter;
+                if (newFilter) {
+                    this.setFilter(newFilter);
+                }
+
                 this.curricula = this.dt.rows({page: 'current'}).data().toArray();
                 $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
             });

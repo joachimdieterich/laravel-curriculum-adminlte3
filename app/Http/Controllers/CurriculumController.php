@@ -114,11 +114,25 @@ class CurriculumController extends Controller
             'by_organization' => Organization::find(auth()->user()->current_organization_id)->curricula()->withAllTags($tags)->get(),
             'all'             => $this->userCurricula(searchTags: request('tags')),
             'favourite'       => $favCurricula,
-            default           => $this->userCurricula(searchTags: request('tags')),
+            default           => $favCurricula,
         };
 
-        return empty($curricula) ? '' : DataTables::of($curricula)
-            ->addColumn('tags', function ($curricula) {
+        $newFilter = null;
+        if (($request->filter ?? 'favourite') ==='favourite' && $curricula->isEmpty()) {
+            $curricula = $this->userCurricula(searchTags: request('tags'));
+            $newFilter = 'all';
+        }
+
+        if (empty($curricula)) {
+            return '';
+        }
+
+        $dt = DataTables::of($curricula);
+        if ($newFilter !== null) {
+            $dt->with('newFilter', $newFilter);
+        }
+
+        return $dt->addColumn('tags', function ($curricula) {
                 return $curricula->tags->toArray();
             })
             ->setRowId('id')

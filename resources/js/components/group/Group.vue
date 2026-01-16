@@ -454,6 +454,7 @@ export default {
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
+        this.globalStore['searchTagModelContext'] = null;
 
         this.currentGroup = this.group;
 

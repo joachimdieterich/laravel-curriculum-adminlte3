@@ -6,6 +6,7 @@ use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Role;
 use App\Tag;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\DataTables;
 
@@ -37,9 +38,12 @@ class RolesController extends Controller
         ]);
 
         return DataTables::of($roles)
-            ->filter(function ($query) {
+            ->filter(function (Builder $query) {
                 if (request()->has('tags')) {
                     $query->withAllTags(Tag::select()->whereIn('id', request('tags'))->get());
+                }
+                if (request()->has('negativeTags')) {
+                    $query->withoutTags(Tag::select()->whereIn('id', request('negativeTags'))->get());
                 }
             }, true)
             ->addColumn('permissions', function ($roles) {

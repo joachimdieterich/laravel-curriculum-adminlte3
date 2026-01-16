@@ -7,6 +7,7 @@ use App\Curriculum;
 use App\CurriculumSubscription;
 use App\CurriculumType;
 use App\Http\Requests\Tags\FavouriteModelRequest;
+use App\Http\Requests\Tags\HideModelRequest;
 use App\Medium;
 use App\Organization;
 use App\Tag;
@@ -69,30 +70,61 @@ class CurriculumController extends Controller
         }
     }
 
-    public function userCurricula($withOwned = true, $user = null, ?array $searchTags = [])
+    public function userCurricula($withOwned = true, $user = null, ?array $searchTags = [], ?array $negativeSearchTags = [])
     {
+        // Wenn nicht explizit nach den "Verstecken"-Tag gesucht wird, ihn standardmäßig als Negativ-Tag eintragen
+        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
+        if ($hiddenTag !== null && !in_array($hiddenTag->id, $searchTags ?? [])) {
+            $negativeSearchTags[] = $hiddenTag->id;
+        }
+
         $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
+        $negativeTags = Tag::select()->whereIn('id', $negativeSearchTags ?? [])->get();
 
         if ($user == null) {
             $user = auth()->user();
         }
-        $userCanSee = $user->curricula()->withAllTags($tags)->get();
+        $userCanSee = $user->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get();
 
         foreach ($user->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags));
+            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags)->withoutTags($negativeTags));
         }
-        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags);
+        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags);
         $userCanSee   = $userCanSee->merge($organization);
 
         if ($withOwned) {
-            $owned      = Curriculum::where('owner_id', $user->id)->withAllTags($tags)->get();
+            $owned      = Curriculum::where('owner_id', $user->id)->withAllTags($tags)->withoutTags($negativeTags)->get();
             $userCanSee = $userCanSee->merge($owned);
             // global curricula are visible for all users, but shouldn't be shown on 'shared with me'
-            $global     = Curriculum::where('type_id', 1)->withAllTags($tags)->get();
+            $global     = Curriculum::where('type_id', 1)->withAllTags($tags)->withoutTags($negativeTags)->get();
             $userCanSee = $userCanSee->merge($global);
         }
 
         return $userCanSee->unique();
+    }
+
+    private function favCurricula()
+    {
+        $favCurricula = new Collection();
+
+        $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
+        if ($favTag !== null) {
+            $favCurricula = $this->userCurricula(searchTags: [$favTag->id]);
+        }
+
+        return $favCurricula;
+    }
+
+    private function hiddenCurricula()
+    {
+        $hiddenCurricula = new Collection();
+
+        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
+        if ($hiddenTag !== null) {
+            $hiddenCurricula = $this->userCurricula(searchTags: [$hiddenTag->id]);
+        }
+
+        return $hiddenCurricula;
     }
 
     public function list(Request $request)
@@ -100,6 +132,7 @@ class CurriculumController extends Controller
         abort_unless(Gate::allows('curriculum_access'), 403);
 
         $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
+        $negativeTags = Tag::select()->whereIn('id', request('negativeTags') ?? [])->get();
 
         $favCurricula = new Collection();
         $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
@@ -108,13 +141,14 @@ class CurriculumController extends Controller
         }
 
         $curricula = match ($request->filter) {
-            'owner'           => Curriculum::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
-            'shared_with_me'  => $this->userCurricula(false, request('tags')),
-            'shared_by_me'    => Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
-            'by_organization' => Organization::find(auth()->user()->current_organization_id)->curricula()->withAllTags($tags)->get(),
-            'all'             => $this->userCurricula(searchTags: request('tags')),
-            'favourite'       => $favCurricula,
-            default           => $this->userCurricula(searchTags: request('tags')),
+            'owner'           => Curriculum::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get(),
+            'shared_with_me'  => $this->userCurricula(false, searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
+            'shared_by_me'    => Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->withoutTags($negativeTags)->get(),
+            'by_organization' => Organization::find(auth()->user()->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get(),
+            'all'             => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
+            'favourite'       => $this->favCurricula(),
+            'hidden'          => $this->hiddenCurricula(),
+            default           => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
         };
 
         return empty($curricula) ? '' : DataTables::of($curricula)
@@ -500,13 +534,25 @@ class CurriculumController extends Controller
 
     public function favourCurriculum(Curriculum $curriculum, FavouriteModelRequest $request)
     {
-        if ($request->input('favourite')) {
+        if ($request->input('mark')) {
             $curriculum->attachTag(trans('global.tag.favourite.singular'));
         } else {
             $curriculum->detachTag(trans('global.tag.favourite.singular'));
         }
 
-        return response(null, 204);
+        return response($curriculum);
+    }
+
+    public function hideCurriculum(Curriculum $curriculum, HideModelRequest $request)
+    {
+        if ($request->input('mark')) {
+            $curriculum->attachTag(trans('global.tag.hidden.singular'));
+        } else {
+            $curriculum->detachTag(trans('global.tag.hidden.singular'));
+        }
+
+
+        return response($curriculum);
     }
 
     public function resetOrderIds(Curriculum $curriculum)

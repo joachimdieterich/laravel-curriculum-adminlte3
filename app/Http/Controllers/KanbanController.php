@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Tags\FavouriteModelRequest;
+use App\Http\Requests\Tags\HideModelRequest;
 use App\Kanban;
-use App\KanbanItem;
-use App\KanbanStatus;
 use App\KanbanSubscription;
 use App\Organization;
 use App\Tag;
@@ -78,11 +77,18 @@ class KanbanController extends Controller
         return $kanbans;
     }
 
-    public function userKanbans($withOwned = true, ?array $searchTags = [])
+    public function userKanbans($withOwned = true, ?array $searchTags = [], ?array $negativeSearchTags = [])
     {
+        // Wenn nicht explizit nach den "Verstecken"-Tag gesucht wird, ihn standardmäßig als Negativ-Tag eintragen
+        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
+        if ($hiddenTag !== null && !in_array($hiddenTag->id, $searchTags ?? [])) {
+            $negativeSearchTags[] = $hiddenTag->id;
+        }
+
         $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
+        $negativeTags = Tag::select()->whereIn('id', $negativeSearchTags ?? [])->get();
         /** @var Collection $userCanSee */
-        $userCanSee = auth()->user()->kanbans()->withAllTags($tags)->get();
+        $userCanSee = auth()->user()->kanbans()->withAllTags($tags)->withoutTags($negativeTags)->get();
 
         //tokenuser? only return subscriptions
         if (auth()->user()->sharing_token !== null) {
@@ -90,17 +96,41 @@ class KanbanController extends Controller
         }
 
         foreach (auth()->user()->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->kanbans()->withAllTags($tags));
+            $userCanSee = $userCanSee->merge($group->kanbans()->withAllTags($tags)->withoutTags($negativeTags));
         }
-        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans()->withAllTags($tags);
+        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans()->withAllTags($tags)->withoutTags($negativeTags);
         $userCanSee   = $userCanSee->merge($organization);
 
         if ($withOwned) {
-            $owned      = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get();
+            $owned      = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get();
             $userCanSee = $userCanSee->merge($owned);
         }
 
         return $userCanSee->unique();
+    }
+
+    private function favKanbans()
+    {
+        $favKanbans = new Collection();
+
+        $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
+        if ($favTag !== null) {
+            $favKanbans = $this->userKanbans(searchTags: [$favTag->id]);
+        }
+
+        return $favKanbans;
+    }
+
+    private function hiddenKanbans()
+    {
+        $hiddenKanbans = new Collection();
+
+        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
+        if ($hiddenTag !== null) {
+            $hiddenKanbans = $this->userKanbans(searchTags: [$hiddenTag->id]);
+        }
+
+        return $hiddenKanbans;
     }
 
     public function list(Request $request)
@@ -108,6 +138,7 @@ class KanbanController extends Controller
         abort_unless(Gate::allows('kanban_access'), 403);
 
         $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
+        $negativeTags = Tag::select()->whereIn('id', request('negativeTags') ?? [])->get();
 
         if (request()->has(['group_id'])) {
             $request  = request()->validate(
@@ -125,22 +156,16 @@ class KanbanController extends Controller
                         }
                     );
                 });
-            $kanbans->withAllTags($tags)->get();
+            $kanbans->withAllTags($tags)->withoutTags($negativeTags)->get();
         } else {
-            $favKanbans = new Collection();
-
-            $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
-            if ($favTag !== null) {
-                $favKanbans = $this->userKanbans(searchTags: [$favTag->id]);
-            }
-
             $kanbans = match ($request->filter) {
-                'owner'           => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->get(),
-                'shared_with_me'  => $this->userKanbans(false, request('tags')),
-                'shared_by_me'    => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->get(),
-                'all'             => $this->userKanbans(searchTags: request('tags')),
-                'favourite'       => $favKanbans,
-                default           => $favKanbans,
+                'owner'           => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get(),
+                'shared_with_me'  => $this->userKanbans(false, request('tags'), request('negativeTags')),
+                'shared_by_me'    => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->withoutTags($negativeTags)->get(),
+                'all'             => $this->userKanbans(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
+                'hidden'          => $this->hiddenKanbans(),
+                'favourite'       => $this->favKanbans(),
+                default           => $this->favKanbans(),
             };
         }
 
@@ -335,13 +360,24 @@ class KanbanController extends Controller
 
     public function favourKanban(Kanban $kanban, FavouriteModelRequest $request)
     {
-        if ($request->input('favourite')) {
+        if ($request->input('mark')) {
             $kanban->attachTag(trans('global.tag.favourite.singular'));
         } else {
             $kanban->detachTag(trans('global.tag.favourite.singular'));
         }
 
-        return response(null, 204);
+        return response($kanban);
+    }
+
+    public function hideKanban(Kanban $kanban, HideModelRequest $request)
+    {
+        if ($request->input('mark')) {
+            $kanban->attachTag(trans('global.tag.hidden.singular'));
+        } else {
+            $kanban->detachTag(trans('global.tag.hidden.singular'));
+        }
+
+        return response($kanban);
     }
 
     private function transformHexColorToRgba($color)

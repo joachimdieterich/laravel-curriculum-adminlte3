@@ -43,6 +43,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::post('curricula/enrol', 'CurriculumController@enrol')->name('curricula.enrol');
     Route::delete('curricula/expel', 'CurriculumController@expel')->name('curricula.expel');
     Route::post('curricula/{curriculum}/favour', 'CurriculumController@favourCurriculum');
+    Route::post('curricula/{curriculum}/hide', 'CurriculumController@hideCurriculum');
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/references', 'CurriculumController@references');
@@ -108,6 +109,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('kanbans/list', 'KanbanController@list');
     Route::get('kanbans/{kanban}/copy', 'KanbanController@copyKanban');
     Route::post('kanbans/{kanban}/favour', 'KanbanController@favourKanban');
+    Route::post('kanbans/{kanban}/hide', 'KanbanController@hideKanban');
     Route::get('export_csv/{kanban}', 'KanbanController@exportKanbanCsv');
     Route::get('export_pdf/{kanban}', 'KanbanController@exportKanbanPdf');
     Route::resource('kanbans', 'KanbanController');

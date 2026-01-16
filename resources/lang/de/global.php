@@ -449,6 +449,14 @@ return [
             'singular' => 'Favorit',
             'plural' => 'Favoriten',
         ],
+        'hidden' => [
+            'singular' => 'Ausgeblendet',
+            'plural' => 'Augeblendete',
+        ],
+        'filter' => [
+            'title' => 'Nach Tags filtern',
+            'negative_title' => 'Tags ausschließen',
+        ],
         'global' => 'Bereichsübergreifend',
         'name' => 'Tag-Name',
         'title' => 'Tags',
@@ -461,6 +469,8 @@ return [
         'delete_helper' => 'Soll der Tag sowie die zugehörigen Daten gelöscht werden?',
         'please_select' => 'Bestehenden Tag auswählen'
     ],
+    'hide' => 'Ausblenden',
+    'remove_hide' => 'Einblenden',
     'organization_management' => 'Organisationsverwaltung',
     'organization' => [
         'title' => 'Organisationen',

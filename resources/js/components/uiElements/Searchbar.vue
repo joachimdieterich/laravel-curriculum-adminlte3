@@ -39,10 +39,10 @@
                 @click="toggleModal"
             >
                 <span class="fa fa-filter">
-                    <span v-if="filter.tags.length > 0"
+                    <span v-if="filter.tags.length > 0 || filter.negativeTags.length > 0"
                           class="tag-count bg-info"
                     >
-                        {{ filter.tags.length }}
+                        {{ filter.tags.length + filter.negativeTags.length }}
                     </span>
                 </span>
             </button>
@@ -51,6 +51,7 @@
             :show="showTagModal"
             @modal-close="toggleModal"
             @tagSelectionChange="(idArray) => {this.filter.tags = idArray;}"
+            @negativTagSelectionChange="(idArray) => {this.filter.negativeTags = idArray;}"
         >
 
         </SearchbarDropDownModal>
@@ -73,7 +74,8 @@ export default {
         return {
             filter: {
                 searchString: '',
-                tags: []
+                tags: [],
+                negativeTags: []
             },
             filtered: false,
             timer: null,
@@ -90,7 +92,7 @@ export default {
             if (forced) { // forced == Enter or button-click
                 this.fireEvent();
                 return;
-            } else if (this.filter.searchString.length < 3 && this.filter.tags.length == 0) {
+            } else if (this.filter.searchString.length < 3 && (this.filter.tags.length == 0 && this.filter.negativeTags.length == 0)) {
                 if (this.filtered) this.removeFilter();
                 return;
             }
@@ -110,6 +112,7 @@ export default {
         clearSearch() {
             this.filter.searchString = '';
             this.filter.tags = [];
+            this.filter.negativeTags = [];
             this.$el.getElementsByTagName('input')[0].focus();
         },
         toggleModal() {
@@ -141,7 +144,8 @@ export default {
             this.searchTagModelContext = newValue;
         },
         'filter.searchString': function() { this.prepareEvent(); },
-        'filter.tags': function() { this.prepareEvent(); }
+        'filter.tags': function() { this.prepareEvent(); },
+        'filter.negativeTags': function() { this.prepareEvent(); }
     }
 }
 </script>

@@ -121,6 +121,7 @@ class LoginController extends Controller
                 env('OIDC_CLIENT_ID'),
                 env('OIDC_CLIENT_SECRET')
             );
+            $oidc->setRedirectURL(env('APP_URL') . '/oidc');
 
             // except if authenticated as guest user, then redirect to SSO login
             if (auth()->user()->id == env('GUEST_USER'))

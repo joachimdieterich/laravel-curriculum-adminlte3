@@ -11,7 +11,7 @@ class OIDCController extends Controller
     /**
      * Handle OIDC authentication
      */
-    public function handle(Request $request): void
+    public function handle(Request $request)
     {
         $oidc = new OpenIDConnectClient(
             env('OIDC_RLP_IDP_HOST'),
@@ -22,10 +22,15 @@ class OIDCController extends Controller
         $oidc->authenticate(); // authenticates user and saves tokens in instance
 
         if (isset($_SESSION['innit_logout']) and $_SESSION['innit_logout'] === true) {
-            // RP-initiated logout
             unset($_SESSION['innit_logout']);
-            $oidc->signOut($oidc->getIdToken(), null);
-            return;
+
+            // logout user locally
+            Auth::guard()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            // RP-initiated logout
+            $oidc->signOut($oidc->getIdToken(), null); // calls 'exit;' internally to stop further execution
         }
 
         try {
@@ -47,7 +52,7 @@ class OIDCController extends Controller
         if (isset($_REQUEST['code'])) {
             $redirect = $_SESSION['redirect_to'];
             unset($_SESSION['redirect_to']);
-            redirect($redirect);
+            return redirect($redirect);
         }
     }
 

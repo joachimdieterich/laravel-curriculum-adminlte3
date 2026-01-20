@@ -51,8 +51,30 @@ class OIDCController extends Controller
         }
     }
 
-    public function backchannelLogout(Request $request): void
+    /**
+     * Handle OIDC backchannel logout
+     * @param  \Illuminate\Http\Request  $request contains logout_token
+     * @return \Illuminate\Http\Response
+     */
+    public function backchannelLogout(Request $request): \Illuminate\Http\Response
     {
-        dump($request->all());
+        $oidc = new OpenIDConnectClient(
+            env('OIDC_RLP_IDP_HOST'),
+            env('OIDC_CLIENT_ID'),
+            env('OIDC_CLIENT_SECRET')
+        );
+
+        if (!$oidc->verifyLogoutToken()) return response('Could not verify logout token', 400);
+
+        $common_name = $oidc->getVerifiedClaims('sub');
+
+        $user = \App\User::select('id')->where('common_name', $common_name)->first();
+        if ($user) {
+            Auth::setUser($user);
+            Auth::guard()->logout();
+        }
+            
+        // if user cannot be found, still return success, or else it will retry sending the logout token
+        return response('User logged out', 200);
     }
 }

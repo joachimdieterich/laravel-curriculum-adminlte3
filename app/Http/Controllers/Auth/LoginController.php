@@ -131,7 +131,7 @@ class LoginController extends Controller
             else
             {
                 session_start();
-                $_SESSION['innit_logout'] = true;
+                $_SESSION['init_logout'] = true;
                 // in order to trigger an RP-initiated logout, we need an ID-token
                 // so we authenticate again to retrieve a new ID-token
                 $oidc->authenticate();

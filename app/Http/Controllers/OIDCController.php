@@ -21,8 +21,8 @@ class OIDCController extends Controller
         
         $oidc->authenticate(); // authenticates user and saves tokens in instance
 
-        if (isset($_SESSION['innit_logout']) and $_SESSION['innit_logout'] === true) {
-            unset($_SESSION['innit_logout']);
+        if (isset($_SESSION['init_logout']) and $_SESSION['init_logout'] === true) {
+            unset($_SESSION['init_logout']);
 
             // logout user locally
             Auth::guard()->logout();

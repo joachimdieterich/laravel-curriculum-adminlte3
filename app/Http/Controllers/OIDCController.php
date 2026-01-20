@@ -20,7 +20,6 @@ class OIDCController extends Controller
         );
         
         $oidc->authenticate(); // authenticates user and saves tokens in instance
-        session_start();
 
         if (isset($_SESSION['innit_logout']) and $_SESSION['innit_logout'] === true) {
             // RP-initiated logout

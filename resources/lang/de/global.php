@@ -1242,6 +1242,7 @@ return [
         'title_singular' => 'Videokonferenz',
         'create' => 'Videokonferenzraum erstellen',
         'edit' => 'Raumeinstellungen',
+        'enter_name' => 'Bitte Vor- und Nachnamen eingeben...',
         'start' => 'Videokonferenz starten',
         'join' => 'Videokonferenz beitreten',
         'share' => 'Zugriff verwalten/Teilen',

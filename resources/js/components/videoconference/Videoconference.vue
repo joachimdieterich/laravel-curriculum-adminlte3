@@ -48,7 +48,8 @@
                                 name="userName"
                                 class="form-control"
                                 v-model.trim="form.userName"
-                                placeholder="Bitte Vor- und Nachnamen eingeben..."
+                                :disabled="lockUserName"
+                                :placeholder="trans('global.videoconference.enter_name')"
                             />
                             <span v-if="form.userName"
                                 class="input-group-append"
@@ -158,8 +159,9 @@ export default {
             method: 'post',
             url: '/videoconferences',
             form: new Form({
-                'userName': '',
+                userName: '',
             }),
+            lockUserName: false,
             loading: false,
             loadingMessage: 'Lade Konferenz',
             isRunning: false,
@@ -168,7 +170,7 @@ export default {
             urlParamModeratorPW: '',
             urlParamAttendeePW: '',
             currentVideoconference: {},
-            servers:{},
+            servers: {},
         }
     },
     mounted() {
@@ -177,8 +179,15 @@ export default {
         this.urlParamModeratorPW = urlParams.get('moderatorPW')
         this.urlParamAttendeePW = urlParams.get('attendeePW')
 
-        if (this.user != null && this.user.firstname != 'Guest'){
+        if (this.user != null && this.user.firstname != 'Guest') {
             this.form.userName = this.user.firstname + ' ' + this.user.lastname;
+            // lock name field for non-owners/non-admins
+            if (this.videoconference.owner_id !== this.$userId || this.checkPermission('is_admin') === false) {
+                this.form.setInitialValues({
+                    userName: this.user.firstname + ' ' + this.user.lastname,
+                });
+                this.lockUserName = true;
+            }
         }
 
         axios.get(this.url + '/' + this.videoconference.id + '/getStatus')
@@ -247,6 +256,10 @@ export default {
             this.timerCount= 10;
             this.timerEnabled = true;
 
+            const userName = this.lockUserName
+                ? this.form.initial.userName
+                : this.form.userName;
+
             if ( // owner or moderator
                 this.videoconference.owner_id == this.$userId ||
                 this.urlParamModeratorPW === this.videoconference.moderatorPW ||
@@ -254,7 +267,10 @@ export default {
                 this.videoconference.editable === true
             ) {
                 // has permission to start
-                window.location = '/videoconferences/' + this.videoconference.id + '/start?userName=' + this.form.userName + '&moderatorPW=' + this.urlParamModeratorPW + '&attendeePW=' + this.urlParamAttendeePW;
+                window.location = '/videoconferences/' + this.videoconference.id + 
+                    '/start?userName=' + userName + 
+                    '&moderatorPW=' + this.urlParamModeratorPW + 
+                    '&attendeePW=' + this.urlParamAttendeePW;
             } else { // join as attendee
                 axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')
                     .then(response => {
@@ -265,7 +281,7 @@ export default {
                             // send token to verify access
                             const token = new URLSearchParams(window.location.search).get('sharing_token');
                             window.location = '/videoconferences/' + this.videoconference.id +
-                                '/start?userName=' + this.form.userName +
+                                '/start?userName=' + userName +
                                 '&moderatorPW=&attendeePW=' + this.urlParamAttendeePW +
                                 '&sharing_token=' + token;
                         }

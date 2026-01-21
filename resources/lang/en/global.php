@@ -1211,6 +1211,7 @@ return [
         'title_singular' => 'Videoconference',
         'create' => 'Create videoconference',
         'edit' => 'Edit videoconference ',
+        'enter_name' => 'Please enter your name...',
         'start' => 'Start videoconference',
         'join' => 'Join videoconference',
         'delete' => 'Delete videoconference',

@@ -140,13 +140,15 @@ class KanbanController extends Controller
         $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
         $negativeTags = Tag::select()->whereIn('id', request('negativeTags') ?? [])->get();
 
+        $newFilter = null;
+
         if (request()->has(['group_id'])) {
-            $request  = request()->validate(
+            $validatedRequest  = request()->validate(
                 [
                     'group_id' => 'required',
                 ]
             );
-            $group_id = $request['group_id'];
+            $group_id = $validatedRequest['group_id'];
             $kanbans  = Kanban::with('subscriptions')
                 ->whereHas('subscriptions', function ($query) use ($group_id) {
                     $query->where(
@@ -167,10 +169,23 @@ class KanbanController extends Controller
                 'favourite'       => $this->favKanbans(),
                 default           => $this->favKanbans(),
             };
+
+            if (($request->filter ?? 'favourite') ==='favourite' && $kanbans->isEmpty()) {
+                $kanbans = $this->userKanbans(searchTags: request('tags'));
+                $newFilter = 'all';
+            }
         }
 
-        return empty($kanbans) ? '' : DataTables::of($kanbans)
-            ->addColumn('tags', function ($kanbans) {
+        if (empty($kanbans)) {
+            return '';
+        }
+
+        $dt = DataTables::of($kanbans);
+        if ($newFilter !== null) {
+            $dt->with('newFilter', $newFilter);
+        }
+
+        return $dt->addColumn('tags', function ($kanbans) {
                 return $kanbans->tags->toArray();
             })
             ->setRowId('id')

@@ -134,12 +134,6 @@ class CurriculumController extends Controller
         $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
         $negativeTags = Tag::select()->whereIn('id', request('negativeTags') ?? [])->get();
 
-        $favCurricula = new Collection();
-        $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
-        if ($favTag !== null) {
-            $favCurricula = $this->userCurricula(searchTags: [$favTag->id]);
-        }
-
         $curricula = match ($request->filter) {
             'owner'           => Curriculum::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get(),
             'shared_with_me'  => $this->userCurricula(false, searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
@@ -148,11 +142,25 @@ class CurriculumController extends Controller
             'all'             => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
             'favourite'       => $this->favCurricula(),
             'hidden'          => $this->hiddenCurricula(),
-            default           => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
+            default           => $this->favCurricula(),
         };
 
-        return empty($curricula) ? '' : DataTables::of($curricula)
-            ->addColumn('tags', function ($curricula) {
+        $newFilter = null;
+        if (($request->filter ?? 'favourite') ==='favourite' && $curricula->isEmpty()) {
+            $curricula = $this->userCurricula(searchTags: request('tags'));
+            $newFilter = 'all';
+        }
+
+        if (empty($curricula)) {
+            return '';
+        }
+
+        $dt = DataTables::of($curricula);
+        if ($newFilter !== null) {
+            $dt->with('newFilter', $newFilter);
+        }
+
+        return $dt->addColumn('tags', function ($curricula) {
                 return $curricula->tags->toArray();
             })
             ->setRowId('id')

@@ -358,6 +358,11 @@ export default {
             this.dt = $('#kanban-datatable').DataTable();
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
+                let newFilter = this.dt.ajax.json().newFilter;
+                if (newFilter) {
+                    this.setFilter(newFilter);
+                }
+
                 this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
             });

@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2.0",
+        "php": "^8.4.16",
         "ext-curl": "*",
         "aacotroneo/laravel-saml2": "*",
         "bacon/bacon-qr-code": "^2.0",

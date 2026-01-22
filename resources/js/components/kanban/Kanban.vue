@@ -45,14 +45,15 @@
             >
                 <template #item="{ element: status, index }">
                     <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
-                        :id="'status-' + status.id"
-                        :key="'drag_status_' + status.id"
-                        class="d-flex flex-column collapse show mh-100"
-                        :style="{
-                            width:  itemWidth + 'px',
-                            opacity: !status.visibility ? '0.7' : '1'
-                        }"
-                        tabindex="-1"
+                          v-show="status.visible ?? true"
+                          :id="'status-' + status.id"
+                          :key="'drag_status_' + status.id"
+                          :class="{'d-flex': (status.visible ?? true), 'flex-column': true, 'collapse': true, 'show': true, 'mh-100': true}"
+                          :style="{
+                              width:  itemWidth + 'px',
+                              opacity: !status.visibility ? '0.7' : '1'
+                          }"
+                          tabindex="-1"
                     >
                         <KanbanStatus
                             :status="status"
@@ -63,6 +64,7 @@
                             :key="status.id"
                             :websocket="websocket && kanban.auto_refresh"
                             filter=".ignore"
+                            @show-with-search="(data) => {status.visible = data.show;}"
                         />
                         <div v-if="editable"
                             :id="'kanbanItemCreateButton_' + index"
@@ -381,7 +383,7 @@ export default {
         },
         showStatusUndoNotification() {
             this.show_status_delete = false;
-            
+
             const status_id = this.delete_id;
             const elem = $('#status-' + status_id);
             elem.collapse('hide');
@@ -423,7 +425,7 @@ export default {
         },
         showItemUndoNotification() {
             this.show_item_delete = false;
-            
+
             const item_id = this.delete_id[0];
             const status_id = this.delete_id[1];
             $('#item-' + item_id).collapse('hide');

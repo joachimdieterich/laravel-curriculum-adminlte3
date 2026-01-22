@@ -231,7 +231,7 @@ export default {
     },
     computed: {
         showWithSearch: function () {
-            if (!this.searchFilter) {
+            if (typeof this.searchFilter !== 'string') {
                 return true;
             }
 

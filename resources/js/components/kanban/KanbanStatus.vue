@@ -1,7 +1,6 @@
 <template>
     <div
         class="kanban-header"
-        v-show="newStatus || showWithSearch(status.title)"
         :style="{ backgroundColor: status?.color }"
     >
         <div v-if="newStatus"
@@ -15,7 +14,7 @@
             </span>
         </div>
         <div v-else
-             v-show="showWithSearch(status.title)"
+             v-show="showWithSearch"
             class="d-flex align-items-center"
             :style="'color:' + $textcolor(status.color)"
         >
@@ -94,6 +93,13 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'KanbanStatus',
+    emits: [
+        'kanban-show-copy',
+        'kanban-show-delete',
+        'kanban-status-updated',
+        'kanban-status-delete',
+        'show-with-search'
+    ],
     props: {
         status: {
             type: Object,
@@ -213,13 +219,6 @@ export default {
                 this.$echo.leave('App.KanbanStatus.' + this.status.id);
             }
         },
-        showWithSearch: function (stringComparedToSearch) {
-            if (!this.searchFilter) {
-                return true;
-            }
-
-            return stringComparedToSearch.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.forcedToShow();
-        },
         forcedToShow: function () {
             for (let key in this.forceShow) {
                 if (this.forceShow[key] == true) {
@@ -229,6 +228,22 @@ export default {
 
             return false;
         }
+    },
+    computed: {
+        showWithSearch: function () {
+            if (!this.searchFilter) {
+                return true;
+            }
+
+            let show = this.status.title.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.forcedToShow()
+
+            this.$emit('show-with-search', {
+                id: this.status.id,
+                show: show
+            });
+
+            return show;
+        },
     },
     mounted() {
         this.startWebsocket();

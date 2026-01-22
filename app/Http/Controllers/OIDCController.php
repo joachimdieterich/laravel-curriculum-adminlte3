@@ -37,6 +37,7 @@ class OIDCController extends Controller
             $common_name = $oidc->requestUserInfo('sub');
             // login user by common_name
             Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
+            LogController::set('ssoLogin'); // set statistics for SSO-authentication
         } catch (\Throwable $th) {
             // if user not authenticated, login as guest user
             // if ($page_allows_guest) ...loginAsGuest

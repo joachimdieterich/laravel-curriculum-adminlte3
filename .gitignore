@@ -28,9 +28,6 @@ yarn-error.log
 /.vscode
 /.vagrant
 
-# Fontawesome
-/public/fonts/vendor/
-
 
 # Mac specific
 .DS_Store

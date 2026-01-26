@@ -57,7 +57,7 @@ class Curriculum extends Model
         'type_id' => 4,  //= user
     ];
 
-    protected $appends = ['is_favourited'];
+    protected $appends = ['is_favourited', 'is_hidden'];
 
     protected $with = ['owner:id,firstname,lastname'];
 

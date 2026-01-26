@@ -73,6 +73,7 @@ return [
     'cancel' => 'Abbrechen',
     'ok' => 'OK',
     'close' => 'Schließen',
+    'or' => 'oder',
     'undo' => 'Rückgängig machen',
     'preview' => 'Vorschau',
     'generate' => 'erzeugen',
@@ -448,6 +449,14 @@ return [
             'singular' => 'Favorit',
             'plural' => 'Favoriten',
         ],
+        'hidden' => [
+            'singular' => 'Ausgeblendet',
+            'plural' => 'Augeblendete',
+        ],
+        'filter' => [
+            'title' => 'Nach Tags filtern',
+            'negative_title' => 'Tags ausschließen',
+        ],
         'global' => 'Bereichsübergreifend',
         'name' => 'Tag-Name',
         'title' => 'Tags',
@@ -460,6 +469,8 @@ return [
         'delete_helper' => 'Soll der Tag sowie die zugehörigen Daten gelöscht werden?',
         'please_select' => 'Bestehenden Tag auswählen'
     ],
+    'hide' => 'Ausblenden',
+    'remove_hide' => 'Einblenden',
     'organization_management' => 'Organisationsverwaltung',
     'organization' => [
         'title' => 'Organisationen',
@@ -705,6 +716,8 @@ return [
         'edit' => 'Medium bearbeiten',
         'upload' => 'Medien/Medium hochladen',
         'upload_helper' => 'Zum Hochladen Datei(en) hierher ziehen<br> oder klicken um Datei(en) auszuwählen',
+        'upload_cloud' => 'Medien (in die Cloud) hochladen',
+        'connect_cloud' => 'Medien aus der Cloud verknüpfen',
         'delete' => 'Medium löschen',
         'delete_helper' => 'Soll das Medium gelöscht werden?',
         'delete_subscription' => 'Medienverknüpfung entfernen',
@@ -1229,6 +1242,7 @@ return [
         'title_singular' => 'Videokonferenz',
         'create' => 'Videokonferenzraum erstellen',
         'edit' => 'Raumeinstellungen',
+        'enter_name' => 'Bitte Vor- und Nachnamen eingeben...',
         'start' => 'Videokonferenz starten',
         'join' => 'Videokonferenz beitreten',
         'share' => 'Zugriff verwalten/Teilen',

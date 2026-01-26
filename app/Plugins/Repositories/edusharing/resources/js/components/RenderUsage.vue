@@ -14,8 +14,7 @@
 
     <div
         :id="'loading_' + component_id"
-        class="overlay position-absolute text-center w-100"
-        style="inset: 0;"
+        class="overlay text-center w-100"
     >
         <i class="fa fa-spinner fa-pulse fa-fw"></i>
         <span class="sr-only">Loading...</span>

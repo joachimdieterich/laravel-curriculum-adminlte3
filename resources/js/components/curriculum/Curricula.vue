@@ -20,6 +20,19 @@
                 </li>
                 <li class="nav-item pointer">
                     <a
+                        id="curriculum-filter-hidden"
+                        class="nav-link "
+                        :class="filter === 'hidden' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('hidden')"
+                    >
+                        <i class="fas fa-eye-slash pr-2"></i>
+                        {{ trans('global.tag.hidden.plural') }}
+                    </a>
+                </li>
+                <li class="nav-item pointer">
+                    <a
                         id="curriculum-filter-all"
                         class="nav-link "
                         :class="filter === 'all' ? 'active' : ''"
@@ -108,7 +121,7 @@
                 :label="trans('global.curriculum.create')"
             />
 
-            <IndexWidget v-for="curriculum in curricula"
+            <IndexWidget v-for="(curriculum, index) in curricula"
                 :id="curriculum.id"
                 :key="'curriculumIndex' + curriculum.id"
                 :model="curriculum"
@@ -131,7 +144,14 @@
                 </template>
 
                 <template v-slot:additional-button>
-                    <favourite :model="curriculum" url="/curricula" :is-favourited="curriculum.is_favourited"></favourite>
+                    <favourite
+                        url="/curricula/[id]/favour"
+                        :model="curriculum"
+                        :is-favourited="curriculum.is_favourited"
+                        @mark-status-changed="(newCurricula) => {
+                            curricula[index] = newCurricula;
+                        }"
+                    />
                 </template>
 
                 <template v-slot:owner>
@@ -164,6 +184,15 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
+                        <hide
+                            url="/curricula/[id]/hide"
+                            :model="curriculum"
+                            :is-hidden="curriculum.is_hidden"
+                            @mark-status-changed="(newCurriculum) => {
+                                curricula[index] = newCurriculum;
+                            }"
+                        />
+
                         <button
                             v-permission="'curriculum_edit'"
                             :name="'curriculum-edit_' + curriculum.id"
@@ -212,7 +241,7 @@
             <DataTable
                 id="curriculum-datatable"
                 :columns="columns"
-                :options="options"
+                :options="dtOptions(this.subscribable_id ? ('/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id) : '/curricula/list')"
                 width="100%"
                 style="display: none;"
             />
@@ -250,6 +279,8 @@ import {useGlobalStore} from "../../store/global";
 import OwnerModal from "../user/OwnerModal.vue";
 import {useToast} from "vue-toastification";
 import Favourite from "../tag/Favourite.vue";
+import Hide from "../tag/Hide.vue";
+import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -264,9 +295,12 @@ export default {
         },
     },
     setup() {
+        const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
         const toast = useToast();
         const globalStore = useGlobalStore();
+
         return {
+            selectedTags, selectedNegativeTags, dtOptions,
             globalStore,
             toast,
         }
@@ -279,7 +313,6 @@ export default {
             showConfirm: false,
             errors: {},
             currentCurriculum: {},
-            selectedTags: [],
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
@@ -288,22 +321,6 @@ export default {
             ],
             filter: 'favourite',
             dt: null,
-        }
-    },
-    computed: {
-        options: function() {
-            let options = this.$dtOptions;
-
-            options.ajax = {
-                url: (this.subscribable_id) ? '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id : '/curricula/list',
-                data: (d) => {
-                    d.tags = this.selectedTags;
-
-                    return d;
-                },
-            };
-
-            return options;
         }
     },
     methods: {
@@ -349,6 +366,11 @@ export default {
             this.dt = $('#curriculum-datatable').DataTable();
 
             this.dt.on('draw.dt', () => {
+                let newFilter = this.dt.ajax.json().newFilter;
+                if (newFilter) {
+                    this.setFilter(newFilter);
+                }
+
                 this.curricula = this.dt.rows({page: 'current'}).data().toArray();
                 $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
             });
@@ -402,6 +424,7 @@ export default {
 
         this.$eventHub.on('filter', (filter) => {
             this.selectedTags = filter.tags;
+            this.selectedNegativeTags = filter.negativeTags;
             this.dt.search(filter.searchString).draw();
         });
 
@@ -411,6 +434,7 @@ export default {
         });
     },
     components: {
+        Hide,
         Favourite,
         OwnerModal,
         IndexWidget,

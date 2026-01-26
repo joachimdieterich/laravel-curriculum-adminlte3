@@ -259,30 +259,36 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      operationId="enrolUsers",
  *      tags={"Moodle v1"},
  *      summary="Enrol users to different resources",
- *      description="Creates or updates user-subscriptions to Kanbans and return the amount of created/updated subscriptions",
+ *      description="Creates or updates user-subscriptions to Kanbans/Curricula/Groups and returns the amount of created/updated subscriptions",
  *      security={
  *           {"passport": {"*"}},
  *      },
  *      @OA\RequestBody(
  *          required=true,
- *          description="at least one model needs to be provided",
+ *          description="at least one model (Kanbans/Curricula/Groups) needs to be provided",
  *          @OA\JsonContent(
  *              required={"users"},
  *              @OA\Property(
  *                  property="users",
- *                  description="array of user common_names",
+ *                  description="array/array-like string (e.g. ''['common_name']'') of user common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="groups",
+ *                  description="array/array-like string of group common_names | will create new groups if not existing",
  *                  type="array",
  *                  @OA\Items(type="string")
  *              ),
  *              @OA\Property(
  *                  property="kanbans",
- *                  description="array of kanban IDs",
+ *                  description="array/array-like string of kanban IDs",
  *                  type="array",
  *                  @OA\Items(type="integer")
  *              ),
  *              @OA\Property(
  *                  property="curricula",
- *                  description="array of curriculum IDs",
+ *                  description="array/array-like string of curriculum IDs",
  *                  type="array",
  *                  @OA\Items(type="integer")
  *              ),
@@ -307,30 +313,36 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      operationId="expelUsers",
  *      tags={"Moodle v1"},
  *      summary="Expel users from different resources",
- *      description="Deletes user-subscriptions to Kanbans and return the amount of deleted subscriptions",
+ *      description="Deletes user-subscriptions from Kanbans/Curricula/Groups and returns the amount of deleted subscriptions",
  *      security={
  *           {"passport": {"*"}},
  *      },
  *      @OA\RequestBody(
  *          required=true,
- *          description="at least one model needs to be provided",
+ *          description="at least one model (Kanbans/Curricula/Groups) needs to be provided",
  *          @OA\JsonContent(
  *              required={"users"},
  *              @OA\Property(
  *                  property="users",
- *                  description="array of user common_names",
+ *                  description="array/array-like string (e.g. ''['common_name']'') of user common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="groups",
+ *                  description="array/array-like string of group common_names | missing groups will be ignored",
  *                  type="array",
  *                  @OA\Items(type="string")
  *              ),
  *              @OA\Property(
  *                  property="kanbans",
- *                  description="array of kanban IDs",
+ *                  description="array/array-like string of kanban IDs",
  *                  type="array",
  *                  @OA\Items(type="integer")
  *              ),
  *              @OA\Property(
  *                  property="curricula",
- *                  description="array of curriculum IDs",
+ *                  description="array/array-like string of curriculum IDs",
  *                  type="array",
  *                  @OA\Items(type="integer")
  *              ),

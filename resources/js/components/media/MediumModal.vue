@@ -169,14 +169,12 @@
                                 <div
                                     v-permission="'external_medium_create'"
                                     id="external"
-                                    class="tab-pane active show"
+                                    class="position-relative tab-pane active show"
                                 >
-                                    <RepositoryPluginCreate v-if="!postProcess"
-                                        :model="this.form"
-                                    />
+                                    <RepositoryPluginCreate :model="form"/>
                                     <div v-if="postProcess"
-                                        :id="'loading_'+this.component_id"
-                                        class="overlay text-center w-100 h-100"
+                                        :id="'loading_' + component_id"
+                                        class="overlay d-flex align-items-center justify-content-center w-100 h-100"
                                     >
                                         <i class="fa fa-spinner fa-pulse fa-fw"></i>
                                         <span>Fertigstellen...</span>

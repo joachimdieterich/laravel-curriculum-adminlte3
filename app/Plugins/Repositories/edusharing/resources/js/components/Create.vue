@@ -1,65 +1,32 @@
 <template>
-    <div class="d-flex flex-wrap justify-content-center">
-        <ul
-            class="nav nav-pills row text-center pb-2"
-            style="flex-basis: 100%;"
+    <div class="d-flex flex-column align-items-center justify-content-center p-2">
+        <button
+            id="upload-button"
+            class="btn btn-lg m-1"
+            style="color: #6c757d;"
+            @click="openUploadWindow()"
         >
-            <li class="nav-item small col-6 p-0">
-                <a
-                    href="#edusharing_new"
-                    class="nav-link show active"
-                    data-toggle="tab"
-                >
-                    <i class="fa fa-upload pr-1"></i>
-                    Medien (in die Cloud) hochladen
-                </a>
-            </li>
-
-            <li class="nav-item small col-6 p-0">
-                <a
-                    href="#edusharing_link"
-                    class="nav-link show"
-                    data-toggle="tab"
-                >
-                    <i class="fa fa-add pr-1"></i>
-                    Medien aus der Cloud verknüpfen
-                </a>
-            </li>
-        </ul>
-
-        <div
-            class="tab-content"
-            style="flex-basis: 100%;"
+            <i class="fa fa-upload pr-1"></i>
+            {{ trans('global.medium.upload_cloud') }}
+        </button>
+        <span>- {{ trans('global.or') }} -</span>
+        <button
+            id="cloud-button"
+            class="btn btn-lg m-1"
+            style="color: #6c757d;"
+            @click="openCloudWindow()"
         >
-            <div
-                id="edusharing_new"
-                class="tab-pane col-12 active p-0"
-            >
-                <iframe
-                    id="eduSharingNewFrame"
-                    :src="this.uploadIframeUrl"
-                    :width="this.width"
-                    :height="this.height"
-                    style="height: 60vh;"
-                    frameborder="0"
-                ></iframe>
-            </div>
-            <div
-                id="edusharing_link"
-                class="tab-pane col-12 p-0"
-            >
-                <iframe
-                    id="eduSharingLinkFrame"
-                    :src="this.cloudIframeUrl"
-                    :width="this.width"
-                    :height="this.height"
-                    frameborder="0"
-                ></iframe>
-            </div>
-        </div>
+            <i class="fa fa-add pr-1"></i>
+            {{ trans('global.medium.connect_cloud') }}
+        </button>
     </div>
 </template>
 <script>
+// variables need to be outside of the component
+// else closing a window will throw a security error
+let uploadWindow = null;
+let cloudWindow = null;
+
 export default {
     props: {
         model: {},
@@ -67,20 +34,50 @@ export default {
     data() {
         return {
             component_id: this._uid,
-            width: "100%",
-            height: "650",
-            uploadIframeUrl: '',
-            cloudIframeUrl: '',
+            uploadURL: '',
+            cloudURL: '',
         };
     },
     methods: {
+        openUploadWindow() {
+            // in local environments fetching the URLs might take some time
+            // so we wait until the URL is fetched, to not open a blank window
+            if (this.uploadURL === '') {
+                document.getElementById('upload-button').disabled = true;
+                let waiting = setInterval(() => {
+                    if (this.uploadURL !== '') {
+                        clearInterval(waiting);
+                        document.getElementById('upload-button').disabled = false;
+                        uploadWindow = window.open(this.uploadURL, 'edusharing_upload');
+                    }
+                }, 100);
+            } else {
+                // focus the window if already opened, instead of reloading the page
+                if (uploadWindow && !uploadWindow.closed) uploadWindow.focus();
+                else uploadWindow = window.open(this.uploadURL, 'edusharing_upload');
+            }
+        },
+        openCloudWindow() {
+            if (this.cloudURL === '') {
+                document.getElementById('cloud-button').disabled = true;
+                let waiting = setInterval(() => {
+                    if (this.cloudURL !== '') {
+                        clearInterval(waiting);
+                        document.getElementById('cloud-button').disabled = false;
+                        cloudWindow = window.open(this.cloudURL, 'edusharing_cloud');
+                    }
+                }, 100);
+            } else {
+                if (cloudWindow && !cloudWindow.closed) cloudWindow.focus();
+                else cloudWindow = window.open(this.cloudURL, 'edusharing_cloud');
+            }
+        },
         receiveMessage(event) {
-            let data = event.data.data;
-
             if (event.data.event === 'APPLY_NODE') {
-                setTimeout(() => { this.emitEvent(data); }, 250);
-
-                window.removeEventListener("message", this.receiveMessage);
+                setTimeout(() => { this.emitEvent(event.data.data); }, 250);
+                // close the tabs to also show the loading indicator
+                if (!uploadWindow.closed) uploadWindow.close();
+                if (!cloudWindow.closed) cloudWindow.close();
             }
         },
         emitEvent(data) {
@@ -134,17 +131,22 @@ export default {
     mounted() {
         axios.get('/media/create?repository=edusharing')
             .then(response => {
-                this.uploadIframeUrl = response.data.uploadIframeUrl;
-                this.cloudIframeUrl  = response.data.cloudIframeUrl;
+                this.uploadURL = response.data.uploadIframeUrl;
+                this.cloudURL  = response.data.cloudIframeUrl;
             })
             .catch(e => {
                 console.log(e);
             });
 
-        window.addEventListener("message", this.receiveMessage, false);
+        window.addEventListener("message", this.receiveMessage);
     },
     unmounted() {
         window.removeEventListener("message", this.receiveMessage);
+        if (uploadWindow && !uploadWindow.closed) uploadWindow.close();
+        if (cloudWindow && !cloudWindow.closed) cloudWindow.close();
     },
 }
 </script>
+<style scoped>
+.btn:hover { color: #007bff !important; }
+</style>

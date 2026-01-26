@@ -2,8 +2,8 @@
     <div class="position-relative">
         <div
             id="objective-tabs-overlay"
-            class="overlay position-absolute flex-column justify-content-center align-items-center"
-            style="inset: 0; background-color: #fff8 !important; display: flex; z-index: 150;"
+            class="overlay flex-column justify-content-center align-items-center"
+            style="background-color: #fff8 !important; display: flex; z-index: 150;"
             @click.stop
         >
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>

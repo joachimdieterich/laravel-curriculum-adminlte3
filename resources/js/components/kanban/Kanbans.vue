@@ -8,7 +8,7 @@
                 <li class="nav-item pointer">
                     <a
                         id="kanban-filter-favourite"
-                        class="nav-link "
+                        class="nav-link"
                         :class="filter === 'favourite' ? 'active' : ''"
                         data-toggle="pill"
                         role="tab"
@@ -16,6 +16,17 @@
                     >
                         <i class="fas fa-heart pr-2"></i>
                         {{ trans('global.tag.favourite.plural') }}
+                    </a>
+                    <a
+                        id="kanban-filter-hidden"
+                        class="nav-link"
+                        :class="filter === 'hidden' ? 'active' : ''"
+                        data-toggle="pill"
+                        role="tab"
+                        @click="setFilter('hidden')"
+                    >
+                        <i class="fas fa-eye-slash pr-2"></i>
+                        {{ trans('global.tag.hidden.plural') }}
                     </a>
                 </li>
                 <li class="nav-item pointer">
@@ -101,7 +112,7 @@
                 </template>
             </IndexWidget>
 
-            <IndexWidget v-for="kanban in kanbans"
+            <IndexWidget v-for="(kanban, index) in kanbans"
                 :key="'kanbanIndex' + kanban.id"
                 :model="kanban"
                 modelName="Kanban"
@@ -113,7 +124,14 @@
                 </template>
 
                 <template v-slot:additional-button>
-                    <favourite :model="kanban" url="/kanbans" :is-favourited="kanban.is_favourited"></favourite>
+                    <favourite
+                        url="/kanbans/[id]/favour"
+                        :model="kanban"
+                        :is-favourited="kanban.is_favourited"
+                        @mark-status-changed="(newKanban) => {
+                            kanbans[index] = newKanban;
+                        }"
+                    />
                 </template>
 
                 <template v-slot:dropdown>
@@ -140,6 +158,15 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
+                        <hide
+                            url="/kanbans/[id]/hide"
+                            :model="kanban"
+                            :is-hidden="kanban.is_hidden"
+                            @mark-status-changed="(newKanban) => {
+                                kanbans[index] = newKanban;
+                            }"
+                        />
+
                         <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_edit'"
                             :name="'edit-kanban-' + kanban.id"
@@ -194,7 +221,7 @@
             <DataTable
                 id="kanban-datatable"
                 :columns="columns"
-                :options="options"
+                :options="dtOptions(this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list')"
                 width="100%"
                 style="display: none;"
             />
@@ -234,7 +261,9 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
+import Hide from "../tag/Hide.vue";
 import Favourite from "../tag/Favourite.vue";
+import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -255,9 +284,12 @@ export default {
         subscribable_id: '',
     },
     setup() {
+        const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
         const toast = useToast();
         const globalStore = useGlobalStore();
+
         return {
+            selectedTags, selectedNegativeTags, dtOptions,
             globalStore,
             toast,
         }
@@ -270,7 +302,6 @@ export default {
             showCopy: false,
             errors: {},
             currentKanban: {},
-            selectedTags: [],
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
@@ -301,22 +332,6 @@ export default {
             Object.assign(kanban, updatedKanban);
         });
     },
-    computed: {
-        options: function() {
-            let options = this.$dtOptions;
-
-            options.ajax = {
-                url: this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list',
-                data: (d) => {
-                    d.tags = this.selectedTags;
-
-                    return d;
-                },
-            };
-
-            return options;
-        }
-    },
     methods: {
         setFilter(filter) {
             this.filter = filter;
@@ -343,12 +358,19 @@ export default {
             this.dt = $('#kanban-datatable').DataTable();
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
+                let newFilter = this.dt.ajax.json().newFilter;
+                if (newFilter) {
+                    this.setFilter(newFilter);
+                }
+
                 this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
             });
 
             this.$eventHub.on('filter', (filter) => {
                 this.selectedTags = filter.tags;
+                this.selectedNegativeTags = filter.negativeTags;
+
                 this.dt.search(filter.searchString).draw();
             });
         },
@@ -409,6 +431,7 @@ export default {
         },
     },
     components: {
+        Hide,
         Favourite,
         SubscribeModal,
         SubscribeKanbanModal,

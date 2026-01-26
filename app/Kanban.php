@@ -45,7 +45,7 @@ class Kanban extends Model
         'created_at'            => 'datetime',
     ];
 
-    protected $appends = ['is_favourited'];
+    protected $appends = ['is_favourited', 'is_hidden'];
 
     public function broadcastOn($event): array
     {

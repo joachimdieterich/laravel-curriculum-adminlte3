@@ -17,8 +17,8 @@
         <div class="carousel-inner pointer">
             <div
                 :id="'loading_' + component_id"
-                class="overlay position-absolute text-center rounded-0 w-100"
-                style="display: none; inset: 0;"
+                class="overlay text-center rounded-0 w-100"
+                style="display: none;"
             >
                 <i class="fa fa-spinner fa-pulse fa-fw"></i>
                 <span class="sr-only">{{ trans('global.loading') }}</span>

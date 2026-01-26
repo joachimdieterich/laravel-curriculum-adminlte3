@@ -11,11 +11,23 @@
                 url="/tags"
                 :additional_query_param="this.typeParameter()"
                 model="tags"
-                :label="trans('global.tag.title')"
+                :label="trans('global.tag.filter.title')"
                 :multiple="true"
                 :selected="selectedTags"
                 @selectedValue="(idArray) => {selectedTagsBuffer = idArray; this.$emit('tagSelectionChange', idArray);}"
                 @cleared="() => {selectedTagsBuffer = []; this.$emit('tagSelectionChange', []);}"
+            />
+            <Select2
+                id="negative-tag-search"
+                name="negative-tag-search"
+                url="/tags"
+                :additional_query_param="this.typeParameter()"
+                model="negative-tags"
+                :label="trans('global.tag.filter.negative_title')"
+                :multiple="true"
+                :selected="selectedNegativeTags"
+                @selectedValue="(idArray) => {selectedNegativeTagsBuffer = idArray; this.$emit('negativTagSelectionChange', idArray);}"
+                @cleared="() => {selectedNegativeTagsBuffer = []; this.$emit('negativTagSelectionChange', []);}"
             />
         </template>
     </DropDownModal>
@@ -40,7 +52,9 @@ export default {
         return {
             searchTagModelContext: null,
             selectedTags: [],
+            selectedNegativeTags: [],
             selectedTagsBuffer: [],
+            selectedNegativeTagsBuffer: [],
         }
     },
     props: {
@@ -67,6 +81,7 @@ export default {
         },
         show: function () {
             this.selectedTags = this.selectedTagsBuffer;
+            this.selectedNegativeTags = this.selectedNegativeTagsBuffer;
         },
     }
 }

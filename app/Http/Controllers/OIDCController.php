@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Jumbojett\OpenIDConnectClient;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 
 class OIDCController extends Controller
 {
@@ -37,6 +38,11 @@ class OIDCController extends Controller
             $common_name = $oidc->requestUserInfo('sub');
             // login user by common_name
             Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
+            // store session-id in redis-set
+            $sessionId = session()->getId();
+            Redis::sadd('user_sessions:' . $common_name, $sessionId);
+            Redis::expire('user_sessions:' . $common_name, config('session.lifetime') * 60);
+
             LogController::set('ssoLogin'); // set statistics for SSO-authentication
         } catch (\Throwable $th) {
             // if user not authenticated, login as guest user
@@ -73,12 +79,14 @@ class OIDCController extends Controller
         if (!$oidc->verifyLogoutToken()) return response('Could not verify logout token', 400);
 
         $common_name = $oidc->getVerifiedClaims('sub');
+        $sessionIds = Redis::smembers('user_sessions:' . $common_name);
 
-        $user = \App\User::select('id')->where('common_name', $common_name)->first();
-        if ($user) {
-            Auth::setUser($user);
-            Auth::guard()->logout();
+        foreach ($sessionIds as $sessionId) {
+            // TODO: check if session-key prefix is correct
+            Redis::del('laravel_session:' . $sessionId);
         }
+
+        Redis::del('user_sessions:' . $common_name);
             
         // if user cannot be found, still return success, or else it will retry sending the logout token
         return response('User logged out', 200);

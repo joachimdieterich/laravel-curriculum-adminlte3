@@ -444,7 +444,7 @@ class User extends Authenticatable
 
     public function getAvatarAttribute()
     {
-        return ($this->medium_id !== null) ? '/media/'.$this->medium_id : (new Avatar)->create($this->fullName())->toBase64()->encoded;
+        return ($this->medium_id !== null) ? '/media/'.$this->medium_id : (new Avatar)->create($this->fullName())->toBase64();
     }
 
     public function mayAccessUser(User $user, $context = 'organization'): bool

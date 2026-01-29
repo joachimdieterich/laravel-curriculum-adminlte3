@@ -54,7 +54,7 @@ class Kanban extends Model
         }
 
         return [
-             new PresenceChannel($this->broadcastChannel())
+            new PresenceChannel($this->broadcastChannel())
         ];
     }
 
@@ -81,17 +81,17 @@ class Kanban extends Model
         return route('kanbans.show', $this->id);
     }
 
-    public function items(): HasMany|Kanban
+    public function items(): HasMany|self
     {
         return $this->hasMany(KanbanItem::class)->orderBy('order_id');
     }
 
-    public function statuses(): HasMany|Kanban
+    public function statuses(): HasMany|self
     {
         return $this->hasMany('App\KanbanStatus', 'kanban_id', 'id')->orderBy('order_id');
     }
 
-    public function withRelations(): Kanban|null
+    public function withRelations(): self|null
     {
         return $this->with([
             'owner'          => function ($query) {
@@ -114,35 +114,35 @@ class Kanban extends Model
         ])->find($this->id);
     }
 
-    public function subscriptions(): HasMany|Kanban
+    public function subscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanSubscription::class);
     }
 
-    public function medium(): HasOne|Kanban
+    public function medium(): HasOne|self
     {
         return $this->hasOne('App\Medium', 'id', 'medium_id');
     }
 
-    public function userSubscriptions(): HasMany|Kanban
+    public function userSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanSubscription::class)
-                    ->where('subscribable_type', 'App\User');
+            ->where('subscribable_type', 'App\User');
     }
 
-    public function groupSubscriptions(): HasMany|Kanban
+    public function groupSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanSubscription::class)
-                    ->where('subscribable_type', 'App\Group');
+            ->where('subscribable_type', 'App\Group');
     }
 
-    public function organizationSubscriptions(): HasMany|Kanban
+    public function organizationSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanSubscription::class)
-                    ->where('subscribable_type', 'App\Organization');
+            ->where('subscribable_type', 'App\Organization');
     }
 
-    public function owner(): HasOne|Kanban
+    public function owner(): HasOne|self
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }

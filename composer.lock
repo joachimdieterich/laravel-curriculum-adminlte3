@@ -13971,12 +13971,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "1318024c3af64dbe11dfac73ccc8cec27739b86c"
+                "reference": "c4162b6092bc6170cc6d0758ba6ee7d29d0dfbb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/1318024c3af64dbe11dfac73ccc8cec27739b86c",
-                "reference": "1318024c3af64dbe11dfac73ccc8cec27739b86c",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c4162b6092bc6170cc6d0758ba6ee7d29d0dfbb8",
+                "reference": "c4162b6092bc6170cc6d0758ba6ee7d29d0dfbb8",
                 "shasum": ""
             },
             "conflict": {
@@ -14978,7 +14978,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-27T23:05:48+00:00"
+            "time": "2026-01-28T22:08:32+00:00"
         },
         {
             "name": "roquie/laravel-dusk-select2",

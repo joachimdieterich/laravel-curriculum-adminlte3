@@ -1,7 +1,8 @@
 <template :id="this.id">
-    <div class="card">
-        <div v-if="show"
-             class="w-full flex-1 p-2">
+    <div v-if="show"
+        class="card"
+    >
+        <div class="p-2">
             <Line
                 :options="chartOptions"
                 :data="chartDataLogin"
@@ -14,8 +15,7 @@
                 :height="height"
             />
         </div>
-        <div v-if="show"
-             class="w-full flex-1 p-2">
+        <div class="p-2">
             <Line
                 :options="chartOptions"
                 :data="chartDataSso"
@@ -28,8 +28,7 @@
                 :height="height"
             />
         </div>
-        <div v-if="show"
-             class="w-full flex-1 p-2">
+        <div class="p-2">
             <Line
                 :options="chartOptions"
                 :data="chartDataGuest"
@@ -65,54 +64,59 @@ ChartJS.register(
     LinearScale,
     CategoryScale,
     PointElement
-)
+);
 
 export default {
-    name: 'LineChart',
-
+    name: 'LoginCharts',
     props: {
-        'date_begin': String,
-        'date_end': String,
+        date_begin: {
+            type: String,
+            required: true,
+        },
+        date_end: {
+            type: String,
+            required: true,
+        },
         chartId: {
             type: String,
-            default: 'line-chart'
+            default: 'line-chart',
         },
         datasetIdKey: {
             type: String,
-            default: 'label'
+            default: 'label',
         },
         width: {
             type: Number,
-            default: 400
+            default: 400,
         },
         height: {
             type: Number,
-            default: 400
+            default: 400,
         },
         cssClasses: {
+            type: String,
             default: '',
-            type: String
         },
         styles: {
             type: Object,
-            default: () => {}
+            default: () => {},
         },
         plugins: {
             type: Array,
-            default: () => []
-        }
+            default: () => [],
+        },
     },
     data() {
         return {
-            chartDataSso:  {
+            chartDataSso: {
                 labels: [],
                 datasets: [
                     {
                         label: '',
                         backgroundColor: '#001219',
-                        data: []
-                    }
-                ]
+                        data: [],
+                    },
+                ],
             },
             chartDataLogin: {
                 labels: [],
@@ -120,29 +124,29 @@ export default {
                     {
                         label: '',
                         backgroundColor: '#005f73',
-                        data: []
-                    }
-                ]
+                        data: [],
+                    },
+                ],
             },
-            chartDataGuest:  {
+            chartDataGuest: {
                 labels: [],
                 datasets: [
                     {
                         label: '',
                         backgroundColor: '#0a9396',
-                        data: []
-                    }
-                ]
+                        data: [],
+                    },
+                ],
             },
             chartOptions: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
             },
-            show: false
+            show: false,
         };
     },
     methods: {
-        loadAll(){
+        loadAll() {
             this.show = false;
             this.loaderEvent('login');
             this.loaderEvent('guestLogin');
@@ -152,49 +156,48 @@ export default {
         loaderEvent(chart) {
             axios.get('/statistics?chart=' + chart + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
                 .then(response => {
-                    let result = [];
-                    result = {
-                        labels: response.data.message.labels,
+                    let result = {
+                        labels: response.data.labels,
                         datasets: [
                             {
-                                label: response.data.message.datasets.label,
-                                backgroundColor: response.data.message.datasets.backgroundColor,
-                                data: response.data.message.datasets.data
-                            }
-                        ]
-                    }
-                    if (chart === 'login'){
+                                label: response.data.datasets.label,
+                                backgroundColor: response.data.datasets.backgroundColor,
+                                data: response.data.datasets.data,
+                            },
+                        ],
+                    };
+                    if (chart === 'login') {
                         this.chartDataLogin = result;
                     }
-                    if (chart === 'ssoLogin'){
+                    if (chart === 'ssoLogin') {
                         this.chartDataSso = result;
                     }
-                    if (chart === 'guestLogin'){
+                    if (chart === 'guestLogin') {
                         this.chartDataGuest = result;
                     }
 
                 }).catch(e => {
                     console.log(e);
-            });
-        }
+                });
+        },
     },
     watch: {
         date_begin: {
-            handler: function(){
+            handler: function() {
                 this.loadAll();
-            }
+            },
         },
         date_end: {
-            handler: function(){
+            handler: function() {
                 this.loadAll();
-            }
-        }
+            },
+        },
     },
     mounted() {
         this.loadAll();
     },
     components: {
-        Line
+        Line,
     },
 };
 </script>

@@ -516,6 +516,7 @@ class CurriculumController extends Controller
     {
         if ($request->input('favourite')) {
             $curriculum->attachTag(trans('global.tag.favourite.singular'));
+            LogController::set(get_class($this) . '@' . __FUNCTION__);
         } else {
             $curriculum->detachTag(trans('global.tag.favourite.singular'));
         }

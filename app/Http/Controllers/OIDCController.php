@@ -23,14 +23,14 @@ class OIDCController extends Controller
             env('OIDC_CLIENT_SECRET')
         );
 
-        if (isset($_SESSION['redirect_to'])) {
-            $allow_guest = $request->has('sharing_token')
-                or str_starts_with($request->getRequestUri(), '/navigator')
-                or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
-                or str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
-            // if resource is accessible for guests, request silent authentication
-            if ($allow_guest) $oidc->addAuthParam(['prompt' => 'none']);
-        }
+        // if (isset($_SESSION['redirect_to'])) {
+        //     $allow_guest = $request->has('sharing_token')
+        //         or str_starts_with($request->getRequestUri(), '/navigator')
+        //         or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
+        //         or str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
+        //     // if resource is accessible for guests, request silent authentication
+        //     if ($allow_guest) $oidc->addAuthParam(['prompt' => 'none']);
+        // }
         
         try {
             $oidc->authenticate(); // authenticates user and saves tokens in instance

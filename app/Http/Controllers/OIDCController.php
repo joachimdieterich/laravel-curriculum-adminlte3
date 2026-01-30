@@ -25,33 +25,34 @@ class OIDCController extends Controller
             env('OIDC_CLIENT_SECRET')
         );
 
-        // if (isset($_SESSION['redirect_to'])) {
-        //     $allow_guest = $request->has('sharing_token')
-        //         or str_starts_with($request->getRequestUri(), '/navigator')
-        //         or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
-        //         or str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
-        //     // if resource is accessible for guests, request silent authentication
-        //     if ($allow_guest) $oidc->addAuthParam(['prompt' => 'none']);
-        // }
+        if (isset($_SESSION['redirect_to'])) {
+            $uri = \Illuminate\Support\Uri::of($_SESSION['redirect_to']);
+            $allow_guest = $uri->query()->has('sharing_token')
+                or str_starts_with($uri->path(), '/navigator')
+                or str_starts_with($uri->path(), '/eventSubscriptions')
+                or str_ends_with($uri->path(), 'startWithPw'); // videoconference-link;
+            // if resource is accessible for guests, request silent authentication
+            if ($allow_guest) $oidc->addAuthParam(['prompt' => 'none']);
+        }
         
         try {
             $oidc->authenticate(); // authenticates user and saves tokens in instance
+
+            $common_name = $oidc->requestUserInfo('sub');
+            // login user by common_name
+            Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
+            // store session-id in redis-set
+            $sessionId = session()->getId();
+            Redis::sadd('user_sessions:' . $common_name, $sessionId);
+            Redis::expire('user_sessions:' . $common_name, config('session.lifetime') * 60);
+    
+            LogController::set('ssoLogin'); // set statistics for SSO-authentication
+            LogController::setStatistics(); // set statistics for used browser and device type
         } catch (\Throwable $th) {
             // if authentication fails, login as guest user
             Auth::loginUsingId((env('GUEST_USER')), true);
             LogController::set('guestLogin'); // set statistics for guest-authentication
         }
-
-        $common_name = $oidc->requestUserInfo('sub');
-        // login user by common_name
-        Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
-        // store session-id in redis-set
-        $sessionId = session()->getId();
-        Redis::sadd('user_sessions:' . $common_name, $sessionId);
-        Redis::expire('user_sessions:' . $common_name, config('session.lifetime') * 60);
-
-        LogController::set('ssoLogin'); // set statistics for SSO-authentication
-        LogController::setStatistics(); // set statistics for used browser and device type
 
         $redirect = '/home'; // fallback
         // since the user got redirected back after authentication, redirect to the originally requested URL

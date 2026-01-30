@@ -79,8 +79,7 @@ class OIDCController extends Controller
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
 
         foreach ($sessionIds as $sessionId) {
-            // TODO: check if session-key prefix is correct
-            Redis::del('laravel_session:' . $sessionId);
+            Redis::del('curriculum_session:' . $sessionId);
         }
 
         Redis::del('user_sessions:' . $common_name);

@@ -90,9 +90,9 @@ class KanbanController extends Controller
         }
 
         foreach (auth()->user()->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->kanbans()->withAllTags($tags));
+            $userCanSee = $userCanSee->merge($group->kanbans()->withAllTags($tags)->get());
         }
-        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans()->withAllTags($tags);
+        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans()->withAllTags($tags)->get();
         $userCanSee   = $userCanSee->merge($organization);
 
         if ($withOwned) {

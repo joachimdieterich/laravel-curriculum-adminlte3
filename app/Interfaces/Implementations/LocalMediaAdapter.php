@@ -8,8 +8,7 @@ use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Laravel\Facades\Image;
 use Yajra\DataTables\DataTables;
 
 class LocalMediaAdapter implements MediaInterface
@@ -143,13 +142,13 @@ class LocalMediaAdapter implements MediaInterface
                 abort(404);
             }
             if (! file_exists($thumb_path)) {
-                $img = Image::make($path)->resize($size, null, function ($constraint) {
+                $img = Image::read($path)->resize($size, null, function ($constraint) {
                     $constraint->aspectRatio();
                 });
                 // save file as jpg with medium quality
                 $img->save($thumb_path, 60);
             } else {
-                $img = Image::make($thumb_path);
+                $img = Image::read($thumb_path);
             }
         }
         /*

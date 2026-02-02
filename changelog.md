@@ -1,8 +1,40 @@
+## 1.3 (2025-01-29)
+- added Tags-system for Kanbans and Curricula
+- Kanbans/Curricula can now be favorited
+- replaced static Edusharing-code with plugin
+- added logic to load edusharing-media in different resolutions
+- fixed mime_type not being saved on external-media
+- clicking on external-media now opens them in new tab
+- removed using MediumPreviewModal in kanbans
+- Media: open locally uploaded PDFs in a new tab
+- Media: allow deleting subscriptions by admins
+- changed all v-swatches to 5x5 color-grid
+- Kanbans: improved UI of ConfirmModal and error-handling
+- Kanbans: added copy-note
+- Kanban: added 'undo'-button after deleting KanbanStatus/KanbanItem
+- Kanban: added searchbar to filter for status/items
+- Kanban: always allow copy for owner/admin
+- KanbanItem: scroll comments into view on opening them in last item
+- updated copy-functionality for Kanban-models regarding copying Media
+- allow handling of medium-subscription-delete if multiple subscriptions to the same medium exist
+- removed by_organization filter in kanbans
+- VideoconferenceModal: fixed selecting non-default server causing 422
+- Map: now checks for edit-rights | structural changes and styling
+- MapModal: hid multiple fields for non-admins
+- Map: fixed initial latitude/longitude usage and changed default values
+- Map: restructured initial marker-cluster and added popup on cluster-hover
+- Map: show marker-popup when hovering entry in sidebar
+- MarkerModal: added option to get coordinates by clicking on the map
+- Objective: list enabling-objectives on 'objectives'-tab
+- ObjectiveMedia: added medium-edit to change title, description and color
+- added RLP-Logo to local storage
+- added schulcampusRLP icons to project
+
 ## 1.2.2 (2025-10-17)
 - KanbanItem: allow Comments by guests
 - ObjectiveMedia: added ConfirmModal for deletion
 - TerminalObjectives: fixed 'delete-objective' not sending delete-request
-Videoconference: fixed issue where users accessing through token-links didn't have access
+- Videoconference: fixed issue where users accessing through token-links didn't have access
 - MediumPreviewModal: highlighted close-button to make it more visible
 - MapMarker: fixed MediumSubscriptions not updating when viewing another Marker
 - AchievementsApiController: created 'get'-endpoint, overhauled 'store'-endpoint and added documentation

@@ -377,6 +377,7 @@ class KanbanController extends Controller
     {
         if ($request->input('mark')) {
             $kanban->attachTag(trans('global.tag.favourite.singular'));
+            LogController::set(get_class($this) . '@' . __FUNCTION__);
         } else {
             $kanban->detachTag(trans('global.tag.favourite.singular'));
         }

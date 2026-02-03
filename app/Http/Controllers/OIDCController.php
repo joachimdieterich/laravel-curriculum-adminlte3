@@ -47,12 +47,13 @@ class OIDCController extends Controller
             Redis::expire('user_sessions:' . $common_name, config('session.lifetime') * 60);
     
             LogController::set('ssoLogin'); // set statistics for SSO-authentication
-            LogController::setStatistics(); // set statistics for used browser and device type
         } catch (\Throwable $th) {
             // if authentication fails, login as guest user
             Auth::loginUsingId((env('GUEST_USER')), true);
             LogController::set('guestLogin'); // set statistics for guest-authentication
         }
+
+        LogController::setStatistics(); // set statistics for used browser and device type
 
         $redirect = '/home'; // fallback
         // since the user got redirected back after authentication, redirect to the originally requested URL
@@ -60,6 +61,7 @@ class OIDCController extends Controller
             $redirect = $_SESSION['redirect_to'];
             unset($_SESSION['redirect_to']);
         }
+
         return redirect($redirect);
     }
 

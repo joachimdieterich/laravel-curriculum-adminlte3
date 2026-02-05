@@ -544,7 +544,7 @@ class CurriculumController extends Controller
     {
         if ($request->input('mark')) {
             $curriculum->attachTag(trans('global.tag.favourite.singular'));
-            LogController::set(get_class($this) . '@' . __FUNCTION__);
+            LogController::set(get_class($this) . '@' . __FUNCTION__, $curriculum->id);
         } else {
             $curriculum->detachTag(trans('global.tag.favourite.singular'));
         }
@@ -556,6 +556,7 @@ class CurriculumController extends Controller
     {
         if ($request->input('mark')) {
             $curriculum->attachTag(trans('global.tag.hidden.singular'));
+            LogController::set(get_class($this) . '@' . __FUNCTION__, $curriculum->id);
         } else {
             $curriculum->detachTag(trans('global.tag.hidden.singular'));
         }

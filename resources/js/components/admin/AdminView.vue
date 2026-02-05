@@ -114,8 +114,8 @@
                             :date_end="date_end"
                         />
                     </span>
-                     <span class="col-3 mt-1">
-                       <PieChart
+                    <span class="col-3 mt-1">
+                        <PieChart
                             id="achievements_chart"
                             :title="trans('global.achievement.title')"
                             chart="achievements"
@@ -182,6 +182,24 @@
                             id="bbbPlugin_chart"
                             :title="trans('global.videoconference.title')"
                             chart="bbbPlugin"
+                            :date_begin="date_begin"
+                            :date_end="date_end"
+                        />
+                    </span>
+                    <span class="col-3 mt-1">
+                        <PieChart
+                            id="favour_chart"
+                            :title=" trans('global.tag.favourite.plural')"
+                            chart="favour"
+                            :date_begin="date_begin"
+                            :date_end="date_end"
+                        />
+                    </span>
+                    <span class="col-3 mt-1">
+                        <PieChart
+                            id="hidden_chart"
+                            :title=" trans('global.tag.hidden.plural')"
+                            chart="hidden"
                             :date_begin="date_begin"
                             :date_end="date_end"
                         />

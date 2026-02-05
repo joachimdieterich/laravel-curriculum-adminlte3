@@ -264,7 +264,7 @@ class KanbanController extends Controller
         LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
 
         return view('kanbans.show')
-            ->with(compact('kanban', 'may_edit', 'is_shared', 'is_websocket_active'));
+            ->with(compact('kanban', 'may_edit', 'is_shared', 'is_websocket_active', 'may_favour'));
     }
 
     /**
@@ -377,7 +377,7 @@ class KanbanController extends Controller
     {
         if ($request->input('mark')) {
             $kanban->attachTag(trans('global.tag.favourite.singular'));
-            LogController::set(get_class($this) . '@' . __FUNCTION__);
+            LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
         } else {
             $kanban->detachTag(trans('global.tag.favourite.singular'));
         }
@@ -389,6 +389,7 @@ class KanbanController extends Controller
     {
         if ($request->input('mark')) {
             $kanban->attachTag(trans('global.tag.hidden.singular'));
+            LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
         } else {
             $kanban->detachTag(trans('global.tag.hidden.singular'));
         }

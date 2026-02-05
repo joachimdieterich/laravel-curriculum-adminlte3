@@ -433,7 +433,15 @@ return [
             'singular' => 'Favourite',
             'plural' => 'Favourites',
         ],
+        'favouritism' => [
+            'singular' => 'Favouritism',
+            'plural' => 'Favouritism',
+        ],
         'hidden' => [
+            'singular' => 'Hidden',
+            'plural' => 'Hidden',
+        ],
+        'hidden_statistic' => [
             'singular' => 'Hidden',
             'plural' => 'Hidden',
         ],

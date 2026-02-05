@@ -67,6 +67,53 @@ class StatisticController extends Controller
             case 'model':
                 $result = $this->getEntriesByModel(request('model'), request('date_begin'), request('date_end'));
                 break;
+            case 'favour':
+                $kanbansCounter = $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@favourKanban', 'kanbans', request('date_begin'), request('date_end'))
+                    ->pluck('counter')
+                    ->sum();
+
+                if ($kanbansCounter > 0) {
+                    $result[] = [
+                        'value' => trans('global.kanban.title'),
+                        'counter' => $kanbansCounter,
+                    ];
+                }
+
+                $curriculaCounter = $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@favourCurriculum', 'curricula', request('date_begin'), request('date_end'))
+                    ->pluck('counter')
+                    ->sum();
+
+                if ($curriculaCounter > 0) {
+                    $result[] = [
+                        'value' => trans('global.curriculum.title'),
+                        'counter' => $curriculaCounter,
+                    ];
+                }
+
+                break;
+            case 'hidden':
+                $kanbansCounter = $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@hideKanban', 'kanbans', request('date_begin'), request('date_end'))
+                    ->pluck('counter')
+                    ->sum();
+
+                if ($kanbansCounter > 0) {
+                    $result[] = [
+                        'value' => trans('global.kanban.title'),
+                        'counter' => $kanbansCounter,
+                    ];
+                }
+
+                $curriculaCounter = $this->getEntriesByKeyWithRelatedTitle('App\Http\Controllers\KanbanController@hideCurriculum', 'curricula', request('date_begin'), request('date_end'))
+                    ->pluck('counter')
+                    ->sum();
+
+                if ($curriculaCounter > 0) {
+                    $result[] = [
+                        'value' => trans('global.curriculum.title'),
+                        'counter' => $curriculaCounter,
+                    ];
+                }
+                break;
             default:
                 break;
         }

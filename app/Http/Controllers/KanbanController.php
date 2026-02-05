@@ -257,6 +257,9 @@ class KanbanController extends Controller
         $kanban = $kanban->withRelations();
 
         $may_edit = $kanban->isEditable(auth()->user()->id, $token);
+        $may_favour = auth()->user()->id != env(
+            'GUEST_USER'
+        );
 
         $is_shared           = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
         $is_websocket_active = env('WEBSOCKET_APP_ACTIVE');
@@ -264,7 +267,7 @@ class KanbanController extends Controller
         LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
 
         return view('kanbans.show')
-            ->with(compact('kanban', 'may_edit', 'is_shared', 'is_websocket_active'));
+            ->with(compact('kanban', 'may_edit', 'is_shared', 'is_websocket_active', 'may_favour'));
     }
 
     /**
@@ -377,7 +380,7 @@ class KanbanController extends Controller
     {
         if ($request->input('mark')) {
             $kanban->attachTag(trans('global.tag.favourite.singular'));
-            LogController::set(get_class($this) . '@' . __FUNCTION__);
+            LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
         } else {
             $kanban->detachTag(trans('global.tag.favourite.singular'));
         }
@@ -389,6 +392,7 @@ class KanbanController extends Controller
     {
         if ($request->input('mark')) {
             $kanban->attachTag(trans('global.tag.hidden.singular'));
+            LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
         } else {
             $kanban->detachTag(trans('global.tag.hidden.singular'));
         }

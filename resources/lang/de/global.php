@@ -449,9 +449,17 @@ return [
             'singular' => 'Favorit',
             'plural' => 'Favoriten',
         ],
+        'favouritism' => [
+            'singular' => 'Favoritisierung',
+            'plural' => 'Favoritisierungen',
+        ],
         'hidden' => [
             'singular' => 'Ausgeblendet',
-            'plural' => 'Augeblendete',
+            'plural' => 'Ausgeblendete',
+        ],
+        'hidden_statistic' => [
+            'singular' => 'Ausgeblendet',
+            'plural' => 'Ausblendungen',
         ],
         'filter' => [
             'title' => 'Nach Tags filtern',

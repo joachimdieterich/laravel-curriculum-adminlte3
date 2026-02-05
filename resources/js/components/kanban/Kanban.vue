@@ -95,6 +95,7 @@
                                             || ($userId == kanban.owner_id)"
                                         :key="item.id"
                                         :editable="editable"
+                                        :favourable="favourable"
                                         :commentable="kanban.commentable"
                                         :only_edit_owned_items="kanban.only_edit_owned_items"
                                         :collapse_items="kanban.collapse_items"
@@ -201,7 +202,7 @@
             <p class="h6">{{ trans('global.owner') }}: {{ initialKanban.owner.firstname + ' ' + initialKanban.owner.lastname }}</p>
         </Teleport>
         <Teleport to="#contributors">
-            <contributors-list v-if="Object.values(currentContributors).length > 1" :contributors="currentContributors" :heading="true"></contributors-list>
+            <contributors-list v-if="Object.values(currentContributors).length > 1 && editable" :contributors="currentContributors" :heading="true"></contributors-list>
         </Teleport>
     </div>
 </template>
@@ -227,6 +228,10 @@ export default {
             default: null,
         },
         editable: {
+            type: Boolean,
+            default: true,
+        },
+        favourable: {
             type: Boolean,
             default: true,
         },

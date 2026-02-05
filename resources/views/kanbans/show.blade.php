@@ -28,6 +28,7 @@
     <div class="d-flex flex-fill h-print-auto" style="height: calc(100vh - 218px)">
         <kanban
             :editable="{{ $may_edit ? 'true' : 'false' }}"
+            :favourable="{{ $may_favour ? 'true' : 'false' }}"
             :websocket="{{ $is_websocket_active ? 'true' : 'false' }}"
             ref="kanbanBoard"
             :initial-kanban="{{ $kanban }}"></kanban>

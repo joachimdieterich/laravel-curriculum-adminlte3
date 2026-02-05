@@ -192,6 +192,7 @@
                     </span>
                 </button>
                 <Reaction
+                    v-if="favourable"
                     :model="item"
                     reaction="like"
                     url="/kanbanItems"
@@ -238,6 +239,10 @@ export default {
             default: false,
         },
         editable: {
+            type: Boolean,
+            default: false,
+        },
+        favourable: {
             type: Boolean,
             default: false,
         },

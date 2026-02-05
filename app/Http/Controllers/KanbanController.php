@@ -257,6 +257,9 @@ class KanbanController extends Controller
         $kanban = $kanban->withRelations();
 
         $may_edit = $kanban->isEditable(auth()->user()->id, $token);
+        $may_favour = auth()->user()->id != env(
+            'GUEST_USER'
+        );
 
         $is_shared           = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
         $is_websocket_active = env('WEBSOCKET_APP_ACTIVE');

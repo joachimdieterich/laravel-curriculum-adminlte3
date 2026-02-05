@@ -36,6 +36,20 @@
         width: 3rem !important;
     }
 
+    &.btn-tab {
+        color: #6c757d;
+        border-radius: 10px;
+
+        &:hover {
+            color: #007bff;
+            background-color: transparent;
+        }
+        &.active {
+            color: white;
+            background-color: #007bff;
+        }
+    }
+
     &.text-secondary:hover { color: #494f54 !important; } // TODO: might be redundant, use 'link-muted' instead
     &:focus { box-shadow: none; }
     &:focus-visible { box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }

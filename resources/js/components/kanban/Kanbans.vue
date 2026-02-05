@@ -1,94 +1,12 @@
 <template>
     <div class="row">
-        <div class="col-md-12 ">
-            <ul v-if="!subscribable"
-                class="nav nav-pills py-2"
-                role="tablist"
-            >
-                <li class="nav-item pointer">
-                    <a
-                        id="kanban-filter-favourite"
-                        class="nav-link"
-                        :class="filter === 'favourite' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('favourite')"
-                    >
-                        <i class="fas fa-heart pr-2"></i>
-                        {{ trans('global.tag.favourite.plural') }}
-                    </a>
-                    <a
-                        id="kanban-filter-hidden"
-                        class="nav-link"
-                        :class="filter === 'hidden' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('hidden')"
-                    >
-                        <i class="fas fa-eye-slash pr-2"></i>
-                        {{ trans('global.tag.hidden.plural') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="kanban-filter-all"
-                        class="nav-link "
-                        :class="filter === 'all' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('all')"
-                    >
-                        <i class="fas fa-columns pr-2"></i>
-                        {{ trans('global.all') }} {{ trans('global.kanban.title') }}
-                    </a>
-                </li>
-                <li
-                    v-permission="'kanban_create'"
-                    class="nav-item pointer"
-                >
-                    <a
-                        id="custom-filter-owner"
-                        class="nav-link"
-                        :class="filter === 'owner' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('owner')"
-                    >
-                        <i class="fa fa-user pr-2"></i>
-                        {{ trans('global.my') }} {{ trans('global.kanban.title') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="custom-filter-shared-with-me"
-                        class="nav-link"
-                        :class="filter === 'shared_with_me' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('shared_with_me')"
-                    >
-                        <i class="fa fa-paper-plane pr-2"></i>
-                        {{ trans('global.shared_with_me') }}
-                    </a>
-                </li>
-                <li
-                    v-permission="'kanban_create'"
-                    class="nav-item pointer"
-                >
-                    <a
-                        id="custom-tabs-shared-by-me"
-                        class="nav-link"
-                        :class="filter === 'shared_by_me' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('shared_by_me')"
-                    >
-                        <i class="fa fa-share-nodes pr-2"></i>
-                        {{ trans('global.shared_by_me') }}
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <TabList
+            :model="'kanban'"
+            modelIcon="fa-columns"
+            :tabs="['favourite', 'all', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"
+            :activeTab="filter"
+            @change-tab="setFilter"
+        />
 
         <div
             id="kanban-content"
@@ -254,6 +172,7 @@
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import SubscribeKanbanModal from "../kanban/SubscribeKanbanModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
+import TabList from "../uiElements/TabList.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
@@ -280,8 +199,14 @@ export default {
             type: String,
             default: 'delete',
         },
-        subscribable_type: '',
-        subscribable_id: '',
+        subscribable_type: {
+            type: String,
+            default: '',
+        },
+        subscribable_id: {
+            type: Number,
+            default: null,
+        },
     },
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
@@ -335,8 +260,7 @@ export default {
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            this.url = '/kanbans/list?filter=' + this.filter;
-            this.dt.ajax.url(this.url).load();
+            this.dt.ajax.url('/kanbans/list?filter=' + this.filter).load();
         },
         editKanban(kanban) {
             this.globalStore?.showModal('kanban-modal', kanban);
@@ -440,6 +364,7 @@ export default {
         DataTable,
         KanbanModal,
         IndexWidget,
+        TabList,
     },
 }
 </script>

@@ -181,9 +181,12 @@ export default {
 
                     if (this.objective_types.length > 0) {
                         // get the order by their current index instead of their id
+                        // console.log(this.curriculum.objective_type_order);
+                        // console.log(this.objective_types);
                         this.type_order = this.curriculum.objective_type_order?.map(
                             type_id => this.objective_types.findIndex(type => type.id === type_id)
                         ) ?? this.objective_types.map((t, index) => index);
+                        // console.log(this.type_order);
                     }
                 })
                 .catch(e => {
@@ -217,6 +220,8 @@ export default {
         handleTypeMoved() {
             // active-state needs to be reset, since it changes to a new index
             this.$el.querySelector('.nav-link.active').classList.remove('active');
+            console.log(this.activeTypeId);
+            console.log(document.getElementById(this.activeTypeId + '-tab'));
             document.getElementById(this.activeTypeId + '-tab').classList.add('active');
             // send new order to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", {
@@ -232,6 +237,7 @@ export default {
             this.type_order.push(this.type_order.length); // index-based
             this.activeTypeId = type.id;
             this.$nextTick(() => { // wait for DOM to be updated
+                // console.log($('#' + type.id + '-tab'));
                 $('#' + type.id + '-tab')[0].click(); // switch to new tab
                 this.handleTypeMoved(); // send new order to the server
             });
@@ -245,9 +251,43 @@ export default {
 
             let index = this.objective_types.findIndex(t => t.id === type.id);
             this.objective_types.splice(index, 1);
-            this.type_order.splice(index, 1);
+            /**
+             * If a type is remove we can't just remove it from the type_order like this
+             *    this.type_order.splice(index, 1);
+             *
+             * We would leave a gap in the array like this:
+             * [
+             *     0: 0
+             *     1: 1
+             *     3: 3
+             * ]
+             *
+             * This will lead to undefined exceptions.
+             * Because of this, we need to "put" all entry after the spliced one, down by an increment of 1
+             */
+            let new_type_order = [];
+            this.type_order.forEach(function (value, i) {
+                console.log(i);
+                console.log(index);
+                if (i < index) {
+                    new_type_order[i] = value;
+                    console.log(new_type_order);
 
-            this.handleTypeMoved(); // send new order to the server
+                    return;
+                }
+
+                if (index == i) {
+                    return;
+                }
+
+                new_type_order[i - 1] = value - 1;
+            });
+            console.log(new_type_order);
+            this.type_order = new_type_order;
+
+            this.$nextTick(() => { // wait for DOM to be updated
+                this.handleTypeMoved(); // send new order to the server
+            });
         },
         removeObjective(deletedObjective) {
             if (deletedObjective.terminal_objective_id === undefined) { // terminal
@@ -288,6 +328,7 @@ export default {
                 ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
             )[0];
 
+            // console.log(this.objective_types);
             let firstTab = this.objective_types[this.type_order[0]].id;
             // the 'active'-state does only need to be set programmatically for the initial tab
             // the rest will be handled by the default nav-tabs behaviour
@@ -300,7 +341,10 @@ export default {
         // terminal objectives
         this.$eventHub.on('terminal-objective-added', (terminal) => {
             const type = terminal.type;
+            console.log(terminal);
             let obj_type = this.objective_types.find(t => t.id === type.id);
+            console.log(this.objective_types);
+            console.log(obj_type);
             if (obj_type === undefined) {
                 this.addNewType(type);
                 this.objective_types[this.objective_types.length - 1].terminal_objectives = [terminal];
@@ -311,15 +355,28 @@ export default {
         });
 
         this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
-            let type = this.objective_types.find(type => type.id === updatedTerminal.objective_type_id);
+            console.log(updatedTerminal);
+            let type = this.objective_types.find(
+                function(type){
+                    console.log(type.id);
+                    console.log(updatedTerminal.objective_type_id);
+                    return type.id === updatedTerminal.objective_type_id;
+                }
+            );
+            // let type = this.objective_types.find(type => type.id === updatedTerminal.objective_type_id);
+            console.log(this.objective_types);
+            console.log(type);
             // objective-type was changed and the new type was not in use before
             if (type === undefined) {
                 this.addNewType(updatedTerminal.type);
                 type = this.objective_types[this.objective_types.length - 1];
+                console.log(type);
                 // don't add the updated objective to the new type yet
                 type.terminal_objectives = [];
+                console.log(type);
             }
 
+            console.log(type);
             let terminal = type.terminal_objectives.find(terminal => terminal.id === updatedTerminal.id);
             // objective-type was changed, so we need to find where the old objective is
             if (terminal === undefined) {
@@ -332,7 +389,7 @@ export default {
                         break;
                     }
                 }
-                
+
                 // move the enabling-objectives from the old model to the new one
                 updatedTerminal.enabling_objectives = terminal.enabling_objectives;
                 // add updated objective to its new type
@@ -345,8 +402,8 @@ export default {
                 for (let i = index; i < old_type.terminal_objectives.length; i++) {
                     old_type.terminal_objectives[i].order_id--;
                 }
-                
-                // update max-ids 
+
+                // update max-ids
                 this.max_ids[updatedTerminal.objective_type_id] = updatedTerminal.id;
                 if (this.max_ids[terminal.objective_type_id] === terminal.id) {
                     let last_terminal = old_type.terminal_objectives[old_type.terminal_objectives.length - 1];
@@ -357,7 +414,9 @@ export default {
                 if (old_type.terminal_objectives.length === 0) {
                     this.removeType(old_type, false);
                     this.activeTypeId = type.id;
-                    $('#' + this.activeTypeId + '-tab')[0].click();
+                    this.$nextTick(() => {
+                        $('#' + this.activeTypeId + '-tab')[0].click();
+                    });
                 }
             } else {
                 Object.assign(terminal, updatedTerminal);

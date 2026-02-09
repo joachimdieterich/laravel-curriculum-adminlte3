@@ -15,29 +15,35 @@
 
         <div
             :id="model + '-filter'"
-            class="d-flex flex-nowrap overflow-auto hide-scrollbars py-2"
+            class="position-relative d-flex flex-nowrap overflow-auto hide-scrollbars my-2"
             role="tablist"
             tabindex="-1"
             aria-label="Filter"
         >
-            <span v-for="(tab, index) in tabs"
-                :key="tab"
-                class="flex-shrink-0"
+            <div class="tablist-background position-absolute rounded-pill h-100"></div>
+            <span
+                :id="model + '-filter-wrapper'"
+                style="display: inherit; z-index: 1;"
             >
-                <button v-if="(tab !== 'owner' && tab !== 'shared-by-me') || checkPermission(model + '_create')"
-                    :id="model + '-filter-' + tab"
-                    class="btn btn-tab"
-                    :class="{ active: activeTab === tab }"
-                    role="tab"
-                    :tabindex="index === 0 ? '0' : '-1'"
-                    :aria-selected="activeTab === tab"
-                    @click="$emit('change-tab', tab)"
-                    @keydown.enter.space="$emit('change-tab', tab)"
-                    @keydown.left.right.prevent="moveFocus($event)"
+                <span v-for="(tab, index) in tabs"
+                    :key="tab"
+                    class="flex-shrink-0"
                 >
-                    <i class="fas pr-2" :class="tabIcon(tab)"></i>
-                    {{ tabText(tab) }}
-                </button>
+                    <button v-if="(tab !== 'owner' && tab !== 'shared-by-me') || checkPermission(model + '_create')"
+                        :id="model + '-filter-' + tab"
+                        class="btn btn-tab bg-transparent"
+                        :class="{ active: activeTab === tab }"
+                        role="tab"
+                        :tabindex="index === 0 ? '0' : '-1'"
+                        :aria-selected="activeTab === tab"
+                        @click="$emit('change-tab', tab)"
+                        @keydown.enter.space="$emit('change-tab', tab)"
+                        @keydown.left.right.prevent="moveFocus($event)"
+                    >
+                        <i class="fas pr-2" :class="tabIcon(tab)"></i>
+                        {{ tabText(tab) }}
+                    </button>
+                </span>
             </span>
         </div>
 
@@ -56,8 +62,6 @@
     </div>
 </template>
 <script>
-import { active } from 'd3';
-
 export default {
     name: "TabList",
     emits: ['change-tab'],
@@ -91,6 +95,7 @@ export default {
     mounted() {
         window.addEventListener('resize', this.checkTabListWidth);
         this.checkTabListWidth();
+        this.changeTab(this.tabs[0]); // initialize active-background position/width
     },
     unmounted() {
         window.removeEventListener('resize', this.checkTabListWidth);
@@ -132,10 +137,18 @@ export default {
                     return tab;
             }
         },
+        changeTab(tab) {
+            const tabRects = document.getElementById(this.model + '-filter-' + tab).getClientRects()[0];
+            const leftOffset = document.getElementById(this.model + '-filter-wrapper').getClientRects()[0].left;
+            const backgroundElem = this.$el.getElementsByClassName('tablist-background')[0];
+
+            backgroundElem.style.left = (tabRects.left - leftOffset) + 'px';
+            backgroundElem.style.width = tabRects.width + 'px';
+        },
         slide(right) {
             const tabListElement = document.getElementById(this.model + '-filter');
             const tabListLeftPos = tabListElement.getClientRects()[0].left;
-            const tabChildren = tabListElement.children;
+            const tabChildren = document.getElementById(this.model + '-filter-wrapper').children;
             let childLeftPos;
 
             if (right) {
@@ -172,5 +185,16 @@ export default {
             }
         },
     },
+    watch: {
+        activeTab: function(newTab) {
+            this.changeTab(newTab);
+        },
+    },
 }
 </script>
+<style scoped>
+.tablist-background {
+    background-color: #007bff;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+</style>

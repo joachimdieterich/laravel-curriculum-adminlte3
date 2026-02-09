@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex align-items-center px-3">
+    <div class="d-flex align-items-center w-100 px-3">
         <span v-if="showNavigators"
             class="pr-2"
         >

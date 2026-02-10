@@ -29,62 +29,20 @@
                         style="max-height: inherit;"
                     >
                         <div class="card-body overflow-auto">
-                            <ul class="nav nav-pills nav-fill">
-                                <!-- User -->
-                                <li v-if="shareWithUsers"
-                                    class="nav-item"
-                                >
-                                    <a
-                                        class="nav-link active show"
-                                        href="#user_subscription"
-                                        data-toggle="tab"
-                                    >
-                                        <i class="fa fa-user mr-2"></i>{{ trans('global.user.title') }}
-                                    </a>
-                                </li>
-                                <!-- Group -->
-                                <li v-if="shareWithGroups"
-                                    class="nav-item"
-                                >
-                                    <a
-                                        class="nav-link"
-                                        href="#group_subscription"
-                                        data-toggle="tab"
-                                    >
-                                        <i class="fa fa-users mr-2"></i>{{ trans('global.group.title') }}
-                                    </a>
-                                </li>
-                                <!-- Organization -->
-                                <li v-if="shareWithOrganizations"
-                                    class="nav-item"
-                                >
-                                    <a
-                                        class="nav-link"
-                                        href="#organization_subscription"
-                                        data-toggle="tab"
-                                    >
-                                        <i class="fa fa-university mr-2"></i>{{ trans('global.organization.title') }}
-                                    </a>
-                                </li>
-                                <!-- Token -->
-                                <li v-if="shareWithToken"
-                                    class="nav-item"
-                                >
-                                    <a
-                                        class="nav-link"
-                                        href="#token_subscription"
-                                        data-toggle="tab"
-                                    >
-                                        <i class="fa fa-key mr-2"></i>{{ trans('global.token') }}
-                                    </a>
-                                </li>
-                            </ul>
+                            <TabList
+                                :model="'subscribe'"
+                                modelIcon="fa-share"
+                                :tabs="['user', 'group', 'organization', 'token']"
+                                :activeTab="filter"
+                                @change-tab="setFilter"
+                            />
     
                             <div class="tab-content pt-2">
                                 <!-- User Tab -->
                                 <div v-if="shareWithUsers"
                                     id="user_subscription"
-                                    class="tab-pane active show"
+                                    class="tab-pane fade active show"
+                                    role="tabpanel"
                                 >
                                     <Select2
                                         id="users_subscription_select"
@@ -107,7 +65,8 @@
                                 <!-- Group Tab -->
                                 <div v-if="shareWithGroups"
                                     id="group_subscription"
-                                    class="tab-pane"
+                                    class="tab-pane fade"
+                                    role="tabpanel"
                                 >
                                     <Select2
                                         id="group_subscription_select"
@@ -130,7 +89,8 @@
                                 <!-- Organization Tab -->
                                 <div v-if="shareWithOrganizations"
                                     id="organization_subscription"
-                                    class="tab-pane"
+                                    class="tab-pane fade"
+                                    role="tabpanel"
                                 >
                                     <Select2
                                         id="organization_subscription_select"
@@ -153,7 +113,8 @@
                                 <!-- Token Tab -->
                                 <div v-if="shareWithToken"
                                     id="token_subscription"
-                                    class="tab-pane"
+                                    class="tab-pane fade"
+                                    role="tabpanel"
                                 >
                                     <div class="form-group pt-2">
                                         <input
@@ -228,6 +189,7 @@
     </Transition>
 </template>
 <script>
+import TabList from "../uiElements/TabList.vue";
 import Subscribers from "./Subscribers.vue";
 import Tokens from "./Tokens.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -266,6 +228,7 @@ export default {
             shareWithGroups: true,
             shareWithOrganizations: true,
             shareWithToken:  false,
+            filter: 'user',
             nameToken: '',
             canEditLabel: window.trans.global.can_edit,
         };
@@ -289,6 +252,10 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+        },
+        setFilter(filter, event) {
+            this.filter = filter;
+            $(event.currentTarget).tab('show');
         },
         subscribe(subscribable_type, subscribable_id) {
             axios.post('/' + this.modelUrl + 'Subscriptions', {
@@ -324,6 +291,7 @@ export default {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show) {
+                this.filter = 'user';
                 const params = state.modals[this.$options.name].params;
 
                 if (typeof (params) !== 'undefined') {
@@ -347,6 +315,7 @@ export default {
         });
     },
     components: {
+        TabList,
         Subscribers,
         Tokens,
         VueDatePicker,

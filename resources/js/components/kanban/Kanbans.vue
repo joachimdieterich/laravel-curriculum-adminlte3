@@ -1,6 +1,7 @@
 <template>
     <div class="row">
         <TabList
+            class="px-3"
             :model="'kanban'"
             modelIcon="fa-columns"
             :tabs="['favourite', 'all', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"

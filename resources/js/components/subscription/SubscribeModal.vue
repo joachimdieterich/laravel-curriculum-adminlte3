@@ -32,7 +32,7 @@
                             <TabList
                                 :model="'subscribe'"
                                 modelIcon="fa-share"
-                                :tabs="['user', 'group', 'organization', 'token']"
+                                :tabs="tabs"
                                 :activeTab="filter"
                                 @change-tab="setFilter"
                             />
@@ -228,6 +228,7 @@ export default {
             shareWithGroups: true,
             shareWithOrganizations: true,
             shareWithToken:  false,
+            tabs: [],
             filter: 'user',
             nameToken: '',
             canEditLabel: window.trans.global.can_edit,
@@ -291,7 +292,6 @@ export default {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show) {
-                this.filter = 'user';
                 const params = state.modals[this.$options.name].params;
 
                 if (typeof (params) !== 'undefined') {
@@ -306,6 +306,14 @@ export default {
                     this.canEditCheckbox = params.canEditCheckbox;
                     this.loadSubscribers();
                 }
+
+                this.tabs = [
+                    this.shareWithUsers && 'user',
+                    this.shareWithGroups && 'group',
+                    this.shareWithOrganizations && 'organization',
+                    this.shareWithToken && 'token',
+                ].filter(tab => tab);
+                this.filter = this.tabs[0];
             }
         });
 

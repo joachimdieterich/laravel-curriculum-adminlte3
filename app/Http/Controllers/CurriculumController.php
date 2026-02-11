@@ -241,10 +241,13 @@ class CurriculumController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @param Curriculum $curriculum
+     * @param null       $token
+     *
+     * @return array|Factory|View|\Illuminate\View\View
+     * @throws JsonException
      */
-    public function show(Curriculum $curriculum, $achievements = false, $token = null)
+    public function show(Curriculum $curriculum, $token = null)
     {
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
@@ -285,17 +288,6 @@ class CurriculumController extends Controller
             ->with(compact('objectiveTypes'))
             ->with(compact('levels'))
             ->with(compact('settings'));
-    }
-
-    /**
-     * Display the specified resource with achievements.
-     *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
-     */
-    public function showAchievements(Curriculum $curriculum)
-    {
-        $this->show($curriculum, true);
     }
 
     public function getObjectives(Curriculum $curriculum)
@@ -695,7 +687,7 @@ class CurriculumController extends Controller
             abort(410, 'global.token_expired');
         }
 
-        return $this->show($curriculum, false, $input['sharing_token']);
+        return $this->show($curriculum, $input['sharing_token']);
 
     }
 

@@ -12,13 +12,15 @@ use App\Level;
 use App\Medium;
 use App\Organization;
 use App\Tag;
-use App\User;
 use App\VariantDefinition;
 use Carbon\Carbon;
 use Gate;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 use Yajra\DataTables\DataTables;
 
 class CurriculumController extends Controller
@@ -260,19 +262,13 @@ class CurriculumController extends Controller
         ])
         ->find($curriculum->id);
 
-        if ($token == null)
-        {
-            $may_edit = $curriculum->isEditable();
-        }
-        else
-        {
-            $may_edit = $curriculum->isEditable(auth()->user()->id, $token);
-        }
+        $may_edit = $token === null ? $curriculum->isEditable() : $curriculum->isEditable(auth()->user()->id, $token);
+        $is_websocket_active = env('WEBSOCKET_APP_ACTIVE');
 
         $settings = json_encode([
-            'edit' => $may_edit, //(auth()->user()->id === $curriculum->owner_id) ? true : false,
+            'edit'                          => $may_edit,
             'cross_reference_curriculum_id' => false,
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         if (request()->wantsJson()) {
             return ['contents' => $curriculum->contents];
@@ -283,6 +279,7 @@ class CurriculumController extends Controller
                 'curriculum',
                 'levels',
                 'settings',
+                'is_websocket_active',
             ));
     }
 

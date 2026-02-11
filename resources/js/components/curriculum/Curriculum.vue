@@ -276,6 +276,9 @@
                 <i class="fa fa-share-alt"></i>
             </a>
         </Teleport>
+        <Teleport to="#contributors">
+            <contributors-list v-if="Object.values(currentContributors).length > 1" :contributors="currentContributors" :heading="true"></contributors-list>
+        </Teleport>
     </div>
 </template>
 <script>
@@ -295,11 +298,14 @@ import {useGlobalStore} from "../../store/global";
 import ContentModal from "../content/ContentModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MediumExportModal from "../media/MediumExportModal.vue";
+import ContributorsList from "../uiElements/ContributorsList.vue";
+import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
     name: "Curriculum",
     components: {
+        ContributorsList,
         MediumModal,
         MediumExportModal,
         ContentModal,
@@ -326,13 +332,20 @@ export default {
             type: Object,
             default: null,
         },
+        websocket: {
+            type: Boolean,
+            default: false,
+        },
     },
     setup() {
         const store = useDatatableStore();
         const globalStore = useGlobalStore();
+        const toast = useToast();
+
         return {
             store,
             globalStore,
+            toast,
         }
     },
     data() {
@@ -349,6 +362,7 @@ export default {
             options : this.$dtOptions,
             search: '',
             dt: null,
+            currentContributors: {},
         }
     },
     mounted() {
@@ -364,6 +378,11 @@ export default {
         this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {
             Object.assign(this.currentCurriculum, updatedCurriculum);
         });
+
+        this.startWebsocket();
+    },
+    unmounted() {
+        this.stopWebsocket();
     },
     methods: {
         createCertificate() {
@@ -376,9 +395,6 @@ export default {
         },
         loaderEvent: function() {
             this.$refs.Contents.loaderEvent();
-        },
-        setCrossReferenceCurriculumId: function(curriculum_id) { //can be called external
-            this.settings.cross_reference_curriculum_id = curriculum_id;
         },
         generateCertificate() {
             this.globalStore?.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});
@@ -410,6 +426,33 @@ export default {
             this.store.setSelectedIds('curriculum-user-datatable', selection);
 
             this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
+        },
+        startWebsocket() {
+            if (this.websocket === true) {
+                this.$echo
+                    .join('App.Curriculum.' + this.curriculum.id)
+                    .here((users) => {
+                        for(let user of users) {
+                            this.currentContributors[user.id] = user;
+                        }
+                    })
+                    .listen('.CurriculumUpdated', (payload) => {
+                        this.$eventHub.emit('curriculum-updated', payload.model);
+                    })
+                    .joining((user) => {
+                        this.currentContributors[user.id] = user;
+                        this.toast.info(this.trans('global.websockets.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
+                    })
+                    .leaving((user) => {
+                        delete this.currentContributors[user.id];
+                        this.toast.info(this.trans('global.websockets.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
+                    });
+            }
+        },
+        stopWebsocket() {
+            if (this.websocket === true && this.kanban.auto_refresh === true) {
+                this.$echo.leave('App.Kanban.' + this.kanban.id);
+            }
         },
     }
 }

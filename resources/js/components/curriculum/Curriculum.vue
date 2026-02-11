@@ -198,7 +198,6 @@
                         <TerminalObjectives
                             ref="terminalObjectives"
                             :curriculum="curriculum"
-                            :objectivetypes="objectivetypes"
                             :settings="settings"
                         />
                     </div>
@@ -321,10 +320,6 @@ export default {
         },
         course: {
             type: Object,
-            default: null,
-        },
-        objectivetypes: {
-            type: Array,
             default: null,
         },
         settings: {

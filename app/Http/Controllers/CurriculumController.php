@@ -8,6 +8,7 @@ use App\CurriculumSubscription;
 use App\CurriculumType;
 use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Http\Requests\Tags\HideModelRequest;
+use App\Level;
 use App\Medium;
 use App\Organization;
 use App\Tag;
@@ -252,13 +253,7 @@ class CurriculumController extends Controller
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
-        $objectiveTypes = \App\ObjectiveType::select('objective_types.id', 'objective_types.title', 'objective_types.uuid')
-            ->join('terminal_objectives', 'objective_types.id', '=', 'terminal_objectives.objective_type_id')
-            ->join('curricula', 'curricula.id', '=', 'terminal_objectives.curriculum_id')
-            ->where('curricula.id', $curriculum->id)
-            ->distinct()
-            ->get();
-        $levels = \App\Level::all();
+        $levels = Level::all();
 
         $curriculum = Curriculum::with([
             'glossar.contents',
@@ -284,10 +279,11 @@ class CurriculumController extends Controller
         }
 
         return view('curricula.show')
-            ->with(compact('curriculum'))
-            ->with(compact('objectiveTypes'))
-            ->with(compact('levels'))
-            ->with(compact('settings'));
+            ->with(compact(
+                'curriculum',
+                'levels',
+                'settings',
+            ));
     }
 
     public function getObjectives(Curriculum $curriculum)

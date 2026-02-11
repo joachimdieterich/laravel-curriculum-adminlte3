@@ -87,9 +87,9 @@ class CurriculumController extends Controller
         $userCanSee = $user->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get();
 
         foreach ($user->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags)->withoutTags($negativeTags));
+            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get());
         }
-        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags);
+        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get());
         $userCanSee   = $userCanSee->merge($organization);
 
         if ($withOwned) {

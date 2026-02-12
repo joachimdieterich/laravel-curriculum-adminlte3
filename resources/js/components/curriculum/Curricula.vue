@@ -28,7 +28,7 @@
                         @click="setFilter('hidden')"
                     >
                         <i class="fas fa-eye-slash pr-2"></i>
-                        {{ trans('global.tag.hidden.plural') }}
+                        {{ trans('global.tag.hidden.singular') }}
                     </a>
                 </li>
                 <li class="nav-item pointer">
@@ -185,11 +185,12 @@
                         x-placement="left-start"
                     >
                         <hide
+                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
                             url="/curricula/[id]/hide"
                             :model="curriculum"
                             :is-hidden="curriculum.is_hidden"
-                            @mark-status-changed="(newCurriculum) => {
-                                curricula[index] = newCurriculum;
+                            @mark-status-changed="() => {
+                                curriculum.splice(index, 1)
                             }"
                         />
 

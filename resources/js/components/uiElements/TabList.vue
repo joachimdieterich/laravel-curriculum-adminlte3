@@ -134,7 +134,7 @@ export default {
                 case 'favourite':
                     return this.trans('global.tag.favourite.plural');
                 case 'hidden':
-                    return this.trans('global.tag.hidden.plural');
+                    return this.trans('global.tag.hidden.singular');
                 case 'all':
                     return this.trans('global.all') + ' ' + this.trans('global.kanban.title');
                 case 'owner':

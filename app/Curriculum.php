@@ -3,6 +3,8 @@
 namespace App;
 
 use App\Services\Tag\HasTags;
+use App\Services\Websocket\Broadcastable;
+use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,9 +33,9 @@ use Mews\Purifier\Casts\CleanHtml;
  *      @OA\Property( property="updated_at", type="string")
  *   ),
  */
-class Curriculum extends Model
+class Curriculum extends Model implements Broadcastable
 {
-    use HasFactory, HasTags;
+    use BroadcastsEvents, HasFactory, HasTags;
 
     protected $guarded = [];
 
@@ -60,6 +62,13 @@ class Curriculum extends Model
     protected $appends = ['is_favourited', 'is_hidden'];
 
     protected $with = ['owner:id,firstname,lastname'];
+
+    public function withRelations(): self|null
+    {
+        return $this->with([
+            'glossar.contents'
+        ])->find($this->id);
+    }
 
     /**
      * Prepare a date for array / JSON serialization.

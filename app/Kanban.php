@@ -3,9 +3,9 @@
 namespace App;
 
 use App\Services\Tag\HasTags;
+use App\Services\Websocket\Broadcastable;
+use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *      @OA\Property( property="allow_copy", type="integer")
  *   ),
  */
-class Kanban extends Model
+class Kanban extends Model implements Broadcastable
 {
     use BroadcastsEvents, HasTags;
 
@@ -46,24 +46,6 @@ class Kanban extends Model
     ];
 
     protected $appends = ['is_favourited', 'is_hidden'];
-
-    public function broadcastOn($event): array
-    {
-        if (!env('WEBSOCKET_APP_ACTIVE', false)) {
-            return [];
-        }
-
-        return [
-            new PresenceChannel($this->broadcastChannel())
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'model' => $this->withRelations(),
-        ];
-    }
 
     /**
      * Prepare a date for array / JSON serialization.

@@ -39,7 +39,7 @@
 @section('content')
     <Curriculum
         :curriculum="{{ $curriculum }}"
-        :course="{{ $course ?? null }}"
+        :course="{{ $course ?? json_encode((object)[]) }}"
         :settings="{{ $settings }}"
         :websocket="{{ $is_websocket_active ? 'true' : 'false' }}"
     />

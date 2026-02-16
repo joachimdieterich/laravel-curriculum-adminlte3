@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="course"
+        <div v-if="Object.keys(course).length"
             v-permission="'achievement_access'"
         >
             <div
@@ -102,7 +102,7 @@
                             {{trans('global.glossar.create')}}
                         </a>
                     </li>
-                    <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && course"
+                    <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
                         v-permission="'certificate_access'"
                         class="nav-item ml-auto"
                     >
@@ -326,7 +326,7 @@ export default {
         },
         course: {
             type: Object,
-            default: null,
+            default: {},
         },
         settings: {
             type: Object,

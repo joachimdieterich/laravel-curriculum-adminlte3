@@ -198,7 +198,7 @@
                     <span class="col-3 mt-1">
                         <PieChart
                             id="hidden_chart"
-                            :title=" trans('global.tag.hidden.plural')"
+                            :title=" trans('global.tag.hidden.singular')"
                             chart="hidden"
                             :date_begin="date_begin"
                             :date_end="date_end"

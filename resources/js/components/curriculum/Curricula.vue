@@ -88,11 +88,12 @@
                         x-placement="left-start"
                     >
                         <hide
+                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
                             url="/curricula/[id]/hide"
                             :model="curriculum"
                             :is-hidden="curriculum.is_hidden"
-                            @mark-status-changed="(newCurriculum) => {
-                                curricula[index] = newCurriculum;
+                            @mark-status-changed="() => {
+                                curriculum.splice(index, 1)
                             }"
                         />
 

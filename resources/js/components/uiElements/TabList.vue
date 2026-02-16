@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex align-items-center w-100 px-3">
+    <div class="d-flex align-items-center w-100">
         <span v-if="showNavigators"
             class="pr-2"
         >
@@ -33,10 +33,13 @@
                         :id="model + '-filter-' + tab"
                         class="btn btn-tab bg-transparent"
                         :class="{ active: activeTab === tab }"
+                        type="button"
                         role="tab"
+                        data-toggle="pill"
+                        :data-target="model == 'subscribe' && ('#' + tab + '_subscription')"
                         :tabindex="index === 0 ? '0' : '-1'"
                         :aria-selected="activeTab === tab"
-                        @click="$emit('change-tab', tab)"
+                        @click="(e) => $emit('change-tab', tab, e)"
                         @keydown.enter.space="$emit('change-tab', tab)"
                         @keydown.left.right.prevent="moveFocus($event)"
                     >
@@ -79,7 +82,7 @@ export default {
         tabs: {
             type: Array,
             default: ['all', 'owned', 'shared_with_me', 'shared_by_me'],
-            title: "Possible String values: 'favourite', 'hidden', 'all', 'owned', 'shared_with_me', 'shared_by_me'",
+            title: "Possible String values: 'favourite', 'hidden', 'all', 'owned','shared_with_me', 'shared_by_me', 'user', 'group', 'organization', 'token'",
         },
         activeTab: {
             type: String,
@@ -112,11 +115,18 @@ export default {
                 case 'all':
                     return this.modelIcon;
                 case 'owner':
+                case 'user':
                     return 'fa-user';
                 case 'shared_with_me':
                     return 'fa-paper-plane';
                 case 'shared_by_me':
                     return 'fa-share-nodes';
+                case 'group':
+                    return 'fa-users';
+                case 'organization':
+                    return 'fa-university';
+                case 'token':
+                    return 'fa-key';
                 default:
                     return '';
             }
@@ -126,7 +136,7 @@ export default {
                 case 'favourite':
                     return this.trans('global.tag.favourite.plural');
                 case 'hidden':
-                    return this.trans('global.tag.hidden.plural');
+                    return this.trans('global.tag.hidden.singular');
                 case 'by_organization':
                     return this.trans('global.my') + ' ' + this.trans('global.organization.title_singular');
                 case 'all':
@@ -137,6 +147,14 @@ export default {
                     return this.trans('global.shared_with_me');
                 case 'shared_by_me':
                     return this.trans('global.shared_by_me');
+                case 'user':
+                    return this.trans('global.user.title');
+                case 'group':
+                    return this.trans('global.group.title');
+                case 'organization':
+                    return this.trans('global.organization.title');
+                case 'token':
+                    return this.trans('global.token');
                 default:
                     return tab;
             }
@@ -153,19 +171,20 @@ export default {
             const tabListElement = document.getElementById(this.model + '-filter');
             const tabListLeftPos = tabListElement.getClientRects()[0].left;
             const tabChildren = document.getElementById(this.model + '-filter-wrapper').children;
+            const margin = 25; // min amount of pixels slider has to move
             let childLeftPos;
 
             if (right) {
                 // check entries from left to right
                 for (let i = 0; i < tabChildren.length; i++) {
                     childLeftPos = tabChildren[i].getClientRects()[0].left;
-                    if (Math.round(childLeftPos) > tabListLeftPos) break;
+                    if (childLeftPos > (tabListLeftPos + margin)) break;
                 }
             } else {
                 // check entries from right to left
                 for (let i = tabChildren.length - 1; i >= 0; i--) {
                     childLeftPos = tabChildren[i].getClientRects()[0].left;
-                    if (Math.round(childLeftPos) < tabListLeftPos) break;
+                    if (childLeftPos < (tabListLeftPos - margin)) break;
                 }
             }
 

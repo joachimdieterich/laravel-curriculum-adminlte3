@@ -288,8 +288,6 @@ return [
     | they need to be listed here and called via config() helper.
     |
     */
-    'ably_key' => env('ABLY_KEY'),
-
     'brand_menu_icon_1' => env('BRAND_MENU_ICON_1'),
     'brand_menu_icon_2' => env('BRAND_MENU_ICON_2'),
     'brand_menu_icon_3' => env('BRAND_MENU_ICON_3'),
@@ -312,34 +310,9 @@ return [
     'brand_menu_url_6' => env('BRAND_MENU_HREF_6'),
     'brand_menu_url_7' => env('BRAND_MENU_HREF_7'),
 
-    'broadcast_connection' => env('BROADCAST_CONNECTION', 'null'),
-
-    'bbb_logout_url' => env('BBB_LOGOUT_URL'),
-    'bbb_server_name_1' => env('BBB_SERVER_NAME_1', 'Server 1'),
-    'bbb_server_name_2' => env('BBB_SERVER_NAME_2', 'Server 2'),
-    'bbb_server_url' => env('BBB_SERVER_BASE_URL'),
-    'bbb_server_url_1' => env('BBB_SERVER_BASE_URL_1', ''),
-    'bbb_server_url_2' => env('BBB_SERVER_BASE_URL_2', ''),
-    'bbb_security_salt' => env('BBB_SECURITY_SALT'),
-    'bbb_security_salt_1' => env('BBB_SECURITY_SALT_1', ''),
-    'bbb_security_salt_2' => env('BBB_SECURITY_SALT_2', ''),
-
-    'cache_driver' => env('CACHE_DRIVER', 'file'),
-
     'documentation_url' => env('DOCUMENTATION'),
 
-    'db_connection' => env('DB_CONNECTION', 'mysql'),
-    'db_database' => env('DB_DATABASE', 'curriculum'),
-    'db_foreign_keys' => env('DB_FOREIGN_KEYS', true),
-    'db_host' => env('DB_HOST', env('APP_HOSTNAME')),
-    'db_port' => env('DB_PORT'),
-    'db_socket' => env('DB_SOCKET'),
-    'db_username' => env('DB_USERNAME'),
-    'db_password' => env('DB_PASSWORD'),
-
     'edusharing_app_id' => env('EDUSHARING_APP_ID'),
-    'edusharing_cloud_url' => env('EDUSHARING_CLOUD_IFRAME_URL'),
-    'edusharing_upload_url' => env('EDUSHARING_UPLOAD_IFRAME_URL'),
     'edusharing_priv_key' => env('EDUSHARING_PRIV_KEY'),
     'edusharing_repo_url' => env('EDUSHARING_REPO_URL'),
     'edusharing_repo_proxy' => env('EDUSHARING_REPO_PROXY', false),
@@ -373,51 +346,13 @@ return [
 
     'guest_user_id' => env('GUEST_USER', 8),
 
-    'ilea_plus_api_key' => env('ILEAPLUS_API_KEY'),
-    'ilea_plus_api_url' => env('ILEAPLUS_API_URL'),
-    'ilea_plus_report_url' => env('ILEAPLUS_REPORT_URL'),
-    'ilea_plus_ui_url' => env('ILEAPLUS_UI_URL'),
-
-    'l5_swagger_const_host' => env('L5_SWAGGER_CONST_HOST'),
-    'l5_swagger_generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS'),
-    'l5_swagger_generate_yaml_copy' => env('L5_SWAGGER_GENERATE_YAML_COPY'),
-    'l5_swagger_passport_scheme' => env('L5_SWAGGER_PASSPORT_SCHEME'),
-    'l5_swagger_ui_persist_authorization' => env('L5_SWAGGER_UI_PERSIST_AUTHORIZATION'),
-
     'lms_plugin' => env('LMSPLUGIN'),
 
     'logging_events' => env('APP.LOGGING.EVENTS', false),
 
-    'mysql_attr_ssl_ca' => env('MYSQL_ATTR_SSL_CA'),
-
     'oidc_client_id' => env('OIDC_CLIENT_ID'),
     'oidc_client_secret' => env('OIDC_CLIENT_SECRET'),
     'oidc_host' => env('OIDC_RLP_IDP_HOST'),
-
-    'pusher_cluster' => env('PUSHER_APP_CLUSTER'),
-    'pusher_host' => env('PUSHER_HOST'),
-    'pusher_port' => env('PUSHER_PORT', 443),
-    'pusher_key' => env('PUSHER_APP_KEY'),
-    'pusher_id' => env('PUSHER_APP_ID'),
-    'pusher_secret' => env('PUSHER_APP_SECRET'),
-    'pusher_scheme' => env('PUSHER_SCHEME', 'https'),
-
-    'redis_client' => env('REDIS_CLIENT', 'predis'),
-    'redis_cluster' => env('REDIS_CLUSTER', 'predis'),
-    'redis_db' => env('REDIS_DB'),
-    'redis_cache_db' => env('REDIS_CACHE_DB'),
-    'redis_host' => env('REDIS_HOST', env('APP_HOSTNAME')),
-    'redis_port' => env('REDIS_PORT'),
-    'redis_password' => env('REDIS_PASSWORD'),
-
-    'reverb_host' => env('REVERB_HOST', env('APP_HOSTNAME')),
-    'reverb_port' => env('REVERB_PORT'),
-    'reverb_key' => env('REVERB_APP_KEY', env('APP_KEY')),
-    'reverb_id' => env('REVERB_APP_ID', env('APP_NAME')),
-    'reverb_secret' => env('REVERB_APP_SECRET'),
-    'reverb_server_host' => env('REVERB_SERVER_HOST', env('REVERB_HOST', env('APP_HOSTNAME'))),
-    'reverb_server_port' => env('REVERB_SERVER_PORT', env('REVERB_PORT')),
-    'reverb_scheme' => env('REVERB_SCHEME', 'https'),
 
     'session_driver' => env('SESSION_DRIVER'),
     'session_lifetime' => env('SESSION_LIFETIME'),

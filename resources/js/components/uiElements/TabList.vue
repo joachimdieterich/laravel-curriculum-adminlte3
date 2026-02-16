@@ -110,6 +110,8 @@ export default {
                     return 'fa-heart';
                 case 'hidden':
                     return 'fa-eye-slash';
+                case 'by_organization':
+                    return 'fa-university';
                 case 'all':
                     return this.modelIcon;
                 case 'owner':
@@ -135,10 +137,12 @@ export default {
                     return this.trans('global.tag.favourite.plural');
                 case 'hidden':
                     return this.trans('global.tag.hidden.singular');
+                case 'by_organization':
+                    return this.trans('global.my') + ' ' + this.trans('global.organization.title_singular');
                 case 'all':
-                    return this.trans('global.all') + ' ' + this.trans('global.kanban.title');
+                    return this.trans('global.all') + ' ' + this.trans('global.' + this.model + '.title');
                 case 'owner':
-                    return this.trans('global.my') + ' ' + this.trans('global.kanban.title');
+                    return this.trans('global.my') + ' ' + this.trans('global.' + this.model + '.title');
                 case 'shared_with_me':
                     return this.trans('global.shared_with_me');
                 case 'shared_by_me':

@@ -8,16 +8,19 @@ use App\CurriculumSubscription;
 use App\CurriculumType;
 use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Http\Requests\Tags\HideModelRequest;
+use App\Level;
 use App\Medium;
 use App\Organization;
 use App\Tag;
-use App\User;
 use App\VariantDefinition;
 use Carbon\Carbon;
 use Gate;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 use Yajra\DataTables\DataTables;
 
 class CurriculumController extends Controller
@@ -241,61 +244,43 @@ class CurriculumController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @param Curriculum $curriculum
+     * @param null       $token
+     *
+     * @return array|Factory|View|\Illuminate\View\View
+     * @throws JsonException
      */
-    public function show(Curriculum $curriculum, $achievements = false, $token = null)
+    public function show(Curriculum $curriculum, $token = null)
     {
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
-        $objectiveTypes = \App\ObjectiveType::select('objective_types.id', 'objective_types.title', 'objective_types.uuid')
-            ->join('terminal_objectives', 'objective_types.id', '=', 'terminal_objectives.objective_type_id')
-            ->join('curricula', 'curricula.id', '=', 'terminal_objectives.curriculum_id')
-            ->where('curricula.id', $curriculum->id)
-            ->distinct()
-            ->get();
-        $levels = \App\Level::all();
+        $levels = Level::all();
 
         $curriculum = Curriculum::with([
             'glossar.contents',
         ])
         ->find($curriculum->id);
 
-        if ($token == null)
-        {
-            $may_edit = $curriculum->isEditable();
-        }
-        else
-        {
-            $may_edit = $curriculum->isEditable(auth()->user()->id, $token);
-        }
+        $may_edit = $token === null ? $curriculum->isEditable() : $curriculum->isEditable(auth()->user()->id, $token);
+        $is_websocket_active = env('WEBSOCKET_APP_ACTIVE');
 
         $settings = json_encode([
-            'edit' => $may_edit, //(auth()->user()->id === $curriculum->owner_id) ? true : false,
+            'edit'                          => $may_edit,
             'cross_reference_curriculum_id' => false,
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         if (request()->wantsJson()) {
             return ['contents' => $curriculum->contents];
         }
 
         return view('curricula.show')
-            ->with(compact('curriculum'))
-            ->with(compact('objectiveTypes'))
-            ->with(compact('levels'))
-            ->with(compact('settings'));
-    }
-
-    /**
-     * Display the specified resource with achievements.
-     *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
-     */
-    public function showAchievements(Curriculum $curriculum)
-    {
-        $this->show($curriculum, true);
+            ->with(compact(
+                'curriculum',
+                'levels',
+                'settings',
+                'is_websocket_active',
+            ));
     }
 
     public function getObjectives(Curriculum $curriculum)
@@ -695,7 +680,7 @@ class CurriculumController extends Controller
             abort(410, 'global.token_expired');
         }
 
-        return $this->show($curriculum, false, $input['sharing_token']);
+        return $this->show($curriculum, $input['sharing_token']);
 
     }
 

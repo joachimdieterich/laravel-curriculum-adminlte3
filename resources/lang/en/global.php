@@ -1068,9 +1068,6 @@ return [
         ],
     ],
     'kanban' => [
-        'contributor' => 'Current Contributor',
-        'contributor_joined' => 'Contributor joined',
-        'contributor_left' => 'Contributor left',
         'title' => 'Kanban-Boards',
         'title_singular' => 'Kanban-Board',
         'create' => 'Create Kanban-Board',
@@ -1355,5 +1352,9 @@ return [
     ],
     'system_config' => [
         'title' => 'System configuration'
+    ],
+    'websockets' => [
+        'contributor_joined' => 'Contributor joined',
+        'contributor_left' => 'Contributor left',
     ]
 ];

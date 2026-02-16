@@ -14,6 +14,12 @@
 use App\User;
 use Illuminate\Support\Facades\Broadcast;
 
+// Curriculum
+Broadcast::channel('App.Curriculum.{curriculumId}', function (User $user) {
+    return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
+});
+
+// Kanban
 Broadcast::channel('App.Kanban.{kanbanId}', function (User $user) {
     return array_merge($user->only(['id', 'firstname', 'lastname']), ['initials' => $user->initials()]);
 });

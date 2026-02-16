@@ -255,8 +255,6 @@ class CurriculumController extends Controller
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
-        $levels = Level::all();
-
         $curriculum = Curriculum::with([
             'glossar.contents',
         ])
@@ -277,7 +275,6 @@ class CurriculumController extends Controller
         return view('curricula.show')
             ->with(compact(
                 'curriculum',
-                'levels',
                 'settings',
                 'is_websocket_active',
             ));

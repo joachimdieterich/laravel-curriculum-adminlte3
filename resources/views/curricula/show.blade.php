@@ -41,7 +41,7 @@
         :curriculum="{{ $curriculum }}"
         :course="{{ $course ?? json_encode((object)[]) }}"
         :settings="{{ $settings }}"
-        :websocket="{{ $is_websocket_active ? 'true' : 'false' }}"
+        :websocket="{{ json_encode($is_websocket_active ?? false) }}"
     />
     <div id="content_top_placeholder"></div>
 @endsection

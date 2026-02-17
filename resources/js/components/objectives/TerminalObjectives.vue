@@ -355,28 +355,19 @@ export default {
         });
 
         this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
-            console.log(updatedTerminal);
             let type = this.objective_types.find(
                 function(type){
-                    console.log(type.id);
-                    console.log(updatedTerminal.objective_type_id);
                     return type.id === updatedTerminal.objective_type_id;
                 }
             );
-            // let type = this.objective_types.find(type => type.id === updatedTerminal.objective_type_id);
-            console.log(this.objective_types);
-            console.log(type);
             // objective-type was changed and the new type was not in use before
             if (type === undefined) {
                 this.addNewType(updatedTerminal.type);
                 type = this.objective_types[this.objective_types.length - 1];
-                console.log(type);
                 // don't add the updated objective to the new type yet
                 type.terminal_objectives = [];
-                console.log(type);
             }
 
-            console.log(type);
             let terminal = type.terminal_objectives.find(terminal => terminal.id === updatedTerminal.id);
             // objective-type was changed, so we need to find where the old objective is
             if (terminal === undefined) {

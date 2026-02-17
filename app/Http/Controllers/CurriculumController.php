@@ -547,26 +547,32 @@ class CurriculumController extends Controller
         return response($curriculum);
     }
 
+    /**
+     * resets the order of objectives and type to their default (created_at)
+     */
     public function resetOrderIds(Curriculum $curriculum)
     {
-        $t = 0;
-        $terminalObjectives = $curriculum->terminalObjectives()->reorder()->orderBy('objective_type_id')->get();
-        $currentObjectiveType = $terminalObjectives->first()->objective_type_id;
-        foreach ($terminalObjectives as $terminalObjective) {
-            if ($currentObjectiveType != $terminalObjective->objective_type_id) {
-                $currentObjectiveType = $terminalObjective->objective_type_id;
-                $t = 0;
-            }
+        // get terminal-objectives with default ordering (by ID => created_at)
+        $terminalObjectives = $curriculum->terminalObjectives()->select('id', 'objective_type_id')->reorder()->get();
+        $type_order = []; // associative array [type_id => terminal_order_id]
 
-            $terminalObjective->update(['order_id' => $t]);
-            $t++;
+        foreach ($terminalObjectives as $terminal) {
+            $type_id = $terminal->objective_type_id;
 
-            $e = 0;
-            foreach ($terminalObjective->enablingObjectives as $enablingObjective) {
-                $enablingObjective->update(['order_id' => $e]);
-                $e++;
+            if (!isset($type_order[$type_id])) $type_order[$type_id] = 0;
+
+            $terminal->update(['order_id' => $type_order[$type_id]]);
+            $type_order[$type_id]++;
+
+            $enabling_order_id = 0;
+            // reset order of enabling-objectives
+            foreach ($terminal->enablingObjectives()->select('id')->reorder()->without('level')->get() as $enabling) {
+                $enabling->update(['order_id' => $enabling_order_id]);
+                $enabling_order_id++;
             }
         }
+        // reset order of objective-types
+        $curriculum->update(['objective_type_order' => array_keys($type_order)]);
     }
 
     public function print(Curriculum $curriculum)

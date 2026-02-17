@@ -105,6 +105,16 @@
                             {{ trans('global.kanban.copy') }}
                         </button>
 
+                        <hide
+                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                            url="/kanbans/[id]/hide"
+                            :model="kanban"
+                            :is-hidden="kanban.is_hidden"
+                            @mark-status-changed="() => {
+                                kanbans.splice(index, 1)
+                            }"
+                        />
+
                         <hr v-if="ownerOrAdmin(kanban)" class="my-1"/>
 
                         <button v-if="ownerOrAdmin(kanban)"
@@ -120,15 +130,6 @@
                             </span>
                         </button>
 
-                        <hide
-                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
-                            url="/kanbans/[id]/hide"
-                            :model="kanban"
-                            :is-hidden="kanban.is_hidden"
-                            @mark-status-changed="() => {
-                                kanbans.splice(index, 1)
-                            }"
-                        />
                     </div>
                 </template>
             </IndexWidget>

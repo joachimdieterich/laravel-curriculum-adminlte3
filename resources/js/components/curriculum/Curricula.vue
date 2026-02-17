@@ -112,6 +112,15 @@
                             <i class="fa fa-share-alt mr-2"></i>
                             {{ trans('global.curriculum.share') }}
                         </button>
+                        <hide
+                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                            url="/curricula/[id]/hide"
+                            :model="curriculum"
+                            :is-hidden="curriculum.is_hidden"
+                            @mark-status-changed="() => {
+                                curriculum.splice(index, 1)
+                            }"
+                        />
                         <hr v-permission="'curriculum_delete'" class="my-1">
                         <button
                             v-permission="'curriculum_delete'"
@@ -123,15 +132,6 @@
                             <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.curriculum.delete') }}
                         </button>
-                        <hide
-                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
-                            url="/curricula/[id]/hide"
-                            :model="curriculum"
-                            :is-hidden="curriculum.is_hidden"
-                            @mark-status-changed="() => {
-                                curriculum.splice(index, 1)
-                            }"
-                        />
                     </div>
                 </template>
             </IndexWidget>

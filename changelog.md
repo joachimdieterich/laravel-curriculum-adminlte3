@@ -1,3 +1,17 @@
+## 1.3.1 (2025-02-18)
+- Kanbans/Curricula can now be hidden (user-specific)
+- created TabList-component to generalize nav-tabs and improve mobile-view
+- replaced nav-tabs in Kanbans/Curricula/SubscribeModal with TabList
+- KanbanItemModal: fixed medium-button visible for guest-role
+- Objective: in 'Media'-tab, fixed clicking medium not opening in Safari
+- fixed listing of Kanbans/Curricula not showing subscribed through groups/organizations
+- ObjectiveBox: fixed scrolling behaviour
+- added migration to standardize the type of every 'color'-column to CHAR(7)
+- Curriculum: fixed bug when changing objective-type of last terminal-objective
+- added hover-effect and box-shadow to color-picker
+- AdminPanel: added favorite/hide logs
+- CurriculumModal: fixed non-admins being able to set type to global
+
 ## 1.3 (2025-01-29)
 - added Tags-system for Kanbans and Curricula
 - Kanbans/Curricula can now be favorited

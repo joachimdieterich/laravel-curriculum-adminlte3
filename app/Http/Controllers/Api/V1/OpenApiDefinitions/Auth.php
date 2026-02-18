@@ -26,15 +26,6 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *              type="string"
 *          )
 *      ),
-*      @OA\Parameter(
-*          name="remember_me",
-*          description="User password",
-*          required=false,
-*          in="path",
-*          @OA\Schema(
-*              type="boolean"
-*          )
-*      ),
 *      @OA\Response(
 *          response=200,
 *          description="successful operation"

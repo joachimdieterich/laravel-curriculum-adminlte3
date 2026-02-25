@@ -37,6 +37,7 @@
                 modelName="Kanban"
                 url="/kanbans"
                 :showSubscribable="subscribable"
+                :hidable="true"
             >
                 <template v-slot:itemIcon>
                     <i class="fa fa-2x fa-columns"></i>

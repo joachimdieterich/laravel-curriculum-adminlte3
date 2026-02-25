@@ -79,6 +79,7 @@
                     || (item.allow_copy && (modelName != 'Plan' || checkPermission('is_teacher')))
                     || (checkPermission('is_teacher') && (showSubscribable || modelName == 'Exam'))
                     || checkPermission('is_admin')
+                    || hidable
                  "
                  :id="modelName + 'Dropdown_' + item.DT_RowId"
                  class="btn btn-flat position-absolute pull-right"
@@ -158,6 +159,10 @@ export default {
         info_deactivated: {
             type: String,
             default: 'Zugriff nicht möglich',
+        },
+        hidable: {
+            type: Boolean,
+            default: false,
         },
     },
     setup() { //use database store

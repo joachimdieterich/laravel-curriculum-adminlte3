@@ -30,6 +30,7 @@
                 :model="curriculum"
                 modelName="Curriculum"
                 url="/curricula"
+                :hidable="true"
             >
                 <template v-slot:icon>
                     <i v-if="curriculum.type_id === 1"

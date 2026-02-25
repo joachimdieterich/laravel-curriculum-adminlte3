@@ -257,21 +257,21 @@ class CurriculumController extends Controller
 
         $levels = Level::all();
 
-        $curriculum = Curriculum::with([
+        $curriculumWithRelation = Curriculum::with([
             'glossar.contents',
         ])
         ->find($curriculum->id);
 
-        $may_edit = $token === null ? $curriculum->isEditable() : $curriculum->isEditable(auth()->user()->id, $token);
-        $is_websocket_active = env('WEBSOCKET_APP_ACTIVE');
+        $may_edit = $token === null ? $curriculumWithRelation->isEditable() : $curriculumWithRelation->isEditable(auth()->user()->id, $token);
 
         $settings = json_encode([
             'edit'                          => $may_edit,
             'cross_reference_curriculum_id' => false,
+            'websocket'                     => config('broadcasting.active'),
         ], JSON_THROW_ON_ERROR);
 
         if (request()->wantsJson()) {
-            return ['contents' => $curriculum->contents];
+            return ['contents' => $curriculumWithRelation->contents];
         }
 
         return view('curricula.show')
@@ -279,7 +279,6 @@ class CurriculumController extends Controller
                 'curriculum',
                 'levels',
                 'settings',
-                'is_websocket_active',
             ));
     }
 

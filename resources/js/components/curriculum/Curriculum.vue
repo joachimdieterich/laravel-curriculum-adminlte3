@@ -48,14 +48,14 @@
                     <li
                         class="nav-item"
                         role="tab"
-                        aria-controls="curriculm-tab"
+                        aria-controls="curriculum-tab"
                         aria-selected="false"
                     >
                         <a
-                            id="curriculm-nav-tab"
+                            id="curriculum-nav-tab"
                             class="nav-link link-muted"
                             data-toggle="tab"
-                            href="#curriculm-tab"
+                            href="#curriculum-tab"
                         >
                             <i class="fas fa-th pr-2"></i>
                             {{ trans('global.objective_tab') }}
@@ -190,10 +190,10 @@
                     class="tab-content"
                 >
                     <div
-                        id="curriculm-tab"
+                        id="curriculum-tab"
                         class="tab-pane fade show active"
                         role="tabpanel"
-                        aria-labelledby="curriculm-nav-tab"
+                        aria-labelledby="curriculum-nav-tab"
                     >
                         <TerminalObjectives
                             ref="terminalObjectives"
@@ -332,10 +332,6 @@ export default {
             type: Object,
             default: null,
         },
-        websocket: {
-            type: Boolean,
-            default: false,
-        },
     },
     setup() {
         const store = useDatatableStore();
@@ -428,7 +424,7 @@ export default {
             this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
         },
         startWebsocket() {
-            if (this.websocket === true) {
+            if (this.settings.websocket === true) {
                 this.$echo
                     .join('App.Curriculum.' + this.curriculum.id)
                     .here((users) => {
@@ -450,7 +446,7 @@ export default {
             }
         },
         stopWebsocket() {
-            if (this.websocket === true && this.kanban.auto_refresh === true) {
+            if (this.settings.websocket === true) {
                 this.$echo.leave('App.Kanban.' + this.kanban.id);
             }
         },

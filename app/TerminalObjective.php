@@ -30,11 +30,6 @@ class TerminalObjective extends Model
         'created_at'  => 'datetime',
     ];
 
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
-
     /**
      * Prepare a date for array / JSON serialization.
      *
@@ -162,8 +157,9 @@ class TerminalObjective extends Model
         return $this->curriculum->isAccessible();
     }
 
-    public static function booted() {
-        static::deleting(function(TerminalObjective $terminal) { // before delete() method call this
+    public static function booted(): void
+    {
+        static::deleting(static function(TerminalObjective $terminal) { // before delete() method call this
             $terminal->achievements()->delete();
             $terminal->subscriptions()->delete();
             $terminal->mediaSubscriptions()->delete();
@@ -174,6 +170,12 @@ class TerminalObjective extends Model
             $terminal->predecessors()->delete();
             $terminal->successors()->delete();
             $terminal->enablingObjectives->each->delete();
+        });
+        static::deleted(static function(TerminalObjective $terminal) {
+            Curriculum::find($terminal->curriculum()->get()->first()->id)?->touch();
+        });
+        static::saved(static function(TerminalObjective $terminal) {
+            Curriculum::find($terminal->curriculum()->get()->first()->id)?->touch();
         });
     }
 }

@@ -16,6 +16,7 @@ return [
     */
 
     'default' => env('BROADCAST_CONNECTION', 'null'),
+    'active' => env('WEBSOCKET_APP_ACTIVE', false),
 
     /*
     |--------------------------------------------------------------------------

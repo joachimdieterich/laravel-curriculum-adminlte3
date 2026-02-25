@@ -160,8 +160,9 @@ class EnablingObjective extends Model
         return $this->curriculum->isAccessible();
     }
 
-    public static function booted() {
-        static::deleting(function(EnablingObjective $enabling) { // before delete() method call this
+    public static function booted(): void
+    {
+        static::deleting(static function(EnablingObjective $enabling) { // before delete() method call this
             $enabling->subscriptions()->delete();
             $enabling->mediaSubscriptions()->delete();
             $enabling->quoteSubscriptions()->delete();
@@ -170,6 +171,12 @@ class EnablingObjective extends Model
             $enabling->successors()->delete();
             $enabling->referenceSubscriptions()->delete();
             $enabling->achievements->each->delete();
+        });
+        static::deleted(static function(EnablingObjective $enabling) {
+            Curriculum::find($enabling->curriculum()->get()->first()->id)?->touch();
+        });
+        static::saved(static function(EnablingObjective $enabling) {
+            Curriculum::find($enabling->curriculum()->get()->first()->id)?->touch();
         });
     }
 }

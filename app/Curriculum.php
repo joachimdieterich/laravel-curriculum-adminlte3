@@ -66,7 +66,8 @@ class Curriculum extends Model implements Broadcastable
     public function withRelations(): self|null
     {
         return $this->with([
-            'glossar.contents'
+            'glossar.contents',
+            'terminalObjectives',
         ])->find($this->id);
     }
 
@@ -262,16 +263,15 @@ class Curriculum extends Model implements Broadcastable
 
     public function isEditable($user_id = null, $token = null)
     {
-        if ($user_id == null)
-        {
+        if ($user_id == null) {
             $user_id = auth()->user()->id;
         }
 
-        if ($token == null){
-            $userSubscription = optional($this->userSubscriptions()
+        if ($token == null) {
+            $userSubscription         = optional($this->userSubscriptions()
                 ->where('subscribable_id', $user_id)
                 ->first());
-            $groupSubscription = optional($this->groupSubscriptions()
+            $groupSubscription        = optional($this->groupSubscriptions()
                 ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
                 ->where('editable', 1)
                 ->first());
@@ -279,37 +279,24 @@ class Curriculum extends Model implements Broadcastable
                 ->whereIn('subscribable_id', auth()->user()->organizations->pluck('id'))
                 ->where('editable', 1)
                 ->first());
-        }
-        else
-        {
+        } else {
             $userSubscription = optional($this->userSubscriptions()
                 /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
                 ->where('sharing_token', $token)
                 ->first());
         }
-        if (
-            ($this->owner_id == $user_id or is_admin()) or // owner or admin
-            ($this->type_id !== 1 and ( // non-global
-                $userSubscription->editable // user enrolled
-                or $groupSubscription->editable ?? false // group enrolled
-                or $organizationSubscription->editable ?? false // organization enrolled
-            ))
+        if (($this->owner_id == $user_id || is_admin()) // owner or admin
+            || ($this->type_id !== 1 // non-global
+                && ($userSubscription?->editable // user enrolled
+                    || $groupSubscription?->editable ?? false // group enrolled
+                    || $organizationSubscription?->editable ?? false // organization enrolled
+                )
+            )
         ) {
             return true;
-        } else {
-            return false;
         }
-    }
 
-    public function tags(?User $currentUser = null)
-    {
-        $currentUser = $currentUser ?? auth()->user()?->id;
-
-        return $this
-            ->morphToMany(self::getTagClassName(), $this->getTaggableMorphName(), $this->getTaggableTableName())
-            ->using($this->getPivotModelClassName())
-            ->where('user_id', $currentUser)
-            ->ordered();
+        return false;
     }
 
     public static function booted() {

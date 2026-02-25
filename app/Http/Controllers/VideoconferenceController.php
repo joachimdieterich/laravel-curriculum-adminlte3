@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\VideoconferenceInterface;
 use App\Organization;
 use App\User;
 use App\Videoconference;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Hash;
 
 class VideoconferenceController extends Controller
 {
-    private $adapter;
+    private string $adapter;
 
     public function __construct(){
         $this->adapter = env('VIDEOCONFERENCE_ADAPTER');
@@ -346,6 +347,7 @@ class VideoconferenceController extends Controller
             . '">'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?attendeePW=' . $videoconference->attendeePW
             . '</a>';
 
+        /** @var VideoconferenceInterface $adapter */
         $adapter = new $this->adapter();
 
         //set proper pw
@@ -430,6 +432,7 @@ class VideoconferenceController extends Controller
 
     public function getStatus(Videoconference $videoconference)
     {
+        /** @var VideoconferenceInterface $adapter */
         $adapter = new $this->adapter();
         if (request()->wantsJson()) {
             $isRunning = $adapter->isMeetingRunning([
@@ -578,6 +581,7 @@ class VideoconferenceController extends Controller
         $input = $this->validateRequest();
         $videoconference = Videoconference::where('meetingID', $input['meetingID'])->get()->first();
 
+        /** @var VideoconferenceInterface $adapter */
         $adapter = new $this->adapter();
         $info = $adapter->getMeetingInfo(
             [

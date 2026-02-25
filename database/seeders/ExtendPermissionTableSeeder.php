@@ -36,6 +36,11 @@ class ExtendPermissionTableSeeder extends Seeder
             'tag_edit',
             'tag_show',
             'tag_delete',
+            'videoconference_access',
+            'videoconference_create',
+            'videoconference_edit',
+            'videoconference_show',
+            'videoconference_delete',
         ];
 
         $permissions = [];

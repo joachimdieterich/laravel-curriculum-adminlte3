@@ -364,6 +364,4 @@ return [
     'telescope_users' => env('TELESCOPE_USERS'),
 
     'videoconference_adapter' => env('VIDEOCONFERENCE_ADAPTER'),
-
-    'websocket_app_active' => env('WEBSOCKET_APP_ACTIVE', false),
 ];

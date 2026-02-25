@@ -41,7 +41,6 @@
         :curriculum="{{ $curriculum }}"
         :course="{{ $course ?? null }}"
         :settings="{{ $settings }}"
-        :websocket="{{ $is_websocket_active ? 'true' : 'false' }}"
     />
     <div id="content_top_placeholder"></div>
 @endsection

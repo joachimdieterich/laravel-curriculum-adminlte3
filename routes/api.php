@@ -39,6 +39,17 @@ Route::group([
     Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
 });
 
+/**
+ * Admin login for access, but common_name for simulation
+ */
+Route::group([
+    'prefix' => 'v1',
+    'as' => 'admin.simulate.',
+    'middleware' => ['client_credentials', 'simulate'],
+], function () {
+     Route::get('videoconferences', 'VideoconferenceController@index')->name('videoconferences.index');
+});
+
 Route::group([
     'prefix' => 'v1',
     'as' => 'admin.',

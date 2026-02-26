@@ -7,6 +7,8 @@ use App\User;
 use App\Videoconference;
 use App\VideoconferenceSubscription;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -45,17 +47,17 @@ class VideoconferenceController extends Controller
         }
 
     }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View|JsonResponse
      */
     public function index()
     {
-        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403, 'missing rights');
 
-        if (request()->wantsJson())
-        {
+        if (request()->wantsJson()) {
             return getEntriesForSelect2ByCollection(
                 $this->getVideoconferences(),
                 'videoconferences.',
@@ -64,10 +66,8 @@ class VideoconferenceController extends Controller
                 "meetingName",
             );
         }
-        else
-        {
-            return view('videoconference.index');
-        }
+
+        return view('videoconference.index');
 
     }
 

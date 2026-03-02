@@ -126,10 +126,8 @@ class StatisticController extends Controller
         switch (request('chart')) {
             case 'ssoLogin':  $background = '#325e04'; break;
             case 'guestLogin': $background = '#0e1b01'; break;
-            default: //case 'login':
-                $key = 'login';
-                $background = '#7eab51';
-                break;
+            //case 'login':
+            default: $background = '#7eab51'; break;
         }
 
         $data = Log::select('created_at', 'counter')

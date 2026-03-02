@@ -79,7 +79,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "classmap": [
-          "database/seeders",
+            "database/seeders",
             "database/factories"
         ]
     },
@@ -106,10 +106,10 @@
         ]
     },
     "authors" : [{
-                    "name" : "Joachim Dieterich",
-                    "email" : "mail@joachimdieterich.com",
-                    "homepage": "http://www.curriculumonline.de",
-                    "role": "Developer"
+            "name" : "Joachim Dieterich",
+            "email" : "mail@joachimdieterich.com",
+            "homepage": "http://www.curriculumonline.de",
+            "role": "Developer"
 		}
 	]
 }

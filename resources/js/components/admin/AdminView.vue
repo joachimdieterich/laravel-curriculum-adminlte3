@@ -78,7 +78,7 @@
                 </div>
 
                 <div class="row">
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="devices_chart"
                             title="Devices"
@@ -87,7 +87,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="browsers_chart"
                             title="Browser"
@@ -96,7 +96,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="organizations_chart"
                             :title="trans('global.active') + ' ' + trans('global.organization.title')"
@@ -105,7 +105,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="groups_chart"
                             :title="trans('global.active') + ' ' + trans('global.group.title')"
@@ -114,7 +114,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="achievements_chart"
                             :title="trans('global.achievement.title')"
@@ -123,7 +123,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="certificates_chart"
                             :title=" trans('global.certificate.title')"
@@ -132,7 +132,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="kanbans_chart"
                             :title=" trans('global.kanban.title')"
@@ -141,7 +141,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="curricula_chart"
                             :title="trans('global.active') + ' ' + trans('global.curriculum.title')"
@@ -150,7 +150,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="courses_chart"
                             :title="trans('global.active')+ ' ' + trans('global.course.title')"
@@ -159,7 +159,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="eventSubscription_chart"
                             :title="trans('global.eventSubscription.title')"
@@ -168,7 +168,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="repositoryPlugin_chart"
                             :title="trans('global.externalRepositorySubscription.title')"
@@ -177,7 +177,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="bbbPlugin_chart"
                             :title="trans('global.videoconference.title')"
@@ -186,7 +186,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="favour_chart"
                             :title=" trans('global.tag.favourite.plural')"
@@ -195,7 +195,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="hidden_chart"
                             :title=" trans('global.tag.hidden.singular')"
@@ -204,7 +204,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                   <!-- <span class="col-6 col-md-3 mt-1">
+                   <!-- <span class="col-6 col-sm-4 col-md-3 mt-1">
                         <PieChart
                             id="bbbPlugin_chart"
                             :title="trans('global.videoconference.title')"

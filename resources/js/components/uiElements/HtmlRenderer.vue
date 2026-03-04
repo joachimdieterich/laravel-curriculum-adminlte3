@@ -44,10 +44,9 @@ export default {
                 let matches = [];
                 matches.push(ma);
 
-                //console.log(matches);
                 matches.forEach((match) => {
                     if (typeof (match[2]) !== 'undefined') {
-                        if (this.isValidHttpUrl(match[2])) {
+                        if (this.isValidHttpUrl(this.$decodeHtml(match[2]))) {
                             const target = match[1].includes('target="_blank"') ? '_blank' : '_self';
                             parts.push({
                                 component: 'LinkItem',

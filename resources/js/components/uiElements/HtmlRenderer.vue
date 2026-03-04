@@ -46,7 +46,7 @@ export default {
 
                 matches.forEach((match) => {
                     if (typeof (match[2]) !== 'undefined') {
-                        const url = this.$decodeHtml(match[2]);
+                        const url = this.htmlToText(match[2]);
                         if (this.isValidHttpUrl(url)) {
                             const target = match[1].includes('target="_blank"') ? '_blank' : '_self';
                             parts.push({

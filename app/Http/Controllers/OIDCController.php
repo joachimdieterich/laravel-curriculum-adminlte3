@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use Jumbojett\OpenIDConnectClient;
 use Illuminate\Support\Facades\Auth;
@@ -82,6 +83,12 @@ class OIDCController extends Controller
 
         $common_name = $oidc->getVerifiedClaims('sub');
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
+
+        Auth::login(User::select('id')->where('common_name', $common_name)->firstOrFail());
+        // logout user locally
+        Auth::guard()->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         foreach ($sessionIds as $sessionId) {
             Redis::del('curriculum_cache' . $sessionId);

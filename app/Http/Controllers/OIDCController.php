@@ -84,12 +84,6 @@ class OIDCController extends Controller
         $common_name = $oidc->getVerifiedClaims('sub');
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
 
-        Auth::login(User::select('id')->where('common_name', $common_name)->firstOrFail());
-        // logout user locally
-        Auth::guard()->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
         foreach ($sessionIds as $sessionId) {
             Redis::del('curriculum_cache' . $sessionId);
         }

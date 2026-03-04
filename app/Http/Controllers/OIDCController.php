@@ -13,7 +13,7 @@ class OIDCController extends Controller
     /**
      * Handle OIDC authentication
      */
-    public function handle(Request $request)
+    public function handle(Request $request): \Illuminate\Http\RedirectResponse
     {
         if (session_status() == PHP_SESSION_NONE) session_start();
 
@@ -25,23 +25,13 @@ class OIDCController extends Controller
             env('OIDC_CLIENT_ID'),
             env('OIDC_CLIENT_SECRET')
         );
-
-        if (isset($_SESSION['redirect_to'])) {
-            $uri = \Illuminate\Support\Uri::of($_SESSION['redirect_to']);
-            $allow_guest = $uri->query()->has('sharing_token')
-                or str_starts_with($uri->path(), '/navigator')
-                or str_starts_with($uri->path(), '/eventSubscriptions')
-                or str_ends_with($uri->path(), 'startWithPw'); // videoconference-link;
-            // if resource is accessible for guests, request silent authentication
-            if ($allow_guest) $oidc->addAuthParam(['prompt' => 'none']);
-        }
         
         try {
             $oidc->authenticate(); // authenticates user and saves tokens in instance
-
             $common_name = $oidc->requestUserInfo('sub');
             // login user by common_name
             Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
+
             // store session-id in redis-set
             $sessionId = session()->getId();
             Redis::sadd('user_sessions:' . $common_name, $sessionId);
@@ -71,7 +61,7 @@ class OIDCController extends Controller
      * @param  \Illuminate\Http\Request  $request contains logout_token
      * @return \Illuminate\Http\Response
      */
-    public function backchannelLogout(Request $request): \Illuminate\Http\Response
+    public function backchannelLogout(Request $request): \Illuminate\Http\JsonResponse
     {
         $oidc = new OpenIDConnectClient(
             env('OIDC_RLP_IDP_HOST'),
@@ -79,7 +69,7 @@ class OIDCController extends Controller
             env('OIDC_CLIENT_SECRET')
         );
 
-        if (!$oidc->verifyLogoutToken()) return response('Could not verify logout token', 400);
+        if (!$oidc->verifyLogoutToken()) return response()->json('Could not verify logout token', 400);
 
         $common_name = $oidc->getVerifiedClaims('sub');
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
@@ -90,11 +80,11 @@ class OIDCController extends Controller
 
         Redis::del('user_sessions:' . $common_name);
             
-        // if user cannot be found, still return success, or else it will retry sending the logout token
-        return response('User logged out', 200);
+        // if user cannot be found, still return success, or else the IDP will reinitiate logout
+        return response()->json('User logged out', 200);
     }
 
-    protected function initiateLogout(Request $request)
+    protected function initiateLogout(Request $request): never
     {
         unset($_SESSION['init_logout']);
 

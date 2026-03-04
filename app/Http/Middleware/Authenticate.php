@@ -24,6 +24,13 @@ class Authenticate extends Middleware
             if (!isset($_SESSION['redirect_to'])) $_SESSION['redirect_to'] = URL::full();
             // $oidc->setCodeChallengeMethod('S256'); // PKCE
 
+            $allow_guest = $request->has('sharing_token')
+                or str_starts_with($request->getRequestUri(), '/navigator')
+                or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
+                or str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
+            // if resource is accessible for guests, request silent authentication
+            if ($allow_guest) $oidc->addAuthParam(['prompt' => 'none']);
+
             // this will call the authorization endpoint and redirect to our OIDC-handling route
             $oidc->setRedirectURL(env('APP_URL') . '/oidc');
             $oidc->authenticate();

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
 use Illuminate\Http\Request;
 use Jumbojett\OpenIDConnectClient;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +14,8 @@ class OIDCController extends Controller
      */
     public function handle(Request $request): \Illuminate\Http\RedirectResponse
     {
-        if (session_status() == PHP_SESSION_NONE) session_start();
-
         // handle logout-request separately
-        if (isset($_SESSION['init_logout']) and $_SESSION['init_logout'] === true) $this->initiateLogout($request);
+        if (session('init_logout') === true) $this->initiateLogout($request);
 
         $oidc = new OpenIDConnectClient(
             env('OIDC_RLP_IDP_HOST'),
@@ -48,9 +45,9 @@ class OIDCController extends Controller
 
         $redirect = '/home'; // fallback
         // since the user got redirected back after authentication, redirect to the originally requested URL
-        if (isset($_SESSION['redirect_to'])) {
-            $redirect = $_SESSION['redirect_to'];
-            unset($_SESSION['redirect_to']);
+        if (session('redirect_to')) {
+            $redirect = session('redirect_to');
+            session()->forget('redirect_to');
         }
 
         return redirect($redirect);
@@ -86,7 +83,7 @@ class OIDCController extends Controller
 
     protected function initiateLogout(Request $request): never
     {
-        unset($_SESSION['init_logout']);
+        session()->forget('init_logout');
 
         $oidc = new OpenIDConnectClient(
             env('OIDC_RLP_IDP_HOST'),

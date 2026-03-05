@@ -19,9 +19,8 @@ class Authenticate extends Middleware
                 env('OIDC_CLIENT_SECRET')
             );
 
-            session_start();
             // store current URL to redirect back after authentication-callback
-            if (!isset($_SESSION['redirect_to'])) $_SESSION['redirect_to'] = URL::full();
+            if (!session('redirect_to')) session(['redirect_to' => URL::full()]);
             // $oidc->setCodeChallengeMethod('S256'); // PKCE
 
             $allow_guest = $request->has('sharing_token')

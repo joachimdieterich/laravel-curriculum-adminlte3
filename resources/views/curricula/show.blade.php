@@ -4,6 +4,10 @@
     <title-component></title-component>
 @endsection
 
+@section('contributors')
+    <div id="contributors"></div>
+@endsection
+
 @section('breadcrumb')
     @if (Auth::user()->id == env('GUEST_USER'))
         <breadcrumbs
@@ -35,8 +39,9 @@
 @section('content')
     <Curriculum
         :curriculum="{{ $curriculum }}"
-        :course="{{ $course ?? null }}"
+        :course="{{ $course ?? json_encode((object)[]) }}"
         :settings="{{ $settings }}"
+        :websocket="{{ json_encode($is_websocket_active ?? false) }}"
     />
     <div id="content_top_placeholder"></div>
 @endsection

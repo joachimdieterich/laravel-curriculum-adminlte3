@@ -3,9 +3,9 @@
 namespace App;
 
 use App\Services\Tag\HasTags;
+use App\Services\Websocket\Broadcastable;
+use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *      @OA\Property( property="allow_copy", type="integer")
  *   ),
  */
-class Kanban extends Model
+class Kanban extends Model implements Broadcastable
 {
     use BroadcastsEvents, HasTags;
 
@@ -47,24 +47,6 @@ class Kanban extends Model
 
     protected $appends = ['is_favourited', 'is_hidden'];
 
-    public function broadcastOn($event): array
-    {
-        if (!env('WEBSOCKET_APP_ACTIVE', false)) {
-            return [];
-        }
-
-        return [
-             new PresenceChannel($this->broadcastChannel())
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'model' => $this->withRelations(),
-        ];
-    }
-
     /**
      * Prepare a date for array / JSON serialization.
      *
@@ -81,17 +63,17 @@ class Kanban extends Model
         return route('kanbans.show', $this->id);
     }
 
-    public function items(): HasMany|Kanban
+    public function items(): HasMany|self
     {
         return $this->hasMany(KanbanItem::class)->orderBy('order_id');
     }
 
-    public function statuses(): HasMany|Kanban
+    public function statuses(): HasMany|self
     {
         return $this->hasMany('App\KanbanStatus', 'kanban_id', 'id')->orderBy('order_id');
     }
 
-    public function withRelations(): Kanban|null
+    public function withRelations(): self|null
     {
         return $this->with([
             'owner'          => function ($query) {
@@ -114,35 +96,35 @@ class Kanban extends Model
         ])->find($this->id);
     }
 
-    public function subscriptions(): HasMany|Kanban
+    public function subscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanSubscription::class);
     }
 
-    public function medium(): HasOne|Kanban
+    public function medium(): HasOne|self
     {
         return $this->hasOne('App\Medium', 'id', 'medium_id');
     }
 
-    public function userSubscriptions(): HasMany|Kanban
+    public function userSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanSubscription::class)
-                    ->where('subscribable_type', 'App\User');
+            ->where('subscribable_type', 'App\User');
     }
 
-    public function groupSubscriptions(): HasMany|Kanban
+    public function groupSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanSubscription::class)
-                    ->where('subscribable_type', 'App\Group');
+            ->where('subscribable_type', 'App\Group');
     }
 
-    public function organizationSubscriptions(): HasMany|Kanban
+    public function organizationSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanSubscription::class)
-                    ->where('subscribable_type', 'App\Organization');
+            ->where('subscribable_type', 'App\Organization');
     }
 
-    public function owner(): HasOne|Kanban
+    public function owner(): HasOne|self
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }

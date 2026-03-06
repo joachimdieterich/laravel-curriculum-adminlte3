@@ -1,109 +1,12 @@
 <template >
     <div class="row">
-        <div class="col-md-12 ">
-            <ul v-if="!this.subscribable_type && !this.subscribable_id"
-                class="nav nav-pills py-2"
-                role="tablist"
-            >
-                <li class="nav-item pointer">
-                    <a
-                        id="curriculum-filter-favourite"
-                        class="nav-link "
-                        :class="filter === 'favourite' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('favourite')"
-                    >
-                        <i class="fas fa-heart pr-2"></i>
-                        {{ trans('global.tag.favourite.plural') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="curriculum-filter-hidden"
-                        class="nav-link "
-                        :class="filter === 'hidden' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('hidden')"
-                    >
-                        <i class="fas fa-eye-slash pr-2"></i>
-                        {{ trans('global.tag.hidden.plural') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="curriculum-filter-all"
-                        class="nav-link "
-                        :class="filter === 'all' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('all')"
-                    >
-                        <i class="fas fa-th pr-2"></i>
-                        {{ trans('global.all') }} {{ trans('global.curriculum.title') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="custom-filter-by-organization"
-                        class="nav-link"
-                        :class="filter === 'by_organization' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('by_organization')"
-                    >
-                        <i class="fas fa-university pr-2"></i>
-                        {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
-                    </a>
-                </li>
-                <li
-                    v-permission="'curriculum_create'"
-                    class="nav-item pointer"
-                >
-                    <a
-                        id="custom-filter-owner"
-                        class="nav-link"
-                        :class="filter === 'owner' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('owner')"
-                    >
-                        <i class="fa fa-user pr-2"></i>
-                        {{ trans('global.my') }} {{ trans('global.curriculum.title') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="custom-filter-shared-with-me"
-                        class="nav-link"
-                        :class="filter === 'shared_with_me' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('shared_with_me')"
-                    >
-                        <i class="fa fa-paper-plane pr-2"></i>
-                        {{ trans('global.shared_with_me') }}
-                    </a>
-                </li>
-                <li
-                    v-permission="'curriculum_create'"
-                    class="nav-item pointer"
-                >
-                    <a
-                        id="custom-tabs-shared-by-me"
-                        :class="filter === 'shared_by_me' ? 'active' : ''"
-                        class="nav-link"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('shared_by_me')"
-                    >
-                        <i class="fa fa-share-nodes  pr-2"></i>
-                        {{ trans('global.shared_by_me') }}
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <TabList
+            :model="'curriculum'"
+            modelIcon="fa-th"
+            :tabs="['favourite', 'all', 'by_organization', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"
+            :activeTab="filter"
+            @change-tab="setFilter"
+        />
 
         <div
             id="curriculum-content"
@@ -127,6 +30,7 @@
                 :model="curriculum"
                 modelName="Curriculum"
                 url="/curricula"
+                :hidable="true"
             >
                 <template v-slot:icon>
                     <i v-if="curriculum.type_id === 1"
@@ -184,15 +88,6 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <hide
-                            url="/curricula/[id]/hide"
-                            :model="curriculum"
-                            :is-hidden="curriculum.is_hidden"
-                            @mark-status-changed="(newCurriculum) => {
-                                curricula[index] = newCurriculum;
-                            }"
-                        />
-
                         <button
                             v-permission="'curriculum_edit'"
                             :name="'curriculum-edit_' + curriculum.id"
@@ -218,6 +113,15 @@
                             <i class="fa fa-share-alt mr-2"></i>
                             {{ trans('global.curriculum.share') }}
                         </button>
+                        <hide
+                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                            url="/curricula/[id]/hide"
+                            :model="curriculum"
+                            :is-hidden="curriculum.is_hidden"
+                            @mark-status-changed="() => {
+                                curriculum.splice(index, 1)
+                            }"
+                        />
                         <hr v-permission="'curriculum_delete'" class="my-1">
                         <button
                             v-permission="'curriculum_delete'"
@@ -281,6 +185,7 @@ import {useToast} from "vue-toastification";
 import Favourite from "../tag/Favourite.vue";
 import Hide from "../tag/Hide.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
+import TabList from "../uiElements/TabList.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -434,6 +339,7 @@ export default {
         });
     },
     components: {
+        TabList,
         Hide,
         Favourite,
         OwnerModal,

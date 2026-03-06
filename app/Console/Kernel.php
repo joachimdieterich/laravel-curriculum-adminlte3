@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('telescope:prune --hours=24')->daily();
+        $schedule->command('passport:purge')->daily();
     }
 
     /**

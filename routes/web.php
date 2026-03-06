@@ -48,7 +48,6 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/references', 'CurriculumController@references');
     Route::get('curricula/{curriculum}', 'CurriculumController@show');
-    Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::get('curricula/{curriculum}/certificates', 'CurriculumController@getCertificates')->name('curricula.getCertificates');
     Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');

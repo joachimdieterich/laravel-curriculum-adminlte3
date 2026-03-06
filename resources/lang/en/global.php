@@ -433,7 +433,15 @@ return [
             'singular' => 'Favourite',
             'plural' => 'Favourites',
         ],
+        'favouritism' => [
+            'singular' => 'Favouritism',
+            'plural' => 'Favouritism',
+        ],
         'hidden' => [
+            'singular' => 'Hidden',
+            'plural' => 'Hidden',
+        ],
+        'hidden_statistic' => [
             'singular' => 'Hidden',
             'plural' => 'Hidden',
         ],
@@ -1060,9 +1068,6 @@ return [
         ],
     ],
     'kanban' => [
-        'contributor' => 'Current Contributor',
-        'contributor_joined' => 'Contributor joined',
-        'contributor_left' => 'Contributor left',
         'title' => 'Kanban-Boards',
         'title_singular' => 'Kanban-Board',
         'create' => 'Create Kanban-Board',
@@ -1347,5 +1352,9 @@ return [
     ],
     'system_config' => [
         'title' => 'System configuration'
+    ],
+    'websockets' => [
+        'contributor_joined' => 'Contributor joined',
+        'contributor_left' => 'Contributor left',
     ]
 ];

@@ -13,9 +13,15 @@ trait HasTags
     {
         $currentUser = $currentUser ?? auth()->user();
 
-        return $this
+        $morph = $this
             ->morphToMany(self::getTagClassName(), $this->getTaggableMorphName(), $this->getTaggableTableName())
-            ->using($this->getPivotModelClassName())
+            ->using($this->getPivotModelClassName());
+
+        if ($currentUser === null) {
+            return $morph->ordered();
+        }
+
+        return $morph
             ->where('user_id', $currentUser->id)
             ->ordered();
     }

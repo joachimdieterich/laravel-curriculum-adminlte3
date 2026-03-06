@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Log;
-use Browser;
+use hisorange\BrowserDetect\Facade as Browser;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -56,7 +56,7 @@ class LogController extends Controller
         if (app()->runningUnitTests() or app()->runningInConsole()) {
             return;
         }
-        LogController::set('browser', Browser::browserName());
+        LogController::set('browser', Browser::browserFamily());
         LogController::setDevice();
     }
 }

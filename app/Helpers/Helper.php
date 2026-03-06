@@ -156,55 +156,46 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
             'selected' => 'sometimes|nullable',
         ]);
 
-        if (request()->has('selected'))
-        {
-            //dump($collection->whereIn($table . $id, (array)$input['selected'])->get());
+        if (request()->has('selected')) {
             return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->values());
         }
-        else
-        {
-            $page = $input['page'];
-            $resultCount = 25;
 
-            $offset = ($page - 1) * $resultCount;
+        $page        = $input['page'];
+        $resultCount = 25;
 
-            $term = strtolower($input['term']); // str_contains is case sensitive
+        $offset = ($page - 1) * $resultCount;
 
-            $allEntries = $collection->filter(function($obj) use ($field, $term) {
-                foreach ((array)$field as $f) {
-                    // if any match is true, return the entry
-                    if (str_contains(strtolower($obj[$f]), $term)) return true;
-                }
-                return false;
-            });
+        $term = strtolower($input['term']); // str_contains is case sensitive
+        $allEntries = $collection->filter(function($obj) use ($field, $term) {
+            return array_any((array) $field, fn($f) => str_contains(strtolower($obj[$f]), $term));
+        });
 
-            $count = Count($allEntries);
+        $count = Count($allEntries);
 
-            $entries = $allEntries
-                ->sortBy($orderby, SORT_NATURAL)
-                ->skip($offset)
-                ->take($resultCount)
-                ->select([$table.$id, $text])
-                ->map(function($entry) use ($table, $id, $text) {
-                    return [
-                        'id' => $entry[$table.$id],
-                        'text' => $entry[$text],
-                    ];
-                })
-                ->values();
+        $entries = $allEntries
+            ->sortBy($orderby, SORT_NATURAL)
+            ->skip($offset)
+            ->take($resultCount)
+            ->select([$table.$id, $text])
+            ->map(function($entry) use ($table, $id, $text) {
+                return [
+                    'id' => $entry[$table.$id],
+                    'text' => $entry[$text],
+                ];
+            })
+            ->values();
 
-            $endCount = $offset + $resultCount;
-            $morePages = $count > $endCount;
+        $endCount  = $offset + $resultCount;
+        $morePages = $count > $endCount;
 
-            $results = array(
-                "results" => $entries,
-                "pagination" => array(
-                    "more" => $morePages
-                )
-            );
+        $results = array(
+            "results" => $entries,
+            "pagination" => array(
+                "more" => $morePages
+            )
+        );
 
-            return response()->json($results);
-        }
+        return response()->json($results);
     }
 }
 

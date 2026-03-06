@@ -39,20 +39,7 @@ export default {
     },
     methods: {
         show() {
-            this.toggleLoadingIndicator();
-            if (this.medium.adapter == 'local') {
-                window.location.assign('/media/' + this.medium.id + '?download=true');
-            } else {
-                axios.get('/media/' + this.medium.id + '?content=true')
-                    .then((response) => {
-                        window.open(response.data, '_blank');
-                        this.toggleLoadingIndicator();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        this.toggleLoadingIndicator();
-                    });
-            }
+            window.open('/media/' + this.medium.id + '?content=true', '_blank');
         },
         toggleLoadingIndicator() {
             // initial state => visible

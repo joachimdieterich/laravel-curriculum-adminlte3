@@ -2,7 +2,7 @@
     <div class="link-preview">
         <div class="info-box bg-info">
             <a
-                :href="htmlToText(href)"
+                :href="href"
                 :target="target"
                 class="d-flex w-100"
             >

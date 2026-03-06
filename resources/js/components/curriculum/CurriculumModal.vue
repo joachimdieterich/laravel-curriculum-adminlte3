@@ -203,7 +203,9 @@
                                             }"
                                         />
                                     </div>
-                                    <div class="form-group">
+                                    <div v-if="checkPermission('is_admin')"
+                                        class="form-group"
+                                    >
                                         <Select2
                                             id="type_id"
                                             name="type_id"
@@ -213,9 +215,7 @@
                                             option_id="id"
                                             option_label="title"
                                             :selected="form.type_id"
-                                            @selectedValue="(id) => {
-                                                this.form.type_id = id;
-                                            }"
+                                            @selectedValue="(id) => this.form.type_id = id[0]"
                                         />
                                     </div>
                                     <Select2

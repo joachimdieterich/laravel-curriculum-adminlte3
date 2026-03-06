@@ -449,9 +449,17 @@ return [
             'singular' => 'Favorit',
             'plural' => 'Favoriten',
         ],
+        'favouritism' => [
+            'singular' => 'Favoritisierung',
+            'plural' => 'Favoritisierungen',
+        ],
         'hidden' => [
             'singular' => 'Ausgeblendet',
-            'plural' => 'Augeblendete',
+            'plural' => 'Ausgeblendete',
+        ],
+        'hidden_statistic' => [
+            'singular' => 'Ausgeblendet',
+            'plural' => 'Ausblendungen',
         ],
         'filter' => [
             'title' => 'Nach Tags filtern',
@@ -1091,9 +1099,6 @@ return [
         ],
     ],
     'kanban' => [
-        'contributor' => 'Aktuelle Bearbeiter',
-        'contributor_joined' => 'Bearbeiter dazu gekommen',
-        'contributor_left' => 'Bearbeiter gegangen',
         'title' => 'Pinnwände',
         'title_singular' => 'Pinnwand',
         'create' => 'Pinnwand erstellen',
@@ -1394,5 +1399,9 @@ return [
     ],
     'system_config' => [
         'title' => 'Systemkonfiguration'
+    ],
+    'websockets' => [
+        'contributor_joined' => 'Bearbeiter dazu gekommen',
+        'contributor_left' => 'Bearbeiter gegangen',
     ]
 ];

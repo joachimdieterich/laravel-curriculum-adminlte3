@@ -45,7 +45,7 @@
             >
                 <div
                     class="small hide-scrollbars overflow-auto h-100 p-margin-0"
-                    style="background-color: inherit; overscroll-behavior: none;"
+                    style="background-color: inherit;"
                     :style="{ 'color': textcolor }"
                     v-html="objective.title"    
                 ></div>

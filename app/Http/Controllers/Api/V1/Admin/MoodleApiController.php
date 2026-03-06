@@ -241,7 +241,7 @@ class MoodleApiController extends Controller
             foreach ($input['kanbans'] as $kanban_id) {
                 // check if kanban exists
                 $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
-                if (empty($owner_id)) abort(400, 'Kanban with ID '.$kanban_id.' not found');
+                if (empty($owner_id)) return response()->json('Kanban with ID '.$kanban_id.' not found', 400);
     
                 foreach ($users as $user) {
                     KanbanSubscription::updateOrCreate([
@@ -263,7 +263,7 @@ class MoodleApiController extends Controller
             foreach ($input['curricula'] as $curriculum_id) {
                 // check if curricula exists
                 $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
-                if (empty($owner_id)) abort(400, 'Curriculum with ID '.$curriculum_id.' not found');
+                if (empty($owner_id)) return response()->json('Curriculum with ID '.$curriculum_id.' not found', 400);
     
                 foreach ($users as $user) {
                     CurriculumSubscription::updateOrCreate([
@@ -299,7 +299,7 @@ class MoodleApiController extends Controller
             foreach ($input['kanbans'] as $kanban_id) {
                 // check if kanban exists
                 $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
-                if (empty($owner_id)) abort(400, 'Kanban with ID '.$kanban_id.' not found');
+                if (empty($owner_id)) return response()->json('Kanban with ID '.$kanban_id.' not found', 400);
     
                 $delete_count += KanbanSubscription::where([
                     'kanban_id' => $kanban_id,
@@ -314,7 +314,7 @@ class MoodleApiController extends Controller
             foreach ($input['curricula'] as $curriculum_id) {
                 // check if curriculum exists
                 $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
-                if (empty($owner_id)) abort(400, 'Curriculum with ID '.$curriculum_id.' not found');
+                if (empty($owner_id)) return response()->json('Curriculum with ID '.$curriculum_id.' not found', 400);
     
                 $delete_count += CurriculumSubscription::where([
                     'curriculum_id' => $curriculum_id,
@@ -331,9 +331,14 @@ class MoodleApiController extends Controller
     protected function checkEnrolExpelInput(array $input)
     {
         // validate that required fields are present
-        if (empty($input['users'])) abort(400, 'No users (common_name) provided');
-        if (empty($input['kanbans']) and empty($input['curricula']) and empty($input['groups']))
-            abort(400, 'At least one model needs to be provided (kanbans/curricula/groups)');
+        if (empty($input['users'])) {
+            response()->json('No users (common_name) provided', 400)->send();
+            exit;
+        }
+        if (empty($input['kanbans']) and empty($input['curricula']) and empty($input['groups'])) {
+            response()->json('At least one model needs to be provided (kanbans/curricula/groups)', 400)->send();
+            exit;
+        }
 
         // parse fields to arrays if they are strings
         if (gettype($input['users']) == 'string') $input['users'] = json_decode($input['users'], true);
@@ -345,7 +350,8 @@ class MoodleApiController extends Controller
         // if not every common_name has a corresponding user, return those
         if (count($users) != count($input['users'])) {
             $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
-            abort(400, 'Users with common names ['.implode(', ', $missing).'] not found');
+            response()->json('Users with common names ['.implode(', ', $missing).'] not found', 400)->send();
+            exit;
         }
 
         return [$input, $users];

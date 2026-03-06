@@ -169,6 +169,9 @@ Route::withoutMiddleware('auth')->group(function() {
 // O
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
 
+    Route::get('oidc', 'OIDCController@handle');
+    Route::withoutMiddleware('web')->post('oidc/backchannellogout', 'OIDCController@backchannelLogout');
+
     /*** Organizations ***/
     Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
     Route::delete('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');

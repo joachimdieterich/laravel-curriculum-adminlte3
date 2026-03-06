@@ -3,40 +3,42 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Aacotroneo\Saml2\Saml2Auth;
+use Jumbojett\OpenIDConnectClient;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\LogController;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards) {
-        if ((auth()->user() === null or auth()->user()->id == env('GUEST_USER')) and env('APP_ENV') != 'local') {
-            $saml2Auth = new Saml2Auth(Saml2Auth::loadOneLoginAuthFromIpdConfig('rlp'));
-            // check if user is already authenticated at IDP
-            if ($saml2Auth->isAuthenticated()) {
-                $common_name = $saml2Auth->getSaml2User()->getAttribute('cn')[0];
-                // authenticate user by common name
-                Auth::login(\App\User::where('common_name', $common_name)->firstOrFail(), true);
-            } else {
-                // only redirect to SSO login if request isn't available to guests
-                if (
-                    !$request->has('forceSSO') and // TODO: temporary solution | remove after implementing OIDC
-                    (
-                        $request->has('sharing_token')
-                        or str_starts_with($request->getRequestUri(), '/navigator')
-                        or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
-                        or str_ends_with($request->getPathInfo(), 'startWithPw') // videoconference-link
-                    )
-                ) {
-                    // set statistics for guest-authentication
-                    LogController::set('guestLogin');
-                    LogController::setStatistics();
-                    Auth::loginUsingId((env('GUEST_USER')), true);
-                } else {
-                    return $saml2Auth->login(URL::full()); // after successful login, redirect to the current URL
+        $user_id = auth()->user()?->id;
+
+        if (($user_id === null or $user_id == env('GUEST_USER')) and env('APP_ENV') != 'local') {
+            $allow_guest = $request->has('sharing_token')
+                or str_starts_with($request->getRequestUri(), '/navigator')
+                or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
+                or str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
+
+            // skip authentication if authenticated as guest and guest access is allowed
+            if ($user_id != env('GUEST_USER') or !$allow_guest) {
+                $oidc = new OpenIDConnectClient(
+                    env('OIDC_RLP_IDP_HOST'),
+                    env('OIDC_CLIENT_ID'),
+                    env('OIDC_CLIENT_SECRET')
+                );
+    
+                // store current URL to redirect back after authentication-callback
+                if (!session('redirect_to')) {
+                    session(['redirect_to' => URL::full()]);
+                    \Session::save();
                 }
+                // $oidc->setCodeChallengeMethod('S256'); // PKCE
+                
+                // if resource is accessible for guests, request silent authentication
+                if ($allow_guest) $oidc->addAuthParam(['prompt' => 'none']);
+    
+                // this will call the authorization endpoint and redirect to our OIDC-handling route
+                $oidc->setRedirectURL(env('APP_URL') . '/oidc');
+                $oidc->authenticate();
             }
         }
         // needed to redirect to login-page in local environment

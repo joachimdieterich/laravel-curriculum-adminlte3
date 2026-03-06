@@ -77,7 +77,7 @@ class OIDCController extends Controller
 
         Redis::del('user_sessions:' . $common_name);
         // remove remember token to prevent auto-renew of deleted sessions
-        \User::where('common_name', $common_name)->update(['remember_token' => null]);
+        \App\User::where('common_name', $common_name)->update(['remember_token' => null]);
             
         // if user cannot be found, still return success, or else the IDP will reinitiate logout
         return response()->json('User logged out', 200);

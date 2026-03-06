@@ -20,7 +20,10 @@ class Authenticate extends Middleware
             );
 
             // store current URL to redirect back after authentication-callback
-            if (!session('redirect_to')) session(['redirect_to' => URL::full()]);
+            if (!session('redirect_to')) {
+                session(['redirect_to' => URL::full()]);
+                \Session::save();
+            }
             // $oidc->setCodeChallengeMethod('S256'); // PKCE
 
             $allow_guest = $request->has('sharing_token')

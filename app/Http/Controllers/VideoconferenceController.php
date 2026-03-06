@@ -18,7 +18,7 @@ class VideoconferenceController extends Controller
     private $adapter;
 
     public function __construct(){
-        $this->adapter = env('VIDEOCONFERENCE_ADAPTER');
+        $this->adapter = config('app.videoconference_adapter');
     }
 
     /**
@@ -52,7 +52,7 @@ class VideoconferenceController extends Controller
      */
     public function index()
     {
-        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403);
 
         if (request()->wantsJson())
         {
@@ -122,7 +122,7 @@ class VideoconferenceController extends Controller
 
     public function list(Request $request)
     {
-        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != env('GUEST_USER'), 403);
+        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403);
 
         if (request()->has(['group_id']))
         {
@@ -194,7 +194,7 @@ class VideoconferenceController extends Controller
             'meetingName'       => $input['meetingName'],
             'attendeePW'        => $input['attendeePW'] ?? Hash::make(Str::random(8)),
             'moderatorPW'       => $input['moderatorPW'] ??  Hash::make(Str::random(8)),
-            'endCallbackUrl'    => env('APP_URL') . '/videoconferences/endCallback?meetingID=' . $meetingID,
+            'endCallbackUrl'    => config('app.url') . '/videoconferences/endCallback?meetingID=' . $meetingID,
             'owner_id'          => auth()->user()->id,
             'welcomeMessage'    => $input['welcomeMessage'] ?? config('bigbluebutton.create.welcomeMessage'),
             'dialNumber'        => $input['dialNumber'] ?? config('bigbluebutton.create.dialNumber'),
@@ -303,10 +303,10 @@ class VideoconferenceController extends Controller
             or $videoconference->subscriptions->where('subscribable_type', "App\Organization")
                 ->where('editable', 1)
                 ->whereIn('subscribable_id', auth()->user()->current_organization_id)->isNotEmpty()
-            or ((env('GUEST_USER') != null)
+            or ((config('app.guest_user_id') != null)
                 ? $videoconference->subscriptions->where('subscribable_type', "App\User")
                     ->where('editable', 1)
-                    ->whereIn('subscribable_id', User::find(env('GUEST_USER'))->id)->isNotEmpty()
+                    ->whereIn('subscribable_id', User::find(config('app.guest_user_id'))->id)->isNotEmpty()
                 : false) //or enrolled via guest
         )
         {
@@ -340,10 +340,10 @@ class VideoconferenceController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__, date('d.m.Y'));
 
-        $moderatorTextPostfix = '<br/>Um jemanden als <b>Moderator:in</b> zur Konferenz einzuladen, schicken Sie diesen Link: <a href="'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
-            . '">'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
-            . '</a><br/><br/> Um jemanden als <b>Teilnehmer:in</b> zur Konferenz einzuladen, schicken Sie diesen Link:  <a href="'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
-            . '">'. env('APP_URL') . '/videoconferences/' . $videoconference->id . '/startWithPw?attendeePW=' . $videoconference->attendeePW
+        $moderatorTextPostfix = '<br/>Um jemanden als <b>Moderator:in</b> zur Konferenz einzuladen, schicken Sie diesen Link: <a href="'. config('app.url') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
+            . '">'. config('app.url') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
+            . '</a><br/><br/> Um jemanden als <b>Teilnehmer:in</b> zur Konferenz einzuladen, schicken Sie diesen Link:  <a href="'. config('app.url') . '/videoconferences/' . $videoconference->id . '/startWithPw?moderatorPW=' . $videoconference->moderatorPW
+            . '">'. config('app.url') . '/videoconferences/' . $videoconference->id . '/startWithPw?attendeePW=' . $videoconference->attendeePW
             . '</a>';
 
         $adapter = new $this->adapter();
@@ -451,7 +451,7 @@ class VideoconferenceController extends Controller
         $presentations = [];
         foreach ($videoconference->media AS $medium){
             $presentations[] = [
-                'link' => ($medium->mime_type == 'url') ? $medium->path : env('APP_URL'). $medium->path(),
+                'link' => ($medium->mime_type == 'url') ? $medium->path : config('app.url'). $medium->path(),
                 'fileName' => $medium->title
             ];
         }

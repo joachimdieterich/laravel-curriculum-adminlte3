@@ -261,7 +261,7 @@ class CurriculumController extends Controller
         ->find($curriculum->id);
 
         $may_edit = $token === null ? $curriculum->isEditable() : $curriculum->isEditable(auth()->user()->id, $token);
-        $is_websocket_active = env('WEBSOCKET_APP_ACTIVE');
+        $is_websocket_active = config('app.websocket_app_active');
 
         $settings = json_encode([
             'edit'                          => $may_edit,

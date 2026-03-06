@@ -191,7 +191,7 @@ class MeetingController extends Controller
     public function getImportDataByUid(Request $request){
         $new_meeting = $this->validateRequest();
         $vm = new EventmanagementPlugin();
-        $events = $vm->plugins[env('EVENTMANAGEMENTPLUGIN')]->lesePlrlpVeranstaltungen(['search'=> $new_meeting['uid']]);
+        $events = $vm->plugins[config('app.eventmanagement_plugin')]->lesePlrlpVeranstaltungen(['search'=> $new_meeting['uid']]);
         //dump($events);
         $event = $events->lesePlrlpVeranstaltungen->data->key_0;
 

@@ -43,7 +43,7 @@ class MapMarkerSubscriptionController extends Controller
                         "token" => $token,
                         "qr"    => (new QRCodeHelper())
                             ->generateQRCodeByString(
-                                env("APP_URL"). "/mapMarkers/" . request('map_marker_id') ."/token?sharing_token=" .$token->sharing_token
+                                config('app.url') . "/mapMarkers/" . request('map_marker_id') ."/token?sharing_token=" .$token->sharing_token
                             )
                     ];
                 }
@@ -57,7 +57,7 @@ class MapMarkerSubscriptionController extends Controller
                         )->with('subscribable')
                             ->whereHasMorph('subscribable', '*', function ($q, $type) {
                                 if ($type == 'App\\User') {
-                                    $q->whereNot('id', env('GUEST_USER'));
+                                    $q->whereNot('id', config('app.guest_user_id'));
                                 }
                             })->get(),
                     ],

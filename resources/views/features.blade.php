@@ -43,7 +43,7 @@
     <div class="content d-flex justify-content-center" style="padding-top:150px">
         <div class="row">
             <div class="col-lg-12" >
-                <h1 class="text-white text-center font-weight-bolder">{{ env('APP_NAME', 'curriculum') }}</h1>
+                <h1 class="text-white text-center font-weight-bolder">{{ config('app.name') }}</h1>
                 <hr class="border-white">
                 <h5 class="text-white font-weight-light text-small text-emphasized">Digitale Lehrpläne und Kompetenz-Zertifizierung</h5> 
             </div>

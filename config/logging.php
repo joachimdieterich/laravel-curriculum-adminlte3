@@ -95,4 +95,5 @@ return [
         ],
     ],
 
+    'events' => env('APP.LOGGING.EVENTS', false),
 ];

@@ -167,7 +167,7 @@ class Kanban extends Model implements Broadcastable
             $user_id = auth()->user()->id;
         }
         // check for subscriptions if not guest user
-        if ($user_id != env('GUEST_USER')) {
+        if ($user_id != config('app.guest_user_id')) {
             $userSubscription         = optional(
                 $this->userSubscriptions()
                     ->where('subscribable_id', $user_id)

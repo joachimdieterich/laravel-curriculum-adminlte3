@@ -1,6 +1,6 @@
 
 <!-- Brand Logo/menu -->
-@if(env('BRAND_MENU_TITLE_1'))
+@if(config('app.brand_menu.1.title'))
 <div id="topnav" class="bg-lime">
     <button
         type="button"
@@ -55,7 +55,7 @@
                     </g>
                 </svg>
                 <span class="brand-txt pl-3 d-flex align-items-center">
-                    {{ env('APP_NAME') }}
+                    {{ config('app.name') }}
                     <i class="fa fa-chevron-down pl-2"></i>
                 </span>
             @endif
@@ -63,10 +63,10 @@
     </button>
     <div class="dropdown-menu bg-lime dropdown-menu-lime elevation-2" style="top: unset;">
         @php ($brand_iterator = 1)
-        @while (env('BRAND_MENU_TITLE_'.$brand_iterator))
-            <a href="{{ env('BRAND_MENU_HREF_'.$brand_iterator) }}" class="dropdown-item">
-                <i class="brand-dropdown_icon {{ env('BRAND_MENU_ICON_'.$brand_iterator) }} fa-fw text-white"></i>
-                <span class="font-weight-light pl-1">{{ env('BRAND_MENU_TITLE_'.$brand_iterator) }}</span>
+        @while (config('app.brand_menu.' . $brand_iterator . '.title'))
+            <a href="{{ config('app.brand_menu.' . $brand_iterator . '.url') }}" class="dropdown-item">
+                <i class="brand-dropdown_icon {{ config('app.brand_menu.' . $brand_iterator . '.icon') }} fa-fw text-white"></i>
+                <span class="font-weight-light pl-1">{{ config('app.brand_menu.' . $brand_iterator . '.title') }}</span>
             </a>
         @php ($brand_iterator++)
         @endwhile
@@ -106,7 +106,7 @@
             @if (Request::is('videoconferences'))
                 {{ trans('global.videoconference.title') }}
             @else
-                {{ env('APP_NAME') }}
+                {{ config('app.name') }}
             @endif
         </span>
     </a>

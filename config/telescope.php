@@ -153,4 +153,9 @@ return [
 
         Watchers\ScheduleWatcher::class => env('TELESCOPE_SCHEDULE_WATCHER', true),
     ],
+
+    'users' => env('TELESCOPE_USERS'),
+    'status_filter' => env('TELESCOPE_STATUS_FILTER', '200, 302'),
+    'duration_filter' => env('TELESCOPE_REQUEST_DURATION_FILTER', 1000),
+    'show_type' => env('TELESCOPE_STATUS_FILTER_SHOW_TYPE', 'dump,query'),
 ];

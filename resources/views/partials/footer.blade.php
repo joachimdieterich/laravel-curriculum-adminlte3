@@ -1,16 +1,23 @@
 @if(isset($contentonly))
-<footer class="main-footer py-1 no-print"
-        style="background-color: #737c83; width: 100%; margin-left: 0 !important;" >
+<footer
+    class="main-footer py-1 ml-0 w-100 no-print"
+    style="background-color: #737c83;"
+>
 @else
-<footer class="main-footer py-1 no-print"
-        style="background-color:#737c83">
+<footer
+    class="main-footer py-1 no-print"
+    style="background-color: #737c83"
+>
 @endif
     <div class="row">
         <div class="col-lg-2">
-            @if (env('FOOTER_LOGO_HEIGHT'))
+            @if (config('app.footer.logo.height'))
             <a href="#">
-                <img style="height:{{ env('FOOTER_LOGO_HEIGHT') }};"
-                     src="{{ env('FOOTER_LOGO_URL') }}" alt="{{ env('FOOTER_LOGO_ALT') }}">
+                <img
+                    src="{{ config('app.footer.logo.url') }}"
+                    alt="{{ config('app.footer.logo.alt') }}"
+                    style="height:{{ config('app.footer.logo.height') }};"
+                />
             </a>
             @endif
         </div>
@@ -18,27 +25,18 @@
         <div class="navbar-expand col-lg-8">
             <ul class="navbar-nav d-flex flex-column flex-sm-row text-center p-2">
                 @php ($footer_iterator = 1)
-                @while ( env('FOOTER_TITLE_'.$footer_iterator) )
+                @while ( config('app.footer.menu.'.$footer_iterator.'.title') )
                 <li class="nav-item flex-fill py-2">
                     <a
                         class="nav-item text-white small"
-                        href="{{ env('FOOTER_URL_'.$footer_iterator) }}"
+                        href="{{ config('app.footer.menu.'.$footer_iterator.'.url') }}"
                     >
-                        {{ env('FOOTER_TITLE_'.$footer_iterator) }}
+                        {{ config('app.footer.menu.'.$footer_iterator.'.title') }}
                     </a>
                 </li>
                 @php ($footer_iterator++)
                 @endwhile
             </ul>
         </div>
-
-<!--        <div class="col-lg-2 pt-2 d-none d-sm-inline-block ">
-            <a class="text-white-50 text-decoration-none "
-               href="http://curriculumonline.de">
-                <small>
-                    Version 1.0.0
-                </small>
-            </a>
-        </div>-->
     </div>
 </footer>

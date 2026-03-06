@@ -11,7 +11,7 @@ class LmsPlugin
 
     public function __construct()
     {
-        $plugin = env('LMSPLUGIN', null);
+        $plugin = config('app.lms_plugin');
         if ($plugin != null) {
             $class = '\\App\\Plugins\\Lms\\'.$plugin.'\\'.$plugin;
             $this->plugins[$plugin] = new $class();

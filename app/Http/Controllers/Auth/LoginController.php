@@ -46,7 +46,7 @@ class LoginController extends Controller
      */
     public function showLoginForm(Request $request)
     {
-        return env('APP_ENV') == 'local'
+        return config('app.env') == 'local'
             ? $this->localLogin($request) // in local environment, show login form
             : redirect('/home'); // in live environment, redirect to /home to trigger SSO through Auth-middleware
     }
@@ -110,21 +110,21 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        if (env('APP_ENV') == 'local') // in local environment, logout user and redirect to login-page
+        if (config('app.env') == 'local') // in local environment, logout user and redirect to login-page
         {
             return $this->localLogout($request);
         }
         else // in live environment, redirect to SSO logout
         {
             $oidc = new \Jumbojett\OpenIDConnectClient(
-                env('OIDC_RLP_IDP_HOST'),
-                env('OIDC_CLIENT_ID'),
-                env('OIDC_CLIENT_SECRET')
+                config('app.oidc_host'),
+                config('app.oidc_client_id'),
+                config('app.oidc_client_secret')
             );
-            $oidc->setRedirectURL(env('APP_URL') . '/oidc');
+            $oidc->setRedirectURL(config('app.url') . '/oidc');
 
             // except if authenticated as guest user, then redirect to SSO login
-            if (auth()->user()->id == env('GUEST_USER'))
+            if (auth()->user()->id == config('app.guest_user_id'))
             {
                 $oidc->authenticate();
             }

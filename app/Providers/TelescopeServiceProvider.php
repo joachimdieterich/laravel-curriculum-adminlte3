@@ -30,11 +30,11 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         Telescope::filter(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
                 // Request mit einer Ladezeit von über 1 Sekunde NICHT rausfiltern
-                if($entry->content['duration'] >= env("TELESCOPE_REQUEST_DURATION_FILTER", 1000)) {
+                if($entry->content['duration'] >= config('telescope.duration_filter')) {
                     return true;
                 }
 
-                $statusFilterArray = explode(',', env("TELESCOPE_STATUS_FILTER", "200, 302"));
+                $statusFilterArray = explode(',', config('telescope.status_filter'));
                 if (!in_array($entry->content['response_status'], $statusFilterArray)) {
                     return true;
                 }
@@ -42,7 +42,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
             $statusFilterShowTypeArray = explode(
                 ',',
-                env("TELESCOPE_STATUS_FILTER_SHOW_TYPE", "dump,query")
+                config('telescope.show_type')
             );
             //store specific types
             if (in_array($entry->type, $statusFilterShowTypeArray)) {
@@ -87,8 +87,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     protected function gate()
     {
         Gate::define('viewTelescope', function ($user) {
-            return in_array($user->email, explode(',', env("TELESCOPE_USERS"))
-            );
+            return in_array($user->email, explode(',', config('telescope.users')));
         });
     }
 }

@@ -16,26 +16,8 @@ class LogbookSubscriptionController extends Controller
      */
     public function index()
     {
-        // $tokens = null;
-        if (request()->wantsJson())
-        {
-            // $tokenscodes = LogbookSubscription::where('logbook_id', request('logbook_id'))
-            //     ->where('sharing_token', "!=", null)
-            //     ->get();
-
-            // foreach ($tokenscodes as $token)
-            // {
-            //     $tokens[] = [
-            //         "token" => $token,
-            //         "qr"    => (new QRCodeHelper())
-            //             ->generateQRCodeByString(
-            //                 env("APP_URL"). "/logbooks/" . request('logbook_id') ."/token?sharing_token=" .$token->sharing_token
-            //             )
-            //     ];
-            // }
-
+        if (request()->wantsJson()) {
             return [
-                // 'tokens' => $tokens,
                 'subscriptions' => optional(
                         optional(
                             Logbook::find(request('logbook_id'))
@@ -43,7 +25,7 @@ class LogbookSubscriptionController extends Controller
                     )->with('subscribable')
                     ->whereHasMorph('subscribable', '*', function ($q, $type) {
                         if ($type == 'App\\User') {
-                            $q->whereNot('id', env('GUEST_USER'));
+                            $q->whereNot('id', config('app.guest_user_id'));
                         }
                     })->get(),
             ];

@@ -246,9 +246,8 @@ class KanbanController extends Controller
     {
         abort_if(
             $token == null and ( // token-links are subscribed to the guest-user
-                auth()->user()->id == env(
-                    'GUEST_USER'
-                ) // so we need to check if a guest-user is accessing through a token
+                // so we need to check if a guest-user is accessing through a token
+                auth()->user()->id == config('app.guest_user_id')
                 or !$kanban->isAccessible()
             ),
             403
@@ -257,12 +256,10 @@ class KanbanController extends Controller
         $kanban = $kanban->withRelations();
 
         $may_edit = $kanban->isEditable(auth()->user()->id, $token);
-        $may_favour = auth()->user()->id != env(
-            'GUEST_USER'
-        );
+        $may_favour = auth()->user()->id != config('app.guest_user_id');
 
         $is_shared           = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
-        $is_websocket_active = env('WEBSOCKET_APP_ACTIVE');
+        $is_websocket_active = config('app.websocket_app_active');
 
         LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
 

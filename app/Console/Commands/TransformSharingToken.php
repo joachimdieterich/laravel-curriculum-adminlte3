@@ -64,7 +64,7 @@ class TransformSharingToken extends Command
             {
                 foreach ($subscriptions as $subscription)
                     $subscription->update([
-                        'subscribable_id'   => env('GUEST_USER'),
+                        'subscribable_id'   => config('app.guest_user_id'),
                         'title'             => $user->username,
                         'sharing_token'     => $user->sharing_token,
                     ]);

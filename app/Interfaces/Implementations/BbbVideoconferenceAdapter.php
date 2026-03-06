@@ -30,8 +30,8 @@ class BbbVideoconferenceAdapter implements VideoconferenceInterface
                 ['link' => 'https://www.example.com/doc.pdf', 'fileName' => 'doc.pdf'], //first will be default and current slide in meeting
                 ['link' => 'https://www.example.com/php_tutorial.pptx', 'fileName' => 'php_tutorial.pptx'],
             ],*/
-            'endCallbackUrl'  => $input['endCallbackUrl'] ?? env('APP_URL') ,
-            'logoutUrl' => $input['logoutUrl'] ?? env('APP_URL'),
+            'endCallbackUrl'  => $input['endCallbackUrl'] ?? config('app.url') ,
+            'logoutUrl' => $input['logoutUrl'] ?? config('app.url'),
         ]);
     }
 

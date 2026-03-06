@@ -35,7 +35,7 @@ class KanbanItem extends Model
 
     public function broadcastOn($event): array
     {
-        if (!env('WEBSOCKET_APP_ACTIVE', false)) {
+        if (!config('app.websocket_app_active')) {
             return [];
         }
 

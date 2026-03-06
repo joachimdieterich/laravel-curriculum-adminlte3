@@ -1,7 +1,7 @@
 @extends('layouts.contentonly')
 
 @section('breadcrumb')
-    @if (Auth::user()->id == env('GUEST_USER'))
+    @if (Auth::user()->id == config('app.guest_user_id'))
         <breadcrumbs
             :entries="{{json_encode([
             ['active'=> true, 'title'=> Str::limit($navigator->title, 10) ]

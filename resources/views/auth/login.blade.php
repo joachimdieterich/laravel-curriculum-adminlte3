@@ -62,7 +62,7 @@
 
                 <div class="row">
                     <div class="col-6">
-                        @if (env('GUEST_USER') !== null)
+                        @if (config('app.guest_user_id') !== null)
                         <a href="/guest" name="login" class="btn btn-primary btn-block btn-flat">{{ trans('global.login_guest') }}</a>
                         @endif
                     </div>
@@ -73,15 +73,15 @@
                     <!-- /.col -->
                 </div>
             </form>
-            @if ( ( env('SAML2_RLP_IDP_SSO_URL') !== null ) AND ( !empty(env('SAML2_RLP_IDP_SSO_URL')) ) )
+            @if (config('app.oidc_host') !== null)
                 <div class="social-auth-links text-center mb-3">
                     <p>- {{ trans('auth.or') }} -</p>
-                    <a href="{{ route('saml2_login', ['idpName' => config('saml2_settings.idpNames')[0]]) }}" class="btn btn-block btn-primary">
-                        <i class=" mr-2"></i> {{ trans('global.login_SSO') }}
+                    <a href="{{ route('home') }}" class="btn btn-block btn-primary">
+                        <i class="mr-2"></i> {{ trans('global.login_SSO') }}
                     </a>
                 </div>
             @endif
-            @if (env('ALLOW_PASSWORD_RESET') === true)
+            @if (config('app.allow_password_reset') === true)
                 <p class="mb-1">
                     <a class="" href="{{ route('password.request') }}">
                         {{ trans('global.forgot_password') }}
@@ -89,10 +89,8 @@
                 </p>
             @endif
             <p class="mb-0">
-                @if ( ( env('SHOW_IMRESSUM') !== null ))
-                    <a class="" href="{{ route('impressum') }}">
-                        Impressum
-                    </a>
+                @if (config('app.show_impressum') === true)
+                    <a class="" href="{{ route('impressum') }}">Impressum</a>
                 @endif
             </p>
             <p class="mb-1">

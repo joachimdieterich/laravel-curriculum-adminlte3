@@ -31,8 +31,8 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_HTTPHEADER => $headers ?? [],
-                CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
-                CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
+                CURLOPT_SSL_VERIFYHOST => config('medium.repositories.edusharing.ssl_verify_host'),
+                CURLOPT_SSL_VERIFYPEER => config('medium.repositories.edusharing.ssl_verify_peer'),
             ]
         );
 
@@ -61,8 +61,8 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
-                CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
+                CURLOPT_SSL_VERIFYHOST => config('medium.repositories.edusharing.ssl_verify_host'),
+                CURLOPT_SSL_VERIFYPEER => config('medium.repositories.edusharing.ssl_verify_peer'),
             ]
         );
 
@@ -95,8 +95,8 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_HTTPHEADER => $headers,
-                CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
-                CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
+                CURLOPT_SSL_VERIFYHOST => config('medium.repositories.edusharing.ssl_verify_host'),
+                CURLOPT_SSL_VERIFYPEER => config('medium.repositories.edusharing.ssl_verify_peer'),
             ]
         );
 
@@ -192,8 +192,8 @@ class EduSharingApiHelper extends EduSharingHelperAbstract  {
                 CURLOPT_FAILONERROR => false,
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_HTTPHEADER => $headers ?? [],
-                CURLOPT_SSL_VERIFYHOST => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
-                CURLOPT_SSL_VERIFYPEER => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
+                CURLOPT_SSL_VERIFYHOST => config('medium.repositories.edusharing.ssl_verify_host'),
+                CURLOPT_SSL_VERIFYPEER => config('medium.repositories.edusharing.ssl_verify_peer'),
             ]
         );
 

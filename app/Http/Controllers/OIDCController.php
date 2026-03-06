@@ -14,15 +14,10 @@ class OIDCController extends Controller
      */
     public function handle(Request $request): \Illuminate\Http\RedirectResponse
     {
-        
         // handle logout-request separately
         if (session('init_logout') === true) $this->initiateLogout($request);
 
-        $oidc = new OpenIDConnectClient(
-            env('OIDC_RLP_IDP_HOST'),
-            env('OIDC_CLIENT_ID'),
-            env('OIDC_CLIENT_SECRET')
-        );
+        $oidc = $this->getOIDCClient();
 
         if (!$request->has('error')) { // silent authentication with no logged-in user
             $oidc->authenticate(); // authenticates user and saves tokens in instance
@@ -37,7 +32,7 @@ class OIDCController extends Controller
     
             LogController::set('ssoLogin'); // set statistics for SSO-authentication
         } else {
-            Auth::loginUsingId((env('GUEST_USER')), true);
+            Auth::loginUsingId((config('app.guest_user_id')), true);
             LogController::set('guestLogin'); // set statistics for guest-authentication
         }
 
@@ -56,15 +51,11 @@ class OIDCController extends Controller
     /**
      * Handle OIDC backchannel logout
      * @param  \Illuminate\Http\Request  $request contains logout_token
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function backchannelLogout(Request $request): \Illuminate\Http\JsonResponse
     {
-        $oidc = new OpenIDConnectClient(
-            env('OIDC_RLP_IDP_HOST'),
-            env('OIDC_CLIENT_ID'),
-            env('OIDC_CLIENT_SECRET')
-        );
+        $oidc = $this->getOIDCClient();
 
         if (!$oidc->verifyLogoutToken()) return response()->json('Could not verify logout token', 400);
 
@@ -87,11 +78,7 @@ class OIDCController extends Controller
     {
         session()->forget('init_logout');
 
-        $oidc = new OpenIDConnectClient(
-            env('OIDC_RLP_IDP_HOST'),
-            env('OIDC_CLIENT_ID'),
-            env('OIDC_CLIENT_SECRET')
-        );
+        $oidc = $this->getOIDCClient();
         $oidc->authenticate(); // to load tokens
 
         // logout user locally
@@ -101,5 +88,14 @@ class OIDCController extends Controller
 
         // RP-initiated logout
         $oidc->signOut($oidc->getIdToken(), null); // calls 'exit;' internally to stop further execution
+    }
+
+    protected function getOIDCClient(): OpenIDConnectClient
+    {
+        return new OpenIDConnectClient(
+            config('app.oidc_host'),
+            config('app.oidc_client_id'),
+            config('app.oidc_client_secret')
+        );
     }
 }

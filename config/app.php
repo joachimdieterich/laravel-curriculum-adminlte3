@@ -236,7 +236,6 @@ return [
     */
 
     'aliases' => [
-
         'App'          => Illuminate\Support\Facades\App::class,
         'Arr'          => Illuminate\Support\Arr::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
@@ -282,86 +281,103 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Env-variables
+    | Miscellaneous
     |--------------------------------------------------------------------------
-    | In order to use env-variables in live-systems when caching configs,
-    | they need to be listed here and called via config() helper.
-    |
     */
-    'brand_menu_icon_1' => env('BRAND_MENU_ICON_1'),
-    'brand_menu_icon_2' => env('BRAND_MENU_ICON_2'),
-    'brand_menu_icon_3' => env('BRAND_MENU_ICON_3'),
-    'brand_menu_icon_4' => env('BRAND_MENU_ICON_4'),
-    'brand_menu_icon_5' => env('BRAND_MENU_ICON_5'),
-    'brand_menu_icon_6' => env('BRAND_MENU_ICON_6'),
-    'brand_menu_icon_7' => env('BRAND_MENU_ICON_7'),
-    'brand_menu_title_1' => env('BRAND_MENU_TITLE_1'),
-    'brand_menu_title_2' => env('BRAND_MENU_TITLE_2'),
-    'brand_menu_title_3' => env('BRAND_MENU_TITLE_3'),
-    'brand_menu_title_4' => env('BRAND_MENU_TITLE_4'),
-    'brand_menu_title_5' => env('BRAND_MENU_TITLE_5'),
-    'brand_menu_title_6' => env('BRAND_MENU_TITLE_6'),
-    'brand_menu_title_7' => env('BRAND_MENU_TITLE_7'),
-    'brand_menu_url_1' => env('BRAND_MENU_HREF_1'),
-    'brand_menu_url_2' => env('BRAND_MENU_HREF_2'),
-    'brand_menu_url_3' => env('BRAND_MENU_HREF_3'),
-    'brand_menu_url_4' => env('BRAND_MENU_HREF_4'),
-    'brand_menu_url_5' => env('BRAND_MENU_HREF_5'),
-    'brand_menu_url_6' => env('BRAND_MENU_HREF_6'),
-    'brand_menu_url_7' => env('BRAND_MENU_HREF_7'),
+    'allow_password_reset' => env('ALLOW_PASSWORD_RESET', false),
 
-    'documentation_url' => env('DOCUMENTATION'),
+    'brand_menu' => [
+        '1' => [
+            'icon' => env('BRAND_MENU_ICON_1'),
+            'title' => env('BRAND_MENU_TITLE_1'),
+            'url' => env('BRAND_MENU_HREF_1'),
+        ],
+        '2' => [
+            'icon' => env('BRAND_MENU_ICON_2'),
+            'title' => env('BRAND_MENU_TITLE_2'),
+            'url' => env('BRAND_MENU_HREF_2'),
+        ],
+        '3' => [
+            'icon' => env('BRAND_MENU_ICON_3'),
+            'title' => env('BRAND_MENU_TITLE_3'),
+            'url' => env('BRAND_MENU_HREF_3'),
+        ],
+        '4' => [
+            'icon' => env('BRAND_MENU_ICON_4'),
+            'title' => env('BRAND_MENU_TITLE_4'),
+            'url' => env('BRAND_MENU_HREF_4'),
+        ],
+        '5' => [
+            'icon' => env('BRAND_MENU_ICON_5'),
+            'title' => env('BRAND_MENU_TITLE_5'),
+            'url' => env('BRAND_MENU_HREF_5'),
+        ],
+        '6' => [
+            'icon' => env('BRAND_MENU_ICON_6'),
+            'title' => env('BRAND_MENU_TITLE_6'),
+            'url' => env('BRAND_MENU_HREF_6'),
+        ],
+        '7' => [
+            'icon' => env('BRAND_MENU_ICON_7'),
+            'title' => env('BRAND_MENU_TITLE_7'),
+            'url' => env('BRAND_MENU_HREF_7'),
+        ],
+    ],
 
-    'edusharing_app_id' => env('EDUSHARING_APP_ID'),
-    'edusharing_priv_key' => env('EDUSHARING_PRIV_KEY'),
-    'edusharing_repo_url' => env('EDUSHARING_REPO_URL'),
-    'edusharing_repo_proxy' => env('EDUSHARING_REPO_PROXY', false),
-    'edusharing_repo_proxy_port' =>  env('EDUSHARING_REPO_PROXY_PORT', false),
-    'edusharing_ssl_verifyhost' => env('EDUSHARING_CURLOPT_SSL_VERIFYHOST', 2),
-    'edusharing_ssl_verifypeer' => env('EDUSHARING_CURLOPT_SSL_VERIFYPEER', 1),
+    'documentation_url' => env('DOCUMENTATION', '/documentation'),
 
     'eventmanagement_plugin' => env('EVENTMANAGEMENTPLUGIN'),
-    'evewa_api_url' => env('EVEWA_API_URL'),
-    'evewa_api_user' => env('EVEWA_API_USER'),
-    'evewa_api_password' => env('EVEWA_API_PASSWORD'),
-    'evewa_proxy' => env('EVEWA_PROXY', false),
-    'evewa_proxy_port' => env('EVEWA_PROXY_PORT', false),
 
-    'fallback_user_username' => env('APP_FALLBACK_USER_USERNAME', 'Deleted User'),
-    'fallback_user_firstname' => env('APP_FALLBACK_USER_FIRSTNAME', 'Deleted'),
-    'fallback_user_lastname' => env('APP_FALLBACK_USER_LASTNAME', 'User'),
-    'fallback_user_email' => env('APP_FALLBACK_USER_EMAIL', 'deleted_user@curriculumonline.de'),
+    'evewa' => [
+        'api_url' => env('EVEWA_API_URL', ''),
+        'api_user' => env('EVEWA_API_USER', ''),
+        'api_password' => env('EVEWA_API_PASSWORD', ''),
+        'proxy' => env('EVEWA_PROXY', false),
+        'proxy_port' => env('EVEWA_PROXY_PORT', false),
+    ],
 
-    'footer_logo_height' => env('FOOTER_LOGO_HEIGHT'),
-    'footer_logo_text' => env('FOOTER_LOGO_ALT'),
-    'footer_logo_url' => env('FOOTER_LOGO_URL'),
-    'footer_title_1' => env('FOOTER_TITLE_1'), // Privacy Policy
-    'footer_title_2' => env('FOOTER_TITLE_2'), // Terms of Service
-    'footer_title_3' => env('FOOTER_TITLE_3'), // Imprint
-    'footer_title_4' => env('FOOTER_TITLE_4'), // Contact
-    'footer_url_1' => env('FOOTER_URL_1'),
-    'footer_url_2' => env('FOOTER_URL_2'),
-    'footer_url_3' => env('FOOTER_URL_3'),
-    'footer_url_4' => env('FOOTER_URL_4'),
+    'fallback' => [
+        'username' => env('APP_FALLBACK_USER_USERNAME', 'Deleted User'),
+        'firstname' => env('APP_FALLBACK_USER_FIRSTNAME', 'Deleted'),
+        'lastname' => env('APP_FALLBACK_USER_LASTNAME', 'User'),
+        'email' => env('APP_FALLBACK_USER_EMAIL', 'deleted_user@curriculumonline.de'),
+    ],
+
+    'footer' => [
+        'logo' => [
+            'src' => env('FOOTER_LOGO_URL'),
+            'alt' => env('FOOTER_LOGO_ALT'),
+            'height' => env('FOOTER_LOGO_HEIGHT'),
+        ],
+        'menu' => [
+            '1' => [ // Privacy Policy
+                'title' => env('FOOTER_TITLE_1'),
+                'url' => env('FOOTER_URL_1'),
+            ],
+            '2' => [ // Terms of Service
+                'title' => env('FOOTER_TITLE_2'),
+                'url' => env('FOOTER_URL_2'),
+            ],
+            '3' => [ // Imprint
+                'title' => env('FOOTER_TITLE_3'),
+                'url' => env('FOOTER_URL_3'),
+            ],
+            '4' => [ // Contact
+                'title' => env('FOOTER_TITLE_4'),
+                'url' => env('FOOTER_URL_4'),
+            ],
+        ],
+    ],
 
     'guest_user_id' => env('GUEST_USER', 8),
 
     'lms_plugin' => env('LMSPLUGIN'),
 
-    'logging_events' => env('APP.LOGGING.EVENTS', false),
-
     'oidc_client_id' => env('OIDC_CLIENT_ID'),
     'oidc_client_secret' => env('OIDC_CLIENT_SECRET'),
     'oidc_host' => env('OIDC_RLP_IDP_HOST'),
 
-    'session_driver' => env('SESSION_DRIVER'),
-    'session_lifetime' => env('SESSION_LIFETIME'),
-
-    'telescope_duration_filter' => env('TELESCOPE_REQUEST_DURATION_FILTER', 1000),
-    'telescope_enabled' => env('TELESCOPE_ENABLED'),
-    'telescope_show_type' => env('TELESCOPE_STATUS_FILTER_SHOW_TYPE', 'dump,query'),
-    'telescope_status_filter' => env('TELESCOPE_STATUS_FILTER', '200, 302'),
-    'telescope_users' => env('TELESCOPE_USERS'),
+    'show_impressum' => env('SHOW_IMPRESSUM', false),
 
     'videoconference_adapter' => env('VIDEOCONFERENCE_ADAPTER'),
 

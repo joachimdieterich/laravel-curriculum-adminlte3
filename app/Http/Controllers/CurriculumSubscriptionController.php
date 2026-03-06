@@ -42,7 +42,7 @@ class CurriculumSubscriptionController extends Controller
                         "token" => $token,
                         "qr"    => (new QRCodeHelper())
                             ->generateQRCodeByString(
-                                env("APP_URL"). "/curricula/" . request('curriculum_id') ."/token?sharing_token=" .$token->sharing_token
+                                config('app.url'). "/curricula/" . request('curriculum_id') ."/token?sharing_token=" .$token->sharing_token
                             )
                     ];
                 }
@@ -55,7 +55,7 @@ class CurriculumSubscriptionController extends Controller
                         )->with('subscribable')
                         ->whereHasMorph('subscribable', '*', function ($q, $type) {
                             if ($type == 'App\\User') {
-                                $q->whereNot('id', env('GUEST_USER'));
+                                $q->whereNot('id', config('app.guest_user_id'));
                             }
                         })->get(),
                 ];
@@ -89,7 +89,7 @@ class CurriculumSubscriptionController extends Controller
             return CurriculumSubscription::with('subscribable')
                 ->whereHasMorph('subscribable', '*', function ($q, $type) {
                     if ($type == 'App\\User') {
-                        $q->whereNot('id', env('GUEST_USER'));
+                        $q->whereNot('id', config('app.guest_user_id'));
                     }
                 })
                 ->find($subscribe->id);

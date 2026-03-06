@@ -12,18 +12,18 @@ class Authenticate extends Middleware
     public function handle($request, Closure $next, ...$guards) {
         $user_id = auth()->user()?->id;
 
-        if (($user_id === null or $user_id == env('GUEST_USER')) and env('APP_ENV') != 'local') {
+        if (($user_id === null or $user_id == config('app.guest_user_id')) and config('app.env') != 'local') {
             $allow_guest = $request->has('sharing_token')
                 or str_starts_with($request->getRequestUri(), '/navigator')
                 or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
                 or str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
 
             // skip authentication if authenticated as guest and guest access is allowed
-            if ($user_id != env('GUEST_USER') or !$allow_guest) {
+            if ($user_id != config('app.guest_user_id') or !$allow_guest) {
                 $oidc = new OpenIDConnectClient(
-                    env('OIDC_RLP_IDP_HOST'),
-                    env('OIDC_CLIENT_ID'),
-                    env('OIDC_CLIENT_SECRET')
+                    config('app.oidc_host'),
+                    config('app.oidc_client_id'),
+                    config('app.oidc_client_secret')
                 );
     
                 // store current URL to redirect back after authentication-callback
@@ -37,7 +37,7 @@ class Authenticate extends Middleware
                 if ($allow_guest) $oidc->addAuthParam(['prompt' => 'none']);
     
                 // this will call the authorization endpoint and redirect to our OIDC-handling route
-                $oidc->setRedirectURL(env('APP_URL') . '/oidc');
+                $oidc->setRedirectURL(config('app.url') . '/oidc');
                 $oidc->authenticate();
             }
         }

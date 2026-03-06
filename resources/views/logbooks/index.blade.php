@@ -1,4 +1,4 @@
-@extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
+@extends((Auth::user()->id == config('app.guest_user_id')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
     {{ trans('global.logbook.title') }}

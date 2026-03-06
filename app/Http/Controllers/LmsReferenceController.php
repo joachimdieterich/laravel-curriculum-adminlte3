@@ -21,7 +21,7 @@ class LmsReferenceController extends Controller
 
         if (request()->wantsJson()) {
             return [
-                'entries' => $lms->plugins[env('LMSPLUGIN')]->{$input['ws_function']}($input),
+                'entries' => $lms->plugins[config('app.lms_plugin')]->{$input['ws_function']}($input),
                 'lms_url' => Organization::find(auth()->user()->current_organization_id)->lms_url
             ];
         }
@@ -38,7 +38,7 @@ class LmsReferenceController extends Controller
         $lms = new LmsPlugin();
 
         if (request()->wantsJson()) {
-            return ['message' => $lms->plugins[env('LMSPLUGIN')]->$input['ws_function']($input)];
+            return ['message' => $lms->plugins[config('app.lms_plugin')]->$input['ws_function']($input)];
         }
     }
 

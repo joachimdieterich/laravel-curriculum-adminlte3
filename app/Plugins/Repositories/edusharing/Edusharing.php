@@ -31,17 +31,17 @@ class Edusharing extends RepositoryPlugin
 
     public function __construct()
     {
-        $this->repoUrl = env('EDUSHARING_REPO_URL', '');
-        $this->proxy = env('EDUSHARING_REPO_PROXY', false);
-        $this->proxy_port = env('EDUSHARING_REPO_PROXY_PORT', false);
+        $this->repoUrl = config('medium.repositories.edusharing.repo_url');
+        $this->proxy = config('medium.repositories.edusharing.repo_proxy');
+        $this->proxy_port = config('medium.repositories.edusharing.repo_proxy_port');
     }
 
     function helperBase($owner_id = null)
     {
         $base = new \EduSharingApiClient\EduSharingHelperBase(
-            env('EDUSHARING_REPO_URL', ''),
-            env('EDUSHARING_PRIV_KEY', ''),
-            env('EDUSHARING_APP_ID', ''),
+            config('medium.repositories.edusharing.repo_url'),
+            config('medium.repositories.edusharing.priv_key'),
+            config('medium.repositories.edusharing.app_id'),
         );
 
         $authHelper = new \EduSharingApiClient\EduSharingAuthHelper($base);

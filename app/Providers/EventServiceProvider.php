@@ -34,7 +34,7 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        if (env('APP.LOGGING.EVENTS', false)) {
+        if (config('logging.events')) {
             Event::listen('*', function ($event, array $data) {
                 if ($event == 'Illuminate\\Log\\Events\\MessageLogged'){ return;}
                 Log::debug($event . ' invoked');

@@ -11,7 +11,7 @@ class EventmanagementPlugin
 
     public function __construct()
     {
-        $plugin = env('EVENTMANAGEMENTPLUGIN', null);
+        $plugin = config('app.eventmanagement_plugin', null);
         if ($plugin != null) {
             $class = '\\App\\Plugins\\Eventmanagement\\'.$plugin.'\\'.$plugin;
             $this->plugins[$plugin] = new $class();

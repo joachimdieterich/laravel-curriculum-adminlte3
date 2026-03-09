@@ -226,7 +226,7 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function currentCurriculaEnrolments(): Collection
+    public function currentCurriculaEnrollments(): Collection
     {
         return DB::table('curricula')
             // ->distinct()

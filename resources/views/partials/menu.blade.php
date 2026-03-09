@@ -19,7 +19,7 @@
                     @include ('forms.input.select', [
                         "model" => "group",
                         "field" => "current_curriculum_group_id",
-                        "options"=> auth()->user()->currentCurriculaEnrolments(),
+                        "options"=> auth()->user()->currentCurriculaEnrollments(),
                         "option_id" => "course_id",
                         "onchange"=> "location = '/courses/'+this.value",
                         "optgroup" => auth()->user()->currentGroupEnrolments()->get(),

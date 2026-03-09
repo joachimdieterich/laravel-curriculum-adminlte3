@@ -32,8 +32,8 @@
 
                 <br/>
 
-                currentCurriculaEnrolments:
-                @foreach(App\User::find($user->id)->currentCurriculaEnrolments() as $cur_enr)
+                currentCurriculaEnrollments:
+                @foreach(App\User::find($user->id)->currentCurriculaEnrollments() as $cur_enr)
                     <li class="small">id: {{ $cur_enr->id }} => {{ $cur_enr->title }};  course_id: {{ $cur_enr->course_id }};  group_id: {{ $cur_enr->group_id }};</li>
                 @endforeach
 

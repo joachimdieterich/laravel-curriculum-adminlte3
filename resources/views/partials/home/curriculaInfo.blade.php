@@ -2,7 +2,7 @@
     class="products-list product-list-in-card pl-2 pr-2"
     role="list"
 >
-    @foreach(auth()->user()->currentCurriculaEnrolments() as $curriculum)
+    @foreach(auth()->user()->currentCurriculaEnrollments() as $curriculum)
         <li
             class="item"
             role="listitem"

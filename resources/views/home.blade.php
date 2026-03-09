@@ -1,11 +1,6 @@
 @extends('layouts.master')
-@section('title')
-    {{ trans('global.home') }}
-@endsection
-@section('breadcrumb')
-    <breadcrumbs></breadcrumbs>
-@endsection
 @section('content')
+    <home></home>
     <div class="content">
         <div class="row">
             <section id="left" class="col-md-6 ">

@@ -289,6 +289,8 @@ app.component('grade', defineAsyncComponent(() => import('./components/grade/Gra
 app.component('groups', defineAsyncComponent(() => import('./components/group/Groups.vue')));
 app.component('group', defineAsyncComponent(() => import('./components/group/Group.vue')));
 
+app.component('home', defineAsyncComponent(() => import('./components/home/Home.vue')));
+
 app.component('maps', defineAsyncComponent(() => import('./components/map/Maps.vue')));
 app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue'))); // cannot be "map" -> name map is reserved
 

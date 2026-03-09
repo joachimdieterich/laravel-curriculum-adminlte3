@@ -101,6 +101,10 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::delete('groups/massDestroy', 'GroupsController@massDestroy')->name('groups.massDestroy');
     Route::get('groups/list', 'GroupsController@list');
 // H
+    Route::get('home/courses', 'HomeController@courses');
+    Route::get('home/groups', 'HomeController@groups');
+    Route::get('home/logbooks', 'HomeController@logbooks');
+    Route::get('home/plans', 'HomeController@plans');
 // I
 // J
 // K

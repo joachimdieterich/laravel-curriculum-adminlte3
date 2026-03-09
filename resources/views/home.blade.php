@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-    <home></home>
+    <home role="{{ auth()->user()->role()->title }}"></home>
     <div class="content">
         <div class="row">
             <section id="left" class="col-md-6 ">

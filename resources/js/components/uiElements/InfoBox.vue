@@ -1,5 +1,5 @@
 <template>
-    <div class="col-6 mb-3">
+    <div class="mb-3">
         <div class="infobox">
             <div class="infobox-header">
                 <button
@@ -9,13 +9,23 @@
                 >
                     <i class="fa" :class="icon"></i>
                 </button>
-                <span class="flex-fill h3 mx-3 my-2">{{ text }}</span>
+                <span class="flex-fill h3 mx-3">{{ text }}</span>
             </div>
             <div class="infobox-body">
-                <div class="card-body p-1">
-                    <ul>
-                        <li>test</li>
-                    </ul>
+                <div v-for="entry in entries"
+                    class="infobox-entry"
+                >
+                    <a
+                        :href="'/' + model + '/' + (entry.course_id ?? entry.id)"
+                    >
+                        <span class="font-weight-bold">{{ entry.title }}</span>
+                        <br/>
+                        <span v-if="entry.grade || entry.group_title"
+                            class="text-muted"
+                        >
+                            {{ entry.grade?.title ?? entry.group_title }}
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -24,6 +34,7 @@
 <script>
 export default {
     name: 'InfoBox',
+    emits: ['error'],
     props: {
         model: {
             type: String,
@@ -39,16 +50,28 @@ export default {
         },
         iconBackgroundClass: {
             type: String,
-            default: 'bg-info',
+            default: 'bg-blue',
         },
     },
     data() {
         return {
             component_id: this.$.uid,
+            entries: [],
         }
     },
     mounted() {
-
+        this.getEntries();
+    },
+    methods: {
+        getEntries() {
+            axios.get('/home/' + this.model)
+                .then(response => {
+                    this.entries = response.data;
+                })
+                .catch(error => {
+                    this.$emit('error', error);
+                });
+        },
     },
 }
 </script>
@@ -59,6 +82,7 @@ export default {
 
     & > .infobox-header {
         display: flex;
+        align-items: center;
         padding: 0.5rem;
         
         & > .infobox-icon {
@@ -71,8 +95,15 @@ export default {
         }
     }
     & > .infobox-body {
+        padding: 0.75rem;
         overflow-y: auto;
         max-height: 240px;
+
+        & > .infobox-entry:not(:last-child) {
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 0.5rem;
+        }
     }
 }
 

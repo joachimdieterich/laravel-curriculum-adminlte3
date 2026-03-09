@@ -77,13 +77,6 @@
                             :objective="terminal"
                             :settings="settings"
                             :max_id="max_ids[type.id]"
-                            @createTerminalObjective="(createObjective) => {
-                                this.createTerminalObjective(createObjective);
-                            }"
-                            @update="(objective) => {
-                                this.currentTerminalObjective = objective;
-                                this.globalStore?.closeModal('terminal-objective-modal');
-                            }"
                         />
 
                         <EnablingObjectives
@@ -164,9 +157,6 @@ export default {
             max_ids: {},
             type_order: [],
             activeTypeId: null,
-            currentCurriculaEnrolments: null,
-            currentTerminalObjective: null,
-            currentEnablingObjective: null,
             objective_types: [],
         }
     },

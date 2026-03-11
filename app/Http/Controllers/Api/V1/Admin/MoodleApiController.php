@@ -146,6 +146,15 @@ class MoodleApiController extends Controller
     public function enrolToGroup(Request $request)
     {
         $input = $this->validateRequest();
+
+        if (empty($input['groups']) or empty($input['common_name'])) {
+            return response()->json('Group common_names and user common_name are required', 400);
+        }
+
+        if (gettype($input['groups']) == 'string') $input['groups'] = json_decode($input['groups'], true);
+        if (!empty($input['logbooks']) and gettype($input['logbooks']) == 'string') $input['logbooks'] = json_decode($input['logbooks'], true);
+        if (!empty($input['kanbans']) and gettype($input['kanbans']) == 'string') $input['kanbans'] = json_decode($input['kanbans'], true);
+
         $groups = Group::whereIn('common_name', $input['groups'])->pluck('id');
         $owner = User::where('common_name', $input['common_name'])->first()->id;
         $response = [];
@@ -172,7 +181,7 @@ class MoodleApiController extends Controller
                         'editable' => $input['editable'] ?? false,
                         'owner_id' => $owner,
                     ]);
-                    array_push($logbooks, $subscribe->save());
+                    array_push($logbooks, $subscribe);
                 }
 
                 $response['logbooks'] = $logbooks;
@@ -192,14 +201,14 @@ class MoodleApiController extends Controller
                         'editable' => $input['editable'] ?? false,
                         'owner_id' => $owner,
                     ]);
-                    array_push($kanbans, $subscribe->save());
+                    array_push($kanbans, $subscribe);
                 }
 
                 $response['kanbans'] = $kanbans;
             }
         }
 
-        return $response;
+        return response()->json($response);
     }
 
     public function enrolUsers(Request $request)
@@ -279,7 +288,7 @@ class MoodleApiController extends Controller
             }
         }
 
-        return $create_count;
+        return response()->json(['count' => $create_count]);
     }
 
     public function expelUsers(Request $request)
@@ -325,7 +334,7 @@ class MoodleApiController extends Controller
             }
         }
 
-        return $delete_count;
+        return response()->json(['count' => $delete_count]);
     }
 
     protected function checkEnrolExpelInput(array $input)
@@ -360,13 +369,13 @@ class MoodleApiController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'common_name' => 'sometimes|string',
-            'users' => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
-            'groups' => is_array(request()->input('groups')) ? 'sometimes|array' : 'sometimes|string',
-            'curricula' => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',
-            'logbooks' => 'sometimes|array',
-            'kanbans' => is_array(request()->input('kanbans')) ? 'sometimes|array' : 'sometimes|string',
-            'editable' => 'sometimes|boolean',
+            'common_name'   => 'sometimes|string',
+            'users'         => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
+            'groups'        => is_array(request()->input('groups')) ? 'sometimes|array' : 'sometimes|string',
+            'curricula'     => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',
+            'logbooks'      => 'sometimes|array',
+            'kanbans'       => is_array(request()->input('kanbans')) ? 'sometimes|array' : 'sometimes|string',
+            'editable'      => 'sometimes|boolean',
         ]);
     }
 }

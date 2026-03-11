@@ -29,22 +29,17 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         Telescope::filter(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
-                // Request mit einer Ladezeit von über 1 Sekunde NICHT rausfiltern
+                // don't filter requests that take too long to process (default 1000ms)
                 if($entry->content['duration'] >= config('telescope.duration_filter')) {
                     return true;
                 }
-
-                $statusFilterArray = explode(',', config('telescope.status_filter'));
-                if (!in_array($entry->content['response_status'], $statusFilterArray)) {
+                // only show requests with a response status code greater than or equal to the configured status filter (default 200)
+                if ($entry->content['response_status'] >= config('telescope.status_filter')) {
                     return true;
                 }
             }
 
-            $statusFilterShowTypeArray = explode(
-                ',',
-                config('telescope.show_type')
-            );
-            //store specific types
+            $statusFilterShowTypeArray = explode(',', config('telescope.show_type'));
             if (in_array($entry->type, $statusFilterShowTypeArray)) {
                 return true;
             }

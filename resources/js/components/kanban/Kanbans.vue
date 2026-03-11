@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <TabList
+        <TabList v-if="!subscribable"
             class="px-3"
             :model="'kanban'"
             modelIcon="fa-columns"

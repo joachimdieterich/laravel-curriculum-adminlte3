@@ -70,7 +70,9 @@
                 :style="{ 'border-color': borderColor(subscription) }"
             >
                 <a class="text-decoration-none">
-                    <RenderUsage :medium="subscription.medium"/>
+                    <div>
+                        <RenderUsage :medium="subscription.medium"/>
+                    </div>
                     <span>
                         <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
                             {{ subscription.medium.title ?? subscription.medium.name }}

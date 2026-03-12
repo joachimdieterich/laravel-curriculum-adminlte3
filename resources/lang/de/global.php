@@ -75,6 +75,8 @@ return [
     'close' => 'Schließen',
     'or' => 'oder',
     'undo' => 'Rückgängig machen',
+    'back' => 'Zurück',
+    'back_to_curriculum' => 'Zurück zur Curriculum-Übersicht',
     'preview' => 'Vorschau',
     'generate' => 'erzeugen',
     'share' => 'Teilen',

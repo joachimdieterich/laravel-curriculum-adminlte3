@@ -19,7 +19,11 @@
 @endsection
 
 @section('title')
-    <title-component></title-component>
+    <title-component
+        :show-back-button="true"
+        back-button-title="global.back_to_curriculum"
+        :back-button-url="{{ json_encode('/curricula/' . $objective->curriculum_id) }}"
+    ></title-component>
 @endsection
 
 @section('content')

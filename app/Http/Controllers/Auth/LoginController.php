@@ -96,8 +96,8 @@ class LoginController extends Controller
 
             return redirect()->intended('home');
         } else {
-            return redirect()->route('login')
-                ->with('error', 'Email-Address And Password Are Wrong.');
+            return redirect()->route('localLogin')
+                ->with('error', 'Email-Address or Password is wrong.');
         }
     }
 

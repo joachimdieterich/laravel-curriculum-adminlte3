@@ -14,7 +14,7 @@
             @if (config('app.footer.logo.height'))
             <a href="#">
                 <img
-                    src="{{ config('app.footer.logo.url') }}"
+                    src="{{ config('app.footer.logo.src') }}"
                     alt="{{ config('app.footer.logo.alt') }}"
                     style="height:{{ config('app.footer.logo.height') }};"
                 />

@@ -8,6 +8,7 @@ use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Mews\Purifier\Casts\CleanHtml;
 
 /**
@@ -134,6 +135,11 @@ class Curriculum extends Model implements Broadcastable
     {
         return $this->hasMany(CurriculumSubscription::class)
             ->where('subscribable_type', 'App\Group');
+    }
+
+    public function achievements(): HasManyThrough
+    {
+        return $this->through('enablingObjectives')->has('achievements');
     }
 
     public function enablingObjectives()

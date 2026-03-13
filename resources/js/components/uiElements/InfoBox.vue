@@ -15,17 +15,17 @@
                 <div v-for="entry in entries"
                     class="infobox-entry"
                 >
-                    <a
-                        :href="'/' + model + '/' + (entry.course_id ?? entry.id)"
-                    >
-                        <span class="font-weight-bold">{{ entry.title }}</span>
-                        <br/>
-                        <span v-if="entry.grade || entry.group_title"
-                            class="text-muted"
-                        >
-                            {{ entry.grade?.title ?? entry.group_title }}
-                        </span>
-                    </a>
+                    <slot name="entry" :entry="entry">
+                        <a :href="'/' + model + '/' + entry.id">
+                            <span class="font-weight-bold">{{ entry.title }}</span>
+                            <br/>
+                            <span v-if="entry.grade"
+                                class="text-muted"
+                            >
+                                {{ entry.grade.title }}
+                            </span>
+                        </a>
+                    </slot>
                 </div>
             </div>
         </div>

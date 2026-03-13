@@ -56,6 +56,11 @@ class HomeController extends Controller
             ->whereIn('groups.organization_id', $org_ids)
             ->where('group_user.user_id', $user->id)
             ->orderBy('curricula.title')
+            ->with(['achievements' => function ($query) use ($user) {
+                $query->select('achievements.id', 'status')
+                    ->where('user_id', $user->id);
+            }])
+            ->withCount('enablingObjectives')
             ->without('owner')
             ->get();
     }

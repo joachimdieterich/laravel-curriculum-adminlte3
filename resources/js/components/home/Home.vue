@@ -13,7 +13,16 @@
                 icon="fa-th"
                 icon-background-class="bg-cyan"
                 @error="handleError"
-            />
+            >
+                <template #entry="{ entry }">
+                    <a :href="'/courses/' + entry.course_id">
+                        <span class="font-weight-bold">{{ entry.title }}</span>
+                        <span class="pull-right">{{ entry.achievements.length }}/{{ entry.enabling_objectives_count }}</span>
+                        <br/>
+                        <span class="text-muted">{{ entry.group_title }}</span>
+                    </a>
+                </template>
+            </InfoBox>
 
             <InfoBox v-if="isVisible.groups"
                 model="groups"

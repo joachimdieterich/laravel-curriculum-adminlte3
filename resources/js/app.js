@@ -311,6 +311,8 @@ app.component('model-limiter', defineAsyncComponent(() => import('./components/c
 app.component('navigators', defineAsyncComponent(() => import('./components/navigator/Navigators.vue')));
 app.component('navigator', defineAsyncComponent(() => import('./components/navigator/Navigator.vue')));
 
+app.component('navigationbar', defineAsyncComponent(() => import('./components/uiElements/Navigationbar.vue')));
+
 app.component('notes', defineAsyncComponent(() => import('./components/note/Notes.vue')));
 
 app.component('objective', defineAsyncComponent(() => import('./components/objectives/Objective.vue')));

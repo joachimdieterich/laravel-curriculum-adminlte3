@@ -126,6 +126,7 @@ class LoginController extends Controller
             // except if authenticated as guest user, then redirect to SSO login
             if (auth()->user()->id == config('app.guest_user_id'))
             {
+                session(['redirect_to' => request()->headers->get('referer')]);
                 $oidc->authenticate();
             }
             else

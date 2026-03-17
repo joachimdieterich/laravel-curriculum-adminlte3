@@ -289,6 +289,7 @@ app.component('grade', defineAsyncComponent(() => import('./components/grade/Gra
 app.component('groups', defineAsyncComponent(() => import('./components/group/Groups.vue')));
 app.component('group', defineAsyncComponent(() => import('./components/group/Group.vue')));
 
+app.component('main-header', defineAsyncComponent(() => import('./components/uiElements/Header.vue')));
 app.component('home', defineAsyncComponent(() => import('./components/home/Home.vue')));
 
 app.component('maps', defineAsyncComponent(() => import('./components/map/Maps.vue')));
@@ -330,8 +331,7 @@ app.component('organization-type', defineAsyncComponent(() => import('./componen
 app.component('kanbans', defineAsyncComponent(() => import('./components/kanban/Kanbans.vue')));
 app.component('kanban', defineAsyncComponent(() => import('./components/kanban/Kanban.vue')));
 
-app.component('searchbar', defineAsyncComponent(() => import('./components/uiElements/Searchbar.vue')));
-app.component('sidebar', defineAsyncComponent(() => import('./components/uiElements/Sidebar.vue')));
+// app.component('sidebar', defineAsyncComponent(() => import('./components/uiElements/Sidebar.vue')));
 
 app.component('subjects', defineAsyncComponent(() => import('./components/subject/Subjects.vue')));
 app.component('subject', defineAsyncComponent(() => import('./components/subject/Subject.vue')));

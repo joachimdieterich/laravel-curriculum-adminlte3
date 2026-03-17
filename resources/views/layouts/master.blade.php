@@ -9,42 +9,13 @@
             id="app"
             class="d-flex flex-column min-vh-100"
         >
-            <!-- Header -->
+            <main-header
+                :menu="{{ json_encode(config('app.brand_menu')) }}"
+                env="{{ config('app.env') }}"
+                :user="{{ json_encode(auth()->user()) }}"
+                :guest-id="{{ config('app.guest_user_id') }}"
+            ></main-header>
             <nav class="main-header navbar navbar-expand navbar-lime navbar-light user-select-none" style="z-index: 1039;">
-                <!-- Brand Logo/menu -->
-                @include('partials.topmenu')
-                <div class="d-flex align-items-center position-relative">
-                    <a
-                        href="#content"
-                        class="skip bg-lime font-weight-bold position-absolute"
-                        style="white-space: nowrap; z-index: 1040;"
-                    >
-                        {{ trans('global.skip_navigation') }}
-                    </a>
-                </div>
-                <ul class="navbar-nav pl-2 mr-auto">
-                    <li class="nav-item mr-2">
-                        <button
-                            type="button"
-                            class="btn btn-icon"
-                            data-toggle="collapse"
-                            data-target=".nav-collapse"
-                            aria-expanded="false"
-                            aria-controls="navigationbar background-mask"
-                        >
-                            <i class="fa fa-bars px-1"></i>
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <a
-                            class="nav-link"
-                            href="/"
-                        >
-                            <b>{{ trans('global.home') }}</b>
-                        </a>
-                    </li>
-                    <searchbar></searchbar>
-                </ul>
                 @include('partials.navbar')
             </nav>
             

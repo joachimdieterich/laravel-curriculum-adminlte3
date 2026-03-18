@@ -41,7 +41,7 @@ class KanbansApiController extends Controller
 
         $kanban = Kanban::create([
             'title'         => $input['title'],
-            'description'   => $input['description'],
+            'description'   => $input['description'] ?? null,
             'color'         => $input['color'] ?? '#2980B9',
             'owner_id'      => $owner_id,
         ]);
@@ -49,7 +49,7 @@ class KanbansApiController extends Controller
         //create tokenLink
         $token = Str::uuid();
 
-        $subscribe =  KanbanSubscription::updateOrCreate([
+        $subscribe = KanbanSubscription::updateOrCreate([
             'kanban_id'         => $kanban->id,
             'subscribable_type' => "App\User",
             'subscribable_id'   => config('app.guest_user_id'),
@@ -62,7 +62,7 @@ class KanbansApiController extends Controller
         ]);
         $subscribe->save();
 
-        $collection = collect($kanban);
+        $collection = collect($kanban->makeHidden('tags', 'is_favourited', 'is_hidden'));
         $collection->put('sharing_link', config('app.url').'/kanbans/'.$kanban->id.'/token?sharing_token='.$token);
         $collection->put('editable',  $subscribe->editable);
 

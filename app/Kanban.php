@@ -227,7 +227,7 @@ class Kanban extends Model implements Broadcastable
                     if (is_null($subscription->additional_data)) $subscription->additional_data = true;
                     // can't call delete()-function of MediumSubscription-model (in general)
                     app(\App\Http\Controllers\MediumSubscriptionController::class)->destroy($subscription);
-                } catch (\Throwable $th) {} // occurs on invalid/non-existing medium-subscription | can be ignored
+                } catch (\Throwable) {} // occurs on invalid/non-existing medium-subscription | can be ignored
             }
             // each status needs to be deleted separately to trigger its booted functions
             $kanban->statuses->each->delete();

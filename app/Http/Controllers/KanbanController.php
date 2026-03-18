@@ -442,7 +442,7 @@ class KanbanController extends Controller
         if ($kanban->medium_id) {
             try {
                 $this->copyMediumSubscription($kanban->medium->subscriptions()->first(), 'App\\Kanban', $kanbanCopy->id);
-            } catch (\Throwable $th) {
+            } catch (\Throwable) {
                 $kanbanCopy->update(['medium_id' => null]);
             }
         }

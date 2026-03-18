@@ -439,6 +439,14 @@ class KanbanController extends Controller
         ]);
         $kanbanCopy->save();
 
+        if ($kanban->medium_id) {
+            try {
+                $this->copyMediumSubscription($kanban->medium->subscriptions()->first(), 'App\\Kanban', $kanbanCopy->id);
+            } catch (\Throwable $th) {
+                $kanbanCopy->update(['medium_id' => null]);
+            }
+        }
+
         foreach ($kanban->statuses as $status) {
             $statusCopy = $status->replicate()->fill([
                 'kanban_id' => $kanbanCopy->id,
@@ -456,27 +464,32 @@ class KanbanController extends Controller
                 $itemCopy->save();
 
                 foreach ($item->mediaSubscriptions as $mediumSubscription) {
-                    $usage = null;
-                    // if Medium is external, we need to create a new usage
-                    if (!is_null($mediumSubscription->additional_data)) {
-                        $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
-                            'App\\KanbanItem',
-                            $itemCopy->id,
-                            $mediumSubscription->additional_data['nodeId'],
-                            $mediumSubscription->medium()->pluck('owner_id')->first()
-                        );
-                    }
-
-                    $mediumSubscription->replicate()->fill([
-                        'subscribable_id'   => $itemCopy->id,
-                        'owner_id'          => auth()->user()->id,
-                        'additional_data'   => $usage,
-                    ])->save();
+                    $this->copyMediumSubscription($mediumSubscription, 'App\\KanbanItem', $itemCopy->id);
                 }
             }
         }
 
         return $kanbanCopy;
+    }
+
+    protected function copyMediumSubscription(\App\MediumSubscription $subscription, string $model,int $modelId): void
+    {
+        $usage = null;
+        // if Medium is external, we need to create a new usage
+        if (!is_null($subscription->additional_data)) {
+            $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                $model,
+                $modelId,
+                $subscription->additional_data['nodeId'],
+                $subscription->medium()->pluck('owner_id')->first()
+            );
+        }
+
+        $subscription->replicate()->fill([
+            'subscribable_id'   => $modelId,
+            'owner_id'          => auth()->user()->id,
+            'additional_data'   => $usage,
+        ])->save();
     }
 
     protected function validateRequest()

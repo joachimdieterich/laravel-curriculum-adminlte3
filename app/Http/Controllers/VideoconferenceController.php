@@ -14,6 +14,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
@@ -580,6 +581,23 @@ class VideoconferenceController extends Controller
         {
             LogController::set(get_class($this).'@'.__FUNCTION__.'->participantCount', $videoconference->meetingID, $info['participantCount']);
         }
+    }
+
+    public function getLinks(Request $request): Collection
+    {
+        abort_unless(Gate::allows('videoconference_access') and auth()->user()->id !== env('GUEST_USER'), 403, 'missing rights');
+
+        $request->validate([
+            'meetingID' => 'required|uuid|exists:videoconferences,meetingID',
+        ]);
+
+        /** @var Videoconference $videoconference */
+        $videoconference = Videoconference::where('meetingID', $request->meetingID)->get()->first();
+
+        return collect([
+            'moderatorLink' => url()->query("/videoconferences/{$videoconference->id}/startWithPw", ['moderatorPW' => $videoconference->moderatorPW]),
+            'attendeeLink' => url()->query("/videoconferences/{$videoconference->id}/startWithPw", ['attendeePw' => $videoconference->attendeePW]),
+        ]);
     }
 
     protected function validateRequest()

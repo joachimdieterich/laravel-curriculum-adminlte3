@@ -1,6 +1,7 @@
 <template >
     <div class="row">
         <TabList
+            class="px-3"
             :model="'curriculum'"
             modelIcon="fa-th"
             :tabs="['favourite', 'all', 'by_organization', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"

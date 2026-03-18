@@ -1,5 +1,8 @@
 <template>
-    <div class="d-flex align-items-center w-100">
+    <div
+        class="d-flex align-items-center"
+        style="max-width: 100vw;"
+    >
         <span v-if="showNavigators"
             class="pr-2"
         >

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\UsersApiController;
+
 Route::group([
     'prefix' => 'v1',
     'namespace' => 'Api\V1',
@@ -49,6 +51,10 @@ Route::group([
 ], function () {
     /*** Videoconferences ***/
     Route::resource('videoconferences', 'VideoconferenceController');
+    Route::get('videoconference/links', 'VideoconferenceController@getLinks');
+
+    /*** Users ***/
+    Route::get('user/permissions', [UsersApiController::class, 'permissions']);
 });
 
 Route::group([

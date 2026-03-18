@@ -47,7 +47,8 @@ Route::group([
     'as' => 'admin.simulate.',
     'middleware' => ['client_credentials', 'simulate'],
 ], function () {
-     Route::get('videoconferences', 'VideoconferenceController@index')->name('videoconferences.index');
+    /*** Videoconferences ***/
+    Route::resource('videoconferences', 'VideoconferenceController');
 });
 
 Route::group([

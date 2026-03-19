@@ -4,34 +4,41 @@
         class="input-group d-print-none mx-3"
         :class="{'d-none': !showSearchbar}"
     >
-        <input
-            id="searchbar_input"
-            class="form-control rounded-pill h-100 border-0 search-field"
-            type="search"
-            :placeholder="trans('global.search')"
-            :aria-label="trans('global.search')"
-            v-model="filter.searchString"
-            @keydown.enter="prepareEvent(true)"
-        />
         <div class="position-relative">
-            <button v-if="filter.searchString.length > 0"
-                id="clearSearch"
-                class="btn position-absolute d-flex align-items-center h-100"
-                :class="{'non-extend-clear-search': searchTagModelContext === null || !checkPermission('tag_access')}"
-                type="button"
-                @click="clearSearch()"
+            <input
+                id="searchbar_input"
+                class="form-control rounded-pill h-100 border-0"
+                type="search"
+                :placeholder="trans('global.search')"
+                :aria-label="trans('global.search')"
+                v-model="filter.searchString"
+                @keydown.enter="prepareEvent(true)"
+            />
+            <div
+                class="position-absolute d-flex align-items-center h-100"
+                style="right: 0; top: 0;"
             >
-                <span class="fa fa-xmark"></span>
-            </button>
-            <button
-                id="searchButton"
-                class="btn position-absolute d-flex align-items-center rounded-pill h-100 border-0"
-                :class="{'non-extend-search-button': searchTagModelContext === null || !checkPermission('tag_access')}"
-                type="button"
-                @click="prepareEvent()"
-            >
-                <span class="fa fa-search"></span>
-            </button>
+                <button v-if="filter.searchString.length > 0"
+                    id="clearSearch"
+                    class="btn d-flex align-items-center"
+                    :class="{'non-extend-clear-search': searchTagModelContext === null || !checkPermission('tag_access')}"
+                    type="button"
+                    @click="clearSearch()"
+                >
+                    <span class="fa fa-xmark"></span>
+                </button>
+                <button
+                    id="searchButton"
+                    class="btn d-flex align-items-center rounded-pill h-100 border-0"
+                    :class="{'non-extend-search-button': searchTagModelContext === null || !checkPermission('tag_access')}"
+                    type="button"
+                    @click="prepareEvent()"
+                >
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="position-relative">
             <button
                 id="extended-search-button"
                 :class="extendedSearchButtonClasses"
@@ -46,15 +53,13 @@
                     </span>
                 </span>
             </button>
+            <SearchbarDropDownModal
+                :show="showTagModal"
+                @modal-close="toggleModal"
+                @tagSelectionChange="(idArray) => {this.filter.tags = idArray;}"
+                @negativTagSelectionChange="(idArray) => {this.filter.negativeTags = idArray;}"
+            />
         </div>
-        <SearchbarDropDownModal
-            :show="showTagModal"
-            @modal-close="toggleModal"
-            @tagSelectionChange="(idArray) => {this.filter.tags = idArray;}"
-            @negativTagSelectionChange="(idArray) => {this.filter.negativeTags = idArray;}"
-        >
-
-        </SearchbarDropDownModal>
     </div>
 </template>
 <script>
@@ -130,7 +135,7 @@ export default {
                 color = ' active-extended-search-button';
             }
 
-            return 'btn position-absolute d-flex align-items-center rounded-pill h-100 border-0' + color;
+            return 'btn d-flex align-items-center rounded-pill h-100 border-0' + color;
         }
     },
     mounted() {
@@ -159,7 +164,6 @@ export default {
     color: white;
     top: 0;
     right: 0;
-
     height: 18px;
     width: 18px;
     line-height: 16px;
@@ -169,13 +173,6 @@ export default {
     background-color: #EAF099;
     z-index: 10;
     right: 36px;
-}
-#searchButton::before {
-    content: 'Suche';
-    width: 0;
-    overflow: hidden;
-    text-align: left;
-    transition: width 0.2s ease-out;
 }
 .non-extend-search-button {
     right: 0 !important;
@@ -194,9 +191,6 @@ export default {
     right: 0;
     padding-left: 47px;
 }
-.search-field {
-    padding-right: 9rem;
-}
 #clearSearch {
     z-index: 20;
     right: 80px;
@@ -210,7 +204,7 @@ input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance: none;
 }
-@media only screen and (max-width: 400px) {
+@media (max-width: 400px) {
     /* more specific selector to overwrite 576px rules */
     div#searchbar > input {
         transition: width 0.5s ease-out, padding 0.5s ease !important;
@@ -222,7 +216,7 @@ input[type="search"]::-webkit-search-results-decoration {
         }
     }
 }
-@media only screen and (max-width: 576px) {
+@media (max-width: 576px) {
     #searchbar {
         > input {
             width: calc(100vw - 183px);
@@ -233,11 +227,15 @@ input[type="search"]::-webkit-search-results-decoration {
             width: 0;
             padding: 0 95px 0 0 !important;
 
-            & + div {
-                > #clearSearch { display: none !important; }
-                > #searchButton::before { width: 55px; }
-            }
+            & + div > #clearSearch { display: none !important; }
         }
     }
+    #searchButton::before {
+        content: 'Search';
+        overflow: hidden;
+        padding-right: 0.5rem;
+        transition: width 0.2s ease-out;
+    }
+    :lang('de') #searchButton::before { content: 'Suche'; }
 }
 </style>

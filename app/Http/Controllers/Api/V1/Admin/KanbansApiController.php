@@ -41,7 +41,7 @@ class KanbansApiController extends Controller
 
         $kanban = Kanban::create([
             'title'         => $input['title'],
-            'description'   => $input['description'],
+            'description'   => $input['description'] ?? null,
             'color'         => $input['color'] ?? '#2980B9',
             'owner_id'      => $owner_id,
         ]);
@@ -49,10 +49,10 @@ class KanbansApiController extends Controller
         //create tokenLink
         $token = Str::uuid();
 
-        $subscribe =  KanbanSubscription::updateOrCreate([
+        $subscribe = KanbanSubscription::updateOrCreate([
             'kanban_id'         => $kanban->id,
             'subscribable_type' => "App\User",
-            'subscribable_id'   => env('GUEST_USER'),
+            'subscribable_id'   => config('app.guest_user_id'),
             'sharing_token'     => $token,
         ], [
             'due_date'  => NULL,
@@ -62,8 +62,8 @@ class KanbansApiController extends Controller
         ]);
         $subscribe->save();
 
-        $collection = collect($kanban);
-        $collection->put('sharing_link', env('APP_URL').'/kanbans/'.$kanban->id.'/token?sharing_token='.$token);
+        $collection = collect($kanban->makeHidden('tags', 'is_favourited', 'is_hidden'));
+        $collection->put('sharing_link', config('app.url').'/kanbans/'.$kanban->id.'/token?sharing_token='.$token);
         $collection->put('editable',  $subscribe->editable);
 
         return $collection->all();
@@ -177,7 +177,7 @@ class KanbansApiController extends Controller
                 "token" => $token,
                 "qr"    => (new QRCodeHelper())
                     ->generateQRCodeByString(
-                        env("APP_URL"). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
+                        config('app.url'). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
                     )
             ];
         }
@@ -192,7 +192,7 @@ class KanbansApiController extends Controller
                 )->with('subscribable')
                     ->whereHasMorph('subscribable', '*', function ($q, $type) {
                         if ($type == 'App\\User') {
-                            $q->whereNot('id', env('GUEST_USER'));
+                            $q->whereNot('id', config('app.guest_user_id'));
                         }
                     })->get(),
             ],

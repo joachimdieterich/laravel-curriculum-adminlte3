@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Aacotroneo\Saml2\Saml2Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\LogController;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -39,28 +38,36 @@ class LoginController extends Controller
         //$this->middleware('guest')->except('logout');
     }
 
-    public function showLoginForm(Request $request){
-        if (
-            (env('SAML2_RLP_IDP_SSO_URL') !== null)
-            and (! empty(env('SAML2_RLP_IDP_SSO_URL')))
-        )
-        {
-            return redirect(env('SAML2_RLP_IDP_SSO_URL'));
-        }
-        else
-        {
-            return view('auth.login');
-        }
+    /**
+     * Show the application's login form
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
+     */
+    public function showLoginForm(Request $request)
+    {
+        return config('app.env') == 'local'
+            ? $this->localLogin($request) // in local environment, show login form
+            : redirect('/home'); // in live environment, redirect to /home to trigger SSO through Auth-middleware
     }
 
-    public function localLogin(Request $request){
-         return view('auth.login');
+    /**
+     * Show the application's login form for local auth
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
+    public function localLogin(Request $request)
+    {
+        return view('auth.login');
     }
 
-    public function localLogout(Request $request){
+    public function localLogout(Request $request)
+    {
         $this->guard()->logout();
 
         $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return view('auth.login');
     }
@@ -89,8 +96,8 @@ class LoginController extends Controller
 
             return redirect()->intended('home');
         } else {
-            return redirect()->route('login')
-                ->with('error', 'Email-Address And Password Are Wrong.');
+            return redirect()->route('localLogin')
+                ->with('error', 'Email-Address or Password is wrong.');
         }
     }
 
@@ -103,41 +110,32 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        // in production environment, redirect to SSO logout
-        if (env('SAML2_RLP_IDP_SSO_URL') !== null and !empty(env('SAML2_RLP_IDP_SSO_URL')))
+        if (config('app.env') == 'local') // in local environment, logout user and redirect to login-page
         {
-            // except if authenticated as guest user, then redirect to SSO login
-            if (auth()->user()->id == env('GUEST_USER'))
-            {
-                $saml2 = new Saml2Auth(Saml2Auth::loadOneLoginAuthFromIpdConfig('rlp'));
-                return $saml2->login($request->headers->get('referer'));
-            }
-            else
-            {
-                return redirect()->action("\Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout",
-                    [
-                        'idpName'       => 'rlp', //todo: add use dynamic value (env?)
-                        'returnTo'      => $request->query('returnTo'),
-                        'sessionIndex'  => $request->session()->get('sessionIndex'),
-                        'nameId'        => $request->session()->get('nameId'),
-                    ]);
-            }
+            return $this->localLogout($request);
         }
-        else // in local environment, logout user and redirect to login-page
+        else // in live environment, redirect to SSO logout
         {
-            $this->guard()->logout();
+            $oidc = new \Jumbojett\OpenIDConnectClient(
+                config('app.oidc_host'),
+                config('app.oidc_client_id'),
+                config('app.oidc_client_secret')
+            );
+            $oidc->setRedirectURL(config('app.url') . '/oidc');
 
-            $request->session()->invalidate();
-
-            $request->session()->regenerateToken();
-
-            if (env('BRAND_MENU_HREF_1'))
+            // except if authenticated as guest user, then redirect to SSO login
+            if (auth()->user()->id == config('app.guest_user_id'))
             {
-                return $this->loggedOut($request) ?: redirect(env('BRAND_MENU_HREF_1'));
+                session(['redirect_to' => request()->headers->get('referer')]);
+                $oidc->authenticate();
             }
             else
             {
-                return $this->loggedOut($request) ?: redirect('/');
+                session(['init_logout' => true]);
+                \Session::save();
+                // in order to trigger an RP-initiated logout, we need an ID-token
+                // so we authenticate again to retrieve a new ID-token
+                $oidc->authenticate();
             }
         }
     }

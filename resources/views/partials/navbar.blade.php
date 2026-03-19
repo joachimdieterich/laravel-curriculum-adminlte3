@@ -60,7 +60,7 @@
             </a>
         </li>
 	@endcan
-    @if (auth()->user()->id == env('GUEST_USER'))
+    @if (auth()->user()->id == config('app.guest_user_id'))
         <div class="user-menu">
             <button
                 class="dropdown-item btn d-flex align-items-center t-18"

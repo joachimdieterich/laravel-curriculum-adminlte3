@@ -226,10 +226,11 @@
                         <button
                             id="kanban-item-save"
                             class="btn btn-primary ml-3"
-                            :disabled="!form.title"
+                            :disabled="!form.title || processing"
                             @click="submit()"
                         >
-                            {{ trans('global.save') }}
+                            <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
+                            <span v-else>{{ trans('global.save') }}</span>
                         </button>
                     </span>
                 </div>
@@ -253,6 +254,7 @@ export default {
             component_id: this.$.uid,
             method: 'post',
             medium: null,
+            processing: false,
             form: new Form({
                 id: '',
                 title: '',
@@ -299,8 +301,10 @@ export default {
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
                 this.globalStore.lockModal(this.$options.name);
-                const params = state.modals[this.$options.name].params;
+                this.processing = false;
                 this.form.reset();
+                
+                const params = state.modals[this.$options.name].params;
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params.item);
                     this.method = params.method;
@@ -355,6 +359,8 @@ export default {
                 this.form.visible_from = this.form.visible_date[0].toLocaleString();
                 this.form.visible_until = this.form.visible_date[1].toLocaleString();
             }
+
+            this.processing = true;
 
             if (this.method == 'patch') {
                 this.update();

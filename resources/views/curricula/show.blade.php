@@ -1,4 +1,4 @@
-@extends((Auth::user()->id == env('GUEST_USER')) ? 'layouts.contentonly' : 'layouts.master')
+@extends((Auth::user()->id == config('app.guest_user_id')) ? 'layouts.contentonly' : 'layouts.master')
 
 @section('title')
     <title-component></title-component>
@@ -9,7 +9,7 @@
 @endsection
 
 @section('breadcrumb')
-    @if (Auth::user()->id == env('GUEST_USER'))
+    @if (Auth::user()->id == config('app.guest_user_id'))
         <breadcrumbs
             :entries="{{json_encode([
             ['active'=> true, 'title'=> Str::limit($curriculum->title, 10) ]
@@ -39,7 +39,7 @@
 @section('content')
     <Curriculum
         :curriculum="{{ $curriculum }}"
-        :course="{{ $course ?? null }}"
+        :course="{{ $course ?? json_encode((object)[]) }}"
         :settings="{{ $settings }}"
     />
     <div id="content_top_placeholder"></div>

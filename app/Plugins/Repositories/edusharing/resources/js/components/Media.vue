@@ -70,7 +70,9 @@
                 :style="{ 'border-color': borderColor(subscription) }"
             >
                 <a class="text-decoration-none">
-                    <RenderUsage :medium="subscription.medium"/>
+                    <div>
+                        <RenderUsage :medium="subscription.medium"/>
+                    </div>
                     <span>
                         <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
                             {{ subscription.medium.title ?? subscription.medium.name }}
@@ -380,3 +382,11 @@ export default {
     },
 }
 </script>
+<style scoped>
+@media (max-width: 990px) {
+    .box { border-right: 10px solid; }
+}
+@media (min-width: 991px) {
+    .box { border-bottom: 10px solid; }
+}
+</style>

@@ -1,10 +1,10 @@
-@extends((Auth::user()->id == env('GUEST_USER')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
+@extends((Auth::user()->id == config('app.guest_user_id')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
 
 @section('contributors')
     <div id="contributors"></div>
 @endsection
 @section('breadcrumb')
-    @if (Auth::user()->id == env('GUEST_USER'))
+    @if (Auth::user()->id == config('app.guest_user_id'))
         <breadcrumbs
             :entries="{{json_encode([
             ['active' => true, 'title'=> Str::limit($kanban->title, 10) ]

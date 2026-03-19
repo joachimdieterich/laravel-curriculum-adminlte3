@@ -10,10 +10,10 @@ class EventSubscriptionController extends Controller
 {
     public function embed(Request $request)
     {
-        if (Auth::user() == null && env('GUEST_USER') !== null) {       //if no user is authenticated authenticate guest
+        if (Auth::user() == null && config('app.guest_user_id') !== null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
             LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
+            Auth::loginUsingId(config('app.guest_user_id'), true);
         }
 
         return view('embed.events.index');
@@ -25,7 +25,7 @@ class EventSubscriptionController extends Controller
 
 
         $vm = new EventmanagementPlugin();
-        $events = $vm->plugins[env('EVENTMANAGEMENTPLUGIN')]->lesePlrlpVeranstaltungen(['search'=> $input['search'], 'page' => $input['page']]);
+        $events = $vm->plugins[config('app.eventmanagement_plugin')]->lesePlrlpVeranstaltungen(['search'=> $input['search'], 'page' => $input['page']]);
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $input['search'], (int) $events->lesePlrlpVeranstaltungen->GESAMT);
 

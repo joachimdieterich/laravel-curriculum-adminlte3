@@ -549,11 +549,9 @@ export default {
         });
 
         this.$eventHub.on('reference-added', () => {
-            this.globalStore?.closeModal('reference-objective-modal');
             this.loadReferences();
         });
         this.$eventHub.on('reference-deleted', () => {
-            this.globalStore?.closeModal('reference-objective-modal');
             this.loadReferences();
         });
         this.$eventHub.on('prerequisite-added', () => {

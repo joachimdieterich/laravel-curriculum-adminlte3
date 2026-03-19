@@ -44,9 +44,9 @@ class EdusharingMediaAdapter implements MediaInterface
     public function create()
     {
         $base = new EduSharingHelperBase(
-            env('EDUSHARING_REPO_URL', ''),
-            env('EDUSHARING_PRIV_KEY', ''),
-            env('EDUSHARING_APP_ID', ''),
+            config('medium.repositories.edusharing.repo_url'),
+            config('medium.repositories.edusharing.priv_key'),
+            config('medium.repositories.edusharing.app_id'),
         );
 
         $authHelper = new EduSharingAuthHelper($base);

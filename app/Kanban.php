@@ -167,7 +167,7 @@ class Kanban extends Model implements Broadcastable
             $user_id = auth()->user()->id;
         }
         // check for subscriptions if not guest user
-        if ($user_id != env('GUEST_USER')) {
+        if ($user_id != config('app.guest_user_id')) {
             $userSubscription         = optional(
                 $this->userSubscriptions()
                     ->where('subscribable_id', $user_id)
@@ -220,12 +220,14 @@ class Kanban extends Model implements Broadcastable
         static::deleting(function ($kanban) {
             $kanban->subscriptions()->delete();
             if ($kanban->medium_id) {
-                $subscription = $kanban->medium->subscriptions()->first();
-                $kanban->update(['medium_id' => null]);
-                // hack to skip setting medium_id of model to null
-                if (is_null($subscription->additional_data)) $subscription->additional_data = true;
-                // can't call delete()-function of MediumSubscription-model (in general)
-                app(\App\Http\Controllers\MediumSubscriptionController::class)->destroy($subscription);
+                try {
+                    $subscription = $kanban->medium->subscriptions()->first();
+                    $kanban->update(['medium_id' => null]);
+                    // hack to skip setting medium_id of model to null
+                    if (is_null($subscription->additional_data)) $subscription->additional_data = true;
+                    // can't call delete()-function of MediumSubscription-model (in general)
+                    app(\App\Http\Controllers\MediumSubscriptionController::class)->destroy($subscription);
+                } catch (\Throwable) {} // occurs on invalid/non-existing medium-subscription | can be ignored
             }
             // each status needs to be deleted separately to trigger its booted functions
             $kanban->statuses->each->delete();

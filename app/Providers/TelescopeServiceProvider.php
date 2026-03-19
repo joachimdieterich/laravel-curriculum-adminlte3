@@ -29,22 +29,17 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         Telescope::filter(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
-                // Request mit einer Ladezeit von über 1 Sekunde NICHT rausfiltern
-                if($entry->content['duration'] >= env("TELESCOPE_REQUEST_DURATION_FILTER", 1000)) {
+                // don't filter requests that take too long to process (default 1000ms)
+                if($entry->content['duration'] >= config('telescope.duration_filter')) {
                     return true;
                 }
-
-                $statusFilterArray = explode(',', env("TELESCOPE_STATUS_FILTER", "200, 302"));
-                if (!in_array($entry->content['response_status'], $statusFilterArray)) {
+                // only show requests with a response status code greater than or equal to the configured status filter (default 200)
+                if ($entry->content['response_status'] >= config('telescope.status_filter')) {
                     return true;
                 }
             }
 
-            $statusFilterShowTypeArray = explode(
-                ',',
-                env("TELESCOPE_STATUS_FILTER_SHOW_TYPE", "dump,query")
-            );
-            //store specific types
+            $statusFilterShowTypeArray = explode(',', config('telescope.show_type'));
             if (in_array($entry->type, $statusFilterShowTypeArray)) {
                 return true;
             }
@@ -87,8 +82,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     protected function gate()
     {
         Gate::define('viewTelescope', function ($user) {
-            return in_array($user->email, explode(',', env("TELESCOPE_USERS"))
-            );
+            return in_array($user->email, explode(',', config('telescope.users')));
         });
     }
 }

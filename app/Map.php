@@ -70,7 +70,7 @@ class Map extends Model
             or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
             or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
             or ($this->owner_id == auth()->user()->id)            // or owner
-            or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->maps->contains('id', $this->id) : false) //or allowed via guest
+            or ((config('app.guest_user_id') != null) ? User::find(config('app.guest_user_id'))->maps->contains('id', $this->id) : false) //or allowed via guest
             or is_admin() // or admin
         ) {
             return true;
@@ -88,7 +88,7 @@ class Map extends Model
             $user_id = auth()->user()->id;
         }
         if ($user_id == $this->owner_id || is_admin()) return true;
-        if ($user_id == env('GUEST_USER')) return false; // guests currently don't have edit rights
+        if ($user_id == config('app.guest_user_id')) return false; // guests currently don't have edit rights
 
         return $this->subscriptions()->where('editable', 1)
             ->where(function ($query) use ($user_id) {

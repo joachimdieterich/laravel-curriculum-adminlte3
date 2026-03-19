@@ -44,14 +44,14 @@ export default {
                 let matches = [];
                 matches.push(ma);
 
-                //console.log(matches);
                 matches.forEach((match) => {
                     if (typeof (match[2]) !== 'undefined') {
-                        if (this.isValidHttpUrl(match[2])) {
+                        const url = this.htmlToText(match[2]);
+                        if (this.isValidHttpUrl(url)) {
                             const target = match[1].includes('target="_blank"') ? '_blank' : '_self';
                             parts.push({
                                 component: 'LinkItem',
-                                props: { href: match[2], text: match[3], target: target }
+                                props: { href: url, text: match[3], target: target }
                             });
                         }
                     } else {

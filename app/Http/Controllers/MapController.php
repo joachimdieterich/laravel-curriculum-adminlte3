@@ -111,7 +111,7 @@ class MapController extends Controller
      */
     public function show(Map $map, $token = null)
     {
-        abort_if(auth()->user()->id == env('GUEST_USER') && $token == null, 403);
+        abort_if(auth()->user()->id == config('app.guest_user_id') && $token == null, 403);
 
         $editable = $map->isEditable(auth()->user()->id, $token);
 

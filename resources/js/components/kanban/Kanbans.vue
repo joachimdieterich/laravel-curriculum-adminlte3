@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <TabList
+        <TabList v-if="!subscribable"
             class="px-3"
             :model="'kanban'"
             modelIcon="fa-columns"
@@ -37,6 +37,7 @@
                 modelName="Kanban"
                 url="/kanbans"
                 :showSubscribable="subscribable"
+                :hidable="true"
             >
                 <template v-slot:itemIcon>
                     <i class="fa fa-2x fa-columns"></i>

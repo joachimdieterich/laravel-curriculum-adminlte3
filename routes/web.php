@@ -169,6 +169,9 @@ Route::withoutMiddleware('auth')->group(function() {
 // O
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
 
+    Route::get('oidc', 'OIDCController@handle');
+    Route::withoutMiddleware('web')->post('oidc/backchannellogout', 'OIDCController@backchannelLogout');
+
     /*** Organizations ***/
     Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
     Route::delete('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
@@ -430,15 +433,15 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 
-if (env('GUEST_USER') !== null) {
+if (config('app.guest_user_id') !== null) {
     Route::get('/guest', function () {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
             LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
+            Auth::loginUsingId((config('app.guest_user_id')), true);
         }
-        if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
-            return redirect('/navigators/' . \App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
+        if (\App\User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
+            return redirect('/navigators/' . \App\User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first()->id);
         } else {
             return redirect('/');
         }

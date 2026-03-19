@@ -234,7 +234,6 @@ class Curriculum extends Model implements Broadcastable
             or ($this->owner_id == auth()->user()->id) // or owner
             or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() // user is enroled in group
             or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() // user is enroled in group
-            //or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula->contains('id', $this->id) : false) // or allowed via guest
         ) {
             return true;
         } else {

@@ -32,14 +32,14 @@ class eVewa extends EventmanagementPlugin
 
     public function __construct()
     {
-        $this->user = env('EVEWA_API_USER', '');
-        $this->password = env('EVEWA_API_PASSWORD', '');
-        $this->url = env('EVEWA_API_URL', '');
+        $this->user = config('app.evewa.api_user');
+        $this->password = config('app.evewa.api_password');
+        $this->url = config('app.evewa.api_url');
 
         $this->getSessionId();
 
-        $this->proxy = env('EVEWA_PROXY', false);
-        $this->proxy = env('EVEWA_PROXY_PORT', false);
+        $this->proxy = config('app.evewa.proxy');
+        $this->proxy_port = config('app.evewa.proxy_port');
     }
 
     /**

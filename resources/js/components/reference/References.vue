@@ -1,34 +1,27 @@
 <template>
     <div>
         <div v-for="curriculum in curricula_list"
-            class="card collapsed-card mb-2 pointer"
+            class="card mb-2"
         >
             <div class="card-header">
-                <h3
-                    class="card-title"
+                <div
+                    class="w-100 pointer"
                     data-card-widget="collapse"
-                    :data-target="'#' + tagName(curriculum.id)"
-                    aria-expanded="true"
+                    :data-target="'#curriculum_' + curriculum.id"
                 >
-                    {{ curriculum.title }}
+                    <span class="h4 mr-2">{{ curriculum.title }}</span>
                     <small>{{ curriculum.organization_type.title }}</small>
-                </h3>
-                <div class="card-tools pull-right">
-                    <button
-                        class="btn btn-tool"
-                        data-card-widget="collapse"
-                        :data-target="'#' + tagName(curriculum.id)"
-                    >
+                    <span class="pull-right">
                         <i class="fas fa-expand-alt"></i>
-                    </button>
+                    </span>
                 </div>
             </div>
             <div
-                :id="tagName(curriculum.id)"
-                class="card-body collapse"
+                :id="'curriculum_' + curriculum.id"
+                class="card-body"
             >
                 <div v-for="filtered_reference in filterReferences(curriculum.id)">
-                    <div class="row pl-3">
+                    <div class="objectives">
                         <ObjectiveBox
                             type="terminal"
                             :objective="(filtered_reference.referenceable_type == 'App\\TerminalObjective') ? filtered_reference.referenceable : filtered_reference.referenceable.terminal_objective"
@@ -42,17 +35,17 @@
                         />
 
                         <div>
-                            <dt>
-                                {{ trans("global.curricula_cross_references_description") }}
-                                <a
+                            <div class="d-flex align-items-center">
+                                <strong>{{ trans("global.curricula_cross_references_description") }}</strong>
+                                <button
                                     v-permission="'reference_edit'"
-                                    class="pull-right pr-2 link-muted pointer"
+                                    class="btn btn-icon ml-2"
                                     @click.prevent="open(filtered_reference.reference)"
                                 >
-                                    <i class="fa fa-pencil-alt pl-2"></i>
-                                </a>
-                            </dt>
-                            <dd v-html="filtered_reference.reference.description"></dd>
+                                    <i class="fa fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                            <div v-html="filtered_reference.reference.description"></div>
                         </div>
                     </div>
                     <hr style="clear:both;">
@@ -90,7 +83,7 @@ export default {
         }
     },
     methods: {
-        loaderEvent(){
+        loaderEvent() {
             axios.get('/' + this.type + 'Objectives/' + this.objective.id + '/referenceSubscriptionSiblings')
                 .then(response => {
                     if (response.data.siblings.length !== 0) {
@@ -116,9 +109,6 @@ export default {
             );
 
             return curricula;
-        },
-        tagName: function(i) {
-            return 'curriculum_' + i;
         },
         open(reference) {
             this.globalStore?.showModal('reference-objective-modal', {

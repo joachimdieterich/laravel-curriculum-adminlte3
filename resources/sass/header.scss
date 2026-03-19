@@ -1,31 +1,36 @@
 #header {
     z-index: 100;
 
-    & > #brand-menu {
-        & > #brand-menu-dropdown {
+    & > #brand-menu, & #user-menu {
+        & > #brand-menu-dropdown-button {
+            font-size: 1.25rem;
+            border-radius: 0;
+
+            &:hover { background-color: #65a300; }
+        }
+        & #brand-menu-dropdown, & #user-menu-dropdown {
+            position: absolute;
             top: 100%;
             min-width: max-content;
             border-radius: 0 0 0.5rem 0.5rem;
             box-shadow: 3px 2px 5px rgba(0, 0, 0, 0.25);
 
+            & a {
+                @extend .d-flex, .align-items-center, .pointer, .px-3, .py-2;
+                color: black;
+
+                &:hover {
+                    color: white;
+                    text-decoration: none;
+                    background-color: #65a300;
+                }
+            }
             & .fa {
                 width: 24px;
                 max-height: 24px;
                 font-size: 1.25rem;
             }
             & > div:last-child a { border-radius: 0 0 0.5rem 0.5rem; }
-        }
-        & a {
-            @extend .text-dark;
-
-            &[href=\/home] {
-                font-size: 1.25rem;
-            }
-            &:hover {
-                color: white;
-                text-decoration: none;
-                background-color: #65a300;
-            }
         }
     }
 }

@@ -13,11 +13,9 @@
                 :menu="{{ json_encode(config('app.brand_menu')) }}"
                 env="{{ config('app.env') }}"
                 :user="{{ json_encode(auth()->user()) }}"
+                :role="{{ json_encode(auth()->user()->role()->only('id', 'title')) }}"
                 :guest-id="{{ config('app.guest_user_id') }}"
             ></main-header>
-            <nav class="main-header navbar navbar-expand navbar-lime navbar-light user-select-none" style="z-index: 1039;">
-                @include('partials.navbar')
-            </nav>
             
             <!-- Content Wrapper. Contains page content -->
             <div
@@ -112,14 +110,6 @@
                     .done(function () {
                         $("#"+id).hide();
                     });
-                }
-            }
-
-            function toggleMenu() {
-                if (localStorage.getItem('menu_toggle_class') == 'sidebar-collapse') {
-                    localStorage.setItem('menu_toggle_class', '');
-                } else {
-                    localStorage.setItem('menu_toggle_class', 'sidebar-collapse');
                 }
             }
         </script>

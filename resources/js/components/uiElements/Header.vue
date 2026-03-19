@@ -18,7 +18,7 @@
                 >
                     <svg
                         version="1.0" xmlns="http://www.w3.org/2000/svg"
-                        width="35px" viewBox="0 0 400.000000 460.000000"
+                        height="40px" viewBox="0 0 400.000000 460.000000"
                         preserveAspectRatio="xMidYMid meet"
                     >
                         <g transform="translate(0.000000,460.000000) scale(0.100000,-0.100000)" fill="#fff" stroke="none">
@@ -46,25 +46,20 @@
                     </svg>
                     {{ trans(brandMenuText) }}
                     <i v-if="notLocalEnv"
-                        class="fa fa-chevron-down ml-2"
+                        class="fa fa-chevron-down"
                         style="font-size: 0.75rem;"
                     ></i>
                 </span>
             </button>
             <div v-if="notLocalEnv"
                 id="brand-menu-dropdown"
-                class="position-absolute d-none bg-lime w-100"
+                class="d-none bg-lime w-100"
             >
-                <div v-for="entry in menu"
-                    class="d-flex"
-                >
-                    <a
-                        :href="entry.url"
-                        class="d-flex align-items-center pointer px-3 py-2"
-                    >
+                <div v-for="entry in menu">
+                    <a :href="entry.url">
                         <i class="fa fa-book text-white text-center" :class="entry.icon"></i>
-                        <span class="text-dark ml-2 my-1">
-                            {{ entry.title }}
+                        <span class="ml-2 my-1">
+                            {{ entry.title ?? ';asdf asdf sda'}}
                         </span>
                     </a>
                 </div>
@@ -81,7 +76,7 @@
             </a>
         </div>
 
-        <div class="d-flex align-items-center flex-fill">
+        <div class="d-flex align-items-center">
             <button v-if="checkPermission('is_admin')"
                 type="button"
                 class="btn btn-icon text-dark"
@@ -101,23 +96,84 @@
             <Searchbar/>
         </div>
 
-        <div id="user-menu">
-            <div v-if="user.id === guestId">
-                <button class="btn">
+        <div
+            id="user-menu"
+            class="d-flex align-items-center ml-auto mr-2"
+        >
+            <button
+                id="user-menu-dropdown-button"
+                class="btn p-1"
+                type="button"
+                @click.stop="toggleUserMenu()"
+            >
+                <span v-if="isGuestUser">
                     <i class="fa fa-right-to-bracket"></i>
                     <strong class="py-1 ml-2">{{ trans('global.login') }}</strong>
-                </button>
+                </span>
+                <span v-else
+                    class="d-flex align-items-center pointer"
+                >
+                    <Avatar
+                        class="mr-1"
+                        :username="user.username"
+                        :firstname="user.firstname"
+                        :lastname="user.lastname"
+                        :size="40"
+                        :medium_id="user.medium_id"
+                    />
+                    <span style="font-weight: 900;">{{ user.firstname }} {{ user.lastname }}</span>
+                </span>
+            </button>
+            <div v-if="!isGuestUser"
+                id="user-menu-dropdown"
+                class="d-none bg-lime"
+                style="right: 0.5rem; width: 250px;"
+            >
+                <div
+                    class="d-flex justify-content-center py-2"
+                    style="border-bottom: 1px solid white"
+                >
+                    <strong class="text-black">{{ role.title }}</strong>
+                </div>
+
+                <div>
+                    <a :href="'/users/' + user.id">
+                        <i class="fa fa-id-card mr-2 fa-fw text-white"></i>
+                        {{ trans('global.myProfile') }}
+                    </a>
+                </div>
+                <div v-if="checkPermission('note_access')">
+                    <a href="/notes">
+                        <i class="fa fa-sticky-note fa-fw mr-2 text-white"></i>
+                        {{ trans('global.note.title') }}
+                    </a>
+                </div>
+                <div v-if="role.id === 1">
+                    <a href="/admin">
+                        <i class="fa fa-cogs fa-fw mr-2 text-white"></i>
+                        {{ trans('global.config.title') }}
+                    </a>
+                </div>
+                <div>
+                    <a href="#" @click.prevent="logout()">
+                        <i class="fa fa-power-off fa-fw mr-2 text-white"></i>
+                        {{ trans('global.logout') }}
+                    </a>
+                </div>
             </div>
-            <div v-else>{{ user.firstname }} {{ user.lastname }}</div>
         </div>
     </div>
 </template>
 <script>
 import Searchbar from './Searchbar.vue';
+import Avatar from './Avatar.vue';
 
 export default {
     name: 'Header',
-    components: { Searchbar },
+    components: {
+        Searchbar,
+        Avatar,
+    },
     props: {
         menu: {
             type: Object,
@@ -129,6 +185,10 @@ export default {
             required: true,
         },
         user: {
+            type: Object,
+            required: true,
+        },
+        role: {
             type: Object,
             required: true,
         },
@@ -150,24 +210,40 @@ export default {
             document.getElementById('brand-menu-dropdown').classList.toggle('d-none');
 
             if (this.brandMenuVisible = !this.brandMenuVisible) {
-                document.addEventListener('click', this.listenToDropdown);
+                document.addEventListener('click', this.listenToBrandMenu);
             } else {
-                document.removeEventListener('click', this.listenToDropdown);
+                document.removeEventListener('click', this.listenToBrandMenu);
             }
         },
-        showUserMenu() {
+        toggleUserMenu() {
+            if (this.isGuestUser) return this.logout();
 
+            document.getElementById('user-menu-dropdown').classList.toggle('d-none');
+
+            if (this.userMenuVisible = !this.userMenuVisible) {
+                document.addEventListener('click', this.listenToUserMenu);
+            } else {
+                document.removeEventListener('click', this.listenToUserMenu);
+            }
         },
-        listenToDropdown(e) {
+        logout() {
+            document.getElementById('logoutform').submit();
+        },
+        listenToBrandMenu(e) {
             const dropdownElem = document.getElementById('brand-menu-dropdown');
             if (!dropdownElem.contains(e.target)) {
                 this.brandMenuVisible = false;
                 dropdownElem.classList.add('d-none');
-                document.removeEventListener('click', this.listenToDropdown);
+                document.removeEventListener('click', this.listenToBrandMenu);
             }
         },
         listenToUserMenu(e) {
-
+            const dropdownElem = document.getElementById('user-menu-dropdown');
+            if (!dropdownElem.contains(e.target)) {
+                this.userMenuVisible = false;
+                dropdownElem.classList.add('d-none');
+                document.removeEventListener('click', this.listenToUserMenu);
+            }
         },
     },
     computed: {
@@ -180,7 +256,10 @@ export default {
             if (href.startsWith('/kanbans')) return 'global.kanban.title'
             else if (href.startsWith('/videoconferences')) return 'global.videoconference.title'
             else return 'Curriculum';
-        }
+        },
+        isGuestUser() {
+            return this.user.id === this.guestId;
+        },
     },
 }
 </script>

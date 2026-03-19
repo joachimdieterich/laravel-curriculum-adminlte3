@@ -61,12 +61,6 @@ import { useToast } from 'vue-toastification';
 
 export default {
     name: 'Home',
-    props: {
-        role: {
-            type: String,
-            required: true,
-        },
-    },
     setup() {
         const toast = useToast();
         return {

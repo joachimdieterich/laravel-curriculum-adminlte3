@@ -1,7 +1,7 @@
 <template>
     <div
         id="searchbar"
-        class="input-group mx-3"
+        class="input-group d-print-none mx-3"
         :class="{'d-none': !showSearchbar}"
     >
         <input

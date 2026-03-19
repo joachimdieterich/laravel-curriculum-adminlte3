@@ -23,15 +23,17 @@
                 class="d-flex flex-fill position-relative bg-gray-light"
             >
                 @can('is_admin')
-                    <navigationbar></navigationbar>
-                    <div
-                        id="background-mask"
-                        class="nav-collapse"
-                        data-toggle="collapse"
-                        data-target=".nav-collapse"
-                        aria-expanded="false"
-                        aria-controls="navigationbar background-mask"
-                    ></div>
+                    <div class="d-print-none">
+                        <navigationbar></navigationbar>
+                        <div
+                            id="background-mask"
+                            class="nav-collapse"
+                            data-toggle="collapse"
+                            data-target=".nav-collapse"
+                            aria-expanded="false"
+                            aria-controls="navigationbar background-mask"
+                        ></div>
+                    </div>
                 @endcan
                 <div class="flex-fill">
                     <!-- Content Header (Page header) -->

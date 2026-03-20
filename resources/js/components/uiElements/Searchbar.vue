@@ -1,7 +1,7 @@
 <template>
     <div
         id="searchbar"
-        class="input-group d-print-none mx-3"
+        class="d-flex d-print-none mx-2"
         :class="{'d-none': !showSearchbar}"
     >
         <div class="position-relative">
@@ -29,8 +29,9 @@
                 </button>
                 <button
                     id="searchButton"
-                    class="btn d-flex align-items-center rounded-pill h-100 border-0"
+                    class="btn btn-icon d-flex align-items-center bg-lime-accent rounded-pill h-100 w-auto border-0"
                     :class="{'non-extend-search-button': searchTagModelContext === null || !checkPermission('tag_access')}"
+                    style="aspect-ratio: 1 / 1;"
                     type="button"
                     @click="prepareEvent()"
                 >
@@ -38,10 +39,11 @@
                 </button>
             </div>
         </div>
-        <div class="position-relative">
+        <div class="position-relative ml-2">
             <button
                 id="extended-search-button"
                 :class="extendedSearchButtonClasses"
+                style="aspect-ratio: 1 / 1;"
                 type="button"
                 @click="toggleModal"
             >
@@ -135,7 +137,7 @@ export default {
                 color = ' active-extended-search-button';
             }
 
-            return 'btn d-flex align-items-center rounded-pill h-100 border-0' + color;
+            return 'btn btn-icon d-flex align-items-center bg-lime-accent rounded-pill h-100 w-auto border-0' + color;
         }
     },
     mounted() {
@@ -170,30 +172,17 @@ export default {
     font-size: 9px !important;
 }
 #searchButton {
-    background-color: #EAF099;
     z-index: 10;
-    right: 36px;
-}
-.non-extend-search-button {
-    right: 0 !important;
-}
-.non-extend-clear-search {
-    right: 40px !important;
-}
-.non-active-extended-search-button {
-    background-color: #EAF099;
 }
 .active-extended-search-button {
-    background-color: #007bff;
+    background-color: #007bff !important;
 }
 #extended-search-button {
     z-index: 9;
-    right: 0;
     padding-left: 47px;
 }
 #clearSearch {
     z-index: 20;
-    right: 80px;
 }
 #clearSearch:focus {
     box-shadow: none;
@@ -218,14 +207,13 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 @media (max-width: 576px) {
     #searchbar {
-        > input {
+        input {
             width: calc(100vw - 183px);
             max-width: 248px;
             transition: width 0.5s ease-out, padding 0.4s ease;
         }
-        &:not(:focus-within) > input {
+        &:not(:focus-within) input {
             width: 0;
-            padding: 0 95px 0 0 !important;
 
             & + div > #clearSearch { display: none !important; }
         }

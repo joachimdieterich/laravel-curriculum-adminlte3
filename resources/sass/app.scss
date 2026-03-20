@@ -86,6 +86,7 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
     from { background: yellow; }
     to { background: transparent; }
 }
+.bg-lime-accent { background-color: #EAF099 !important; }
 .inset { inset: 0; }
 .p-margin-0 p { margin-bottom: 0px !important; }
 .pointer { cursor: pointer; }

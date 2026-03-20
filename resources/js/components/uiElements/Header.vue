@@ -53,7 +53,7 @@
             </button>
             <div v-if="notLocalEnv"
                 id="brand-menu-dropdown"
-                class="d-none bg-lime w-100"
+                class="d-none bg-lime w-100 mr-2"
             >
                 <div v-for="entry in menu">
                     <a :href="entry.url">
@@ -88,10 +88,13 @@
                 <i class="fa fa-bars px-1"></i>
             </button>
             <a
-                class="text-dark text-decoration-none p-2 mx-2"
+                class="text-dark text-decoration-none p-2 mr-2"
                 href="/"
             >
-                <strong>{{ trans('global.home') }}</strong>
+                <button class="d-md-none btn btn-icon bg-lime-accent">
+                    <i class="fa fa-home"></i>
+                </button>
+                <strong class="d-none d-md-inline">{{ trans('global.home') }}</strong>
             </a>
             <Searchbar/>
         </div>
@@ -121,7 +124,10 @@
                         :size="40"
                         :medium_id="user.medium_id"
                     />
-                    <span style="font-weight: 900;">{{ user.firstname }} {{ user.lastname }}</span>
+                    <span
+                        class="d-none d-md-inline"
+                        style="font-weight: 900;"
+                    >{{ user.firstname }} {{ user.lastname }}</span>
                 </span>
             </button>
             <div v-if="!isGuestUser"

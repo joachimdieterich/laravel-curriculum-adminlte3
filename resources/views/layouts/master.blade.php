@@ -31,9 +31,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a
-                            class="nav-link"
-                            href="/"
+                        <a id="nav-link-home"
+                           class="nav-link"
+                           href="/"
                         >
                             <b>{{ trans('global.home') }}</b>
                         </a>

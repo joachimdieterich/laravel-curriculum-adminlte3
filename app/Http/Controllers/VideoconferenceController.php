@@ -3,13 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Organization;
+use App\Services\Regex;
 use App\User;
 use App\Videoconference;
 use App\VideoconferenceSubscription;
+use Bigbluebutton;
 use Carbon\Carbon;
+use Gate;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,11 +31,11 @@ class VideoconferenceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function servers()
     {
-        abort_unless(\Gate::allows('videoconference_create'), 403);
+        abort_unless(Gate::allows('videoconference_create'), 403);
 
         $servers = [];
         $i = 1;
@@ -45,17 +52,17 @@ class VideoconferenceController extends Controller
         }
 
     }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View|JsonResponse
      */
     public function index()
     {
-        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403);
+        abort_unless(Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403, 'missing rights');
 
-        if (request()->wantsJson())
-        {
+        if (request()->wantsJson()) {
             return getEntriesForSelect2ByCollection(
                 $this->getVideoconferences(),
                 'videoconferences.',
@@ -64,10 +71,8 @@ class VideoconferenceController extends Controller
                 "meetingName",
             );
         }
-        else
-        {
-            return view('videoconference.index');
-        }
+
+        return view('videoconference.index');
 
     }
 
@@ -122,18 +127,14 @@ class VideoconferenceController extends Controller
 
     public function list(Request $request)
     {
-        abort_unless(\Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403);
+        abort_unless(Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403);
 
-        if (request()->has(['group_id']))
-        {
-            $request = request()->validate(
-                [
-                    'group_id' => 'required',
-                ]
-            );
-            $group_id = $request['group_id'];
+        if (request()->has(['group_id'])) {
+            $validatedRequest = request()->validate(['group_id' => 'required']);
+
+            $group_id         = $validatedRequest['group_id'];
             $videoconferences = Videoconference::with('subscriptions')
-                ->whereHas('subscriptions', function ($query) use ($group_id){
+                ->whereHas('subscriptions', function ($query) use ($group_id) {
                     $query->where(
                         function ($query) use ($group_id) {
                             $query->where('subscribable_type', 'App\\Group')
@@ -141,25 +142,14 @@ class VideoconferenceController extends Controller
                         }
                     );
                 });
+        } else {
+            $videoconferences = match ($request->filter) {
+                'owner'          => Videoconference::where('owner_id', auth()->user()->id)->get(),
+                'shared_with_me' => $this->userVideoconferences(false),
+                'shared_by_me'   => Videoconference::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get(),
+                default /*all*/  => $this->userVideoconferences(),
+            };
         }
-        else
-        {
-            switch ($request->filter)
-            {
-                case 'owner':            $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->get();
-                    break;
-                case 'shared_with_me':   $videoconferences = $this->userVideoconferences(false);
-                    break;
-                case 'shared_by_me':     $videoconferences = Videoconference::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
-                    break;
-                case 'all':
-                default:                 $videoconferences = $this->userVideoconferences();
-                    break;
-            }
-        }
-
-
-
 
         return empty($videoconferences) ? '' : DataTables::of($videoconferences)
             ->setRowId('id')
@@ -169,7 +159,7 @@ class VideoconferenceController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -179,14 +169,17 @@ class VideoconferenceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
-        abort_unless(\Gate::allows('videoconference_create'), 403);
+        abort_unless(Gate::allows('videoconference_create'), 403);
 
         $input = $this->validateRequest();
+        request()->validate([
+            'meetingName' => 'required|string',
+        ]);
 
         $meetingID = $input['meetingID'] ?? Str::uuid();
         $videoconference = Videoconference::updateOrCreate([
@@ -236,9 +229,8 @@ class VideoconferenceController extends Controller
             'server' => $input['server'] ?? 'server1',
         ]);
 
-        $createMeeting = \Bigbluebutton::server( $videoconference->server)->initCreateMeeting($videoconference->toArray());
-        $conf = \Bigbluebutton::server($videoconference->server)->create($createMeeting);
-        //dump($conf);
+        $createMeeting = Bigbluebutton::server( $videoconference->server)->initCreateMeeting($videoconference->toArray());
+        $conf = Bigbluebutton::server($videoconference->server)->create($createMeeting);
 
         if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
         {
@@ -260,8 +252,10 @@ class VideoconferenceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Videoconference  $videoconference
-     * @return \Illuminate\Http\Response
+     * @param Videoconference $videoconference
+     * @param bool            $editable
+     * @param null            $token
+     * @return \Illuminate\View\View
      */
     public function show(Videoconference $videoconference, $editable = false, $token = null)
     {
@@ -293,17 +287,16 @@ class VideoconferenceController extends Controller
 
     private function isModerator(Videoconference $videoconference) // todo: -> better wording canStart -> means not is moderator
     {
-        if (
-            $videoconference->subscriptions->where('subscribable_type', "App\User")
+        if ($videoconference->subscriptions->where('subscribable_type', "App\User")
                 ->where('editable', 1)
                 ->whereIn('subscribable_id', auth()->user()->id)->isNotEmpty()
-            or $videoconference->subscriptions->where('subscribable_type', "App\Group")
-                    ->where('editable', 1)
-                    ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))->isNotEmpty()
-            or $videoconference->subscriptions->where('subscribable_type', "App\Organization")
+            || $videoconference->subscriptions->where('subscribable_type', "App\Group")
+                ->where('editable', 1)
+                ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))->isNotEmpty()
+            || $videoconference->subscriptions->where('subscribable_type', "App\Organization")
                 ->where('editable', 1)
                 ->whereIn('subscribable_id', auth()->user()->current_organization_id)->isNotEmpty()
-            or ((config('app.guest_user_id') != null)
+            || ((config('app.guest_user_id') != null)
                 ? $videoconference->subscriptions->where('subscribable_type', "App\User")
                     ->where('editable', 1)
                     ->whereIn('subscribable_id', User::find(config('app.guest_user_id'))->id)->isNotEmpty()
@@ -349,8 +342,7 @@ class VideoconferenceController extends Controller
         $adapter = new $this->adapter();
 
         //set proper pw
-        if (
-            (auth()->user()->id == $videoconference->owner_id) ||
+        if ((auth()->user()->id == $videoconference->owner_id) ||
             ($videoconference->allJoinAsModerator === true) ||
             $this->isModerator($videoconference) === true ||
             $videoconference->moderatorPW == $moderatorPW
@@ -366,14 +358,12 @@ class VideoconferenceController extends Controller
         ])
         ) {
 
-            if (
-                (auth()->user()->id == $videoconference->owner_id) ||
+            if ((auth()->user()->id == $videoconference->owner_id) ||
                 ($videoconference->allJoinAsModerator === true) ||
                 $this->isModerator($videoconference) === true ||
                 $videoconference->moderatorPW == $currentPW ||
                 $videoconference->anyoneCanStart === true
-            )
-            {
+            ){
                 $conf =  $adapter->start([
                     'meetingID'                             => $videoconference->meetingID,
                     'meetingName'                           => $videoconference->meetingName,
@@ -462,8 +452,8 @@ class VideoconferenceController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Videoconference  $videoconference
-     * @return \Illuminate\Http\Response
+     * @param Videoconference $videoconference
+     * @return Response
      */
     public function edit(Videoconference $videoconference)
     {
@@ -473,13 +463,13 @@ class VideoconferenceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Videoconference  $videoconference
-     * @return \Illuminate\Http\Response
+     * @param Request         $request
+     * @param Videoconference $videoconference
+     * @return Response
      */
     public function update(Request $request, Videoconference $videoconference)
     {
-        abort_unless((\Gate::allows('videoconference_edit') and $videoconference->isAccessible()), 403);
+        abort_unless((Gate::allows('videoconference_edit') and $videoconference->isAccessible()), 403);
         $input = $this->validateRequest();
 
         //todo: check if guestPolicy is changed. -> if not use initCreateMeeting() ?
@@ -537,12 +527,12 @@ class VideoconferenceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Videoconference  $videoconference
-     * @return \Illuminate\Http\Response
+     * @param Videoconference $videoconference
+     * @return Response
      */
     public function destroy(Videoconference $videoconference)
     {
-        abort_unless(\Gate::allows('videoconference_delete'), 403);
+        abort_unless(Gate::allows('videoconference_delete'), 403);
 
         $videoconference->subscriptions()->delete();
 
@@ -593,33 +583,50 @@ class VideoconferenceController extends Controller
         }
     }
 
+    public function getLinks(Request $request): Collection
+    {
+        abort_unless(Gate::allows('videoconference_access') and auth()->user()->id !== config('app.guest_user_id'), 403, 'missing rights');
+
+        $request->validate([
+            'meetingID' => 'required|uuid|exists:videoconferences,meetingID',
+        ]);
+
+        /** @var Videoconference $videoconference */
+        $videoconference = Videoconference::where('meetingID', $request->meetingID)->get()->first();
+
+        return collect([
+            'moderatorLink' => url()->query("/videoconferences/{$videoconference->id}/startWithPw", ['moderatorPW' => $videoconference->moderatorPW]),
+            'attendeeLink' => url()->query("/videoconferences/{$videoconference->id}/startWithPw", ['attendeePw' => $videoconference->attendeePW]),
+        ]);
+    }
+
     protected function validateRequest()
     {
         return request()->validate([
             'id' => 'sometimes|nullable|integer',
             'sharing_token' => 'sometimes|string',
             'meetingID' => 'sometimes',
-            'meetingName' => 'sometimes',
-            'attendeePW' => 'sometimes',
-            'moderatorPW' => 'sometimes',
+            'meetingName' => 'sometimes|max:191',
+            'attendeePW' => 'sometimes|max:191',
+            'moderatorPW' => 'sometimes|max:191',
             'presentation' => 'sometimes',
             'recordID' => 'sometimes',
             'state' => 'sometimes',
             'userName' => 'sometimes',
             'password' => 'sometimes',
-            'endCallbackUrl' => 'sometimes',
+            'endCallbackUrl' => 'sometimes|max:191',
             'welcomeMessage' => 'sometimes|string|nullable',
             'dialNumber' => 'sometimes',
             'maxParticipants' => 'sometimes|integer',
-            'logoutUrl' => 'sometimes|nullable|url',
+            'logoutUrl' => 'sometimes|nullable|url|max:191',
             'record' => 'sometimes|boolean',
             'duration' => 'sometimes|integer',
             'isBreakout' => 'sometimes|boolean',
             'moderatorOnlyMessage' => 'sometimes|string|nullable',
             'autoStartRecording' => 'sometimes|boolean',
             'allowStartStopRecording' => 'sometimes|boolean',
-            'bannerText' => 'sometimes|string|nullable',
-            'bannerColor' => 'sometimes|string',
+            'bannerText' => 'sometimes|string|max:512|nullable',
+            'bannerColor' => ['sometimes', 'string', 'regex:' . Regex::HEX_COLOR->value],
             'logo' => 'sometimes|nullable|url',
             'copyright' => 'sometimes|string|nullable',
             'muteOnStart' => 'sometimes|boolean',
@@ -632,11 +639,11 @@ class VideoconferenceController extends Controller
             'lockSettingsLockedLayout' => 'sometimes|boolean',
             'lockSettingsLockOnJoin' => 'sometimes|boolean',
             'lockSettingsLockOnJoinConfigurable' => 'sometimes|boolean',
-            'guestPolicy' => 'sometimes',
+            'guestPolicy' => ['sometimes', Rule::in(config('bigbluebutton.create.possibleGuestPolicies'))],
             'meetingKeepEvents' => 'sometimes|boolean',
             'endWhenNoModerator' => 'sometimes|boolean',
             'endWhenNoModeratorDelayInMinutes' => 'sometimes|integer',
-            'meetingLayout' => 'sometimes',
+            'meetingLayout' => ['sometimes', Rule::in(config('bigbluebutton.create.possibleMeetingLayout'))],
             'learningDashboardCleanupDelayInMinutes' => 'sometimes|integer',
             'allowModsToEjectCameras' => 'sometimes|boolean',
             'allowRequestsWithoutSession' => 'sometimes|boolean',
@@ -646,12 +653,15 @@ class VideoconferenceController extends Controller
             'hooksID' => 'sometimes',
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'sharing_token' => 'sometimes',
-            'medium_id' => 'sometimes',
+            'medium_id' => 'sometimes|integer|nullable',
             'webcamsOnlyForModerator' => 'sometimes|boolean',
             'anyoneCanStart' => 'sometimes|boolean',
             'server' => 'sometimes|string',
             'owner_id' => 'sometimes|integer|nullable',
+        ],
+        [
+            'guestPolicy' => 'The :attribute must be one of these values: [' . implode(', ', config('bigbluebutton.create.possibleGuestPolicies')) . ']',
+            'meetingLayout' => 'The :attribute must be one of these values: [' . implode(', ', config('bigbluebutton.create.possibleMeetingLayout')) . ']',
         ]);
     }
 }

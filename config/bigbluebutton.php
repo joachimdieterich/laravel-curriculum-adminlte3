@@ -263,7 +263,8 @@ return [
          *
          * var @string
          */
-        'guestPolicy'                        => 'ALWAYS_ACCEPT',
+        'guestPolicy'           => 'ALWAYS_ACCEPT',
+        'possibleGuestPolicies' => ['ALWAYS_ACCEPT', 'ALWAYS_DENY', 'ASK_MODERATOR'],
 
         /**
          * Defaults to the value of defaultKeepEvents.
@@ -296,7 +297,8 @@ return [
          *
          * var @enum
          */
-        'meetingLayout' => 'SMART_LAYOUT',
+        'meetingLayout'         => 'SMART_LAYOUT',
+        'possibleMeetingLayout' => ['CUSTOM_LAYOUT', 'SMART_LAYOUT', 'PRESENTATION_FOCUS', 'VIDEO_FOCUS'],
 
         /**
          * Default learningDashboardCleanupDelayInMinutes=2.

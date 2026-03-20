@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\MediaInterface;
 use App\Medium;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class MediumController extends Controller
 {
@@ -15,7 +15,7 @@ class MediumController extends Controller
         $this->repository = $request->filled('repository') ? $request->input('repository') : config('medium.repositories.default');
     }
 
-    protected function adapter(string $adapter = null)
+    protected function adapter(?string $adapter = null): MediaInterface
     {
         return config('medium.repositories.'.$adapter.'.adapter') ?? config('medium.repositories.'.$this->repository.'.adapter');
     }

@@ -3,24 +3,22 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\VideoconferenceController;
+use App\Http\Controllers\UsersController;
 use App\Notifications\Welcome;
-use App\Organization;
 use App\User;
-use App\Videoconference;
+use Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class UsersApiController extends Controller
 {
     public function index()
     {
-        if (request()->common_name)
-        {
-            return  User::where('common_name', request()->common_name)->get();
+        if (request()->common_name) {
+            return User::where('common_name', request()->common_name)->get();
         }
-        else
-        {
-            return User::all();
-        }
+
+        return User::all();
 
     }
 
@@ -29,11 +27,11 @@ class UsersApiController extends Controller
         //tempfix for false provisioned users
         if (User::withTrashed()->where('username', request()->username)->exists()) {
             $user = User::withTrashed()->where('username', request()->username)->get()->first();
-            $user->update(['username' => 'alt_'.request()->username]);
+            $user->update(['username' => 'alt_' . request()->username]);
         }
         if (User::withTrashed()->where('email', request()->email)->exists()) {
             $user = User::withTrashed()->where('email', request()->email)->get()->first();
-            $user->update(['email' => 'alt_'.request()->email]);
+            $user->update(['email' => 'alt_' . request()->email]);
         }
 
         if (User::withTrashed()->where('common_name', request()->common_name)->exists()) {
@@ -66,35 +64,35 @@ class UsersApiController extends Controller
     {
         if ($user->delete()) {
             return ['message' => 'Successful deleted'];
-        } else {
-            return ['message' => 'Deleting failed'];
         }
+
+        return ['message' => 'Deleting failed'];
     }
 
-            public function forceDestroy($id)
+    public function forceDestroy($id)
     {
         $user = User::withTrashed()->findOrFail($id);
 
-        if ((new \App\Http\Controllers\UsersController())->forceDestroy($user, true)) {
+        if (new UsersController()->forceDestroy($user, true)) {
             return ['message' => 'Successful deleted'];
-        } else {
-            return ['message' => 'Deleting failed'];
         }
+
+        return ['message' => 'Deleting failed'];
     }
 
     public function withGroups(User $user)
     {
-        return  $user->where('id', $user->id)->with('groups')->get();
+        return $user->where('id', $user->id)->with('groups')->get();
     }
 
     public function withOrganizations(User $user)
     {
-        return  $user->where('id', $user->id)->with('organizations')->get();
+        return $user->where('id', $user->id)->with('organizations')->get();
     }
 
     public function withRoles(User $user)
     {
-        return  $user->where('id', $user->id)->with('roles')->get();
+        return $user->where('id', $user->id)->with('roles')->get();
     }
 
     public function dashboard(User $user)
@@ -108,18 +106,28 @@ class UsersApiController extends Controller
             1, //optional event ID
         ];*/
 
-        return ['enrollments' => $user->currentGroups()
-                                      ->select('groups.id', 'groups.title')
-                                      ->with(['curricula'=> function ($query) {
-                                            $query->select('curricula.id', 'curricula.title');
-                                       }])->get(),
+        return [
+            'enrollments'   => $user->currentGroups()
+                ->select('groups.id', 'groups.title')
+                ->with(['curricula' => function ($query) {
+                    $query->select('curricula.id', 'curricula.title');
+                }])->get(),
             'notifications' => [/*$user->notifications*/],
-            'events' => [/*$event*/],
+            'events'        => [/*$event*/],
         ];
     }
 
     protected function filteredRequest()
     {
         return array_filter(request()->all()); //filter to ignore fields with null values
+    }
+
+    public function permissions(Request $request): Collection
+    {
+        return collect([
+            'common_name' => $request->common_name,
+            'is_admin' => is_admin(),
+            'permissions' => Auth::user()->permissions()->pluck('title')
+        ]);
     }
 }

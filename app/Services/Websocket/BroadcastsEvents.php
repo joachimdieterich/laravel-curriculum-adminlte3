@@ -10,7 +10,7 @@ trait BroadcastsEvents
 
     public function broadcastOn($event): array
     {
-        if (!config('app.websocket_active')) {
+        if (!config('broadcasting.active')) {
             return [];
         }
 

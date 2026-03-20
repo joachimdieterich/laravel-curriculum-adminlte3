@@ -380,6 +380,4 @@ return [
     'show_impressum' => env('SHOW_IMPRESSUM', false),
 
     'videoconference_adapter' => env('VIDEOCONFERENCE_ADAPTER'),
-
-    'websocket_app_active' => env('WEBSOCKET_APP_ACTIVE', false),
 ];

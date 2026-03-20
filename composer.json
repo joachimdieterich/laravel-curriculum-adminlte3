@@ -30,6 +30,7 @@
         "joisarjignesh/bigbluebutton": "^2.6",
         "jumbojett/openid-connect-php": "^1.0",
         "laravel/framework": "^12.0",
+        "laravel/horizon": "^5.45",
         "laravel/passport": "^12.0",
         "laravel/reverb": "^1.0",
         "laravel/telescope": "^5.0",

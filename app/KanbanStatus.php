@@ -29,7 +29,7 @@ class KanbanStatus extends Model
 
     public function broadcastOn(): array
     {
-        if (!config('app.websocket_app_active')) {
+        if (!config('broadcasting.active')) {
             return [];
         }
 

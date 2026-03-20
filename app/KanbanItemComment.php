@@ -26,7 +26,7 @@ class KanbanItemComment extends Model
 
     public function broadcastOn($event): array
     {
-        if (!config('app.websocket_app_active')) {
+        if (!config('broadcasting.active')) {
             return [];
         }
 

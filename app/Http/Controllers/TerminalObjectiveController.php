@@ -4,32 +4,36 @@ namespace App\Http\Controllers;
 
 use App\Config;
 use App\Curriculum;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use App\QuoteSubscription;
 use App\ReferenceSubscription;
 use App\TerminalObjective;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class TerminalObjectiveController extends Controller
 {
-
     public function getEnablingObjectives(TerminalObjective $terminalObjective) {
         if (request()->wantsJson()) {
             return getEntriesForSelect2ByCollectionAlternative($terminalObjective->enablingObjectives, '', 'title', 'order_id');
         }
     }
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response|TerminalObjective
      */
-    public function store(Request $request)
+    public function store(Request $request): Response|TerminalObjective
     {
-        abort_unless(Curriculum::find(request('curriculum_id'))->isAccessible(), 403);
+        $curriculum = Curriculum::find(request('curriculum_id'));
+        abort_unless($curriculum->isAccessible(), 403);
 
         $order_id = $this->getMaxOrderId(request('curriculum_id'), request('objective_type_id'));
+
         $terminalObjective = TerminalObjective::create(array_merge($request->all(), ['order_id' => $order_id]));
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
@@ -37,13 +41,15 @@ class TerminalObjectiveController extends Controller
         if (request()->wantsJson()) {
             return TerminalObjective::with(['enablingObjectives', 'type'])->find($terminalObjective->id);
         }
+
+        return response(null, 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\TerminalObjective  $terminalObjective
-     * @return \Illuminate\Http\Response
+     * @param TerminalObjective $terminalObjective
+     * @return View
      */
     public function show(TerminalObjective $terminalObjective)
     {
@@ -75,9 +81,9 @@ class TerminalObjectiveController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\TerminalObjective  $terminalObjective
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param TerminalObjective         $terminalObjective
+     * @return Response
      */
     public function update(Request $request, TerminalObjective $terminalObjective)
     {
@@ -118,7 +124,7 @@ class TerminalObjectiveController extends Controller
     /**
      * do calculations when objective is moved to another curriculum
      *
-     * @param  \App\TerminalObjective  $old_objective
+     * @param TerminalObjective $old_objective
      * @param $request
      */
     public function moveToCurriculum($objective, $request)
@@ -134,8 +140,8 @@ class TerminalObjectiveController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\TerminalObjective  $terminalObjective
-     * @return \Illuminate\Http\Response
+     * @param TerminalObjective $terminalObjective
+     * @return Response
      */
     public function destroy(TerminalObjective $terminalObjective)
     {

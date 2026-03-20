@@ -224,6 +224,6 @@ input[type="search"]::-webkit-search-results-decoration {
         padding-right: 0.5rem;
         transition: width 0.2s ease-out;
     }
-    :lang('de') #searchButton::before { content: 'Suche'; }
+    :lang(de) #searchButton::before { content: 'Suche'; }
 }
 </style>

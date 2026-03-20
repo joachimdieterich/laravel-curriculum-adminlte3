@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <TabList
             class="px-3"
             :model="'kanban'"

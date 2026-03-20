@@ -1,7 +1,7 @@
 <template>
     <div
         id="kanban-container"
-        class="kanban-container w-print-auto"
+        class="position-relative w-print-auto"
     >
         <img v-if="kanban.medium_id"
             class="position-absolute p-0 h-100 w-100"
@@ -84,7 +84,7 @@
                             item-key="id"
                             handle=".handle"
                             :data-status-id="status.id"
-                            class="kanban-items-container d-flex flex-column hide-scrollbars overflow-auto"
+                            class="kanban-items-container d-flex flex-column flex-fill hide-scrollbars overflow-auto"
                             :move="isLocked"
                             @end="syncItemMoved"
                         >
@@ -607,10 +607,11 @@ export default {
 }
 </script>
 <style scoped>
-.kanban-container {
+#kanban-container {
     background-color: #fff;
-    position: relative;
-    width: 100%;
+    width: 100vw;
+    height: 100%;
+    min-height: 400px;
 }
 .kanban-wrapper {
     height: 100%;
@@ -619,16 +620,19 @@ export default {
     overflow-x: auto;
     overflow-y: clip;
 }
-.kanban-items-container { scroll-behavior: smooth; }
-.kanban-items-container > :last-child > .card { margin-bottom: 0; }
-@media (max-width: 991px) {
-    .kanban-container {
-        width: 100vw;
-        margin-left: -1rem;
-    }
+.kanban-items-container {
+    height: 0px !important;
+    scroll-behavior: smooth;
+
+    & > :last-child > .card { margin-bottom: 0; }
 }
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
     &:hover, &:focus { opacity: 1 !important; }
+}
+@media (max-width: 576px) {
+    #kanban-container {
+        height: 80vh;
+    }
 }
 </style>

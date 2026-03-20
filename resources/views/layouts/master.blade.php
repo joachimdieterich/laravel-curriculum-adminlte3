@@ -35,20 +35,18 @@
                         ></div>
                     </div>
                 @endcan
-                <div class="flex-fill">
+                <div class="d-flex flex-column flex-fill">
                     <!-- Content Header (Page header) -->
-                    <section class="content-header">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-sm-6 pl-0">
-                                    <h1> @yield('title')</h1>
-                                </div>
-                                <div class="d-flex align-items-center col-sm-6 px-0">
-                                    @yield('breadcrumb')
-                                </div>
+                    <section class="p-3">
+                        <div class="d-flex">
+                            <div class="col-12 col-sm-6 px-0">
+                                <h1 class="h3 m-0">@yield('title')</h1>
                             </div>
-                            @yield('contributors')
-                        </div><!-- /.container-fluid -->
+                            <div class="d-flex align-items-center col-sm-6 px-0">
+                                @yield('breadcrumb')
+                            </div>
+                        </div>
+                        @yield('contributors')
                     </section>
     
                     <!-- Main content -->

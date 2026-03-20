@@ -1,23 +1,7 @@
-@extends((Auth::user()->id == config('app.guest_user_id')) || $is_shared ? 'layouts.contentonly' : 'layouts.master')
+@extends('layouts.master')
 
 @section('contributors')
     <div id="contributors"></div>
-@endsection
-@section('breadcrumb')
-    @if (Auth::user()->id == config('app.guest_user_id'))
-        <breadcrumbs
-            :entries="{{json_encode([
-            ['active' => true, 'title'=> Str::limit($kanban->title, 10) ]
-        ])}}"
-        ></breadcrumbs>
-    @else
-        <breadcrumbs
-            :entries="{{json_encode([
-            ['active'=> true, 'title'=> trans('global.kanban.title_singular'), 'url' => "/kanbans"],
-            ['active'=> true, 'title'=> Str::limit($kanban->title, 10) ]
-        ])}}"
-        ></breadcrumbs>
-    @endif
 @endsection
 
 @section('title')
@@ -25,12 +9,13 @@
 @endsection
 
 @section('content')
-    <div class="d-flex flex-fill h-print-auto" style="height: calc(100vh - 218px)">
+    <div class="h-100">
         <kanban
             :editable="{{ $may_edit ? 'true' : 'false' }}"
             :favourable="{{ $may_favour ? 'true' : 'false' }}"
             :websocket="{{ $is_websocket_active ? 'true' : 'false' }}"
             ref="kanbanBoard"
-            :initial-kanban="{{ $kanban }}"></kanban>
+            :initial-kanban="{{ $kanban }}"
+        ></kanban>
     </div>
 @endsection

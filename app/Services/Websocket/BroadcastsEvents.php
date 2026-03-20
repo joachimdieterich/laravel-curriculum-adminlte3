@@ -19,10 +19,10 @@ trait BroadcastsEvents
         ];
     }
 
-    public function broadcastWith(): array
+    public function broadcastWith($event): array
     {
         return [
-            'model' => $this->withRelations(),
+            'model' => $event === 'deleted' ? $this : $this->withRelations(),
         ];
     }
 }

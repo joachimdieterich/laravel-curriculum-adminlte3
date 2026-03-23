@@ -1,5 +1,5 @@
 <template>
-    <ol class="breadcrumb bg-gray-light p-0 mb-0 ml-sm-auto">
+    <ol class="breadcrumb bg-gray-light p-0 mb-0 ml-auto">
         <li v-if="showHome"
             class="breadcrumb-item"
         >

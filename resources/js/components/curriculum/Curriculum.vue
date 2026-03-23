@@ -395,6 +395,10 @@ export default {
         generateCertificate() {
             this.globalStore?.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});
         },
+        printCurriculum() {
+            axios.get('/curricula/' + this.curriculum.id + '/print')
+                .then(response => window.location.href = response.data.path);
+        },
         exportCurriculum() {
             this.globalStore?.showModal('medium-export-modal', {
                 id: this.curriculum.id,

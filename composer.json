@@ -63,7 +63,11 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "ext-pcntl": "8.3",
+            "ext-posix": "8.3"
+        }
     },
     "extra": {
         "laravel": {

@@ -4,16 +4,16 @@
         class="d-flex position-sticky bg-lime user-select-none"
     >
         <div id="brand-menu"
-            class="d-flex position-relative mr-4"
+            class="d-flex position-relative mr-2"
         >
             <button
                 id="brand-menu-dropdown-button"
-                class="btn p-1"
+                class="btn"
                 type="button"
                 @click.stop="toggleBrandMenu()"
             >
                 <span
-                    class="d-flex align-items-center px-4"
+                    class="d-flex align-items-center px-3 px-sm-4"
                     style="gap: 10px;"
                 >
                     <svg
@@ -44,7 +44,7 @@
                             />
                         </g>
                     </svg>
-                    {{ trans(brandMenuText) }}
+                    <span class="d-none d-sm-inline">{{ trans(brandMenuText) }}</span>
                     <i v-if="notLocalEnv"
                         class="fa fa-chevron-down"
                         style="font-size: 0.75rem;"
@@ -88,7 +88,7 @@
                 <i class="fa fa-bars px-1"></i>
             </button>
             <a
-                class="text-dark text-decoration-none p-2 mr-2"
+                class="text-dark text-decoration-none p-md-2 mx-2"
                 href="/"
             >
                 <button class="d-md-none btn btn-icon bg-lime-accent">
@@ -101,11 +101,11 @@
 
         <div
             id="user-menu"
-            class="d-flex align-items-center ml-auto mr-2"
+            class="d-flex align-items-center ml-auto"
         >
             <button
                 id="user-menu-dropdown-button"
-                class="btn p-1"
+                class="btn"
                 type="button"
                 @click.stop="toggleUserMenu()"
             >
@@ -117,7 +117,6 @@
                     class="d-flex align-items-center pointer"
                 >
                     <Avatar
-                        class="mr-1"
                         :username="user.username"
                         :firstname="user.firstname"
                         :lastname="user.lastname"
@@ -125,7 +124,7 @@
                         :medium_id="user.medium_id"
                     />
                     <span
-                        class="d-none d-md-inline"
+                        class="d-none d-md-inline ml-1"
                         style="font-weight: 900;"
                     >{{ user.firstname }} {{ user.lastname }}</span>
                 </span>

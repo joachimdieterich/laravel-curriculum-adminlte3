@@ -2,6 +2,7 @@
     <div
         id="header"
         class="d-flex position-sticky bg-lime user-select-none"
+        style="top: 0;"
     >
         <div id="brand-menu"
             class="d-flex position-relative mr-2"

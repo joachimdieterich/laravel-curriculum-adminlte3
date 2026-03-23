@@ -578,15 +578,14 @@ class CurriculumController extends Controller
 
     public function print(Curriculum $curriculum)
     {
-
-        //LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this).'@'.__FUNCTION__);
         $html = view('print.curriculum')
             ->with(compact('curriculum'))
             ->render();
         if (request()->wantsJson()) {
             return ['path' => (app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save'))];
         }
-        //  return app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save');
+        // return app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save');
     }
 
     public function syncObjectiveTypesOrder(Curriculum $curriculum)

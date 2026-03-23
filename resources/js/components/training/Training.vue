@@ -1,15 +1,12 @@
 <template>
-    <div>
+    <div class="d-flex flex-column px-3">
         <div class="card">
             <div class="card-header">
-               <!-- <div class="card-tools pr-2 s">
-                    <i class="fa fa-pencil-alt"></i>
-                </div> -->
                 <div class="user-block">
                     <span class="username ml-0">
                         {{ currentTraining.title }}
                         <span class="description ml-0">
-                            {{ this.timePeriod }}
+                            {{ timePeriod }}
                         </span>
                     </span>
                 </div>

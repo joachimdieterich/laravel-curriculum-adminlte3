@@ -1,87 +1,85 @@
 <template>
-    <div class="row">
-        <div class="col-md-12 ">
-            <ul v-if="!subscribable"
-                class="nav nav-pills py-2"
-                role="tablist"
+    <div class="d-flex flex-column">
+        <ul v-if="!subscribable"
+            class="nav nav-pills px-3 py-2"
+            role="tablist"
+        >
+            <li class="nav-item pointer">
+                <a
+                    id="logbook-filter-all"
+                    class="nav-link"
+                    :class="filter === 'all' ? 'active' : ''"
+                    data-toggle="pill"
+                    role="tab"
+                    @click="setFilter('all')"
+                >
+                    <i class="fas fa-th pr-2"></i>
+                    {{ trans('global.all') }} {{ trans('global.logbook.title') }}
+                </a>
+            </li>
+            <li class="nav-item pointer">
+                <a
+                    id="custom-filter-by-organization"
+                    class="nav-link"
+                    :class="filter === 'by_organization' ? 'active' : ''"
+                    data-toggle="pill"
+                    role="tab"
+                    @click="setFilter('by_organization')"
+                >
+                    <i class="fas fa-university pr-2"></i>
+                    {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
+                </a>
+            </li>
+            <li
+                v-permission="'logbook_create'"
+                class="nav-item pointer"
             >
-                <li class="nav-item pointer">
-                    <a
-                        id="logbook-filter-all"
-                        class="nav-link"
-                        :class="filter === 'all' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('all')"
-                    >
-                        <i class="fas fa-th pr-2"></i>
-                        {{ trans('global.all') }} {{ trans('global.logbook.title') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="custom-filter-by-organization"
-                        class="nav-link"
-                        :class="filter === 'by_organization' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('by_organization')"
-                    >
-                        <i class="fas fa-university pr-2"></i>
-                        {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
-                    </a>
-                </li>
-                <li
-                    v-permission="'logbook_create'"
-                    class="nav-item pointer"
+                <a
+                    id="custom-filter-owner"
+                    class="nav-link"
+                    :class="filter === 'owner' ? 'active' : ''"
+                    data-toggle="pill"
+                    role="tab"
+                    @click="setFilter('owner')"
                 >
-                    <a
-                        id="custom-filter-owner"
-                        class="nav-link"
-                        :class="filter === 'owner' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('owner')"
-                    >
-                        <i class="fa fa-user pr-2"></i>
-                        {{ trans('global.my') }} {{ trans('global.logbook.title') }}
-                    </a>
-                </li>
-                <li class="nav-item pointer">
-                    <a
-                        id="custom-filter-shared-with-me"
-                        class="nav-link"
-                        :class="filter === 'shared_with_me' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('shared_with_me')"
-                    >
-                        <i class="fa fa-paper-plane pr-2"></i>
-                        {{ trans('global.shared_with_me') }}
-                    </a>
-                </li>
-                <li
-                    v-permission="'logbook_create'"
-                    class="nav-item pointer"
+                    <i class="fa fa-user pr-2"></i>
+                    {{ trans('global.my') }} {{ trans('global.logbook.title') }}
+                </a>
+            </li>
+            <li class="nav-item pointer">
+                <a
+                    id="custom-filter-shared-with-me"
+                    class="nav-link"
+                    :class="filter === 'shared_with_me' ? 'active' : ''"
+                    data-toggle="pill"
+                    role="tab"
+                    @click="setFilter('shared_with_me')"
                 >
-                    <a
-                        id="custom-tabs-shared-by-me"
-                        class="nav-link"
-                        :class="filter === 'shared_by_me' ? 'active' : ''"
-                        data-toggle="pill"
-                        role="tab"
-                        @click="setFilter('shared_by_me')"
-                    >
-                        <i class="fa fa-share-nodes  pr-2"></i>
-                        {{ trans('global.shared_by_me') }}
-                    </a>
-                </li>
-            </ul>
-        </div>
+                    <i class="fa fa-paper-plane pr-2"></i>
+                    {{ trans('global.shared_with_me') }}
+                </a>
+            </li>
+            <li
+                v-permission="'logbook_create'"
+                class="nav-item pointer"
+            >
+                <a
+                    id="custom-tabs-shared-by-me"
+                    class="nav-link"
+                    :class="filter === 'shared_by_me' ? 'active' : ''"
+                    data-toggle="pill"
+                    role="tab"
+                    @click="setFilter('shared_by_me')"
+                >
+                    <i class="fa fa-share-nodes  pr-2"></i>
+                    {{ trans('global.shared_by_me') }}
+                </a>
+            </li>
+        </ul>
 
         <div
             id="logbook-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'logbook_create'"
@@ -170,7 +168,7 @@
 
         <div
             id="logbook-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="logbook-datatable"

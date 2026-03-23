@@ -1,5 +1,8 @@
 <template>
-    <div id="outermap" class="h-100">
+    <div
+        id="outermap"
+        class="position-relative h-100"
+    >
         <div
             id="sidebar"
             class="sidebar border-0"
@@ -804,14 +807,13 @@ export default {
 @import "leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
 .sidebar {
     z-index: 1000 !important;
-    height: 83% !important;
-    margin-top: 67px;
-    margin-left: 17px;
 
-    & > .sidebar-tabs > ul, & > .sidebar-tabs > ul > li:last-child {
+    & > .sidebar-tabs > ul,
+    & > .sidebar-tabs > ul > li:last-child {
         border-bottom-left-radius: 4px;
     }
-    &.collapsed > .sidebar-tabs > ul, &.collapsed > .sidebar-tabs > ul > li:last-child {
+    &.collapsed > .sidebar-tabs > ul,
+    &.collapsed > .sidebar-tabs > ul > li:last-child {
         border-bottom-right-radius: 4px;
     }
 }

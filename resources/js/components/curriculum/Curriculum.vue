@@ -5,7 +5,7 @@
         >
             <div
                 id="user-datatable-wrapper"
-                class="w-100 dataTablesWrapper"
+                class="dataTablesWrapper"
             >
                 <DataTable
                     id="curriculum-user-datatable"
@@ -21,230 +21,224 @@
         </div>
 
         <hr class="clearfix">
-        <div class="row pt-3">
-            <div class="col-12">
-                <ul
-                    class="nav nav-tabs"
-                    role="tablist"
-                    aria-label="Curriculum Tabs"
+        <div class="d-flex flex-column px-3 pb-3">
+            <ul
+                class="nav nav-tabs"
+                role="tablist"
+                aria-label="Curriculum Tabs"
+            >
+                <li
+                    class="nav-item"
+                    role="tab"
                 >
-                    <li
-                        class="nav-item"
-                        role="tab"
+                    <a
+                        id="content-nav-tab"
+                        class="nav-link link-muted"
+                        href="#content-tab"
+                        data-toggle="tab"
                         aria-controls="content-tab"
-                        aria-selected="true"
+                        @click="loaderEvent()"
                     >
-                        <a
-                            id="content-nav-tab"
-                            class="nav-link link-muted"
-                            data-toggle="tab"
-                            href="#content-tab"
-                            @click="loaderEvent()"
-                        >
-                            <i class="fa fa-align-justify pr-2"></i>
-                            {{ trans('global.content.index') }}
-                        </a>
-                    </li>
-                    <li
-                        class="nav-item"
-                        role="tab"
+                        <i class="fa fa-align-justify pr-2"></i>
+                        {{ trans('global.content.index') }}
+                    </a>
+                </li>
+                <li
+                    class="nav-item"
+                    role="tab"
+                >
+                    <a
+                        id="curriculm-nav-tab"
+                        class="nav-link link-muted active"
+                        href="#curriculm-tab"
+                        data-toggle="tab"
                         aria-controls="curriculm-tab"
-                        aria-selected="false"
                     >
-                        <a
-                            id="curriculm-nav-tab"
-                            class="nav-link link-muted"
-                            data-toggle="tab"
-                            href="#curriculm-tab"
-                        >
-                            <i class="fas fa-th pr-2"></i>
-                            {{ trans('global.objective_tab') }}
-                        </a>
-                    </li>
-                    <li
-                        class="nav-item"
-                        role="tab"
+                        <i class="fas fa-th pr-2"></i>
+                        {{ trans('global.objective_tab') }}
+                    </a>
+                </li>
+                <li
+                    class="nav-item"
+                    role="tab"
+                >
+                    <a
+                        id="medium-nav-tab"
+                        class="nav-link link-muted"
+                        href="#medium-tab"
+                        data-toggle="tab"
                         aria-controls="medium-tab"
-                        aria-selected="false"
                     >
-                        <a
-                            id="medium-nav-tab"
-                            class="nav-link link-muted"
-                            data-toggle="tab"
-                            href="#medium-tab"
-                        >
-                            <i class="fa fa-folder-open pr-2"></i>
-                            {{ trans('global.medium.title') }}
-                        </a>
-                    </li>
-                    <li
-                        class="nav-item"
-                        role="tab"
+                        <i class="fa fa-folder-open pr-2"></i>
+                        {{ trans('global.medium.title') }}
+                    </a>
+                </li>
+                <li
+                    class="nav-item"
+                    role="tab"
+                >
+                    <a v-if="curriculum.glossar != null"
+                        id="glossar-nav-tab"
+                        class="nav-link link-muted"
+                        href="#glossar-tab"
+                        data-toggle="tab"
                         aria-controls="glossar-tab"
-                        aria-selected="false"
                     >
-                        <a v-if="curriculum.glossar != null"
-                            id="glossar-nav-tab"
-                            class="nav-link link-muted"
-                            data-toggle="tab"
-                            href="#glossar-tab"
-                        >
-                            <i class="fa fa-book-open pr-2"></i>
-                            {{ trans('global.glossar.title_singular') }}
-                        </a>
-                        <a v-else
-                            v-permission="'glossar_create'"
-                            id="glossar-nav-tab"
-                            class="nav-link link-muted"
-                            :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id=' + curriculum.id"
-                        >
-                            <i class="fa fa-book-open pr-2"></i>
-                            {{trans('global.glossar.create')}}
-                        </a>
-                    </li>
-                    <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
-                        v-permission="'certificate_access'"
-                        class="nav-item ml-auto"
+                        <i class="fa fa-book-open pr-2"></i>
+                        {{ trans('global.glossar.title_singular') }}
+                    </a>
+                    <a v-else
+                        v-permission="'glossar_create'"
+                        id="glossar-nav-tab"
+                        class="nav-link link-muted"
+                        :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id=' + curriculum.id"
                     >
-                        <a
-                            id="certificate-nav-tab"
-                            class="nav-link link-muted"
-                            @click.prevent="generateCertificate()"
-                        >
-                            <i class="fa fa-certificate pr-2"></i>
-                            {{ trans('global.certificate.generate') }}
-                        </a>
-                    </li>
-                    <li
-                        v-permission="'certificate_create'"
-                        class="nav-item ml-auto"
+                        <i class="fa fa-book-open pr-2"></i>
+                        {{trans('global.glossar.create')}}
+                    </a>
+                </li>
+                <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
+                    v-permission="'certificate_access'"
+                    class="nav-item ml-auto"
+                >
+                    <a
+                        id="certificate-nav-tab"
+                        class="nav-link link-muted"
+                        @click.prevent="generateCertificate()"
                     >
-                        <a
-                            id="certificate-nav-tab"
-                            class="nav-link link-muted pointer"
-                            @click.prevent="createCertificate()"
-                        >
-                            <i class="fa fa-certificate pr-2"></i>
-                            {{trans('global.certificate.create')}}
-                        </a>
-                    </li>
-                    <li
-                        v-permission="'curriculum_print'"
-                        class="nav-item"
+                        <i class="fa fa-certificate pr-2"></i>
+                        {{ trans('global.certificate.generate') }}
+                    </a>
+                </li>
+                <li
+                    v-permission="'certificate_create'"
+                    class="nav-item ml-auto"
+                >
+                    <a
+                        id="certificate-nav-tab"
+                        class="nav-link link-muted pointer"
+                        @click.prevent="createCertificate()"
                     >
-                        <a
-                            id="config-nav-tab"
-                            class="nav-link link-muted pointer"
-                            data-toggle="tooltip"
-                            :title="trans('global.curriculum.print')"
-                            @click="printCurriculum()"
-                        >
-                            <i class="fa fa-print"></i>
-                        </a>
-                    </li>
-                    <li
-                        class="nav-item"
-                        @click="setGlobalStorage('#curriculum_'+curriculum.id, '#description-tab')"
-                    >
-                        <a
-                            id="description-nav-tab"
-                            class="nav-link link-muted"
-                            data-toggle="tab"
-                            href="#description-tab"
-                        >
-                            <i class="fa fa-info"></i>
-                        </a>
-                    </li>
-                    <li
-                        v-permission="'curriculum_edit'"
-                        class="nav-item"
-                    >
-                        <a
-                            id="fix-order-nav-tab"
-                            class="nav-link link-muted pointer"
-                            data-toggle="tooltip"
-                            :title="trans('global.resetOrder')"
-                            @click="resetOrderIds()"
-                        >
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                    </li>
-                    <li
-                        v-permission="'curriculum_create'"
+                        <i class="fa fa-certificate pr-2"></i>
+                        {{trans('global.certificate.create')}}
+                    </a>
+                </li>
+                <li
+                    v-permission="'curriculum_print'"
+                    class="nav-item"
+                >
+                    <a
+                        id="config-nav-tab"
+                        class="nav-link link-muted pointer"
                         data-toggle="tooltip"
-                        title="Export curriculum"
-                        class="nav-item"
+                        :title="trans('global.curriculum.print')"
+                        @click="printCurriculum()"
                     >
-                        <a
-                            id="export-curriculum-nav-tab"
-                            class="nav-link link-muted pointer"
-                            @click="exportCurriculum()"
-                        >
-                            <i class="fas fa-cloud-download-alt"></i>
-                        </a>
-                    </li>
-                </ul>
+                        <i class="fa fa-print"></i>
+                    </a>
+                </li>
+                <li
+                    class="nav-item"
+                    @click="setGlobalStorage('#curriculum_'+curriculum.id, '#description-tab')"
+                >
+                    <a
+                        id="description-nav-tab"
+                        class="nav-link link-muted"
+                        data-toggle="tab"
+                        href="#description-tab"
+                    >
+                        <i class="fa fa-info"></i>
+                    </a>
+                </li>
+                <li
+                    v-permission="'curriculum_edit'"
+                    class="nav-item"
+                >
+                    <a
+                        id="fix-order-nav-tab"
+                        class="nav-link link-muted pointer"
+                        data-toggle="tooltip"
+                        :title="trans('global.resetOrder')"
+                        @click="resetOrderIds()"
+                    >
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                </li>
+                <li
+                    v-permission="'curriculum_create'"
+                    data-toggle="tooltip"
+                    title="Export curriculum"
+                    class="nav-item"
+                >
+                    <a
+                        id="export-curriculum-nav-tab"
+                        class="nav-link link-muted pointer"
+                        @click="exportCurriculum()"
+                    >
+                        <i class="fas fa-cloud-download-alt"></i>
+                    </a>
+                </li>
+            </ul>
 
+            <div
+                id="custom-content-below-tabContent"
+                class="tab-content"
+            >
                 <div
-                    id="custom-content-below-tabContent"
-                    class="tab-content"
+                    id="curriculm-tab"
+                    class="tab-pane fade show active"
+                    role="tabpanel"
+                    aria-labelledby="curriculm-nav-tab"
+                >
+                    <TerminalObjectives
+                        ref="terminalObjectives"
+                        :curriculum="curriculum"
+                        :settings="settings"
+                    />
+                </div>
+                <div
+                    id="content-tab"
+                    class="tab-pane fade"
+                    role="tab"
+                    aria-labelledby="content-nav-tab"
+                >
+                    <contents
+                        ref="Contents"
+                        subscribable_type="App\Curriculum"
+                        :subscribable_id="curriculum.id"
+                    />
+                </div>
+                <div
+                    id="medium-tab"
+                    class="tab-pane fade"
+                    role="tab"
+                    aria-labelledby="medium-nav-tab"
+                >
+                    <Media
+                        subscribable_type="App\Curriculum"
+                        :subscribable_id="curriculum.id"
+                        :public="true"
+                        format="list"
+                    />
+                </div>
+                <div v-if="curriculum.glossar != null"
+                    id="glossar-tab"
+                    class="tab-pane fade"
+                    role="tab"
+                    aria-labelledby="glossar-nav-tab"
+                >
+                    <glossars :glossar="curriculum.glossar"/>
+                </div>
+                <div
+                    id="description-tab"
+                    class="tab-pane fade"
+                    role="tab"
+                    aria-labelledby="description-nav-tab"
                 >
                     <div
-                        id="curriculm-tab"
-                        class="tab-pane fade show active"
-                        role="tabpanel"
-                        aria-labelledby="curriculm-nav-tab"
-                    >
-                        <TerminalObjectives
-                            ref="terminalObjectives"
-                            :curriculum="curriculum"
-                            :settings="settings"
-                        />
-                    </div>
-                    <div
-                        id="content-tab"
-                        class="tab-pane fade"
-                        role="tab"
-                        aria-labelledby="content-nav-tab"
-                    >
-                        <contents
-                            ref="Contents"
-                            subscribable_type="App\Curriculum"
-                            :subscribable_id="curriculum.id"
-                        />
-                    </div>
-                    <div
-                        id="medium-tab"
-                        class="tab-pane fade"
-                        role="tab"
-                        aria-labelledby="medium-nav-tab"
-                    >
-                        <Media
-                            subscribable_type="App\Curriculum"
-                            :subscribable_id="curriculum.id"
-                            :public="true"
-                            format="list"
-                        />
-                    </div>
-                    <div v-if="curriculum.glossar != null"
-                        id="glossar-tab"
-                        class="tab-pane fade"
-                        role="tab"
-                        aria-labelledby="glossar-nav-tab"
-                    >
-                        <glossars :glossar="curriculum.glossar"/>
-                    </div>
-                    <div
-                        id="description-tab"
-                        class="tab-pane fade"
-                        role="tab"
-                        aria-labelledby="description-nav-tab"
-                    >
-                        <div
-                            class="card p-3"
-                            v-html="currentCurriculum.description"
-                        ></div>
-                    </div>
+                        class="card p-3"
+                        v-html="currentCurriculum.description"
+                    ></div>
                 </div>
             </div>
         </div>

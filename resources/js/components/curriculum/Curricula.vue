@@ -1,5 +1,5 @@
 <template >
-    <div class="row">
+    <div class="d-flex flex-column">
         <TabList
             class="px-3"
             :model="'curriculum'"
@@ -11,7 +11,7 @@
 
         <div
             id="curriculum-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget v-if="checkPermission('curriculum_create')
                     && (
@@ -141,7 +141,7 @@
 
         <div
             id="curriculum-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="curriculum-datatable"

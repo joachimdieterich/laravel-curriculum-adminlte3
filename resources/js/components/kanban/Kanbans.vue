@@ -11,7 +11,7 @@
 
         <div
             id="kanban-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'kanban_create'"
@@ -138,7 +138,7 @@
 
         <div
             id="kanban-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="kanban-datatable"

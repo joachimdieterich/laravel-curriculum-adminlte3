@@ -10,40 +10,6 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     /**
-     * Create user
-     *
-     * @param  [string] name
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [string] password_confirmation
-     * @return [string] message
-     */
-//    public function signup(Request $request)
-//    {
-//        dd($request);
-//        $request->validate([
-//            'username' => 'required|string',
-//            'common_name' => 'required|string|unique:users',
-//            'firstname' => 'required|string',
-//            'lastname' => 'required|string',
-//            'email' => 'required|string|email|unique:users',
-//            'password' => 'required|string|confirmed'
-//        ]);
-//        $user = new User([
-//            'username' => $request->username,
-//            'common_name' => $request->common_name,
-//            'firstname' => $request->firstname,
-//            'lastname' => $request->lastname,
-//            'email' => $request->email,
-//            'password' => bcrypt($request->password)
-//        ]);
-//        $user->save();
-//        return response()->json([
-//            'message' => 'Successfully created user!'
-//        ], 201);
-//    }
-
-    /**
      * Login user and create token
      *
      * @param  [string] email

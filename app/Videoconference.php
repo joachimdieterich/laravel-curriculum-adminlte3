@@ -5,6 +5,58 @@ namespace App;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ *   @OA\Schema(
+ *      @OA\Xml(name="Videoconference"),
+ *
+ *      @OA\Property( property="id", type="integer"),
+ *      @OA\Property( property="meetingID", type="string", format="uuid"),
+ *      @OA\Property( property="meetingName", type="string"),
+ *      @OA\Property( property="attendeePW", type="string"),
+ *      @OA\Property( property="moderatorPW", type="string"),
+ *      @OA\Property( property="endCallbackUrl", type="string", format="uri"),
+ *      @OA\Property( property="owner_id", type="integer"),
+ *      @OA\Property( property="welcomeMessage", type="string"),
+ *      @OA\Property( property="dialNumber", type="string"),
+ *      @OA\Property( property="maxParticipants", type="string"),
+ *      @OA\Property( property="logoutUrl", type="string"),
+ *      @OA\Property( property="record", type="boolean"),
+ *      @OA\Property( property="duration", type="integer"),
+ *      @OA\Property( property="isBreakout", type="boolean"),
+ *      @OA\Property( property="moderatorOnlyMessage", type="string"),
+ *      @OA\Property( property="autoStartRecording", type="boolean"),
+ *      @OA\Property( property="allowStartStopRecording", type="boolean"),
+ *      @OA\Property( property="bannerText", type="string"),
+ *      @OA\Property( property="bannerColor", type="string"),
+ *      @OA\Property( property="logo", type="string"),
+ *      @OA\Property( property="copyright", type="string"),
+ *      @OA\Property( property="muteOnStart", type="boolean"),
+ *      @OA\Property( property="lockSettingsDisableCam", type="boolean"),
+ *      @OA\Property( property="lockSettingsDisableMic", type="boolean"),
+ *      @OA\Property( property="lockSettingsDisablePrivateChat", type="boolean"),
+ *      @OA\Property( property="lockSettingsDisablePublicChat", type="boolean"),
+ *      @OA\Property( property="lockSettingsDisableNote", type="boolean"),
+ *      @OA\Property( property="lockSettingsLockedLayout", type="boolean"),
+ *      @OA\Property( property="lockSettingsLockOnJoin", type="boolean"),
+ *      @OA\Property( property="lockSettingsLockOnJoinConfigurable", type="boolean"),
+ *      @OA\Property( property="guestPolicy", type="string"),
+ *      @OA\Property( property="meetingKeepEvents", type="boolean"),
+ *      @OA\Property( property="endWhenNoModerator", type="boolean"),
+ *      @OA\Property( property="endWhenNoModeratorDelayInMinutes", type="integer"),
+ *      @OA\Property( property="meetingLayout", type="string"),
+ *      @OA\Property( property="learningDashboardCleanupDelayInMinutes", type="integer"),
+ *      @OA\Property( property="allowModsToEjectCameras", type="boolean"),
+ *      @OA\Property( property="allowRequestsWithoutSession", type="boolean"),
+ *      @OA\Property( property="allJoinAsModerator", type="boolean"),
+ *      @OA\Property( property="userCameraCap", type="integer"),
+ *      @OA\Property( property="medium_id", type="integer"),
+ *      @OA\Property( property="webcamsOnlyForModerator", type="boolean"),
+ *      @OA\Property( property="anyoneCanStart", type="boolean"),
+ *      @OA\Property( property="server", type="string"),
+ *      @OA\Property( property="updated_at", type="string", format="date-time"),
+ *      @OA\Property( property="created_at", type="string", format="date-time"),
+ *   ),
+ */
 class Videoconference extends Model
 {
     use HasFactory;

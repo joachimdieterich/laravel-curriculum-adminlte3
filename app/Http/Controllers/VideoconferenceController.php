@@ -15,7 +15,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
@@ -170,10 +169,9 @@ class VideoconferenceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return Response
+     * @return Videoconference|void
      */
-    public function store(Request $request)
+    public function store()
     {
         abort_unless(Gate::allows('videoconference_create'), 403);
 
@@ -587,85 +585,70 @@ class VideoconferenceController extends Controller
         }
     }
 
-    public function getLinks(Request $request): Collection
-    {
-        abort_unless(Gate::allows('videoconference_access') and auth()->user()->id !== config('app.guest_user_id'), 403, 'missing rights');
-
-        $request->validate([
-            'meetingID' => 'required|uuid|exists:videoconferences,meetingID',
-        ]);
-
-        /** @var Videoconference $videoconference */
-        $videoconference = Videoconference::where('meetingID', $request->meetingID)->get()->first();
-
-        return collect([
-            'moderatorLink' => url()->query("/videoconferences/{$videoconference->id}/startWithPw", ['moderatorPW' => $videoconference->moderatorPW]),
-            'attendeeLink' => url()->query("/videoconferences/{$videoconference->id}/startWithPw", ['attendeePw' => $videoconference->attendeePW]),
-        ]);
-    }
-
     protected function validateRequest()
     {
-        return request()->validate([
-            'id' => 'sometimes|nullable|integer',
-            'sharing_token' => 'sometimes|string',
-            'meetingID' => 'sometimes',
-            'meetingName' => 'sometimes|max:191',
-            'attendeePW' => 'sometimes|max:191',
-            'moderatorPW' => 'sometimes|max:191',
-            'presentation' => 'sometimes',
-            'recordID' => 'sometimes',
-            'state' => 'sometimes',
-            'userName' => 'sometimes',
-            'password' => 'sometimes',
-            'endCallbackUrl' => 'sometimes|max:191',
-            'welcomeMessage' => 'sometimes|string|nullable',
-            'dialNumber' => 'sometimes',
-            'maxParticipants' => 'sometimes|integer',
-            'logoutUrl' => 'sometimes|nullable|url|max:191',
-            'record' => 'sometimes|boolean',
-            'duration' => 'sometimes|integer',
-            'isBreakout' => 'sometimes|boolean',
-            'moderatorOnlyMessage' => 'sometimes|string|nullable',
-            'autoStartRecording' => 'sometimes|boolean',
-            'allowStartStopRecording' => 'sometimes|boolean',
-            'bannerText' => 'sometimes|string|max:512|nullable',
-            'bannerColor' => ['sometimes', 'string', 'regex:' . Regex::HEX_COLOR->value],
-            'logo' => 'sometimes|nullable|url',
-            'copyright' => 'sometimes|string|nullable',
-            'muteOnStart' => 'sometimes|boolean',
-            'allowModsToUnmuteUsers' => 'sometimes|boolean',
-            'lockSettingsDisableCam' => 'sometimes|boolean',
-            'lockSettingsDisableMic' => 'sometimes|boolean',
-            'lockSettingsDisablePrivateChat' => 'sometimes|boolean',
-            'lockSettingsDisablePublicChat' => 'sometimes|boolean',
-            'lockSettingsDisableNote' => 'sometimes|boolean',
-            'lockSettingsLockedLayout' => 'sometimes|boolean',
-            'lockSettingsLockOnJoin' => 'sometimes|boolean',
-            'lockSettingsLockOnJoinConfigurable' => 'sometimes|boolean',
-            'guestPolicy' => ['sometimes', Rule::in(config('bigbluebutton.create.possibleGuestPolicies'))],
-            'meetingKeepEvents' => 'sometimes|boolean',
-            'endWhenNoModerator' => 'sometimes|boolean',
-            'endWhenNoModeratorDelayInMinutes' => 'sometimes|integer',
-            'meetingLayout' => ['sometimes', Rule::in(config('bigbluebutton.create.possibleMeetingLayout'))],
-            'learningDashboardCleanupDelayInMinutes' => 'sometimes|integer',
-            'allowModsToEjectCameras' => 'sometimes|boolean',
-            'allowRequestsWithoutSession' => 'sometimes|boolean',
-            'allJoinAsModerator' => 'sometimes|boolean',
-            'userCameraCap' => 'sometimes|integer',
-            'getRaw' => 'sometimes',
-            'hooksID' => 'sometimes',
-            'subscribable_type' => 'sometimes|string',
-            'subscribable_id'   => 'sometimes|integer',
-            'medium_id' => 'sometimes|integer|nullable',
-            'webcamsOnlyForModerator' => 'sometimes|boolean',
-            'anyoneCanStart' => 'sometimes|boolean',
-            'server' => 'sometimes|string',
-            'owner_id' => 'sometimes|integer|nullable',
-        ],
-        [
-            'guestPolicy' => 'The :attribute must be one of these values: [' . implode(', ', config('bigbluebutton.create.possibleGuestPolicies')) . ']',
-            'meetingLayout' => 'The :attribute must be one of these values: [' . implode(', ', config('bigbluebutton.create.possibleMeetingLayout')) . ']',
-        ]);
+        return request()->validate(
+            [
+                'id' => 'sometimes|nullable|integer',
+                'sharing_token' => 'sometimes|string',
+                'meetingID' => 'sometimes',
+                'meetingName' => 'sometimes|max:191',
+                'attendeePW' => 'sometimes|max:191',
+                'moderatorPW' => 'sometimes|max:191',
+                'presentation' => 'sometimes',
+                'recordID' => 'sometimes',
+                'state' => 'sometimes',
+                'userName' => 'sometimes',
+                'password' => 'sometimes',
+                'endCallbackUrl' => 'sometimes|max:191',
+                'welcomeMessage' => 'sometimes|string|nullable',
+                'dialNumber' => 'sometimes',
+                'maxParticipants' => 'sometimes|integer',
+                'logoutUrl' => 'sometimes|nullable|url|max:191',
+                'record' => 'sometimes|boolean',
+                'duration' => 'sometimes|integer',
+                'isBreakout' => 'sometimes|boolean',
+                'moderatorOnlyMessage' => 'sometimes|string|nullable',
+                'autoStartRecording' => 'sometimes|boolean',
+                'allowStartStopRecording' => 'sometimes|boolean',
+                'bannerText' => 'sometimes|string|max:512|nullable',
+                'bannerColor' => ['sometimes', 'string', 'regex:' . Regex::HEX_COLOR->value],
+                'logo' => 'sometimes|nullable|url',
+                'copyright' => 'sometimes|string|nullable',
+                'muteOnStart' => 'sometimes|boolean',
+                'allowModsToUnmuteUsers' => 'sometimes|boolean',
+                'lockSettingsDisableCam' => 'sometimes|boolean',
+                'lockSettingsDisableMic' => 'sometimes|boolean',
+                'lockSettingsDisablePrivateChat' => 'sometimes|boolean',
+                'lockSettingsDisablePublicChat' => 'sometimes|boolean',
+                'lockSettingsDisableNote' => 'sometimes|boolean',
+                'lockSettingsLockedLayout' => 'sometimes|boolean',
+                'lockSettingsLockOnJoin' => 'sometimes|boolean',
+                'lockSettingsLockOnJoinConfigurable' => 'sometimes|boolean',
+                'guestPolicy' => ['sometimes', Rule::in(config('bigbluebutton.create.possibleGuestPolicies'))],
+                'meetingKeepEvents' => 'sometimes|boolean',
+                'endWhenNoModerator' => 'sometimes|boolean',
+                'endWhenNoModeratorDelayInMinutes' => 'sometimes|integer',
+                'meetingLayout' => ['sometimes', Rule::in(config('bigbluebutton.create.possibleMeetingLayout'))],
+                'learningDashboardCleanupDelayInMinutes' => 'sometimes|integer',
+                'allowModsToEjectCameras' => 'sometimes|boolean',
+                'allowRequestsWithoutSession' => 'sometimes|boolean',
+                'allJoinAsModerator' => 'sometimes|boolean',
+                'userCameraCap' => 'sometimes|integer',
+                'getRaw' => 'sometimes',
+                'hooksID' => 'sometimes',
+                'subscribable_type' => 'sometimes|string',
+                'subscribable_id'   => 'sometimes|integer',
+                'medium_id' => 'sometimes|integer|nullable',
+                'webcamsOnlyForModerator' => 'sometimes|boolean',
+                'anyoneCanStart' => 'sometimes|boolean',
+                'server' => 'sometimes|string',
+                'owner_id' => 'sometimes|integer|nullable',
+            ],
+            [
+                'guestPolicy' => 'The :attribute must be one of these values: [' . implode(', ', config('bigbluebutton.create.possibleGuestPolicies')) . ']',
+                'meetingLayout' => 'The :attribute must be one of these values: [' . implode(', ', config('bigbluebutton.create.possibleMeetingLayout')) . ']',
+            ]
+        );
     }
 }

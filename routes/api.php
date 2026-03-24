@@ -39,22 +39,22 @@ Route::group([
 ], function () {
     Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
     Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
-});
 
-/**
- * Admin login for access, but common_name for simulation
- */
-Route::group([
-    'prefix' => 'v1',
-    'as' => 'admin.simulate.',
-    'middleware' => ['client_credentials', 'simulate'],
-], function () {
-    /*** Videoconferences ***/
-    Route::resource('videoconferences', 'VideoconferenceController');
-    Route::get('videoconference/links', 'VideoconferenceController@getLinks');
 
-    /*** Users ***/
-    Route::get('user/permissions', [UsersApiController::class, 'permissions']);
+    /**
+     * Admin login for access, but common_name for simulation
+     */
+    Route::group([
+        'as' => 'simulate.',
+        'middleware' => ['client_credentials', 'simulate'],
+    ], function () {
+        /*** Videoconferences ***/
+        Route::apiResource('videoconferences', 'VideoconferenceApiController');
+        Route::get('videoconference/links', 'VideoconferenceApiController@getLinks');
+
+        /*** Users ***/
+        Route::get('user/permissions', [UsersApiController::class, 'permissions']);
+    });
 });
 
 Route::group([

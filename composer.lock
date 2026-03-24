@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa3de934302ba5366f6c20d05d72def0",
+    "content-hash": "4075a5aec51af951835416b1ff1158af",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3871,6 +3871,86 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-03-18T14:28:59+00:00"
+        },
+        {
+            "name": "laravel/horizon",
+            "version": "v5.45.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/horizon.git",
+                "reference": "b2b32e3f6013081e0176307e9081cd085f0ad4d6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/b2b32e3f6013081e0176307e9081cd085f0ad4d6",
+                "reference": "b2b32e3f6013081e0176307e9081cd085f0ad4d6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-pcntl": "*",
+                "ext-posix": "*",
+                "illuminate/contracts": "^9.21|^10.0|^11.0|^12.0|^13.0",
+                "illuminate/queue": "^9.21|^10.0|^11.0|^12.0|^13.0",
+                "illuminate/support": "^9.21|^10.0|^11.0|^12.0|^13.0",
+                "laravel/sentinel": "^1.0",
+                "nesbot/carbon": "^2.17|^3.0",
+                "php": "^8.0",
+                "ramsey/uuid": "^4.0",
+                "symfony/console": "^6.0|^7.0|^8.0",
+                "symfony/error-handler": "^6.0|^7.0|^8.0",
+                "symfony/polyfill-php83": "^1.28",
+                "symfony/process": "^6.0|^7.0|^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "^7.56|^8.37|^9.16|^10.9|^11.0",
+                "phpstan/phpstan": "^1.10|^2.0",
+                "predis/predis": "^1.1|^2.0|^3.0"
+            },
+            "suggest": {
+                "ext-redis": "Required to use the Redis PHP driver.",
+                "predis/predis": "Required when not using the Redis PHP driver (^1.1|^2.0|^3.0)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Horizon": "Laravel\\Horizon\\Horizon"
+                    },
+                    "providers": [
+                        "Laravel\\Horizon\\HorizonServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "6.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Horizon\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Dashboard and code-driven configuration for Laravel queues.",
+            "keywords": [
+                "laravel",
+                "queue"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/horizon/issues",
+                "source": "https://github.com/laravel/horizon/tree/v5.45.4"
+            },
+            "time": "2026-03-18T14:14:59+00:00"
         },
         {
             "name": "laravel/passport",
@@ -13934,12 +14014,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "e19b0f27b204991af95a5fefad00630bc3e376ae"
+                "reference": "5b2dfdf2eaba4663778f776fe9b906ba425c03d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/e19b0f27b204991af95a5fefad00630bc3e376ae",
-                "reference": "e19b0f27b204991af95a5fefad00630bc3e376ae",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5b2dfdf2eaba4663778f776fe9b906ba425c03d4",
+                "reference": "5b2dfdf2eaba4663778f776fe9b906ba425c03d4",
                 "shasum": ""
             },
             "conflict": {
@@ -14408,7 +14488,7 @@
                 "maikuolan/phpmussel": ">=1,<1.6",
                 "mainwp/mainwp": "<=4.4.3.3",
                 "manogi/nova-tiptap": "<=3.2.6",
-                "mantisbt/mantisbt": "<2.27.2",
+                "mantisbt/mantisbt": "<2.28.1",
                 "marcwillmann/turn": "<0.3.3",
                 "marshmallow/nova-tiptap": "<5.7",
                 "matomo/matomo": "<1.11",
@@ -14501,7 +14581,7 @@
                 "openid/php-openid": "<2.3",
                 "openmage/magento-lts": "<20.16.1",
                 "opensolutions/vimbadmin": "<=3.0.15",
-                "opensource-workshop/connect-cms": "<1.8.7|>=2,<2.4.7",
+                "opensource-workshop/connect-cms": "<1.41.1|>=2,<2.41.1",
                 "orchid/platform": ">=8,<14.43",
                 "oro/calendar-bundle": ">=4.2,<=4.2.6|>=5,<=5.0.6|>=5.1,<5.1.1",
                 "oro/commerce": ">=4.1,<5.0.11|>=5.1,<5.1.1",
@@ -14596,6 +14676,7 @@
                 "pubnub/pubnub": "<6.1",
                 "punktde/pt_extbase": "<1.5.1",
                 "pusher/pusher-php-server": "<2.2.1",
+                "putyourlightson/craft-sprig": ">=2,<2.15.2|>=3,<3.15.2",
                 "pwweb/laravel-core": "<=0.3.6.0-beta",
                 "pxlrbt/filament-excel": "<1.1.14|>=2.0.0.0-alpha,<2.3.3",
                 "pyrocms/pyrocms": "<=3.9.1",
@@ -14615,6 +14696,7 @@
                 "reportico-web/reportico": "<=8.1",
                 "rhukster/dom-sanitizer": "<1.0.7",
                 "rmccue/requests": ">=1.6,<1.8",
+                "roadiz/documents": "<2.3.42|>=2.4,<2.5.44|>=2.6,<2.6.28|>=2.7,<2.7.9",
                 "robrichards/xmlseclibs": "<3.1.5",
                 "roots/soil": "<4.1",
                 "roundcube/roundcubemail": "<1.5.10|>=1.6,<1.6.11",
@@ -14968,7 +15050,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-20T22:08:23+00:00"
+            "time": "2026-03-23T22:10:56+00:00"
         },
         {
             "name": "roquie/laravel-dusk-select2",
@@ -16114,5 +16196,9 @@
         "ext-curl": "*"
     },
     "platform-dev": {},
+    "platform-overrides": {
+        "ext-pcntl": "8.3",
+        "ext-posix": "8.3"
+    },
     "plugin-api-version": "2.9.0"
 }

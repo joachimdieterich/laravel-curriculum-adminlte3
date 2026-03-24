@@ -259,7 +259,7 @@ class KanbanController extends Controller
         $may_favour = auth()->user()->id != config('app.guest_user_id');
 
         $is_shared           = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
-        $is_websocket_active = config('app.websocket_app_active');
+        $is_websocket_active = config('broadcasting.active');
 
         LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
 

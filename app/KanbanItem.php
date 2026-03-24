@@ -2,9 +2,9 @@
 
 namespace App;
 
+use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Maize\Markable\Markable;
 use Illuminate\Database\Eloquent\Model;
 use Mews\Purifier\Casts\CleanHtml;
@@ -35,7 +35,7 @@ class KanbanItem extends Model
 
     public function broadcastOn($event): array
     {
-        if (!config('app.websocket_app_active')) {
+        if (!config('broadcasting.active')) {
             return [];
         }
 
@@ -47,33 +47,31 @@ class KanbanItem extends Model
         $updatedAtColumnName = $this->getUpdatedAtColumn();
 
         // If the only changed column is the updated_at (touch) just proceed normal
-        if (count($diff) == 1 && isset($diff[$updatedAtColumnName])) {
+        if (count($diff) === 1 && isset($diff[$updatedAtColumnName])) {
             return $defaultChannels;
         }
 
-        $diffWithoutUpdatedAtAndOrderId = array_filter($diff, function($key) use($updatedAtColumnName) {
-            return $key != $updatedAtColumnName && $key != 'order_id';
+        $diffWithoutUpdatedAtAndOrderId = array_filter($diff, static function($key) use($updatedAtColumnName) {
+            return $key !== $updatedAtColumnName && $key !== 'order_id';
         }, ARRAY_FILTER_USE_KEY);
 
         // Only broadcast with real changes (order_id doesn't count)
-        if (count($diff) > 1 && count($diffWithoutUpdatedAtAndOrderId) == 0) {
+        if (count($diff) > 1 && count($diffWithoutUpdatedAtAndOrderId) === 0) {
             return [];
         }
 
         return $defaultChannels;
     }
 
-    public function broadcastWith(): array
+    public function withRelations(): self|null
     {
-        return [
-            'model' => $this->with(
-                'comments',
-                    'comments.user',
-                    'comments.likes',
-                    'mediaSubscriptions.medium',
-                    'likes',
-            )->find($this->id),
-        ];
+        return $this->with(
+            'comments',
+            'comments.user',
+            'comments.likes',
+            'mediaSubscriptions.medium',
+            'likes',
+        )->find($this->id);
     }
 
     /**

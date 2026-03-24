@@ -10,7 +10,7 @@ trait BroadcastsEvents
 
     public function broadcastOn($event): array
     {
-        if (!config('app.websocket_active')) {
+        if (!config('broadcasting.active')) {
             return [];
         }
 
@@ -19,10 +19,10 @@ trait BroadcastsEvents
         ];
     }
 
-    public function broadcastWith(): array
+    public function broadcastWith($event): array
     {
         return [
-            'model' => $this->withRelations(),
+            'model' => $event === 'deleted' ? $this : $this->withRelations(),
         ];
     }
 }

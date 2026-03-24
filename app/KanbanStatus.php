@@ -2,9 +2,8 @@
 
 namespace App;
 
+use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -26,24 +25,6 @@ class KanbanStatus extends Model
         'visible_from'  => 'datetime',
         'visible_until' => 'datetime',
     ];
-
-    public function broadcastOn(): array
-    {
-        if (!config('app.websocket_app_active')) {
-            return [];
-        }
-
-        return [
-            new Channel($this->broadcastChannel())
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'model' => $this->withRelations(),
-        ];
-    }
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -129,7 +110,7 @@ class KanbanStatus extends Model
         return $this->kanban->isEditable($user, $sharing_token);
     }
 
-    public function withRelations(): Model|null
+    public function withRelations(): self|null
     {
         return $this
             ->with([

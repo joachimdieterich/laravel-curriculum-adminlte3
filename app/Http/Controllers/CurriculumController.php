@@ -255,28 +255,29 @@ class CurriculumController extends Controller
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
-        $curriculum = Curriculum::with([
+        $levels = Level::all();
+
+        $curriculumWithRelation = Curriculum::with([
             'glossar.contents',
         ])
         ->find($curriculum->id);
 
-        $may_edit = $token === null ? $curriculum->isEditable() : $curriculum->isEditable(auth()->user()->id, $token);
-        $is_websocket_active = config('app.websocket_app_active');
+        $may_edit = $token === null ? $curriculumWithRelation->isEditable() : $curriculumWithRelation->isEditable(auth()->user()->id, $token);
 
         $settings = json_encode([
             'edit'                          => $may_edit,
             'cross_reference_curriculum_id' => false,
+            'websocket'                     => config('broadcasting.active'),
         ], JSON_THROW_ON_ERROR);
 
         if (request()->wantsJson()) {
-            return ['contents' => $curriculum->contents];
+            return ['contents' => $curriculumWithRelation->contents];
         }
 
         return view('curricula.show')
             ->with(compact(
                 'curriculum',
                 'settings',
-                'is_websocket_active',
             ));
     }
 
@@ -577,15 +578,14 @@ class CurriculumController extends Controller
 
     public function print(Curriculum $curriculum)
     {
-
-        //LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this).'@'.__FUNCTION__);
         $html = view('print.curriculum')
             ->with(compact('curriculum'))
             ->render();
         if (request()->wantsJson()) {
             return ['path' => (app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save'))];
         }
-        //  return app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save');
+        // return app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save');
     }
 
     public function syncObjectiveTypesOrder(Curriculum $curriculum)

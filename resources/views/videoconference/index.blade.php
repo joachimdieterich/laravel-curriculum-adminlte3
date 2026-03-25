@@ -1,12 +1,9 @@
-@extends('layouts.contentonly')
+@extends('layouts.master')
 
 @section('title')
 @endsection
 @section('breadcrumb')
 @endsection
 @section('content')
-    <videoconferences
-        model-url="videoconferences"
-    >
-    </videoconferences>
+    <videoconferences></videoconferences>
 @endsection

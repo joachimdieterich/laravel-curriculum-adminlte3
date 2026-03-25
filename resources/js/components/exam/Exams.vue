@@ -1,8 +1,8 @@
 <template >
-    <div class="row">
+    <div class="d-flex flex-column">
         <div
             id="exam-content"
-            class="col-md-12 m-0"
+            class="px-3 m-0"
         >
             <ul v-if="subscribable"
                 v-permission="'is_teacher'"
@@ -138,7 +138,7 @@
         </div>
         <div
             id="exam-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="exam-datatable"

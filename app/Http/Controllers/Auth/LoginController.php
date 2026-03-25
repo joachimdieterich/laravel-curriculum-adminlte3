@@ -127,11 +127,13 @@ class LoginController extends Controller
             if (auth()->user()->id == config('app.guest_user_id'))
             {
                 session(['redirect_to' => request()->headers->get('referer')]);
+                session()->save();
                 $oidc->authenticate();
             }
             else
             {
                 session(['init_logout' => true]);
+                session()->save();
                 // in order to trigger an RP-initiated logout, we need an ID-token
                 // so we authenticate again to retrieve a new ID-token
                 $oidc->authenticate();

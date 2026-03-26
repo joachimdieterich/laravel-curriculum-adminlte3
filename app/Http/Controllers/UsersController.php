@@ -55,6 +55,8 @@ class UsersController extends Controller
 
     public function list()
     {
+        abort_unless(\Gate::allows('user_show'), 403);
+
         $rowID = 'id';
 
         if (request()->has(['group_id']))

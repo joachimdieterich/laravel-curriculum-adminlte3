@@ -55,7 +55,7 @@ class UsersController extends Controller
 
     public function list()
     {
-        abort_unless(\Gate::allows('user_show'), 403);
+        abort_unless(\Gate::allows('user_access'), 403);
 
         $rowID = 'id';
 

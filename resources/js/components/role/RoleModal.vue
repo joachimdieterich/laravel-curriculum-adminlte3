@@ -113,11 +113,6 @@ export default {
         TagMultiselect,
         Select2,
     },
-    props: {
-        params: {
-            type: Object,
-        },
-    },
     setup() { //use database store
         const globalStore = useGlobalStore();
         return {

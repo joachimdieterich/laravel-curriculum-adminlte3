@@ -6,10 +6,13 @@ use App\Http\Requests\Tags\AttachTagRequest;
 use App\Http\Requests\Tags\StoreTagRequest;
 use App\Http\Requests\Tags\UpdateTagRequest;
 use App\Role;
+use App\Services\Tag\HasTags;
 use App\Services\Tag\TagService;
 use App\Tag;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Yajra\DataTables\DataTables;
 
@@ -60,24 +63,11 @@ class TagsController extends Controller
 
     public function store(StoreTagRequest $request)
     {
+        abort_unless(\Gate::allows('tag_access'), 403);
+
         $tag = Tag::findOrCreate(
-            $request->get('name'),
+            $request->input('name'),
         );
-
-        if (request()->wantsJson()) {
-            return $tag;
-        }
-    }
-
-    public function attach(AttachTagRequest $request)
-    {
-        $tag = Tag::findOrCreate(
-            $request->get('name'),
-        );
-
-        /** @var Role $role */
-        $role = ($request->get('type'))::findOrFail($request->get('taggable_id'));
-        $role->attachTag($tag);
 
         if (request()->wantsJson()) {
             return $tag;
@@ -86,6 +76,8 @@ class TagsController extends Controller
 
     public function update(UpdateTagRequest $request, Tag $tag)
     {
+        abort_unless(\Gate::allows('tag_access'), 403);
+
         $tag->update($request->all(['name']));
 
         return $tag->refresh();
@@ -108,5 +100,33 @@ class TagsController extends Controller
         if (request()->wantsJson()) {
             return ['message' => $return];
         }
+    }
+
+    public function attach(AttachTagRequest $request)
+    {
+        abort_unless(\Gate::allows('tag_access'), 403);
+
+        $tag = Tag::findOrCreate(
+            $request->input('name'),
+        );
+
+        /** @var Role $role */
+        $role = ($request->input('type'))::findOrFail($request->input('taggable_id'));
+        $role->attachTag($tag);
+
+        if (request()->wantsJson()) {
+            return $tag;
+        }
+    }
+
+    public function saveModelTags(Request $request)
+    {
+        abort_unless(\Gate::allows('tag_delete'), 403);
+
+        /** @var HasTags|Model $model */
+        $model = ($request->input('model'))::findOrFail($request->input('id'));
+        $model->tags()->sync($request->input('tags'));
+
+        return $model->fresh();
     }
 }

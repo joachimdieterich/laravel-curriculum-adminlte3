@@ -148,7 +148,7 @@ export default {
                     title: 'global.system_config.title',
                     entries: [
                         {
-                            model: 'tags',
+                            model: 'tag',
                             icon: 'fa-tag',
                             href: '/tags',
                         },

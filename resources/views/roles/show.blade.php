@@ -12,6 +12,7 @@
 @endsection
 @section('content')
     <role
-        :role="{{ $role }}">
-    </role>
+        :role="{{ $role }}"
+        :all-permissions="{{ $allPermissions }}"
+    ></role>
 @endsection

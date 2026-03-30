@@ -95,11 +95,13 @@ class RolesController extends Controller
     {
         abort_unless(\Gate::allows('role_show'), 403);
 
-        $role->load('permissions');
+        $role->load('permissions:id,title');
         $role->load('tags');
 
+        $allPermissions = \App\Permission::select('id', 'title')->orderBy('title')->get();
+
         return view('roles.show')
-            ->with(compact('role'));
+            ->with(compact('role', 'allPermissions'));
     }
 
     public function destroy(Role $role)
@@ -111,5 +113,18 @@ class RolesController extends Controller
         if (request()->wantsJson()) {
             return ['message' => $return];
         }
+    }
+
+    public function togglePermission(Role $role, $permissionId)
+    {
+        abort_unless(\Gate::allows('role_edit'), 403);
+
+        if ($role->permissions()->where('id', $permissionId)->exists()) {
+            $role->permissions()->detach($permissionId);
+        } else {
+            $role->permissions()->attach($permissionId);
+        }
+
+        Cache::forget('roles'); //cache should update next time
     }
 }

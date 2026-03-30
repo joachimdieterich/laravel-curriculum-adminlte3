@@ -209,6 +209,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::resource('repositorySubscriptions', 'RepositorySubscriptionController');
 
     Route::get('roles/list', 'RolesController@list')->name('roles.list');
+    Route::post('roles/{role}/togglePermission/{permissionId}', 'RolesController@togglePermission')->name('roles.togglePermission');
 // S
     /*** Subjects ***/
     Route::get('subjects/list', 'SubjectController@list')->name('subjects.list');

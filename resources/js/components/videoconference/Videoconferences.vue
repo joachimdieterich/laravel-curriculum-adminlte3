@@ -1,5 +1,8 @@
 <template>
-    <div class="d-flex flex-column">
+    <div
+        class="d-flex flex-column"
+        :style="{ marginTop: subscribable ? null : '-1.5rem' }"
+    >
         <ul v-if="!subscribable"
             class="nav nav-pills px-3 py-2"
             role="tablist"

@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -10,9 +10,10 @@
                         </h5>
                     </div>
                     <div
-                        v-permission="'organization_edit'"
-                        class="card-tools pr-2">
-                        <a  @click="editPermission()">
+                        v-permission="'is_admin'"
+                        class="card-tools pr-2"
+                    >
+                        <a @click="editPermission()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
@@ -24,31 +25,6 @@
                     <small class="float-right">
                         {{ this.currentPermission.updated_at }}
                     </small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-8 col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title px-1">
-                        {{ trans('global.permission.title') }}
-                    </div>
-                </div>
-                <div class="card-body"
-                     style="position:relative;">
-                    <div class="tab-content">
-                        <div class="tab-pane active show">
-                            <div class="row">
-                                <div v-for="permission in permission.permissions "
-                                     class="col-3">
-                                    <ul class=" btn btn-block btn-secondary btn-xs">
-                                        {{ permission.title }}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

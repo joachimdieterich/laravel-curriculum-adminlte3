@@ -1,8 +1,8 @@
 <template >
-    <div class="row">
+    <div class="d-flex flex-column">
         <div
             id="role-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'role_create'"
@@ -54,9 +54,10 @@
                 </template>
             </IndexWidget>
         </div>
+
         <div
             id="role-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="role-datatable"

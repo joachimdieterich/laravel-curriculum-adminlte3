@@ -1,9 +1,9 @@
 
 <template >
-    <div class="row">
+    <div class="d-flex flex-column">
         <div
             id="permission-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'permission_create'"
@@ -55,9 +55,10 @@
                 </template>
             </IndexWidget>
         </div>
+
         <div
             id="permission-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="permission-datatable"

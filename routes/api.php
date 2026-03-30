@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\UsersApiController;
+
 Route::group([
     'prefix' => 'v1',
     'namespace' => 'Api\V1',
@@ -37,6 +39,22 @@ Route::group([
 ], function () {
     Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
     Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
+
+
+    /**
+     * Admin login for access, but common_name for simulation
+     */
+    Route::group([
+        'as' => 'simulate.',
+        'middleware' => ['client_credentials', 'simulate'],
+    ], function () {
+        /*** Videoconferences ***/
+        Route::apiResource('videoconferences', 'VideoconferenceApiController');
+        Route::get('videoconference/links', 'VideoconferenceApiController@getLinks');
+
+        /*** Users ***/
+        Route::get('user/permissions', [UsersApiController::class, 'permissions']);
+    });
 });
 
 Route::group([

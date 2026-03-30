@@ -47,14 +47,15 @@ class UsersController extends Controller
                 "CONCAT(firstname, ' ', lastname)",
             );
         }
-        else
-        {
-            return view('users.index');
-        }
+        abort_unless(\Gate::allows('user_access'), 403);
+
+        return view('users.index');
     }
 
     public function list()
     {
+        abort_unless(\Gate::allows('user_access'), 403);
+
         $rowID = 'id';
 
         if (request()->has(['group_id']))

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @OA\Schema(
- *   required={"referenceable_id","scale","status","user_common_name","owner_common_name"},
+ *   required={"referenceable_id","status","user_common_name","owner_common_name"},
  *   @OA\Xml(name="Achievement"),
  *   
  *   @OA\Property( property="id", type="integer"),
@@ -53,11 +53,6 @@ class Achievement extends Model
     public function owner()
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
-    }
-
-    public function scale()
-    {
-        return $this->hasOne('App\AchievementScale', 'id', 'scale_id');
     }
 
     public static function booted() {

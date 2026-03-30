@@ -57,7 +57,12 @@ class MoodleApiController extends Controller
 
         //return $user->first()->curricula(['curricula.id', 'curricula.title']);
 
-        return Curriculum::select('id', 'title')->without('owner')->where('type_id', 1)->orWhere('owner_id', $user_id)->get()->makeHidden(['is_favourited']);
+        return Curriculum::select('id', 'title')
+            ->without('owner')
+            ->where('type_id', 1)
+            ->orWhere('owner_id', $user_id)
+            ->get()
+            ->makeHidden(['is_favourited']);
     }
 
     public function getTerminalObjectives(\App\Curriculum $curriculum,Request $request)
@@ -146,6 +151,15 @@ class MoodleApiController extends Controller
     public function enrolToGroup(Request $request)
     {
         $input = $this->validateRequest();
+
+        if (empty($input['groups']) or empty($input['common_name'])) {
+            return response()->json('Group common_names and user common_name are required', 400);
+        }
+
+        if (gettype($input['groups']) == 'string') $input['groups'] = json_decode($input['groups'], true);
+        if (!empty($input['logbooks']) and gettype($input['logbooks']) == 'string') $input['logbooks'] = json_decode($input['logbooks'], true);
+        if (!empty($input['kanbans']) and gettype($input['kanbans']) == 'string') $input['kanbans'] = json_decode($input['kanbans'], true);
+
         $groups = Group::whereIn('common_name', $input['groups'])->pluck('id');
         $owner = User::where('common_name', $input['common_name'])->first()->id;
         $response = [];
@@ -172,7 +186,7 @@ class MoodleApiController extends Controller
                         'editable' => $input['editable'] ?? false,
                         'owner_id' => $owner,
                     ]);
-                    array_push($logbooks, $subscribe->save());
+                    array_push($logbooks, $subscribe);
                 }
 
                 $response['logbooks'] = $logbooks;
@@ -192,14 +206,14 @@ class MoodleApiController extends Controller
                         'editable' => $input['editable'] ?? false,
                         'owner_id' => $owner,
                     ]);
-                    array_push($kanbans, $subscribe->save());
+                    array_push($kanbans, $subscribe);
                 }
 
                 $response['kanbans'] = $kanbans;
             }
         }
 
-        return $response;
+        return response()->json($response);
     }
 
     public function enrolUsers(Request $request)
@@ -242,7 +256,7 @@ class MoodleApiController extends Controller
                 // check if kanban exists
                 $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Kanban with ID '.$kanban_id.' not found', 400);
-    
+
                 foreach ($users as $user) {
                     KanbanSubscription::updateOrCreate([
                         'kanban_id' => $kanban_id,
@@ -252,7 +266,7 @@ class MoodleApiController extends Controller
                         'editable' => $input['editable'] ?? false,
                         'owner_id' => $owner_id,
                     ]);
-    
+
                     $create_count++;
                 }
             }
@@ -264,7 +278,7 @@ class MoodleApiController extends Controller
                 // check if curricula exists
                 $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Curriculum with ID '.$curriculum_id.' not found', 400);
-    
+
                 foreach ($users as $user) {
                     CurriculumSubscription::updateOrCreate([
                         'curriculum_id' => $curriculum_id,
@@ -273,13 +287,13 @@ class MoodleApiController extends Controller
                     ], [
                         'owner_id' => $owner_id,
                     ]);
-    
+
                     $create_count++;
                 }
             }
         }
 
-        return $create_count;
+        return response()->json(['count' => $create_count]);
     }
 
     public function expelUsers(Request $request)
@@ -300,7 +314,7 @@ class MoodleApiController extends Controller
                 // check if kanban exists
                 $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Kanban with ID '.$kanban_id.' not found', 400);
-    
+
                 $delete_count += KanbanSubscription::where([
                     'kanban_id' => $kanban_id,
                     'subscribable_type' => "App\User",
@@ -315,7 +329,7 @@ class MoodleApiController extends Controller
                 // check if curriculum exists
                 $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Curriculum with ID '.$curriculum_id.' not found', 400);
-    
+
                 $delete_count += CurriculumSubscription::where([
                     'curriculum_id' => $curriculum_id,
                     'subscribable_type' => "App\User",
@@ -325,7 +339,7 @@ class MoodleApiController extends Controller
             }
         }
 
-        return $delete_count;
+        return response()->json(['count' => $delete_count]);
     }
 
     protected function checkEnrolExpelInput(array $input)
@@ -360,13 +374,13 @@ class MoodleApiController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'common_name' => 'sometimes|string',
-            'users' => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
-            'groups' => is_array(request()->input('groups')) ? 'sometimes|array' : 'sometimes|string',
-            'curricula' => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',
-            'logbooks' => 'sometimes|array',
-            'kanbans' => is_array(request()->input('kanbans')) ? 'sometimes|array' : 'sometimes|string',
-            'editable' => 'sometimes|boolean',
+            'common_name'   => 'sometimes|string',
+            'users'         => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
+            'groups'        => is_array(request()->input('groups')) ? 'sometimes|array' : 'sometimes|string',
+            'curricula'     => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',
+            'logbooks'      => 'sometimes|array',
+            'kanbans'       => is_array(request()->input('kanbans')) ? 'sometimes|array' : 'sometimes|string',
+            'editable'      => 'sometimes|boolean',
         ]);
     }
 }

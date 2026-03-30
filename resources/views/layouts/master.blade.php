@@ -16,7 +16,7 @@
                 :role="{{ json_encode(auth()->user()->role()->only('id', 'title')) }}"
                 :guest-id="{{ config('app.guest_user_id') }}"
             ></main-header>
-            
+
             <!-- Content Wrapper. Contains page content -->
             <div
                 id="content"

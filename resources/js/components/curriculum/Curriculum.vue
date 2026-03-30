@@ -48,11 +48,11 @@
                     role="tab"
                 >
                     <a
-                        id="curriculm-nav-tab"
+                        id="curriculum-nav-tab"
                         class="nav-link link-muted active"
-                        href="#curriculm-tab"
+                        href="#curriculum-tab"
                         data-toggle="tab"
-                        aria-controls="curriculm-tab"
+                        aria-controls="curriculum-tab"
                     >
                         <i class="fas fa-th pr-2"></i>
                         {{ trans('global.objective_tab') }}
@@ -180,65 +180,66 @@
                 </li>
             </ul>
 
-            <div
-                id="custom-content-below-tabContent"
-                class="tab-content"
-            >
                 <div
-                    id="curriculm-tab"
-                    class="tab-pane fade show active"
-                    role="tabpanel"
-                    aria-labelledby="curriculm-nav-tab"
-                >
-                    <TerminalObjectives
-                        ref="terminalObjectives"
-                        :curriculum="curriculum"
-                        :settings="settings"
-                    />
-                </div>
-                <div
-                    id="content-tab"
-                    class="tab-pane fade"
-                    role="tab"
-                    aria-labelledby="content-nav-tab"
-                >
-                    <contents
-                        ref="Contents"
-                        subscribable_type="App\Curriculum"
-                        :subscribable_id="curriculum.id"
-                    />
-                </div>
-                <div
-                    id="medium-tab"
-                    class="tab-pane fade"
-                    role="tab"
-                    aria-labelledby="medium-nav-tab"
-                >
-                    <Media
-                        subscribable_type="App\Curriculum"
-                        :subscribable_id="curriculum.id"
-                        :public="true"
-                        format="list"
-                    />
-                </div>
-                <div v-if="curriculum.glossar != null"
-                    id="glossar-tab"
-                    class="tab-pane fade"
-                    role="tab"
-                    aria-labelledby="glossar-nav-tab"
-                >
-                    <glossars :glossar="curriculum.glossar"/>
-                </div>
-                <div
-                    id="description-tab"
-                    class="tab-pane fade"
-                    role="tab"
-                    aria-labelledby="description-nav-tab"
+                    id="custom-content-below-tabContent"
+                    class="tab-content"
                 >
                     <div
-                        class="card p-3"
-                        v-html="currentCurriculum.description"
-                    ></div>
+                        id="curriculum-tab"
+                        class="tab-pane fade show active"
+                        role="tabpanel"
+                        aria-labelledby="curriculm-nav-tab"
+                    >
+                        <TerminalObjectives
+                            ref="terminalObjectives"
+                            :curriculum="curriculum"
+                            :settings="settings"
+                        />
+                    </div>
+                    <div
+                        id="content-tab"
+                        class="tab-pane fade"
+                        role="tab"
+                        aria-labelledby="content-nav-tab"
+                    >
+                        <contents
+                            ref="Contents"
+                            subscribable_type="App\Curriculum"
+                            :subscribable_id="curriculum.id"
+                        />
+                    </div>
+                    <div
+                        id="medium-tab"
+                        class="tab-pane fade"
+                        role="tab"
+                        aria-labelledby="medium-nav-tab"
+                    >
+                        <Media
+                            subscribable_type="App\Curriculum"
+                            :subscribable_id="curriculum.id"
+                            :public="true"
+                            format="list"
+                        />
+                    </div>
+                    <div v-if="curriculum.glossar != null"
+                        id="glossar-tab"
+                        class="tab-pane fade"
+                        role="tab"
+                        aria-labelledby="glossar-nav-tab"
+                    >
+                        <glossars :glossar="curriculum.glossar"/>
+                    </div>
+                    <div
+                        id="description-tab"
+                        class="tab-pane fade"
+                        role="tab"
+                        aria-labelledby="description-nav-tab"
+                    >
+                        <div
+                            class="card p-3"
+                            v-html="currentCurriculum.description"
+                        ></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -326,10 +327,6 @@ export default {
             type: Object,
             default: null,
         },
-        websocket: {
-            type: Boolean,
-            default: false,
-        },
     },
     setup() {
         const store = useDatatableStore();
@@ -393,6 +390,10 @@ export default {
         generateCertificate() {
             this.globalStore?.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});
         },
+        printCurriculum() {
+            axios.get('/curricula/' + this.curriculum.id + '/print')
+                .then(response => window.location.href = response.data.path);
+        },
         exportCurriculum() {
             this.globalStore?.showModal('medium-export-modal', {
                 id: this.curriculum.id,
@@ -422,7 +423,7 @@ export default {
             this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
         },
         startWebsocket() {
-            if (this.websocket === true) {
+            if (this.settings.websocket === true) {
                 this.$echo
                     .join('App.Curriculum.' + this.curriculum.id)
                     .here((users) => {
@@ -444,7 +445,7 @@ export default {
             }
         },
         stopWebsocket() {
-            if (this.websocket === true && this.kanban.auto_refresh === true) {
+            if (this.settings.websocket === true) {
                 this.$echo.leave('App.Kanban.' + this.kanban.id);
             }
         },

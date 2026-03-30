@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-column">
-        <TabList
+        <TabList v-if="!subscribable"
             class="px-3"
             :model="'kanban'"
             modelIcon="fa-columns"

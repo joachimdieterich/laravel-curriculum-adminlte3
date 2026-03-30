@@ -77,6 +77,9 @@
                             :objective="terminal"
                             :settings="settings"
                             :max_id="max_ids[type.id]"
+                            @update="(objective) => {
+                                this.globalStore?.closeModal('terminal-objective-modal');
+                            }"
                         />
 
                         <EnablingObjectives
@@ -171,12 +174,9 @@ export default {
 
                     if (this.objective_types.length > 0) {
                         // get the order by their current index instead of their id
-                        // console.log(this.curriculum.objective_type_order);
-                        // console.log(this.objective_types);
                         this.type_order = this.curriculum.objective_type_order?.map(
                             type_id => this.objective_types.findIndex(type => type.id === type_id)
                         ) ?? this.objective_types.map((t, index) => index);
-                        // console.log(this.type_order);
                     }
                 })
                 .catch(e => {
@@ -210,8 +210,6 @@ export default {
         handleTypeMoved() {
             // active-state needs to be reset, since it changes to a new index
             this.$el.querySelector('.nav-link.active').classList.remove('active');
-            console.log(this.activeTypeId);
-            console.log(document.getElementById(this.activeTypeId + '-tab'));
             document.getElementById(this.activeTypeId + '-tab').classList.add('active');
             // send new order to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", {
@@ -227,7 +225,6 @@ export default {
             this.type_order.push(this.type_order.length); // index-based
             this.activeTypeId = type.id;
             this.$nextTick(() => { // wait for DOM to be updated
-                // console.log($('#' + type.id + '-tab'));
                 $('#' + type.id + '-tab')[0].click(); // switch to new tab
                 this.handleTypeMoved(); // send new order to the server
             });
@@ -257,11 +254,8 @@ export default {
              */
             let new_type_order = [];
             this.type_order.forEach(function (value, i) {
-                console.log(i);
-                console.log(index);
                 if (i < index) {
                     new_type_order[i] = value;
-                    console.log(new_type_order);
 
                     return;
                 }
@@ -272,7 +266,6 @@ export default {
 
                 new_type_order[i - 1] = value - 1;
             });
-            console.log(new_type_order);
             this.type_order = new_type_order;
 
             this.$nextTick(() => { // wait for DOM to be updated
@@ -318,7 +311,6 @@ export default {
                 ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
             )[0];
 
-            // console.log(this.objective_types);
             let firstTab = this.objective_types[this.type_order[0]].id;
             // the 'active'-state does only need to be set programmatically for the initial tab
             // the rest will be handled by the default nav-tabs behaviour
@@ -328,13 +320,12 @@ export default {
 
         $('#objective-tabs-overlay').hide();
 
-        // terminal objectives
+        /////////////////////////////////////////////////////
+        //////////////// terminal objectives ////////////////
+        /////////////////////////////////////////////////////
         this.$eventHub.on('terminal-objective-added', (terminal) => {
             const type = terminal.type;
-            console.log(terminal);
             let obj_type = this.objective_types.find(t => t.id === type.id);
-            console.log(this.objective_types);
-            console.log(obj_type);
             if (obj_type === undefined) {
                 this.addNewType(type);
                 this.objective_types[this.objective_types.length - 1].terminal_objectives = [terminal];
@@ -429,7 +420,9 @@ export default {
             }
         });
 
-        // enabling objectives
+        /////////////////////////////////////////////////////
+        //////////////// enabling objectives ////////////////
+        /////////////////////////////////////////////////////
         this.$eventHub.on('enabling-objective-added', (enabling) => {
             let terminal;
             for (const type of this.objective_types) {
@@ -470,6 +463,14 @@ export default {
 
         this.$eventHub.on('objective-deleted', (deletedObjective) => {
             this.removeObjective(deletedObjective);
+        });
+
+
+        /////////////////////////////////////////////////////
+        ///////////////////////// curriculum ////////////////
+        /////////////////////////////////////////////////////
+        this.$eventHub.on('curriculum-updated', () => {
+            this.loaderEvent();
         });
     },
     computed: {

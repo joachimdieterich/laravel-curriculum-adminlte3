@@ -96,8 +96,8 @@ class LoginController extends Controller
 
             return redirect()->intended('home');
         } else {
-            return redirect()->route('login')
-                ->with('error', 'Email-Address And Password Are Wrong.');
+            return redirect()->route('localLogin')
+                ->with('error', 'Email-Address or Password is wrong.');
         }
     }
 
@@ -126,12 +126,14 @@ class LoginController extends Controller
             // except if authenticated as guest user, then redirect to SSO login
             if (auth()->user()->id == config('app.guest_user_id'))
             {
+                session(['redirect_to' => request()->headers->get('referer')]);
+                session()->save();
                 $oidc->authenticate();
             }
             else
             {
                 session(['init_logout' => true]);
-                \Session::save();
+                session()->save();
                 // in order to trigger an RP-initiated logout, we need an ID-token
                 // so we authenticate again to retrieve a new ID-token
                 $oidc->authenticate();

@@ -17,6 +17,9 @@
         @cleared="(data) => {
             this.$emit('cleared', data);
         }"
+        @opened="(data) => {
+            this.$emit('opened', data);
+        }"
     >
         <template v-slot:pre-dropdown>
             <drop-down-modal :show-title="false" :show-footer="false" :show="showNewTagForm" classes="mb-1" modal-class="mb-2" modal-css="position: relativ;">
@@ -70,7 +73,7 @@ export default defineComponent({
             default: [],
         }
     },
-    emits: ['selectedValue', 'cleared', 'tag-attached'],
+    emits: ['selectedValue', 'opened', 'cleared', 'tag-attached'],
     setup() {
         const toast = useToast();
         return {

@@ -11,7 +11,8 @@
                     </div>
                     <div
                         v-permission="'user_edit'"
-                        class="card-tools pr-2">
+                        class="card-tools pr-2"
+                    >
                         <a @click="editUser(user)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
@@ -36,6 +37,14 @@
                 </div>
 
                 <div class="card-body">
+                    <Select2
+                        id="select-organization"
+                        name="select-organization"
+                        url="/organizations"
+                        model="organization"
+                        @selectedValue="(id) => this.setCurrentOrganization(id[0])"
+                    />
+                    <hr>
                     <strong>
                         <i class="fa fa-university mr-1"></i>
                         {{ trans('global.organization.title_singular') }}
@@ -141,23 +150,23 @@
 import UserModal from "../user/UserModal.vue";
 import Avatar from "../uiElements/Avatar.vue";
 import Notes from "../note/Notes.vue";
+import Select2 from "../forms/Select2.vue";
 import ContactDetail from "../contactDetail/ContactDetail.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "User",
-    components:{
+    components: {
         ContactDetail,
         Avatar,
         UserModal,
-        Notes
+        Notes,
+        Select2,
     },
     props: {
         user: {
-            default: null
-        },
-        status_definitions: {
-            default: null
+            type: Object,
+            default: null,
         },
     },
     setup () {
@@ -178,22 +187,24 @@ export default {
         });
     },
     methods: {
-        editUser(user){
+        editUser(user) {
             this.globalStore?.showModal('user-modal', user);
         },
-        getRoleInOrganization(organization){
-            //console.log(this.user.roles.filter((r) => r.pivot.organization_id == organization.id));
+        setCurrentOrganization(id) {
+            axios.patch('/users/setCurrentOrganization', { current_organization_id: id });
+        },
+        getRoleInOrganization(organization) {
             return this.user.roles.filter((r) => r.pivot.organization_id == organization.id);
         },
-        getOrganizationOfGroup(group){
+        getOrganizationOfGroup(group) {
             return this.user.organizations.filter((o) => o.id == group.organization_id);
         },
-        getOrganizationForRole(role){
+        getOrganizationForRole(role) {
             return this.user.organizations.filter((o) => o.id == role.pivot.organization_id);
         },
-        getCurrentOrganization(){
+        getCurrentOrganization() {
             return this.user.organizations.filter((o) => o.id == this.user.current_organization_id)[0];
-        }
+        },
     }
 }
 </script>

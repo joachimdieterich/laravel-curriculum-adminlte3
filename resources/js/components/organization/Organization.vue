@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -91,9 +91,7 @@ import {useGlobalStore} from "../../store/global.js";
 
 export default {
     name: "Organization",
-    components: {
-        OrganizationModal,
-    },
+    components: { OrganizationModal },
     props: {
         organization: {
             type: Object,

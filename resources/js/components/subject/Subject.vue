@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -45,23 +45,20 @@
         </div>
 
         <Teleport to="body">
-            <SubjectModal></SubjectModal>
+            <SubjectModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import SubjectModal from "../subject/SubjectModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "subject",
-    components:{
-        SubjectModal
-    },
+    components: { SubjectModal },
     props: {
         subject: {
-            default: null
+            default: null,
         },
     },
     setup () {
@@ -82,12 +79,11 @@ export default {
             this.globalStore?.closeModal('subject-modal');
             this.currentSubject = subject;
         });
-
     },
     methods: {
         editSubject(){
             this.globalStore?.showModal('subject-modal', this.currentSubject);
         },
-    }
+    },
 }
 </script>

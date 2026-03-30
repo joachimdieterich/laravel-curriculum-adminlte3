@@ -1,8 +1,8 @@
 <template >
-    <div class="row">
+    <div class="d-flex flex-column">
         <div
             id="navigatorView-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <div v-for="navigatorItem in navigatorItems">
                 <div v-if="navigatorItem.position == 'header'">
@@ -99,7 +99,7 @@
         </div>
         <div
             id="navigatorView-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="navigatorItem-datatable"

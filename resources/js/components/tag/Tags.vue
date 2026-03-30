@@ -1,13 +1,8 @@
 <template>
-    <div class="row">
-        <div class="col-md-12 ">
-            <ul class="nav nav-pills py-2"
-                role="tablist"
-            >
-            </ul>
-        </div>
-        <div id="tag-content"
-             class="col-md-12 m-0"
+    <div class="d-flex flex-column">
+        <div
+            id="tag-content"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'tag_create'"
@@ -62,7 +57,7 @@
         </div>
         <div
             id="tag-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="tag-datatable"
@@ -92,7 +87,6 @@
     </div>
 </template>
 <script>
-
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -104,8 +98,7 @@ import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
-    name: 'tags',
-    props: {},
+    name: 'Tags',
     setup() {
         const globalStore = useGlobalStore();
         const toast = useToast();

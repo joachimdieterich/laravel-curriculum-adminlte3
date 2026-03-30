@@ -1,8 +1,8 @@
-<template >
-    <div class="row">
+<template>
+    <div class="d-flex flex-column">
         <div
             id="certificate-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'certificate_create'"
@@ -57,7 +57,7 @@
 
         <div
             id="certificate-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="certificate-datatable"
@@ -97,7 +97,6 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {

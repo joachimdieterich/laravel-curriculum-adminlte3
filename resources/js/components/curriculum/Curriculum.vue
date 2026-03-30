@@ -180,66 +180,65 @@
                 </li>
             </ul>
 
+            <div
+                id="custom-content-below-tabContent"
+                class="tab-content"
+            >
                 <div
-                    id="custom-content-below-tabContent"
-                    class="tab-content"
+                    id="curriculum-tab"
+                    class="tab-pane fade show active"
+                    role="tabpanel"
+                    aria-labelledby="curriculm-nav-tab"
+                >
+                    <TerminalObjectives
+                        ref="terminalObjectives"
+                        :curriculum="curriculum"
+                        :settings="settings"
+                    />
+                </div>
+                <div
+                    id="content-tab"
+                    class="tab-pane fade"
+                    role="tab"
+                    aria-labelledby="content-nav-tab"
+                >
+                    <contents
+                        ref="Contents"
+                        subscribable_type="App\Curriculum"
+                        :subscribable_id="curriculum.id"
+                    />
+                </div>
+                <div
+                    id="medium-tab"
+                    class="tab-pane fade"
+                    role="tab"
+                    aria-labelledby="medium-nav-tab"
+                >
+                    <Media
+                        subscribable_type="App\Curriculum"
+                        :subscribable_id="curriculum.id"
+                        :public="true"
+                        format="list"
+                    />
+                </div>
+                <div v-if="curriculum.glossar != null"
+                    id="glossar-tab"
+                    class="tab-pane fade"
+                    role="tab"
+                    aria-labelledby="glossar-nav-tab"
+                >
+                    <glossars :glossar="curriculum.glossar"/>
+                </div>
+                <div
+                    id="description-tab"
+                    class="tab-pane fade"
+                    role="tab"
+                    aria-labelledby="description-nav-tab"
                 >
                     <div
-                        id="curriculum-tab"
-                        class="tab-pane fade show active"
-                        role="tabpanel"
-                        aria-labelledby="curriculm-nav-tab"
-                    >
-                        <TerminalObjectives
-                            ref="terminalObjectives"
-                            :curriculum="curriculum"
-                            :settings="settings"
-                        />
-                    </div>
-                    <div
-                        id="content-tab"
-                        class="tab-pane fade"
-                        role="tab"
-                        aria-labelledby="content-nav-tab"
-                    >
-                        <contents
-                            ref="Contents"
-                            subscribable_type="App\Curriculum"
-                            :subscribable_id="curriculum.id"
-                        />
-                    </div>
-                    <div
-                        id="medium-tab"
-                        class="tab-pane fade"
-                        role="tab"
-                        aria-labelledby="medium-nav-tab"
-                    >
-                        <Media
-                            subscribable_type="App\Curriculum"
-                            :subscribable_id="curriculum.id"
-                            :public="true"
-                            format="list"
-                        />
-                    </div>
-                    <div v-if="curriculum.glossar != null"
-                        id="glossar-tab"
-                        class="tab-pane fade"
-                        role="tab"
-                        aria-labelledby="glossar-nav-tab"
-                    >
-                        <glossars :glossar="curriculum.glossar"/>
-                    </div>
-                    <div
-                        id="description-tab"
-                        class="tab-pane fade"
-                        role="tab"
-                        aria-labelledby="description-nav-tab"
-                    >
-                        <div
-                            class="card p-3"
-                            v-html="currentCurriculum.description"
-                        ></div>
-                    </div>
+                        class="card p-3"
+                        v-html="currentCurriculum.description"
+                    ></div>
                 </div>
             </div>
         </div>

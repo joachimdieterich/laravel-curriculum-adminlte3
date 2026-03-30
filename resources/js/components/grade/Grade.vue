@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -11,12 +11,12 @@
                     </div>
                     <div
                         v-permission="'organization_edit'"
-                        class="card-tools pr-2">
-                        <a  @click="editGrade()">
+                        class="card-tools pr-2"
+                    >
+                        <a @click="editGrade()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
-
                 </div>
 
                 <div class="card-body">
@@ -45,23 +45,20 @@
         </div>
 
         <Teleport to="body">
-            <GradeModal></GradeModal>
+            <GradeModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import {useGlobalStore} from "../../store/global";
 import GradeModal from "../grade/GradeModal.vue";
 
 export default {
     name: "grade",
-    components:{
-        GradeModal
-    },
+    components: { GradeModal },
     props: {
         grade: {
-            default: null
+            default: null,
         },
     },
     setup () {
@@ -88,6 +85,6 @@ export default {
         editGrade(){
             this.globalStore?.showModal('grade-modal', this.currentGrade);
         },
-    }
+    },
 }
 </script>

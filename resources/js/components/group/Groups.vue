@@ -1,9 +1,9 @@
 <template >
     <div>
-        <div class="row">
+        <div class="d-flex flex-column">
             <div
                 id="group-content"
-                class="col-md-12 m-0"
+                class="px-3"
             >
                 <div class="row">
                     <div class="col-md-12 m-0 pb-2">
@@ -81,7 +81,7 @@
             </div>
             <div
                 id="group-datatable-wrapper"
-                class="w-100 dataTablesWrapper"
+                class="dataTablesWrapper"
             >
                 <DataTable
                     id="group-datatable"
@@ -111,7 +111,7 @@
             </Teleport>
         </div>
         <div v-if="checkPermission('is_schooladmin')"
-            class="row mt-4"
+            class="mt-4"
         >
             <GroupOptions/>
         </div>
@@ -129,7 +129,6 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     data() {
         return {
             component_id: this.$.uid,

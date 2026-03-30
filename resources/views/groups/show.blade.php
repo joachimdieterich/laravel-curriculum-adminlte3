@@ -8,14 +8,7 @@
             ['active'=> true, 'title'=> $group->title ]
         ])}}"
     ></breadcrumbs>
-
 @endsection
 @section('content')
-    <div class="row">
-        <div class="col-12">
-            <group
-                :group="{{ $group }}">
-            </group>
-        </div>
-    </div>
+    <group :group="{{ $group }}"></group>
 @endsection

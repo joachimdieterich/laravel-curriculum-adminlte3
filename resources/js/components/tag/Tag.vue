@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -21,18 +21,12 @@
     </div>
 </template>
 <script>
-
 export default {
-    name: "tag",
+    name: "Tag",
     props: {
         tag: {
             default: null,
         },
-    },
-    data() {
-        return {
-            componentId: this.$.uid,
-        }
     },
 }
 </script>

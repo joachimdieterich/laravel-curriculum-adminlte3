@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-wrap">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -137,15 +137,12 @@
         </Teleport>
     </div>
 </template>
-
 <script>
 import UserModal from "../user/UserModal.vue";
 import Avatar from "../uiElements/Avatar.vue";
 import Notes from "../note/Notes.vue";
 import ContactDetail from "../contactDetail/ContactDetail.vue";
-import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
-
 
 export default {
     name: "User",

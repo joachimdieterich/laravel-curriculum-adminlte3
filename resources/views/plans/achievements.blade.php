@@ -1,4 +1,4 @@
-@extends('layouts.contentonly')
+@extends('layouts.master')
 
 @section('content')
     <plan-achievements :terminal="{{ $terminal }}" :enabling="{{ $enabling }}" :users="{{ $users }}"/>

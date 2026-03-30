@@ -11,6 +11,5 @@
     ></breadcrumbs>
 @endsection
 @section('content')
-<subject
- :subject="{{ $subject }}"></subject>
+    <subject :subject="{{ $subject }}"></subject>
 @endsection

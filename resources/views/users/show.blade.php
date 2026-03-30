@@ -13,58 +13,71 @@
 @section('content')
     <user :user="{{ $user }}"></user>
 @can('is_admin')
-<div class="row">
+<div class="d-flex">
     <div class="col-12">
         @if (auth()->user()->role()->id == 1)
         <div class="card">
-            <div class="card-header p-2">Debug</div>
+            <div class="card-header p-2">
+                <h3>Debug</h3>
+            </div>
             <div class="card-body">
-                User
-                <li class="small">id: {{ $user->id }};</li>
-                <li class="small">common_name: {{ $user->common_name }};</li>
-                <li class="small">firstname: {{ $user->firstname }};</li>
-                <li class="small">lastname: {{ $user->lastname }};</li>
-                <li class="small">email: {{ $user->email }};</li>
-                <li class="small">created_at: {{ $user->created_at }};</li>
-                <li class="small">status: {{ $user->status }};</li>
-                <li class="small">current_organization_id: {{ $user->current_organization_id }} => {{ $user->organizations->find($user->current_organization_id)?->title }};</li>
-                <li class="small">current_period_id: {{ $user->current_period_id }};</li>
+                <strong>User Details</strong>
+                <div class="ml-4">
+                    <li class="small">id: {{ $user->id }};</li>
+                    <li class="small">common_name: {{ $user->common_name }};</li>
+                    <li class="small">firstname: {{ $user->firstname }};</li>
+                    <li class="small">lastname: {{ $user->lastname }};</li>
+                    <li class="small">email: {{ $user->email }};</li>
+                    <li class="small">created_at: {{ $user->created_at }};</li>
+                    <li class="small">status: {{ $user->status }};</li>
+                    <li class="small">current_organization_id: {{ $user->current_organization_id }} => {{ $user->organizations->find($user->current_organization_id)?->title }};</li>
+                    <li class="small">current_period_id: {{ $user->current_period_id }};</li>
+                </div>
 
                 <br/>
 
-                currentCurriculaEnrollments:
-                @foreach(App\User::find($user->id)->currentCurriculaEnrollments() as $cur_enr)
-                    <li class="small">id: {{ $cur_enr->id }} => {{ $cur_enr->title }};  course_id: {{ $cur_enr->course_id }};  group_id: {{ $cur_enr->group_id }};</li>
-                @endforeach
+                <strong>Current Curricula Enrollments</strong>
+                <div class="ml-4">
+                    @foreach(App\User::find($user->id)->currentCurriculaEnrollments() as $cur_enr)
+                        <li class="small">id: {{ $cur_enr->id }} => {{ $cur_enr->title }};  course_id: {{ $cur_enr->course_id }};  group_id: {{ $cur_enr->group_id }};</li>
+                    @endforeach
+                </div>
 
                 <br/>
 
-                currentGroupEnrolments:
-                @foreach(App\User::find($user->id)->currentGroupEnrolments as $grp_enr)
-                    <li class="small">id: {{ $grp_enr->id }} => {{ $grp_enr->title }};  period_id: {{ $grp_enr->period_id }};  course_id: {{ $grp_enr->course_id }};</li>
-                @endforeach
+                <strong>Current Group Enrollments</strong>
+                <div class="ml-4">
+                    @foreach(App\User::find($user->id)->currentGroupEnrolments as $grp_enr)
+                        <li class="small">id: {{ $grp_enr->id }} => {{ $grp_enr->title }};  period_id: {{ $grp_enr->period_id }};  course_id: {{ $grp_enr->course_id }};</li>
+                    @endforeach
+                </div>
 
                 <br/>
 
-                Groups:
-                @foreach(App\User::find($user->id)->groups as $groups)
-                    <li class="small">id: {{ $groups->id }} => {{ $groups->title }};  period_id: {{ $groups->period_id }};  organization_id: {{ $groups->organization_id }};</li>
-                @endforeach
+                <strong>Groups</strong>
+                <div class="ml-4">
+                    @foreach(App\User::find($user->id)->groups as $groups)
+                        <li class="small">id: {{ $groups->id }} => {{ $groups->title }};  period_id: {{ $groups->period_id }};  organization_id: {{ $groups->organization_id }};</li>
+                    @endforeach
+                </div>
 
                 <br/>
 
-                currentCurriculaPeriods:
-                @foreach(App\User::find($user->id)->currentPeriods() as $cur_period)
-                    <li class="small">id: {{ $cur_period->id }} => {{ $cur_period->title }}; organization_id: {{ $cur_period->organization_id }};</li>
-                @endforeach
+                <strong>Current Curricula Periods</strong>
+                <div class="ml-4">
+                    @foreach(App\User::find($user->id)->currentPeriods() as $cur_period)
+                        <li class="small">id: {{ $cur_period->id }} => {{ $cur_period->title }}; organization_id: {{ $cur_period->organization_id }};</li>
+                    @endforeach
+                </div>
 
                 <br/>
 
-                organizations:
-                @foreach(App\User::find($user->id)->organizations as $org)
-                    <li class="small">id: {{ $org->id }} => {{ $org->title }};</li>
-                @endforeach
-                <br/>
+                <strong>Organizations</strong>
+                <div class="ml-4">
+                    @foreach(App\User::find($user->id)->organizations as $org)
+                        <li class="small">id: {{ $org->id }} => {{ $org->title }};</li>
+                    @endforeach
+                </div>
             </div>
         </div>
         @endif

@@ -1,8 +1,8 @@
 <template >
-    <div class="row">
+    <div class="d-flex flex-column">
         <div
             id="grade-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'grade_create'"
@@ -56,7 +56,7 @@
         </div>
         <div
             id="grade-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="grade-datatable"
@@ -96,7 +96,6 @@ import ConfirmModal from "../uiElements/ConfirmModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {

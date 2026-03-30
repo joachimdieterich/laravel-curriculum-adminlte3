@@ -1,8 +1,8 @@
 <template >
-    <div class="row">
+    <div class="d-flex flex-column">
         <div
             id="subject-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'subject_create'"
@@ -56,7 +56,7 @@
         </div>
         <div
             id="subject-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="subject-datatable"

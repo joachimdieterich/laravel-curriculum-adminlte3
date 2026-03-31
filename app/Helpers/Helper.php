@@ -199,6 +199,45 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
     }
 }
 
+if (! function_exists('getDataTableWithEntries'))
+{
+    /**
+     * helper function to get all entries for select2 fields
+     * @param Illuminate\Database\Eloquent\Builder $query the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
+     * @param bool $withOwned if false, owned entries will be excluded
+     * @param string $rowId column to use as primary key for datatables
+     * @param array|null $searchTags if given, only entries with these tags will be returned
+     * @param array|null $negativeSearchTags if given, entries with these tags will be excluded
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function getDataTableWithEntries($query, $withOwned = true, $rowId = 'id', $searchTags = null, $negativeSearchTags = null): \Illuminate\Http\JsonResponse
+    {
+        try {
+            if (!$withOwned) $query->whereNot('owner_id', auth()->user()->id);
+
+            if ($searchTags != null) {
+                // skip SQL-query if no tags are selected, since we'd get an empty collection anyway
+                $tags = empty($searchTags) ? [] : \App\Tag::whereIn('id', $searchTags)->get();
+                $query->withAllTags($tags);
+            }
+
+            if ($negativeSearchTags != null) {
+                $tags = empty($negativeSearchTags) ? [] : \App\Tag::whereIn('id', $negativeSearchTags)->get();
+                $query->withoutTags($tags);
+            }
+    
+            return \Yajra\DataTables\DataTables::of($query)
+                ->setRowId($rowId)
+                ->make(true);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'error' => 'An error occurred while fetching the data.',
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
+}
+
 if (! function_exists('format_select_input')) {
 
     /**

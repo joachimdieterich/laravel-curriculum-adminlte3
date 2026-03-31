@@ -42,7 +42,9 @@
                         name="select-organization"
                         url="/organizations"
                         model="organization"
-                        @selectedValue="(id) => this.setCurrentOrganization(id[0])"
+                        :label="trans('global.organization.set')"
+                        :placeholder="user.organizations.find(org => org.id === user.current_organization_id).title"
+                        @selectedValue="(id) => setCurrentOrganization(id[0])"
                     />
                     <hr>
                     <strong>
@@ -191,7 +193,8 @@ export default {
             this.globalStore?.showModal('user-modal', user);
         },
         setCurrentOrganization(id) {
-            axios.patch('/users/setCurrentOrganization', { current_organization_id: id });
+            axios.patch('/users/setCurrentOrganization', { current_organization_id: id })
+                .then(() => window.location.reload());
         },
         getRoleInOrganization(organization) {
             return this.user.roles.filter((r) => r.pivot.organization_id == organization.id);

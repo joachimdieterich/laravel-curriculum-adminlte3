@@ -157,17 +157,24 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        abort_unless(\Gate::allows('user_show'), 403, "Missing permission to view user");
-        abort_unless(auth()->user()->mayAccessUser($user), 403, "No access to view user");
+        // users should be able to view their own profile
+        if ($user->id !== auth()->user()->id) {
+            abort_unless(\Gate::allows('user_show'), 403, "Missing permission to view user");
+            abort_unless(auth()->user()->mayAccessUser($user), 403, "No access to view user");
+        }
 
         if (request()->wantsJson()) {
             return ['user' => $user];
         }
 
         $status_definitions = StatusDefinition::all();
-        $user->load('roles');
-        $user->load(['organizations.state', 'organizations.country']);
-        $user->load('groups');
+        $user->load('roles:id,title');
+        $user->load([
+            'organizations:id,title,country_id,state_id,postcode,city,street',
+            'organizations.country:alpha2,lang_de,lang_en',
+            'organizations.state'
+        ]);
+        $user->load('groups:id,title,organization_id');
         $user->load('contactDetail.owner');
 
         return view('users.show')
@@ -224,8 +231,6 @@ class UsersController extends Controller
         ]);
 
         LogController::set('activeOrg', request('current_organization_id')); //set statistics
-
-        return back();
     }
 
     public function setCurrentPeriod()

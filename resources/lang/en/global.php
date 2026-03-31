@@ -472,6 +472,9 @@ return [
         'title_singular' => 'Organization',
         'create' => 'Create Organisation',
         'edit' => 'Update Organisation',
+        'set' => 'Select active organisation',
+        'delete' => 'Delete organisation',
+        'delete_helper' => 'Should this organisation and all its corresponding data be deleted?',
         'fields' => [
             'title' => 'Name',
             'street' => 'Street',

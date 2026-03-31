@@ -487,6 +487,7 @@ return [
         'title_singular' => 'Organisation',
         'create' => 'Organisation erstellen',
         'edit' => 'Organisation bearbeiten',
+        'set' => 'Aktive Organisation auswählen',
         'delete' => 'Organisation löschen',
         'delete_helper' => 'Soll die Organisation sowie die zugehörigen Daten gelöscht werden?',
         'fields' => [

@@ -67,52 +67,6 @@
         </div>
         <script src="{{ asset('node_modules/tinymce/tinymce.js') }}"></script>
         <script src="{{ asset('node_modules/mathjax/es5/tex-svg.js') }}"></script>
-
-        <script>
-            function setCurrentOrganization(selectBox) {
-                var op = selectBox.options[selectBox.selectedIndex];
-                $.ajax({
-                    headers: {'x-csrf-token': _token},
-                    method: 'POST',
-                    url: "{{ route('users.setCurrentOrganization') }}",
-                    data: {
-                        current_organization_id: op.value,
-                        _method: 'PATCH',
-                    }
-                })
-                .done(function () { location.reload() })
-            }
-
-            function setCurrentOrganizationAndPeriod(selectBox) {
-                var op = selectBox.options[selectBox.selectedIndex];
-                $.ajax({
-                    headers: {'x-csrf-token': _token},
-                    method: 'POST',
-                    url: "{{ route('users.setCurrentPeriod') }}",
-                    data: {
-                        current_period_id: op.value,
-                        _method: 'PATCH',
-                    }
-                })
-                .done(function () { location.reload() })
-            }
-
-            function destroyDataTableEntry(route, id) {
-                window.event.stopPropagation(); // stops redirection to source
-
-                if (confirm("{{ trans('global.areYouSure') }}")) {
-                    $.ajax({
-                        headers: { 'x-csrf-token': _token },
-                        method: 'POST',
-                        url: '/'+route+'/'+id,
-                        data: { _method: 'DELETE' }
-                    })
-                    .done(function () {
-                        $("#"+id).hide();
-                    });
-                }
-            }
-        </script>
         @yield('scripts')
     </body>
 </html>

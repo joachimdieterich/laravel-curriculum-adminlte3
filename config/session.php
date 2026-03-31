@@ -196,4 +196,6 @@ return [
 
     'same_site' => null,
 
+    'prefix' => env('SESSION_PREFIX', env('APP_NAME', 'laravel') . '_session'),
+
 ];

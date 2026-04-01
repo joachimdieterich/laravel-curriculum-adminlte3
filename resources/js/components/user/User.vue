@@ -37,16 +37,19 @@
                 </div>
 
                 <div class="card-body">
-                    <Select2
-                        id="select-organization"
-                        name="select-organization"
-                        url="/organizations"
-                        model="organization"
-                        :label="trans('global.organization.set')"
-                        :placeholder="user.organizations.find(org => org.id === user.current_organization_id).title"
-                        @selectedValue="(id) => setCurrentOrganization(id[0])"
-                    />
-                    <hr>
+                    <div v-if="user.organizations.length > 1">
+                        <Select2
+                            id="select-organization"
+                            name="select-organization"
+                            url="/organizations"
+                            model="organization"
+                            :label="trans('global.organization.set')"
+                            :placeholder="user.organizations.find(org => org.id === user.current_organization_id).title"
+                            :list="user.organizations.map(org => { return { id: org.id, title: org.title } })"
+                            @selectedValue="(id) => setCurrentOrganization(id[0])"
+                        />
+                        <hr>
+                    </div>
                     <strong>
                         <i class="fa fa-university mr-1"></i>
                         {{ trans('global.organization.title_singular') }}
@@ -208,6 +211,6 @@ export default {
         getCurrentOrganization() {
             return this.user.organizations.filter((o) => o.id == this.user.current_organization_id)[0];
         },
-    }
+    },
 }
 </script>

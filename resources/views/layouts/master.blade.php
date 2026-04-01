@@ -27,7 +27,7 @@
                         <navigationbar></navigationbar>
                         <div
                             id="background-mask"
-                            class="nav-collapse"
+                            class="nav-collapse w-100"
                             data-toggle="collapse"
                             data-target=".nav-collapse"
                             aria-expanded="false"

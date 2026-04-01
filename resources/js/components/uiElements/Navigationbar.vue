@@ -213,7 +213,6 @@ export default {
     transition: background-color 0.3s ease;
 
     &.collapsing, &.show {
-        width: 100vw;
         height: 100% !important;
     }
     &.show { background-color: rgba(0, 0, 0, 0.25); }

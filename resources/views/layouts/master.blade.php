@@ -24,7 +24,9 @@
             >
                 @can('is_admin')
                     <div class="d-print-none">
-                        <navigationbar></navigationbar>
+                        <navigationbar
+                            :organizations="{{ json_encode(auth()->user()->organizations()->select('organizations.id', 'title')->get()) }}"
+                        ></navigationbar>
                         <div
                             id="background-mask"
                             class="nav-collapse w-100"

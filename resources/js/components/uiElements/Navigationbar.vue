@@ -4,6 +4,15 @@
         class="position-absolute bg-white collapse nav-collapse width h-100"
     >
         <div id="nav-wrapper">
+            <Select2
+                id="select-organization-admin"
+                name="select-organization"
+                class="px-1"
+                model="organization"
+                :label="trans('global.organization.set')"
+                :list="organizations"
+                @selectedValue="(id) => setCurrentOrganization(id[0])"
+            />
             <div v-for="tab in tabs"
                 class="nav-group d-flex flex-column py-2"
             >
@@ -29,8 +38,17 @@
     </div>
 </template>
 <script>
+import Select2 from '../forms/Select2.vue';
+
 export default {
     name: "Navigationbar",
+    components: { Select2 },
+    props: {
+        organizations: {
+            type: Array,
+            default: [],
+        },
+    },
     data() {
         return {
             tabs: [
@@ -161,6 +179,12 @@ export default {
     },
     mounted() {
         this.activeEntry = window.location.pathname.match(/\/[^\/]*/)[0];
+    },
+    methods: {
+        setCurrentOrganization(id) {
+            axios.patch('/users/setCurrentOrganization', { current_organization_id: id })
+                .then(() => window.location.reload());
+        },
     },
 }
 </script>

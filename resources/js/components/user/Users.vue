@@ -156,6 +156,8 @@
                 />
             </div>
 
+            <UserOptions v-if="!subscribable"/>
+
             <Teleport to="body">
                 <UserModal v-if="!subscribable"/>
                 <SubscribeUserModal v-if="subscribable"/>
@@ -172,11 +174,6 @@
                     }"
                 />
             </Teleport>
-        </div>
-        <div v-if="!subscribable"
-            class="row mt-4"
-        >
-            <UserOptions/>
         </div>
     </div>
 </template>

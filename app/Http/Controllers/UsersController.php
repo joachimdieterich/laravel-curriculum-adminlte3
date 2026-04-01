@@ -11,7 +11,6 @@ use App\Imports\UsersImport;
 use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
-use App\Role;
 use App\StatusDefinition;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +18,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
-use Yajra\DataTables\DataTables;
 
 class UsersController extends Controller
 {
@@ -71,13 +69,12 @@ class UsersController extends Controller
         else
         {
             $users = (auth()->user()->role()->id == 1)
-                ? User::select('id', 'username', 'firstname', 'lastname', 'common_name', 'email', 'medium_id', 'deleted_at')->noSharing()
-                : Organization::find(auth()->user()->current_organization_id)->users()->noSharing();
+                ? User::query()
+                : Organization::find(auth()->user()->current_organization_id)->users();
+            $users->select('users.id', 'username', 'firstname', 'lastname', 'common_name', 'email')->noSharing();
         }
 
-        return DataTables::of($users)
-            ->setRowId($rowID)
-            ->make(true);
+        return getDataTableWithEntries($users, $rowID);
     }
 
     public function create()

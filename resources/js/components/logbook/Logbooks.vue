@@ -260,7 +260,6 @@ export default {
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
                 { title: 'description', data: 'description', searchable: true},
-                { title: 'medium_id', data: 'medium_id'},
             ],
             options : this.$dtOptions,
             filter: 'all',

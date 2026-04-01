@@ -185,10 +185,7 @@ class KanbanController extends Controller
             $dt->with('newFilter', $newFilter);
         }
 
-        return $dt->addColumn('tags', function ($kanbans) {
-                return $kanbans->tags->toArray();
-            })
-            ->setRowId('id')
+        return $dt->setRowId('id')
             ->make(true);
     }
 

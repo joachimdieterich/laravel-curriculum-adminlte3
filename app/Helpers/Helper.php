@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use App\Medium;
 use App\MediumSubscription;
+use Illuminate\Database\Eloquent\Builder;
 
 if (! function_exists('getEntriesForSelect2ByModel')) {
     /**
@@ -199,21 +200,58 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
     }
 }
 
+if (! function_exists('getModels'))
+{
+    /**
+     * helper function to get all models that are subscribed to the user
+     * @param string|Builder $model either model::class or a builder-instance, e.g. $user->kanbans()
+     * @param bool $withOwned also get entries owned by the user
+     * @return Builder
+     */
+    function getModels($model, $withOwned = true): Builder
+    {
+        // parse model to a query-builder if classname is given
+        if (is_string($model)) $model = $model::query();
+
+        $model->whereHas('subscriptions', function ($q) {
+            $q->where(function ($q) {
+                $q->where('subscribable_type', 'App\\User')
+                    ->where('subscribable_id', auth()->user()->id);
+            })->orWhere(function ($q) {
+                $q->where('subscribable_type', 'App\\Group')
+                    ->whereIn('subscribable_id', auth()->user()->groups()->pluck('groups.id'));
+            })
+            ->orWhere(function ($q) {
+                $q->where('subscribable_type', 'App\\Organization')
+                    ->where('subscribable_id', auth()->user()->current_organization_id);
+            });
+        });
+
+        if ($withOwned) {
+            $model->orWhere('owner_id', auth()->user()->id);
+        }
+
+        return $model;
+    }
+}
+
 if (! function_exists('getDataTableWithEntries'))
 {
     /**
      * helper function to get all entries for select2 fields
      * @param Illuminate\Database\Eloquent\Builder $query the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
-     * @param bool $withOwned if false, owned entries will be excluded
      * @param string $rowId column to use as primary key for datatables
+     * @param bool $withSubscribed also get entries shared with the user
+     * @param bool $withOwned also get entries owned by the user, not only shared with the user
      * @param array|null $searchTags if given, only entries with these tags will be returned
      * @param array|null $negativeSearchTags if given, entries with these tags will be excluded
      * @return \Illuminate\Http\JsonResponse
      */
-    function getDataTableWithEntries($query, $withOwned = true, $rowId = 'id', $searchTags = null, $negativeSearchTags = null): \Illuminate\Http\JsonResponse
+    function getDataTableWithEntries($query, $rowId = 'id', $withSubscribed = false, $withOwned = false, $searchTags = null, $negativeSearchTags = null): \Illuminate\Http\JsonResponse
     {
         try {
-            if (!$withOwned) $query->whereNot('owner_id', auth()->user()->id);
+            if ($withSubscribed) $query = getModels($query, $withOwned);
+            else if ($withOwned) $query->orWhere('owner_id', auth()->user()->id); // only get owned entries
 
             if ($searchTags != null) {
                 // skip SQL-query if no tags are selected, since we'd get an empty collection anyway

@@ -4,15 +4,15 @@
         class="position-absolute bg-white collapse nav-collapse width h-100"
     >
         <div id="nav-wrapper">
-            <div v-for="group in groups"
+            <div v-for="tab in tabs"
                 class="nav-group d-flex flex-column py-2"
             >
-                <div v-if="group.title"
+                <div v-if="tab.title"
                     class="nav-group-title"
                 >
-                    <strong>{{ trans(group.title) }}</strong>
+                    <strong>{{ trans(tab.title) }}</strong>
                 </div>
-                <div v-for="entry in group.entries"
+                <div v-for="entry in tab.entries"
                     class="nav-entry"
                 >
                     <a
@@ -33,7 +33,7 @@ export default {
     name: "Navigationbar",
     data() {
         return {
-            groups: [
+            tabs: [
                 {
                     title: null,
                     entries: [

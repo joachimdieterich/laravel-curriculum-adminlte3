@@ -9,6 +9,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @OA\Schema(
@@ -44,8 +45,6 @@ class Kanban extends Model implements Broadcastable
         'updated_at'            => 'datetime',
         'created_at'            => 'datetime',
     ];
-
-    protected $appends = ['is_favourited', 'is_hidden'];
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -90,6 +89,11 @@ class Kanban extends Model implements Broadcastable
             'medium:id,title,medium_name',
             'tags'
         ])->find($this->id);
+    }
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany('App\\Tag', 'taggable');
     }
 
     public function subscriptions(): HasMany|self

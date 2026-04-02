@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use App\Tag;
 use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Database\Eloquent\Builder;
@@ -253,7 +254,19 @@ if (! function_exists('getDataTableWithEntries'))
             else if ($withOwned) $query->orWhere('owner_id', auth()->user()->id); // only get owned entries
 
             if ($searchTags !== null) {
-                $hiddenTagId = \App\Tag::findFromString(trans('global.tag.hidden.singular'))->id;
+                $query->with('tags:id,name,slug');
+
+                $favouriteTagId = Tag::findFromString(trans('global.tag.favourite.singular'))->id;
+                $hiddenTagId = Tag::findFromString(trans('global.tag.hidden.singular'))->id;
+
+                // append is_favourite and is_hidden as separate fields
+                // we do it this way, because the built-in function would fire a separate query for each entry
+                $query->addSelect(
+                    DB::raw('CASE WHEN `tags`.`id` = ' . $favouriteTagId . ' THEN 1 ELSE 0 END AS is_favourited'),
+                    DB::raw('CASE WHEN `tags`.`id` = ' . $hiddenTagId . ' THEN 1 ELSE 0 END AS is_hidden')
+                )
+                ->leftJoin('taggables', 'taggables.taggable_id', '=', $query->getModel()->getTable() . '.id')
+                ->leftJoin('tags', 'tags.id', '=', 'taggables.tag_id');
 
                 // if hidden-tag is not explicitly included in search-tags, exclude hidden entries
                 if ($hiddenTagId != null && !in_array($hiddenTagId, $searchTags)) {
@@ -261,12 +274,12 @@ if (! function_exists('getDataTableWithEntries'))
                 }
 
                 // skip SQL-query if no tags are selected, since we'd get an empty collection anyway
-                $tags = empty($searchTags) ? [] : \App\Tag::whereIn('id', $searchTags)->get();
+                $tags = empty($searchTags) ? [] : Tag::whereIn('id', $searchTags)->get();
                 $query->withAllTags($tags);
             }
 
             if (!empty($negativeSearchTags)) {
-                $tags = empty($negativeSearchTags) ? [] : \App\Tag::whereIn('id', $negativeSearchTags)->get();
+                $tags = empty($negativeSearchTags) ? [] : Tag::whereIn('id', $negativeSearchTags)->get();
                 $query->withoutTags($tags);
             }
     

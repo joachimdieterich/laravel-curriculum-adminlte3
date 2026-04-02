@@ -44,7 +44,7 @@ class KanbanController extends Controller
     {
         abort_unless(Gate::allows('kanban_access'), 403);
 
-        $kanbans = Kanban::query();
+        $kanbans = Kanban::select('kanbans.*');
         $withOwned = false;
         $withSubscribed = false;
         $tags = request('tags') ?? [];

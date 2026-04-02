@@ -6,13 +6,11 @@ use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Http\Requests\Tags\HideModelRequest;
 use App\Kanban;
 use App\KanbanSubscription;
-use App\Organization;
 use App\Tag;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Gate;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +18,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\View\View;
-use Yajra\DataTables\DataTables;
 
 class KanbanController extends Controller
 {
@@ -32,9 +29,10 @@ class KanbanController extends Controller
     public function index()
     {
         abort_unless(Gate::allows('kanban_access'), 403);
+
         if (request()->wantsJson()) {
             return getEntriesForSelect2ByCollection(
-                $this->getKanbans(),
+                getSubscribedModels(Kanban::class),
                 'kanbans.'
             );
         }
@@ -42,114 +40,24 @@ class KanbanController extends Controller
         return view('kanbans.index');
     }
 
-    public function getKanbans($withOwned = true)
-    {
-        $kanbans = Kanban::with('subscriptions')
-            ->whereHas('subscriptions', function ($query) {
-                $query->where(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\Organization')->where(
-                            'subscribable_id',
-                            auth()->user()->current_organization_id
-                        );
-                    }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\Group')->whereIn(
-                            'subscribable_id',
-                            auth()->user()->groups->pluck('id')
-                        );
-                    }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\User')->where(
-                            'subscribable_id',
-                            auth()->user()->id
-                        );
-                    }
-                );
-            })->orWhere('owner_id', auth()->user()->id);
-
-        if ($withOwned) {
-            $kanbans = $kanbans->orWhere('owner_id', auth()->user()->id);
-        }
-
-        return $kanbans;
-    }
-
-    public function userKanbans($withOwned = true, ?array $searchTags = [], ?array $negativeSearchTags = [])
-    {
-        // Wenn nicht explizit nach den "Verstecken"-Tag gesucht wird, ihn standardmäßig als Negativ-Tag eintragen
-        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
-        if ($hiddenTag !== null && !in_array($hiddenTag->id, $searchTags ?? [])) {
-            $negativeSearchTags[] = $hiddenTag->id;
-        }
-
-        $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
-        $negativeTags = Tag::select()->whereIn('id', $negativeSearchTags ?? [])->get();
-        /** @var Collection $userCanSee */
-        $userCanSee = auth()->user()->kanbans()->withAllTags($tags)->withoutTags($negativeTags)->get();
-
-        //tokenuser? only return subscriptions
-        if (auth()->user()->sharing_token !== null) {
-            return $userCanSee;
-        }
-
-        foreach (auth()->user()->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->kanbans()->withAllTags($tags)->withoutTags($negativeTags)->get());
-        }
-        $organization = Organization::find(auth()->user()->current_organization_id)->kanbans()->withAllTags($tags)->withoutTags($negativeTags)->get();
-        $userCanSee   = $userCanSee->merge($organization);
-
-        if ($withOwned) {
-            $owned      = Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get();
-            $userCanSee = $userCanSee->merge($owned);
-        }
-
-        return $userCanSee->unique();
-    }
-
-    private function favKanbans()
-    {
-        $favKanbans = new Collection();
-
-        $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
-        if ($favTag !== null) {
-            $favKanbans = $this->userKanbans(searchTags: [$favTag->id]);
-        }
-
-        return $favKanbans;
-    }
-
-    private function hiddenKanbans()
-    {
-        $hiddenKanbans = new Collection();
-
-        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
-        if ($hiddenTag !== null) {
-            $hiddenKanbans = $this->userKanbans(searchTags: [$hiddenTag->id]);
-        }
-
-        return $hiddenKanbans;
-    }
-
     public function list(Request $request)
     {
         abort_unless(Gate::allows('kanban_access'), 403);
 
-        $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
-        $negativeTags = Tag::select()->whereIn('id', request('negativeTags') ?? [])->get();
-
-        $newFilter = null;
+        $kanbans = Kanban::query();
+        $withOwned = false;
+        $withSubscribed = false;
+        $tags = request('tags') ?? [];
+        $negativeTags = request('negativeTags') ?? [];
 
         if (request()->has(['group_id'])) {
-            $validatedRequest  = request()->validate(
+            $group_id = request()->validate(
                 [
                     'group_id' => 'required',
                 ]
-            );
-            $group_id = $validatedRequest['group_id'];
-            $kanbans  = Kanban::with('subscriptions')
+            )['group_id'];
+
+            $kanbans = Kanban::with('subscriptions')
                 ->whereHas('subscriptions', function ($query) use ($group_id) {
                     $query->where(
                         function ($query) use ($group_id) {
@@ -158,35 +66,27 @@ class KanbanController extends Controller
                         }
                     );
                 });
-            $kanbans->withAllTags($tags)->withoutTags($negativeTags)->get();
         } else {
-            $kanbans = match ($request->filter) {
-                'owner'           => Kanban::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get(),
-                'shared_with_me'  => $this->userKanbans(false, request('tags'), request('negativeTags')),
-                'shared_by_me'    => Kanban::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->withoutTags($negativeTags)->get(),
-                'all'             => $this->userKanbans(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
-                'hidden'          => $this->hiddenKanbans(),
-                'favourite'       => $this->favKanbans(),
-                default           => $this->favKanbans(),
-            };
-
-            if (($request->filter ?? 'favourite') ==='favourite' && $kanbans->isEmpty()) {
-                $kanbans = $this->userKanbans(searchTags: request('tags'));
-                $newFilter = 'all';
+            switch ($request->filter) {
+                case 'owner':           $withOwned = true;
+                    break;
+                case 'shared_with_me':  $withSubscribed = true;
+                    break;
+                case 'shared_by_me':    $kanbans->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
+                    break;
+                case 'all':             $withSubscribed = $withOwned = true;
+                    break;
+                case 'hidden':          $withSubscribed = $withOwned = true;
+                                        $tags[] = Tag::findFromString(trans('global.tag.hidden.singular'))->id;
+                    break;
+                case 'favourite':
+                default:                $withSubscribed = $withOwned = true;
+                                        $tags[] = Tag::findFromString(trans('global.tag.favourite.singular'))->id;
+                    break;
             }
         }
 
-        if (empty($kanbans)) {
-            return '';
-        }
-
-        $dt = DataTables::of($kanbans);
-        if ($newFilter !== null) {
-            $dt->with('newFilter', $newFilter);
-        }
-
-        return $dt->setRowId('id')
-            ->make(true);
+        return getDataTableWithEntries($kanbans, $withSubscribed, $withOwned, $tags, $negativeTags);
     }
 
     /**

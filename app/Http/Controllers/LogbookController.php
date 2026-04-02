@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Logbook;
-use App\Organization;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 
 class LogbookController extends Controller
 {
@@ -20,15 +17,12 @@ class LogbookController extends Controller
         if (request()->wantsJson())
         {
             return getEntriesForSelect2ByCollection(
-                getModels(Logbook::class),
+                getSubscribedModels(Logbook::class),
                 'logbooks.'
             );
         }
-        else
-        {
-            return view('logbooks.index');
-        }
 
+        return view('logbooks.index');
     }
 
     public function list(Request $request)
@@ -41,12 +35,12 @@ class LogbookController extends Controller
 
         if (request()->has(['group_id']))
         {
-            $request = request()->validate(
+            $group_id = request()->validate(
                 [
                     'group_id' => 'required',
                 ]
-            );
-            $group_id = $request['group_id'];
+            )['group_id'];
+
             $logbooks = Logbook::whereHas('subscriptions', function ($query) use ($group_id) {
                 $query->where(function ($query) use ($group_id) {
                     $query->where('subscribable_type', 'App\\Group')
@@ -69,8 +63,7 @@ class LogbookController extends Controller
             }
         }
 
-
-        return getDataTableWithEntries($logbooks, 'logbooks.id', $withSubscribed, $withOwned);
+        return getDataTableWithEntries($logbooks, $withSubscribed, $withOwned);
     }
 
     /**

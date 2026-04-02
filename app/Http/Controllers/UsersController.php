@@ -54,8 +54,6 @@ class UsersController extends Controller
     {
         abort_unless(\Gate::allows('user_access'), 403);
 
-        $rowID = 'id';
-
         if (request()->has(['group_id']))
         {
             $request = request()->validate(
@@ -64,7 +62,6 @@ class UsersController extends Controller
                 ]
             );
             $users = Group::where('id',$request['group_id'])->first()->users();
-            $rowID = 'user_id';
         }
         else
         {
@@ -74,7 +71,7 @@ class UsersController extends Controller
             $users->select('users.id', 'username', 'firstname', 'lastname', 'common_name', 'email')->noSharing();
         }
 
-        return getDataTableWithEntries($users, $rowID);
+        return getDataTableWithEntries($users);
     }
 
     public function create()

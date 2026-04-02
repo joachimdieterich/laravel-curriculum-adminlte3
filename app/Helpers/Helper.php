@@ -200,7 +200,7 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
     }
 }
 
-if (! function_exists('getModels'))
+if (! function_exists('getSubscribedModels'))
 {
     /**
      * helper function to get all models that are subscribed to the user
@@ -208,7 +208,7 @@ if (! function_exists('getModels'))
      * @param bool $withOwned also get entries owned by the user
      * @return Builder
      */
-    function getModels($model, $withOwned = true): Builder
+    function getSubscribedModels($model, $withOwned = true): Builder
     {
         // parse model to a query-builder if classname is given
         if (is_string($model)) $model = $model::query();
@@ -240,33 +240,37 @@ if (! function_exists('getDataTableWithEntries'))
     /**
      * helper function to get all entries for select2 fields
      * @param Illuminate\Database\Eloquent\Builder $query the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
-     * @param string $rowId column to use as primary key for datatables
-     * @param bool $withSubscribed also get entries shared with the user
-     * @param bool $withOwned also get entries owned by the user, not only shared with the user
+     * @param bool $withSubscribed get entries shared with the user
+     * @param bool $withOwned get entries owned by the user
      * @param array|null $searchTags if given, only entries with these tags will be returned
      * @param array|null $negativeSearchTags if given, entries with these tags will be excluded
      * @return \Illuminate\Http\JsonResponse
      */
-    function getDataTableWithEntries($query, $rowId = 'id', $withSubscribed = false, $withOwned = false, $searchTags = null, $negativeSearchTags = null): \Illuminate\Http\JsonResponse
+    function getDataTableWithEntries($query, $withSubscribed = false, $withOwned = false, $searchTags = null, $negativeSearchTags = null): \Illuminate\Http\JsonResponse
     {
         try {
-            if ($withSubscribed) $query = getModels($query, $withOwned);
+            if ($withSubscribed) $query = getSubscribedModels($query, $withOwned);
             else if ($withOwned) $query->orWhere('owner_id', auth()->user()->id); // only get owned entries
 
-            if ($searchTags != null) {
+            if ($searchTags !== null) {
+                $hiddenTagId = \App\Tag::findFromString(trans('global.tag.hidden.singular'))->id;
+
+                // if hidden-tag is not explicitly included in search-tags, exclude hidden entries
+                if ($hiddenTagId != null && !in_array($hiddenTagId, $searchTags)) {
+                    $negativeSearchTags[] = $hiddenTagId;
+                }
+
                 // skip SQL-query if no tags are selected, since we'd get an empty collection anyway
                 $tags = empty($searchTags) ? [] : \App\Tag::whereIn('id', $searchTags)->get();
                 $query->withAllTags($tags);
             }
 
-            if ($negativeSearchTags != null) {
+            if (!empty($negativeSearchTags)) {
                 $tags = empty($negativeSearchTags) ? [] : \App\Tag::whereIn('id', $negativeSearchTags)->get();
                 $query->withoutTags($tags);
             }
     
-            return \Yajra\DataTables\DataTables::of($query)
-                ->setRowId($rowId)
-                ->make(true);
+            return \Yajra\DataTables\DataTables::of($query)->make(true);
         } catch (\Throwable $th) {
             return response()->json([
                 'error' => 'An error occurred while fetching the data.',

@@ -76,22 +76,18 @@ class Kanban extends Model implements Broadcastable
     public function withRelations(): self|null
     {
         return $this->with([
-            'owner'          => function ($query) {
-                $query->select('id', 'firstname', 'lastname');
-            },
+            'owner:id,firstname,lastname',
             'statuses.items' => function ($query) {
                 $query->with([
                     'comments',
-                    'comments.user',
+                    'comments.user:id,username,firstname,lastname',
                     'comments.likes',
                     'likes',
-                    'mediaSubscriptions.medium',
-                    'owner' => function ($query) {
-                        $query->select('id', 'username', 'firstname', 'lastname');
-                    },
+                    'mediaSubscriptions.medium:id,title,medium_name,mime_type',
+                    'owner:id,username,firstname,lastname',
                 ])->orderBy('order_id');
             },
-            'medium',
+            'medium:id,title,medium_name',
             'tags'
         ])->find($this->id);
     }

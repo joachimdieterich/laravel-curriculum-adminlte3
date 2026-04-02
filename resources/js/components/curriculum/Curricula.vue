@@ -223,7 +223,6 @@ export default {
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
-                { title: 'tags', data: 'tags' }
             ],
             filter: 'favourite',
             dt: null,

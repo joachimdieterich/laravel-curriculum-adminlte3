@@ -477,7 +477,8 @@ return [
         'edit' => 'Tag bearbeiten',
         'delete' => 'Tag löschen',
         'delete_helper' => 'Soll der Tag sowie die zugehörigen Daten gelöscht werden?',
-        'please_select' => 'Bestehenden Tag auswählen'
+        'please_select' => 'Bestehenden Tag auswählen',
+        'tag_component_title' => 'Tags anheften/entfernen',
     ],
     'hide' => 'Ausblenden',
     'remove_hide' => 'Einblenden',

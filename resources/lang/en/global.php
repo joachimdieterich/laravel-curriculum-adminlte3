@@ -462,7 +462,8 @@ return [
         'edit' => 'Edit tag',
         'delete' => 'Delete tag',
         'delete_helper' => 'Should the tag be deleted and its corresponded data?',
-        'please_select' => 'Choose existing tag'
+        'please_select' => 'Choose existing tag',
+        'tag_component_title' => 'Attach/remove tags',
     ],
     'hide' => 'Hide',
     'remove_hide' => 'Unhide',

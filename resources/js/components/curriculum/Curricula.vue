@@ -98,6 +98,17 @@
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.curriculum.edit') }}
                         </button>
+
+                        <button
+                            v-permission="'tag_access'"
+                            :name="'manage-tags-' + curriculum.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="manageTags(curriculum)"
+                        >
+                            <i class="fa fa-tag mr-2"></i>
+                            {{ trans('global.tag.title') }}
+                        </button>
+
                         <button v-if="$userId == curriculum.owner_id"
                             :name="'curriculum-set_owner_' + curriculum.id"
                             class="dropdown-item text-secondary"
@@ -106,6 +117,7 @@
                             <i class="fa fa-user mr-2"></i>
                             {{ trans('global.curriculum.edit_owner') }}
                         </button>
+
                         <button
                             :name="'curriculum-share_' + curriculum.id"
                             class="dropdown-item text-secondary"
@@ -153,6 +165,7 @@
         </div>
 
         <Teleport to="body">
+            <TagComponentModal event-prefix="curriculum" model-namespace="\App\Curriculum"/>
             <CurriculumModal/>
             <SubscribeModal/>
             <MediumModal/>
@@ -187,6 +200,7 @@ import Favourite from "../tag/Favourite.vue";
 import Hide from "../tag/Hide.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 import TabList from "../uiElements/TabList.vue";
+import TagComponentModal from "../tag/TagComponentModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -229,6 +243,9 @@ export default {
         }
     },
     methods: {
+        manageTags(curriculum) {
+            this.globalStore?.showModal('tag-component-modal', curriculum);
+        },
         confirmItemDelete(curriculum) {
             this.currentCurriculum = curriculum;
             this.showConfirm = true;
@@ -339,6 +356,7 @@ export default {
         });
     },
     components: {
+        TagComponentModal,
         TabList,
         Hide,
         Favourite,

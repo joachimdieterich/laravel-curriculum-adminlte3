@@ -48,6 +48,11 @@
 </template>
 <script>
 export default {
+    emits: [
+        'selectedValue',
+        'opened',
+        'cleared'
+    ],
     props: {
         id: {
             type: String,
@@ -200,6 +205,9 @@ export default {
 
             this.componentInstance.on("select2:select", function(e) {
                 this.$emit("selectedValue", this.componentInstance.select2("data").map(i => i['id']));
+            }.bind(this))
+            .on("select2:open", function() {
+                this.$emit("opened");
             }.bind(this))
             .on("select2:clear", function() {
                 this.$emit("cleared");

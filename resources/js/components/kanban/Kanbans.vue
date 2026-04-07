@@ -88,6 +88,16 @@
                             {{ trans('global.kanban.edit') }}
                         </button>
 
+                        <button
+                            v-permission="'tag_access'"
+                            :name="'manage-tags-' + kanban.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="manageTags(kanban)"
+                        >
+                            <i class="fa fa-tag mr-2"></i>
+                            {{ trans('global.tag.title') }}
+                        </button>
+
                         <button v-if="ownerOrAdmin(kanban)"
                             :name="'kanban-share_' + kanban.id"
                             class="dropdown-item text-secondary"
@@ -150,6 +160,7 @@
         </div>
 
         <Teleport to="body">
+            <TagComponentModal v-if="!subscribable" event-prefix="kanban" model-namespace="\App\Kanban"/>
             <KanbanModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
@@ -187,6 +198,7 @@ import {useToast} from "vue-toastification";
 import Hide from "../tag/Hide.vue";
 import Favourite from "../tag/Favourite.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
+import TagComponentModal from "../tag/TagComponentModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -264,6 +276,9 @@ export default {
         setFilter(filter) {
             this.filter = filter;
             this.dt.ajax.url('/kanbans/list?filter=' + this.filter).load();
+        },
+        manageTags(kanban) {
+            this.globalStore?.showModal('tag-component-modal', kanban);
         },
         editKanban(kanban) {
             this.globalStore?.showModal('kanban-modal', kanban);
@@ -358,6 +373,7 @@ export default {
         },
     },
     components: {
+        TagComponentModal,
         Hide,
         Favourite,
         SubscribeModal,

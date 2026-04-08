@@ -31,7 +31,7 @@
         "jumbojett/openid-connect-php": "^1.0",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.45",
-        "laravel/passport": "^12.0",
+        "laravel/passport": "^13.7",
         "laravel/reverb": "^1.0",
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.0",

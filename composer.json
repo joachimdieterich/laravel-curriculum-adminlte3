@@ -50,6 +50,7 @@
         "beyondcode/laravel-dump-server": "^2.0",
         "fakerphp/faker": "^1.20",
         "filp/whoops": "^2.0",
+        "fruitcake/laravel-debugbar": "^4.2",
         "laracasts/cypress": "^3.0",
         "laravel/dusk": "^8.0",
         "laravel/pint": "^0.2.1",

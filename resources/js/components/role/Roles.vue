@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="d-flex flex-column">
         <div
             id="role-content"
@@ -97,7 +97,6 @@ import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
         const globalStore = useGlobalStore();
@@ -115,14 +114,10 @@ export default {
             search: '',
             showConfirm: false,
             url: '/roles/list',
-            errors: {},
             currentRole: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'permissions', data: 'permissions' },
-                { title: 'tags', data: 'tags' }
             ],
         }
     },

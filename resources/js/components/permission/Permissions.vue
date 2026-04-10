@@ -1,5 +1,5 @@
 
-<template >
+<template>
     <div class="d-flex flex-column">
         <div
             id="permission-content"
@@ -98,7 +98,6 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -111,10 +110,8 @@ export default {
             permissions: null,
             search: '',
             showConfirm: false,
-            errors: {},
             currentPermission: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],

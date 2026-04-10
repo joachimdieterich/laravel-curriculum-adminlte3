@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Interfaces\VideoconferenceInterface;
-use App\Organization;
 use App\Services\Regex;
 use App\User;
 use App\Videoconference;
@@ -17,7 +16,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Hash;
 
 class VideoconferenceController extends Controller
@@ -50,7 +48,6 @@ class VideoconferenceController extends Controller
         if (request()->wantsJson()) {
             return $servers;
         }
-
     }
 
     /**
@@ -60,100 +57,28 @@ class VideoconferenceController extends Controller
      */
     public function index()
     {
-        abort_unless(Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403, 'missing rights');
+        abort_unless(Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403);
 
         if (request()->wantsJson()) {
             return getEntriesForSelect2ByCollection(
-                $this->getVideoconferences(),
+                getSubscribedModels(Videoconference::class),
                 'videoconferences.',
-                        ['meetingName', 'medium_id'],
+                ['meetingName', 'medium_id'],
                 'meetingName',
                 "meetingName",
             );
         }
 
         return view('videoconference.index');
-
     }
 
-    public function getVideoconferences($withOwned = true)
-    {
-        $videoconferences = Videoconference::with('subscriptions')
-            ->whereHas('subscriptions', function ($query) {
-                $query->where(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
-                    }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
-                    }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
-                    }
-                );
-            });
-
-        if ($withOwned) {
-            $videoconferences = $videoconferences->orWhere('owner_id', auth()->user()->id);
-        }
-
-        return $videoconferences;
-    }
-
-    public function userVideoconferences($withOwned = true, $user = null)
-    {
-        if ($user == null)
-        {
-            $user = auth()->user();
-        }
-        $userCanSee = $user->videoconferences;
-
-        foreach ($user->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->videoconferences);
-        }
-        $organization = Organization::find($user->current_organization_id)->videoconferences;
-        $userCanSee = $userCanSee->merge($organization);
-
-        if ($withOwned)
-        {
-            $owned = Videoconference::where('owner_id', $user->id)->get();
-            $userCanSee = $userCanSee->merge($owned);
-        }
-
-        return $userCanSee->unique();
-    }
-
-    public function list(Request $request)
+    public function list(Request $request): JsonResponse
     {
         abort_unless(Gate::allows('videoconference_access') and auth()->user()->id != config('app.guest_user_id'), 403);
 
-        if (request()->has(['group_id'])) {
-            $validatedRequest = request()->validate(['group_id' => 'required']);
+        $videoconferences = Videoconference::query();
 
-            $group_id         = $validatedRequest['group_id'];
-            $videoconferences = Videoconference::with('subscriptions')
-                ->whereHas('subscriptions', function ($query) use ($group_id) {
-                    $query->where(
-                        function ($query) use ($group_id) {
-                            $query->where('subscribable_type', 'App\\Group')
-                                ->where('subscribable_id', $group_id);
-                        }
-                    );
-                });
-        } else {
-            $videoconferences = match ($request->filter) {
-                'owner'          => Videoconference::where('owner_id', auth()->user()->id)->get(),
-                'shared_with_me' => $this->userVideoconferences(false),
-                'shared_by_me'   => Videoconference::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get(),
-                default /*all*/  => $this->userVideoconferences(),
-            };
-        }
-
-        return empty($videoconferences) ? '' : DataTables::of($videoconferences)
-            ->setRowId('id')
-            ->make(true);
+        return getDataTableWithEntries($videoconferences);
     }
 
     /**

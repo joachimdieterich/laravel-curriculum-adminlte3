@@ -40,53 +40,13 @@ class KanbanController extends Controller
         return view('kanbans.index');
     }
 
-    public function list(Request $request)
+    public function list(Request $request): JsonResponse
     {
         abort_unless(Gate::allows('kanban_access'), 403);
 
         $kanbans = Kanban::select('kanbans.*');
-        $withOwned = false;
-        $withSubscribed = false;
-        $tags = request('tags') ?? [];
-        $negativeTags = request('negativeTags') ?? [];
 
-        if (request()->has(['group_id'])) {
-            $group_id = request()->validate(
-                [
-                    'group_id' => 'required',
-                ]
-            )['group_id'];
-
-            $kanbans = Kanban::with('subscriptions')
-                ->whereHas('subscriptions', function ($query) use ($group_id) {
-                    $query->where(
-                        function ($query) use ($group_id) {
-                            $query->where('subscribable_type', 'App\\Group')
-                                ->where('subscribable_id', $group_id);
-                        }
-                    );
-                });
-        } else {
-            switch ($request->filter) {
-                case 'owner':           $withOwned = true;
-                    break;
-                case 'shared_with_me':  $withSubscribed = true;
-                    break;
-                case 'shared_by_me':    $kanbans->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
-                    break;
-                case 'all':             $withSubscribed = $withOwned = true;
-                    break;
-                case 'hidden':          $withSubscribed = $withOwned = true;
-                                        $tags[] = Tag::findFromString(trans('global.tag.hidden.singular'))->id;
-                    break;
-                case 'favourite':
-                default:                $withSubscribed = $withOwned = true;
-                                        $tags[] = Tag::findFromString(trans('global.tag.favourite.singular'))->id;
-                    break;
-            }
-        }
-
-        return getDataTableWithEntries($kanbans, $withSubscribed, $withOwned, $tags, $negativeTags);
+        return getDataTableWithEntries($kanbans, true);
     }
 
     /**

@@ -3,12 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Map;
-use App\Organization;
-use App\Videoconference;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use App\MapSubscription;
 
 class MapController extends Controller
@@ -25,50 +21,13 @@ class MapController extends Controller
         return view('map.index');
     }
 
-    public function userMaps($withOwned = true, $user = null)
-    {
-        if ($user == null)
-        {
-            $user = auth()->user();
-        }
-        $userCanSee = $user->maps;
-
-        foreach ($user->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->maps);
-        }
-        $organization = Organization::find($user->current_organization_id)->maps;
-        $userCanSee = $userCanSee->merge($organization);
-
-        if ($withOwned)
-        {
-            $owned = Map::where('owner_id', $user->id)->get();
-            $userCanSee = $userCanSee->merge($owned);
-        }
-
-        return $userCanSee->unique();
-    }
-    public function list(Request $request)
+    public function list(Request $request): \Illuminate\Http\JsonResponse
     {
         abort_unless(\Gate::allows('map_access'), 403);
 
-        switch ($request->filter)
-        {
-            case 'owner':            $maps = Map::where('owner_id', auth()->user()->id)->get();
-                break;
-            case 'by_organization':  $maps = Organization::where('id', auth()->user()->current_organization_id)->get()->first()->maps;
-                break;
-            case 'shared_with_me':   $maps = $this->userMaps(false);
-                break;
-            case 'shared_by_me':     $maps = Map::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
-                break;
-            case 'all':
-            default:                 $maps = $this->userMaps();
-                break;
-        }
+        $maps = Map::without('markers');
 
-        return empty($maps) ? '' : DataTables::of($maps)
-            ->setRowId('id')
-            ->make(true);
+        return getDataTableWithEntries($maps);
     }
 
     /**

@@ -14,23 +14,20 @@ class PermissionsController extends Controller
     {
         abort_unless(\Gate::allows('permission_access'), 403);
         if (request()->wantsJson()) {
-            return  getEntriesForSelect2ByModel(
+            return getEntriesForSelect2ByModel(
                 "App\Permission"
             );
         }
         return view('permissions.index');
     }
 
-    public function list()
+    public function list(): \Illuminate\Http\JsonResponse
     {
         abort_unless(\Gate::allows('permission_access'), 403);
 
-        $permissions = Permission::all();
+        $permissions = Permission::select('id', 'title');
 
-        return DataTables::of($permissions)
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->make(true);
+        return DataTables::of($permissions)->make(true);
     }
 
     public function store(StorePermissionRequest $request)

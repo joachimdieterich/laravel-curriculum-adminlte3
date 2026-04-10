@@ -10,18 +10,14 @@ use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Http\Requests\Tags\HideModelRequest;
 use App\Level;
 use App\Medium;
-use App\Organization;
-use App\Tag;
 use App\VariantDefinition;
 use Carbon\Carbon;
 use Gate;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use JsonException;
-use Yajra\DataTables\DataTables;
 
 class CurriculumController extends Controller
 {
@@ -39,7 +35,7 @@ class CurriculumController extends Controller
             }
         }
 
-        abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json return should work for all users
+        abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json-requests should work for all users
 
         return view('curricula.index');
     }
@@ -73,101 +69,13 @@ class CurriculumController extends Controller
         }
     }
 
-    public function userCurricula($withOwned = true, $user = null, ?array $searchTags = [], ?array $negativeSearchTags = [])
-    {
-        // Wenn nicht explizit nach den "Verstecken"-Tag gesucht wird, ihn standardmäßig als Negativ-Tag eintragen
-        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
-        if ($hiddenTag !== null && !in_array($hiddenTag->id, $searchTags ?? [])) {
-            $negativeSearchTags[] = $hiddenTag->id;
-        }
-
-        $tags = Tag::select()->whereIn('id', $searchTags ?? [])->get();
-        $negativeTags = Tag::select()->whereIn('id', $negativeSearchTags ?? [])->get();
-
-        if ($user == null) {
-            $user = auth()->user();
-        }
-        $userCanSee = $user->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get();
-
-        foreach ($user->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get());
-        }
-        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get();
-        $userCanSee   = $userCanSee->merge($organization);
-
-        if ($withOwned) {
-            $owned      = Curriculum::where('owner_id', $user->id)->withAllTags($tags)->withoutTags($negativeTags)->get();
-            $userCanSee = $userCanSee->merge($owned);
-            // global curricula are visible for all users, but shouldn't be shown on 'shared with me'
-            $global     = Curriculum::where('type_id', 1)->withAllTags($tags)->withoutTags($negativeTags)->get();
-            $userCanSee = $userCanSee->merge($global);
-        }
-
-        return $userCanSee->unique();
-    }
-
-    private function favCurricula()
-    {
-        $favCurricula = new Collection();
-
-        $favTag = Tag::findFromString(trans('global.tag.favourite.singular'));
-        if ($favTag !== null) {
-            $favCurricula = $this->userCurricula(searchTags: [$favTag->id]);
-        }
-
-        return $favCurricula;
-    }
-
-    private function hiddenCurricula()
-    {
-        $hiddenCurricula = new Collection();
-
-        $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
-        if ($hiddenTag !== null) {
-            $hiddenCurricula = $this->userCurricula(searchTags: [$hiddenTag->id]);
-        }
-
-        return $hiddenCurricula;
-    }
-
-    public function list(Request $request)
+    public function list(Request $request): \Illuminate\Http\JsonResponse
     {
         abort_unless(Gate::allows('curriculum_access'), 403);
 
-        $tags = Tag::select()->whereIn('id', request('tags') ?? [])->get();
-        $negativeTags = Tag::select()->whereIn('id', request('negativeTags') ?? [])->get();
+        $curricula = Curriculum::select('curricula.*');
 
-        $curricula = match ($request->filter) {
-            'owner'           => Curriculum::where('owner_id', auth()->user()->id)->withAllTags($tags)->withoutTags($negativeTags)->get(),
-            'shared_with_me'  => $this->userCurricula(false, searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
-            'shared_by_me'    => Curriculum::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->withAllTags($tags)->withoutTags($negativeTags)->get(),
-            'by_organization' => Organization::find(auth()->user()->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get(),
-            'all'             => $this->userCurricula(searchTags: request('tags'), negativeSearchTags: request('negativeTags')),
-            'favourite'       => $this->favCurricula(),
-            'hidden'          => $this->hiddenCurricula(),
-            default           => $this->favCurricula(),
-        };
-
-        $newFilter = null;
-        if (($request->filter ?? 'favourite') ==='favourite' && $curricula->isEmpty()) {
-            $curricula = $this->userCurricula(searchTags: request('tags'));
-            $newFilter = 'all';
-        }
-
-        if (empty($curricula)) {
-            return '';
-        }
-
-        $dt = DataTables::of($curricula);
-        if ($newFilter !== null) {
-            $dt->with('newFilter', $newFilter);
-        }
-
-        return $dt->addColumn('tags', function ($curricula) {
-                return $curricula->tags->toArray();
-            })
-            ->setRowId('id')
-            ->make(true);
+        return getDataTableWithEntries($curricula, true);
     }
 
     /**
@@ -778,28 +686,10 @@ class CurriculumController extends Controller
         }
         else if (is_creator() || is_schooladmin() || is_teacher())
         {
-            $curriculum = Curriculum::where('owner_id', auth()->user()->id) // owner
-                ->orWhere('type_id', 1) // global curricula
-                ->orWhereHas('subscriptions', function ($query) {
-                    $query->where( // organization-subscription
-                        function ($query) {
-                            $query->where('subscribable_type', 'App\\Organization')
-                                ->where('subscribable_id', auth()->user()->current_organization_id);
-                        }
-                    )->orWhere( // group-subscription
-                        function ($query) {
-                            $query->where('subscribable_type', 'App\\Group')
-                                ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
-                        }
-                    )->orWhere( // user-subscription
-                        function ($query) {
-                            $query->where('subscribable_type', 'App\\User')
-                                ->where('subscribable_id', auth()->user()->id);
-                        }
-                    );
-                })->get();
-
-            return getEntriesForSelect2ByCollectionAlternative($curriculum);
+            $curriculum = getSubscribedModels(Curriculum::class)
+                ->orWhere('type_id', 1); // global curricula
+                
+            return getEntriesForSelect2ByCollection($curriculum, 'curricula.');
         }
         else
         {

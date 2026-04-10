@@ -29,13 +29,11 @@ class RolesController extends Controller
         return view('roles.index');
     }
 
-    public function list()
+    public function list(): \Illuminate\Http\JsonResponse
     {
         abort_unless(\Gate::allows('role_access'), 403);
-        $roles = Role::select([
-            'id',
-            'title',
-        ]);
+
+        $roles = Role::select('id', 'title');
 
         return DataTables::of($roles)
             ->filter(function (Builder $query) {
@@ -52,11 +50,6 @@ class RolesController extends Controller
             ->addColumn('tags', function ($roles) {
                 return $roles->tags->toArray();
             })
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 

@@ -71,7 +71,7 @@ class UsersController extends Controller
             $users->select('users.id', 'username', 'firstname', 'lastname', 'common_name', 'email')->noSharing();
         }
 
-        return getDataTableWithEntries($users);
+        return \Yajra\DataTables\DataTables::of($users)->make(true);
     }
 
     public function create()

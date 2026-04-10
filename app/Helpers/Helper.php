@@ -241,19 +241,62 @@ if (! function_exists('getDataTableWithEntries'))
     /**
      * helper function to get all entries for select2 fields
      * @param Illuminate\Database\Eloquent\Builder $query the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
-     * @param bool $withSubscribed get entries shared with the user
-     * @param bool $withOwned get entries owned by the user
-     * @param array|null $searchTags if given, only entries with these tags will be returned
-     * @param array|null $negativeSearchTags if given, entries with these tags will be excluded
+     * @param bool $hasTags does the model have tags?
      * @return \Illuminate\Http\JsonResponse
      */
-    function getDataTableWithEntries($query, $withSubscribed = false, $withOwned = false, $searchTags = null, $negativeSearchTags = null): \Illuminate\Http\JsonResponse
+    function getDataTableWithEntries($query, $hasTags = false): \Illuminate\Http\JsonResponse
     {
+        $withOwned = false;
+        $withSubscribed = false;
+        $tags = $hasTags ? request('tags') ?? [] : null;
+        $negativeTags = $hasTags ? request('negativeTags') ?? [] : null;
+
+        // requests from /groups/{id} only need entries that are shared with the group
+        if (request()->has(['group_id'])) {
+            $group_id = request()->validate([
+                'group_id' => 'required|integer',
+            ])['group_id'];
+
+            $query->whereHas('subscriptions', function ($q) use ($group_id) {
+                $q->where([
+                    'subscribable_type' => 'App\\Group',
+                    'subscribable_id' => $group_id,
+                ]);
+            });
+        } else {
+            // set flags based on TabList-filter
+            switch (request('filter')) {
+                case 'owner':           $withOwned = true;
+                    break;
+                case 'shared_with_me':  $withSubscribed = true;
+                    break;
+                case 'shared_by_me':    $query->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
+                    break;
+                case 'by_organization': $query->whereHas('subscriptions', function ($query) {
+                                            $query->where([
+                                                'subscribable_type' => 'App\\Organization',
+                                                'subscribable_id' => auth()->user()->current_organization_id,
+                                            ]);
+                                        });
+                    break;
+                case 'all':             $withSubscribed = $withOwned = true;
+                    break;
+                case 'hidden':          $withSubscribed = $withOwned = true;
+                                        $tags[] = Tag::findFromString(trans('global.tag.hidden.singular'))->id;
+                    break;
+                case 'favourite':
+                default:                $withSubscribed = $withOwned = true;
+                                        if ($hasTags) $tags[] = Tag::findFromString(trans('global.tag.favourite.singular'))->id;
+                    break;
+            }
+        }
+
         try {
             if ($withSubscribed) $query = getSubscribedModels($query, $withOwned);
             else if ($withOwned) $query->orWhere('owner_id', auth()->user()->id); // only get owned entries
 
-            if ($searchTags !== null) {
+            // only apply tag-filters if model has tags
+            if ($hasTags) {
                 $query->with('tags:id,name,slug');
 
                 $favouriteTagId = Tag::findFromString(trans('global.tag.favourite.singular'))->id;
@@ -269,18 +312,21 @@ if (! function_exists('getDataTableWithEntries'))
                 ->leftJoin('tags', 'tags.id', '=', 'taggables.tag_id');
 
                 // if hidden-tag is not explicitly included in search-tags, exclude hidden entries
-                if ($hiddenTagId != null && !in_array($hiddenTagId, $searchTags)) {
-                    $negativeSearchTags[] = $hiddenTagId;
+                if ($hiddenTagId != null && !in_array($hiddenTagId, $tags)) {
+                    $negativeTags[] = $hiddenTagId;
                 }
 
-                // skip SQL-query if no tags are selected, since we'd get an empty collection anyway
-                $tags = empty($searchTags) ? [] : Tag::whereIn('id', $searchTags)->get();
-                $query->withAllTags($tags);
-            }
+                // apply filter
+                if (!empty($tags)) {
+                    $tags = Tag::whereIn('id', $tags)->get();
+                    $query->withAllTags($tags);
+                }
 
-            if (!empty($negativeSearchTags)) {
-                $tags = empty($negativeSearchTags) ? [] : Tag::whereIn('id', $negativeSearchTags)->get();
-                $query->withoutTags($tags);
+                // apply negative-filter
+                if (!empty($negativeTags)) {
+                    $negativeTags = Tag::whereIn('id', $negativeTags)->get();
+                    $query->withoutTags($negativeTags);
+                }
             }
     
             return \Yajra\DataTables\DataTables::of($query)->make(true);

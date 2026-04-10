@@ -30,40 +30,8 @@ class LogbookController extends Controller
         abort_unless(\Gate::allows('logbook_access'), 403);
 
         $logbooks = Logbook::select('logbooks.id', 'title', 'description', 'medium_id', 'color', 'css_icon', 'owner_id');
-        $withSubscribed = false;
-        $withOwned = false;
 
-        if (request()->has(['group_id']))
-        {
-            $group_id = request()->validate(
-                [
-                    'group_id' => 'required',
-                ]
-            )['group_id'];
-
-            $logbooks = Logbook::whereHas('subscriptions', function ($query) use ($group_id) {
-                $query->where(function ($query) use ($group_id) {
-                    $query->where('subscribable_type', 'App\\Group')
-                        ->where('subscribable_id', $group_id);
-                });
-            });
-        }
-        else
-        {
-            switch ($request->filter) {
-                case 'owner':           $withOwned = true;
-                    break;
-                case 'shared_with_me':  $withSubscribed = true;
-                    break;
-                case 'shared_by_me':    $logbooks->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
-                    break;
-                case 'all':
-                default:                $withSubscribed = $withOwned = true;
-                    break;
-            }
-        }
-
-        return getDataTableWithEntries($logbooks, $withSubscribed, $withOwned);
+        return getDataTableWithEntries($logbooks);
     }
 
     /**

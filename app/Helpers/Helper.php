@@ -1,5 +1,6 @@
 <?php
 
+use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Medium;
 use App\MediumSubscription;
@@ -392,9 +393,11 @@ if (! function_exists('today_online')) {
 }
 
 if (! function_exists('is_admin')) {
-    function is_admin()
+    function is_admin(?User $user = null): bool
     {
-        return auth()->user()->role()->id == 1;
+        $user = $user ?? auth()->user();
+
+        return $user->role()->id == 1;
     }
 }
 

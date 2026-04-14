@@ -42,7 +42,7 @@ Route::group([
 
 
     /**
-     * Admin login for access, but common_name for simulation
+     * Oauth login for access, but common_name for user simulation
      */
     Route::group([
         'as' => 'simulate.',
@@ -50,10 +50,10 @@ Route::group([
     ], function () {
         /*** Videoconferences ***/
         Route::apiResource('videoconferences', 'VideoconferenceApiController');
-        Route::get('videoconference/links', 'VideoconferenceApiController@getLinks');
+        Route::get('videoconferences/links', 'VideoconferenceApiController@getLinks');
 
         /*** Users ***/
-        Route::get('user/permissions', [UsersApiController::class, 'permissions']);
+        Route::get('users/permissions', [UsersApiController::class, 'permissions']);
     });
 });
 

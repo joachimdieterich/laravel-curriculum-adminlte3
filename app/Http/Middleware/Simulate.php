@@ -11,16 +11,13 @@ class Simulate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards)
     {
-        $user = auth('api')->user();
-        if ($user !== null && $user->id !== config('guest_user_id')) {
-            $request->validate([
-                'common_name' => 'required|string|exists:users,common_name',
-            ]);
+        $request->validate([
+            'common_name' => 'required|string|exists:users,common_name',
+        ]);
 
-            $commonName = $request->get('common_name');
+        $commonName = $request->input('common_name');
 
-            Auth::login(User::where('common_name', $commonName)->firstOrFail(), true);
-        }
+        Auth::login(User::where('common_name', $commonName)->firstOrFail(), true);
 
         return $next($request);
     }

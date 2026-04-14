@@ -11,8 +11,7 @@
                 :create=true
                 :label="trans('global.tag.create')"
             />
-            <IndexWidget
-                v-for="tag in tags"
+            <IndexWidget v-for="tag in tags"
                 :key="tag.id"
                 :model="tag"
                 modelName="Tag"
@@ -113,12 +112,10 @@ export default {
             tags: null,
             search: '',
             showConfirm: false,
-            errors: {},
             currentTag: {},
-            testVar: true,
             columns: [
-                {title: 'id', data: 'id'},
-                {title: 'name', data: 'translation', searchable: true},
+                { title: 'id', data: 'id' },
+                { title: 'name', data: 'translation', searchable: true },
             ],
         }
     },

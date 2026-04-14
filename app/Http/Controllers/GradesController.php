@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\CurriculumType;
 use App\Grade;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\DataTables;
 
 class GradesController extends Controller
@@ -20,23 +20,17 @@ class GradesController extends Controller
         return view('grades.index');
     }
 
-    public function list()
+    public function list(): JsonResponse
     {
         abort_unless(\Gate::allows('grade_access'), 403);
-        $grades = Grade::select([
-            'id',
-            'title',
-            'external_begin',
-            'external_end',
-            'organization_type_id',
-        ])->with('organizationType')->get();
+
+        $grades = Grade::select(['id', 'title', 'external_begin', 'external_end', 'organization_type_id'])
+            ->with('organizationType:id,title');
 
         return DataTables::of($grades)
             ->addColumn('organization_type', function ($grades) {
                 return isset($grades->organizationType->title) ? $grades->organizationType->title : 'default';
             })
-            ->addColumn('check', '')
-            ->setRowId('id')
             ->make(true);
     }
 

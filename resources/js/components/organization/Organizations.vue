@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="d-flex flex-column">
         <div
             id="organization-content"
@@ -108,15 +108,10 @@ export default {
             search: '',
             showConfirm: false,
             url: '/organizations/list',
-            errors: {},
             currentOrganization: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'postcode', data: 'postcode', searchable: true },
-                { title: 'city', data: 'city', searchable: true },
-                { title: 'status', data: 'status', searchable: true },
             ],
             options : this.$dtOptions,
             dt: null,

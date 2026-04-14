@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="d-flex flex-column">
         <div
             id="grade-content"
@@ -109,15 +109,10 @@ export default {
             search: '',
             showConfirm: false,
             url: '/grades/list',
-            errors: {},
             currentGrade: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
-                { title: 'external_begin', data: 'external_begin'},
-                { title: 'external_end', data: 'external_end', searchable: true},
-                { title: 'organization_type', data: 'organization_type', searchable: true},
             ],
             options : this.$dtOptions,
             dt: null,

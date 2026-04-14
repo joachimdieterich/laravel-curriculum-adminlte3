@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Curriculum;
 use App\CurriculumSubscription;
-use App\Grade;
 use App\Group;
 use App\Http\Requests\MassDestroyGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
-use App\Organization;
 use App\OrganizationRoleUser;
-use App\Period;
 use App\User;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 
@@ -28,42 +25,33 @@ class GroupsController extends Controller
         return view('groups.index');
     }
 
-    public function list()
+    public function list(): JsonResponse
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        $group_id_field = 'id'; // if auth()->user()->groups() is used query uses group_user table therefore group_id_field = group_id
+        $groups = Group::select('id', 'title', 'common_name', 'grade_id', 'period_id', 'organization_id');
 
         switch (auth()->user()->role()->id) {
             case 1: // admin
-                $groups = Group::with(['grade', 'period', 'organization']);
                 break;
             case 2: // creator
             case 4: // schooladmin
             case 5: // teacher
-                $groups = Group::where('organization_id', auth()->user()->current_organization_id)->with(['grade', 'period', 'organization']);
+                $groups->where('organization_id', auth()->user()->current_organization_id);
                 break;
             default: // student
-                // needs get() because DataTables will try to order by 'id', but because of the 'join group_user' it should be 'groups.id'
-                $groups = auth()->user()->groups()->with(['grade', 'period', 'organization'])->get();
+                $groups->whereHas('users', function ($query) {
+                    $query->where('user_id', auth()->user()->id);
+                });
                 break;
         }
 
-       /* $show_gate = \Gate::allows('group_show');
-        $edit_gate = \Gate::allows('group_edit');
-        $delete_gate = \Gate::allows('group_delete');*/
+        $groups->with('organization:id,title');
 
         return DataTables::of($groups)
-            ->addColumn('grade', function ($groups) {
-                return $groups->grade->title;
-            })
-            ->addColumn('period', function ($groups) {
-                return $groups->period->title;
-            })
             ->addColumn('organization', function ($groups) {
                 return $groups->organization->title;
             })
-            ->setRowId($group_id_field)
             ->make(true);
     }
 

@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="d-flex flex-column">
         <div
             id="organization-type-content"
@@ -109,15 +109,10 @@ export default {
             search: '',
             showConfirm: false,
             url: '/organizationTypes/list',
-            errors: {},
             currentOrganizationType: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'external_id', data: 'external_id' },
-                { title: 'country_id', data: 'country_id', searchable: true} ,
-                { title: 'state_id', data: 'state_id', searchable: true },
             ],
             options : this.$dtOptions,
             dt: null,

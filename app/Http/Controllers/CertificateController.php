@@ -9,6 +9,7 @@ use App\Organization;
 use App\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Barryvdh\Snappy\Facades\SnappyPdf;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -28,15 +29,13 @@ class CertificateController extends Controller
         return view('certificates.index');
     }
 
-    public function list()
+    public function list(): JsonResponse
     {
         abort_unless(\Gate::allows('certificate_access'), 403);
-        $certificates = null;
+        $certificates = Certificate::with(['organization:id,title', 'curriculum:id,title']);;
 
-        if (is_admin()) {
-            $certificates = Certificate::with(['organization', 'curriculum', 'owner']);
-        } else {
-            $certificates  = Certificate::where('owner_id', auth()->user()->id)->with(['organization', 'curriculum', 'owner']);
+        if (!is_admin()) {
+            $certificates->where('owner_id', auth()->user()->id);
         }
 
         return DataTables::of($certificates)
@@ -46,14 +45,6 @@ class CertificateController extends Controller
             ->addColumn('curriculum', function ($certificates) {
                 return $certificates->curriculum->title;
             })
-            ->addColumn('owner', function ($certificates) {
-                return $certificates->owner->firstname.' '.$certificates->owner->lastname;
-            })
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 

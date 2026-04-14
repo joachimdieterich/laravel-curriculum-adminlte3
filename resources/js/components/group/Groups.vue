@@ -1,4 +1,4 @@
-<template >
+<template>
     <div>
         <div class="d-flex flex-column">
             <div
@@ -135,13 +135,10 @@ export default {
             groups: null,
             search: '',
             showConfirm: false,
-            errors: {},
             currentGroup: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'grade', data: 'grade' },
-                { title: 'period', data: 'period', searchable: true },
                 { title: 'organization', data: 'organization', searchable: true },
             ],
             options : this.$dtOptions,

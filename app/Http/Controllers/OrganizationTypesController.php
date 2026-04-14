@@ -4,48 +4,30 @@ namespace App\Http\Controllers;
 
 use App\OrganizationType;
 use App\State;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\DataTables;
 
 class OrganizationTypesController extends Controller
 {
     public function index()
     {
-
         if (request()->wantsJson()) {
-
             return getEntriesForSelect2ByModel(
                 "App\OrganizationType"
             );
         }
-        else
-        {
-            abort_unless(\Gate::allows('organization_type_access'), 403);
+        abort_unless(\Gate::allows('organization_type_access'), 403);
 
-            $organization_types = OrganizationType::all();
-
-            return view('organizationtypes.index', compact('organization_types'));
-        }
-
+        return view('organizationtypes.index');
     }
 
-    public function list()
+    public function list(): JsonResponse
     {
         abort_unless(\Gate::allows('organization_type_access'), 403);
 
-        $organization_types = OrganizationType::select([
-            'id',
-            'title',
-            'external_id',
-            'state_id',
-            'country_id', ]);
+        $organization_types = OrganizationType::select('id', 'title', 'external_id', 'state_id', 'country_id');
 
-        return DataTables::of($organization_types)
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
-            ->make(true);
+        return DataTables::of($organization_types)->make(true);
     }
 
     public function store()

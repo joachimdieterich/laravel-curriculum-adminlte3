@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Subject;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
 
@@ -21,18 +22,12 @@ class SubjectController extends Controller
         return view('subjects.index');
     }
 
-    public function list()
+    public function list(): JsonResponse
     {
         abort_unless(\Gate::allows('subject_access'), 403);
-        $subject = Subject::select([
-            'id',
-            'title',
-            'title_short',
-        ])->get();
+        $subject = Subject::select('id', 'title', 'title_short');
 
-        return DataTables::of($subject)
-            ->setRowId('id')
-            ->make(true);
+        return DataTables::of($subject)->make(true);
     }
 
     public function getSubject(Request $request)

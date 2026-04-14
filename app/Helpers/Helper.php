@@ -282,11 +282,11 @@ if (! function_exists('getDataTableWithEntries'))
                 case 'all':             $withSubscribed = $withOwned = true;
                     break;
                 case 'hidden':          $withSubscribed = $withOwned = true;
-                                        $tags[] = Tag::findFromString(trans('global.tag.hidden.singular'))->id;
+                                        $tags[] = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
                     break;
                 case 'favourite':
                 default:                $withSubscribed = $withOwned = true;
-                                        if ($hasTags) $tags[] = Tag::findFromString(trans('global.tag.favourite.singular'))->id;
+                                        if ($hasTags) $tags[] = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
                     break;
             }
         }
@@ -297,10 +297,13 @@ if (! function_exists('getDataTableWithEntries'))
 
             // only apply tag-filters if model has tags
             if ($hasTags) {
-                $query->with('tags:id,name,slug');
+                $query->with(['tags' => function ($query) {
+                    $query->select('id', 'name', 'slug')
+                        ->where('user_id', auth()->user()->id);
+                }]);
 
-                $favouriteTagId = Tag::findFromString(trans('global.tag.favourite.singular'))->id;
-                $hiddenTagId = Tag::findFromString(trans('global.tag.hidden.singular'))->id;
+                $favouriteTagId = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
+                $hiddenTagId = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
 
                 // append is_favourite and is_hidden as separate fields
                 // we do it this way, because the built-in function would fire a separate query for each entry
@@ -312,7 +315,7 @@ if (! function_exists('getDataTableWithEntries'))
                 ->leftJoin('tags', 'tags.id', '=', 'taggables.tag_id');
 
                 // if hidden-tag is not explicitly included in search-tags, exclude hidden entries
-                if ($hiddenTagId != null && !in_array($hiddenTagId, $tags)) {
+                if ($hiddenTagId !== 0 && !in_array($hiddenTagId, $tags)) {
                     $negativeTags[] = $hiddenTagId;
                 }
 

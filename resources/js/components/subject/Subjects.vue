@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="d-flex flex-column">
         <div
             id="subject-content"
@@ -109,12 +109,10 @@ export default {
             search: '',
             showConfirm: false,
             url: '/subjects/list',
-            errors: {},
             currentRole: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'title_short', data: 'title_short', searchable: true },
             ],
             options : this.$dtOptions,
             dt: null,

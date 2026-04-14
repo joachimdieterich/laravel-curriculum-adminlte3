@@ -6,6 +6,7 @@ use App\Organization;
 use App\OrganizationRoleUser;
 use App\StatusDefinition;
 use App\User;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\DataTables;
 
 class OrganizationsController extends Controller
@@ -34,29 +35,19 @@ class OrganizationsController extends Controller
         return view('organizations.index');
     }
 
-    public function list()
+    public function list(): JsonResponse
     {
         abort_unless(\Gate::allows('organization_access'), 403);
 
+        $organizations = Organization::query();
 
-        if (auth()->user()->role()->id == 1) {
-            $organizations = Organization::with(['status']);
-            $organization_id_field = 'id'; // if auth()->user()->organizations() is used query uses organization_role_user table therefore organization_id field = organization_id
-        } else  {
-            $organizations = auth()->user()->organizations()->with(['status']);
-            $organization_id_field = 'organization_id';
+        if (!is_admin()) {
+            $organizations->whereHas('users', function ($query) {
+                $query->where('user_id', auth()->user()->id);
+            });
         }
 
-        return DataTables::of($organizations)
-            ->addColumn('status', function ($organizations) {
-                return $organizations->status->lang_de;
-            })
-            ->addColumn('check', '')
-            ->setRowId($organization_id_field)
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
-            ->make(true);
+        return DataTables::of($organizations)->make(true);
     }
 
     /**

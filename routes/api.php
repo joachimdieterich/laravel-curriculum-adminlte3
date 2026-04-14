@@ -49,8 +49,8 @@ Route::group([
         'middleware' => ['client_credentials', 'simulate'],
     ], function () {
         /*** Videoconferences ***/
-        Route::apiResource('videoconferences', 'VideoconferenceApiController');
         Route::get('videoconferences/links', 'VideoconferenceApiController@getLinks');
+        Route::apiResource('videoconferences', 'VideoconferenceApiController');
 
         /*** Users ***/
         Route::get('users/permissions', [UsersApiController::class, 'permissions']);

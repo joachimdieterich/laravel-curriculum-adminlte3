@@ -40,56 +40,64 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *      @OA\Parameter(
 *          name="owner_cn",
 *          description="common_name of Kanban-owner",
-*          required=true
+*          required=true,
+*          @OA\Schema(type="string"),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="title",
 *          description="Kanban title",
-*          required=true
+*          required=true,
+*          @OA\Schema(type="string"),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="description",
-*          description="Kanban description"
+*          description="Kanban description",
+*          @OA\Schema(type="string"),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="color",
 *          description="Color",
-*          example="#2980B9"
+*          @OA\Schema(type="string", default="#2980B9"),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="editable",
 *          description="Return the token-link with edit-rights",
-*          example="0 or 1"
+*          @OA\Schema(type="boolean", default=false),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="commentable",
 *          description="allow comments on kanban-items",
-*          default=true,
-*          example="0 or 1"
+*          @OA\Schema(type="boolean", default=true),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="auto_refresh",
 *          description="automatically update changes inside kanban-board",
-*          default=false,
-*          example="0 or 1"
+*          @OA\Schema(type="boolean", default=false),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="only_edit_owned_items",
 *          description="Only allow editing of owned items",
-*          default=false,
-*          example="0 or 1"
+*          @OA\Schema(type="boolean", default=false),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="collapse_items",
 *          description="Collapse items by default",
-*          default=false,
-*          example="0 or 1"
+*          @OA\Schema(type="boolean", default=false),
+*          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="allow_copy",
 *          description="allow other users to copy this kanban",
-*          default=true,
-*          example="0 or 1"
+*          @OA\Schema(type="boolean", default=true),
+*          in="query"
 *      ),
 *      @OA\Response(
 *          response=200,

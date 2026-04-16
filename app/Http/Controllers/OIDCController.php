@@ -63,7 +63,7 @@ class OIDCController extends Controller
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
 
         foreach ($sessionIds as $sessionId) {
-            Redis::del('curriculum_cache' . $sessionId);
+            Redis::del(config('database.redis.session.prefix') . $sessionId);
         }
 
         Redis::del('user_sessions:' . $common_name);

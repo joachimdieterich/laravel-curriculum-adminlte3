@@ -27,8 +27,8 @@ class OIDCController extends Controller
             Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
     
             // store session-id in redis-set
-            $sessionId = session_id();
-            Redis::sadd('user_sessions:' . $common_name, $sessionId);
+            Redis::sadd('user_sessions:' . $common_name, session_id());
+            Redis::sadd('user_sessions:' . $common_name, session()->getId());
             Redis::expire('user_sessions:' . $common_name, config('session.lifetime') * 60);
     
             LogController::set('ssoLogin'); // set statistics for SSO-authentication
@@ -68,6 +68,7 @@ class OIDCController extends Controller
 
         foreach ($sessionIds as $sessionId) {
             Redis::del('PHPREDIS_SESSION:' . $sessionId);
+            Redis::del('curriculum' . $sessionId);
         }
 
         // remove remember token to prevent auto-renew of deleted sessions

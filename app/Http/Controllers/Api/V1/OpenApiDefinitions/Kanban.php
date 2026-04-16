@@ -104,7 +104,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *          description="successful operation",
 *          @OA\JsonContent(ref="#/components/schemas/Kanban"),
 *       ),
-*       @OA\Response(response=400, description="Missing/Empty attribute [owner_cn] or [title]"),
+*       @OA\Response(response=400, description="Missing required attributes or wrong format"),
 *       @OA\Response(response=404, description="owner_cn not found"),
 * )
 *

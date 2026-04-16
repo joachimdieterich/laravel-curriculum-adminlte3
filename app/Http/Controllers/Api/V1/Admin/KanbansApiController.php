@@ -11,6 +11,7 @@ use App\OrganizationRoleUser;
 use App\Period;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class KanbansApiController extends Controller
@@ -24,10 +25,8 @@ class KanbansApiController extends Controller
 
     public function store()
     {
-        if (!request()->filled('owner_cn')) return response()->json('Missing/Empty attribute [owner_cn]', 400);
-        if (!request()->filled('title')) return response()->json('Missing/Empty attribute [title]', 400);
         // if required attributes are missing it responds with a redirect
-        $input = request()->validate([
+        $validator = Validator::make(request()->all(), [
             'owner_cn'              => 'required|string',
             'title'                 => 'required|string|max:191',
             'description'           => 'nullable|string',
@@ -40,6 +39,9 @@ class KanbansApiController extends Controller
             'allow_copy'            => 'sometimes|boolean',
         ]);
 
+        if ($validator->fails()) return response()->json($validator->messages(), 400);
+
+        $input = $validator->getData();
         $owner_id = User::where('common_name', $input['owner_cn'])->pluck('id')->first();
 
         if (!$owner_id) return response()->json('owner_cn not found', 404);

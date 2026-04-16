@@ -62,12 +62,14 @@ class OIDCController extends Controller
 
         $common_name = $oidc->getVerifiedClaims('sub');
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
+        Redis::del('user_sessions:' . $common_name);
+
+        Redis::select(2); // sessions are stored in the redis-db with index 2
 
         foreach ($sessionIds as $sessionId) {
             Redis::del('PHPREDIS_SESSION:' . $sessionId);
         }
 
-        Redis::del('user_sessions:' . $common_name);
         // remove remember token to prevent auto-renew of deleted sessions
         \App\User::where('common_name', $common_name)->update(['remember_token' => null]);
             

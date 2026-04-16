@@ -82,6 +82,8 @@ class OIDCController extends Controller
 
         // logout user locally
         Auth::guard()->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         session_destroy();
 
         // RP-initiated logout

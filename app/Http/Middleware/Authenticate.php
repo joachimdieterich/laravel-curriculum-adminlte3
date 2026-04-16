@@ -26,11 +26,9 @@ class Authenticate extends Middleware
                     config('app.oidc_client_secret')
                 );
     
+                if (session_status() === PHP_SESSION_NONE) session_start();
                 // store current URL to redirect back after authentication-callback
-                if (!session('redirect_to')) {
-                    session(['redirect_to' => URL::full()]);
-                    session()->save();
-                }
+                if (!isset($_SESSION['redirec_to'])) $_SESSION['redirect_to'] = URL::full();
 
                 // $oidc->setCodeChallengeMethod('S256'); // PKCE
                 

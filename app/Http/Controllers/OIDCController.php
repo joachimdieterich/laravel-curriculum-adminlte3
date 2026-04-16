@@ -15,7 +15,7 @@ class OIDCController extends Controller
     public function handle(Request $request): \Illuminate\Http\RedirectResponse
     {
         // handle logout-request separately
-        if (session('init_logout') === true) $this->initiateLogout($request);
+        if ($_SESSION['init_logout'] === true) $this->initiateLogout($request);
 
         $oidc = $this->getOIDCClient();
 
@@ -26,7 +26,7 @@ class OIDCController extends Controller
             Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
     
             // store session-id in redis-set
-            $sessionId = session()->getId();
+            $sessionId = session_id();
             Redis::sadd('user_sessions:' . $common_name, $sessionId);
             Redis::expire('user_sessions:' . $common_name, config('session.lifetime') * 60);
     
@@ -40,9 +40,9 @@ class OIDCController extends Controller
 
         $redirect = '/home'; // fallback
         // since the user got redirected back after authentication, redirect to the originally requested URL
-        if (session('redirect_to')) {
-            $redirect = session('redirect_to');
-            session()->forget('redirect_to');
+        if (isset($_SESSION['redirect_to'])) {
+            $redirect = $_SESSION['redirect_to'];
+            unset($_SESSION['redirect_to']);
         }
 
         return redirect($redirect);
@@ -63,7 +63,7 @@ class OIDCController extends Controller
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
 
         foreach ($sessionIds as $sessionId) {
-            Redis::del(config('database.redis.session.prefix') . $sessionId);
+            Redis::del('curriculum' . $sessionId);
         }
 
         Redis::del('user_sessions:' . $common_name);
@@ -76,15 +76,12 @@ class OIDCController extends Controller
 
     protected function initiateLogout(Request $request): never
     {
-        session()->forget('init_logout');
-
         $oidc = $this->getOIDCClient();
         $oidc->authenticate(); // to load tokens
 
         // logout user locally
         Auth::guard()->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        session_destroy();
 
         // RP-initiated logout
         $oidc->signOut($oidc->getIdToken(), null); // calls 'exit;' internally to stop further execution

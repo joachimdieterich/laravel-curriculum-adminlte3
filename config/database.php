@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 return [
 
     /*
@@ -131,6 +133,7 @@ return [
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', 6379),
             'database' => env('REDIS_CACHE_DB', 1),
+            'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME'), '_'), 'laravel' . '_cache:'),
         ],
 
         'session' => [
@@ -138,6 +141,7 @@ return [
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', 6379),
             'database' => env('REDIS_SESSION_DB', 2),
+            'prefix' => env('SESSION_PREFIX', Str::slug(env('APP_NAME'), '_'), 'laravel' . '_session:'),
         ],
     ],
 ];

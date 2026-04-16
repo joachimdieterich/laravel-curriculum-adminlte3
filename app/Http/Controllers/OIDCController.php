@@ -14,6 +14,7 @@ class OIDCController extends Controller
      */
     public function handle(Request $request): \Illuminate\Http\RedirectResponse
     {
+        if (session_status() === PHP_SESSION_NONE) session_start();
         // handle logout-request separately
         if ($_SESSION['init_logout'] === true) $this->initiateLogout($request);
 

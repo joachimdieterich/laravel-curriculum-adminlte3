@@ -123,6 +123,8 @@ class LoginController extends Controller
             );
             $oidc->setRedirectURL(config('app.url') . '/oidc');
 
+            if (session_status() === PHP_SESSION_NONE) session_start();
+
             // except if authenticated as guest user, then redirect to SSO login
             if (auth()->user()->id == config('app.guest_user_id'))
             {

@@ -22,7 +22,7 @@ class Authenticate extends Middleware
             if (!$allow_guest && str_starts_with($request->getRequestUri(), '/curricula/')) {
                 // check if curriculum is accessible for guests
                 // if not, force authentication
-                $allow_guest = !(\App\Curriculum::select('id')->find($request->route('curriculum'))->isAccessible());
+                $allow_guest = \App\Curriculum::select('type_id')->find($request->route('curriculum'))->type_id == 1;
             }
 
             // skip authentication if authenticated as guest and guest access is allowed

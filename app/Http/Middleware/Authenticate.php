@@ -14,10 +14,16 @@ class Authenticate extends Middleware
 
         if (($user_id === null or $user_id == config('app.guest_user_id')) and config('app.env') != 'local') {
             $allow_guest = $request->has('sharing_token')
-                || str_starts_with($request->getRequestUri(), '/curricula/') // only '/curricula/{id}' not index-page
                 || str_starts_with($request->getRequestUri(), '/navigator')
                 || str_starts_with($request->getRequestUri(), '/eventSubscriptions')
                 || str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
+
+            // if '/curricula/{id}' page (without token)
+            if (!$allow_guest && str_starts_with($request->getRequestUri(), '/curricula/')) {
+                // check if curriculum is accessible for guests
+                // if not, force authentication
+                $allow_guest = !(\App\Curriculum::select('id')->find($request->route('curriculum'))->isAccessible());
+            }
 
             // skip authentication if authenticated as guest and guest access is allowed
             if ($user_id != config('app.guest_user_id') or !$allow_guest) {

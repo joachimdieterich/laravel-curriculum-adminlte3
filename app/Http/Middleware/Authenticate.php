@@ -14,6 +14,7 @@ class Authenticate extends Middleware
 
         if (($user_id === null or $user_id == config('app.guest_user_id')) and config('app.env') != 'local') {
             $allow_guest = $request->has('sharing_token')
+                or str_starts_with($request->getRequestUri(), '/curricula/') // only '/curricula/{id}' not index-page
                 or str_starts_with($request->getRequestUri(), '/navigator')
                 or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
                 or str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;

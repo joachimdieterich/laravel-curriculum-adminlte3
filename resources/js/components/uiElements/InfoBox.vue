@@ -6,6 +6,8 @@
                     type="button"
                     class="btn infobox-icon elevation-1"
                     :class="iconBackgroundClass"
+                    @click="goToModel"
+                    @click.middle="goToModel(true)"
                 >
                     <i class="fa" :class="icon"></i>
                 </button>
@@ -58,6 +60,10 @@ export default {
             type: String,
             default: 'bg-blue',
         },
+        href: {
+            type: String,
+            default: null, // defaults to this.model
+        },
         hasModal: {
             type: Boolean,
             default: false,
@@ -81,6 +87,10 @@ export default {
                 .catch(error => {
                     this.$emit('error', error);
                 });
+        },
+        goToModel(newTab = false) {
+            if (newTab) window.open(this.href || '/' + this.model, '_blank');
+            else window.location.href = this.href || '/' + this.model;
         },
         openModal() {
             this.$emit('open-modal', this.model);

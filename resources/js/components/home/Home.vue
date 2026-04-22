@@ -12,6 +12,7 @@
                 :text="trans('global.curriculum.title')"
                 icon="fa-th"
                 icon-background-class="bg-cyan"
+                href="/curricula"
                 @error="handleError"
             >
                 <template #entry="{ entry }">

@@ -10,6 +10,12 @@
                     <i class="fa" :class="icon"></i>
                 </button>
                 <span class="flex-fill h3 mx-3">{{ text }}</span>
+                <button v-if="hasModal"
+                    class="btn btn-icon btn-icon-big"
+                    @click="openModal"
+                >
+                    <i class="fa fa-2x fa-plus"></i>
+                </button>
             </div>
             <div class="infobox-body">
                 <div v-for="entry in entries"
@@ -34,7 +40,7 @@
 <script>
 export default {
     name: 'InfoBox',
-    emits: ['error'],
+    emits: ['open-modal', 'error'],
     props: {
         model: {
             type: String,
@@ -51,6 +57,10 @@ export default {
         iconBackgroundClass: {
             type: String,
             default: 'bg-blue',
+        },
+        hasModal: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {
@@ -71,6 +81,9 @@ export default {
                 .catch(error => {
                     this.$emit('error', error);
                 });
+        },
+        openModal() {
+            this.$emit('open-modal', this.model);
         },
     },
 }

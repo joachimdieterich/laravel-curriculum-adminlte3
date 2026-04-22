@@ -42,6 +42,8 @@
                 :text="trans('global.logbook.title')"
                 icon="fa-book"
                 icon-background-class="bg-red"    
+                :has-modal="true"
+                @open-modal="openModal('logbook-modal')"
                 @error="handleError"
             />
     
@@ -50,24 +52,36 @@
                 :text="trans('global.plan.title')"
                 icon="fa-clipboard-list"
                 icon-background-class="bg-green"
+                :has-modal="isVisible.plans"
+                @open-modal="openModal('plan-modal')"
                 @error="handleError"
             />
         </div>
+        <LogbookModal/>
+        <PlanModal/>
     </div>
 </template>
 <script>
 import InfoBox from '../uiElements/InfoBox.vue';
+import LogbookModal from '../logbook/LogbookModal.vue';
+import PlanModal from '../plan/PlanModal.vue';
+import { useGlobalStore } from '../../store/global';
 import { useToast } from 'vue-toastification';
 
 export default {
     name: 'Home',
     setup() {
+        const globalStore = useGlobalStore();
         const toast = useToast();
         return {
+            globalStore,
             toast,
         };
     },
     methods: {
+        openModal(modalName) {
+            this.globalStore.showModal(modalName, {});
+        },
         handleError(error) {
             this.toast.error(this.errorMessage(error));
         },
@@ -82,6 +96,8 @@ export default {
     },
     components: {
         InfoBox,
+        LogbookModal,
+        PlanModal,
     },
 }
 </script>

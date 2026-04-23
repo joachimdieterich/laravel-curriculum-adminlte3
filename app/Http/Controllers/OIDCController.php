@@ -64,9 +64,10 @@ class OIDCController extends Controller
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
         Redis::del('user_sessions:' . $common_name);
 
-        Redis::select(2); // sessions are stored in the redis-db with index 2
+        Redis::select(config('database.redis.session.database'));
 
         foreach ($sessionIds as $sessionId) {
+            // since we're using both PHP's and Laravel's session-handler, we need to remove both sessions
             Redis::del('PHPREDIS_SESSION:' . $sessionId);
             Redis::del('curriculum' . $sessionId);
         }

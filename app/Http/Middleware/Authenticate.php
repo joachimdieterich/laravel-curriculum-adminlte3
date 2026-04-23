@@ -33,6 +33,9 @@ class Authenticate extends Middleware
                     config('app.oidc_client_secret')
                 );
     
+                // we need to use PHP's session-handler, because of the OIDC-library
+                // if we use Laravel's session-handler, the value will not be accessible later,
+                // because the session will have changed for some reason
                 if (session_status() === PHP_SESSION_NONE) session_start();
                 // store current URL to redirect back after authentication-callback
                 if (!isset($_SESSION['redirect_to'])) $_SESSION['redirect_to'] = URL::full();

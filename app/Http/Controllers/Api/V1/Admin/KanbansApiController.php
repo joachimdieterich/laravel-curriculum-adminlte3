@@ -108,22 +108,7 @@ class KanbansApiController extends Controller
 
         if ($kanban->owner_id !== $user_id) return response()->json("common_name does not match Kanban-owner's common_name", 403);
 
-        // delete medium if edusharing-medium
-        if ($kanban->medium_id) {
-            $medium = $kanban->medium;
-
-            if ($medium->adapter == 'edusharing') {
-                $medium->subscriptions()->delete();
-                $medium->delete();
-            }
-        }
-
-        //delete relations
-        $kanban->items()->delete();
-        $kanban->statuses()->delete();
-        $kanban->subscriptions()->delete();
-
-        if ($kanban->delete()) return response()->json(true);
+        return response()->json($kanban->delete());
     }
 
     public function enrol()

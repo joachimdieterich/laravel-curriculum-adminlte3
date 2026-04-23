@@ -192,17 +192,17 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 * )
 *
 * @OA\Delete(
-*      path="/v1/kanbans/{kanban}",
+*      path="/v1/kanbans/{id}",
 *      operationId="deleteKanban",
 *      tags={"Kanban v1"},
 *      summary="Delete kanban by ID",
-*      description="Delete a kanban object",
+*      description="Delete a Kanban-Board",
 *      security={
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="kanban",
-*          description="Kanban ID",
+*          name="id",
+*          description="ID of Kanban-Board",
 *          required=true,
 *          in="path",
 *          @OA\Schema(

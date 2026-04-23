@@ -35,7 +35,7 @@ class Authenticate extends Middleware
     
                 if (session_status() === PHP_SESSION_NONE) session_start();
                 // store current URL to redirect back after authentication-callback
-                if (!isset($_SESSION['redirec_to'])) $_SESSION['redirect_to'] = URL::full();
+                if (!isset($_SESSION['redirect_to'])) $_SESSION['redirect_to'] = URL::full();
 
                 // $oidc->setCodeChallengeMethod('S256'); // PKCE
                 

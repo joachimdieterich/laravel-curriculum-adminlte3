@@ -300,12 +300,15 @@ export default {
             this.dt = $('#kanban-datatable').DataTable();
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
-                let newFilter = this.dt.ajax.json().newFilter;
-                if (newFilter) {
-                    this.setFilter(newFilter);
+                let initialLoad = this.dt.rows().data().context[0].iDraw === 1;
+                let data = this.dt.rows({ page: 'current' }).data().toArray();
+                // if user doesn't have any favourited objects, default to 'all'-tab
+                if (initialLoad && data.length === 0) {
+                    this.setFilter('all');
+                    return;
                 }
 
-                this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
+                this.kanbans = data;
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
             });
 

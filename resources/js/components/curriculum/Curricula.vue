@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="d-flex flex-column">
         <TabList
             class="px-3"
@@ -288,12 +288,15 @@ export default {
             this.dt = $('#curriculum-datatable').DataTable();
 
             this.dt.on('draw.dt', () => {
-                let newFilter = this.dt.ajax.json().newFilter;
-                if (newFilter) {
-                    this.setFilter(newFilter);
+                let initialLoad = this.dt.rows().data().context[0].iDraw === 1;
+                let data = this.dt.rows({ page: 'current' }).data().toArray();
+                // if user doesn't have any favourited objects, default to 'all'-tab
+                if (initialLoad && data.length === 0) {
+                    this.setFilter('all');
+                    return;
                 }
 
-                this.curricula = this.dt.rows({page: 'current'}).data().toArray();
+                this.curricula = data;
                 $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
             });
         },

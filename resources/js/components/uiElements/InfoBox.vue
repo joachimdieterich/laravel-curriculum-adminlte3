@@ -6,7 +6,7 @@
                     type="button"
                     class="btn infobox-icon elevation-1"
                     :class="iconBackgroundClass"
-                    @click="goToModel"
+                    @click="goToModel()"
                     @click.middle="goToModel(true)"
                 >
                     <i class="fa" :class="icon"></i>

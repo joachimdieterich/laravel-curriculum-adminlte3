@@ -68,17 +68,6 @@ class Logbook extends Model
 
     public function isAccessible()
     {
-        if (
-            auth()->user()->logbooks->contains('id', $this->id) //direct subscription
-            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
-            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
-            or ($this->subscriptions->where('subscribable_type', "App\Course")->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id')))->isNotEmpty()
-            or (auth()->user()->id == $this->owner_id)           // user owns logbook
-            or is_admin()
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return auth()->user()->logbooks->contains('id', $this->id) or is_admin();
     }
 }

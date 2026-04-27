@@ -9,6 +9,7 @@ use Cmgmyr\Messenger\Traits\Messagable;
 use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -22,7 +23,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
-use LaravelIdea\Helper\App\_IH_User_QB;
 use Laravolt\Avatar\Avatar;
 
 /**
@@ -305,16 +305,9 @@ class User extends Authenticatable
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
     }
 
-    public function logbooks(): HasManyThrough
+    public function logbooks(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Logbook',
-            'App\LogbookSubscription',
-            'subscribable_id', // Foreign key on logbook_subscription table...
-            'id', // Foreign key on logbook table...
-            'id', // Local key on logbook table...
-            'logbook_id' // Local key on logbook_subscription table...
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Logbook');
     }
 
     public function media(): HasMany
@@ -322,16 +315,9 @@ class User extends Authenticatable
         return $this->hasMany('App\Medium', 'owner_id');
     }
 
-    public function plans(): HasManyThrough
+    public function plans(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Plan',
-            'App\PlanSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'plan_id'
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Plan');
     }
 
     public function periods(): Collection
@@ -437,7 +423,7 @@ class User extends Authenticatable
                 ->get();
     }
 
-    public function users(): User|_IH_User_QB|BelongsToMany
+    public function users(): User|BelongsToMany
     {
         return (auth()->user()->role()->id == 1) ? User::select('id', 'username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id', 'username', 'firstname', 'lastname', 'deleted_at'); //todo, get all users of all organizations not only current
     }

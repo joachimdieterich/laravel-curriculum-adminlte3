@@ -79,6 +79,14 @@ export default {
             toast,
         };
     },
+    mounted() {
+        this.$eventHub.on('logbook-added', (logbook) => {
+            window.location.href = '/logbooks/' + logbook.id;
+        });
+        this.$eventHub.on('plan-added', (plan) => {
+            window.location.href = '/plans/' + plan.id;
+        });
+    },
     methods: {
         openModal(modalName) {
             this.globalStore.showModal(modalName, {});

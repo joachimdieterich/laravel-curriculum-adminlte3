@@ -86,7 +86,8 @@ class HomeController extends Controller
     public function logbooks(): Collection
     {
         return auth()->user()->logbooks()
-            ->select('logbooks.id', 'logbooks.title')
+            ->select('logbooks.id', 'logbooks.title', 'logbooks.owner_id')
+            ->orderBy('logbooks.title')
             ->get();
     }
 
@@ -98,7 +99,8 @@ class HomeController extends Controller
     public function plans(): Collection
     {
         return auth()->user()->plans()
-            ->select('plans.id', 'plans.title')
+            ->select('plans.id', 'plans.title', 'plans.owner_id')
+            ->orderBy('plans.title')
             ->get();
     }
 }

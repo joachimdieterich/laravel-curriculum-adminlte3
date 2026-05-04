@@ -36,7 +36,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-
         \Laravel\Passport\Passport::personalAccessTokensExpireIn(\Carbon\CarbonInterval::days(7));
 
         Blade::directive('canany', function ($permissions) {

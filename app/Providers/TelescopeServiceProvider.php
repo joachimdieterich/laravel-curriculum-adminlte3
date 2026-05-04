@@ -21,7 +21,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         // Add Telescope tag status
         Telescope::tag(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
-                return [$entry->content['response_status']];
+                return [
+                    $entry->content['response_status'],
+                    $entry->content['uri'],
+                ];
             }
 
             return [];

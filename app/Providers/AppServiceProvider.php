@@ -37,8 +37,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-        $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
-        $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
 
         Blade::directive('canany', function ($permissions) {
             return "<?php if (auth()->check() && array_intersect(auth()->user()->permissions()->pluck('title')->toArray(), {$permissions})): ?>";

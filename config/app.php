@@ -179,11 +179,6 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         /*
-         * Package Service Providers...
-         */
-        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
-
-        /*
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
@@ -243,7 +238,6 @@ return [
         'Auth'         => Illuminate\Support\Facades\Auth::class,
         'Blade'        => Illuminate\Support\Facades\Blade::class,
         'Broadcast'    => Illuminate\Support\Facades\Broadcast::class,
-        'Bugsnag'      => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'Bus'          => Illuminate\Support\Facades\Bus::class,
         'Cache'        => Illuminate\Support\Facades\Cache::class,
         'Config'       => Illuminate\Support\Facades\Config::class,

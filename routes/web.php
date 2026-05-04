@@ -410,6 +410,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');
+    Route::get('tests/exception', 'Tests\TestController@exception');
 
     /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');

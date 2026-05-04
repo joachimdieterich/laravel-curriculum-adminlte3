@@ -21,4 +21,9 @@ class TestController extends Controller
         }
         return $tests;
     }
+
+    public function exception()
+    {
+        throw new \RuntimeException('whoops');
+    }
 }

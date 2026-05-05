@@ -23,10 +23,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *      @OA\Property( property="owner_id", type="integer"),
  *      @OA\Property( property="created_at", type="string"),
  *      @OA\Property( property="updated_at", type="string"),
- *      @OA\Property( property="commentable", type="integer"),
- *      @OA\Property( property="auto_refresh", type="integer"),
- *      @OA\Property( property="only_edit_owned_items", type="integer"),
- *      @OA\Property( property="allow_copy", type="integer")
+ *      @OA\Property( property="commentable", type="boolean", default=true),
+ *      @OA\Property( property="auto_refresh", type="boolean", default=false),
+ *      @OA\Property( property="only_edit_owned_items", type="boolean", default=false),
+ *      @OA\Property( property="collapse_items", type="boolean", default=false),
+ *      @OA\Property( property="allow_copy", type="boolean", default=true),
  *   ),
  */
 class Kanban extends Model implements Broadcastable

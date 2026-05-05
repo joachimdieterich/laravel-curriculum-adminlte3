@@ -41,29 +41,62 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *          name="owner_cn",
 *          description="common_name of Kanban-owner",
 *          required=true,
+*          @OA\Schema(type="string"),
 *          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="title",
 *          description="Kanban title",
 *          required=true,
+*          @OA\Schema(type="string"),
 *          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="description",
 *          description="Kanban description",
+*          @OA\Schema(type="string"),
 *          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="color",
 *          description="Color",
-*          example="#2980B9",
+*          @OA\Schema(type="string", default="#2980B9"),
 *          in="query"
 *      ),
 *      @OA\Parameter(
 *          name="editable",
 *          description="Return the token-link with edit-rights",
-*          example="0 or 1",
+*          @OA\Schema(type="boolean", default=false),
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="commentable",
+*          description="allow comments on kanban-items",
+*          @OA\Schema(type="boolean", default=true),
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="auto_refresh",
+*          description="automatically update changes inside kanban-board",
+*          @OA\Schema(type="boolean", default=false),
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="only_edit_owned_items",
+*          description="Only allow editing of owned items",
+*          @OA\Schema(type="boolean", default=false),
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="collapse_items",
+*          description="Collapse items by default",
+*          @OA\Schema(type="boolean", default=false),
+*          in="query"
+*      ),
+*      @OA\Parameter(
+*          name="allow_copy",
+*          description="allow other users to copy this kanban",
+*          @OA\Schema(type="boolean", default=true),
 *          in="query"
 *      ),
 *      @OA\Response(
@@ -71,7 +104,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *          description="successful operation",
 *          @OA\JsonContent(ref="#/components/schemas/Kanban"),
 *       ),
-*       @OA\Response(response=400, description="Missing/Empty attribute [owner_cn] or [title]"),
+*       @OA\Response(response=400, description="Missing required attributes or wrong format"),
 *       @OA\Response(response=404, description="owner_cn not found"),
 * )
 *
@@ -159,17 +192,17 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 * )
 *
 * @OA\Delete(
-*      path="/v1/kanbans/{kanban}",
+*      path="/v1/kanbans/{id}",
 *      operationId="deleteKanban",
 *      tags={"Kanban v1"},
 *      summary="Delete kanban by ID",
-*      description="Delete a kanban object",
+*      description="Delete a Kanban-Board",
 *      security={
 *           {"passport": {"*"}},
 *      },
 *      @OA\Parameter(
-*          name="kanban",
-*          description="Kanban ID",
+*          name="id",
+*          description="ID of Kanban-Board",
 *          required=true,
 *          in="path",
 *          @OA\Schema(

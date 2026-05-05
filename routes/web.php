@@ -47,7 +47,6 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/references', 'CurriculumController@references');
-    Route::get('curricula/{curriculum}', 'CurriculumController@show');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::get('curricula/{curriculum}/certificates', 'CurriculumController@getCertificates')->name('curricula.getCertificates');
     Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');
@@ -291,6 +290,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('countries', 'CountryController');
 
     Route::get('curricula', 'CurriculumController@index')->name('curricula.index');
+    Route::get('curricula/{curriculum}', 'CurriculumController@show');
     Route::get('curricula/{curriculum}/token', 'CurriculumController@getCurriculumByToken');
 
     Route::get('enablingObjectives/{enablingObjective}', 'EnablingObjectiveController@show');

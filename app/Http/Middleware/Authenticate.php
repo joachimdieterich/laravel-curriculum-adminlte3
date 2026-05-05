@@ -14,9 +14,16 @@ class Authenticate extends Middleware
 
         if (($user_id === null or $user_id == config('app.guest_user_id')) and config('app.env') != 'local') {
             $allow_guest = $request->has('sharing_token')
-                or str_starts_with($request->getRequestUri(), '/navigator')
-                or str_starts_with($request->getRequestUri(), '/eventSubscriptions')
-                or str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
+                || str_starts_with($request->getRequestUri(), '/navigator')
+                || str_starts_with($request->getRequestUri(), '/eventSubscriptions')
+                || str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
+
+            // if '/curricula/{id}' page (without token)
+            if (!$allow_guest && str_starts_with($request->getRequestUri(), '/curricula/')) {
+                // check if curriculum is accessible for guests
+                // if not, force authentication
+                $allow_guest = \App\Curriculum::select('type_id')->find($request->route('curriculum'))->type_id == 1;
+            }
 
             // skip authentication if authenticated as guest and guest access is allowed
             if ($user_id != config('app.guest_user_id') or !$allow_guest) {
@@ -26,11 +33,12 @@ class Authenticate extends Middleware
                     config('app.oidc_client_secret')
                 );
     
+                // we need to use PHP's session-handler, because of the OIDC-library
+                // if we use Laravel's session-handler, the value will not be accessible later,
+                // because the session will have changed for some reason
+                if (session_status() === PHP_SESSION_NONE) session_start();
                 // store current URL to redirect back after authentication-callback
-                if (!session('redirect_to')) {
-                    session(['redirect_to' => URL::full()]);
-                    session()->save();
-                }
+                if (!isset($_SESSION['redirect_to'])) $_SESSION['redirect_to'] = URL::full();
 
                 // $oidc->setCodeChallengeMethod('S256'); // PKCE
                 

@@ -14,8 +14,9 @@ class OIDCController extends Controller
      */
     public function handle(Request $request): \Illuminate\Http\RedirectResponse
     {
+        if (session_status() === PHP_SESSION_NONE) session_start();
         // handle logout-request separately
-        if (session('init_logout') === true) $this->initiateLogout($request);
+        if (isset($_SESSION['init_logout']) && $_SESSION['init_logout'] === true) $this->initiateLogout($request);
 
         $oidc = $this->getOIDCClient();
 
@@ -26,8 +27,8 @@ class OIDCController extends Controller
             Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
     
             // store session-id in redis-set
-            $sessionId = session()->getId();
-            Redis::sadd('user_sessions:' . $common_name, $sessionId);
+            Redis::sadd('user_sessions:' . $common_name, session_id());
+            Redis::sadd('user_sessions:' . $common_name, session()->getId());
             Redis::expire('user_sessions:' . $common_name, config('session.lifetime') * 60);
     
             LogController::set('ssoLogin'); // set statistics for SSO-authentication
@@ -40,9 +41,9 @@ class OIDCController extends Controller
 
         $redirect = '/home'; // fallback
         // since the user got redirected back after authentication, redirect to the originally requested URL
-        if (session('redirect_to')) {
-            $redirect = session('redirect_to');
-            session()->forget('redirect_to');
+        if (isset($_SESSION['redirect_to'])) {
+            $redirect = $_SESSION['redirect_to'];
+            unset($_SESSION['redirect_to']);
         }
 
         return redirect($redirect);
@@ -61,12 +62,16 @@ class OIDCController extends Controller
 
         $common_name = $oidc->getVerifiedClaims('sub');
         $sessionIds = Redis::smembers('user_sessions:' . $common_name);
+        Redis::del('user_sessions:' . $common_name);
+
+        Redis::select(config('database.redis.session.database'));
 
         foreach ($sessionIds as $sessionId) {
-            Redis::del('curriculum_cache' . $sessionId);
+            // since we're using both PHP's and Laravel's session-handler, we need to remove both sessions
+            Redis::del('PHPREDIS_SESSION:' . $sessionId);
+            Redis::del('curriculum' . $sessionId);
         }
 
-        Redis::del('user_sessions:' . $common_name);
         // remove remember token to prevent auto-renew of deleted sessions
         \App\User::where('common_name', $common_name)->update(['remember_token' => null]);
             
@@ -76,8 +81,6 @@ class OIDCController extends Controller
 
     protected function initiateLogout(Request $request): never
     {
-        session()->forget('init_logout');
-
         $oidc = $this->getOIDCClient();
         $oidc->authenticate(); // to load tokens
 
@@ -85,6 +88,7 @@ class OIDCController extends Controller
         Auth::guard()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        session_destroy();
 
         // RP-initiated logout
         $oidc->signOut($oidc->getIdToken(), null); // calls 'exit;' internally to stop further execution

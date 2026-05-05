@@ -22,6 +22,9 @@ class AchievementsApiController extends Controller
         ) {
             return response()->json('Missing required fields', 400);
         }
+        if (strlen($input['status']) !== 2 || !preg_match('/[0-9]/', $input['status'])) {
+            return response()->json('Invalid status format, expected 2 characters with at least one number', 400);
+        }
         // decode referenceable_id and user_common_name if sent as strings
         if (gettype($input['referenceable_id']) == 'string') $input['referenceable_id'] = json_decode($input['referenceable_id'], true);
         if (gettype($input['user_common_name']) == 'string') $input['user_common_name'] = json_decode($input['user_common_name'], true);
@@ -43,6 +46,23 @@ class AchievementsApiController extends Controller
 
         foreach ($user_ids as $user_id) {
             foreach ($input['referenceable_id'] as $ref_id) {
+                $status = $input['status'];
+                $whitecard = strpos(strtolower($input['status']), 'x');
+                // fill whitecard slot with previous value if exists, otherwise default to 0
+                if ($whitecard !== false) {
+                    $achievement = Achievement::select('status')->where([
+                        'referenceable_type' => 'App\\EnablingObjective',
+                        'referenceable_id'   => $ref_id,
+                        'user_id'            => $user_id,
+                    ])->first();
+    
+                    if ($achievement == null) {
+                        $status[$whitecard] = 0;
+                    } else {
+                        $status[$whitecard] = $achievement->status[$whitecard];
+                    }
+                }
+
                 Achievement::updateOrCreate(
                     [
                         'referenceable_type' => 'App\\EnablingObjective',
@@ -50,7 +70,7 @@ class AchievementsApiController extends Controller
                         'user_id'            => $user_id,
                     ],
                     [
-                        'status'             => $input['status'],
+                        'status'             => $status,
                         'owner_id'           => $owner_id,
                     ]
                 );
@@ -66,7 +86,8 @@ class AchievementsApiController extends Controller
                     ->whereIn('user_id', $user_ids);
             }])
             ->get();
-}
+    }
+
     public function getAchievements()
     {
         $input = request()->all();

@@ -127,9 +127,9 @@ class Curriculum extends Model
             ->where('subscribable_type', 'App\Group');
     }
 
-    public function enablingObjectives()
+    public function enablingObjectives(string $orderBy = 'order_id')
     {
-        return $this->hasMany('App\EnablingObjective', 'curriculum_id', 'id')->orderBy('order_id');
+        return $this->hasMany('App\EnablingObjective', 'curriculum_id', 'id')->orderBy($orderBy);
     }
 
     public function terminalObjectives()

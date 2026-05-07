@@ -90,7 +90,7 @@ class MoodleApiController extends Controller
         Auth::loginUsingId($user->first()->id);
         $curriculum->isAccessible();
 
-        return $curriculum->enablingObjectives->map->only('id', 'title', 'terminal_objective_id');
+        return $curriculum->enablingObjectives('terminal_objective_id')->get()->map->only('id', 'title', 'terminal_objective_id');
     }
 
     public function getLogbooks(Request $request)
@@ -242,7 +242,7 @@ class MoodleApiController extends Controller
                 // check if kanban exists
                 $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Kanban with ID '.$kanban_id.' not found', 400);
-    
+
                 foreach ($users as $user) {
                     KanbanSubscription::updateOrCreate([
                         'kanban_id' => $kanban_id,
@@ -252,7 +252,7 @@ class MoodleApiController extends Controller
                         'editable' => $input['editable'] ?? false,
                         'owner_id' => $owner_id,
                     ]);
-    
+
                     $create_count++;
                 }
             }
@@ -264,7 +264,7 @@ class MoodleApiController extends Controller
                 // check if curricula exists
                 $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Curriculum with ID '.$curriculum_id.' not found', 400);
-    
+
                 foreach ($users as $user) {
                     CurriculumSubscription::updateOrCreate([
                         'curriculum_id' => $curriculum_id,
@@ -273,7 +273,7 @@ class MoodleApiController extends Controller
                     ], [
                         'owner_id' => $owner_id,
                     ]);
-    
+
                     $create_count++;
                 }
             }
@@ -300,7 +300,7 @@ class MoodleApiController extends Controller
                 // check if kanban exists
                 $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Kanban with ID '.$kanban_id.' not found', 400);
-    
+
                 $delete_count += KanbanSubscription::where([
                     'kanban_id' => $kanban_id,
                     'subscribable_type' => "App\User",
@@ -315,7 +315,7 @@ class MoodleApiController extends Controller
                 // check if curriculum exists
                 $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Curriculum with ID '.$curriculum_id.' not found', 400);
-    
+
                 $delete_count += CurriculumSubscription::where([
                     'curriculum_id' => $curriculum_id,
                     'subscribable_type' => "App\User",

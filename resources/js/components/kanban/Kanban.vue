@@ -507,11 +507,11 @@ export default {
                     })
                     .joining((user) => {
                         this.currentContributors[user.id] = user;
-                        this.toast.info(this.trans('global.kanban.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
+                        this.toast.info(this.trans('global.websockets.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
                     })
                     .leaving((user) => {
                         delete this.currentContributors[user.id];
-                        this.toast.info(this.trans('global.kanban.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
+                        this.toast.info(this.trans('global.websockets.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
                     });
             }
         },

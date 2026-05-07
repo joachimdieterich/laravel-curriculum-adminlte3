@@ -69,6 +69,9 @@ return [
     'close' => 'Close',
     'or' => 'or',
     'undo' => 'Undo',
+    'back' => 'Back',
+    'back_to_curriculum' => 'Back to Curriculum Overview',
+    'preview' => 'Preview',
     'generate' => 'Generate',
     'share' => 'Share',
     'pleaseSelect' => 'Please select',
@@ -459,7 +462,8 @@ return [
         'edit' => 'Edit tag',
         'delete' => 'Delete tag',
         'delete_helper' => 'Should the tag be deleted and its corresponded data?',
-        'please_select' => 'Choose existing tag'
+        'please_select' => 'Choose existing tag',
+        'tag_component_title' => 'Attach/remove tags',
     ],
     'hide' => 'Hide',
     'remove_hide' => 'Unhide',
@@ -1068,9 +1072,6 @@ return [
         ],
     ],
     'kanban' => [
-        'contributor' => 'Current Contributor',
-        'contributor_joined' => 'Contributor joined',
-        'contributor_left' => 'Contributor left',
         'title' => 'Kanban-Boards',
         'title_singular' => 'Kanban-Board',
         'create' => 'Create Kanban-Board',
@@ -1355,5 +1356,9 @@ return [
     ],
     'system_config' => [
         'title' => 'System configuration'
+    ],
+    'websockets' => [
+        'contributor_joined' => 'Contributor joined',
+        'contributor_left' => 'Contributor left',
     ]
 ];

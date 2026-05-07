@@ -75,6 +75,8 @@ return [
     'close' => 'Schließen',
     'or' => 'oder',
     'undo' => 'Rückgängig machen',
+    'back' => 'Zurück',
+    'back_to_curriculum' => 'Zurück zur Curriculum-Übersicht',
     'preview' => 'Vorschau',
     'generate' => 'erzeugen',
     'share' => 'Teilen',
@@ -475,7 +477,8 @@ return [
         'edit' => 'Tag bearbeiten',
         'delete' => 'Tag löschen',
         'delete_helper' => 'Soll der Tag sowie die zugehörigen Daten gelöscht werden?',
-        'please_select' => 'Bestehenden Tag auswählen'
+        'please_select' => 'Bestehenden Tag auswählen',
+        'tag_component_title' => 'Tags anheften/entfernen',
     ],
     'hide' => 'Ausblenden',
     'remove_hide' => 'Einblenden',
@@ -1099,9 +1102,6 @@ return [
         ],
     ],
     'kanban' => [
-        'contributor' => 'Aktuelle Bearbeiter',
-        'contributor_joined' => 'Bearbeiter dazu gekommen',
-        'contributor_left' => 'Bearbeiter gegangen',
         'title' => 'Pinnwände',
         'title_singular' => 'Pinnwand',
         'create' => 'Pinnwand erstellen',
@@ -1402,5 +1402,9 @@ return [
     ],
     'system_config' => [
         'title' => 'Systemkonfiguration'
+    ],
+    'websockets' => [
+        'contributor_joined' => 'Bearbeiter dazu gekommen',
+        'contributor_left' => 'Bearbeiter gegangen',
     ]
 ];

@@ -8,16 +8,19 @@ use App\CurriculumSubscription;
 use App\CurriculumType;
 use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Http\Requests\Tags\HideModelRequest;
+use App\Level;
 use App\Medium;
 use App\Organization;
 use App\Tag;
-use App\User;
 use App\VariantDefinition;
 use Carbon\Carbon;
 use Gate;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 use Yajra\DataTables\DataTables;
 
 class CurriculumController extends Controller
@@ -87,9 +90,9 @@ class CurriculumController extends Controller
         $userCanSee = $user->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get();
 
         foreach ($user->groups as $group) {
-            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags)->withoutTags($negativeTags));
+            $userCanSee = $userCanSee->merge($group->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get());
         }
-        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags);
+        $organization = Organization::find($user->current_organization_id)->curricula()->withAllTags($tags)->withoutTags($negativeTags)->get();
         $userCanSee   = $userCanSee->merge($organization);
 
         if ($withOwned) {
@@ -241,61 +244,41 @@ class CurriculumController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @param Curriculum $curriculum
+     * @param null       $token
+     *
+     * @return array|Factory|View|\Illuminate\View\View
+     * @throws JsonException
      */
-    public function show(Curriculum $curriculum, $achievements = false, $token = null)
+    public function show(Curriculum $curriculum, $token = null)
     {
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
         LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
 
-        $objectiveTypes = \App\ObjectiveType::select('objective_types.id', 'objective_types.title', 'objective_types.uuid')
-            ->join('terminal_objectives', 'objective_types.id', '=', 'terminal_objectives.objective_type_id')
-            ->join('curricula', 'curricula.id', '=', 'terminal_objectives.curriculum_id')
-            ->where('curricula.id', $curriculum->id)
-            ->distinct()
-            ->get();
-        $levels = \App\Level::all();
+        $levels = Level::all();
 
-        $curriculum = Curriculum::with([
+        $curriculumWithRelation = Curriculum::with([
             'glossar.contents',
         ])
         ->find($curriculum->id);
 
-        if ($token == null)
-        {
-            $may_edit = $curriculum->isEditable();
-        }
-        else
-        {
-            $may_edit = $curriculum->isEditable(auth()->user()->id, $token);
-        }
+        $may_edit = $token === null ? $curriculumWithRelation->isEditable() : $curriculumWithRelation->isEditable(auth()->user()->id, $token);
 
         $settings = json_encode([
-            'edit' => $may_edit, //(auth()->user()->id === $curriculum->owner_id) ? true : false,
+            'edit'                          => $may_edit,
             'cross_reference_curriculum_id' => false,
-        ]);
+            'websocket'                     => config('broadcasting.active'),
+        ], JSON_THROW_ON_ERROR);
 
         if (request()->wantsJson()) {
-            return ['contents' => $curriculum->contents];
+            return ['contents' => $curriculumWithRelation->contents];
         }
 
         return view('curricula.show')
-            ->with(compact('curriculum'))
-            ->with(compact('objectiveTypes'))
-            ->with(compact('levels'))
-            ->with(compact('settings'));
-    }
-
-    /**
-     * Display the specified resource with achievements.
-     *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
-     */
-    public function showAchievements(Curriculum $curriculum)
-    {
-        $this->show($curriculum, true);
+            ->with(compact(
+                'curriculum',
+                'settings',
+            ));
     }
 
     public function getObjectives(Curriculum $curriculum)
@@ -565,39 +548,44 @@ class CurriculumController extends Controller
         return response($curriculum);
     }
 
+    /**
+     * resets the order of objectives and type to their default (created_at)
+     */
     public function resetOrderIds(Curriculum $curriculum)
     {
-        $t = 0;
-        $terminalObjectives = $curriculum->terminalObjectives()->reorder()->orderBy('objective_type_id')->get();
-        $currentObjectiveType = $terminalObjectives->first()->objective_type_id;
-        foreach ($terminalObjectives as $terminalObjective) {
-            if ($currentObjectiveType != $terminalObjective->objective_type_id) {
-                $currentObjectiveType = $terminalObjective->objective_type_id;
-                $t = 0;
-            }
+        // get terminal-objectives with default ordering (by ID => created_at)
+        $terminalObjectives = $curriculum->terminalObjectives()->select('id', 'objective_type_id')->reorder()->get();
+        $type_order = []; // associative array [type_id => terminal_order_id]
 
-            $terminalObjective->update(['order_id' => $t]);
-            $t++;
+        foreach ($terminalObjectives as $terminal) {
+            $type_id = $terminal->objective_type_id;
 
-            $e = 0;
-            foreach ($terminalObjective->enablingObjectives as $enablingObjective) {
-                $enablingObjective->update(['order_id' => $e]);
-                $e++;
+            if (!isset($type_order[$type_id])) $type_order[$type_id] = 0;
+
+            $terminal->update(['order_id' => $type_order[$type_id]]);
+            $type_order[$type_id]++;
+
+            $enabling_order_id = 0;
+            // reset order of enabling-objectives
+            foreach ($terminal->enablingObjectives()->select('id')->reorder()->without('level')->get() as $enabling) {
+                $enabling->update(['order_id' => $enabling_order_id]);
+                $enabling_order_id++;
             }
         }
+        // reset order of objective-types
+        $curriculum->update(['objective_type_order' => array_keys($type_order)]);
     }
 
     public function print(Curriculum $curriculum)
     {
-
-        //LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this).'@'.__FUNCTION__);
         $html = view('print.curriculum')
             ->with(compact('curriculum'))
             ->render();
         if (request()->wantsJson()) {
             return ['path' => (app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save'))];
         }
-        //  return app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save');
+        // return app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save');
     }
 
     public function syncObjectiveTypesOrder(Curriculum $curriculum)
@@ -695,7 +683,7 @@ class CurriculumController extends Controller
             abort(410, 'global.token_expired');
         }
 
-        return $this->show($curriculum, false, $input['sharing_token']);
+        return $this->show($curriculum, $input['sharing_token']);
 
     }
 

@@ -1,6 +1,7 @@
 <template>
     <div class="row">
-        <TabList
+        <TabList v-if="!subscribable"
+            class="px-3"
             :model="'kanban'"
             modelIcon="fa-columns"
             :tabs="['favourite', 'all', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"
@@ -36,6 +37,7 @@
                 modelName="Kanban"
                 url="/kanbans"
                 :showSubscribable="subscribable"
+                :hidable="true"
             >
                 <template v-slot:itemIcon>
                     <i class="fa fa-2x fa-columns"></i>
@@ -76,15 +78,6 @@
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
-                        <hide
-                            url="/kanbans/[id]/hide"
-                            :model="kanban"
-                            :is-hidden="kanban.is_hidden"
-                            @mark-status-changed="(newKanban) => {
-                                kanbans[index] = newKanban;
-                            }"
-                        />
-
                         <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_edit'"
                             :name="'edit-kanban-' + kanban.id"
@@ -93,6 +86,16 @@
                         >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.kanban.edit') }}
+                        </button>
+
+                        <button
+                            v-permission="'tag_access'"
+                            :name="'manage-tags-' + kanban.id"
+                            class="dropdown-item text-secondary"
+                            @click.prevent="manageTags(kanban)"
+                        >
+                            <i class="fa fa-tag mr-2"></i>
+                            {{ trans('global.tag.title') }}
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban)"
@@ -113,6 +116,16 @@
                             {{ trans('global.kanban.copy') }}
                         </button>
 
+                        <hide
+                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                            url="/kanbans/[id]/hide"
+                            :model="kanban"
+                            :is-hidden="kanban.is_hidden"
+                            @mark-status-changed="() => {
+                                kanbans.splice(index, 1)
+                            }"
+                        />
+
                         <hr v-if="ownerOrAdmin(kanban)" class="my-1"/>
 
                         <button v-if="ownerOrAdmin(kanban)"
@@ -127,6 +140,7 @@
                                 {{ trans('global.kanban.delete') }}
                             </span>
                         </button>
+
                     </div>
                 </template>
             </IndexWidget>
@@ -146,6 +160,7 @@
         </div>
 
         <Teleport to="body">
+            <TagComponentModal v-if="!subscribable" event-prefix="kanban" model-namespace="\App\Kanban"/>
             <KanbanModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
@@ -183,6 +198,7 @@ import {useToast} from "vue-toastification";
 import Hide from "../tag/Hide.vue";
 import Favourite from "../tag/Favourite.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
+import TagComponentModal from "../tag/TagComponentModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -261,6 +277,9 @@ export default {
         setFilter(filter) {
             this.filter = filter;
             this.dt.ajax.url('/kanbans/list?filter=' + this.filter).load();
+        },
+        manageTags(kanban) {
+            this.globalStore?.showModal('tag-component-modal', kanban);
         },
         editKanban(kanban) {
             this.globalStore?.showModal('kanban-modal', kanban);
@@ -355,6 +374,7 @@ export default {
         },
     },
     components: {
+        TagComponentModal,
         Hide,
         Favourite,
         SubscribeModal,

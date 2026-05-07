@@ -9,7 +9,7 @@ Route::get('/features', 'OpenController@features')->name('features');
 Route::get('/impressum', 'OpenController@impressum')->name('impressum');
 Route::get('/terms', 'OpenController@terms')->name('terms');
 
-Route::get('/localLogin', 'Auth\LoginController@localLogin');
+Route::get('/localLogin', 'Auth\LoginController@localLogin')->name('localLogin');
 Route::get('/localLogout', 'Auth\LoginController@localLogout');
 Auth::routes(['register' => false]);
 
@@ -47,8 +47,6 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/references', 'CurriculumController@references');
-    Route::get('curricula/{curriculum}', 'CurriculumController@show');
-    Route::get('curricula/{curriculum}/achievements', 'CurriculumController@showAchievements')->name('curricula.showAchievements');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::get('curricula/{curriculum}/certificates', 'CurriculumController@getCertificates')->name('curricula.getCertificates');
     Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');
@@ -170,6 +168,9 @@ Route::withoutMiddleware('auth')->group(function() {
 // O
     Route::get('objectiveTypes/list', 'ObjectiveTypeController@list')->name('objectiveTypes.list');
 
+    Route::get('oidc', 'OIDCController@handle');
+    Route::withoutMiddleware('web')->post('oidc/backchannellogout', 'OIDCController@backchannelLogout');
+
     /*** Organizations ***/
     Route::post('organizations/enrol', 'OrganizationsController@enrol')->name('organizations.enrol');
     Route::delete('organizations/expel', 'OrganizationsController@expel')->name('organizations.expel');
@@ -289,6 +290,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('countries', 'CountryController');
 
     Route::get('curricula', 'CurriculumController@index')->name('curricula.index');
+    Route::get('curricula/{curriculum}', 'CurriculumController@show');
     Route::get('curricula/{curriculum}/token', 'CurriculumController@getCurriculumByToken');
 
     Route::get('enablingObjectives/{enablingObjective}', 'EnablingObjectiveController@show');
@@ -401,6 +403,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('tags/list', 'TagsController@list');
     Route::get('tags/type', 'TagsController@type');
     Route::post('tags/attach', 'TagsController@attach');
+    Route::patch('tags/model', 'TagsController@saveModelTags');
     Route::resource('tags', 'TagsController');
 
     Route::resource('tasks', 'TaskController');
@@ -411,6 +414,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');
+    Route::get('tests/exception', 'Tests\TestController@exception');
 
     /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
@@ -431,15 +435,15 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 
-if (env('GUEST_USER') !== null) {
+if (config('app.guest_user_id') !== null) {
     Route::get('/guest', function () {
         if (Auth::user() == null) {       //if no user is authenticated authenticate guest
             LogController::set('guestLogin');
             LogController::setStatistics();
-            Auth::loginUsingId((env('GUEST_USER')), true);
+            Auth::loginUsingId((config('app.guest_user_id')), true);
         }
-        if (\App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
-            return redirect('/navigators/' . \App\User::find(env('GUEST_USER'))->organizations()->first()->navigators()->first()->id);
+        if (\App\User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
+            return redirect('/navigators/' . \App\User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first()->id);
         } else {
             return redirect('/');
         }

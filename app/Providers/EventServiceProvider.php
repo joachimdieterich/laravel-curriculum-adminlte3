@@ -19,12 +19,6 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        'Aacotroneo\Saml2\Events\Saml2LoginEvent' => [
-            'App\Listeners\SAMLLoginListener',
-        ],
-        'Aacotroneo\Saml2\Events\Saml2LogoutEvent' => [
-            'App\Listeners\SAMLLogoutListener',
-        ],
     ];
 
     protected $subscribe = [
@@ -40,7 +34,7 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        if (env('APP.LOGGING.EVENTS', false)) {
+        if (config('logging.events')) {
             Event::listen('*', function ($event, array $data) {
                 if ($event == 'Illuminate\\Log\\Events\\MessageLogged'){ return;}
                 Log::debug($event . ' invoked');

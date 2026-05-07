@@ -26,7 +26,7 @@ class KanbanItemComment extends Model
 
     public function broadcastOn($event): array
     {
-        if (!env('WEBSOCKET_APP_ACTIVE', false)) {
+        if (!config('broadcasting.active')) {
             return [];
         }
 
@@ -37,9 +37,9 @@ class KanbanItemComment extends Model
         ];
     }
 
-    public function broadcastWith($event): array
+    public function broadcastWith($event): self|array
     {
-        return [
+        return $event === 'deleted' ? $this : [
             'id' => $this->id,
             'model' => $this->with(
                 'user',

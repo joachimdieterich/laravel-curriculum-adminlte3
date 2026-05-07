@@ -3,9 +3,7 @@
 /public/build/
 /public/hot
 /public/storage
-/public/js/app.js
-/storage/*.key
-/storage/api-docs
+/public/js
 /storage/*
 !/storage/framework/
 /vendor/*

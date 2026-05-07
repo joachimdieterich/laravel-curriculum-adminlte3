@@ -47,14 +47,15 @@ class UsersController extends Controller
                 "CONCAT(firstname, ' ', lastname)",
             );
         }
-        else
-        {
-            return view('users.index');
-        }
+        abort_unless(\Gate::allows('user_access'), 403);
+
+        return view('users.index');
     }
 
     public function list()
     {
+        abort_unless(\Gate::allows('user_access'), 403);
+
         $rowID = 'id';
 
         if (request()->has(['group_id']))
@@ -314,10 +315,10 @@ class UsersController extends Controller
         $fallback_user = User::firstOrCreate(
             ['common_name' => 'deleted_user'],
             [
-                'username' => env('APP_FALLBACK_USER_USERNAME', 'Deleted User'),
-                'firstname' => env('APP_FALLBACK_USER_FIRSTNAME', 'Deleted'),
-                'lastname' => env('APP_FALLBACK_USER_LASTNAME', 'User'),
-                'email' => env('APP_FALLBACK_USER_EMAIL', 'User'),
+                'username' => config('app.fallback.username'),
+                'firstname' => config('app.fallback.firstname'),
+                'lastname' => config('app.fallback.lastname'),
+                'email' => config('app.fallback.email'),
                 'password' => Str::uuid(),
             ]
         );

@@ -11,6 +11,7 @@ use App\OrganizationRoleUser;
 use App\Period;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class KanbansApiController extends Controller
@@ -24,35 +25,46 @@ class KanbansApiController extends Controller
 
     public function store()
     {
-        if (!request()->filled('owner_cn')) return response()->json('Missing/Empty attribute [owner_cn]', 400);
-        if (!request()->filled('title')) return response()->json('Missing/Empty attribute [title]', 400);
         // if required attributes are missing it responds with a redirect
-        $input = request()->validate([
-            'owner_cn'      => 'required|string',
-            'title'         => 'required|string|max:191',
-            'description'   => 'nullable|string',
-            'color'         => 'nullable|string|max:7',
-            'editable'      => 'nullable|boolean',
+        $validator = Validator::make(request()->all(), [
+            'owner_cn'              => 'required|string',
+            'title'                 => 'required|string|max:191',
+            'description'           => 'nullable|string',
+            'color'                 => 'nullable|string|max:7',
+            'editable'              => 'nullable|boolean',
+            'commentable'           => 'sometimes|boolean',
+            'auto_refresh'          => 'sometimes|boolean',
+            'only_edit_owned_items' => 'sometimes|boolean',
+            'collapse_items'        => 'sometimes|boolean',
+            'allow_copy'            => 'sometimes|boolean',
         ]);
 
+        if ($validator->fails()) return response()->json($validator->messages(), 400);
+
+        $input = $validator->getData();
         $owner_id = User::where('common_name', $input['owner_cn'])->pluck('id')->first();
 
         if (!$owner_id) return response()->json('owner_cn not found', 404);
 
         $kanban = Kanban::create([
-            'title'         => $input['title'],
-            'description'   => $input['description'],
-            'color'         => $input['color'] ?? '#2980B9',
-            'owner_id'      => $owner_id,
+            'title'                 => $input['title'],
+            'description'           => $input['description'] ?? null,
+            'color'                 => $input['color'] ?? '#2980B9',
+            'owner_id'              => $owner_id,
+            'commentable'           => $input['commentable'] ?? true,
+            'auto_refresh'          => $input['auto_refresh'] ?? false,
+            'only_edit_owned_items' => $input['only_edit_owned_items'] ?? false,
+            'collapse_items'        => $input['collapse_items'] ?? false,
+            'allow_copy'            => $input['allow_copy'] ?? true,
         ]);
 
         //create tokenLink
         $token = Str::uuid();
 
-        $subscribe =  KanbanSubscription::updateOrCreate([
+        $subscribe = KanbanSubscription::updateOrCreate([
             'kanban_id'         => $kanban->id,
             'subscribable_type' => "App\User",
-            'subscribable_id'   => env('GUEST_USER'),
+            'subscribable_id'   => config('app.guest_user_id'),
             'sharing_token'     => $token,
         ], [
             'due_date'  => NULL,
@@ -62,8 +74,8 @@ class KanbansApiController extends Controller
         ]);
         $subscribe->save();
 
-        $collection = collect($kanban);
-        $collection->put('sharing_link', env('APP_URL').'/kanbans/'.$kanban->id.'/token?sharing_token='.$token);
+        $collection = collect($kanban->makeHidden('tags', 'is_favourited', 'is_hidden'));
+        $collection->put('sharing_link', config('app.url').'/kanbans/'.$kanban->id.'/token?sharing_token='.$token);
         $collection->put('editable',  $subscribe->editable);
 
         return $collection->all();
@@ -96,22 +108,7 @@ class KanbansApiController extends Controller
 
         if ($kanban->owner_id !== $user_id) return response()->json("common_name does not match Kanban-owner's common_name", 403);
 
-        // delete medium if edusharing-medium
-        if ($kanban->medium_id) {
-            $medium = $kanban->medium;
-
-            if ($medium->adapter == 'edusharing') {
-                $medium->subscriptions()->delete();
-                $medium->delete();
-            }
-        }
-
-        //delete relations
-        $kanban->items()->delete();
-        $kanban->statuses()->delete();
-        $kanban->subscriptions()->delete();
-
-        if ($kanban->delete()) return response()->json(true);
+        return response()->json($kanban->delete());
     }
 
     public function enrol()
@@ -177,7 +174,7 @@ class KanbansApiController extends Controller
                 "token" => $token,
                 "qr"    => (new QRCodeHelper())
                     ->generateQRCodeByString(
-                        env("APP_URL"). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
+                        config('app.url'). "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
                     )
             ];
         }
@@ -192,7 +189,7 @@ class KanbansApiController extends Controller
                 )->with('subscribable')
                     ->whereHasMorph('subscribable', '*', function ($q, $type) {
                         if ($type == 'App\\User') {
-                            $q->whereNot('id', env('GUEST_USER'));
+                            $q->whereNot('id', config('app.guest_user_id'));
                         }
                     })->get(),
             ],

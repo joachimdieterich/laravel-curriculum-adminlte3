@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,45 +10,10 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     /**
-     * Create user
-     *
-     * @param  [string] name
-     * @param  [string] email
-     * @param  [string] password
-     * @param  [string] password_confirmation
-     * @return [string] message
-     */
-//    public function signup(Request $request)
-//    {
-//        dd($request);
-//        $request->validate([
-//            'username' => 'required|string',
-//            'common_name' => 'required|string|unique:users',
-//            'firstname' => 'required|string',
-//            'lastname' => 'required|string',
-//            'email' => 'required|string|email|unique:users',
-//            'password' => 'required|string|confirmed'
-//        ]);
-//        $user = new User([
-//            'username' => $request->username,
-//            'common_name' => $request->common_name,
-//            'firstname' => $request->firstname,
-//            'lastname' => $request->lastname,
-//            'email' => $request->email,
-//            'password' => bcrypt($request->password)
-//        ]);
-//        $user->save();
-//        return response()->json([
-//            'message' => 'Successfully created user!'
-//        ], 201);
-//    }
-
-    /**
      * Login user and create token
      *
      * @param  [string] email
      * @param  [string] password
-     * @param  [boolean] remember_me
      * @return [string] access_token
      * @return [string] token_type
      * @return [string] expires_at
@@ -59,20 +23,18 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
-            'remember_me' => 'boolean',
         ]);
+
         $credentials = request(['email', 'password']);
         if (! Auth::attempt($credentials)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 401);
         }
+
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
-        if ($request->remember_me) {
-            $token->expires_at = Carbon::now()->addWeeks(1);
-        }
         $token->save();
 
         return response()->json([
@@ -105,6 +67,6 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json($request->user('api'));
     }
 }

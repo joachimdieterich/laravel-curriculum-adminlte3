@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="course"
+        <div v-if="Object.keys(course).length"
             v-permission="'achievement_access'"
         >
             <div
@@ -48,14 +48,14 @@
                     <li
                         class="nav-item"
                         role="tab"
-                        aria-controls="curriculm-tab"
+                        aria-controls="curriculum-tab"
                         aria-selected="false"
                     >
                         <a
-                            id="curriculm-nav-tab"
+                            id="curriculum-nav-tab"
                             class="nav-link link-muted"
                             data-toggle="tab"
-                            href="#curriculm-tab"
+                            href="#curriculum-tab"
                         >
                             <i class="fas fa-th pr-2"></i>
                             {{ trans('global.objective_tab') }}
@@ -102,7 +102,7 @@
                             {{trans('global.glossar.create')}}
                         </a>
                     </li>
-                    <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && course"
+                    <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
                         v-permission="'certificate_access'"
                         class="nav-item ml-auto"
                     >
@@ -190,15 +190,14 @@
                     class="tab-content"
                 >
                     <div
-                        id="curriculm-tab"
+                        id="curriculum-tab"
                         class="tab-pane fade show active"
                         role="tabpanel"
-                        aria-labelledby="curriculm-nav-tab"
+                        aria-labelledby="curriculum-nav-tab"
                     >
                         <TerminalObjectives
                             ref="terminalObjectives"
                             :curriculum="curriculum"
-                            :objectivetypes="objectivetypes"
                             :settings="settings"
                         />
                     </div>
@@ -277,6 +276,9 @@
                 <i class="fa fa-share-alt"></i>
             </a>
         </Teleport>
+        <Teleport to="#contributors">
+            <contributors-list v-if="Object.values(currentContributors).length > 1" :contributors="currentContributors" :heading="true"></contributors-list>
+        </Teleport>
     </div>
 </template>
 <script>
@@ -296,11 +298,14 @@ import {useGlobalStore} from "../../store/global";
 import ContentModal from "../content/ContentModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MediumExportModal from "../media/MediumExportModal.vue";
+import ContributorsList from "../uiElements/ContributorsList.vue";
+import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
     name: "Curriculum",
     components: {
+        ContributorsList,
         MediumModal,
         MediumExportModal,
         ContentModal,
@@ -321,11 +326,7 @@ export default {
         },
         course: {
             type: Object,
-            default: null,
-        },
-        objectivetypes: {
-            type: Array,
-            default: null,
+            default: {},
         },
         settings: {
             type: Object,
@@ -335,9 +336,12 @@ export default {
     setup() {
         const store = useDatatableStore();
         const globalStore = useGlobalStore();
+        const toast = useToast();
+
         return {
             store,
             globalStore,
+            toast,
         }
     },
     data() {
@@ -354,6 +358,7 @@ export default {
             options : this.$dtOptions,
             search: '',
             dt: null,
+            currentContributors: {},
         }
     },
     mounted() {
@@ -369,6 +374,11 @@ export default {
         this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {
             Object.assign(this.currentCurriculum, updatedCurriculum);
         });
+
+        this.startWebsocket();
+    },
+    unmounted() {
+        this.stopWebsocket();
     },
     methods: {
         createCertificate() {
@@ -382,11 +392,12 @@ export default {
         loaderEvent: function() {
             this.$refs.Contents.loaderEvent();
         },
-        setCrossReferenceCurriculumId: function(curriculum_id) { //can be called external
-            this.settings.cross_reference_curriculum_id = curriculum_id;
-        },
         generateCertificate() {
             this.globalStore?.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});
+        },
+        printCurriculum() {
+            axios.get('/curricula/' + this.curriculum.id + '/print')
+                .then(response => window.location.href = response.data.path);
         },
         exportCurriculum() {
             this.globalStore?.showModal('medium-export-modal', {
@@ -415,6 +426,33 @@ export default {
             this.store.setSelectedIds('curriculum-user-datatable', selection);
 
             this.$refs.terminalObjectives.externalEvent(this.store.getSelectedIds('curriculum-user-datatable'));
+        },
+        startWebsocket() {
+            if (this.settings.websocket === true) {
+                this.$echo
+                    .join('App.Curriculum.' + this.curriculum.id)
+                    .here((users) => {
+                        for(let user of users) {
+                            this.currentContributors[user.id] = user;
+                        }
+                    })
+                    .listen('.CurriculumUpdated', (payload) => {
+                        this.$eventHub.emit('curriculum-updated', payload.model);
+                    })
+                    .joining((user) => {
+                        this.currentContributors[user.id] = user;
+                        this.toast.info(this.trans('global.websockets.contributor_joined') + ': ' + user.firstname + ' ' + user.lastname);
+                    })
+                    .leaving((user) => {
+                        delete this.currentContributors[user.id];
+                        this.toast.info(this.trans('global.websockets.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
+                    });
+            }
+        },
+        stopWebsocket() {
+            if (this.settings.websocket === true) {
+                this.$echo.leave('App.Kanban.' + this.kanban.id);
+            }
         },
     }
 }

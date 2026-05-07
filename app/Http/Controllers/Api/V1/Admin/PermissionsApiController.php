@@ -14,23 +14,8 @@ class PermissionsApiController extends Controller
         return Permission::all();
     }
 
-    public function store(StorePermissionRequest $request)
-    {
-        return Permission::create($request->all());
-    }
-
-    public function update(UpdatePermissionRequest $request, Permission $permission)
-    {
-        return $permission->update($request->all());
-    }
-
     public function show(Permission $permission)
     {
         return $permission;
-    }
-
-    public function destroy(Permission $permission)
-    {
-        return $permission->delete();
     }
 }

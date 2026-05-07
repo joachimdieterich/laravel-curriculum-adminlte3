@@ -99,16 +99,16 @@
                                         />
                                     </div>
                                     <tag-multiselect
-                                        type="App\Kanban"
+                                        type="App\Curriculum"
                                         :model-id="this.form.id"
                                         :selectedTags="this.selectedTags"
                                         @selectedValue="(data) => {
                                             this.form.tags = data;
                                         }"
-                                                @cleared="() => {
+                                        @cleared="() => {
                                             this.form.tags = [];
                                         }"
-                                                @tag-attached="(tag) => {
+                                        @tag-attached="(tag) => {
                                             this.updateSelectedTags(tag.id);
                                         }"
                                     ></tag-multiselect>

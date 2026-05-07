@@ -3,9 +3,9 @@
 namespace App;
 
 use App\Services\Tag\HasTags;
+use App\Services\Websocket\Broadcastable;
+use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -23,13 +23,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *      @OA\Property( property="owner_id", type="integer"),
  *      @OA\Property( property="created_at", type="string"),
  *      @OA\Property( property="updated_at", type="string"),
- *      @OA\Property( property="commentable", type="integer"),
- *      @OA\Property( property="auto_refresh", type="integer"),
- *      @OA\Property( property="only_edit_owned_items", type="integer"),
- *      @OA\Property( property="allow_copy", type="integer")
+ *      @OA\Property( property="commentable", type="boolean", default=true),
+ *      @OA\Property( property="auto_refresh", type="boolean", default=false),
+ *      @OA\Property( property="only_edit_owned_items", type="boolean", default=false),
+ *      @OA\Property( property="collapse_items", type="boolean", default=false),
+ *      @OA\Property( property="allow_copy", type="boolean", default=true),
  *   ),
  */
-class Kanban extends Model
+class Kanban extends Model implements Broadcastable
 {
     use BroadcastsEvents, HasTags;
 
@@ -46,24 +47,6 @@ class Kanban extends Model
     ];
 
     protected $appends = ['is_favourited', 'is_hidden'];
-
-    public function broadcastOn($event): array
-    {
-        if (!env('WEBSOCKET_APP_ACTIVE', false)) {
-            return [];
-        }
-
-        return [
-            new PresenceChannel($this->broadcastChannel())
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'model' => $this->withRelations(),
-        ];
-    }
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -185,7 +168,7 @@ class Kanban extends Model
             $user_id = auth()->user()->id;
         }
         // check for subscriptions if not guest user
-        if ($user_id != env('GUEST_USER')) {
+        if ($user_id != config('app.guest_user_id')) {
             $userSubscription         = optional(
                 $this->userSubscriptions()
                     ->where('subscribable_id', $user_id)
@@ -238,12 +221,14 @@ class Kanban extends Model
         static::deleting(function ($kanban) {
             $kanban->subscriptions()->delete();
             if ($kanban->medium_id) {
-                $subscription = $kanban->medium->subscriptions()->first();
-                $kanban->update(['medium_id' => null]);
-                // hack to skip setting medium_id of model to null
-                if (is_null($subscription->additional_data)) $subscription->additional_data = true;
-                // can't call delete()-function of MediumSubscription-model (in general)
-                app(\App\Http\Controllers\MediumSubscriptionController::class)->destroy($subscription);
+                try {
+                    $subscription = $kanban->medium->subscriptions()->first();
+                    $kanban->update(['medium_id' => null]);
+                    // hack to skip setting medium_id of model to null
+                    if (is_null($subscription->additional_data)) $subscription->additional_data = true;
+                    // can't call delete()-function of MediumSubscription-model (in general)
+                    app(\App\Http\Controllers\MediumSubscriptionController::class)->destroy($subscription);
+                } catch (\Throwable) {} // occurs on invalid/non-existing medium-subscription | can be ignored
             }
             // each status needs to be deleted separately to trigger its booted functions
             $kanban->statuses->each->delete();

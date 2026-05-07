@@ -3,6 +3,8 @@
 namespace App;
 
 use App\Services\Tag\HasTags;
+use App\Services\Websocket\Broadcastable;
+use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,9 +33,9 @@ use Mews\Purifier\Casts\CleanHtml;
  *      @OA\Property( property="updated_at", type="string")
  *   ),
  */
-class Curriculum extends Model
+class Curriculum extends Model implements Broadcastable
 {
-    use HasFactory, HasTags;
+    use BroadcastsEvents, HasFactory, HasTags;
 
     protected $guarded = [];
 
@@ -60,6 +62,14 @@ class Curriculum extends Model
     protected $appends = ['is_favourited', 'is_hidden'];
 
     protected $with = ['owner:id,firstname,lastname'];
+
+    public function withRelations(): self|null
+    {
+        return $this->with([
+            'glossar.contents',
+            'terminalObjectives',
+        ])->find($this->id);
+    }
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -225,7 +235,6 @@ class Curriculum extends Model
             or ($this->owner_id == auth()->user()->id) // or owner
             or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() // user is enroled in group
             or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() // user is enroled in group
-            //or ((env('GUEST_USER') != null) ? User::find(env('GUEST_USER'))->curricula->contains('id', $this->id) : false) // or allowed via guest
         ) {
             return true;
         } else {
@@ -253,16 +262,15 @@ class Curriculum extends Model
 
     public function isEditable($user_id = null, $token = null)
     {
-        if ($user_id == null)
-        {
+        if ($user_id == null) {
             $user_id = auth()->user()->id;
         }
 
-        if ($token == null){
-            $userSubscription = optional($this->userSubscriptions()
+        if ($token == null) {
+            $userSubscription         = optional($this->userSubscriptions()
                 ->where('subscribable_id', $user_id)
                 ->first());
-            $groupSubscription = optional($this->groupSubscriptions()
+            $groupSubscription        = optional($this->groupSubscriptions()
                 ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
                 ->where('editable', 1)
                 ->first());
@@ -270,37 +278,24 @@ class Curriculum extends Model
                 ->whereIn('subscribable_id', auth()->user()->organizations->pluck('id'))
                 ->where('editable', 1)
                 ->first());
-        }
-        else
-        {
+        } else {
             $userSubscription = optional($this->userSubscriptions()
                 /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
                 ->where('sharing_token', $token)
                 ->first());
         }
-        if (
-            ($this->owner_id == $user_id or is_admin()) or // owner or admin
-            ($this->type_id !== 1 and ( // non-global
-                $userSubscription->editable // user enrolled
-                or $groupSubscription->editable ?? false // group enrolled
-                or $organizationSubscription->editable ?? false // organization enrolled
-            ))
+        if (($this->owner_id == $user_id || is_admin()) // owner or admin
+            || ($this->type_id !== 1 // non-global
+                && ($userSubscription?->editable // user enrolled
+                    || $groupSubscription?->editable ?? false // group enrolled
+                    || $organizationSubscription?->editable ?? false // organization enrolled
+                )
+            )
         ) {
             return true;
-        } else {
-            return false;
         }
-    }
 
-    public function tags(?User $currentUser = null)
-    {
-        $currentUser = $currentUser ?? auth()->user()?->id;
-
-        return $this
-            ->morphToMany(self::getTagClassName(), $this->getTaggableMorphName(), $this->getTaggableTableName())
-            ->using($this->getPivotModelClassName())
-            ->where('user_id', $currentUser)
-            ->ordered();
+        return false;
     }
 
     public static function booted() {

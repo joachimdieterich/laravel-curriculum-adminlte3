@@ -17,13 +17,6 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *     @OA\Schema(type="array", @OA\Items(type="integer"))
  *   ),
  *   @OA\Parameter(
- *     name="scale",
- *     description="Title of the achievement scale, e.g. 'moodle'",
- *     required=true,
- *     in="query",
- *     @OA\Schema(type="string")
- *   ),
- *   @OA\Parameter(
  *     name="user_common_name",
  *     description="(optional) Only get achievements from given users",
  *     in="query",
@@ -38,7 +31,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *     )
  *   ),
  *   @OA\Response(response=400, description="Missing required fields | Invalid data format, expected array for referenceable_id and user_common_name"),
- *   @OA\Response(response=404, description="common_name or scale not found")
+ *   @OA\Response(response=404, description="common_name not found")
  * ),
  * @OA\Post(
  *   path="/v1/achievements",
@@ -70,15 +63,8 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *     @OA\Schema(type="array", @OA\Items(type="integer"))
  *   ),
  *   @OA\Parameter(
- *     name="scale",
- *     description="Title of the achievement scale, e.g. 'moodle'",
- *     required=true,
- *     in="query",
- *     @OA\Schema(type="string")
- *   ),
- *   @OA\Parameter(
  *     name="status",
- *     description="Status value (max. 2 chars)",
+ *     description="Status value (max. 2 chars, at least 1 number), use 'x'/'X' for whitecard (keep previous value)",
  *     required=true,
  *     in="query",
  *     @OA\Schema(type="string")
@@ -92,7 +78,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *     )
  *   ),
  *   @OA\Response(response=400, description="Missing required fields | Invalid data format, expected array for referenceable_id and user_common_name"),
- *   @OA\Response(response=404, description="common_name or scale not found")
+ *   @OA\Response(response=404, description="common_name not found")
  * )
  */
 

@@ -23,7 +23,7 @@ class ShareTokenController extends Controller
             $date = Carbon::parse($date);
         }
 
-        $user = User::find(env('GUEST_USER'));
+        $user = User::find(config('app.guest_user_id'));
 
         $subscriptionClass = null;
         $field_model_id = null;
@@ -73,7 +73,7 @@ class ShareTokenController extends Controller
             "token" => $subscribe,
             "qr"    => (new QRCodeHelper())
                 ->generateQRCodeByString(
-                    env("APP_URL") . "/" . $model_url . "/" . $input['model_id'] . "/token?sharing_token=" . $subscribe->sharing_token
+                    config('app.url') . "/" . $model_url . "/" . $input['model_id'] . "/token?sharing_token=" . $subscribe->sharing_token
                 ),
         ];
     }

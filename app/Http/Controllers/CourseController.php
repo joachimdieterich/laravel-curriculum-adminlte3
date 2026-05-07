@@ -74,8 +74,6 @@ class CourseController extends Controller
         ])
         ->get();
 
-        /*$logbook = (null !== $course->logbookSubscription()->get()->first()) ? $course->logbookSubscription()->get()->first()->logbook()->get()->first() : null;*/
-
         $settings = json_encode([
             'course' => true,
             'edit' => false,
@@ -88,7 +86,6 @@ class CourseController extends Controller
             ->with(compact('objectiveTypes'))
             ->with(compact('course'))
             ->with(compact('certificates'))
-            /*->with(compact('logbook'))*/
             ->with(compact('settings'));
     }
 

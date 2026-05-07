@@ -47,7 +47,7 @@ class ReferenceController extends Controller
     {
         abort_unless(\Gate::allows('objective_edit'), 403);
         if (request()->wantsJson()) {
-            return ['message' => $reference->update($request->all())];
+            return $reference->update($this->validateRequest());
         }
     }
 

@@ -147,7 +147,8 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *          description="successful operation",
  *          @OA\Schema(ref="#/components/schemas/SelectList"),
  *       ),
- *       @OA\Response(response=400, description="Bad request"),
+ *       @OA\Response(response=400, description="User with given common_name does not exist"),
+ *       @OA\Response(response=403, description="Curriculum is not accessible for this user"),
  * )
  *
  * @OA\Get(

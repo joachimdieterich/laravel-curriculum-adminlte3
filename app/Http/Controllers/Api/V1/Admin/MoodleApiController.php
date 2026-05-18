@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Group;
+use Illuminate\Support\Facades\Validator;
 
 class MoodleApiController extends Controller
 {
@@ -90,12 +91,23 @@ class MoodleApiController extends Controller
 
     public function getEnablingObjectives(\App\Curriculum $curriculum, Request $request)
     {
-        $this->validateRequest();
-        $user = User::where('common_name', request()->input('common_name'));
-        Auth::loginUsingId($user->first()->id);
-        $curriculum->isAccessible();
+        $validator = Validator::make(request()->all(), [
+            'common_name' => 'required|string|exists:users,common_name',
+        ]);
 
-        return $curriculum->enablingObjectives('terminal_objective_id')->get()->map->only('id', 'title', 'terminal_objective_id');
+        if ($validator->fails()) return response()->json('User with given common_name does not exist', 400);
+
+        $common_name = $validator->validated()['common_name'];
+
+        $user = User::select('id')->where('common_name', $common_name)->first();
+        Auth::loginUsingId($user->id);
+
+        if (!$curriculum->isAccessible()) return response()->json('Curriculum is not accessible for this user', 403);
+
+        return $curriculum->enablingObjectives()
+            ->select('id', 'title', 'terminal_objective_id')
+            ->without(['terminalObjective', 'level'])
+            ->get();
     }
 
     public function getLogbooks(Request $request)

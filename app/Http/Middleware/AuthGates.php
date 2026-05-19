@@ -25,14 +25,6 @@ class AuthGates
                 }
             }
 
-            $current_role_id = ($user->role() !== null) ? $user->role()->id : abort(403, 'Fehlende Organisationszugehörigkeit');
-            //$current_role_id =  $user->role()->id;
-            foreach ($permissionsArray as $title => $roles) {
-                Gate::define($title, function () use ($current_role_id, $roles) {
-                    return in_array($current_role_id, $roles) ? true : false; //only check current role
-                });
-            }
-
             //set current organization and current period if not set
             if ($user->current_organization_id === null) {
                 $user->current_organization_id = $user->organizations()->first()->id;
@@ -48,6 +40,14 @@ class AuthGates
                         ->where('groups.organization_id', $user->current_organization_id)
                         ->get()->first())->id;
                 $user->save();
+            }
+
+            $current_role_id = ($user->role() !== null) ? $user->role()->id : abort(403, 'Fehlende Organisationszugehörigkeit');
+            //$current_role_id =  $user->role()->id;
+            foreach ($permissionsArray as $title => $roles) {
+                Gate::define($title, function () use ($current_role_id, $roles) {
+                    return in_array($current_role_id, $roles) ? true : false; //only check current role
+                });
             }
         }
 

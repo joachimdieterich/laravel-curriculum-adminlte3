@@ -5,10 +5,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/home');
 
-Route::get('/features', 'OpenController@features')->name('features');
-Route::get('/impressum', 'OpenController@impressum')->name('impressum');
-Route::get('/terms', 'OpenController@terms')->name('terms');
-
 Route::get('/localLogin', 'Auth\LoginController@localLogin')->name('localLogin');
 Route::get('/localLogout', 'Auth\LoginController@localLogout');
 Auth::routes(['register' => false]);

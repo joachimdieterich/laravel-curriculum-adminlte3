@@ -403,49 +403,49 @@ if (! function_exists('is_admin')) {
     {
         $user = $user ?? auth()->user();
 
-        return $user->role()->id == 1;
+        return $user->role()?->id == 1;
     }
 }
 
 if (! function_exists('is_creator')) {
     function is_creator()
     {
-        return auth()->user()->role()->id == 2;
+        return auth()->user()?->role()->id == 2;
     }
 }
 
 if (! function_exists('is_schooladmin')) {
     function is_schooladmin()
     {
-        return auth()->user()->role()->id == 4;
+        return auth()->user()?->role()->id == 4;
     }
 }
 
 if (! function_exists('is_teacher')) {
     function is_teacher()
     {
-        return auth()->user()->role()->id == 5;
+        return auth()->user()?->role()->id == 5;
     }
 }
 
 if (! function_exists('is_student')) {
     function is_student()
     {
-        return auth()->user()->role()->id == 6;
+        return auth()->user()?->role()->id == 6;
     }
 }
 
 if (! function_exists('is_parent')) {
     function is_parent()
     {
-        return auth()->user()->role()->id == 7;
+        return auth()->user()?->role()->id == 7;
     }
 }
 
 if (! function_exists('is_guest')) {
     function is_guest()
     {
-        return auth()->user()->role()->id == 8;
+        return auth()->user()?->role()->id == 8;
     }
 }
 

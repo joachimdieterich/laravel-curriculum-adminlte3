@@ -33,7 +33,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         Telescope::filter(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
                 // don't filter requests that take too long to process (default 1000ms)
-                if($entry->content['duration'] >= config('telescope.duration_filter')) {
+                if (
+                    $entry->content['duration'] >= config('telescope.duration_filter')
+                    && !str_starts_with($entry->content['uri'], '/media')
+                ) {
                     return true;
                 }
                 // only show requests with a response status code greater than or equal to the configured status filter (default 200)

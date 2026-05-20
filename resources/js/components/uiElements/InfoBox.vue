@@ -25,7 +25,7 @@
                 >
                     <slot name="entry" :entry="entry">
                         <i v-if="!entry.grade"
-                            class="fa mr-2"
+                            class="fa text-secondary mr-2"
                             :class="entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
                         ></i>
                         <a :href="'/' + model + '/' + entry.id">

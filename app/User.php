@@ -378,9 +378,11 @@ class User extends Authenticatable
      */
     public function role(): ?Model
     {
-        return $this->belongsToMany(Role::class, 'organization_role_users')
-            ->withPivot(['user_id', 'role_id', 'organization_id'])
-            ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
+        return once(function() {
+            return $this->belongsToMany(Role::class, 'organization_role_users')
+                ->withPivot(['user_id', 'role_id', 'organization_id'])
+                ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
+        });
     }
 
     public function unreadMessagesCount(): int

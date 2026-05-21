@@ -172,7 +172,7 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
             return array_any(
                 (array) $field,
                 function ($f) use ($obj, $term) {
-                    return str_contains(strtolower(($obj)[$f]), $term);
+                    return str_contains(strtolower($obj->{$f}), $term);
                 }
             );
         });

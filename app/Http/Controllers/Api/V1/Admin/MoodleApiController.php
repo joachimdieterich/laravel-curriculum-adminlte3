@@ -368,12 +368,10 @@ class MoodleApiController extends Controller
     {
         // validate that required fields are present
         if (empty($input['users'])) {
-            response()->json('No users (common_name) provided', 400)->send();
-            exit;
+            return response()->json('No users (common_name) provided', 400);
         }
         if (empty($input['kanbans']) and empty($input['curricula']) and empty($input['groups'])) {
-            response()->json('At least one model needs to be provided (kanbans/curricula/groups)', 400)->send();
-            exit;
+            return response()->json('At least one model needs to be provided (kanbans/curricula/groups)', 400);
         }
 
         // parse fields to arrays if they are strings
@@ -386,8 +384,7 @@ class MoodleApiController extends Controller
         // if not every common_name has a corresponding user, return those
         if (count($users) != count($input['users'])) {
             $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
-            response()->json('Users with common names ['.implode(', ', $missing).'] not found', 400)->send();
-            exit;
+            return response()->json('Users with common names ['.implode(', ', $missing).'] not found', 400);
         }
 
         return [$input, $users];

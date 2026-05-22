@@ -235,10 +235,19 @@ class MoodleApiController extends Controller
         $create_count = 0;
 
         if (!empty($input['groups'])) {
-            // enrol users to groups
             $groups = Group::select('id', 'common_name')->whereIn('common_name', $input['groups'])->get();
             // if not every common_name has a corresponding group
             if (count($groups) != count($input['groups'])) {
+                // first check if organization is provided and exists
+                if (empty($input['organization'])) {
+                    return response()->json('Organization-common_name is required when enrolling users to groups', 400);
+                }
+    
+                $organization = \App\Organization::select('id')->where('common_name', $input['organization'])->first();
+                if (empty($organization)) {
+                    return response()->json('Organization with common_name `'.$input['organization'].'` not found', 400);
+                }
+
                 $missing = array_diff($input['groups'], $groups->pluck('common_name')->toArray());
                 foreach ($missing as $common_name) {
                     // create new group
@@ -247,13 +256,14 @@ class MoodleApiController extends Controller
                         'common_name' => $common_name,
                         'grade_id' => 999, // default grade
                         'period_id' => 1, // default period
-                        'organization_id' => 1, // default organization
+                        'organization_id' => $organization->id,
                     ]);
 
                     $groups->push($new_group);
                 }
             }
 
+            // enrol users to groups
             foreach ($groups as $group) {
                 foreach ($users as $user) {
                     $group->users()->syncWithoutDetaching($user->id);
@@ -389,6 +399,7 @@ class MoodleApiController extends Controller
             'common_name'   => 'sometimes|string',
             'users'         => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
             'groups'        => is_array(request()->input('groups')) ? 'sometimes|array' : 'sometimes|string',
+            'organization'  => 'sometimes|string',
             'curricula'     => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',
             'logbooks'      => 'sometimes|array',
             'kanbans'       => is_array(request()->input('kanbans')) ? 'sometimes|array' : 'sometimes|string',

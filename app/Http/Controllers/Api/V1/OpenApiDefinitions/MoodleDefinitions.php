@@ -282,6 +282,11 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *                  @OA\Items(type="string")
  *              ),
  *              @OA\Property(
+ *                  property="organization",
+ *                  description="The common_name of the organization the group should be assigned to. Only required if groups need to be created.",
+ *                  type="string"
+ *              ),
+ *              @OA\Property(
  *                  property="kanbans",
  *                  description="array/array-like string of kanban IDs",
  *                  type="array",

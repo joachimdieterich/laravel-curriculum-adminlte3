@@ -224,7 +224,7 @@ if (! function_exists('getSubscribedModels'))
             })
             ->orWhere(function ($q) {
                 $q->where('subscribable_type', 'App\\Organization')
-                    ->where('subscribable_id', auth()->user()->current_organization_id);
+                    ->whereIn('subscribable_id', auth()->user()->organizations()->pluck('organizations.id'));
             });
         });
 

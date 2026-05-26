@@ -204,7 +204,7 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
 if (! function_exists('getSubscribedModels'))
 {
     /**
-     * helper function to get all models that are subscribed to the user
+     * generalized function to get all entries of a model that are subscribed to the user
      * @param string|Builder $model either model::class or a builder-instance, e.g. $user->kanbans()
      * @param bool $withOwned also get entries owned by the user
      * @return Builder

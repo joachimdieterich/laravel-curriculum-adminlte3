@@ -21,8 +21,9 @@
                 <div class="card-body box-profile">
                     <div class="text-center">
                         <avatar
-                            :medium_id="user.medium_id"
+                            :medium="user.avatar"
                             :css="'clearfix'"
+                            :show-popup-details="false"
                         />
                     </div>
 

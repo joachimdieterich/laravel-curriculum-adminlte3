@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Group;
+use App\Helpers\Formatter;
 use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
@@ -165,6 +166,7 @@ class UsersController extends Controller
         }
 
         $status_definitions = StatusDefinition::all();
+        $user->append('avatar');
         $user->load('roles');
         $user->load(['organizations.state', 'organizations.country']);
         $user->load('groups');

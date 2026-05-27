@@ -1,11 +1,17 @@
 <template>
-    <span>
+    <span :style="'width: ' + size + 'px; height: ' + size + 'px; display: inline-block;'">
         <span v-if="label">
             <div
                 class="user-block pr-2"
                 :class="css"
             >
-                <img v-if="typeof avatar_medium_id === 'number'"
+                <img v-if="medium !== null"
+                     class="img-circle img-bordered-sm"
+                     :width="size"
+                     :height="size"
+                     :src="medium"
+                />
+                <img v-else-if="typeof avatar_medium_id === 'number'"
                      class="img-circle img-bordered-sm"
                      :style="'width:' + size + ' !important;height:' + size + ' !important;'"
                      :src="'/media/' + avatar_medium_id"
@@ -24,15 +30,21 @@
             </div>
         </span>
         <div v-else
-             @mouseenter="contributorDetailsEntered(user_id, $event)"
-             @mouseleave="contributorDetailsLeft"
-             @mousemove="contributorDetailsMovement"
-             @touchstart="contributorDetailsEntered(user_id, $event);"
-             @touchend="contributorDetailsLeft"
-             @touchmove="contributorDetailsMovement"
+             @mouseenter="entered(user_id, $event)"
+             @mouseleave="detailsLeft"
+             @mousemove="movement"
+             @touchstart="entered(user_id, $event);"
+             @touchend="detailsLeft"
+             @touchmove="movement"
              :style="'width:' + size + 'px; height:' + size + 'px;'"
         >
-            <img v-if="typeof avatar_medium_id === 'number'"
+            <img v-if="medium !== null"
+                 class="img-circle img-bordered-sm"
+                 :width="size"
+                 :height="size"
+                 :src="medium"
+            />
+            <img v-else-if="typeof avatar_medium_id === 'number'"
                  class="direct-chat-img"
                  :class="css"
                  :style="'width:' + size + 'px; height:' + size + 'px; float:none !important'"
@@ -45,9 +57,9 @@
                     :width="size"
                     :height="size"
             ></canvas>
-            <div v-show="contributorDetails.show && contributorDetails.key === user_id"
-                 class="rounded-sm contributor-details"
-                 :style="{top: contributorDetailsTopStyle + 'px', left: contributorDetailsLeftStyle + 'px'}"
+            <div v-show="showPopupDetails && details.show && details.key === user_id"
+                 class="rounded-sm details"
+                 :style="{top: topStyle + 'px', left: leftStyle + 'px'}"
             >
                 {{ firstname }} {{ lastname }}
             </div>
@@ -55,7 +67,7 @@
     </span>
 </template>
 <style scoped>
-.contributor-details {
+.details {
     cursor: default;
     position: fixed;
     font-weight: normal;
@@ -110,6 +122,16 @@ export default {
             type: Number,
             default: null,
         },
+        medium: {
+            type: String,
+            default: null,
+            title: "The image itself. Best base64-format."
+        },
+        showPopupDetails: {
+            type: Boolean,
+            default: true,
+            title: "Controls if the Popup with user information should be displayed"
+        }
     },
     data() {
         return {
@@ -118,27 +140,26 @@ export default {
             avatar_medium_id: null,
             colours: ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"],
             user: null,
-            contributorDetails: {
+            details: {
                 key: 0,
                 show: false,
                 posX: 0,
                 posY: 0
             },
-            contributorStyles: {}
         };
     },
     methods: {
-        contributorDetailsEntered: function (contributorKey, e) {
-            this.contributorDetails.key = contributorKey;
-            this.contributorDetails.show = true;
+        entered: function (key, e) {
+            this.details.key = key;
+            this.details.show = true;
 
-            this.contributorDetailsMovement(e);
+            this.movement(e);
         },
-        contributorDetailsLeft: function () {
-            this.contributorDetails.key = 0;
-            this.contributorDetails.show = false;
+        detailsLeft: function () {
+            this.details.key = 0;
+            this.details.show = false;
         },
-        contributorDetailsMovement: function (e) {
+        movement: function (e) {
             let x = e.x;
             let y = e.y;
 
@@ -146,8 +167,8 @@ export default {
                 x = e.targetTouches[0].clientX;
                 y = e.targetTouches[0].clientY;
             }
-            this.contributorDetails.posX = x - 80;
-            this.contributorDetails.posY = y - 80;
+            this.details.posX = x - 80;
+            this.details.posY = y - 80;
         },
         drawCanvas() {
             let initials = "";
@@ -205,7 +226,7 @@ export default {
         this.id = 'user-avatar' + this.$.uid;
         this.avatar_medium_id = this.medium_id;
 
-        if (this.user_id == null && this.medium_id == null) {
+        if (this.user_id == null && this.medium_id == null && this.medium == null) {
             this.drawCanvas();
         } else {
             axios.get('/users/' + this.user_id)
@@ -219,11 +240,11 @@ export default {
         }
     },
     computed: {
-        contributorDetailsLeftStyle() {
-            return this.contributorDetails.posX
+        leftStyle() {
+            return this.details.posX
         },
-        contributorDetailsTopStyle() {
-            return this.contributorDetails.posY
+        topStyle() {
+            return this.details.posY
         },
     }
 }

@@ -567,7 +567,10 @@ class VideoconferenceController extends Controller
     {
         /* this endpoint is accessible without authentification, only use validated input! */
         $input = $this->validateRequest();
-        $videoconference = Videoconference::where('meetingID', $input['meetingID'])->get()->first();
+        $videoconference = Videoconference::select('meetingId', 'moderatorPW', 'server')
+            ->where('meetingID', $input['meetingID'])->first();
+
+        if ($videoconference === null) return;
 
         /** @var VideoconferenceInterface $adapter */
         $adapter = new $this->adapter();

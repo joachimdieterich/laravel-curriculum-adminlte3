@@ -121,18 +121,11 @@ class MoodleApiController extends Controller
     public function getKanbans(Request $request)
     {
         $this->validateRequest();
-        $user = User::where('common_name', request('common_name'));
-        $user = Auth::loginUsingId($user->first()->id);
+        $userId = User::select('id')->where('common_name', request('common_name'))->first()->id;
+        Auth::loginUsingId($userId);
 
-
-        $kanbans = (new KanbanController())->userKanbans(); //get all accessible kanbans
-        /*$kanbans = Kanban::where('owner_id', $user->id )
-            ->select('id', 'title')->get()
-            ->merge(
-                $user->kanbans()
-                    ->select('kanbans.id', 'kanbans.title')->get()
-            );*/
-        return $kanbans->map->only('id', 'title')->unique('id');
+        $kanbans = getSubscribedModels(Kanban::select('id', 'title'));
+        return $kanbans->get();
 
     }
 

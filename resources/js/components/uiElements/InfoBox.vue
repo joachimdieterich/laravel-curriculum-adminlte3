@@ -11,7 +11,14 @@
                 >
                     <i class="fa" :class="icon"></i>
                 </button>
-                <span class="flex-fill h3 mx-3">{{ text }}</span>
+                <span class="flex-fill h3 mx-3">
+                    <a
+                        :href="href || '/' + model"
+                        class="text-decoration-none"
+                    >
+                        {{ text }}
+                    </a>
+                </span>
                 <button v-if="hasModal"
                     class="btn btn-icon btn-icon-big"
                     @click="openModal"

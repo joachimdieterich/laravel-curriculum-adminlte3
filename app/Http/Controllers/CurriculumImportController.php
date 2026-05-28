@@ -404,14 +404,14 @@ class CurriculumImportController extends Controller
         if ($zip->open(storage_path("app/{$zip_file}")) === true) {
             $zip->extractTo(storage_path("app/{$folder}/{$filename}"));
             $zip->close();
-        //ok
         } else {
             //error handling
         }
 
         $json = Storage::disk('local')->get("{$folder}/{$filename}/{$filename}.json");
-        //dd(json_decode($json));
+
         $data = json_decode($json);
+        $data->type_id = 4; // type = user
 
         $folder = "{$folder}/{$filename}";
 

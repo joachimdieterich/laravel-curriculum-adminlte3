@@ -192,12 +192,12 @@
                 <i class="fa fa-file-csv"></i>
             </a>
 
-            <!-- <a
+            <a
                 :href="'/export_pdf/' + kanban.id"
                 class="btn text-secondary px-1 ml-1"
             >
                 <i class="fa fa-file-pdf"></i>
-            </a> -->
+            </a>
 
             <p class="h6">{{ trans('global.owner') }}: {{ initialKanban.owner.firstname + ' ' + initialKanban.owner.lastname }}</p>
         </Teleport>

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Group;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 
 class MoodleApiController extends Controller
@@ -231,7 +232,12 @@ class MoodleApiController extends Controller
     public function enrolUsers(Request $request)
     {
         $input = $this->validateRequest();
-        [$input, $users] = $this->checkEnrolExpelInput($input);
+        $validate = $this->checkEnrolExpelInput($input);
+
+        if ($validate instanceof JsonResponse) return $validate;
+
+        [$input, $users] = $validate;
+
         $groups = null;
         $create_count = 0;
 
@@ -327,7 +333,11 @@ class MoodleApiController extends Controller
     public function expelUsers(Request $request)
     {
         $input = $this->validateRequest();
-        [$input, $users] = $this->checkEnrolExpelInput($input);
+        $validate = $this->checkEnrolExpelInput($input);
+
+        if ($validate instanceof JsonResponse) return $validate;
+
+        [$input, $users] = $validate;
         $delete_count = 0;
 
         if (!empty($input['groups'])) {
@@ -370,7 +380,7 @@ class MoodleApiController extends Controller
         return response()->json(['count' => $delete_count]);
     }
 
-    protected function checkEnrolExpelInput(array $input)
+    protected function checkEnrolExpelInput(array $input): array|JsonResponse
     {
         // validate that required fields are present
         if (empty($input['users'])) {

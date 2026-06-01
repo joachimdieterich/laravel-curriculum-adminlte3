@@ -232,6 +232,7 @@ class MoodleApiController extends Controller
     {
         $input = $this->validateRequest();
         [$input, $users] = $this->checkEnrolExpelInput($input);
+        $groups = null;
         $create_count = 0;
 
         if (!empty($input['groups'])) {
@@ -272,6 +273,11 @@ class MoodleApiController extends Controller
             }
         }
 
+        // set subscription-type based on whether groups were provided or not
+        [$model, $subscribable_type] = $groups !== null
+            ? [$groups, "App\Group"]
+            : [$users, "App\User"];
+
         if (!empty($input['kanbans'])) {
             // create subscriptions for kanbans
             foreach ($input['kanbans'] as $kanban_id) {
@@ -279,11 +285,11 @@ class MoodleApiController extends Controller
                 $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Kanban with ID '.$kanban_id.' not found', 400);
 
-                foreach ($users as $user) {
+                foreach ($model as $subscribable) {
                     KanbanSubscription::updateOrCreate([
                         'kanban_id' => $kanban_id,
-                        'subscribable_type' => "App\User",
-                        'subscribable_id' => $user->id,
+                        'subscribable_type' => $subscribable_type,
+                        'subscribable_id' => $subscribable->id,
                     ], [
                         'editable' => $input['editable'] ?? false,
                         'owner_id' => $owner_id,
@@ -301,11 +307,11 @@ class MoodleApiController extends Controller
                 $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Curriculum with ID '.$curriculum_id.' not found', 400);
 
-                foreach ($users as $user) {
+                foreach ($model as $subscribable) {
                     CurriculumSubscription::updateOrCreate([
                         'curriculum_id' => $curriculum_id,
-                        'subscribable_type' => "App\User",
-                        'subscribable_id' => $user->id,
+                        'subscribable_type' => $subscribable_type,
+                        'subscribable_id' => $subscribable->id,
                     ], [
                         'owner_id' => $owner_id,
                     ]);

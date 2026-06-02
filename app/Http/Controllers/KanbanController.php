@@ -79,7 +79,7 @@ class KanbanController extends Controller
 
     public function userKanbans($withOwned = true, ?array $searchTags = [], ?array $negativeSearchTags = [])
     {
-        // Wenn nicht explizit nach den "Verstecken"-Tag gesucht wird, ihn standardmäßig als Negativ-Tag eintragen
+        // Unless the "Hide" tag is explicitly searched for, select it as a negative tag by default
         $hiddenTag = Tag::findFromString(trans('global.tag.hidden.singular'));
         if ($hiddenTag !== null && !in_array($hiddenTag->id, $searchTags ?? [])) {
             $negativeSearchTags[] = $hiddenTag->id;

@@ -272,10 +272,9 @@ class MoodleApiController extends Controller
 
             // enrol users to groups
             foreach ($groups as $group) {
-                foreach ($users as $user) {
-                    $group->users()->syncWithoutDetaching($user->id);
-                    $create_count++;
-                }
+                $user_ids = $users->pluck('id')->toArray();
+                $group->users()->syncWithoutDetaching($user_ids);
+                $create_count += count($user_ids);
             }
         }
 

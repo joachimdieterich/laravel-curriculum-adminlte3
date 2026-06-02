@@ -2,35 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Jumbojett\OpenIDConnectClient;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use Jumbojett\OpenIDConnectClientException;
 
 class OIDCController extends Controller
 {
     /**
      * Handle OIDC authentication
      */
-    public function handle(Request $request): \Illuminate\Http\RedirectResponse
+    public function handle(Request $request): RedirectResponse
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         // handle logout-request separately
-        if (isset($_SESSION['init_logout']) && $_SESSION['init_logout'] === true) $this->initiateLogout($request);
+        if (isset($_SESSION['init_logout']) && $_SESSION['init_logout'] === true) {
+            $this->initiateLogout($request);
+        }
 
         $oidc = $this->getOIDCClient();
 
         if (!$request->has('error')) { // silent authentication with no logged-in user
             $oidc->authenticate(); // authenticates user and saves tokens in instance
             $common_name = $oidc->requestUserInfo('sub');
+
             // login user by common_name
-            Auth::login(\App\User::select('id')->where('common_name', $common_name)->firstOrFail(), true);
-    
+            /** @var User $user */
+            $user = User::select('id')->where('common_name', $common_name)->firstOrFail();
+            Auth::login($user, true);
+
             // store session-id in redis-set
             Redis::sadd('user_sessions:' . $common_name, session_id());
             Redis::sadd('user_sessions:' . $common_name, session()->getId());
             Redis::expire('user_sessions:' . $common_name, config('session.lifetime') * 60);
-    
+
             LogController::set('ssoLogin'); // set statistics for SSO-authentication
         } else {
             Auth::loginUsingId((config('app.guest_user_id')), true);
@@ -50,11 +62,12 @@ class OIDCController extends Controller
     }
 
     /**
-     * Handle OIDC backchannel logout
-     * @param  \Illuminate\Http\Request  $request contains logout_token
-     * @return \Illuminate\Http\JsonResponse
+     * Handle OIDC back channel logout
+     * @param Request $request contains logout_token
+     * @return JsonResponse
+     * @throws OpenIDConnectClientException
      */
-    public function backchannelLogout(Request $request): \Illuminate\Http\JsonResponse
+    public function backchannelLogout(Request $request): JsonResponse
     {
         $oidc = $this->getOIDCClient();
 
@@ -73,13 +86,13 @@ class OIDCController extends Controller
         }
 
         // remove remember token to prevent auto-renew of deleted sessions
-        \App\User::where('common_name', $common_name)->update(['remember_token' => null]);
-            
+        User::where('common_name', $common_name)->update(['remember_token' => null]);
+
         // if user cannot be found, still return success, or else the IDP will reinitiate logout
-        return response()->json('User logged out', 200);
+        return response()->json('User logged out');
     }
 
-    protected function initiateLogout(Request $request): never
+    protected function initiateLogout(Request $request): void
     {
         $oidc = $this->getOIDCClient();
         $oidc->authenticate(); // to load tokens

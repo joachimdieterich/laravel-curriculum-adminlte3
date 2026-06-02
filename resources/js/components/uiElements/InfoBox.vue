@@ -6,15 +6,16 @@
                     type="button"
                     class="btn infobox-icon elevation-1"
                     :class="iconBackgroundClass"
+                    tabindex="-1"
                     @click="goToModel()"
                     @click.middle="goToModel(true)"
                 >
                     <i class="fa" :class="icon"></i>
                 </button>
-                <span class="flex-fill h3 mx-3">
+                <span class="flex-fill h3 mx-2">
                     <a
                         :href="href || '/' + model"
-                        class="text-decoration-none"
+                        class="text-decoration-none px-2"
                     >
                         {{ text }}
                     </a>
@@ -26,8 +27,13 @@
                     <i class="fa fa-2x fa-plus"></i>
                 </button>
             </div>
-            <div v-if="!linkOnly"
+            <div v-if="!linkOnly || entries.length > 0"
                 class="infobox-body"
+                tabindex="0"
+                role="group"
+                :aria-label="trans('global.entries_for') + ' ' + text"
+                @keydown.left.prevent="skipToPreviousInfoBox"
+                @keydown.right.prevent="skipToNextInfoBox"
             >
                 <div v-for="entry in entries"
                     class="infobox-entry"
@@ -113,6 +119,16 @@ export default {
         openModal() {
             this.$emit('open-modal', this.model);
         },
+        skipToPreviousInfoBox(event) {
+            let infoboxes = [...document.getElementsByClassName('infobox-body')];
+            let currentIndex = infoboxes.indexOf(event.currentTarget);
+            infoboxes[currentIndex - 1]?.focus();
+        },
+        skipToNextInfoBox(event) {
+            let infoboxes = [...document.getElementsByClassName('infobox-body')];
+            let currentIndex = infoboxes.indexOf(event.currentTarget);
+            infoboxes[currentIndex + 1]?.focus();
+        },
     },
 }
 </script>
@@ -139,6 +155,7 @@ export default {
         padding: 0.75rem;
         overflow-y: auto;
         max-height: 240px;
+        border-radius: 0.75rem;
 
         & > .infobox-entry:not(:last-child) {
             padding-bottom: 0.5rem;

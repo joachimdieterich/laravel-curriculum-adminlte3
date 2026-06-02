@@ -42,6 +42,7 @@ return [
     'resetOrder' => 'Reset order',
     'show' => 'Show',
     'entries' => 'Entries',
+    'entries_for' => 'Entries for',
     'perPage' => 'Entries per page',
     'search' => 'Search',
     'view' => 'View',

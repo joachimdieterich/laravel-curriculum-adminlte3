@@ -47,6 +47,7 @@ return [
     'resetOrder' => 'Reihenfolge zurücksetzen',
     'show' => 'anzeigen',
     'entries' => 'Einträge',
+    'entries_for' => 'Einträge für',
     'perPage' => 'Einträge pro Seite',
     'search' => 'Suchbegriff',
     'view' => 'Ansicht',

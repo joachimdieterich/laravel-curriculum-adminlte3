@@ -26,7 +26,9 @@
                     <i class="fa fa-2x fa-plus"></i>
                 </button>
             </div>
-            <div class="infobox-body">
+            <div v-if="!linkOnly"
+                class="infobox-body"
+            >
                 <div v-for="entry in entries"
                     class="infobox-entry"
                 >
@@ -79,6 +81,11 @@ export default {
             type: Boolean,
             default: false,
         },
+        linkOnly: {
+            type: Boolean,
+            default: false,
+            description: 'if true, the infobox will only be a link and not fetch any entries',
+        },
     },
     data() {
         return {
@@ -87,7 +94,7 @@ export default {
         }
     },
     mounted() {
-        this.getEntries();
+        if (!this.linkOnly) this.getEntries();
     },
     methods: {
         getEntries() {

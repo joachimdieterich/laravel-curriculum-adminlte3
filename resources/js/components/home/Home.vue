@@ -57,6 +57,14 @@
                 @open-modal="openModal('plan-modal')"
                 @error="handleError"
             />
+
+            <InfoBox v-if="checkPermission('is_admin')"
+                model="users"
+                :text="trans('global.user_management')"
+                icon="fa-user"
+                icon-background-class="bg-blue"
+                :link-only="true"
+            />
         </div>
         <LogbookModal/>
         <PlanModal/>

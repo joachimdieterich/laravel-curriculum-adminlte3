@@ -136,6 +136,7 @@ export default {
 .infobox {
     background-color: #fff;
     border-radius: 0.75rem;
+    box-shadow: var(--shadow-default);
 
     & > .infobox-header {
         display: flex;

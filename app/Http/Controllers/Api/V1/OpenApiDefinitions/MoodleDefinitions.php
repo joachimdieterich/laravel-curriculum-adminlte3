@@ -147,7 +147,8 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *          description="successful operation",
  *          @OA\Schema(ref="#/components/schemas/SelectList"),
  *       ),
- *       @OA\Response(response=400, description="Bad request"),
+ *       @OA\Response(response=400, description="User with given common_name does not exist"),
+ *       @OA\Response(response=403, description="Curriculum is not accessible for this user"),
  * )
  *
  * @OA\Get(
@@ -279,6 +280,11 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *                  description="array/array-like string of group common_names | will create new groups if not existing",
  *                  type="array",
  *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
+ *                  property="organization",
+ *                  description="The common_name of the organization the group should be assigned to. Only required if groups need to be created.",
+ *                  type="string"
  *              ),
  *              @OA\Property(
  *                  property="kanbans",

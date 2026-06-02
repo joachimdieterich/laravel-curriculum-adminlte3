@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Group;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Validator;
 
 class MoodleApiController extends Controller
 {
@@ -90,12 +92,23 @@ class MoodleApiController extends Controller
 
     public function getEnablingObjectives(\App\Curriculum $curriculum, Request $request)
     {
-        $this->validateRequest();
-        $user = User::where('common_name', request()->input('common_name'));
-        Auth::loginUsingId($user->first()->id);
-        $curriculum->isAccessible();
+        $validator = Validator::make(request()->all(), [
+            'common_name' => 'required|string|exists:users,common_name',
+        ]);
 
-        return $curriculum->enablingObjectives('terminal_objective_id')->get()->map->only('id', 'title', 'terminal_objective_id');
+        if ($validator->fails()) return response()->json('User with given common_name does not exist', 400);
+
+        $common_name = $validator->validated()['common_name'];
+
+        $user = User::select('id')->where('common_name', $common_name)->first();
+        Auth::loginUsingId($user->id);
+
+        if (!$curriculum->isAccessible()) return response()->json('Curriculum is not accessible for this user', 403);
+
+        return $curriculum->enablingObjectives()
+            ->select('id', 'title', 'terminal_objective_id')
+            ->without(['terminalObjective', 'level'])
+            ->get();
     }
 
     public function getLogbooks(Request $request)
@@ -219,14 +232,29 @@ class MoodleApiController extends Controller
     public function enrolUsers(Request $request)
     {
         $input = $this->validateRequest();
-        [$input, $users] = $this->checkEnrolExpelInput($input);
+        $validate = $this->checkEnrolExpelInput($input);
+
+        if ($validate instanceof JsonResponse) return $validate;
+
+        [$input, $users] = $validate;
+
+        $groups = null;
         $create_count = 0;
 
         if (!empty($input['groups'])) {
-            // enrol users to groups
             $groups = Group::select('id', 'common_name')->whereIn('common_name', $input['groups'])->get();
             // if not every common_name has a corresponding group
             if (count($groups) != count($input['groups'])) {
+                // first check if organization is provided and exists
+                if (empty($input['organization'])) {
+                    return response()->json('Organization-common_name is required when enrolling users to groups', 400);
+                }
+    
+                $organization = \App\Organization::select('id')->where('common_name', $input['organization'])->first();
+                if (empty($organization)) {
+                    return response()->json('Organization with common_name `'.$input['organization'].'` not found', 400);
+                }
+
                 $missing = array_diff($input['groups'], $groups->pluck('common_name')->toArray());
                 foreach ($missing as $common_name) {
                     // create new group
@@ -235,20 +263,25 @@ class MoodleApiController extends Controller
                         'common_name' => $common_name,
                         'grade_id' => 999, // default grade
                         'period_id' => 1, // default period
-                        'organization_id' => 1, // default organization
+                        'organization_id' => $organization->id,
                     ]);
 
                     $groups->push($new_group);
                 }
             }
 
+            // enrol users to groups
             foreach ($groups as $group) {
-                foreach ($users as $user) {
-                    $group->users()->syncWithoutDetaching($user->id);
-                    $create_count++;
-                }
+                $user_ids = $users->pluck('id')->toArray();
+                $group->users()->syncWithoutDetaching($user_ids);
+                $create_count += count($user_ids);
             }
         }
+
+        // set subscription-type based on whether groups were provided or not
+        [$model, $subscribable_type] = $groups !== null
+            ? [$groups, "App\Group"]
+            : [$users, "App\User"];
 
         if (!empty($input['kanbans'])) {
             // create subscriptions for kanbans
@@ -257,11 +290,11 @@ class MoodleApiController extends Controller
                 $owner_id = Kanban::select('owner_id')->find($kanban_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Kanban with ID '.$kanban_id.' not found', 400);
 
-                foreach ($users as $user) {
+                foreach ($model as $subscribable) {
                     KanbanSubscription::updateOrCreate([
                         'kanban_id' => $kanban_id,
-                        'subscribable_type' => "App\User",
-                        'subscribable_id' => $user->id,
+                        'subscribable_type' => $subscribable_type,
+                        'subscribable_id' => $subscribable->id,
                     ], [
                         'editable' => $input['editable'] ?? false,
                         'owner_id' => $owner_id,
@@ -279,11 +312,11 @@ class MoodleApiController extends Controller
                 $owner_id = Curriculum::select('owner_id')->find($curriculum_id)?->owner_id;
                 if (empty($owner_id)) return response()->json('Curriculum with ID '.$curriculum_id.' not found', 400);
 
-                foreach ($users as $user) {
+                foreach ($model as $subscribable) {
                     CurriculumSubscription::updateOrCreate([
                         'curriculum_id' => $curriculum_id,
-                        'subscribable_type' => "App\User",
-                        'subscribable_id' => $user->id,
+                        'subscribable_type' => $subscribable_type,
+                        'subscribable_id' => $subscribable->id,
                     ], [
                         'owner_id' => $owner_id,
                     ]);
@@ -299,7 +332,11 @@ class MoodleApiController extends Controller
     public function expelUsers(Request $request)
     {
         $input = $this->validateRequest();
-        [$input, $users] = $this->checkEnrolExpelInput($input);
+        $validate = $this->checkEnrolExpelInput($input);
+
+        if ($validate instanceof JsonResponse) return $validate;
+
+        [$input, $users] = $validate;
         $delete_count = 0;
 
         if (!empty($input['groups'])) {
@@ -342,16 +379,14 @@ class MoodleApiController extends Controller
         return response()->json(['count' => $delete_count]);
     }
 
-    protected function checkEnrolExpelInput(array $input)
+    protected function checkEnrolExpelInput(array $input): array|JsonResponse
     {
         // validate that required fields are present
         if (empty($input['users'])) {
-            response()->json('No users (common_name) provided', 400)->send();
-            exit;
+            return response()->json('No users (common_name) provided', 400);
         }
         if (empty($input['kanbans']) and empty($input['curricula']) and empty($input['groups'])) {
-            response()->json('At least one model needs to be provided (kanbans/curricula/groups)', 400)->send();
-            exit;
+            return response()->json('At least one model needs to be provided (kanbans/curricula/groups)', 400);
         }
 
         // parse fields to arrays if they are strings
@@ -364,8 +399,7 @@ class MoodleApiController extends Controller
         // if not every common_name has a corresponding user, return those
         if (count($users) != count($input['users'])) {
             $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
-            response()->json('Users with common names ['.implode(', ', $missing).'] not found', 400)->send();
-            exit;
+            return response()->json('Users with common names ['.implode(', ', $missing).'] not found', 400);
         }
 
         return [$input, $users];
@@ -377,6 +411,7 @@ class MoodleApiController extends Controller
             'common_name'   => 'sometimes|string',
             'users'         => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
             'groups'        => is_array(request()->input('groups')) ? 'sometimes|array' : 'sometimes|string',
+            'organization'  => 'sometimes|string',
             'curricula'     => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',
             'logbooks'      => 'sometimes|array',
             'kanbans'       => is_array(request()->input('kanbans')) ? 'sometimes|array' : 'sometimes|string',

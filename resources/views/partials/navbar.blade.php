@@ -74,7 +74,7 @@
         <li class="dropdown mr-2">
             <span class="user-menu dropdown-toggle" data-toggle="dropdown" role="button">
                 <img
-                    src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : Avatar::create(auth()->user()->fullName())->toBase64() }}"
+                    src="{{ (auth()->user()->medium_id !== null) ? '/media/'.auth()->user()->medium_id  : auth()->user()->getAvatarAttribute() }}"
                     alt="User profile picture"
                     class="img-circle color-white"
                     style="height: 40px; width: 40px;"

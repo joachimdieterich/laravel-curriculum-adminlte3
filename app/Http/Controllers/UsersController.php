@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Group;
-use App\Helpers\Formatter;
+use App\Helpers\SubscribeHelper;
 use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
@@ -29,6 +29,7 @@ class UsersController extends Controller
         if (auth()->user()->role()->id > 6) {   //todo check: should students see all other user of current org?
             abort(403);
         }
+
         // every user should share with users of current organization except admins
         if (request()->wantsJson()) {
             $users = is_admin()
@@ -51,6 +52,15 @@ class UsersController extends Controller
         abort_unless(\Gate::allows('user_access'), 403);
 
         return view('users.index');
+    }
+
+    public function listForSubscription(): array
+    {
+        if (auth()->user()->role()->id > 6) {
+            abort(403);
+        }
+
+        return SubscribeHelper::usersForSubscription();
     }
 
     public function list()

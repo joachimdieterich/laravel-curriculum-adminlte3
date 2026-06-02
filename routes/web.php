@@ -240,6 +240,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::patch('users/setAvatar', 'UsersController@setAvatar')->name('users.setAvatar');
     Route::get('users/{user}/dsgvoExport', 'UsersController@dsgvoExport')->name('users.dsgvoExport');
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
+    Route::get('users/list/subscription', 'UsersController@listForSubscription');
     Route::resource('users', 'UsersController');
 // V
     Route::get('variantDefinitions/list', 'VariantDefinitionController@list');

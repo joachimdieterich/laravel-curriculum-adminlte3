@@ -63,11 +63,10 @@ class OIDCController extends Controller
 
     /**
      * Handle OIDC back channel logout
-     * @param Request $request contains logout_token
      * @return JsonResponse
      * @throws OpenIDConnectClientException
      */
-    public function backchannelLogout(Request $request): JsonResponse
+    public function backchannelLogout(): JsonResponse
     {
         $oidc = $this->getOIDCClient();
 

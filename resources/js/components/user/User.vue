@@ -65,7 +65,7 @@
 
                     <strong>
                         <i class="fas fa-user-tag mr-1"></i>
-                        {{ trans('global.roles') }}
+                        {{ trans('global.role.title') }}
                     </strong>
                     <ul class="pl-4">
                         <li v-for="role in user.roles"

@@ -1,7 +1,7 @@
 <template>
     <div
         id="home"
-        class="d-flex flex-column flex-md-row"
+        class="d-flex flex-column flex-md-row mx-lg-3"
     >
         <div
             id="home-left"

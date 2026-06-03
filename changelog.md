@@ -1,3 +1,12 @@
+## 1.4.1 (2026-06-03)
+- User: cache role() for current request to prevent redundant DB-calls
+- Kanban: added embed-view by checking if inside an iframe
+- Kanban: fixed 'create PDF' throwing 500
+- Videoconference: fixed endCallback if vs couldn't be found
+- added 503-response if OIDC-service isn't available
+- imported Curricula are now stored with type_id = 4 (user-type)
+- fixed error if current_organization_id isn't set
+
 ## 1.4.0 (2026-05-21)
 - replaced SAML with OIDC
 - Kanban: fixed edge-case where deletion doesn't work with invalid medium-subscription

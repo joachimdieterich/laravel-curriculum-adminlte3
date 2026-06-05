@@ -272,9 +272,9 @@ export default {
             const titles = this.menu.titles.split(',');
 
             return links.map((link, index) => ({
-                link,
-                icon: icons[index],
-                title: titles[index]
+                link: link.trim(),
+                icon: icons[index].trim(),
+                title: titles[index].trim(),
             }));
         },
     },

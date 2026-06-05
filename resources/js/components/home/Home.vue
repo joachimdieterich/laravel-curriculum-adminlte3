@@ -18,7 +18,12 @@
                 <template #entry="{ entry }">
                     <a :href="'/courses/' + entry.course_id">
                         <span class="font-weight-bold">{{ entry.title }}</span>
-                        <span class="pull-right">{{ entry.achievements.length }}/{{ entry.enabling_objectives_count }}</span>
+                        <span class="pull-right w-50">
+                            <ProgressBar
+                                :achievements="entry.achievements"
+                                :maxEntries="entry.enabling_objectives_count"
+                            />
+                        </span>
                         <br/>
                         <span class="text-muted">{{ entry.group_title }}</span>
                     </a>
@@ -72,6 +77,7 @@
 </template>
 <script>
 import InfoBox from '../uiElements/InfoBox.vue';
+import ProgressBar from '../uiElements/ProgressBar.vue';
 import LogbookModal from '../logbook/LogbookModal.vue';
 import PlanModal from '../plan/PlanModal.vue';
 import { useGlobalStore } from '../../store/global';
@@ -113,6 +119,7 @@ export default {
     },
     components: {
         InfoBox,
+        ProgressBar,
         LogbookModal,
         PlanModal,
     },

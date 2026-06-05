@@ -288,6 +288,7 @@ export default {
                 .forEach(el => el.remove());
             // remove unneded paddings and margins
             document.getElementById('content')?.classList.remove('content-wrapper');
+            document.getElementsByClassName('content')[0]?.classList.remove('px-3');
             this.$el.parentElement.style.height = '100vh';
         },
         share() {

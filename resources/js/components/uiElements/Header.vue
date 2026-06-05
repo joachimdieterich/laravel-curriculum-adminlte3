@@ -56,11 +56,11 @@
                 id="brand-menu-dropdown"
                 class="d-none bg-lime w-100 mr-2"
             >
-                <div v-for="entry in menu">
-                    <a :href="entry.url">
-                        <i class="fa fa-book text-white text-center" :class="entry.icon"></i>
+                <div v-for="entry in menuEntries">
+                    <a :href="entry.link">
+                        <i class="fa text-white text-center" :class="entry.icon"></i>
                         <span class="ml-2 my-1">
-                            {{ entry.title ?? ';asdf asdf sda'}}
+                            {{ entry.title }}
                         </span>
                     </a>
                 </div>
@@ -265,6 +265,17 @@ export default {
         },
         isGuestUser() {
             return this.user.id === this.guestId;
+        },
+        menuEntries() {
+            const icons = this.menu.icons.split(',');
+            const links = this.menu.links.split(',');
+            const titles = this.menu.titles.split(',');
+
+            return links.map((link, index) => ({
+                link,
+                icon: icons[index],
+                title: titles[index]
+            }));
         },
     },
 }

@@ -287,41 +287,9 @@ return [
     'allow_password_reset' => env('ALLOW_PASSWORD_RESET', false),
 
     'brand_menu' => [
-        '1' => [
-            'icon' => env('BRAND_MENU_ICON_1'),
-            'title' => env('BRAND_MENU_TITLE_1'),
-            'url' => env('BRAND_MENU_HREF_1'),
-        ],
-        '2' => [
-            'icon' => env('BRAND_MENU_ICON_2'),
-            'title' => env('BRAND_MENU_TITLE_2'),
-            'url' => env('BRAND_MENU_HREF_2'),
-        ],
-        '3' => [
-            'icon' => env('BRAND_MENU_ICON_3'),
-            'title' => env('BRAND_MENU_TITLE_3'),
-            'url' => env('BRAND_MENU_HREF_3'),
-        ],
-        '4' => [
-            'icon' => env('BRAND_MENU_ICON_4'),
-            'title' => env('BRAND_MENU_TITLE_4'),
-            'url' => env('BRAND_MENU_HREF_4'),
-        ],
-        '5' => [
-            'icon' => env('BRAND_MENU_ICON_5'),
-            'title' => env('BRAND_MENU_TITLE_5'),
-            'url' => env('BRAND_MENU_HREF_5'),
-        ],
-        '6' => [
-            'icon' => env('BRAND_MENU_ICON_6'),
-            'title' => env('BRAND_MENU_TITLE_6'),
-            'url' => env('BRAND_MENU_HREF_6'),
-        ],
-        '7' => [
-            'icon' => env('BRAND_MENU_ICON_7'),
-            'title' => env('BRAND_MENU_TITLE_7'),
-            'url' => env('BRAND_MENU_HREF_7'),
-        ],
+        'icons' => env('BRAND_MENU_ICONS'),
+        'links' => env('BRAND_MENU_LINKS'),
+        'titles' => env('BRAND_MENU_TITLES'),
     ],
 
     'documentation_url' => env('DOCUMENTATION', '/documentation'),

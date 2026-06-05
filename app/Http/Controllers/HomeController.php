@@ -58,7 +58,8 @@ class HomeController extends Controller
             ->orderBy('curricula.title')
             ->with(['achievements' => function ($query) use ($user) {
                 $query->select('achievements.id', 'status')
-                    ->where('user_id', $user->id);
+                    ->where('user_id', $user->id)
+                    ->whereNot('status', '00');
             }])
             ->withCount('enablingObjectives')
             ->without('owner')

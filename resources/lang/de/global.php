@@ -1420,5 +1420,8 @@ return [
     ],
     'cselect' => [
         'no_results' => 'Keine Übereinstimmungen gefunden',
-    ]
+    ],
+    'exception' => [
+        'too_many_results' => 'Zu viele Ergebnisse wurden gefunden. Bitte grenzen sie die Suche ein.'
+    ],
 ];

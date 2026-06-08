@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\TooManyResultsException;
 use App\Group;
 use App\Helpers\SubscribeHelper;
 use App\Http\Requests\MassDestroyUserRequest;
@@ -12,9 +13,10 @@ use App\Imports\UsersImport;
 use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
-use App\Role;
+use App\Services\Roles\Roles;
 use App\StatusDefinition;
 use App\User;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -54,13 +56,17 @@ class UsersController extends Controller
         return view('users.index');
     }
 
-    public function listForSubscription(): array
+    public function listForSubscription(): array|Response
     {
-        if (auth()->user()->role()->id > 6) {
+        if (auth()->user()->role()->id > Roles::STUDENT->value) {
             abort(403);
         }
 
-        return SubscribeHelper::usersForSubscription();
+        try {
+            return SubscribeHelper::usersForSubscription();
+        } catch (TooManyResultsException $e) {
+            return response($e->getMessage(), 400);
+        }
     }
 
     public function list()
@@ -213,7 +219,7 @@ class UsersController extends Controller
      * ! No soft delete !
      *
      * @param  MassDestroyUserRequest  $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      */
     public function massDestroy(MassDestroyUserRequest $request)
     {

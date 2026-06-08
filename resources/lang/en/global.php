@@ -1374,5 +1374,8 @@ return [
     ],
     'cselect' => [
         'no_results' => 'No results found',
-    ]
+    ],
+    'exception' => [
+        'too_many_results' => 'Too many results where found. Please limit the search more.'
+    ],
 ];

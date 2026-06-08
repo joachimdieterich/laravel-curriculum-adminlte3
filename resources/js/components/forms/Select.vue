@@ -147,8 +147,17 @@ export default {
                     loading(false);
                     this.options = res.data;
                 })
-                .catch(() => {
+                .catch((error) => {
                     loading(false);
+                    if (error.response.status === 400) {
+                        this.toast.error(error.response.data, {
+                            timeout: 6000,
+                            hideProgressBar: true,
+                        });
+
+                        return;
+                    }
+
                     this.toast.error(this.trans('global.code_500'), {
                         timeout: 3000,
                         hideProgressBar: true,

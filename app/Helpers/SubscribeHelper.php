@@ -12,6 +12,11 @@ class SubscribeHelper
 {
     const int MAX_RESULT = 10000;
 
+    /**
+     * @return array
+     *
+     * @throws TooManyResultsException
+     */
     public static function usersForSubscription(): array
     {
         $input = request()->validate([
@@ -44,9 +49,6 @@ class SubscribeHelper
 
         $searchTerm = $input['search'];
         if ($searchTerm) {
-//            $users
-//                ->where('firstname', 'like', '%' . $searchTerm . '%')
-//                ->where('lastname', 'like', '%' . $searchTerm . '%');
             $users->where(  // count all entries FIRST with filter to get pagination working
                 function ($query) use ($searchTerm) {
                     foreach (['username', 'firstname', 'lastname'] as $f) {

@@ -45,6 +45,11 @@ class Achievement extends Model
         return $this->morphMany('App\Note', 'notable');
     }
 
+    public function referenceable()
+    {
+        return $this->morphTo();
+    }
+
     public function user()
     {
         return $this->hasOne('App\User', 'id', 'user_id');

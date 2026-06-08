@@ -7,7 +7,7 @@
                 :style="{ width: (progress[3] / maxEntries * 100) + '%' }"
             ></div>
             <div v-if="progress[2]"
-                class="bg-yellow position-relative"
+                class="bg-orange position-relative"
                 :style="{ width: (progress[2] / maxEntries * 100) + '%' }"
             ></div>
             <div v-if="progress[1]"
@@ -45,7 +45,7 @@ export default {
         calculateProgress() {
             this.progress = {
                 1: 0, // green
-                2: 0, // yellow
+                2: 0, // orange
                 3: 0, // red
             };
             this.achievements.forEach(achievement => {
@@ -73,7 +73,7 @@ export default {
     top: 0;
 
     & > .bg-red { box-shadow: 0px 0px 5px #dc354580; }
-    & > .bg-yellow { box-shadow: 0px 0px 5px #ffc10780; }
+    & > .bg-orange { box-shadow: 0px 0px 5px #fd7e1480; }
     & > .bg-green { box-shadow: 0px 0px 5px #28a74580; }
     & > :first-child::before {
         content: '';

@@ -1,18 +1,18 @@
 <template>
     <div class="progress-bar-wrapper position-relative text-center bg-light rounded-pill">
         <span>{{ achievements.length }}/{{ maxEntries }}</span>
-        <div class="progress-bar-container position-absolute d-flex h-100">
+        <div class="progress-bar-container position-absolute d-flex h-100 w-100">
             <div v-if="progress[3]"
-                class="bg-red"
-                :style="{ width: (entryWidth * progress[3]) + 'px' }"
+                class="bg-red position-relative"
+                :style="{ width: (progress[3] / maxEntries * 100) + '%' }"
             ></div>
             <div v-if="progress[2]"
-                class="bg-yellow"
-                :style="{ width: (entryWidth * progress[2]) + 'px' }"
+                class="bg-yellow position-relative"
+                :style="{ width: (progress[2] / maxEntries * 100) + '%' }"
             ></div>
             <div v-if="progress[1]"
-                class="bg-green"
-                :style="{ width: (entryWidth * progress[1]) + 'px' }"
+                class="bg-green position-relative"
+                :style="{ width: (progress[1] / maxEntries * 100) + '%' }"
             ></div>
         </div>
     </div>
@@ -36,12 +36,9 @@ export default {
                 type: Object,
                 default: {},
             },
-            entryWidth: 0,
         }
     },
     mounted() {
-        const PADDING = 24; // horizontal padding of the wrapper
-        this.entryWidth = (this.$el.offsetWidth - PADDING) / this.maxEntries;
         this.calculateProgress();
     },
     methods: {
@@ -64,7 +61,6 @@ export default {
 </script>
 <style scoped>
 .progress-bar-wrapper {
-    padding: 0px 0.75rem;
     background-color: #e5e5e5 !important;
 
     & > span {
@@ -73,6 +69,7 @@ export default {
     }
 }
 .progress-bar-container {
+    padding: 0px 0.75rem;
     top: 0;
 
     & > .bg-red { box-shadow: 0px 0px 5px #dc354580; }

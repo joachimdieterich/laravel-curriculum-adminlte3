@@ -21,8 +21,9 @@
                 <div class="card-body box-profile">
                     <div class="text-center">
                         <avatar
-                            :medium_id="user.medium_id"
+                            :medium="user.avatar"
                             :css="'clearfix'"
+                            :show-popup-details="false"
                         />
                     </div>
 
@@ -64,7 +65,7 @@
 
                     <strong>
                         <i class="fas fa-user-tag mr-1"></i>
-                        {{ trans('global.roles') }}
+                        {{ trans('global.role.title') }}
                     </strong>
                     <ul class="pl-4">
                         <li v-for="role in user.roles"

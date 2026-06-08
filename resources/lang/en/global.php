@@ -75,6 +75,7 @@ return [
     'preview' => 'Preview',
     'generate' => 'Generate',
     'share' => 'Share',
+    'shareSearch' => 'Search (min. 3 chars)',
     'pleaseSelect' => 'Please select',
     'pleaseSelectOptional' => 'Please select (optional)',
     'loading' => 'Loading...',
@@ -246,18 +247,28 @@ return [
     'subordinate_element_singular' => 'Subordinate Element',
     'subordinate_element' => 'Subordinate Elements',
     'one_file' => 'Export as a single PDF-file',
-    'roles' => 'Roles',
+    'roles' => [
+        'Administrator' => 'Administrator',
+        'Creator'       => 'Ersteller',
+        'Indexer'       => 'Indexer',
+        'Schooladmin'   => 'Schuladmin',
+        'Teacher'       => 'Lehrer',
+        'Student'       => 'Schüler',
+        'Parent'        => 'Elternteil',
+        'Guest'         => 'Gast',
+        'Token'         => 'Token',
+    ],
     'role' => [
-        'title' => 'Roles',
+        'title'          => 'Roles',
         'title_singular' => 'Role',
-        'create' => 'Create role',
-        'edit' => 'Edit role',
-        'delete' => 'Delete role',
-        'delete_helper' => 'Should this role be deleted?',
-        'enrol' => 'Assign role',
-        'expel' => 'Revoke role',
-        'fields' => [
-            'permissions' => 'Permissions',
+        'create'         => 'Create role',
+        'edit'           => 'Edit role',
+        'delete'         => 'Delete role',
+        'delete_helper'  => 'Should this role be deleted?',
+        'enrol'          => 'Assign role',
+        'expel'          => 'Revoke role',
+        'fields'         => [
+            'permissions'        => 'Permissions',
             'permissions_helper' => '',
         ],
     ],
@@ -1361,5 +1372,11 @@ return [
     'websockets' => [
         'contributor_joined' => 'Contributor joined',
         'contributor_left' => 'Contributor left',
-    ]
+    ],
+    'cselect' => [
+        'no_results' => 'No results found',
+    ],
+    'exception' => [
+        'too_many_results' => 'Too many results where found. Please limit the search more.'
+    ],
 ];

@@ -183,3 +183,48 @@ textarea { min-height: 150px; }
 .tox-fullscreen .tox.tox-tinymce-aux {
     z-index: 10000 !important;
 }
+
+/***********
+ * c-select
+ ***********/
+:root {
+    --vs-search-input-placeholder-color: #999 !important;
+    /* TODO: Abklären ob highlight nicht doch eine andere farbe sein sollte, als die ausgewählte option*/
+    --vs-dropdown-option--active-bg: rgb(0, 115.62, 239.7) !important;
+    --vs-dropdown-border-radius: 0 0 4px 4px !important;
+    --vs-dropdown-option-border-radius: 0 !important;
+    --vs-dropdown-option-margin: 0 !important;
+    --vs-dropdown-optgroup-option-padding: 5px 5px 5px calc(1em + 5px) !important;
+    --vs-dropdown-option-padding: 5px calc(1em + 15px) !important;
+    --vs-dropdown-optgroup-option-bg: none !important;
+}
+
+.v-select-icon {
+    max-height: 3em;
+}
+.vs__dropdown-optgroup-option {
+    font-weight: 700;
+    min-height: 2.5em;
+    color: #888;
+    display: flex;
+    position: relative;
+    align-items: center;
+}
+.vs__dropdown-toggle { min-height: 38px; }
+.vs__dropdown-toggle[aria-expanded=true] {
+    --vs-border-color: rgb(127.5, 189, 255);
+    --vs-border-radius: 4px 4px 0 0 !important;
+}
+
+/* overflow-context */
+.v-select-overflow.v-select { position: unset; }
+.v-select-overflow .vs__dropdown-menu {
+    border-top: 0;
+    width: calc(100% - 2.5rem);
+    margin-top: 0;
+    padding-bottom: 0.5em;
+    left: unset;
+    top: unset;
+}
+.v-select-overflow .vs__dropdown-toggle { height: 100%; }
+.v-select-overflow .vs__selected-options { flex-wrap: wrap; }

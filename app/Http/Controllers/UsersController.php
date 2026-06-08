@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\TooManyResultsException;
 use App\Group;
+use App\Helpers\SubscribeHelper;
 use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
@@ -11,9 +13,10 @@ use App\Imports\UsersImport;
 use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
-use App\Role;
+use App\Services\Roles\Roles;
 use App\StatusDefinition;
 use App\User;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -28,6 +31,7 @@ class UsersController extends Controller
         if (auth()->user()->role()->id > 6) {   //todo check: should students see all other user of current org?
             abort(403);
         }
+
         // every user should share with users of current organization except admins
         if (request()->wantsJson()) {
             $users = is_admin()
@@ -50,6 +54,19 @@ class UsersController extends Controller
         abort_unless(\Gate::allows('user_access'), 403);
 
         return view('users.index');
+    }
+
+    public function listForSubscription(): array|Response
+    {
+        if (auth()->user()->role()->id > Roles::STUDENT->value) {
+            abort(403);
+        }
+
+        try {
+            return SubscribeHelper::usersForSubscription();
+        } catch (TooManyResultsException $e) {
+            return response($e->getMessage(), 400);
+        }
     }
 
     public function list()
@@ -165,6 +182,7 @@ class UsersController extends Controller
         }
 
         $status_definitions = StatusDefinition::all();
+        $user->append('avatar');
         $user->load('roles');
         $user->load(['organizations.state', 'organizations.country']);
         $user->load('groups');
@@ -201,7 +219,7 @@ class UsersController extends Controller
      * ! No soft delete !
      *
      * @param  MassDestroyUserRequest  $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|Response
      */
     public function massDestroy(MassDestroyUserRequest $request)
     {

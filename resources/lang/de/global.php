@@ -81,6 +81,7 @@ return [
     'preview' => 'Vorschau',
     'generate' => 'erzeugen',
     'share' => 'Teilen',
+    'shareSearch' => 'Suchen (min. 3 Zeichen)',
     'pleaseSelect' => 'Bitte wählen ',
     'pleaseSelectOptional' => 'Bitte wählen (Optional)',
     'loading' => 'Wird geladen...',
@@ -259,18 +260,28 @@ return [
     'subordinate_element_singular' => 'Untergeordnetes Element',
     'subordinate_element' => 'Untergeordnete Elemente',
     'one_file' => 'Ausgabe in einer Datei',
-    'roles' => 'Rollen',
+    'roles' => [
+        'Administrator' => 'Administrator',
+        'Creator'       => 'Ersteller',
+        'Indexer'       => 'Indexer',
+        'Schooladmin'   => 'Schuladmin',
+        'Teacher'       => 'Lehrer',
+        'Student'       => 'Schüler',
+        'Parent'        => 'Elternteil',
+        'Guest'         => 'Gast',
+        'Token'         => 'Token',
+    ],
     'role' => [
-        'title' => 'Rollen',
+        'title'          => 'Rollen',
         'title_singular' => 'Rolle',
-        'create' => 'Rolle erstellen',
-        'edit' => 'Rolle bearbeiten',
-        'delete' => 'Rolle löschen',
-        'delete_helper' => 'Soll diese Rolle gelöscht werden?',
-        'enrol' => 'Rolle zuweisen',
-        'expel' => 'Rolle entziehen/ausschreiben',
-        'fields' => [
-            'permissions' => 'Berechtigungen',
+        'create'         => 'Rolle erstellen',
+        'edit'           => 'Rolle bearbeiten',
+        'delete'         => 'Rolle löschen',
+        'delete_helper'  => 'Soll diese Rolle gelöscht werden?',
+        'enrol'          => 'Rolle zuweisen',
+        'expel'          => 'Rolle entziehen/ausschreiben',
+        'fields'         => [
+            'permissions'        => 'Berechtigungen',
             'permissions_helper' => '',
         ],
     ],
@@ -1407,5 +1418,11 @@ return [
     'websockets' => [
         'contributor_joined' => 'Bearbeiter dazu gekommen',
         'contributor_left' => 'Bearbeiter gegangen',
-    ]
+    ],
+    'cselect' => [
+        'no_results' => 'Keine Übereinstimmungen gefunden',
+    ],
+    'exception' => [
+        'too_many_results' => 'Zu viele Ergebnisse wurden gefunden. Bitte grenzen sie die Suche ein.'
+    ],
 ];

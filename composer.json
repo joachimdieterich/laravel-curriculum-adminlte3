@@ -42,7 +42,9 @@
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
         "select2/select2": "^4.0",
         "spatie/laravel-tags": "^4.10",
-        "yajra/laravel-datatables-oracle": "~12.0"
+        "yajra/laravel-datatables-oracle": "~12.0",
+        "ext-dom": "*",
+        "ext-zip": "*"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^2.0",

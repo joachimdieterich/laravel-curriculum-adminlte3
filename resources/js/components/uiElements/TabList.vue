@@ -98,7 +98,7 @@ export default {
     mounted() {
         window.addEventListener('resize', this.checkTabListWidth);
         this.checkTabListWidth();
-        this.changeTab(this.tabs[0]); // initialize active-background position/width
+        this.changeTab(this.tabs[0], true); // initialize active-background position/width
     },
     unmounted() {
         window.removeEventListener('resize', this.checkTabListWidth);
@@ -159,13 +159,17 @@ export default {
                     return tab;
             }
         },
-        changeTab(tab) {
+        changeTab(tab, initial = false) {
             const tabRects = document.getElementById(this.model + '-filter-' + tab).getClientRects()[0];
             const leftOffset = document.getElementById(this.model + '-filter-wrapper').getClientRects()[0].left;
             const backgroundElem = this.$el.getElementsByClassName('tablist-background')[0];
 
             backgroundElem.style.left = (tabRects.left - leftOffset) + 'px';
-            backgroundElem.style.width = tabRects.width + 'px';
+            let width = tabRects.width;
+            if (initial && document.getElementsByClassName('modal-mask')[0]?.contains(this.$el)) {
+                width = width / 1.1;
+            }
+            backgroundElem.style.width = width + 'px';
         },
         slide(right) {
             const tabListElement = document.getElementById(this.model + '-filter');

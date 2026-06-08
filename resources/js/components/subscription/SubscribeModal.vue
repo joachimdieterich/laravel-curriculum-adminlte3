@@ -4,7 +4,7 @@
             class="modal-mask"
             @mouseup.self="globalStore.closeModal($options.name)"
         >
-            <div class="modal-container">
+            <div class="modal-container share-modal-container">
                 <div class="modal-header">
                     <span class="card-title">
                         <i class="fa fa-share-alt text-secondary mr-3"></i>
@@ -36,7 +36,7 @@
                                 :activeTab="filter"
                                 @change-tab="setFilter"
                             />
-    
+
                             <div class="tab-content pt-2">
                                 <!-- User Tab -->
                                 <div v-if="shareWithUsers"
@@ -44,6 +44,11 @@
                                     class="tab-pane fade active show"
                                     role="tabpanel"
                                 >
+                                    <subscribe-user-select
+                                        @selectedValue="(option) => {
+                                            this.subscribe('App\\User', option.value.user.id);
+                                        }"
+                                    ></subscribe-user-select>
                                     <Select2
                                         id="users_subscription_select"
                                         name="users_subscription_select"
@@ -51,8 +56,8 @@
                                         model="user"
                                         @selectedValue="(id) => {
                                             this.subscribe('App\\User', id[0])
-                                        }"
-                                    />
+                                        }">
+                                    </select2>
                                     <Subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
                                         :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\User')"
@@ -61,7 +66,7 @@
                                         :canEditCheckbox="canEditCheckbox"
                                     />
                                 </div>
-    
+
                                 <!-- Group Tab -->
                                 <div v-if="shareWithGroups"
                                     id="group_subscription"
@@ -85,7 +90,7 @@
                                         :canEditCheckbox="canEditCheckbox"
                                     />
                                 </div>
-    
+
                                 <!-- Organization Tab -->
                                 <div v-if="shareWithOrganizations"
                                     id="organization_subscription"
@@ -109,7 +114,7 @@
                                         :canEditCheckbox="canEditCheckbox"
                                     />
                                 </div>
-    
+
                                 <!-- Token Tab -->
                                 <div v-if="shareWithToken"
                                     id="token_subscription"
@@ -133,16 +138,7 @@
                                         :cancel-text="trans('global.close')"
                                         :placeholder="trans('global.valid_to')"
                                     />
-    
-        <!--                            <span v-if="canEditCheckbox"
-                                        class="pull-right custom-control custom-switch custom-switch-on-green">
-                                        <input v-model="canEditToken"
-                                                type="checkbox"
-                                                id="canEditToken"
-                                                class="custom-control-input pt-1 "
-                                                @click="changeCanEditTokenValue(canEditToken)">
-                                        <label class="custom-control-label " for="canEditToken"></label>
-                                    </span>-->
+
                                     <div>
                                         <button
                                             type="button"
@@ -153,9 +149,9 @@
                                             {{ trans('global.create') }}
                                         </button>
                                     </div>
-    
+
                                     <hr class="pt-1 clearfix">
-    
+
                                     <Tokens v-if="subscribers.tokens != undefined"
                                         :modelUrl="modelUrl"
                                         :canEditLabel="canEditLabel"
@@ -197,6 +193,8 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
+import CSelect from "../forms/Select.vue";
+import SubscribeUserSelect from "./SubscribeUserSelect.vue";
 
 export default {
     name: 'subscribe-modal',
@@ -272,9 +270,6 @@ export default {
                 console.log(e);
             });
         },
-        changeCanEditTokenValue(value) {
-            this.canEditToken = !value;
-        },
         createUserToken() {
             axios.post('/tokens', {
                 model_id: this.modelId,
@@ -323,6 +318,8 @@ export default {
         });
     },
     components: {
+        SubscribeUserSelect,
+        CSelect,
         TabList,
         Subscribers,
         Tokens,

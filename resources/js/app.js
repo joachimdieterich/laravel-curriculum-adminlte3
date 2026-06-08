@@ -64,7 +64,11 @@ app.config.globalProperties.trans = (key, replacements) => {
     });
 
     return translatedString;
-};
+}
+
+import vSelect from 'vs-vue3-select'
+import 'vs-vue3-select/dist/vs-vue3-select.css'
+app.component('v-select', vSelect);
 
 import VSwatches from 'vue3-swatches';
 import 'vue3-swatches/dist/style.css';

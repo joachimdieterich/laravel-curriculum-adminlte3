@@ -9,6 +9,7 @@ use Cmgmyr\Messenger\Traits\Messagable;
 use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,7 +24,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 use LaravelIdea\Helper\App\_IH_User_QB;
-use Laravolt\Avatar\Avatar;
+use Laravolt\Avatar\Facade as Avatar;
 
 /**
  *   @OA\Schema(
@@ -418,7 +419,8 @@ class User extends Authenticatable
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class, 'organization_role_users')
-            ->withPivot(['user_id', 'role_id', 'organization_id']);
+            ->withPivot(['user_id', 'role_id', 'organization_id'])
+            ->orderByPivot('organization_id');
     }
 
     public function organizationRolesUsers(): User|HasMany
@@ -444,9 +446,18 @@ class User extends Authenticatable
         return (auth()->user()->role()->id == 1) ? User::select('id', 'username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id', 'username', 'firstname', 'lastname', 'deleted_at'); //todo, get all users of all organizations not only current
     }
 
-    public function getAvatarAttribute()
+    protected function avatar(): Attribute
     {
-        return ($this->medium_id !== null) ? '/media/'.$this->medium_id : (new Avatar)->create($this->fullName())->toBase64();
+        return Attribute::make(
+            get: function () {
+                return $this->getAvatarAttribute();
+            },
+        );
+    }
+
+    public function getAvatarAttribute(): string
+    {
+        return ($this->medium_id !== null) ? '/media/'.$this->medium_id : Avatar::create($this->fullName())->toBase64();
     }
 
     public function mayAccessUser(User $user, $context = 'organization'): bool

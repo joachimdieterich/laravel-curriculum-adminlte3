@@ -99,6 +99,7 @@ Route::withoutMiddleware('auth')->group(function() {
 // H
     Route::get('home/courses', 'HomeController@courses');
     Route::get('home/groups', 'HomeController@groups');
+    Route::get('home/achievements', 'HomeController@achievements');
     Route::get('home/logbooks', 'HomeController@logbooks');
     Route::get('home/plans', 'HomeController@plans');
 // I

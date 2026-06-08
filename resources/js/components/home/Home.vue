@@ -37,6 +37,27 @@
                 icon-background-class="bg-purple"
                 @error="handleError"
             />
+
+            <InfoBox v-if="isVisible.achievements"
+                model="achievements"
+                :text="trans('global.achievement.recent')"
+                icon="fa-trophy"
+                icon-background-class="bg-blue"
+                @error="handleError"
+            >
+                <template #entry="{ entry }">
+                    <span class="d-flex align-items-center">
+                        <i
+                            class="t-18 fa fa-circle mr-2"
+                            :class="achievementColor(entry.status)"
+                        ></i>
+                        <span
+                            class="p-margin-0 m-0"    
+                            v-html="entry.referenceable.title"
+                        ></span>
+                    </span>
+                </template>
+            </InfoBox>
         </div>
 
         <div
@@ -53,7 +74,7 @@
                 @error="handleError"
             />
     
-            <InfoBox
+            <InfoBox v-if="isVisible.plans"
                 model="plans"
                 :text="trans('global.plan.title')"
                 icon="fa-clipboard-list"
@@ -108,12 +129,35 @@ export default {
         handleError(error) {
             this.toast.error(this.errorMessage(error));
         },
+        achievementColor(status) {
+            // prioritise teacher feedback (index 0) over self-assessment (index 1)
+            const indicator = status[0] !== '0' ? status[0] : status[1];
+            let css = 'text-gray';
+
+            switch (indicator) {
+                case '1':
+                    css = 'text-green';
+                    break;
+                case '2':
+                    css = 'text-orange'
+                    break;
+                case '3':
+                    css = 'text-red';
+                    break;
+                default:
+                    break;
+            }
+
+            return css;
+        },
     },
     computed: {
         isVisible() {
+            const isTeacher = this.checkPermission('is_teacher');
             return {
-                groups: this.checkPermission('is_teacher'),
-                plans: this.checkPermission('is_teacher'),
+                groups: isTeacher,
+                plans: isTeacher,
+                achievements: true,
             };
         },
     },

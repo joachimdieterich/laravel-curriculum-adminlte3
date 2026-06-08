@@ -80,6 +80,21 @@ class HomeController extends Controller
     }
 
     /**
+     * Returns the 10 most recent achievements of the user
+     * 
+     * @return Collection
+     */
+    public function achievements(): Collection
+    {
+        return auth()->user()->achievements()
+            ->orderBy('achievements.updated_at', 'desc')
+            ->where('status', '!=', '00')
+            ->limit(10)
+            ->with('referenceable:id,title')
+            ->get(['id', 'status', 'referenceable_id', 'referenceable_type']);
+    }
+
+    /**
      * Returns the logbooks of the user
      * 
      * @return Collection

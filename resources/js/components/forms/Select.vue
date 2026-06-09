@@ -120,7 +120,8 @@ export default {
             searchLengthMinium: 3,
             search: '',
             page: 1,
-            options: []
+            options: [],
+            fetchTimer: null,
         }
     },
     computed: {
@@ -166,8 +167,15 @@ export default {
         },
         setFetchOptions (search, loading) {
             this.search = search;
+
+            // Only trigger GET-Request if search wasn't triggered again in the last 200ms
             if (search.length >= this.searchLengthMinium) {
-                this.fetchOptions(loading);
+                clearTimeout(this.fetchTimer);
+
+                // Neuen Timer starten
+                this.fetchTimer = setTimeout(async () => {
+                    this.fetchOptions(loading);
+                }, 200);
             }
         },
     },

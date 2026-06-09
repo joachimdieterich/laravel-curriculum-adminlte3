@@ -2,7 +2,7 @@
     <div
         v-show="showWithSearch(item.title) || showWithSearch(item.description)"
         :id="'item-' + item.id"
-        class="kanban-item collapse show mb-3"
+        class="kanban-item collapse show mx-2 mb-3"
         :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
         tabindex="-1"
     >
@@ -149,60 +149,61 @@
             </div>
         </div>
 
-        <div class="kanban-item-footer d-flex align-items-center bg-gray-light px-3 py-2">
-            <Avatar
-                :key="item.id + '_editor_' + item.owner.id"
-                :title="item.owner.firstname + ' ' + item.owner.lastname"
-                :username="item.owner.username"
-                :firstname="item.owner.firstname"
-                :lastname="item.owner.lastname"
-                :size="25"
-                class="contacts-list-img o"
-                data-toggle="tooltip"
-            />
-            <Avatar v-if="editors != null"
-                v-for="(editor_user, index) in editorsWithoutOwner"
-                :key="item.id + '_editor_' + index"
-                :title="editor_user.firstname + ' ' + editor_user.lastname"
-                :username="editor_user.username"
-                :firstname="editor_user.firstname"
-                :lastname="editor_user.lastname"
-                :size="25"
-                class="contacts-list-img"
-                data-toggle="tooltip"
-            />
-
-            <div class="d-flex ml-auto">
-                <button v-if="commentable"
-                    class="btn btn-icon px-2 py-1 mr-2"
-                    :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
-                    data-toggle="collapse"
-                    :data-target="'#comments_' + item.id"
-                    aria-expanded="false"
-                    @click="toggleComments()"
-                >
-                    <i class="far fa-comments"></i>
-                    <span v-if="item.comments.length > 0"
-                        class="comment-count bg-success"
-                    >
-                        {{ item.comments.length }}
-                    </span>
-                </button>
-                <Reaction
-                    v-if="favourable"
-                    :model="item"
-                    reaction="like"
-                    url="/kanbanItems"
+        <div class="kanban-item-footer d-flex flex-column bg-gray-light">
+            <div class="d-flex align-items-center px-3 py-2">
+                <Avatar
+                    :key="item.id + '_editor_' + item.owner.id"
+                    :title="item.owner.firstname + ' ' + item.owner.lastname"
+                    :username="item.owner.username"
+                    :firstname="item.owner.firstname"
+                    :lastname="item.owner.lastname"
+                    :size="25"
+                    class="contacts-list-img o"
+                    data-toggle="tooltip"
                 />
+                <Avatar v-if="editors != null"
+                    v-for="(editor_user, index) in editorsWithoutOwner"
+                    :key="item.id + '_editor_' + index"
+                    :title="editor_user.firstname + ' ' + editor_user.lastname"
+                    :username="editor_user.username"
+                    :firstname="editor_user.firstname"
+                    :lastname="editor_user.lastname"
+                    :size="25"
+                    class="contacts-list-img"
+                    data-toggle="tooltip"
+                />
+    
+                <div class="d-flex ml-auto">
+                    <button v-if="commentable"
+                        class="btn btn-icon px-2 py-1 mr-2"
+                        :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
+                        data-toggle="collapse"
+                        :data-target="'#comments_' + item.id"
+                        aria-expanded="false"
+                        @click="toggleComments()"
+                    >
+                        <i class="far fa-comments"></i>
+                        <span v-if="item.comments.length > 0"
+                            class="comment-count bg-success"
+                        >
+                            {{ item.comments.length }}
+                        </span>
+                    </button>
+                    <Reaction v-if="favourable"
+                        :model="item"
+                        reaction="like"
+                        url="/kanbanItems"
+                    />
+                </div>
             </div>
-        </div>
 
-        <Comments v-if="commentable"
-            :websocket="websocket"
-            :comments="item.comments"
-            :model="item"
-            :kanban_owner_id="kanban_owner_id"
-        />
+            <Comments v-if="commentable"
+                :websocket="websocket"
+                :comments="item.comments"
+                :model="item"
+                :kanban_owner_id="kanban_owner_id"
+            />
+        </div>
     </div>
 </template>
 <script>

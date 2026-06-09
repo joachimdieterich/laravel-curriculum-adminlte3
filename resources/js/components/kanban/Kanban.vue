@@ -39,21 +39,21 @@
                 item-key="id"
                 handle=".handle"
                 class="d-flex m-0 h-100"
-                style="width: max-content; gap: 16px;"
+                style="width: max-content;"
                 :move="isLocked"
                 @end="syncStatusMoved"
             >
                 <template #item="{ element: status, index }">
                     <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
-                          v-show="status.visible ?? true"
-                          :id="'status-' + status.id"
-                          :key="'drag_status_' + status.id"
-                          :class="{'d-flex': (status.visible ?? true), 'flex-column': true, 'collapse': true, 'show': true, 'mh-100': true}"
-                          :style="{
-                              width:  itemWidth + 'px',
-                              opacity: !status.visibility ? '0.7' : '1'
-                          }"
-                          tabindex="-1"
+                        :id="'status-' + status.id"
+                        :key="'drag_status_' + status.id"
+                        class="flex-column mh-100 collapse show"
+                        :class="status.visible ?? true ? 'd-flex' : 'd-none'"
+                        :style="{
+                            width:  (itemWidth + 16) + 'px',
+                            opacity: !status.visibility ? '0.7' : '1'
+                        }"
+                        tabindex="-1"
                     >
                         <KanbanStatus
                             :status="status"
@@ -115,7 +115,7 @@
                 </template>
                 <template #footer>
                     <div v-if="editable"
-                        class="d-print-none no-border float-left pr-2"
+                        class="d-print-none"
                         :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus :newStatus="true"/>
@@ -278,7 +278,7 @@ export default {
         },
         toggleCollapseAll(e) {
             const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'hide' : 'show';
-            $('#kanban-wrapper .card-body').collapse(collapse);
+            $('#kanban-wrapper .kanban-item-body').collapse(collapse);
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {
@@ -616,9 +616,9 @@ export default {
 .kanban-wrapper {
     padding: 2rem;
     overflow-x: auto;
-    overflow-y: clip;
+    overflow-y: clip;    
 }
-.kanban-header {
+.kanban-status {
     background-color: white;
     padding: 0.75rem;
     border-radius: 0.5rem;
@@ -626,17 +626,16 @@ export default {
 .kanban-items-container {
     height: 0px !important;
     scroll-behavior: smooth;
-
-    & > :last-child > .card { margin-bottom: 0; }
 }
 .kanban-item {
     position: relative;
+    border-radius: 0.5rem;
 
     & > .kanban-item-header {
         position: relative;
         border-bottom: 1px solid #0002;
-        border-top-left-radius: 0.5rem;
-        border-top-right-radius: 0.5rem;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
         transition: filter 0.25s;
 
         &:hover { filter: brightness(90%); }
@@ -665,11 +664,16 @@ export default {
     }
     & > .kanban-item-footer {
         border-top: 1px solid #0002;
-        border-bottom-left-radius: 0.5rem;
-        border-bottom-right-radius: 0.5rem;
+        border-bottom-left-radius: inherit;
+        border-bottom-right-radius: inherit;
+
+        & .comments {
+            border-bottom-left-radius: inherit;
+            border-bottom-right-radius: inherit;
+        }
     }
 }
-.kanban-item, .kanban-header { box-shadow: var(--shadow-default); }
+.kanban-item, .kanban-status { box-shadow: var(--shadow-default); }
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
     &:hover, &:focus { opacity: 1 !important; }

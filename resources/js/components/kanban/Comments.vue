@@ -1,7 +1,7 @@
 <template>
     <div
         :id="'comments_' + model.id"
-        class="comments px-3 border-top collapse"
+        class="comments px-3 border-top bg-white collapse"
     >
         <div
             ref="scroll_container"

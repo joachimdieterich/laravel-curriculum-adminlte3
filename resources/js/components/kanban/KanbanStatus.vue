@@ -1,6 +1,6 @@
 <template>
     <div
-        class="kanban-header"
+        class="kanban-status mx-2"
         :style="{ backgroundColor: status?.color }"
     >
         <div v-if="newStatus"

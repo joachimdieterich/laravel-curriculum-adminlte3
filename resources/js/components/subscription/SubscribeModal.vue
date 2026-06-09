@@ -49,15 +49,6 @@
                                             this.subscribe('App\\User', option.value.user.id);
                                         }"
                                     ></subscribe-user-select>
-                                    <Select2
-                                        id="users_subscription_select"
-                                        name="users_subscription_select"
-                                        url="/users"
-                                        model="user"
-                                        @selectedValue="(id) => {
-                                            this.subscribe('App\\User', id[0])
-                                        }">
-                                    </select2>
                                     <Subscribers v-if="subscribers.subscriptions != undefined"
                                         :modelUrl="modelUrl"
                                         :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\User')"

@@ -5,6 +5,7 @@
               @selectedValue="(selectedOption) => {return this.$emit('selectedValue', selectedOption);}"
               :multiple="false"
               :groupedOptions="true"
+              :clearSearchOnSelect="false"
     >
         <template v-slot:option="option">
             <div class="select-option">

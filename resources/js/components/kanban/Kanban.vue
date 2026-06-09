@@ -29,7 +29,7 @@
 
         <div
             id="kanban-wrapper"
-            class="kanban-wrapper position-relative"
+            class="kanban-wrapper position-relative h-100 w-100"
             :style="'background-color: ' + kanban.color + 'B2;'"
         >
             <!-- Columns (Statuses) -->
@@ -606,7 +606,7 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style>
 #kanban-container {
     background-color: #fff;
     width: 100vw;
@@ -614,11 +614,14 @@ export default {
     min-height: 400px;
 }
 .kanban-wrapper {
-    height: 100%;
-    width: 100%;
     padding: 2rem;
     overflow-x: auto;
     overflow-y: clip;
+}
+.kanban-header {
+    background-color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
 }
 .kanban-items-container {
     height: 0px !important;
@@ -626,6 +629,47 @@ export default {
 
     & > :last-child > .card { margin-bottom: 0; }
 }
+.kanban-item {
+    position: relative;
+
+    & > .kanban-item-header {
+        position: relative;
+        border-bottom: 1px solid #0002;
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+        transition: filter 0.25s;
+
+        &:hover { filter: brightness(90%); }
+        & > .kanban-item-header-title {
+            padding-right: 3rem;
+        }
+    }
+    & > .kanban-item-tools {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+    & > .kanban-item-info {
+        border-top: 1px solid #0002;
+        font-size: 0.75rem;
+
+        & .due-date {
+            color: #6c757d;
+            font-weight: 600;
+        }
+        & .badge {
+            border: 1px solid #dc3545;
+            background-color: #fff;
+            color: #dc3545;
+            font-size: 0.8em;
+        }
+    }
+    & > .kanban-item-footer {
+        border-top: 1px solid #0002;
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+    }
+}
+.kanban-item, .kanban-header { box-shadow: var(--shadow-default); }
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
     &:hover, &:focus { opacity: 1 !important; }

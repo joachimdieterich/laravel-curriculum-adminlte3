@@ -2,111 +2,106 @@
     <div
         v-show="showWithSearch(item.title) || showWithSearch(item.description)"
         :id="'item-' + item.id"
-        class="card collapse show"
+        class="kanban-item collapse show mb-3"
         :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
         tabindex="-1"
     >
         <div
-            class="card-header p-0"
+            class="kanban-item-header px-3 py-2"
             :class="collapse_items && 'collapsed'"
-            :style="{ color: textColor }"
+            :style="{ color: textColor, backgroundColor: item.color }"
             data-toggle="collapse"
-            :data-target="'#item-' + item.id + ' > .card-body'"
+            :data-target="'#item-' + item.id + ' > .kanban-item-body'"
             aria-expanded="true"
         >
-            <div
-                class="card-header-title pl-3 py-2"
-                :style="{ backgroundColor: item.color }"
-            >
+            <div class="kanban-item-header-title">
                 {{ item.title }}
                 <i class="fa fa-angle-up d-print-none"></i>
                 <div style="font-size: 10px;">
                     {{ item.created_at }}
                 </div>
             </div>
-            <div
-                class="card-tools d-print-none position-absolute"
-                style="top: 8px; right: 16px;"
+        </div>
+
+        <div
+            class="kanban-item-tools d-print-none position-absolute"
+            :style="{ color: textColor }"
+        >
+            <div v-if="edit_rights || copy_rights || delete_rights"
+                :id="'kanbanItemDropdown_' + index"
+                class="float-right py-0 px-2 pointer"
+                style="background-color: transparent;"
+                data-toggle="dropdown"
+                aria-expanded="false"
             >
-                <div v-if="edit_rights || copy_rights || delete_rights"
-                    :id="'kanbanItemDropdown_' + index"
-                    class="float-right py-0 px-2 pointer"
-                    style="background-color: transparent;"
-                    data-toggle="dropdown"
-                    aria-expanded="false"
+                <i class="fa fa-ellipsis-v"></i>
+                <div
+                    class="dropdown-menu"
+                    x-placement="top-start"
                 >
-                    <i class="fas fa-ellipsis-v"
-                       :style="{ 'text-color': textColor }"
-                    ></i>
-                    <div
-                        class="dropdown-menu"
-                        x-placement="top-start"
-                    >
-                        <div v-if="edit_rights">
-                            <button
-                                :name="'kanbanItemEdit_' + index"
-                                class="dropdown-item text-secondary py-1"
-                                @click="edit()"
-                            >
-                                <i class="fa fa-pencil-alt mr-2"></i>
-                                {{ trans('global.kanbanItem.edit') }}
-                            </button>
-                            <button
-                                v-permission="'external_medium_create'"
-                                class="dropdown-item text-secondary py-1"
-                                :name="'kanbanItemAddMedia_' + index"
-                                @click="addMedia()"
-                            >
-                                <i class="fa fa-folder-open mr-2"></i>
-                                {{ trans('global.medium.title_singular') }}
-                            </button>
-                        </div>
+                    <div v-if="edit_rights">
+                        <button
+                            :name="'kanbanItemEdit_' + index"
+                            class="dropdown-item text-secondary py-1"
+                            @click="edit()"
+                        >
+                            <i class="fa fa-pencil-alt mr-2"></i>
+                            {{ trans('global.kanbanItem.edit') }}
+                        </button>
+                        <button
+                            v-permission="'external_medium_create'"
+                            class="dropdown-item text-secondary py-1"
+                            :name="'kanbanItemAddMedia_' + index"
+                            @click="addMedia()"
+                        >
+                            <i class="fa fa-folder-open mr-2"></i>
+                            {{ trans('global.medium.title_singular') }}
+                        </button>
+                    </div>
 
-                        <div v-if="copy_rights">
-                            <button
-                                name="kanbanItemCopy"
-                                class="dropdown-item text-secondary py-1"
-                                @click="confirmCopy()"
-                            >
-                                <i class="fa fa-copy mr-2"></i>
-                                {{ trans('global.kanbanItem.copy') }}
-                            </button>
-                        </div>
+                    <div v-if="copy_rights">
+                        <button
+                            name="kanbanItemCopy"
+                            class="dropdown-item text-secondary py-1"
+                            @click="confirmCopy()"
+                        >
+                            <i class="fa fa-copy mr-2"></i>
+                            {{ trans('global.kanbanItem.copy') }}
+                        </button>
+                    </div>
 
-                        <div v-if="delete_rights">
-                            <hr class="my-1">
-                            <button
-                                v-permission="'kanban_delete'"
-                                class="dropdown-item py-1 text-red"
-                                :name="'kanbanItemDelete_' + index"
-                                @click="confirmDeletion()"
-                            >
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.kanbanItem.delete') }}
-                            </button>
-                        </div>
+                    <div v-if="delete_rights">
+                        <hr class="my-1">
+                        <button
+                            v-permission="'kanban_delete'"
+                            class="dropdown-item py-1 text-red"
+                            :name="'kanbanItemDelete_' + index"
+                            @click="confirmDeletion()"
+                        >
+                            <i class="fa fa-trash mr-2"></i>
+                            {{ trans('global.kanbanItem.delete') }}
+                        </button>
                     </div>
                 </div>
-                <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
-                    class="float-right py-0 px-1 mx-1 handle pointer"
-                    @click.stop
-                >
-                    <span class="position-relative"
-                          :style="{ 'text-color': textColor }">
-                        <i v-if="editable"
-                           class="fa fa-arrows-up-down-left-right"
-                        ></i>
-                        <i v-if="item.locked"
-                           class="fa fa-lock text-muted position-absolute"
-                           style="left: 8px; top: 10px; cursor: not-allowed;"
-                        ></i>
-                    </span>
-                </div>
+            </div>
+            <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
+                class="float-right py-0 px-1 mx-1 handle pointer"
+                @click.stop
+            >
+                <span class="position-relative">
+                    <i v-if="editable"
+                       class="fa fa-arrows-up-down-left-right"
+                    ></i>
+                    <i v-if="item.locked"
+                       class="fa fa-lock text-muted position-absolute"
+                       style="left: 8px; top: 10px; cursor: not-allowed;"
+                    ></i>
+                </span>
             </div>
         </div>
 
         <div
-            class="card-body p-0 collapse"
+            class="kanban-item-body p-0 bg-white collapse"
             :class="!collapse_items && 'show'"
         >
             <div style="overflow-x: auto;">
@@ -125,34 +120,36 @@
         </div>
 
         <div v-if="item.due_date || (item.visibility && (item.visible_from || item.visible_until))"
-            class="card-footer px-3 py-2"
+            class="kanban-item-info d-flex flex-column bg-gray-light px-3 py-2"
             :class="{ 'border-top-0': item.description === null }"
         >
-            <div class="w-100">
-                <div v-if="item.due_date">
-                    <div class="due-date pull-left">{{ trans('global.due_at') }}: {{ postDate() }}</div>
-                    <span v-if="expired"
-                        class="pull-right badge badge-secondary"
-                    >
-                        {{ trans('global.kanbanItem.expired') }}
-                    </span>
+            <div v-if="item.due_date"
+                class="d-flex align-items-center"
+            >
+                <div class="due-date flex-fill">{{ trans('global.due_at') }}: {{ postDate() }}</div>
+                <span v-if="expired"
+                    class="badge"
+                >
+                    {{ trans('global.kanbanItem.expired') }}
+                </span>
+            </div>
+            <div v-if="item.visibility && (item.visible_from || item.visible_until)"
+                class="d-flex align-items-center"
+            >
+                <div class="due-date flex-fill">
+                    {{ trans('global.visibility') }}
+                    <span v-if="item.visible_from && new Date() < new Date(item.visible_from)">{{ diffForHumans(item.visible_from) }}</span>
+                    <span v-if="new Date() > new Date(item.visible_from)">{{ trans('global.timeTo') }} {{ diffForHumans(item.visible_until) }}</span>
                 </div>
-                <div v-if="item.visibility && (item.visible_from || item.visible_until)">
-                    <div class="due-date pull-left">
-                        {{ trans('global.visibility') }}
-                        <span v-if="item.visible_from && new Date() < new Date(item.visible_from)">{{ diffForHumans(item.visible_from) }}</span>
-                        <span v-if="new Date() > new Date(item.visible_from)">{{ trans('global.timeTo') }} {{ diffForHumans(item.visible_until) }}</span>
-                    </div>
-                    <span v-if="hidden"
-                        class="pull-right badge badge-secondary"
-                    >
-                        {{ trans('global.hidden') }}
-                    </span>
-                </div>
+                <span v-if="hidden"
+                    class="badge"
+                >
+                    {{ trans('global.hidden') }}
+                </span>
             </div>
         </div>
 
-        <div class="card-footer d-flex align-items-center px-3 py-2">
+        <div class="kanban-item-footer d-flex align-items-center bg-gray-light px-3 py-2">
             <Avatar
                 :key="item.id + '_editor_' + item.owner.id"
                 :title="item.owner.firstname + ' ' + item.owner.lastname"
@@ -360,7 +357,7 @@ export default {
         toggleComments() {
             // scroll comments into view if opening and at bottom of kanban column
             if (this.show_comments = !this.show_comments && this.$el.parentElement.nextElementSibling === null) {
-                setTimeout(() => this.$el.querySelector('.card-footer').scrollIntoView(), 333);
+                setTimeout(() => this.$el.querySelector('.kanban-item-footer').scrollIntoView(), 333);
             }
         },
         postDate() {
@@ -465,25 +462,3 @@ export default {
     },
 }
 </script>
-<style scoped>
-.due-date {
-    color: #6c757d;
-    font-size: 12px;
-    font-weight: 600;
-}
-.badge {
-    border: 1px solid #dc3545;
-    background-color: #fff;
-    color: #dc3545;
-    font-size: 10px;
-    line-height: 11px;
-    vertical-align: middle;
-}
-.card-header-title {
-    transition: filter 0.25s;
-    padding-right: 3.5rem;
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
-}
-.card-header-title:hover { filter: brightness(90%); }
-</style>

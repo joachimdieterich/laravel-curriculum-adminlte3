@@ -58,6 +58,7 @@ return [
         'too_long' => 'The given text is too long',
         'no_token_support' => 'This resource does not support sharing-tokens.',
         'no_access_to_user' => 'You do not have permission to access this user.',
+        'too_many_results' => 'Too many results where found. Please limit the search more.',
         '403' => 'You do not have the necessary permissions to perform this action.',
         '404' => 'The requested resource could not be found.',
         '419' => 'The session has expired - please reload the page.',
@@ -1241,7 +1242,6 @@ return [
         'expel_helper' => 'Disconnect group from videoconference',
         'presentations' => 'Presentations',
         'add_presentation' => 'Add presentation',
-        'enter_name' => 'Please enter your name',
         'participant_link' => 'Link for participants',
         'moderator_link' => 'Link for moderators',
         'audio_video_settings' => 'Audio/Video settings',
@@ -1374,8 +1374,5 @@ return [
     ],
     'cselect' => [
         'no_results' => 'No results found',
-    ],
-    'exception' => [
-        'too_many_results' => 'Too many results where found. Please limit the search more.'
     ],
 ];

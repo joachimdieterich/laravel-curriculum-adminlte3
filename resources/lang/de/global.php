@@ -63,6 +63,7 @@ return [
         'too_long' => 'Der eingegebene Text ist zu lang',
         'no_token_support' => 'Diese Ressource unterstützt keine Freigabelinks.',
         'no_access_to_user' => 'Sie haben nicht die Berechtigung, auf diesen Benutzer zuzugreifen.',
+        'too_many_results' => 'Zu viele Ergebnisse wurden gefunden. Bitte grenzen sie die Suche ein.',
         '403' => 'Sie haben nicht die notwendigen Berechtigungen, um diese Aktion auszuführen.',
         '404' => 'Die angeforderte Ressource konnte nicht gefunden werden.',
         '419' => 'Die Sitzung ist abgelaufen - bitte laden Sie die Seite neu.',
@@ -1272,7 +1273,6 @@ return [
         'expel_helper' => 'Gruppe aus Videokonferenz ausschreiben',
         'presentations' => 'Präsentationen',
         'add_presentation' => 'Präsentation hinzufügen',
-        'enter_name' => 'Bitte Vor- und Nachnamen eingeben',
         'participant_link' => 'Link für Teilnehmer:innen',
         'moderator_link' => 'Link für Moderator:innen',
         'audio_video_settings' => 'Audio-/Video-Einstellungen',
@@ -1420,8 +1420,5 @@ return [
     ],
     'cselect' => [
         'no_results' => 'Keine Übereinstimmungen gefunden',
-    ],
-    'exception' => [
-        'too_many_results' => 'Zu viele Ergebnisse wurden gefunden. Bitte grenzen sie die Suche ein.'
     ],
 ];

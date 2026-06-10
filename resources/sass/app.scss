@@ -215,6 +215,9 @@ textarea { min-height: 150px; }
     --vs-border-color: rgb(127.5, 189, 255);
     --vs-border-radius: 4px 4px 0 0 !important;
 }
+.vs--single.vs--searching:not(.vs--open):not(.vs--loading) .vs__search {
+    opacity: 1 !important;
+}
 
 /* overflow-context */
 .v-select-overflow.v-select { position: unset; }

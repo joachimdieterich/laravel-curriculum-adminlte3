@@ -47,8 +47,8 @@ class KanbanItemController extends Controller
         if (isset($input['media_subscriptions']) AND count($input['media_subscriptions']) > 0) {
             MediumSubscription::whereIn('medium_id', $input['media_subscriptions'])
             ->where([
-                'subscribable_id'   => $input['kanban_status_id'],
-                'subscribable_type' => 'App\\KanbanStatus',
+                'subscribable_id'   => auth()->user()->id,
+                'subscribable_type' => 'App\\KanbanItemCreate',
             ])
             ->update([
                 'subscribable_id'   => $kanbanItem->id,

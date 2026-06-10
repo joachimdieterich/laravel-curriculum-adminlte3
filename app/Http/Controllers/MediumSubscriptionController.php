@@ -60,7 +60,10 @@ class MediumSubscriptionController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
-        $input['subscribable_type']::find($input['subscribable_id'])->touch(); //To get Sync after media upload working
+
+        if (!str_ends_with($input['subscribable_type'], 'Create')) {
+            $input['subscribable_type']::find($input['subscribable_id'])->touch(); // to get Sync after media upload working
+        }
 
         return MediumSubscription::where([
             'medium_id' => $input['medium_id'],
@@ -153,9 +156,11 @@ class MediumSubscriptionController extends Controller
     protected function handleDelete(mixed $model)
     {
         abort_unless(\Gate::allows('medium_delete'), 403);
+        // subscriptions created on a not-yet-existing ressource
+        $isTemp = str_ends_with($model['subscribable_type'], 'Create');
 
         // if request didn't send additional_data (on models where only 1 medium can be attached)
-        if (!isset($model['additional_data'])) {
+        if (!isset($model['additional_data']) && !$isTemp) {
             // remove the medium_id from the model, so deleting the medium doesn't cause a foreign key constraint error
             $model['subscribable_type']::where('id', $model['subscribable_id'])->update(['medium_id' => null]);
         }
@@ -190,7 +195,7 @@ class MediumSubscriptionController extends Controller
                 if ($unique) Medium::where('id', $model['medium_id'])->delete();
             }
 
-            $model['subscribable_type']::find($model['subscribable_id'])->touch(); // to trigger update-event for websockets
+            if (!$isTemp) $model['subscribable_type']::find($model['subscribable_id'])->touch(); // to trigger update-event for websockets
         }
 
         return response(null, 204);

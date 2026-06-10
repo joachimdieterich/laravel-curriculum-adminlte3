@@ -256,7 +256,7 @@ class EdusharingMediaAdapter implements MediaInterface
                 ['subscribable_type', $subscribable_type],
                 ['subscribable_id', $subscribable_id],
                 ['medium_id', $medium->id],
-            ])->first()->get();
+            ])->first();
 
             // delete usage
             $edusharing = new Edusharing;
@@ -307,6 +307,8 @@ class EdusharingMediaAdapter implements MediaInterface
 
     public function checkIfUserHasSubscription($subscription)
     {
+        if (str_ends_with($subscription->subscribable_type, 'Create')) return true;
+
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())

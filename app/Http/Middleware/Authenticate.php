@@ -47,7 +47,12 @@ class Authenticate extends Middleware
     
                 // this will call the authorization endpoint and redirect to our OIDC-handling route
                 $oidc->setRedirectURL(config('app.url') . '/oidc');
-                $oidc->authenticate();
+
+                try {
+                    $oidc->authenticate();
+                } catch (\Throwable) {
+                    abort(503, 'global.error.oidc');
+                }
             }
         }
         // needed to redirect to login-page in local environment

@@ -23,7 +23,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
             if ($entry->type === 'request') {
                 return [
                     $entry->content['response_status'],
-                    explode('/', $entry->content['uri'])[1] ?? null,
+                    preg_split("/[\/|?]/", $entry->content['uri'])[1] ?? null,
                 ];
             }
 

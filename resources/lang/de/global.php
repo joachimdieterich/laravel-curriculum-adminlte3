@@ -63,6 +63,7 @@ return [
         'too_long' => 'Der eingegebene Text ist zu lang',
         'no_token_support' => 'Diese Ressource unterstützt keine Freigabelinks.',
         'no_access_to_user' => 'Sie haben nicht die Berechtigung, auf diesen Benutzer zuzugreifen.',
+        'oidc' => 'Der Authentifizierungsdienst ist derzeit nicht erreichbar. Bitte versuchen Sie es später erneut.',
         'too_many_results' => 'Zu viele Ergebnisse wurden gefunden. Bitte grenzen sie die Suche ein.',
         '403' => 'Sie haben nicht die notwendigen Berechtigungen, um diese Aktion auszuführen.',
         '404' => 'Die angeforderte Ressource konnte nicht gefunden werden.',

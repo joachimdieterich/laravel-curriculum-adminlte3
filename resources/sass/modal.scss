@@ -35,8 +35,8 @@
     .card { margin-bottom: 0; }
 }
 @media (min-width: 769px) {
-    .modal-container { min-width: 50vh; }
-    .share-modal-container { min-width: 80vmax; }
+    .modal-container { min-width: 50vmin; }
+    .share-modal-container { min-width: 70vmin; }
 }
 /*
  * The following styles are auto-applied to elements with

@@ -9,21 +9,22 @@
     >
         <template v-slot:option="option">
             <div class="select-option">
-                <div class="select-option select-user">
-                    <span class="select-user-avatar">
-                        <img class="v-select-icon img-circle color-white select-user-avatar" alt="" :src="option.option.value.icon">
-                    </span>
-                    <span class="select-option-name">{{ option.option.label }}</span>
-                </div>
-                <span class="select-option-organization-role" style="margin-left: auto; order: 3;">
-                    <span v-for="organization in option.option.value.organizations"
-                          class="small select-option-organization"
-                    >
-                        {{ organization }}
-                    </span>
-                    <br>
-                    <span class="select-option-role">{{ option.option.value.roleName }}</span>
+                <span class="select-user-avatar">
+                    <img class="v-select-icon img-circle color-white select-user-avatar" alt="" :src="option.option.value.icon">
                 </span>
+                <div class="select-user">
+                    <span class="big select-option-name">{{ option.option.label }}</span>
+                    <div class="select-option-organization-role">
+                        <div class="select-option-organizations">
+                            <span v-for="organization in option.option.value.organizations"
+                                  class="small select-option-organization"
+                            >
+                                {{ organization }}
+                            </span>
+                        </div>
+                        <span class="select-option-role">{{ option.option.value.roleName }}</span>
+                    </div>
+                </div>
             </div>
         </template>
     </c-select>
@@ -48,17 +49,20 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 :root {
     --select-option-role-color: #6c757d;
 }
 .vs__dropdown-option:hover { --select-option-role-color: var(--vs-dropdown-option--active-color); }
 
-.select-user { max-width: 70%; }
+.select-user {
+    min-width: calc(100% - 48px);;
+    display: flex;
+    flex-direction: row;
+}
 .select-user-avatar { height: 100%; }
-.select-option      { display: flex; gap: 5px; }
-.select-option-name { align-content: center; overflow: hidden; text-overflow: ellipsis;}
-.select-option-organization { margin-right: 5px; }
+.select-option      { display: flex; column-gap: 5px; align-items: center; }
+.select-option-name { align-content: center; overflow: hidden; text-overflow: ellipsis; font-size: 1.2rem;}
 .select-option-organization-role {
     margin-left: auto;
     order: 3;
@@ -66,8 +70,32 @@ export default {
     width: 40%;
     text-align: right;
 }
+.select-option-organizations {
+    display: flex;
+    column-gap: 5px;
+    flex-wrap: wrap;
+    justify-content: end;
+}
 .select-option-role {
     font-family: "DejaVu Sans", Arial, sans-serif;
+    font-style: italic;
     color: var(--select-option-role-color);
+}
+
+/* Tablet and mobile */
+@media (max-width: 769px) {
+    .select-option {
+        column-gap: 10px;
+    }
+    .select-user {
+        max-width: 70%;
+        flex-direction: column;
+    }
+    .select-option-organizations { justify-content: left; }
+    .select-option-organization-role {
+        margin-left: unset;
+        text-align: left;
+        width: unset;
+    }
 }
 </style>

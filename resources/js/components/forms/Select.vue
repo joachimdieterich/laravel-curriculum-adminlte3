@@ -27,6 +27,8 @@
                       class="v-select-overflow"
                       @search="setFetchOptions"
                       @option:selecting="(selectedOption) => {return this.$emit('selectedValue', selectedOption);}"
+                      :dropdown-should-open="() => {console.log(this.loading);return search.length >= this.searchLengthMinium && !this.loading;}"
+                      :clear-search-on-blur="() => {return false}"
             >
                 <template v-slot:option="option">
                     <slot name="option" :option="option"></slot>
@@ -122,6 +124,7 @@ export default {
             page: 1,
             options: [],
             fetchTimer: null,
+            loading: false
         }
     },
     computed: {
@@ -141,15 +144,17 @@ export default {
         },
     },
     methods: {
-        fetchOptions(loading) {
-            loading(true);
+        fetchOptions(selectLoadingStateFunction) {
+            selectLoadingStateFunction(true);
             axios.get(this.fullUrl)
                 .then((res) => {
-                    loading(false);
+                    selectLoadingStateFunction(false);
+                    this.loading = false;
                     this.options = res.data;
                 })
                 .catch((error) => {
-                    loading(false);
+                    selectLoadingStateFunction(false);
+                    this.loading = false;
                     if (error.response.status === 400) {
                         this.toast.error(error.response.data, {
                             timeout: 6000,
@@ -172,6 +177,7 @@ export default {
             if (search.length >= this.searchLengthMinium) {
                 clearTimeout(this.fetchTimer);
 
+                this.loading = true;
                 // Neuen Timer starten
                 this.fetchTimer = setTimeout(async () => {
                     this.fetchOptions(loading);

@@ -131,6 +131,28 @@ class MediumSubscriptionController extends Controller
     }
 
     /**
+     * media added on creation of a ressource are subscribed to a fallback-scheme,
+     * so after actually storing the model, we need to update the temporary values
+     * @param int|array $medium_id one or multiple IDs of the subscribed media
+     * @param int $subscribable_id ID of the newly created model
+     * @param String $model classname of the model e. g. 'App\\Kanban'
+     */
+    public function updateTempSubscriptions($medium_id, $subscribable_id, $model): void
+    {
+        if (gettype($medium_id) === 'integer') $medium_id = [$medium_id];
+
+        MediumSubscription::whereIn('medium_id', $medium_id)
+            ->where([
+                'subscribable_id' => auth()->user()->id,
+                'subscribable_type' => $model . 'Create',
+            ])
+            ->update([
+                'subscribable_id' => $subscribable_id,
+                'subscribable_type' => $model,
+            ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\MediumSubscription  $mediumSubscription

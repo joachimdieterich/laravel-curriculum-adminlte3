@@ -95,6 +95,16 @@ class EdusharingMediaAdapter implements MediaInterface
                 $input['subscribable_id'],
                 $input['external_id'],
             );
+
+            // if a medium was added to a model with a 'medium_id'-column
+            if (
+                !str_ends_with($input['subscribable_type'], 'Create') &&
+                \Schema::hasColumn(app($input['subscribable_type'])->getTable(), 'medium_id')
+            ) {
+                // instantly update its value, so the subscription can't end up as a data-corpse
+                $input['subscribable_type']::whereId($input['subscribable_id'])
+                    ->update(['medium_id' => $medium->id]);
+            }
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__, null, 1);

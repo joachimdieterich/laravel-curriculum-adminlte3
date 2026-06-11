@@ -7,6 +7,7 @@
         <button v-if="previewMedium && media_subscriptions.length < 2"
             type="button"
             class="btn btn-icon mr-2"
+            :disabled="isProcessing"
             @click="deleteSubscription()"
         >
             <i class="fa fa-trash text-danger"></i>
@@ -15,6 +16,13 @@
             class="btn-group"
             style="max-height: 100px;"
         >
+            <div v-if="isProcessing"
+                class="overlay"
+                style="background-color: #fff8 !important;"
+                @click.stop
+            >
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            </div>
             <button v-if="previewMedium"
                 type="button"
                 class="btn btn-default"
@@ -93,6 +101,7 @@ export default {
         return {
             component_id: this.$.uid,
             previewMedium: null,
+            isProcessing: false,
         }
     },
     setup() {
@@ -108,9 +117,17 @@ export default {
 
         this.$eventHub.on('new-media-subscriptions', (data) => {
             if (data?.id !== this.component_id) return;
+            // if the medium is getting replaced
+            if (!this.multiple && this.previewMedium) {
+                // we should delete the old subscription first
+                this.deleteSubscription(false);
+                this.previewMedium = null;
+            }
 
-            if (this.previewMedium == null) this.previewMedium = data.selectedMedia[0].medium ?? data.selectedMedia[0];
-            this.$emit('add', data.selectedMedia);
+            const medium = data.selectedMedia[0].medium ?? data.selectedMedia[0];
+            if (this.previewMedium == null) this.previewMedium = medium;
+            
+            this.$emit('add', this.multiple ? data.selectedMedia : medium)
         });
     },
     methods: {
@@ -120,13 +137,14 @@ export default {
             this.globalStore?.showModal('medium-modal', {
                 subscribable_id: this.subscribable_id ?? this.$userId,
                 subscribable_type: this.subscribable_id ? this.subscribable_type : type_fallback,
-                subscribeSelected: true,
+                subscribeSelected: this.multiple, // whether to create subscriptions for local media
                 public: true,
                 callback: 'new-media-subscriptions',
                 callbackId: this.component_id,
             });
         },
-        deleteSubscription() {
+        deleteSubscription(emitEvent = true) {
+            this.isProcessing = true;
             const type_fallback = this.subscribable_type + 'Create';
 
             axios.post('/mediumSubscriptions/destroy', {
@@ -135,8 +153,11 @@ export default {
                 subscribable_type: this.subscribable_id ? this.subscribable_type : type_fallback,
                 additional_data: true, // hack to skip setting medium_id of model to null
             }).then(() => {
-                this.$emit('delete', this.previewMedium.id);
-                this.previewMedium = null;
+                if (emitEvent) {
+                    this.$emit('delete', this.previewMedium.id);
+                    this.previewMedium = null;
+                }
+                this.isProcessing = false;
             });
         },
     },

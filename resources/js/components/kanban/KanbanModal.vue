@@ -105,9 +105,7 @@
                                     :subscribable_type="'App\\Kanban'"
                                     :allow_fallback_on_create="true"
                                     :medium_id="form.medium_id"
-                                    @add="(subscription) => {
-                                        this.form.medium_id = subscription.medium.id;
-                                    }"
+                                    @add="(medium) => form.medium_id = medium.id ?? null"
                                     @delete="() => form.medium_id = null"
                                 />
                             </div>
@@ -307,7 +305,6 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    console.log(this.$toast);
                     this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
@@ -339,12 +336,8 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
+                    this.method = this.form.id ? 'patch' : 'post';
                     this.updateSelectedTags();
-                    if (this.form.id !== '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
                 }
             }
         });

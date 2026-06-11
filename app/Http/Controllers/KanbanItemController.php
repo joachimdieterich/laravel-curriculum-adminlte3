@@ -44,16 +44,9 @@ class KanbanItemController extends Controller
             'owner_id'          => auth()->user()->id,
         ]);
 
-        if (isset($input['media_subscriptions']) AND count($input['media_subscriptions']) > 0) {
-            MediumSubscription::whereIn('medium_id', $input['media_subscriptions'])
-            ->where([
-                'subscribable_id'   => auth()->user()->id,
-                'subscribable_type' => 'App\\KanbanItemCreate',
-            ])
-            ->update([
-                'subscribable_id'   => $kanbanItem->id,
-                'subscribable_type' => 'App\\KanbanItem',
-            ]);
+        if (isset($input['media_subscriptions']) && count($input['media_subscriptions']) > 0) {
+            app(MediumSubscriptionController::class)
+                ->updateTempSubscriptions($input['media_subscriptions'], $kanbanItem->id, 'App\\KanbanItem');
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);

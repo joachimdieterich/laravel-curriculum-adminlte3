@@ -76,8 +76,8 @@ export default {
             if (event.data.event === 'APPLY_NODE') {
                 setTimeout(() => { this.emitEvent(event.data.data); }, 250);
                 // close the tabs to also show the loading indicator
-                if (!uploadWindow.closed) uploadWindow.close();
-                if (!cloudWindow.closed) cloudWindow.close();
+                if (uploadWindow && !uploadWindow.closed) uploadWindow.close();
+                if (cloudWindow && !cloudWindow.closed) cloudWindow.close();
             }
         },
         emitEvent(data) {

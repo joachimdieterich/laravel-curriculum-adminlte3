@@ -1,42 +1,13 @@
 <template>
     <span :style="'width: ' + size + 'px; height: ' + size + 'px; display: inline-block;'">
-        <span v-if="label">
-            <div
-                class="user-block pr-2"
-                :class="css"
-            >
-                <img v-if="medium !== null"
-                     class="img-circle img-bordered-sm"
-                     :width="size"
-                     :height="size"
-                     :src="medium"
-                />
-                <img v-else-if="typeof avatar_medium_id === 'number'"
-                     class="img-circle img-bordered-sm"
-                     :style="'width:' + size + ' !important;height:' + size + ' !important;'"
-                     :src="'/media/' + avatar_medium_id"
-                />
-                <canvas v-else
-                        class="img-circle"
-                        :id="id"
-                        style="border-radius: 50%;"
-                        :width="size"
-                        :height="size"
-                ></canvas>
-                <span class="username">
-                    <a href="#">{{ title }}</a>
-                </span>
-                <span class="description">{{ subtitle }}</span>
-            </div>
-        </span>
-        <div v-else
-             @mouseenter="entered(user_id, $event)"
-             @mouseleave="detailsLeft"
-             @mousemove="movement"
-             @touchstart="entered(user_id, $event);"
-             @touchend="detailsLeft"
-             @touchmove="movement"
-             :style="'width:' + size + 'px; height:' + size + 'px;'"
+        <div
+            @mouseenter="showPopupDetails ? { mouseenter: entered($event) } : {}"
+            @mouseleave="showPopupDetails ? { mouseleave: left() } : {}"
+            @mousemove="showPopupDetails ? { mousemove: movement($event) } : {}"
+            @touchstart="showPopupDetails ? { touchstart: entered($event) } : {}"
+            @touchend="showPopupDetails ? { touchend: left() } : {}"
+            @touchmove="showPopupDetails ? { touchmove: movement($event) } : {}"
+            :style="'width:' + size + 'px; height:' + size + 'px;'"
         >
             <img v-if="medium !== null"
                  class="img-circle img-bordered-sm"
@@ -57,9 +28,9 @@
                     :width="size"
                     :height="size"
             ></canvas>
-            <div v-show="showPopupDetails && details.show && details.key === user_id"
+            <div v-if="details.show"
                  class="rounded-sm details"
-                 :style="{top: topStyle + 'px', left: leftStyle + 'px'}"
+                 :style="position"
             >
                 {{ firstname }} {{ lastname }}
             </div>
@@ -86,19 +57,7 @@ export default {
             type: Number,
             default: null,
         },
-        label: {
-            type: Boolean,
-            default: false,
-        },
         css: {
-            type: String,
-            default: null,
-        },
-        title: {
-            type: String,
-            default: null,
-        },
-        subtitle: {
             type: String,
             default: null,
         },
@@ -131,7 +90,7 @@ export default {
             type: Boolean,
             default: true,
             title: "Controls if the Popup with user information should be displayed"
-        }
+        },
     },
     data() {
         return {
@@ -149,17 +108,17 @@ export default {
         };
     },
     methods: {
-        entered: function (key, e) {
-            this.details.key = key;
+        entered(e) {
+            this.details.key = this.user_id;
             this.details.show = true;
 
             this.movement(e);
         },
-        detailsLeft: function () {
+        left() {
             this.details.key = 0;
             this.details.show = false;
         },
-        movement: function (e) {
+        movement(e) {
             let x = e.x;
             let y = e.y;
 
@@ -209,7 +168,7 @@ export default {
                 context.fillStyle = "#FFF";
                 context.fillText(initials, canvasCssWidth / 2, canvasCssHeight / 1.495);
             });
-        }
+        },
     },
     watch: {
         user_id: function() {
@@ -220,7 +179,7 @@ export default {
         },
         lastname: function() {
             this.drawCanvas();
-        }
+        },
     },
     mounted() {
         this.id = 'user-avatar' + this.$.uid;
@@ -240,12 +199,12 @@ export default {
         }
     },
     computed: {
-        leftStyle() {
-            return this.details.posX
+        position() {
+            return {
+                top: this.details.posY + 'px',
+                left: this.details.posX + 'px',
+            };
         },
-        topStyle() {
-            return this.details.posY
-        },
-    }
+    },
 }
 </script>

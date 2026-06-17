@@ -113,6 +113,7 @@ export default {
                 'User',
                 'Videoconference',
                 'VideoconferenceSubscription',
+                'Tag',
             ];
 
             models.forEach((model_name) => {

@@ -1,3 +1,34 @@
+## 1.4.1 (2026-06-03)
+- User: cache role() for current request to prevent redundant DB-calls
+- Kanban: added embed-view by checking if inside an iframe
+- Kanban: fixed 'create PDF' throwing 500
+- Videoconference: fixed endCallback if vs couldn't be found
+- added 503-response if OIDC-service isn't available
+- imported Curricula are now stored with type_id = 4 (user-type)
+- fixed error if current_organization_id isn't set
+
+## 1.4.0 (2026-05-21)
+- replaced SAML with OIDC
+- Kanban: fixed edge-case where deletion doesn't work with invalid medium-subscription
+- Kanban: copying Kanbans now also copies mediumSubscription of Kanban itself
+- KanbanModal: added processing-indicator when clicking 'save'-button
+- Curriculum: fixed print-button calling non-existing function
+- HtmlRenderer: fixed QR-Code URL when using multiple URL-parameters
+- ObjectiveMedia: fixed positioning/scaling of image
+- ObjectiveMedia: increased border-bottom-width from 5px to 10px
+- PlanEntry: fixed MathJax not being rendered after updating description
+- Title: added functionality for a 'back'-button
+- fixed students having access to user-data of all other users in same organization
+- LogController: only log browser-name (without version-number)
+- AdminView: improved tablet-view and mobile-view
+- Telescope: changed logic of which response-status to show
+- Telescope: added URI-tag to requests
+- Telescope: stopped saving media-entries, if their request-duration was too long
+- AuthGates: fixed flawed logic when user has no current_organization_id
+- replaced env()-calls with config()
+- added unique-index to Users common_name column
+- cached role_permissions and translations-object for slight performance increase
+
 ## 1.3.1 (2025-02-18)
 - Kanbans/Curricula can now be hidden (user-specific)
 - created TabList-component to generalize nav-tabs and improve mobile-view
@@ -12,7 +43,7 @@
 - AdminPanel: added favorite/hide logs
 - CurriculumModal: fixed non-admins being able to set type to global
 
-## 1.3 (2025-01-29)
+## 1.3.0 (2025-01-29)
 - added Tags-system for Kanbans and Curricula
 - Kanbans/Curricula can now be favorited
 - replaced static Edusharing-code with plugin

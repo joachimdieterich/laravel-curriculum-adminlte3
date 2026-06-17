@@ -151,8 +151,6 @@ export default {
         return {
             componentId: this.$.uid,
             componentInstance: null,
-            currentSelection: [],
-            values1: []
         }
     },
     methods: {

@@ -9,7 +9,7 @@
             :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
             :alt="medium.title ?? medium.medium_name ?? 'background image'"
         />
-        <div
+        <div v-if="!embeded"
             class="d-print-none position-absolute pointer"
             style="top: 10px; left: 10px; line-height: 1; z-index: 10;"
             :style="{ color: textColor }"
@@ -257,6 +257,7 @@ export default {
             itemWidth: 320,
             item: null,
             copy_id: null,
+            embeded: false,
             delete_id: null,
             stopDeletion: false,
             show_item_copy: false,
@@ -279,6 +280,16 @@ export default {
         toggleCollapseAll(e) {
             const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'hide' : 'show';
             $('#kanban-wrapper .kanban-item-body').collapse(collapse);
+        },
+        setEmbededView() {
+            // TODO: needs to be adapted for the new layout in '1531-dashboard' branch
+            // delete all elements that are not needed in embeded view
+            document.querySelectorAll('.main-header, .main-sidebar, .main-footer, .content-header')
+                .forEach(el => el.remove());
+            // remove unneded paddings and margins
+            document.getElementById('content')?.classList.remove('content-wrapper');
+            document.getElementsByClassName('content')[0]?.classList.remove('px-3');
+            this.$el.parentElement.style.height = '100vh';
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {
@@ -526,6 +537,9 @@ export default {
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
+
+        this.embeded = window.self !== window.top;
+        if (this.embeded) this.setEmbededView();
 
         this.kanban = this.initialKanban;
 

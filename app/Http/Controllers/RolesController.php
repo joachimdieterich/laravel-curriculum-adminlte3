@@ -6,6 +6,7 @@ use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Role;
 use App\Tag;
+use Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\DataTables;
@@ -14,16 +15,16 @@ class RolesController extends Controller
 {
     public function index()
     {
-        abort_unless(\Gate::allows('role_access'), 403);
+        abort_unless(Gate::allows('role_access'), 403);
 
         if (request()->wantsJson()) {
             if (is_admin()) {
                 return getEntriesForSelect2ByModel("App\Role");
-            } else {
-                return getEntriesForSelect2ByCollection(
-                    Role::where('id', '>', auth()->user()->role()->id)
-                );
             }
+
+            return getEntriesForSelect2ByCollection(
+                Role::where('id', '>', auth()->user()->role()->id)
+            );
         }
 
         return view('roles.index');
@@ -31,7 +32,7 @@ class RolesController extends Controller
 
     public function list(): \Illuminate\Http\JsonResponse
     {
-        abort_unless(\Gate::allows('role_access'), 403);
+        abort_unless(Gate::allows('role_access'), 403);
 
         $roles = Role::select('id', 'title');
 
@@ -55,7 +56,7 @@ class RolesController extends Controller
 
     public function store(StoreRoleRequest $request)
     {
-        abort_unless(\Gate::allows('role_create'), 403);
+        abort_unless(Gate::allows('role_create'), 403);
 
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
@@ -71,7 +72,7 @@ class RolesController extends Controller
 
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        abort_unless(\Gate::allows('role_edit'), 403);
+        abort_unless(Gate::allows('role_edit'), 403);
 
         $role->update($request->all());
         $role->permissions()->sync($request->input('permissions', []));
@@ -86,7 +87,7 @@ class RolesController extends Controller
 
     public function show(Role $role)
     {
-        abort_unless(\Gate::allows('role_show'), 403);
+        abort_unless(Gate::allows('role_show'), 403);
 
         $role->load('permissions:id,title');
         $role->load('tags');
@@ -99,7 +100,7 @@ class RolesController extends Controller
 
     public function destroy(Role $role)
     {
-        abort_unless(\Gate::allows('role_delete'), 403);
+        abort_unless(Gate::allows('role_delete'), 403);
 
         $return = $role->delete();
 

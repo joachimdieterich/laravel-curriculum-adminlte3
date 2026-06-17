@@ -64,7 +64,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *   ),
  *   @OA\Parameter(
  *     name="status",
- *     description="Status value (max. 2 chars)",
+ *     description="Status value (max. 2 chars, at least 1 number), use 'x'/'X' for whitecard (keep previous value)",
  *     required=true,
  *     in="query",
  *     @OA\Schema(type="string")

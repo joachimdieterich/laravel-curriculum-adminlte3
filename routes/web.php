@@ -43,7 +43,6 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('curricula/list', 'CurriculumController@list');
     Route::get('curricula/types', 'CurriculumController@types');
     Route::get('curricula/references', 'CurriculumController@references');
-    Route::get('curricula/{curriculum}', 'CurriculumController@show');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::get('curricula/{curriculum}/certificates', 'CurriculumController@getCertificates')->name('curricula.getCertificates');
     Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');
@@ -243,6 +242,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::patch('users/setAvatar', 'UsersController@setAvatar')->name('users.setAvatar');
     Route::get('users/{user}/dsgvoExport', 'UsersController@dsgvoExport')->name('users.dsgvoExport');
     Route::get('users/{user}/avatar', 'UsersController@getAvatar');
+    Route::get('users/list/subscription', 'UsersController@listForSubscription');
     Route::resource('users', 'UsersController');
 // V
     Route::get('variantDefinitions/list', 'VariantDefinitionController@list');
@@ -293,6 +293,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('countries', 'CountryController');
 
     Route::get('curricula', 'CurriculumController@index')->name('curricula.index');
+    Route::get('curricula/{curriculum}', 'CurriculumController@show');
     Route::get('curricula/{curriculum}/token', 'CurriculumController@getCurriculumByToken');
 
     Route::get('enablingObjectives/{enablingObjective}', 'EnablingObjectiveController@show');
@@ -416,6 +417,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* Tests */
     Route::get('tests', 'Tests\TestController@index');
+    Route::get('tests/exception', 'Tests\TestController@exception');
 
     /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');

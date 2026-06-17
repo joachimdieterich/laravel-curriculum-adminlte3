@@ -1,5 +1,6 @@
 <?php
 
+use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Tag;
 use App\Medium;
@@ -169,7 +170,13 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
 
         $term = strtolower($input['term']); // str_contains is case sensitive
         $allEntries = $collection->filter(function($obj) use ($field, $term) {
-            return array_any((array) $field, fn($f) => str_contains(strtolower($obj[$f]), $term));
+            // if any match is true, return the entry
+            return array_any(
+                (array) $field,
+                function ($f) use ($obj, $term) {
+                    return str_contains(strtolower($obj->{$f}), $term);
+                }
+            );
         });
 
         $count = Count($allEntries);
@@ -535,51 +542,53 @@ if (! function_exists('today_online')) {
 }
 
 if (! function_exists('is_admin')) {
-    function is_admin()
+    function is_admin(?User $user = null): bool
     {
-        return auth()->user()->role()->id == 1;
+        $user = $user ?? auth()->user();
+
+        return $user->role()?->id == 1;
     }
 }
 
 if (! function_exists('is_creator')) {
     function is_creator()
     {
-        return auth()->user()->role()->id == 2;
+        return auth()->user()?->role()->id == 2;
     }
 }
 
 if (! function_exists('is_schooladmin')) {
     function is_schooladmin()
     {
-        return auth()->user()->role()->id == 4;
+        return auth()->user()?->role()->id == 4;
     }
 }
 
 if (! function_exists('is_teacher')) {
     function is_teacher()
     {
-        return auth()->user()->role()->id == 5;
+        return auth()->user()?->role()->id == 5;
     }
 }
 
 if (! function_exists('is_student')) {
     function is_student()
     {
-        return auth()->user()->role()->id == 6;
+        return auth()->user()?->role()->id == 6;
     }
 }
 
 if (! function_exists('is_parent')) {
     function is_parent()
     {
-        return auth()->user()->role()->id == 7;
+        return auth()->user()?->role()->id == 7;
     }
 }
 
 if (! function_exists('is_guest')) {
     function is_guest()
     {
-        return auth()->user()->role()->id == 8;
+        return auth()->user()?->role()->id == 8;
     }
 }
 

@@ -188,6 +188,13 @@ export default {
             return img + this.entry.description;
         },
     },
+    watch: {
+        'entry.description': function() {
+            this.$nextTick(() => {
+                MathJax.typeset(); // MathJax needs to be re-rendered after the description changes
+            });
+        },
+    },
     components: {
         Objectives,
         Trainings,

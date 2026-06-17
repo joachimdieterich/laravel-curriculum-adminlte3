@@ -124,10 +124,12 @@ class UsersApiController extends Controller
 
     public function permissions(Request $request): Collection
     {
+        $user = User::firstWhere('common_name', $request->common_name);
+
         return collect([
             'common_name' => $request->common_name,
-            'is_admin' => is_admin(),
-            'permissions' => Auth::user()->permissions()->pluck('title')
+            'is_admin'    => is_admin($user),
+            'permissions' => $user?->permissions()->pluck('title')
         ]);
     }
 }

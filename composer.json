@@ -2,7 +2,7 @@
     "name": "joachimdieterich/curriculum",
     "type": "project",
     "description": "curriculum (laravel)",
-    "version": "1.2.0",
+    "version": "1.4.1",
     "keywords": [
         "framework",
         "laravel"
@@ -14,8 +14,7 @@
         "bacon/bacon-qr-code": "^2.0",
         "barryvdh/laravel-dompdf": "^3.1",
         "barryvdh/laravel-snappy": "^1.0.0",
-        "binarytorch/larecipe": "^2.2",
-        "bugsnag/bugsnag-laravel": "^2.15",
+        "binarytorch/larecipe": "^2.3",
         "cmgmyr/messenger": "^2.20",
         "darkaonline/l5-swagger": "^8.3",
         "doctrine/dbal": "^3.0",
@@ -40,16 +39,18 @@
         "maatwebsite/excel": "^3.1",
         "maize-tech/laravel-markable": "^2.0",
         "mews/purifier": "^3.4",
-        "predis/predis": "^3.3",
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
         "select2/select2": "^4.0",
         "spatie/laravel-tags": "^4.10",
-        "yajra/laravel-datatables-oracle": "~12.0"
+        "yajra/laravel-datatables-oracle": "~12.0",
+        "ext-dom": "*",
+        "ext-zip": "*"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^2.0",
         "fakerphp/faker": "^1.20",
         "filp/whoops": "^2.0",
+        "fruitcake/laravel-debugbar": "^4.2",
         "laracasts/cypress": "^3.0",
         "laravel/dusk": "^8.0",
         "laravel/pint": "^0.2.1",

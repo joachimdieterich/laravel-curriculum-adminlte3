@@ -145,7 +145,7 @@ class Curriculum extends Model implements Broadcastable
 
     public function enablingObjectives()
     {
-        return $this->hasMany('App\EnablingObjective', 'curriculum_id', 'id')->orderBy('order_id');
+        return $this->hasMany('App\EnablingObjective', 'curriculum_id', 'id')->orderBy('terminal_objective_id')->orderBy('order_id');
     }
 
     public function terminalObjectives()

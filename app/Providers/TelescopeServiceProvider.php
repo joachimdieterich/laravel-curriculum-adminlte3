@@ -21,7 +21,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         // Add Telescope tag status
         Telescope::tag(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
-                return [$entry->content['response_status']];
+                return [
+                    $entry->content['response_status'],
+                    preg_split("/[\/|?]/", $entry->content['uri'])[1] ?? null,
+                ];
             }
 
             return [];
@@ -30,7 +33,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         Telescope::filter(static function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
                 // don't filter requests that take too long to process (default 1000ms)
-                if($entry->content['duration'] >= config('telescope.duration_filter')) {
+                if (
+                    $entry->content['duration'] >= config('telescope.duration_filter')
+                    && !str_starts_with($entry->content['uri'], '/media')
+                ) {
                     return true;
                 }
                 // only show requests with a response status code greater than or equal to the configured status filter (default 200)

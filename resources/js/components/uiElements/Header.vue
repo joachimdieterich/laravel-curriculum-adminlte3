@@ -123,6 +123,7 @@
                         :lastname="user.lastname"
                         :size="40"
                         :medium_id="user.medium_id"
+                        :show-popup-details="false"
                     />
                     <span
                         class="d-none d-md-inline ml-1"

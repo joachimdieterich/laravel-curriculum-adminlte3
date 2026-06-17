@@ -68,6 +68,6 @@ class Logbook extends Model
 
     public function isAccessible()
     {
-        return auth()->user()->logbooks->contains('id', $this->id) or is_admin();
+        return auth()->user()->logbooks()->get()->contains('id', $this->id) or is_admin();
     }
 }

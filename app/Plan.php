@@ -86,7 +86,7 @@ class Plan extends Model
 
     public function isAccessible()
     {
-        return auth()->user()->plans->contains('id', $this->id) or is_admin();
+        return auth()->user()->plans()->get()->contains('id', $this->id) or is_admin();
     }
 
     public function isEditable() {

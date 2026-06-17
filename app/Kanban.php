@@ -141,25 +141,7 @@ class Kanban extends Model implements Broadcastable
 
     public function isAccessible(): bool
     {
-        if (
-            auth()->user()->kanbans->contains('id', $this->id) // user enrolled
-            or $this->subscriptions->where('subscribable_type', "App\Group")->whereIn(
-                'subscribable_id',
-                auth()->user()->groups->pluck(
-                    'id'
-                )
-            )->isNotEmpty() // user is enroled in group
-            or $this->subscriptions->where('subscribable_type', "App\Organization")->whereIn(
-                'subscribable_id',
-                auth()->user()->current_organization_id
-            )->isNotEmpty() // user is enroled in organization
-            or $this->owner_id == auth()->user()->id
-            or is_admin()
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return auth()->user()->kanbans()->get(['id'])->contains('id', $this->id) or is_admin();
     }
 
     public function isEditable($user_id = null, $token = null): bool

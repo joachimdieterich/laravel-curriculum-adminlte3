@@ -176,12 +176,9 @@ class Videoconference extends Model
     public function isAccessible($token = null)
     {
         if (
-            auth()->user()->videoconferences->contains('id', $this->id) // user enrolled
-            or $this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))->isNotEmpty() //user is enroled in group
-            or $this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id)->isNotEmpty() //user is enroled in group
+            auth()->user()->videoconferences()->get()->contains('id', $this->id)
             or ($token and $this->subscriptions->where('sharing_token', $token)->isNotEmpty()) // or has token
-            or $this->owner_id == auth()->user()->id // or owner
-            or is_admin() // or admin
+            or is_admin()
         ) {
             return true;
         } else {

@@ -88,12 +88,6 @@ class User extends Authenticatable
         'current_period_id',
     ];
 
-    protected static function booted()
-    {
-
-    }
-
-
     /**
      * Prepare a date for array / JSON serialization.
      *
@@ -278,16 +272,9 @@ class User extends Authenticatable
         return $this->morphMany('App\MeetingSubscription', 'subscribable');
     }
 
-    public function kanbans(): HasManyThrough
+    public function kanbans(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Kanban',
-            'App\KanbanSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'kanban_id'
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Kanban');
     }
 
     public function lmsReferences(): HasManyThrough
@@ -474,28 +461,13 @@ class User extends Authenticatable
             ->withPivot(['login_data', 'exam_completed_at']);
     }
 
-    public function videoconferences(): HasManyThrough
+    public function videoconferences(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Videoconference',
-            'App\VideoconferenceSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'videoconference_id'
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Videoconference');
     }
 
-    public function maps(): HasManyThrough
+    public function maps(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Map',
-            'App\MapSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'map_id'
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Map');
     }
-
 }

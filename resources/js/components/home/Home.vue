@@ -5,7 +5,7 @@
     >
         <div
             id="home-left"
-            class="col-12 col-md-6"
+            class="col-12 col-md-6 flex-shrink-1"
         >
             <InfoBox
                 model="courses"
@@ -62,7 +62,7 @@
 
         <div
             id="home-right"
-            class="col-12 col-md-6"
+            class="col-12 col-md-6 flex-shrink-1"
         >
             <InfoBox
                 model="logbooks"

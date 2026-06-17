@@ -130,8 +130,8 @@ export default {
             this.toast.error(this.errorMessage(error));
         },
         achievementColor(status) {
-            // prioritise teacher feedback (index 0) over self-assessment (index 1)
-            const indicator = status[0] !== '0' ? status[0] : status[1];
+            // prioritise teacher feedback (index 1) over self-assessment (index 0)
+            const indicator = status[1] !== '0' ? status[1] : status[0];
             let css = 'text-gray';
 
             switch (indicator) {

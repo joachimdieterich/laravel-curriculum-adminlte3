@@ -167,7 +167,11 @@ textarea { min-height: 150px; }
 .overlay {
     position: absolute;
     inset: 0;
-    background-color: rgba(255, 255, 255, 0.9) !important;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.7) !important;
 }
 .error-block {
     color: #dc3545;

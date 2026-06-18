@@ -95,6 +95,16 @@ class EdusharingMediaAdapter implements MediaInterface
                 $input['subscribable_id'],
                 $input['external_id'],
             );
+
+            // if a medium was added to a model with a 'medium_id'-column
+            if (
+                !str_ends_with($input['subscribable_type'], 'Create') &&
+                \Schema::hasColumn(app($input['subscribable_type'])->getTable(), 'medium_id')
+            ) {
+                // instantly update its value, so the subscription can't end up as a data-corpse
+                $input['subscribable_type']::whereId($input['subscribable_id'])
+                    ->update(['medium_id' => $medium->id]);
+            }
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__, null, 1);
@@ -256,7 +266,7 @@ class EdusharingMediaAdapter implements MediaInterface
                 ['subscribable_type', $subscribable_type],
                 ['subscribable_id', $subscribable_id],
                 ['medium_id', $medium->id],
-            ])->first()->get();
+            ])->first();
 
             // delete usage
             $edusharing = new Edusharing;
@@ -307,6 +317,8 @@ class EdusharingMediaAdapter implements MediaInterface
 
     public function checkIfUserHasSubscription($subscription)
     {
+        if (str_ends_with($subscription->subscribable_type, 'Create')) return true;
+
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())

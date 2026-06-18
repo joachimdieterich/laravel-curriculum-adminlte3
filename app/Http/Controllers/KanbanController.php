@@ -211,21 +211,27 @@ class KanbanController extends Controller
     public function store(Request $request)
     {
         abort_unless(Gate::allows('kanban_create'), 403);
-        $new_kanban = $this->validateRequest();
+        $input = $this->validateRequest();
 
         $kanban = Kanban::create([
-            'title'                 => $new_kanban['title'],
-            'description'           => $new_kanban['description'],
-            'color'                 => $new_kanban['color'] ?? '#2980B9',
-            'medium_id'             => $new_kanban['medium_id'] ?? null,
-            'commentable'           => $new_kanban['commentable'],
-            'auto_refresh'          => $new_kanban['auto_refresh'],
-            'only_edit_owned_items' => $new_kanban['only_edit_owned_items'],
-            'collapse_items'        => $new_kanban['collapse_items'],
-            'allow_copy'            => $new_kanban['allow_copy'],
+            'title'                 => $input['title'],
+            'description'           => $input['description'],
+            'color'                 => $input['color'] ?? '#2980B9',
+            'medium_id'             => $input['medium_id'] ?? null,
+            'commentable'           => $input['commentable'],
+            'auto_refresh'          => $input['auto_refresh'],
+            'only_edit_owned_items' => $input['only_edit_owned_items'],
+            'collapse_items'        => $input['collapse_items'],
+            'allow_copy'            => $input['allow_copy'],
             'owner_id'              => auth()->user()->id,
         ]);
+
         $kanban->tags()->sync($request->input('tags'));
+
+        if (isset($input['medium_id'])) {
+            app(MediumSubscriptionController::class)
+                ->updateTempSubscriptions($input['medium_id'], $kanban->id, 'App\\Kanban');
+        }
 
         LogController::set(get_class($this) . '@' . __FUNCTION__);
         if (request()->wantsJson()) {

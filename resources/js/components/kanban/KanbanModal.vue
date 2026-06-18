@@ -100,22 +100,13 @@
                                     fallback-input-type="color"
                                 />
 
-                                <MediumForm v-if="form.id"
-                                    :id="'medium_form' + component_id"
-                                    :medium_id="form.medium_id"
+                                <NewMediumForm
                                     :subscribable_id="form.id"
-                                    subscribable_type="App\Kanban"
-                                    accept="image/*"
-                                    @selectedValue="(id) => {
-                                        // on removal of medium, directly update the resource
-                                        if (this.form.medium_id !== null && id === null) {
-                                            this.$eventHub.emit('kanban-updated', {
-                                                id: this.form.id,
-                                                medium_id: null,
-                                            });
-                                        }
-                                        this.form.medium_id = id;
-                                    }"
+                                    :subscribable_type="'App\\Kanban'"
+                                    :allow_fallback_on_create="true"
+                                    :medium_id="form.medium_id"
+                                    @add="(medium) => form.medium_id = medium.id ?? null"
+                                    @delete="() => form.medium_id = null"
                                 />
                             </div>
                         </div>
@@ -231,7 +222,7 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumForm from "../media/MediumForm.vue";
+import NewMediumForm from "../media/NewMediumForm.vue";
 import axios from "axios";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
@@ -243,7 +234,7 @@ export default {
     components: {
         TagMultiselect,
         Select2,
-        MediumForm,
+        NewMediumForm,
     },
     props: {
         params: {
@@ -265,7 +256,7 @@ export default {
             method: 'post',
             processing: false,
             form: new Form({
-                id: '',
+                id: null,
                 title:  '',
                 description:  '',
                 owner_id: null,
@@ -314,7 +305,6 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    console.log(this.$toast);
                     this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
@@ -346,12 +336,8 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     params.tags = this.getSelectedTags(params.tags);
                     this.form.populate(params);
+                    this.method = this.form.id ? 'patch' : 'post';
                     this.updateSelectedTags();
-                    if (this.form.id !== '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
                 }
             }
         });

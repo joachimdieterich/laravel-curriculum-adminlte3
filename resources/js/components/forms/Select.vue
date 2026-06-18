@@ -1,48 +1,47 @@
 <template>
-        <div
-            :id="id + '_form_group'"
-            class="form-group c-select-form-group"
-            :class="[(typeof css != 'undefined') ? css : '' ]"
-        >
-            <label v-if="showLabel"
-                :for="id"
-                :class="[classLeft]"
-            >
-                <span v-if="label != ''" :class="{'full-line': buttonNewLine}">{{ label }}</span>
-                <span v-else>
-                    {{ trans('global.' + model + '.title_singular') }}
-                </span>
-                <span v-if="multiple">
-                    <slot name="buttons"></slot>
-                </span>
-            </label>
+        <slot name="pre-dropdown"></slot>
+        <v-select ref="instance"
+                  :options="options"
+                  :filterable="false"
+                  :multiple="multiple"
+                  :placeholder="placeholder"
+                  :label="label"
+                  v-model="selectedOption"
+                  class="v-select-overflow"
+                  @search="setFetchOptions"
+                  @open="onOpen"
+                  @close="onClose"
+                  @option:selected="(selectedOption) => {
+                      this.selectedOption = selectedOption;
+                      if (clearSearchOnSelect()) {
+                          this.selectedOption = undefined
+                      }
 
-            <slot name="pre-dropdown"></slot>
-            <v-select :ref="instance"
-                      :options="groupedOptions? options: paginated"
-                      :filterable="false"
-                      :multiple="multiple"
-                      :placeholder="placeholder"
-                      label="label"
-                      class="v-select-overflow"
-                      @search="setFetchOptions"
-                      @option:selecting="(selectedOption) => {return this.$emit('selectedValue', selectedOption);}"
-                      :dropdown-should-open="() => {console.log(this.loading);return search.length >= this.searchLengthMinium && !this.loading;}"
-                      :clear-search-on-blur="() => {return false}"
-            >
-                <template v-slot:option="option">
-                    <slot name="option" :option="option"></slot>
-                </template>
-                <template #list-footer>
-                    <li v-show="hasNextPage" ref="load" class="loader">
-                        {{ trans('global.loading') }}
-                    </li>
-                </template>
-                <template #no-options="">
+                      return this.$emit('selectedValue', selectedOption);
+                  }"
+                  :dropdown-should-open="(instance) => {
+                      return this.searchLengthMinium === 0
+                      ? instance.open && selectedOption !== null || (instance.open && !this.loading)
+                      : search.length >= this.searchLengthMinium && !this.loading;
+                  }"
+                  :clear-search-on-blur="clearSearchOnSelect"
+                  :loading="loading"
+                  :searchable="searchable"
+        >
+            <template v-slot:option="option">
+                <slot name="option" :option="option"></slot>
+            </template>
+            <template #list-footer>
+                <li v-show="hasNextPage" ref="load" class="v-select-loader">
+                    {{ trans('global.loading') }}
+                </li>
+            </template>
+            <template #no-options="">
+                <div v-show="!hasNextPage">
                     {{ trans('global.cselect.no_results') }}
-                </template>
-            </v-select>
-        </div>
+                </div>
+            </template>
+        </v-select>
 </template>
 
 <script>
@@ -68,109 +67,150 @@ export default {
             default: 'c-select',
             required: true,
         },
-        url: {
-            type: String,
-            default: '',
-        },
-        model: {
-            type: String,
-            required: false,
-        },
+
+        // v-select controlling
         groupedOptions: {
             type: Boolean,
             required: false,
             default: false
         },
-        css: {
-            type: String,
-            default: '',
-        },
-        showLabel: {
-            type: Boolean,
-            default: true,
-        },
-        classLeft: {
-            type: String,
-            default: 'p-0 col-sm-12',
-        },
-        label: {
-            type: String,
-            default: '',
-        },
         multiple: {
             type: Boolean,
             default: false,
         },
-        placeholder: {
-            type: String,
-            default: window.trans.global.shareSearch,
-        },
-        buttonSizeClass: {
-            type: String,
-            default: 'btn-xs'
-        },
-        buttonNewLine: {
+        searchable: {
             type: Boolean,
-            default: false
+            default: true,
+        },
+        clearSearchOnSelect: {
+            type: Function,
+            default: function () {
+                return false;
+            }
+        },
+
+        // frontend
+        label: {
+            type: String,
+            default: 'label',
+        },
+        placeholderKey: {
+            type: String,
+            default: 'pleaseSelect',
+        },
+
+        // search
+        url: {
+            type: String,
+            default: '',
+        },
+        searchQueryParameter: {
+            type: String,
+            default: 'term'
+        },
+        handleFetchedData: {
+            type: Function,
+            default: function (getData) {
+                return getData.results;
+            }
+        },
+        handleFetchedSelectedFetchData: {
+            type: Function,
+            default: function (getData) {
+                return getData[0];
+            }
+        },
+        searchLengthMinium: {
+            type: Number,
+            default: 0
+        },
+        selected: {
+            default: undefined
         },
     },
     data() {
         return {
             componentId: this.$.uid,
-            instance: null,
+            observer: null,
             limit: 25,
-            searchLengthMinium: 3,
             search: '',
             page: 1,
             options: [],
             fetchTimer: null,
-            loading: false
+            loading: false,
+            selectedOption: null,
+            gotEmptyOrNotEnoughFetchResult: false,
+            selectedLabel: '',
+        }
+    },
+    mounted() {
+        this.observer = new IntersectionObserver(this.infiniteScroll, {threshold: 0.8});
+
+        if (this.selected != undefined) {
+            this.fetchSelected();
         }
     },
     computed: {
-        paginated() {
-            return this.options.slice(0, this.limit)
+        placeholder() {
+            return window.trans.global[this.placeholderKey];
         },
         hasNextPage() {
-            return this.paginated.length < this.options.length
+            return this.options.length <= (this.page * this.limit) && !this.gotEmptyOrNotEnoughFetchResult
         },
         fullUrl() {
-            let fullUrl = this.url + '?search=' + this.search;
+            let fullUrl = this.url + '?' + this.searchQueryParameter + '=' + this.search;
             if (!this.groupedOptions) {
                 fullUrl += '&page=' + this.page;
             }
 
             return fullUrl;
         },
+        fullSelectedUrl() {
+            return this.url + '?selected=' + this.selected;
+        }
     },
     methods: {
-        fetchOptions(selectLoadingStateFunction) {
-            selectLoadingStateFunction(true);
-            axios.get(this.fullUrl)
-                .then((res) => {
-                    selectLoadingStateFunction(false);
-                    this.loading = false;
-                    this.options = res.data;
-                })
-                .catch((error) => {
-                    selectLoadingStateFunction(false);
-                    this.loading = false;
-                    if (error.response.status === 400) {
-                        this.toast.error(error.response.data, {
-                            timeout: 6000,
-                            hideProgressBar: true,
-                        });
+        handleFetchError(error) {
+            this.loading = false;
+            let message = this.trans('global.code_500');
+            if (error?.response?.status === 400) {
+                message = error.response.data;
+            }
 
-                        return;
+            this.toast.error(message, {
+                timeout: 6000,
+                hideProgressBar: true,
+            });
+        },
+        async fetchOptions(addResult = false) {
+            return axios.get(this.fullUrl)
+                .then((res) => {
+                    this.loading = false;
+                    let data = this.handleFetchedData(res.data) ?? [];
+                    this.gotEmptyOrNotEnoughFetchResult = data.length < this.limit;
+
+                    this.page++;
+
+                    if (addResult) {
+                        this.options = this.options.concat(data);
+                    } else {
+                        this.options = data;
                     }
 
-                    this.toast.error(this.trans('global.code_500'), {
-                        timeout: 3000,
-                        hideProgressBar: true,
-                    });
-                });
+                    if (this.hasNextPage) {
+                        this.observer.observe(this.$refs.load);
+                    }
+                })
+                .catch(this.handleFetchError);
         },
-        setFetchOptions (search, loading) {
+        async fetchSelected() {
+            return axios.get(this.fullSelectedUrl)
+                .then((res) => {
+                    this.selectedOption =  this.handleFetchedSelectedFetchData(res.data);
+                })
+                .catch(this.handleFetchError);
+        },
+        setFetchOptions (search) {
             this.search = search;
 
             // Only trigger GET-Request if search wasn't triggered again in the last 200ms
@@ -178,19 +218,29 @@ export default {
                 clearTimeout(this.fetchTimer);
 
                 this.loading = true;
-                // Neuen Timer starten
                 this.fetchTimer = setTimeout(async () => {
-                    this.fetchOptions(loading);
+                    await this.fetchOptions();
                 }, 200);
+            }
+        },
+        async onOpen() {
+            // Simulate search on opening
+            if (this.searchLengthMinium === 0) {
+                this.page = 1;
+                await this.fetchOptions();
+            }
+        },
+        onClose() {
+            this.observer.disconnect();
+        },
+        async infiniteScroll([{ isIntersecting, target }]) {
+            if (isIntersecting) {
+                const ul = target.offsetParent;
+                const scrollTop = target.offsetParent.scrollTop;
+                await this.fetchOptions( true);
+                ul.scrollTop = scrollTop;
             }
         },
     },
 }
 </script>
-
-<style>
-.full-line {
-    width: 100%;
-    display: inline-block;
-}
-</style>

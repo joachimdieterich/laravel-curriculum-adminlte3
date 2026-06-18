@@ -1,34 +1,47 @@
 <template>
-    <c-select id="subscribe-c-select"
+    <div id="subscribe-c-select_form_group" class="form-group c-select-form-group">
+        <label for="subscribe-c-select_form_group" class="p-0 col-sm-12">
+            <span>
+                {{ trans('global.user.title_singular') }}
+            </span>
+        </label>
+
+        <c-select id="subscribe-c-select"
               model="user"
               url="/users/list/subscription"
               @selectedValue="(selectedOption) => {return this.$emit('selectedValue', selectedOption);}"
               :multiple="false"
-              :groupedOptions="true"
-              :clearSearchOnSelect="false"
-    >
-        <template v-slot:option="option">
-            <div class="select-option">
-                <span class="select-user-avatar">
-                    <img class="v-select-icon img-circle color-white select-user-avatar" alt="" :src="option.option.value.icon">
-                </span>
-                <div class="select-user">
-                    <span class="big select-option-name">{{ option.option.label }}</span>
-                    <div class="select-option-organization-role">
-                        <div class="select-option-organizations">
-                            <span v-for="organization in option.option.value.organizations"
-                                  class="small select-option-organization"
-                            >
-                                {{ organization }}
-                            </span>
+              :grouped-options="true"
+              :search-length-minium="3"
+              placeholderKey="shareSearch"
+              search-query-parameter="search"
+              :handle-fetched-data="(data) => {
+                  return data;
+              }"
+              :clear-search-on-select="()=>{return true;}"
+        >
+            <template v-slot:option="option">
+                <div class="select-option">
+                    <span class="select-user-avatar">
+                        <img class="v-select-icon img-circle color-white select-user-avatar" alt="" :src="option.option.value.icon">
+                    </span>
+                    <div class="select-user">
+                        <span class="big select-option-name">{{ option.option.label }}</span>
+                        <div class="select-option-organization-role">
+                            <div class="select-option-organizations">
+                                <span v-for="organization in option.option.value.organizations"
+                                      class="small select-option-organization"
+                                >
+                                    {{ organization }}
+                                </span>
+                            </div>
+                            <span class="select-option-role">{{ option.option.value.roleName }}</span>
                         </div>
-                        <span class="select-option-role">{{ option.option.value.roleName }}</span>
                     </div>
                 </div>
-            </div>
-        </template>
-    </c-select>
-
+            </template>
+        </c-select>
+    </div>
 </template>
 
 <script>

@@ -1,7 +1,7 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
+             class="modal-mask"
         >
             <div class="modal-container">
                 <div class="modal-header">
@@ -40,7 +40,7 @@
                                     v-model="form.title"
                                 />
                             </div>
-        
+
                             <div class="form-group">
                                 <label for="description">
                                     {{ trans('global.map.fields.description') }}
@@ -54,18 +54,31 @@
                                     v-model="form.description"
                                 />
                             </div>
-        
-                            <Select2
-                                id="level_id"
-                                name="level_id"
-                                url="/levels"
-                                model="level"
-                                :selected="this.form.level_id"
-                                @selectedValue="(id) => {
-                                    this.form.level_id = id[0];
-                                }"
-                            />
-        
+                            <div id="subscribe-c-select_form_group" class="form-group c-select-form-group">
+                                <label for="subscribe-c-select_form_group" class="p-0 col-sm-12">
+                                    <span>
+                                        {{ trans('global.level.title_singular') }}
+                                    </span>
+                                </label>
+                                <c-select
+                                    id="level_id"
+                                    :multiple="false"
+                                    :searchable="false"
+                                    model="level"
+                                    url="/levels"
+                                    label="text"
+                                    :selected="this.form.level_id"
+                                    :handle-fetched-selected-fetch-data="(data) => {
+                                        data[0].text = data[0].title;
+
+                                        return data[0];
+                                    }"
+                                    @selectedValue="(level) => {
+                                        this.form.level_id = level.id;
+                                    }"
+                                ></c-select>
+                            </div>
+
                             <div>
                                 <label for="time_approach">{{ trans('global.enablingObjective.fields.time_approach') }}</label>
                                 <input
@@ -139,10 +152,12 @@ import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
+import CSelect from "../forms/Select.vue";
 
 export default {
     name: 'enabling-objective-modal',
     components: {
+        CSelect,
         Editor,
         Select2,
     },

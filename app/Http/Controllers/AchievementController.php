@@ -91,6 +91,7 @@ class AchievementController extends Controller
             'achievement_id'    => $achievement->id,
             'status'            => $achievement->status,
             'owner_id'          => $achievement->owner_id,
+            'created_at'        => $achievement->updated_at,
         ]);
     }
 

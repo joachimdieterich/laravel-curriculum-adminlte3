@@ -11,6 +11,7 @@ class AchievementHistory extends Model
         'achievement_id',
         'status',
         'owner_id',
+        'created_at',
     ];
 
     protected $casts = [
@@ -18,7 +19,7 @@ class AchievementHistory extends Model
         'created_at'  => 'datetime',
     ];
 
-    const UPDATED_AT = null; // table doesn't have an 'updated_at'-column
+    public $timestamps = false;
 
     public function achievement(): BelongsTo
     {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Achievement;
+use App\AchievementHistory;
 use App\EnablingObjective;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -48,32 +49,36 @@ class AchievementsApiController extends Controller
             foreach ($input['referenceable_id'] as $ref_id) {
                 $status = $input['status'];
                 $whitecard = strpos(strtolower($input['status']), 'x');
-                // fill whitecard slot with previous value if exists, otherwise default to 0
-                if ($whitecard !== false) {
-                    $achievement = Achievement::select('status')->where([
+                $achievement = Achievement::select('status')
+                    ->where([
                         'referenceable_type' => 'App\\EnablingObjective',
                         'referenceable_id'   => $ref_id,
                         'user_id'            => $user_id,
                     ])->first();
-    
-                    if ($achievement == null) {
-                        $status[$whitecard] = 0;
-                    } else {
-                        $status[$whitecard] = $achievement->status[$whitecard];
-                    }
+
+                if ($whitecard !== false) {
+                    // fill whitecard slot with previous value if exists, otherwise default to 0
+                    $status[$whitecard] = $achievement?->status[$whitecard] ?? '0';
                 }
 
-                Achievement::updateOrCreate(
-                    [
-                        'referenceable_type' => 'App\\EnablingObjective',
-                        'referenceable_id'   => $ref_id,
-                        'user_id'            => $user_id,
-                    ],
-                    [
-                        'status'             => $status,
-                        'owner_id'           => $owner_id,
-                    ]
-                );
+                if ($achievement) {
+                    $this->preserveStatus($achievement);
+
+                    $achievement->status = $status;
+                    $achievement->owner_id = auth()->user()->id;
+
+                    $achievement->save();
+                } else {
+                    Achievement::create(
+                        [
+                            'referenceable_type' => 'App\\EnablingObjective',
+                            'referenceable_id'   => $ref_id,
+                            'user_id'            => $user_id,
+                            'status'             => $status,
+                            'owner_id'           => $owner_id,
+                        ]
+                    );
+                }
             }
         }
 
@@ -123,5 +128,15 @@ class AchievementsApiController extends Controller
                 if ($user_ids) $query->whereIn('user_id', $user_ids);
             }])
             ->get();
+    }
+
+    protected function preserveStatus(Achievement $achievement): void
+    {
+        AchievementHistory::create([
+            'achievement_id'    => $achievement->id,
+            'status'            => $achievement->status,
+            'owner_id'          => $achievement->owner_id,
+            'created_at'        => $achievement->updated_at,
+        ]);
     }
 }

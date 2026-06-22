@@ -90,7 +90,13 @@ class HomeController extends Controller
             ->orderBy('achievements.updated_at', 'desc')
             ->where('status', '!=', '00')
             ->limit(10)
-            ->with('referenceable:id,title')
+            ->with([
+                'referenceable:id,title',
+                'history' => function($query) {
+                    $query->orderBy('created_at', 'desc')->limit(1);
+                },
+                'history.owner',
+            ])
             ->get(['id', 'status', 'referenceable_id', 'referenceable_type']);
     }
 

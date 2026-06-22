@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AchievementHistory extends Model
 {
@@ -24,5 +25,10 @@ class AchievementHistory extends Model
     public function achievement(): BelongsTo
     {
         return $this->belongsTo(Achievement::class);
+    }
+
+    public function owner(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'owner_id')->select('id', 'firstname', 'lastname');
     }
 }

@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
+        @vite(['resources/sass/app.scss'])
         <link href="{{ public_path('css/custom.css') }}" rel="stylesheet" />
     </head>
 

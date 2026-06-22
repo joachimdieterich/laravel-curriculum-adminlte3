@@ -306,7 +306,7 @@ class KanbanController extends Controller
             'only_edit_owned_items' => $input['only_edit_owned_items'],
             'collapse_items'        => $input['collapse_items'],
             'allow_copy'            => $input['allow_copy'],
-            'owner_id'              => is_admin() ? $input['owner_id'] : $kanban->owner_id,
+            'owner_id'              => Gate::allows('is_teacher') ? $input['owner_id'] : $kanban->owner_id,
         ]);
         $kanban->tags()->sync($request->input('tags'));
 

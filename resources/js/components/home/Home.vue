@@ -47,10 +47,19 @@
             >
                 <template #entry="{ entry }">
                     <span class="d-flex align-items-center">
-                        <i
-                            class="t-18 fa fa-circle mr-2"
-                            :class="achievementColor(entry.status)"
-                        ></i>
+                        <span
+                            class="position-relative mr-2"
+                            style="height: 18px; width: 18px;"
+                        >
+                            <i
+                                class="position-absolute fa fa-circle t-20"
+                                :class="achievementColor(entry.status[0])"
+                            ></i>
+                            <i v-if="entry.status[1] !== '0'"
+                                class="position-absolute far fa-circle-check t-20 text-border-white"
+                                :class="achievementColor(entry.status[1])"
+                            ></i>
+                        </span>
                         <span
                             class="p-margin-0 m-0"    
                             v-html="entry.referenceable.title"
@@ -130,11 +139,9 @@ export default {
             this.toast.error(this.errorMessage(error));
         },
         achievementColor(status) {
-            // prioritise teacher feedback (index 1) over self-assessment (index 0)
-            const indicator = status[1] !== '0' ? status[1] : status[0];
-            let css = 'text-gray';
+            let css = 'text-transparent';
 
-            switch (indicator) {
+            switch (status) {
                 case '1':
                     css = 'text-green';
                     break;

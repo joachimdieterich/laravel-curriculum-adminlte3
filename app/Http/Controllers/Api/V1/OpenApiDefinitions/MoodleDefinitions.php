@@ -207,7 +207,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      path="/v1/moodle/course",
  *      operationId="getCourse",
  *      tags={"Moodle v1"},
- *      summary="Get Course-ID by group-cn and Curriculum-ID"
+ *      summary="Get Course-ID by group-cn and Curriculum-ID",
  *      security={
  *           {"passport": {"*"}},
  *      },

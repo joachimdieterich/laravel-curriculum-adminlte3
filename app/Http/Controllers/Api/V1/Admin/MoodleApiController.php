@@ -161,7 +161,7 @@ class MoodleApiController extends Controller
         $input = $validator->getData();
         
         $group_id = Group::select('id')->where('common_name', $input['group_cn'])->first()?->id;
-        if ($group_id === null) return response()->json(['error' => 'Group not found'], 403);
+        if ($group_id === null) return response()->json(['error' => 'Group not found'], 404);
 
         $course_id = CurriculumSubscription::select('id')
             ->where([
@@ -171,7 +171,7 @@ class MoodleApiController extends Controller
             ])
             ->first()?->id;
 
-        if ($course_id === null) return response()->json(['error' => 'No existing course'], 403);
+        if ($course_id === null) return response()->json(['error' => 'No existing course'], 404);
 
         return response()->json($course_id);
     }

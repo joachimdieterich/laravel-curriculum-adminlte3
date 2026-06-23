@@ -235,7 +235,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *          @OA\Schema(ref="#/components/schemas/SelectList"),
  *      ),
  *      @OA\Response(response=400, description="Missing required parameters"),
- *      @OA\Response(response=403, description="Group not found | No existing course"),
+ *      @OA\Response(response=404, description="Group not found | No existing course"),
  * )
  * 
  * @OA\Post(

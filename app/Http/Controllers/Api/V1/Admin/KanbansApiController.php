@@ -44,7 +44,7 @@ class KanbansApiController extends Controller
         $input = $validator->getData();
         $owner_id = User::where('common_name', $input['owner_cn'])->pluck('id')->first();
 
-        if (!$owner_id) return response()->json('owner_cn not found', 404);
+        if (!$owner_id) return response()->json(['error' => 'owner_cn not found'], 404);
 
         $kanban = Kanban::create([
             'title'                 => $input['title'],
@@ -101,12 +101,8 @@ class KanbansApiController extends Controller
 
     public function destroy(Kanban $kanban)
     {
-        if (!request()->has('owner_cn')) return response()->json('Missing attribute [owner_cn]', 400);
-
-        $owner_cn = request()->validate(['owner_cn' => 'required|string'])['owner_cn'];
-        $user_id = User::where('common_name', $owner_cn)->pluck('id')->first();
-
-        if ($kanban->owner_id !== $user_id) return response()->json("common_name does not match Kanban-owner's common_name", 403);
+        $allowed_client = (int)\App\Config::select('value')->where('key', 'edusharing-client-id')->first()?->value;
+        if (getOAuthClientId() !== $allowed_client) return response()->json(['error' => 'Method not allowed'], 403);
 
         return response()->json($kanban->delete());
     }

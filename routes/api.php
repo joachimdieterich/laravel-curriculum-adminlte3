@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\UsersApiController;
+use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'v1',
@@ -112,6 +113,7 @@ Route::group([
     Route::get('moodle/logbooks', 'MoodleApiController@getLogbooks');
     Route::get('moodle/kanbans', 'MoodleApiController@getKanbans');
     Route::get('moodle/groups', 'MoodleApiController@getGroups');
+    Route::get('moodle/course', 'MoodleApiController@getCourse');
     Route::post('moodle/groups/enrol', 'MoodleApiController@enrolToGroup');
     Route::post('moodle/users/enrol', 'MoodleApiController@enrolUsers');
     Route::post('moodle/users/expel', 'MoodleApiController@expelUsers');

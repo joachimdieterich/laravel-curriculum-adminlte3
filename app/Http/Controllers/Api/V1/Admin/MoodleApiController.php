@@ -149,6 +149,33 @@ class MoodleApiController extends Controller
 
     }
 
+    public function getCourse(Request $request)
+    {
+        $validator = Validator::make(request()->all(), [
+            'group_cn'      => 'required|string',
+            'curriculum_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) return response()->json($validator->messages(), 400);
+
+        $input = $validator->getData();
+        
+        $group_id = Group::select('id')->where('common_name', $input['group_cn'])->first()?->id;
+        if ($group_id === null) return response()->json(['error' => 'Group not found'], 403);
+
+        $course_id = CurriculumSubscription::select('id')
+            ->where([
+                'curriculum_id'     => $input['curriculum_id'],
+                'subscribable_type' => 'App\\Group',
+                'subscribable_id'   => $group_id,
+            ])
+            ->first()?->id;
+
+        if ($course_id === null) return response()->json(['error' => 'No existing course'], 403);
+
+        return response()->json($course_id);
+    }
+
     public function getGroups(Request $request)
     {
         $this->validateRequest();

@@ -113,7 +113,6 @@ class MoodleApiController extends Controller
 
     public function getLogbooks(Request $request)
     {
-        $this->validateRequest();
         $user = User::where('common_name', request('common_name'));
         $user = Auth::loginUsingId($user->first()->id);
 
@@ -127,24 +126,19 @@ class MoodleApiController extends Controller
         $logbooks = (new LogbookController())->getLogbooks()->get(); //get all accessible logbooks
 
         return $logbooks->map->only('id', 'title')->unique('id');
-
-
     }
 
     public function getKanbans(Request $request)
     {
-        $this->validateRequest();
         $userId = User::select('id')->where('common_name', request('common_name'))->first()->id;
         Auth::loginUsingId($userId);
 
-        $kanbans = getSubscribedModels(Kanban::select('id', 'title'));
-        return $kanbans->get();
+        return getSubscribedModels(Kanban::select('id', 'title'))->get();
 
     }
 
     public function getGroups(Request $request)
     {
-        $this->validateRequest();
         $user = User::where('common_name', request('common_name'));
         $user = Auth::loginUsingId($user->first()->id);
 

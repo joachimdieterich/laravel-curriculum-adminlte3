@@ -112,14 +112,18 @@
             />
         </div>
         <LogbookModal/>
+        <KanbanModal/>
         <PlanModal/>
+        <MediumModal/>
     </div>
 </template>
 <script>
 import InfoBox from '../uiElements/InfoBox.vue';
 import ProgressBar from '../uiElements/ProgressBar.vue';
 import LogbookModal from '../logbook/LogbookModal.vue';
+import KanbanModal from '../kanban/KanbanModal.vue';
 import PlanModal from '../plan/PlanModal.vue';
+import MediumModal from '../media/MediumModal.vue';
 import { useGlobalStore } from '../../store/global';
 import { useToast } from 'vue-toastification';
 
@@ -182,7 +186,9 @@ export default {
         InfoBox,
         ProgressBar,
         LogbookModal,
+        KanbanModal,
         PlanModal,
+        MediumModal,
     },
 }
 </script>

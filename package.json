@@ -60,6 +60,7 @@
         "moment": "^2.29.4",
         "pinia": "^2.1.7",
         "pusher-js": "^8.4.0",
+        "select2": "4.0.13",
         "sidebar-v2": "^0.4.0",
         "tinymce": "^8.6.0",
         "vite-plugin-commonjs": "^0.10.3",

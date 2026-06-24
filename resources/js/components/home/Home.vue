@@ -82,6 +82,16 @@
                 @open-modal="openModal('logbook-modal')"
                 @error="handleError"
             />
+
+            <InfoBox
+                model="kanbans"
+                :text="trans('global.kanban.title')"
+                icon="fa-columns"
+                icon-background-class="bg-yellow"
+                :has-modal="true"
+                @open-modal="openModal('kanban-modal')"
+                @error="handleError"
+            />
     
             <InfoBox v-if="isVisible.plans"
                 model="plans"

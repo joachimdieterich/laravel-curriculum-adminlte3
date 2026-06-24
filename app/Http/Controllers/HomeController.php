@@ -113,6 +113,13 @@ class HomeController extends Controller
             ->get();
     }
 
+    public function kanbans(): Collection
+    {
+        return auth()->user()->kanbans()
+            ->orderBy('kanbans.title')
+            ->get(['kanbans.id', 'kanbans.title', 'kanbans.owner_id']);
+    }
+
     /**
      * Returns the plans of the user
      * 

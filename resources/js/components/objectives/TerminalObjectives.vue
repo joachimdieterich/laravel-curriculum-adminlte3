@@ -44,7 +44,9 @@
                     </li>
                </template>
             </draggable>
-            <li class="form-group py-2 mb-0 ml-auto">
+            <li v-if="curriculum.type_id === 1"
+                class="form-group py-2 mb-0 ml-auto"
+            >
                 <Select2
                     id="references"
                     name="references"

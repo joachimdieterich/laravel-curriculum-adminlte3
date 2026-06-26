@@ -47,21 +47,35 @@
             >
                 <template #entry="{ entry }">
                     <span class="d-flex align-items-center">
-                        <span
-                            class="position-relative mr-2"
-                            style="height: 18px; width: 18px;"
+                        <span v-if="entry.history.length > 0"
+                            class="position-relative d-flex align-items-center mr-1"
                         >
                             <i
-                                class="position-absolute fa fa-circle t-20"
+                                class="fa fa-circle t-20 mr-1"
+                                :class="achievementColor(entry.history[0].status[0])"
+                            ></i>
+                            <i v-if="entry.history[0].status[1] !== '0'"
+                                class="position-absolute far fa-circle-check t-20 text-border-white"
+                                :class="achievementColor(entry.history[0].status[1])"
+                                style="left: 0;"
+                            ></i>
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                        </span>
+                        <span
+                            class="position-relative d-flex mr-2"
+                        >
+                            <i
+                                class="fa fa-circle t-20"
                                 :class="achievementColor(entry.status[0])"
                             ></i>
                             <i v-if="entry.status[1] !== '0'"
                                 class="position-absolute far fa-circle-check t-20 text-border-white"
                                 :class="achievementColor(entry.status[1])"
+                                style="left: 0;"
                             ></i>
                         </span>
                         <span
-                            class="p-margin-0 m-0"    
+                            class="p-margin-0 m-0"
                             v-html="entry.referenceable.title"
                         ></span>
                     </span>

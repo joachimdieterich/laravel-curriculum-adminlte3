@@ -472,11 +472,6 @@ class User extends Authenticatable
         }
     }
 
-    public function scopeNoSharing($query): void
-    {
-        $query->whereNull('sharing_token');
-    }
-
     public function exams(): BelongsToMany
     {
         return $this->belongsToMany(

@@ -317,7 +317,7 @@ class EdusharingMediaAdapter implements MediaInterface
 
     public function checkIfUserHasSubscription($subscription)
     {
-        if (str_ends_with($subscription->subscribable_type, 'Create')) return true;
+        if (str_ends_with($subscription->subscribable_type, 'Create') || is_admin()) return true;
 
         switch ($subscription->subscribable_type) {
             case "App\Organization":

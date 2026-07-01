@@ -154,6 +154,7 @@ Route::withoutMiddleware('auth')->group(function() {
 
     /*** Media ***/
     Route::get('media/list', 'MediumController@list')->name('media.list');
+    Route::get('media/adminSearch', 'MediumController@adminSearch')->name('media.adminSearch');
     Route::post('media/{medium}/destroy', 'MediumController@destroy'); // has to be post (has parameters)
     Route::get('media/{medium}/thumb', 'MediumController@thumb')->name('media.thumb');
     Route::resource('media', 'MediumController');

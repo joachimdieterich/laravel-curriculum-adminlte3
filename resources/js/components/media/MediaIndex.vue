@@ -1,96 +1,107 @@
 <template>
-<div>
-    <div id="media_create_datatable_filter"
-         class="dataTables_filter">
-        <input
-            id="media_search_datatable"
-            name="media_search_datatable"
-            type="search"
-            class="form-control form-control-sm"
-            v-model="search"
-            placeholder="Suchbegriff"
-            aria-controls="media_create_datatable"
-        />
-    </div>
-    <div class="form-group table-responsive" >
+    <div>
+        <div class="bg-white mx-3 mb-3">
+            <h2>Parameter</h2>
+
+            <span class="custom-control custom-switch custom-switch-on-green">
+                <input
+                    id="show-local"
+                    class="custom-control-input pt-1"
+                    type="checkbox"
+                    v-model="showLocal"
+                />
+                <label
+                    class="custom-control-label text-muted"
+                    for="show-local"
+                >
+                    Lokale Medien anzeigen
+                </label>
+            </span>
+            <span class="custom-control custom-switch custom-switch-on-green">
+                <input
+                    id="show-external"
+                    class="custom-control-input pt-1"
+                    type="checkbox"
+                    v-model="showExternal"
+                />
+                <label
+                    class="custom-control-label text-muted"
+                    for="show-external"
+                >
+                    Externe Medien anzeigen
+                </label>
+            </span>
+
+            <button
+                class="btn btn-primary my-2"
+                type="button"
+                :disabled="!showLocal && !showExternal"
+                @click="loader"
+            >
+                Aktualisieren
+            </button>
+        </div>
         <div
             id="media-datatable-wrapper"
             class="w-100 dataTablesWrapper"
         >
             <DataTable
                 id="media-datatable"
-                columns="columns"
-                :options="options"
-                :ajax="'/media/list'"
-                :search="search"
+                :columns="columns"
+                :data="media"
                 width="100%"
-            ></DataTable>
+            />
         </div>
     </div>
-</div>
 </template>
-
 <script>
-import Form from 'form-backend-validation';
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5'
-import {useGlobalStore} from "../../store/global.js";
-
 DataTable.use(DataTablesCore);
 
-    export default {
-        props: {
-
-        },
-        setup () { //use database store
-            const globalStore = useGlobalStore();
-            return {
-                globalStore
-            }
-        },
-        data() {
-            return {
-                component_id: this.$.uid,
-                search: '',
-                columns: [
-                    {
-                        title: 'img',
-                        data: 'id',
-                        render: function(data, type, full, meta) {
-                            return '<img src="/media/'+ data +'" width="60"/>';
-                        }
-                    },
-                    { title: 'title', data: 'title', searchable: true },
-                    { title: 'size', data: 'size' },
-                    { title: 'created_at', data: 'created_at' },
-                ],
-                options : this.$dtOptions,
-                postProcess: false,
-            }
-        },
-
-        methods: {
-          /*  show(mediumObject) {
-                this.globalStore?.showModal('medium-preview-modal', mediumObject);
-            },*/
-        },
-
-        mounted() {
-            const dt = $('#media-datatable').DataTable();
-
-            $('#media_search_datatable').on('keyup', function () {
-                dt.search(this.search).draw();
-            }.bind(this));
-
-            dt.on('select', function(e, dt, type, indexes) {
-                let selection = dt.rows('.selected').data().toArray()
-                this.globalStore.setSelectedMedia(selection);
-            }.bind(this));
-
-        },
-        components: {
-            DataTable
+export default {
+    data() {
+        return {
+            component_id: this.$.uid,
+            media: null,
+            dt: null,
+            columns: [
+                {
+                    title: 'img',
+                    data: 'id',
+                    // render: function(data) {
+                    //     return '<img src="/media/'+ data +'" width="60"/>';
+                    // }
+                },
+                { title: 'title', data: 'title' },
+                { title: 'adapter', data: 'adapter' },
+                { title: 'size', data: 'size' },
+            ],
+            options : this.$dtOptions,
+            showLocal: true,
+            showExternal: true,
         }
+    },
+    mounted() {
+        this.loader();
+    },
+    methods: {
+        loader() {
+            this.dt = $('#media-datatable').DataTable();
+            
+            axios.get('/media/adminSearch', {
+                params: {
+                    showLocal: this.showLocal,
+                    showExternal: this.showExternal,
+                },
+            }).then(response => {
+                this.media = response.data;
+            });
+        },
+    },
+    components: {
+        DataTable,
     }
+}
 </script>

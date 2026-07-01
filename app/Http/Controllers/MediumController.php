@@ -112,4 +112,26 @@ class MediumController extends Controller
     {
         return $this->adapter()->checkIfUserHasSubscription($subscription);
     }
+
+    /**
+     * Display a listing of media throughout all adapters.</br>
+     * Only available to admin users.
+     */
+    public function adminSearch()
+    {
+        abort_unless(is_admin(), 403);
+        $input = request()->only(['showLocal', 'showExternal']);
+        $query = Medium::select(['id', 'title', 'size', 'adapter']);
+
+        // if not all adapters are selected, filter by adapter
+        if ($input['showLocal'] !== $input['showExternal']) {
+            if ($input['showLocal']) {
+                $query->where('adapter', 'local');
+            } else {
+                $query->where('adapter', '<>', 'local');
+            }
+        }
+
+        return $query->get();
+    }
 }

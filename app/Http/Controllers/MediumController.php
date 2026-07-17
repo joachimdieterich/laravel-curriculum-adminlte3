@@ -125,13 +125,13 @@ class MediumController extends Controller
 
         // if not all adapters are selected, filter by adapter
         if ($input['showLocal'] !== $input['showExternal']) {
-            if ($input['showLocal']) {
+            if ($input['showLocal'] === 'true') {
                 $query->where('adapter', 'local');
             } else {
                 $query->where('adapter', '<>', 'local');
             }
         }
-
-        return $query->get();
+        
+        return \Yajra\DataTables\DataTables::of($query)->make(true);
     }
 }

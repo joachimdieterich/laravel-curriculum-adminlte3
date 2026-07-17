@@ -36,7 +36,7 @@
                 class="btn btn-primary my-2"
                 type="button"
                 :disabled="!showLocal && !showExternal"
-                @click="loader"
+                @click="reload()"
             >
                 Aktualisieren
             </button>
@@ -48,19 +48,34 @@
             <DataTable
                 id="media-datatable"
                 :columns="columns"
-                :data="media"
+                :ajax="{
+                    url: '/media/adminSearch',
+                    data: function(d) {
+                        d.showLocal = showLocal;
+                        d.showExternal = showExternal;
+                    },
+                }"
+                :options="dtOptions"
                 width="100%"
             />
         </div>
     </div>
 </template>
 <script>
+import {globalValues} from "../../globalValues.js";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5'
 DataTable.use(DataTablesCore);
 
 export default {
+    setup() {
+        const dtOptions = globalValues.dtOptions;
+
+        return {
+            dtOptions,
+        }
+    },
     data() {
         return {
             component_id: this.$.uid,
@@ -84,24 +99,15 @@ export default {
         }
     },
     mounted() {
-        this.loader();
+        this.dt = $('#media-datatable').DataTable();
     },
     methods: {
-        loader() {
-            this.dt = $('#media-datatable').DataTable();
-            
-            axios.get('/media/adminSearch', {
-                params: {
-                    showLocal: this.showLocal,
-                    showExternal: this.showExternal,
-                },
-            }).then(response => {
-                this.media = response.data;
-            });
-        },
+        reload() {
+            this.dt.ajax.reload();
+        }
     },
     components: {
         DataTable,
-    }
+    },
 }
 </script>

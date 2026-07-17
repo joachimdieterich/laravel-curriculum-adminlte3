@@ -120,8 +120,8 @@ class MediumController extends Controller
     public function adminSearch()
     {
         abort_unless(is_admin(), 403);
-        $input = request()->only(['showLocal', 'showExternal']);
-        $query = Medium::select(['id', 'title', 'size', 'adapter']);
+        $input = request()->only(['showLocal', 'showExternal', 'onlyShowUnsubscribed']);
+        $query = Medium::select(['id', 'title', 'size', 'adapter'])->withCount('subscriptions');
 
         // if not all adapters are selected, filter by adapter
         if ($input['showLocal'] !== $input['showExternal']) {
@@ -130,6 +130,10 @@ class MediumController extends Controller
             } else {
                 $query->where('adapter', '<>', 'local');
             }
+        }
+        if ($input['onlyShowUnsubscribed'] === 'true') {
+            $query->leftJoin('medium_subscriptions', 'media.id', '=', 'medium_subscriptions.medium_id')
+                ->whereNull('medium_subscriptions.medium_id');
         }
         
         return \Yajra\DataTables\DataTables::of($query)->make(true);

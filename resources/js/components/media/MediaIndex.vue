@@ -31,6 +31,20 @@
                     Externe Medien anzeigen
                 </label>
             </span>
+            <span class="custom-control custom-switch custom-switch-on-green">
+                <input
+                    id="only-show-unsubscribed"
+                    class="custom-control-input pt-1"
+                    type="checkbox"
+                    v-model="onlyShowUnsubscribed"
+                />
+                <label
+                    class="custom-control-label text-muted"
+                    for="only-show-unsubscribed"
+                >
+                    Nur Medien ohne Verkn&uuml;pfungen anzeigen
+                </label>
+            </span>
 
             <button
                 class="btn btn-primary my-2"
@@ -53,6 +67,7 @@
                     data: function(d) {
                         d.showLocal = showLocal;
                         d.showExternal = showExternal;
+                        d.onlyShowUnsubscribed = onlyShowUnsubscribed;
                     },
                 }"
                 :options="dtOptions"
@@ -92,10 +107,12 @@ export default {
                 { title: 'title', data: 'title' },
                 { title: 'adapter', data: 'adapter' },
                 { title: 'size', data: 'size' },
+                { title: 'subscriptions_count', data: 'subscriptions_count' },
             ],
             options : this.$dtOptions,
             showLocal: true,
             showExternal: true,
+            onlyShowUnsubscribed: false,
         }
     },
     mounted() {

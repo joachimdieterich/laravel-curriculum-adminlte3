@@ -209,18 +209,8 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
 *              type="integer"
 *          )
 *      ),
-*      @OA\Parameter(
-*          name="owner_cn",
-*          description="common_name of Kanban-owner",
-*          required=true,
-*          in="query",
-*          @OA\Schema(
-*              type="string"
-*          )
-*      ),
 *      @OA\Response(response=200, description="successful operation"),
-*      @OA\Response(response=400, description="Missing attribute [owner_cn]"),
-*      @OA\Response(response=403, description="common_name does not match Kanban-owner's common_name")
+*      @OA\Response(response=403, description="Method not allowed"),
 * )
 *
 * @OA\Post(

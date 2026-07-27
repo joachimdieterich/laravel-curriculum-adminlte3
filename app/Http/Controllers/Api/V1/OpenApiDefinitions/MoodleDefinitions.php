@@ -203,6 +203,41 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *      @OA\Response(response=400, description="Bad request"),
  * )
  * 
+ * @OA\Get(
+ *      path="/v1/moodle/course",
+ *      operationId="getCourse",
+ *      tags={"Moodle v1"},
+ *      summary="Get Course-ID by group-cn and Curriculum-ID",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *      @OA\Parameter(
+ *          name="group_cn",
+ *          description="group common_name",
+ *          required=true,
+ *          in="query",
+ *          @OA\Schema(
+ *              type="string"
+ *          )
+ *      ),
+ *      @OA\Parameter(
+ *          name="curriculum_id",
+ *          description="Curriculum-ID",
+ *          required=true,
+ *          in="query",
+ *          @OA\Schema(
+ *              type="integer"
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *          @OA\Schema(ref="#/components/schemas/SelectList"),
+ *      ),
+ *      @OA\Response(response=400, description="Missing required parameters"),
+ *      @OA\Response(response=404, description="Group not found | No existing course"),
+ * )
+ * 
  * @OA\Post(
  *      path="/v1/moodle/groups/enrol",
  *      operationId="enrolGroup",

@@ -323,7 +323,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('kanbans/{kanban}', 'KanbanController@show');
     Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
 
-    Route::resource('levels', 'LevelController');
+    Route::resource('levels', 'LevelController')
+        ->only('index');
 
     Route::resource('lmsReferences', 'LmsReferenceController');
     Route::resource('lmsReferenceSubscriptions', 'LmsReferenceSubscriptionController');

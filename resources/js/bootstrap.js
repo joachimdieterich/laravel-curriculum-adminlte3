@@ -15,7 +15,7 @@ try {
 
 } catch (e) {}
 
-import select2 from 'select2/dist/js/select2.full';
+import select2 from 'select2/dist/js/select2.full.min';
 select2();
 window.select2Translation = {
     errorLoading: function () {

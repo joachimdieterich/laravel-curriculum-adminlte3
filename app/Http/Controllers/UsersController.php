@@ -34,7 +34,7 @@ class UsersController extends Controller
         // every user should share with users of current organization except admins
         if (request()->wantsJson()) {
             $users = is_admin()
-                ? User::noSharing()
+                ? User::query()
                 : Organization::find(auth()->user()->current_organization_id)->users();
 
             // only get users with teacher-role or higher
@@ -86,7 +86,7 @@ class UsersController extends Controller
             $users = (auth()->user()->role()->id == 1)
                 ? User::query()
                 : Organization::find(auth()->user()->current_organization_id)->users();
-            $users->select('users.id', 'username', 'firstname', 'lastname', 'common_name', 'email')->noSharing();
+            $users->select('users.id', 'username', 'firstname', 'lastname', 'common_name', 'email');
         }
 
         return \Yajra\DataTables\DataTables::of($users)->make(true);

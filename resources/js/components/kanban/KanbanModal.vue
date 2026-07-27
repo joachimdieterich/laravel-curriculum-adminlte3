@@ -54,7 +54,7 @@
                             </div>
 
                             <div class="form-group">
-                                <Select2 v-if="checkPermission('is_admin')"
+                                <Select2 v-if="form.id && checkPermission('is_teacher')"
                                     id="user_id"
                                     css="mb-0 mt-3"
                                     :label="trans('global.change_owner')"

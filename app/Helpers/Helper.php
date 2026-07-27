@@ -699,3 +699,24 @@ if (! function_exists('limiter')) {
                 ->count() < $limit;
     }
 }
+
+if (! function_exists('getOAuthClientId'))
+{
+    /**
+     * Decodes bearer-token and returns its Client-ID
+     * 
+     * @return int|null
+     */
+    function getOAuthClientId()
+    {
+        if (request()->bearerToken() === null) return null;
+
+        return (int)\Firebase\JWT\JWT::decode(
+            request()->bearerToken(),
+            new \Firebase\JWT\Key(
+                \File::get(storage_path('oauth-public.key')),
+                'RS256'
+            )
+        )->aud;
+    }
+}

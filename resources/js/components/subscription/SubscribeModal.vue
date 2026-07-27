@@ -30,6 +30,7 @@
                     >
                         <div class="card-body overflow-auto">
                             <TabList
+                                class="justify-content-center"
                                 :model="'subscribe'"
                                 modelIcon="fa-share"
                                 :tabs="tabs"

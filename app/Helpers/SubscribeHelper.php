@@ -39,7 +39,7 @@ class SubscribeHelper
         }
 
         $users = $isAdmin
-            ? User::noSharing()
+            ? User::query()
             : User::whereAttachedTo(auth()->user()->organizations);
 
         // only get users with teacher-role or higher

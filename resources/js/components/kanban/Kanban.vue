@@ -7,7 +7,7 @@
             class="position-absolute p-0 h-100 w-100"
             style="object-fit: cover;"
             :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
-            :alt="medium.title ?? medium.medium_name ?? 'background image'"
+            :alt="kanban.medium.title ?? kanban.medium.medium_name ?? 'background image'"
         />
         <div v-if="!embeded"
             class="d-print-none position-absolute pointer"

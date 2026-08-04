@@ -197,10 +197,6 @@ if (document.querySelector("meta[name='user-id']")){
     app.config.globalProperties.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 }
 
-import Sticky from 'vue-sticky-directive';
-
-app.use(Sticky);
-
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 

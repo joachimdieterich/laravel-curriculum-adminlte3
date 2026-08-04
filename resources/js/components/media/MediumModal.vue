@@ -214,7 +214,6 @@
 import Form from 'form-backend-validation';
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import 'datatables.net-select-bs5'
 import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/edusharing/resources/js/components/Create.vue';
 import {useGlobalStore} from "../../store/global.js";
 

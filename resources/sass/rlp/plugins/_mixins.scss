@@ -57,7 +57,7 @@
           }
 
           .select2-selection__choice__remove {
-            color: rgba(color-yiq($color), 0.7);
+            color: rgba(color-contrast($color), 0.7);
 
             &:hover {
               color: color-yiq($color);

@@ -40,7 +40,7 @@
                 >
                     <slot name="entry" :entry="entry">
                         <i v-if="!entry.grade"
-                            class="fa text-secondary mr-2"
+                            class="fa text-secondary me-2"
                             :class="entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
                         ></i>
                         <a :href="'/' + model + '/' + entry.id">
@@ -132,7 +132,7 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style>
 .infobox {
     background-color: #fff;
     border-radius: 0.75rem;
@@ -158,10 +158,17 @@ export default {
         max-height: 240px;
         border-radius: 0.75rem;
 
-        & > .infobox-entry:not(:last-child) {
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 0.5rem;
+        & > .infobox-entry {
+            & > a {
+                text-decoration: none;
+                &:hover { text-decoration: underline; }
+                & > :first-child { font-weight: bold; }
+            }
+            &:not(:last-child) {
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #dee2e6;
+                margin-bottom: 0.5rem;
+            }
         }
     }
 }

@@ -16,7 +16,7 @@
             box-shadow: 3px 2px 5px rgba(0, 0, 0, 0.25);
 
             & a {
-                @extend .d-flex, .align-items-center, .pointer, .px-3, .py-2;
+                @extend .d-flex, .align-items-center, .pointer, .text-decoration-none, .px-3, .py-2;
                 color: black;
 
                 &:hover {

@@ -18,7 +18,7 @@
                     </button>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body accordion">
                     <div class="card">
                         <div class="card-body">
                             <div class="form-group">
@@ -81,14 +81,22 @@
                         </div>
                     </div>
 
-                    <div class="card">
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.display') }}</span>
+                    <div class="accordion-item">
+                        <div class="accordion-header border-bottom">
+                            <span
+                                class="accordion-button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#kanban-display"
+                                aria-expanded="true"
+                                aria-controls="kanban-display"
+                            >
+                                {{ trans('global.display') }}
+                            </span>
                         </div>
-                        <div class="card-body">
+                        <div
+                            id="kanban-display"
+                            class="accordion-collapse collapse show"
+                        >
                             <div class="d-flex justify-content-between align-items-center">
                                 <v-swatches
                                     style="height: 42px;"
@@ -195,7 +203,7 @@
                     </div>
                 </div>
 
-                <div class="card-footer">
+                <div class="modal-footer">
                     <span class="pull-right">
                         <button
                             id="kanban-cancel"

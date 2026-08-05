@@ -1,7 +1,7 @@
 <template>
     <div
         id="navigationbar"
-        class="position-absolute bg-white collapse nav-collapse width h-100"
+        class="position-absolute bg-white collapse-horizontal collapse h-100"
     >
         <div id="nav-wrapper">
             <Select2

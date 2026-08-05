@@ -5,7 +5,7 @@
         style="min-height: 50px; top: 0;"
     >
         <div id="brand-menu"
-            class="d-flex position-relative mr-2"
+            class="d-flex position-relative me-2"
         >
             <button
                 id="brand-menu-dropdown-button"
@@ -54,12 +54,12 @@
             </button>
             <div v-if="notLocalEnv"
                 id="brand-menu-dropdown"
-                class="d-none bg-lime w-100 mr-2"
+                class="d-none bg-lime w-100 me-2"
             >
                 <div v-for="entry in menuEntries">
                     <a :href="entry.link">
                         <i class="fa text-white text-center" :class="entry.icon"></i>
-                        <span class="ml-2 my-1">
+                        <span class="ms-2 my-1">
                             {{ entry.title }}
                         </span>
                     </a>
@@ -81,8 +81,8 @@
             <button v-if="checkPermission('is_admin')"
                 type="button"
                 class="btn btn-icon text-dark"
-                data-toggle="collapse"
-                data-target=".nav-collapse"
+                data-bs-toggle="collapse"
+                data-bs-target="#navigationbar, #background-mask"
                 aria-expanded="false"
                 aria-controls="navigationbar background-mask"
             >
@@ -102,7 +102,7 @@
 
         <div
             id="user-menu"
-            class="d-flex align-items-center ml-auto"
+            class="d-flex align-items-center ms-auto"
         >
             <button
                 id="user-menu-dropdown-button"
@@ -112,7 +112,7 @@
             >
                 <span v-if="isGuestUser">
                     <i class="fa fa-right-to-bracket"></i>
-                    <strong class="py-1 ml-2">{{ trans('global.login') }}</strong>
+                    <strong class="py-1 ms-2">{{ trans('global.login') }}</strong>
                 </span>
                 <span v-else
                     class="d-flex align-items-center pointer"
@@ -126,7 +126,7 @@
                         :show-popup-details="false"
                     />
                     <span
-                        class="d-none d-md-inline ml-1"
+                        class="d-none d-md-inline ms-1"
                         style="font-weight: 900;"
                     >{{ user.firstname }} {{ user.lastname }}</span>
                 </span>
@@ -144,26 +144,26 @@
                 </div>
 
                 <div>
-                    <a :href="'/users/' + user.id">
-                        <i class="fa fa-id-card mr-2 fa-fw text-white"></i>
+                    <a :href="'/users/' + user.id" class="link-muted">
+                        <i class="fa fa-id-card me-2 fa-fw text-white"></i>
                         {{ trans('global.myProfile') }}
                     </a>
                 </div>
                 <div v-if="checkPermission('note_access')">
                     <a href="/notes">
-                        <i class="fa fa-sticky-note fa-fw mr-2 text-white"></i>
+                        <i class="fa fa-sticky-note fa-fw me-2 text-white"></i>
                         {{ trans('global.note.title') }}
                     </a>
                 </div>
                 <div v-if="role.id === 1">
                     <a href="/admin">
-                        <i class="fa fa-cogs fa-fw mr-2 text-white"></i>
+                        <i class="fa fa-cogs fa-fw me-2 text-white"></i>
                         {{ trans('global.config.title') }}
                     </a>
                 </div>
                 <div>
                     <a href="#" @click.prevent="logout()">
-                        <i class="fa fa-power-off fa-fw mr-2 text-white"></i>
+                        <i class="fa fa-power-off fa-fw me-2 text-white"></i>
                         {{ trans('global.logout') }}
                     </a>
                 </div>

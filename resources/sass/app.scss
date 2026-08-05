@@ -119,6 +119,10 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
     &::-webkit-scrollbar { width: 0 !important }
 }
 textarea { min-height: 150px; }
+a.link-underline-hover {
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+}
 .select2 {
     max-width: 100%;
     width: 100%;

@@ -2,7 +2,6 @@
     <div>
         <div
             :id="id + '_form_group'"
-            class="form-group"
             :class="[(typeof css != 'undefined') ? css : '' ]"
             :style="id == 'permissions' ? { 'margin-bottom': '200px' } : ''"
         >

@@ -231,7 +231,6 @@
 <script>
 import Form from 'form-backend-validation';
 import NewMediumForm from "../media/NewMediumForm.vue";
-import axios from "axios";
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";

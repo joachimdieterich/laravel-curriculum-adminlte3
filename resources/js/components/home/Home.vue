@@ -48,10 +48,10 @@
                 <template #entry="{ entry }">
                     <span class="d-flex align-items-center">
                         <span v-if="entry.history.length > 0"
-                            class="position-relative d-flex align-items-center mr-1"
+                            class="position-relative d-flex align-items-center me-1"
                         >
                             <i
-                                class="fa fa-circle t-20 mr-1"
+                                class="fa fa-circle t-20 me-1"
                                 :class="achievementColor(entry.history[0].status[0])"
                             ></i>
                             <i v-if="entry.history[0].status[1] !== '0'"
@@ -62,7 +62,7 @@
                             <i class="fa-solid fa-arrow-right-long"></i>
                         </span>
                         <span
-                            class="position-relative d-flex mr-2"
+                            class="position-relative d-flex me-2"
                         >
                             <i
                                 class="fa fa-circle t-20"

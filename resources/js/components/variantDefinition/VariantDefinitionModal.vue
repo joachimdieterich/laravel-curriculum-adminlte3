@@ -122,12 +122,10 @@
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
 import {useGlobalStore} from "../../store/global";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 
 export default {
     name: 'variant-definition-modal',
     components: {
-        FontAwesomePicker,
         Editor
     },
     props: {},

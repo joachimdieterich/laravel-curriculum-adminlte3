@@ -133,7 +133,7 @@
 import Form from 'form-backend-validation';
 import Editor from "@tinymce/tinymce-vue";
 import MediumForm from "../media/MediumForm.vue";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
+import FontAwesomePicker from "../uiElements/FontAwesomePicker.vue/index.js";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
 

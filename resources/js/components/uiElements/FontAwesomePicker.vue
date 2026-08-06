@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import icons from './icons';
+import icons from '../../icons';
 
 export default {
     name: 'fontAwesomePicker',

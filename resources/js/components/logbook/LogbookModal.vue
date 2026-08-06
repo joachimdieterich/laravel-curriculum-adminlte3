@@ -157,7 +157,7 @@
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
+import FontAwesomePicker from '../uiElements/FontAwesomePicker.vue';
 import MediumForm from "../media/MediumForm.vue";
 
 export default {

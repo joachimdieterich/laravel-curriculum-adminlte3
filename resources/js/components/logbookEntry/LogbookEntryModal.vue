@@ -103,7 +103,6 @@ import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 import Editor from "@tinymce/tinymce-vue";
-import FontAwesomePicker from "../../../views/forms/input/FontAwesomePicker.vue";
 import MediumForm from "../media/MediumForm.vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 
@@ -112,7 +111,6 @@ export default {
     components: {
         VueDatePicker,
         MediumForm,
-        FontAwesomePicker,
         Editor,
         Select2,
     },

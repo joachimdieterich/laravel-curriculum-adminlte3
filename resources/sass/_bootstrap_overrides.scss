@@ -1,0 +1,24 @@
+.accordion-item {
+    &:last-child { border-bottom: 0; }
+    > .accordion-header {
+        &:hover {
+            cursor: pointer;
+            background-color: #e9ecef;
+        }
+        > .accordion-button {
+            color: inherit;
+            background-color: inherit;
+            font-size: 1.125rem;
+        }
+    }
+    > .accordion-collapse > div { padding: 1.25rem; }
+}
+
+.form-check-input {
+    @extend .pointer;
+}
+
+.form-check-label {
+    @extend .pointer;
+    font-weight: 600;
+}

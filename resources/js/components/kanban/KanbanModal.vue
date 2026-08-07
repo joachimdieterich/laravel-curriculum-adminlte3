@@ -1,5 +1,101 @@
 <template>
-    <Transition name="modal">
+    <Modal
+        model="kanban"
+        modalName="kanban-modal"
+        :method="method"
+        :require-title="true"
+        :processing="processing"
+        :show-medium-field="true"
+        :show-permission-section="true"
+    >
+        <template #permissions>
+            <div class="form-check form-switch">
+                <input
+                    id="kanban-commentable"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.commentable"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-commentable"
+                >
+                    {{ trans('global.commentable') }}
+                </label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input
+                    id="kanban-auto-refresh"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.auto_refresh"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-auto-refresh"
+                >
+                    {{ trans('global.auto_refresh') }}
+                </label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input
+                    id="kanban-only-edit-owned-items"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.only_edit_owned_items"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-only-edit-owned-items"
+                >
+                    {{ trans('global.kanban.only_edit_owned_items') }}
+                </label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input
+                    id="kanban-collapse-items"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.collapse_items"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-collapse-items"
+                >
+                    {{ trans('global.kanban.collapse_items') }}
+                </label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input
+                    id="kanban-allow-copy"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.allow_copy"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-allow-copy"
+                >
+                    {{ trans('global.kanban.allow_copy') }}
+                </label>
+            </div>
+        </template>
+    </Modal>
+    <!-- <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
             class="modal-mask"
         >
@@ -226,9 +322,11 @@
                 </div>
             </div>
         </div>
-    </Transition>
+    </Transition> -->
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
+
 import Form from 'form-backend-validation';
 import NewMediumForm from "../media/NewMediumForm.vue";
 import Select2 from "../forms/Select2.vue";
@@ -237,8 +335,9 @@ import {useToast} from "vue-toastification";
 import TagMultiselect from "../tag/TagMultiselect.vue";
 
 export default {
-    name: 'kanban-modal',
+    name: 'KanbanModal',
     components: {
+        Modal,
         TagMultiselect,
         Select2,
         NewMediumForm,
@@ -301,6 +400,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.processing = false;
                     this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
@@ -312,6 +412,7 @@ export default {
                     this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.processing = false;
                     this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });

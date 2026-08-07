@@ -37,6 +37,7 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 // to update adminLTE copy "~admin-lte/build/scss" to "adminLTE";
 @import "rlp/AdminLTE-raw";
 
+@import '_bootstrap_overrides.scss';
 @import '_variables.scss';
 @import 'boxes.scss';
 @import 'buttons.scss';

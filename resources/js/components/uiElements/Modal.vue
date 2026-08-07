@@ -5,7 +5,7 @@
         >
             <div class="modal-container">
                 <div class="modal-header">
-                    <span class="card-title">
+                    <span class="modal-title">
                         {{ method === 'post' ? trans('global.' + model + '.create') : trans('global.' + model + '.edit') }}
                     </span>
                     <button
@@ -21,7 +21,7 @@
                 <div class="modal-body accordion">
                     <div class="accordion-item">
                         <div v-if="showGeneralHeader"
-                            class="accordion-header border-bottom"
+                            class="accordion-header"
                         >
                             <span
                                 class="accordion-button"
@@ -37,41 +37,43 @@
                             :id="model + '-general'"
                             class="accordion-collapse collapse show"
                         >
-                            <slot name="general">
-                                <input
-                                    type="text"
-                                    :id="model + '-title'"
-                                    :name="model + '-title'"
-                                    class="form-control mb-3"
-                                    maxlength="191"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                                <textarea
-                                    :id="model + '-description'"
-                                    :name="model + '-description'"
-                                    class="form-control mb-3"
-                                    style="max-height: 35svh;"
-                                    rows="5"
-                                    :placeholder="trans('global.description')"
-                                    v-model.trim="form.description"
-                                ></textarea>
-                                <Select2 v-if="showOwnerField"
-                                    :id="model + '-owner'"
-                                    css="mb-3"
-                                    :label="trans('global.change_owner')"
-                                    model="User"
-                                    url="/users"
-                                    :selected="form.owner_id"
-                                    @selectedValue="(id) => this.form.owner_id = id[0]"
-                                />
-                            </slot>
+                            <div>
+                                <slot name="general">
+                                    <input
+                                        type="text"
+                                        :id="model + '-title'"
+                                        :name="model + '-title'"
+                                        class="form-control mb-3"
+                                        maxlength="191"
+                                        v-model.trim="form.title"
+                                        :placeholder="trans('global.title') + ' *'"
+                                        :required="requireTitle"
+                                    />
+                                    <textarea
+                                        :id="model + '-description'"
+                                        :name="model + '-description'"
+                                        class="form-control"
+                                        style="max-height: 35svh;"
+                                        rows="5"
+                                        :placeholder="trans('global.description')"
+                                        v-model.trim="form.description"
+                                    ></textarea>
+                                    <Select2 v-if="showOwnerField"
+                                        :id="model + '-owner'"
+                                        css="mt-3"
+                                        :label="trans('global.change_owner')"
+                                        model="User"
+                                        url="/users"
+                                        :selected="form.owner_id"
+                                        @selectedValue="(id) => this.form.owner_id = id[0]"
+                                    />
+                                </slot>
+                            </div>
                         </div>
                     </div>
 
                     <div class="accordion-item">
-                        <div class="accordion-header border-bottom">
+                        <div class="accordion-header">
                             <span
                                 class="accordion-button"
                                 data-bs-toggle="collapse"
@@ -86,37 +88,65 @@
                             :id="model + '-display'"
                             class="accordion-collapse collapse show"
                         >
-                            <v-swatches
-                                style="height: 42px;"
-                                :swatches="$swatches"
-                                row-length="5"
-                                popover-y="top"
-                                v-model="form.color"
-                                show-fallback
-                                fallback-input-type="color"
-                            />
-                            <NewMediumForm
-                                :subscribable_id="form.id"
-                                :subscribable_type="'App\\' + model.charAt(0).toUpperCase() + model.slice(1)"
-                                :allow_fallback_on_create="true"
-                                :medium_id="form.medium_id"
-                                @add="(medium) => form.medium_id = medium.id ?? null"
-                                @delete="() => form.medium_id = null"
-                            />
-                            <FontAwesomePicker
-                                class="dropdown-menu dropdown-menu-right"
-                                style="min-width: min(385px, 90vw);"
-                                :searchbox="trans('global.select_icon')"
-                                @selectIcon="(icon) => form.css_icon = 'fa fa-' + icon.className"
-                            />
+                            <div class="d-flex justify-content-between w-100">
+                                <v-swatches
+                                    style="height: 42px;"
+                                    :swatches="$swatches"
+                                    row-length="5"
+                                    popover-y="top"
+                                    v-model="form.color"
+                                    show-fallback
+                                    fallback-input-type="color"
+                                />
+                                <NewMediumForm v-if="showMediumField"
+                                    :subscribable_id="form.id"
+                                    :subscribable_type="'App\\' + model.charAt(0).toUpperCase() + model.slice(1)"
+                                    :allow_fallback_on_create="true"
+                                    :medium_id="form.medium_id"
+                                    @add="(medium) => form.medium_id = medium.id ?? null"
+                                    @delete="() => form.medium_id = null"
+                                />
+                                <FontAwesomePicker v-if="showIconPicker"
+                                    class="dropdown-menu dropdown-menu-right"
+                                    style="min-width: min(385px, 90vw);"
+                                    :searchbox="trans('global.select_icon')"
+                                    @selectIcon="(icon) => form.css_icon = 'fa fa-' + icon.className"
+                                />
+                            </div>
                         </div>
                     </div>
+
+                    <div v-if="showPermissionSection"
+                        class="accordion-item"
+                    >
+                        <div class="accordion-header">
+                            <span
+                                class="accordion-button"
+                                data-bs-toggle="collapse"
+                                :data-bs-target="'#' + model + '-permissions'"
+                                aria-expanded="false"
+                                :aria-controls="model + '-permissions'"
+                            >
+                                {{ trans('global.permissions') }}
+                            </span>
+                        </div>
+                        <div
+                            :id="model + '-permissions'"
+                            class="accordion-collapse collapse show"
+                        >
+                            <div>
+                                <slot name="permissions"></slot>
+                            </div>
+                        </div>
+                    </div>
+
+                    <slot name="custom"></slot>
                 </div>
 
                 <div class="modal-footer">
                     <slot name="footer-left"></slot>
                     <span class="pull-right">
-                        <button
+                        <button v-if="!hideCancelButton"
                             :id="model + '-cancel'"
                             type="button"
                             class="btn btn-default"
@@ -124,10 +154,10 @@
                         >
                             {{ trans('global.cancel') }}
                         </button>
-                        <button
+                        <button v-if="!hideSaveButton"
                             :id="model + '-save'"
                             class="btn btn-primary ms-3"
-                            :disabled="!form.title || processing"
+                            :disabled="processing || (requireTitle && !form.title)"
                             @click="$emit('save', form)"
                         >
                             <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
@@ -149,6 +179,7 @@ import {useGlobalStore} from "../../store/global";
 export default {
     name: 'Modal',
     emits: ['save'],
+    expose: ['resetForm'],
     components: {
         Select2,
         NewMediumForm,
@@ -165,10 +196,14 @@ export default {
             required: true,
             description: 'The name of the modal to control visibility',
         },
-        formData: {
-            type: Object,
-            default: null,
-            description: 'The initial data for the form',
+        method: {
+            type: String,
+            description: 'The HTTP method for the form submission (e.g., "post" or "patch")',
+        },
+        requireTitle: {
+            type: Boolean,
+            default: true,
+            description: 'Indicates if the built-in title field is required for form submission',
         },
         processing: {
             type: Boolean,
@@ -205,6 +240,16 @@ export default {
             default: false,
             description: 'Controls the visibility of the permission section in the form',
         },
+        hideCancelButton: {
+            type: Boolean,
+            default: false,
+            description: 'Controls the visibility of the cancel button in the modal footer',
+        },
+        hideSaveButton: {
+            type: Boolean,
+            default: false,
+            description: 'Controls the visibility of the save button in the modal footer',  
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -226,12 +271,16 @@ export default {
             }),
         };
     },
-    watch: {
-        formData: {
-            immediate: true,
-            handler(newVal) {
-                if (newVal) this.form.populate(newVal);
-            },
+    methods: {
+        /**
+         * exposed function that should only be called from the parent component
+         * @param formData populate the form
+         */
+        resetForm(formData = null) {
+            this.form.reset();
+            if (formData) {
+                this.form.populate(formData);
+            }
         },
     },
 };

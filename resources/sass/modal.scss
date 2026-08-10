@@ -29,6 +29,8 @@
     background-color: transparent;
     padding: 0.75rem 1.25rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
 
     > .modal-title {
         font-size: 1.125rem;
@@ -42,12 +44,14 @@
     overflow-y: auto;
     padding: 0;
 
-    input, textarea { box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.1); }
+    input, textarea { box-shadow: var(--shadow-subtle); }
 }
 .modal-footer {
-    background-color: #00000008;
-    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    background-color: #f2f4f5;
     padding: 0.75rem 1.25rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
 }
 @media (min-width: 769px) {
     .share-modal-container { min-width: 70vmin; }

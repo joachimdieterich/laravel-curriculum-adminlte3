@@ -706,7 +706,7 @@ export default {
         }
     }
 }
-.kanban-item, .kanban-status { box-shadow: var(--shadow-default); }
+.kanban-item, .kanban-status { box-shadow: var(--shadow-layout); }
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
     &:hover, &:focus { opacity: 1 !important; }

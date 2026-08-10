@@ -64,7 +64,7 @@ export default defineComponent({
         },
         modelId: {
             required: true,
-            type: Number,
+            type: [Number, null],
             title: "ID of the tagged model"
         },
         selectedTags: {

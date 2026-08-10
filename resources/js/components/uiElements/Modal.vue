@@ -54,7 +54,7 @@
                                         :name="model + '-description'"
                                         class="form-control"
                                         style="max-height: 35svh;"
-                                        rows="5"
+                                        rows="4"
                                         :placeholder="trans('global.description')"
                                         v-model.trim="form.description"
                                     ></textarea>
@@ -68,6 +68,7 @@
                                         @selectedValue="(id) => this.form.owner_id = id[0]"
                                     />
                                 </slot>
+                                <slot name="general-extended"></slot>
                             </div>
                         </div>
                     </div>
@@ -107,7 +108,7 @@
                                     @delete="() => form.medium_id = null"
                                 />
                                 <FontAwesomePicker v-if="showIconPicker"
-                                    class="dropdown-menu dropdown-menu-right"
+                                    class="dropdown-menu dropdown-menu-end"
                                     style="min-width: min(385px, 90vw);"
                                     :searchbox="trans('global.select_icon')"
                                     @selectIcon="(icon) => form.css_icon = 'fa fa-' + icon.className"
@@ -173,7 +174,6 @@
 import Select2 from "../forms/Select2.vue";
 import NewMediumForm from "../media/NewMediumForm.vue";
 import FontAwesomePicker from "./FontAwesomePicker.vue";
-import Form from 'form-backend-validation';
 import {useGlobalStore} from "../../store/global";
 
 export default {
@@ -260,16 +260,13 @@ export default {
     },
     data() {
         return {
-            form: new Form({
-                id: null,
-                title: '',
-                description: '',
-                owner_id: null,
-                color: '#27AF60',
-                medium_id: null,
-                css_icon: 'fa fa-book',
-            }),
+            // we're not using the Form-plugin, since two Form-objects can't be merged,
+            // and we want to keep the form data in the parent component
+            form: {},
         };
+    },
+    mounted() {
+        this.resetForm();
     },
     methods: {
         /**
@@ -277,9 +274,22 @@ export default {
          * @param formData populate the form
          */
         resetForm(formData = null) {
-            this.form.reset();
+            this.form = {
+                id: null,
+                title: '',
+                description: '',
+                owner_id: null,
+                color: '#27AF60',
+                medium_id: null,
+                css_icon: 'fa fa-book',
+            };
+
             if (formData) {
-                this.form.populate(formData);
+                Object.keys(this.form).forEach(key => {
+                    if (formData.hasOwnProperty(key)) {
+                        this.form[key] = formData[key];
+                    }
+                });
             }
         },
     },

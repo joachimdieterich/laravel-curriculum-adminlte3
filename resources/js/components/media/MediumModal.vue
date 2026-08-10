@@ -25,7 +25,7 @@
                         <!-- left side of menu only visible to admins -->
                         <div
                             v-permission="'is_admin'"
-                            class="card-pane-left p-0"
+                            style="border-right: 1px solid lightgrey"
                         >
                             <ul class="nav flex-column">
                                 <li
@@ -35,7 +35,7 @@
                                     <a
                                         href="#upload"
                                         class="link-muted"
-                                        data-toggle="tab"
+                                        data-bs-toggle="tab"
                                         @click="setTab('upload');"
                                     >
                                         {{ trans('global.medium.upload') }}
@@ -48,7 +48,7 @@
                                     <a
                                         href="#local-media"
                                         class="link-muted"
-                                        data-toggle="tab"
+                                        data-bs-toggle="tab"
                                         @click="setTab('media');"
                                     >
                                         {{ trans('global.medium.title') }}
@@ -57,7 +57,7 @@
     <!--                            <li class="nav-link text-sm"
                                     v-can="'link_create'">
                                     <a class="link-muted"
-                                    data-toggle="tab"
+                                    data-bs-toggle="tab"
                                     @click="setTab('link')">
                                         {{ trans('global.medium.link') }}
                                     </a>
@@ -69,7 +69,7 @@
                                     <a
                                         href="#external"
                                         class="link-muted active show"
-                                        data-toggle="tab"
+                                        data-bs-toggle="tab"
                                         @click="setTab('external')"
                                     >
                                         {{ trans('global.externalRepositorySubscription.title_singular') }}
@@ -78,7 +78,7 @@
                             </ul>
                         </div>
 
-                        <div class="p-1 flex-fill border-left">
+                        <div class="p-1 flex-fill">
                             <div class="tab-content">
                                 <div
                                     v-permission="'is_admin'"
@@ -186,7 +186,7 @@
                 </div>
 
                 <div v-if="tab !== 'external'"
-                    class="card-footer"
+                    class="modal-footer"
                 >
                     <span class="pull-right">
                         <button

@@ -1,13 +1,27 @@
 <template>
     <Modal
+        ref="modal"
         model="kanban"
         modalName="kanban-modal"
         :method="method"
-        :require-title="true"
         :processing="processing"
+        :require-title="true"
+        :show-owner-field="form.id && checkPermission('is_teacher')"
         :show-medium-field="true"
         :show-permission-section="true"
+        @save="(form) => submit(form)"
     >
+        <template #general-extended>
+            <TagMultiselect
+                class="mt-3"
+                type="App\Kanban"
+                :model-id="form.id"
+                :selectedTags="selectedTags"
+                @selectedValue="(data) => form.tags = data"
+                @cleared="() => form.tags = []"
+                @tag-attached="(tag) => updateSelectedTags(tag.id)"
+            />
+        </template>
         <template #permissions>
             <div class="form-check form-switch">
                 <input
@@ -95,234 +109,6 @@
             </div>
         </template>
     </Modal>
-    <!-- <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ method === 'post' ? trans('global.kanban.create') : trans('global.kanban.edit') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="modal-body accordion">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    class="form-control"
-                                    maxlength="191"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
-                                    required
-                                />
-                                <p v-if="form.errors.title"
-                                    class="help-block"
-                                    v-text="form.errors.title[0]"
-                                ></p>
-                            </div>
-
-                            <div class="form-group">
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    :placeholder="trans('global.kanbanItem.fields.description')"
-                                    class="form-control description "
-                                    style="max-height: 35svh;"
-                                    v-model.trim="form.description"
-                                ></textarea>
-                                <p v-if="form.errors.description"
-                                    class="help-block"
-                                    v-text="form.errors.description[0]"
-                                ></p>
-                            </div>
-
-                            <div class="form-group">
-                                <Select2 v-if="form.id && checkPermission('is_teacher')"
-                                    id="user_id"
-                                    css="mb-0 mt-3"
-                                    :label="trans('global.change_owner')"
-                                    model="User"
-                                    url="/users"
-                                    :selected="form.owner_id"
-                                    @selectedValue="(id) => this.form.owner_id = id[0]"
-                                />
-                            </div>
-                            <tag-multiselect
-                                type="App\Kanban"
-                                :model-id="this.form.id"
-                                :selectedTags="this.selectedTags"
-                                @selectedValue="(data) => {
-                                    this.form.tags = data;
-                                }"
-                                @cleared="() => {
-                                    this.form.tags = [];
-                                }"
-                                @tag-attached="(tag) => {
-                                    this.updateSelectedTags(tag.id);
-                                }"
-                            ></tag-multiselect>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <div class="accordion-header border-bottom">
-                            <span
-                                class="accordion-button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#kanban-display"
-                                aria-expanded="true"
-                                aria-controls="kanban-display"
-                            >
-                                {{ trans('global.display') }}
-                            </span>
-                        </div>
-                        <div
-                            id="kanban-display"
-                            class="accordion-collapse collapse show"
-                        >
-                            <div class="d-flex justify-content-between align-items-center">
-                                <v-swatches
-                                    style="height: 42px;"
-                                    :swatches="$swatches"
-                                    row-length="5"
-                                    popover-y="top"
-                                    v-model="form.color"
-                                    show-fallback
-                                    fallback-input-type="color"
-                                />
-
-                                <NewMediumForm
-                                    :subscribable_id="form.id"
-                                    :subscribable_type="'App\\Kanban'"
-                                    :allow_fallback_on_create="true"
-                                    :medium_id="form.medium_id"
-                                    @add="(medium) => form.medium_id = medium.id ?? null"
-                                    @delete="() => form.medium_id = null"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.permissions') }}</span>
-                        </div>
-
-                        <div class="card-body">
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'commentable_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.commentable"
-                                />
-                                <label
-                                    class="custom-control-label text-muted"
-                                    :for="'commentable_' + form.id"
-                                >
-                                    {{ trans('global.commentable') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'auto_refresh_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.auto_refresh"
-                                />
-                                <label
-                                    class="custom-control-label text-muted"
-                                    :for="'auto_refresh_' + form.id"
-                                >
-                                    {{ trans('global.auto_refresh') }}
-                                </label>
-                            </span>
-                            <span class=" custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'only_edit_owned_items_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.only_edit_owned_items"
-                                />
-                                <label
-                                    class="custom-control-label text-muted"
-                                    :for="'only_edit_owned_items_' + form.id"
-                                >
-                                    {{ trans('global.kanban.only_edit_owned_items') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'collapse_items_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.collapse_items"
-                                />
-                                <label
-                                    class="custom-control-label text-muted"
-                                    :for="'collapse_items_' + form.id"
-                                >
-                                    {{ trans('global.kanban.collapse_items') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'allow_copy_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.allow_copy"
-                                />
-                                <label
-                                    class="custom-control-label text-muted"
-                                    :for="'allow_copy_' + form.id"
-                                >
-                                    {{ trans('global.kanban.allow_copy') }}
-                                </label>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <span class="pull-right">
-                        <button
-                            id="kanban-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="kanban-save"
-                            class="btn btn-primary ml-3"
-                            :disabled="!form.title || processing"
-                            @click="submit()"
-                        >
-                            <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
-                            <span v-else>{{ trans('global.save') }}</span>
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition> -->
 </template>
 <script>
 import Modal from '../uiElements/Modal.vue';
@@ -335,7 +121,7 @@ import {useToast} from "vue-toastification";
 import TagMultiselect from "../tag/TagMultiselect.vue";
 
 export default {
-    name: 'KanbanModal',
+    name: 'kanban-modal',
     components: {
         Modal,
         TagMultiselect,
@@ -384,7 +170,8 @@ export default {
         }
     },
     methods: {
-        submit() {
+        submit(formData) {
+            this.form.populate(formData);
             this.processing = true;
 
             if (this.method == 'patch') {
@@ -447,6 +234,8 @@ export default {
                     this.method = this.form.id ? 'patch' : 'post';
                     this.updateSelectedTags();
                 }
+
+                this.$refs.modal.resetForm(this.form);
             }
         });
     },

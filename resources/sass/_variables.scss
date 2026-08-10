@@ -1,3 +1,6 @@
 :root {
-    --shadow-default: 5px 5px 5px rgba(0, 0, 0, 0.1);
+    --shadow-default: 0px 0px 0.5rem rgba(0, 0, 0, 0.2);
+    --shadow-strong: 0px 0px 0.5rem rgba(0, 0, 0, 0.5);
+    --shadow-subtle: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    --shadow-layout: 5px 5px 5px rgba(0, 0, 0, 0.1);
 }

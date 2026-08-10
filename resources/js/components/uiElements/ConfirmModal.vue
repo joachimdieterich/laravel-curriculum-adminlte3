@@ -5,28 +5,28 @@
             @click.self="$emit('close')"
         >
             <div
-                class="modal-container"
-                style="border-top-left-radius: 5px; border-top-right-radius: 5px; max-width: 75vh;"
+                class="modal-container bg-transparent"
+                style="max-width: min(95vw, 750px);"
             >
                 <div
                     class="modal-header"
                     :class="'bg-' + css"
+                    style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;"
                 >
-                    <span class="card-title">{{ title }}</span>
+                    <span class="modal-title">{{ title }}</span>
                     <button
                         type="button"
                         class="btn btn-icon-alt"
+                        :title="trans('global.close')"
                         @click="$emit('close')"
                     >
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body" v-html="description"></div>
-                    </div>
+                <div class="modal-body bg-white">
+                    <div class="p-3" v-html="description"></div>
                 </div>
-                <div class="card-footer">
+                <div class="modal-footer">
                     <span class="pull-right">
                         <button
                             id="confirm-cancel"

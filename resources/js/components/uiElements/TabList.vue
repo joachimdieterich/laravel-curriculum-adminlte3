@@ -227,4 +227,8 @@ export default {
     background-color: #007bff;
     transition: width 0.3s ease, left 0.3s ease;
 }
+.btn {
+    border-radius: 10rem;
+    border-color: transparent;
+}
 </style>

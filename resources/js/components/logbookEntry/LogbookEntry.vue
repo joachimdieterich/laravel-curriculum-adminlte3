@@ -11,9 +11,9 @@
             :data-target="'#logbook_body_'+entry.id"
             aria-expanded="true"
         >
-            <span class="username ml-0">
+            <span class="username ms-0">
                 <avatar
-                    class="pull-right ml-2 contacts-list-img"
+                    class="pull-right ms-2 contacts-list-img"
                     data-toggle="tooltip"
                     :title="entry.owner.firstname + ' ' + entry.owner.lastname"
                     :firstname="entry.owner.firstname"
@@ -48,7 +48,7 @@
                     </button>
                 </span>
                 <span >{{ entry.title }}</span>
-                <span class="description ml-0">
+                <span class="description ms-0">
                     {{ timePeriod }}
                     <small
                         style="vertical-align: middle;"
@@ -77,7 +77,7 @@
                         class="nav-link show active"
                         data-toggle="tab"
                     >
-                        <i class="fa fa-info pr-1"></i>
+                        <i class="fa fa-info pe-1"></i>
                         <span v-if="help">{{ trans('global.logbook.fields.description') }}</span>
                     </a>
                 </li>
@@ -91,7 +91,7 @@
                         data-toggle="tab"
                         @click="loaderEvent()"
                     >
-                        <i class="fa fa-align-justify pr-1"></i>
+                        <i class="fa fa-align-justify pe-1"></i>
                         <span v-if="help">{{ trans('global.content.title') }}</span>
                     </a>
                 </li>
@@ -104,7 +104,7 @@
                         class="nav-link"
                         data-toggle="tab"
                     >
-                        <i class="fa fa-tasks pr-1"></i>
+                        <i class="fa fa-tasks pe-1"></i>
                         <span v-if="help">{{ trans('global.task.title') }}</span>
                     </a>
                 </li>
@@ -117,7 +117,7 @@
                         class="nav-link"
                         data-toggle="tab"
                     >
-                        <i class="fa fa-photo-video pr-1"></i>
+                        <i class="fa fa-photo-video pe-1"></i>
                         <span v-if="help">{{ trans('global.medium.title') }}</span>
                     </a>
                 </li>
@@ -130,7 +130,7 @@
                         class="nav-link"
                         data-toggle="tab"
                     >
-                        <i class="fa fa-sitemap pr-1"></i>
+                        <i class="fa fa-sitemap pe-1"></i>
                         <span v-if="help">
                             {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
                         </span>
@@ -147,7 +147,7 @@
                         data-toggle="tab"
                         @click="loaderAbsences()"
                     >
-                        <i class="fa fa-users-slash pr-1"></i>
+                        <i class="fa fa-users-slash pe-1"></i>
                         <span v-if="help">{{ trans('global.absences.title') }}</span>
                     </a>
                 </li>
@@ -162,17 +162,17 @@
                         data-toggle="tab"
                         @click="loadLmsPlugin()"
                     >
-                        <i class="fa fa-graduation-cap pr-1"></i>
+                        <i class="fa fa-graduation-cap pe-1"></i>
                         <span v-if="help">{{ trans('global.lms.title_singular') }}</span>
                     </a>
                 </li>
 
-                <li class="nav-item ml-auto pull-right">
+                <li class="nav-item ms-auto pull-right">
                     <a
                         class="nav-link small link-muted pointer"
                         @click="help = !help"
                     >
-                        <i class="fa fa-question pr-1"></i>
+                        <i class="fa fa-question pe-1"></i>
                     </a>
                 </li>
             </ul>

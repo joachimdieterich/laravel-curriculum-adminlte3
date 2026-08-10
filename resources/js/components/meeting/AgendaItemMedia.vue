@@ -5,17 +5,17 @@
         >
             <div
                 :id="'medium_'+medium.id"
-                class="pull-left ml-2 border pointer p-0"
+                class="pull-left ms-2 border pointer p-0"
                 style="width: 100px !important; min-height: 60px !important; background-size: cover;"
                 :style="{'background-image': 'url(/media/' + medium.id + ')'}"
                 @click="show('medium', medium)"
             >
                 <i v-if="medium.mime_type === 'application/pdf'"
-                    class="far fa-file-pdf text-primary text-center  ml-2 px-4 py-2"
+                    class="far fa-file-pdf text-primary text-center  ms-2 px-4 py-2"
                     style="font-size: 250%;"
                 ></i>
                 <i v-if="medium.mime_type === 'url'"
-                    class="fa fa-link text-primary text-center ml-2 px-4 py-2"
+                    class="fa fa-link text-primary text-center ms-2 px-4 py-2"
                     style="font-size: 250%;"
                 ></i>
             </div>

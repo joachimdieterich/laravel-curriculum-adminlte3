@@ -30,7 +30,7 @@
                             style="background: transparent; width:30px; font-size: 1.1rem; font-weight: 400; border-bottom: 1px solid black !important;"
                             @keyup.enter="submit(done.id)"
                         />
-                        <div class="input-group-append ml-1">
+                        <div class="input-group-append ms-1">
                             <span
                                 class="input-group-text p-0 border-0 m-0"
                                 style="background: transparent !important;"

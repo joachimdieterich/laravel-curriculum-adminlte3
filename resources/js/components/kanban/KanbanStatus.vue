@@ -20,7 +20,7 @@
         >
             <div v-if="edit_rights || copy_rights || delete_rights"
                 :id="'kanbanStatusDropdown_' + status.id"
-                class="d-print-none btn btn-flat py-0 pl-0 pull-left"
+                class="d-print-none btn btn-flat py-0 ps-0 pull-left"
                 data-toggle="dropdown"
                 aria-expanded="false"
             >
@@ -39,7 +39,7 @@
                                 class="dropdown-item text-secondary py-1"
                                 @click="edit()"
                             >
-                                <i class="fa fa-pencil-alt mr-2"></i>
+                                <i class="fa fa-pencil-alt me-2"></i>
                                 {{ trans('global.kanbanStatus.edit') }}
                             </button>
                         </div>
@@ -50,7 +50,7 @@
                                 class="dropdown-item text-secondary py-1"
                                 @click="confirmCopy()"
                             >
-                                <i class="fa fa-copy mr-2"></i>
+                                <i class="fa fa-copy me-2"></i>
                                 {{ trans('global.kanbanStatus.copy') }}
                             </button>
                         </div>
@@ -63,7 +63,7 @@
                                 class="dropdown-item py-1 text-red"
                                 @click="confirmDeletion()"
                             >
-                                <i class="fa fa-trash mr-2"></i>
+                                <i class="fa fa-trash me-2"></i>
                                 {{ trans('global.kanbanStatus.delete') }}
                             </button>
                         </div>
@@ -73,7 +73,7 @@
             <strong>{{ status.title }}</strong>
             <div v-if="$userId == kanban_owner_id
                     || (!status.locked || $userId == status.owner_id)"
-                class="handle d-print-none ml-auto pointer"
+                class="handle d-print-none ms-auto pointer"
             >
                 <span class="position-relative">
                     <i v-if="editable"

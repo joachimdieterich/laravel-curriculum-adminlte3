@@ -74,7 +74,7 @@
                         </button>
                         <button v-if="!download_url"
                             id="btn_generate"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="form.certificate_id === null"
                             @click="submit()"
                         >
@@ -89,7 +89,7 @@
 
                         <a v-if="download_url"
                             id="btn_download"
-                            class="btn btn-primary hidden ml-3"
+                            class="btn btn-primary hidden ms-3"
                             :href="download_url"
                             target="_blank"
                             @click="download_url = null; globalStore.closeModal($options.name)"

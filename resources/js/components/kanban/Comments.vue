@@ -54,7 +54,7 @@
                                     || checkPermission('is_admin')
                                 "
                                 type="button"
-                                class="d-print-none btn btn-icon text-danger px-2 py-1 mr-1 invisible"
+                                class="d-print-none btn btn-icon text-danger px-2 py-1 me-1 invisible"
                                 @click="deleteComment(comment)"
                             >
                                 <i class="fa fa-trash"></i>

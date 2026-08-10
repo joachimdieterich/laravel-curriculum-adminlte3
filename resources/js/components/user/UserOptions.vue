@@ -73,7 +73,7 @@
                                     v-model="form.checked"
                                 />
                                 <label for="input-password_show"
-                                       class="form-check-label pl-2">
+                                       class="form-check-label ps-2">
                                     Passwort anzeigen
                                 </label>
                             </div>
@@ -84,7 +84,7 @@
                                 class="btn btn-default pull-right mt-3"
                                 @click="resetPassword()"
                             >
-                                <i class="fa fa-lock mr-2"></i>
+                                <i class="fa fa-lock me-2"></i>
                                 {{ trans('global.reset_password') }}
                             </button>
                         </div>
@@ -121,7 +121,7 @@
                                 class="btn btn-default pull-right mt-3"
                                 @click="enroleToGroup()"
                             >
-                                <i class="fa fa-plus mr-2"></i>
+                                <i class="fa fa-plus me-2"></i>
                                 {{ trans('global.user.enrol') }}
                             </button>
                             <button
@@ -131,7 +131,7 @@
                                 class="btn btn-default pull-right mt-3"
                                 @click="expelFromGroup()"
                             >
-                                <i class="fa fa-minus mr-2"></i>
+                                <i class="fa fa-minus me-2"></i>
                                 {{ trans('global.user.expel') }}
                             </button>
                         </div>
@@ -181,7 +181,7 @@
                                 class="btn btn-default pull-right mt-3"
                                 @click="enroleToOrganization()"
                             >
-                                <i class="fa fa-plus mr-2"></i>
+                                <i class="fa fa-plus me-2"></i>
                                 {{ trans('global.role.enrol') }}
                             </button>
                             <button
@@ -191,7 +191,7 @@
                                 class="btn btn-default pull-right mt-3"
                                 @click="expelFromOrganization()"
                             >
-                                <i class="fa fa-minus mr-2"></i>
+                                <i class="fa fa-minus me-2"></i>
                                 {{ trans('global.role.expel') }}
                             </button>
                         </div>
@@ -227,7 +227,7 @@
                                 class="btn btn-default pull-right mt-3"
                                 @click="setUserStatus()"
                             >
-                                <i class="fa fa-lock mr-2"></i>
+                                <i class="fa fa-lock me-2"></i>
                                 {{ trans('global.user.set_status') }}
                             </button>
                         </div>
@@ -244,7 +244,7 @@
                                 class="btn btn-danger pull-right mt-3"
                                 @click="deleteUser()"
                             >
-                                <i class="fa fa-trash mr-2"></i>
+                                <i class="fa fa-trash me-2"></i>
                                 {{ trans('global.user.delete') }}
                             </button>
                         </div>

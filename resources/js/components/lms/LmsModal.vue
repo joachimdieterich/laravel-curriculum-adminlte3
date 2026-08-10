@@ -11,7 +11,7 @@
                     </span>
                     <button
                         type="button"
-                        class="btn btn-icon text-secondary ml-auto mr-2"
+                        class="btn btn-icon text-secondary ms-auto me-2"
                         @click="token = false"
                     >
                         <i class="fa fa-user-lock"></i>
@@ -112,7 +112,7 @@
                         </button>
                         <button
                             id="grade-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="!form.course_id"
                             @click="submit()"
                         >

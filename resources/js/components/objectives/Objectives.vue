@@ -60,7 +60,7 @@
                 class="btn btn-default btn-flat text-left border-0 rounded-pill"
                 style="padding: 0.75rem 1.25rem;"
             >
-                <i class="fas fa-add pr-1"></i>
+                <i class="fas fa-add pe-1"></i>
                 {{ trans('global.referenceable_types.link') }}
             </button>
         </div>

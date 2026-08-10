@@ -69,11 +69,11 @@
                     role="tabpanel"
                     aria-labelledby="home-nav-tab"
                 >
-                    <div class="sidebar-header d-flex align-items-center pr-0">
+                    <div class="sidebar-header d-flex align-items-center pe-0">
                         <span class="line-clamp">{{ map.title }}</span>
                         <span v-if="map.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'map_edit'"
-                            class="d-flex pull-right ml-auto mr-1"
+                            class="d-flex pull-right ms-auto me-1"
                         >
                             <button
                                 type="button"
@@ -111,7 +111,7 @@
                             @mouseover="showMarkerPopup(marker)"
                             @mouseleave="hideMarkerPopup(marker)"
                         >
-                            <i class="fa fa-location-dot pr-2"></i>
+                            <i class="fa fa-location-dot pe-2"></i>
                             <button
                                 class="btn btn-link p-0 text-decoration-none"
                                 type="button"
@@ -121,7 +121,7 @@
                                 {{ marker.title }}
                             </button>
                             <span v-if="editable"
-                                class="d-flex align-items-center ml-auto"
+                                class="d-flex align-items-center ms-auto"
                                 style="height: 0px;"
                             >
                                 <button
@@ -132,7 +132,7 @@
                                     <i class="fa fa-pencil-alt"></i>
                                 </button>
                                 <button
-                                    class="btn btn-icon d-print-none text-danger ml-2 px-1 hide-lg"
+                                    class="btn btn-icon d-print-none text-danger ms-2 px-1 hide-lg"
                                     type="button"
                                     @click="confirmItemDelete(marker)"
                                 >

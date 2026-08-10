@@ -7,7 +7,7 @@
                     @click="openModal()"
                 >
                     <div class="plan-entry card-header border-0">
-                        <i class="fas fa-add pr-1"></i>
+                        <i class="fas fa-add pe-1"></i>
                         {{ trans('global.planEntry.create') }}
                     </div>
                 </button>
@@ -24,13 +24,13 @@
                             aria-expanded="false"
                         >
                             <i
-                                class="mr-1"
+                                class="me-1"
                                 :class="entry.css_icon"
                             ></i>
                             {{ entry.title }}
                             <i class="fa fa-angle-up"></i>
                             <div
-                                class="card-tools d-flex align-items-center mr-0"
+                                class="card-tools d-flex align-items-center me-0"
                                 style="height: 24px;"
                             >
                                 <button v-if="entry.certificates"
@@ -42,7 +42,7 @@
                                 </button>
                                 <span v-if="editable && showTools" class="d-flex">
                                     <button
-                                        class="btn btn-icon ml-2"
+                                        class="btn btn-icon ms-2"
                                         :title="trans('global.planEntry.edit')"
                                         @click.stop="openModal(entry)"
                                     >
@@ -52,7 +52,7 @@
                                             || plan.owner_id == $userId
                                             || checkPermission('is_admin')
                                         "
-                                        class="btn btn-icon text-danger ml-2"
+                                        class="btn btn-icon text-danger ms-2"
                                         :title="trans('global.planEntry.delete')"
                                         @click.stop="openConfirm()"
                                     >

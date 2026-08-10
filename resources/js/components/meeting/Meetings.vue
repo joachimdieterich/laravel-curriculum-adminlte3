@@ -11,7 +11,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fas fa-th pr-2"></i>
+                        <i class="fas fa-th pe-2"></i>
                         {{ trans('global.all') }} {{ trans('global.meeting.title') }}
                     </a>
                 </li>
@@ -23,7 +23,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fas fa-university pr-2"></i>
+                        <i class="fas fa-university pe-2"></i>
                         {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                     </a>
                 </li>
@@ -36,7 +36,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-user pr-2"></i>
+                        <i class="fa fa-user pe-2"></i>
                         {{ trans('global.my') }} {{ trans('global.meeting.title') }}
                     </a>
                 </li>
@@ -48,7 +48,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-paper-plane pr-2"></i>
+                        <i class="fa fa-paper-plane pe-2"></i>
                         {{ trans('global.shared_with_me') }}
                     </a>
                 </li>
@@ -61,7 +61,7 @@
                        data-toggle="pill"
                        role="tab"
                     >
-                        <i class="fa fa-share-nodes  pr-2"></i>
+                        <i class="fa fa-share-nodes  pe-2"></i>
                         {{ trans('global.shared_by_me') }}
                     </a>
                 </li>
@@ -96,7 +96,7 @@
                 <template
                     v-permission="'meeting_edit, meeting_delete'"
                     v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
+                    <div class="dropdown-menu dropdown-menu-end"
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
@@ -104,7 +104,7 @@
                             :name="'edit-meeting-' + meeting.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="editMeeting(meeting)">
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.meeting.edit') }}
                         </button>
                         <button
@@ -112,7 +112,7 @@
                             :name="'copy-meeting-'+meeting.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmMeetingCopy(meeting)">
-                            <i class="fa fa-copy mr-2"></i>
+                            <i class="fa fa-copy me-2"></i>
                             {{ trans('global.meeting.copy') }}
                         </button>
                         <hr class="my-1">
@@ -123,11 +123,11 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(meeting)">
                              <span v-if="create_label_field == 'enrol'">
-                                 <i class="fa fa-unlink mr-2"></i>
+                                 <i class="fa fa-unlink me-2"></i>
                                 {{ trans('global.meeting.expel') }}
                             </span>
                             <span v-else>
-                                 <i class="fa fa-trash mr-2"></i>
+                                 <i class="fa fa-trash me-2"></i>
                                 {{ trans('global.meeting.delete') }}
                             </span>
                         </button>

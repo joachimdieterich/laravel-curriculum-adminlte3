@@ -2,7 +2,7 @@
     <div :id="component_id">
         <button v-if="showBackButton"
             type="button"
-            class="d-inline btn btn-icon btn-icon-big mr-1"
+            class="d-inline btn btn-icon btn-icon-big me-1"
             :title="trans(backButtonTitle)"
             @click="goBackTo()"
         >

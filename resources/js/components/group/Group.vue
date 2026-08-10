@@ -187,7 +187,7 @@
                         aria-controls="glossar"
                         aria-selected="false"
                     >
-                        <i class="fa fa-book-open pr-2"></i>
+                        <i class="fa fa-book-open pe-2"></i>
                         <span v-if="help">{{ trans('global.glossar.title_singular') }}</span>
                     </button>
                     <button v-else
@@ -196,7 +196,7 @@
                         id="create-glossar"
                         :href="'/glossar/create?subscribable_type=App\\Group&subscribable_id=' + group.id"
                     >
-                        <i class="fa fa-book-open pr-2"></i>
+                        <i class="fa fa-book-open pe-2"></i>
                         {{ trans('global.glossar.create') }}
                     </button>
                 </li> -->
@@ -215,18 +215,18 @@
                         aria-controls="media"
                         aria-selected="false"
                     >
-                        <i class="fa fa-folder-open pr-2"></i>
+                        <i class="fa fa-folder-open pe-2"></i>
                         {{ trans('global.medium.title') }}
                     </button>
                 </li> -->
                 <!-- Help -->
-                <li class="nav-item ml-auto pull-right">
+                <li class="nav-item ms-auto pull-right">
                     <button
                         class="nav-link small link-muted pointer"
                         style="line-height: 24px;"
                         @click="help = !help"
                     >
-                        <i class="fa fa-question pr-1" style="font-size: 16px;"></i>
+                        <i class="fa fa-question pe-1" style="font-size: 16px;"></i>
                     </button>
                 </li>
                 <!-- Edit -->

@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-university mr-1"></i>
+                            <i class="fa fa-university me-1"></i>
                             {{ currentOrganization.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'organization_edit'"
-                        class="card-tools pr-2 pointer"
+                        class="card-tools pe-2 pointer"
                     >
                         <a  @click="editOrganization()">
                             <i class="fas fa-pencil-alt"></i>
@@ -21,7 +21,7 @@
 
                 <div class="card-body">
                     <strong>
-                        <i class="fas fa-city mr-1"></i>
+                        <i class="fas fa-city me-1"></i>
                         {{ trans('global.organizationType.title_singular') }}
                     </strong>
                     <p class="text-muted">
@@ -30,7 +30,7 @@
                     <hr>
 
                     <strong>
-                        <i class="fa fa-map-marker mr-1"></i>
+                        <i class="fa fa-map-marker me-1"></i>
                         {{ trans('global.place') }}
                     </strong>
                     <p class="text-muted">
@@ -40,7 +40,7 @@
                     </p>
                     <hr>
 
-                    <strong><i class="fa fa-phone mr-1"></i>
+                    <strong><i class="fa fa-phone me-1"></i>
                         {{ trans('global.contactDetail.title_singular') }}
                     </strong>
                     <p class="text-muted">
@@ -49,7 +49,7 @@
                     </p>
                     <hr>
 
-                    <strong><i class="fa fa-graduation-cap mr-1"></i>
+                    <strong><i class="fa fa-graduation-cap me-1"></i>
                         {{ trans('global.lms.title_singular') }}-URL
                     </strong>
                     <p class="text-muted">
@@ -58,7 +58,7 @@
                     <hr>
 
                     <strong>
-                        <i class="fa fa-file-alt mr-1"></i>
+                        <i class="fa fa-file-alt me-1"></i>
                         {{ trans('global.organization.fields.description') }}
                     </strong>
                     <p

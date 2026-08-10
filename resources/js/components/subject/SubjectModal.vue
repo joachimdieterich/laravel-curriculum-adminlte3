@@ -96,7 +96,7 @@
                         </button>
                         <button
                             id="subject-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

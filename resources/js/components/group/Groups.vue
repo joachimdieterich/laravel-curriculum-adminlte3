@@ -39,7 +39,7 @@
                         v-permission="'group_edit, group_delete'"
                     >
                         <div
-                            class="dropdown-menu dropdown-menu-right"
+                            class="dropdown-menu dropdown-menu-end"
                             style="z-index: 1050;"
                             x-placement="left-start"
                         >
@@ -49,7 +49,7 @@
                                 class="dropdown-item text-secondary"
                                 @click.prevent="editGroup(group)"
                             >
-                                <i class="fa fa-pencil-alt mr-2"></i>
+                                <i class="fa fa-pencil-alt me-2"></i>
                                 {{ trans('global.group.edit') }}
                             </button>
                             <hr class="my-1">
@@ -60,7 +60,7 @@
                                 class="dropdown-item py-1 text-red"
                                 @click.prevent="confirmItemDelete(group)"
                             >
-                                <i class="fa fa-trash mr-2"></i>
+                                <i class="fa fa-trash me-2"></i>
                                 {{ trans('global.group.delete') }}
                             </button>
                         </div>
@@ -69,7 +69,7 @@
                     <template v-slot:badges>
                         <p>
                             <span
-                                class="btn btn-info btn-xs position-absolute mr-1"
+                                class="btn btn-info btn-xs position-absolute me-1"
                                 style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
                             >
                                 <i class="fa fa-university"></i>

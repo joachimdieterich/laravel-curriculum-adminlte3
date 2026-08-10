@@ -13,16 +13,16 @@
                     <i class="fa fa-list"></i>
                 </a>
                 <span v-if="currentSlide === 0"
-                    class="pl-2"
+                    class="ps-2"
                 >
                     Index
                 </span>
                 <span v-else
-                    class="d-flex align-items-center pl-2"
+                    class="d-flex align-items-center ps-2"
                 >
                     {{ subscriptions[currentSlide-1].content.title }}
                     <a
-                        class="btn btn-flat text-secondary link-muted py-0 ml-1"
+                        class="btn btn-flat text-secondary link-muted py-0 ms-1"
                         @click="edit(subscriptions[currentSlide - 1])"
                     >
                         <i class="fa fa-pencil"></i>

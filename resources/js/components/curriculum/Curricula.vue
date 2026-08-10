@@ -74,7 +74,7 @@
                 >
                     <p class="text-muted small">
                         <span
-                            class="btn btn-info btn-xs position-absolute select-all pull-right mr-1"
+                            class="btn btn-info btn-xs position-absolute select-all pull-right me-1"
                             style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
                         >
                             <i class="fa fa-archive" aria-hidden="true"></i>
@@ -85,7 +85,7 @@
 
                 <template v-slot:dropdown>
                     <div
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -95,7 +95,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="editCurriculum(curriculum)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.curriculum.edit') }}
                         </button>
 
@@ -105,7 +105,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="manageTags(curriculum)"
                         >
-                            <i class="fa fa-tag mr-2"></i>
+                            <i class="fa fa-tag me-2"></i>
                             {{ trans('global.tag.title') }}
                         </button>
 
@@ -114,7 +114,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="setOwner(curriculum)"
                         >
-                            <i class="fa fa-user mr-2"></i>
+                            <i class="fa fa-user me-2"></i>
                             {{ trans('global.curriculum.edit_owner') }}
                         </button>
 
@@ -123,7 +123,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="shareCurriculum(curriculum)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt me-2"></i>
                             {{ trans('global.curriculum.share') }}
                         </button>
                         <hide
@@ -143,7 +143,7 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(curriculum)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.curriculum.delete') }}
                         </button>
                     </div>

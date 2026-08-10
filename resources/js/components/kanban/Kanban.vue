@@ -187,14 +187,14 @@
 
             <a
                 :href="'/export_csv/' + kanban.id"
-                class="btn text-secondary px-1 ml-2"
+                class="btn text-secondary px-1 ms-2"
             >
                 <i class="fa fa-file-csv"></i>
             </a>
 
             <a
                 :href="'/export_pdf/' + kanban.id"
-                class="btn text-secondary px-1 ml-1"
+                class="btn text-secondary px-1 ms-1"
             >
                 <i class="fa fa-file-pdf"></i>
             </a>

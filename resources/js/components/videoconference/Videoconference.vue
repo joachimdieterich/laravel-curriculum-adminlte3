@@ -78,7 +78,7 @@
                         class="d-flex pt-3"
                     >
                         <a
-                            class="btn btn-light pt-2 ml-auto mr-3"
+                            class="btn btn-light pt-2 ms-auto me-3"
                             @click="copyToClipboard('attendee')"
                         >
                             <i class="fa fa-copy"></i>

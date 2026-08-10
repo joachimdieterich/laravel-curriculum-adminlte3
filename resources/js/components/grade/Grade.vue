@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fas fa-layer-group mr-1"></i>
+                            <i class="fas fa-layer-group me-1"></i>
                             {{ this.currentGrade.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'organization_edit'"
-                        class="card-tools pr-2"
+                        class="card-tools pe-2"
                     >
                         <a @click="editGrade()">
                             <i class="fas fa-pencil-alt"></i>
@@ -27,7 +27,7 @@
                     <hr>
 
                     <strong>
-                        <i class="fas fa-city mr-1"></i>
+                        <i class="fas fa-city me-1"></i>
                         {{ trans('global.organizationType.title_singular') }}
                     </strong>
                     <p class="text-muted">

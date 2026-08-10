@@ -10,7 +10,7 @@
         :is-marked="isHidden"
         :model="model"
         :button-class="{'dropdown-item': true, 'text-secondary': true}"
-        :icon-class="{'mr-2': true}"
+        :icon-class="{'me-2': true}"
         @mark-status-changed="(newModel) => {
             this.$emit('hide-status-changed', newModel)
         }"

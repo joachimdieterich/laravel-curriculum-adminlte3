@@ -10,7 +10,7 @@
             @endif
             @if(isset($multiple))
                 <span class="btn btn-info btn-xs deselect-all pull-right">{{trans("global.deselect_all")}}</span>
-                <span class="btn btn-info btn-xs select-all pull-right mr-1">{{trans("global.select_all")}}</span>
+                <span class="btn btn-info btn-xs select-all pull-right me-1">{{trans("global.select_all")}}</span>
 
             @endif
         </label>

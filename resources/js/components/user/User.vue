@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-user mr-1"></i>
+                            <i class="fa fa-user me-1"></i>
                             {{ user.firstname }} {{ user.lastname }}
                         </h5>
                     </div>
                     <div
                         v-permission="'user_edit'"
-                        class="card-tools pr-2"
+                        class="card-tools pe-2"
                     >
                         <a @click="editUser(user)">
                             <i class="fas fa-pencil-alt"></i>
@@ -52,10 +52,10 @@
                         <hr>
                     </div>
                     <strong>
-                        <i class="fa fa-university mr-1"></i>
+                        <i class="fa fa-university me-1"></i>
                         {{ trans('global.organization.title_singular') }}
                     </strong>
-                    <ul class="pl-4">
+                    <ul class="ps-4">
                         <li v-for="organization in user.organizations"
                            class="small"
                         >
@@ -65,10 +65,10 @@
                     <hr>
 
                     <strong>
-                        <i class="fa fa-users mr-1"></i>
+                        <i class="fa fa-users me-1"></i>
                         {{ trans('global.group.title_singular') }}
                     </strong>
-                    <ul class="pl-4">
+                    <ul class="ps-4">
                         <li v-for="group in user.groups"
                             class="small"
                         >
@@ -78,10 +78,10 @@
                     <hr>
 
                     <strong>
-                        <i class="fas fa-user-tag mr-1"></i>
+                        <i class="fas fa-user-tag me-1"></i>
                         {{ trans('global.role.title') }}
                     </strong>
-                    <ul class="pl-4">
+                    <ul class="ps-4">
                         <li v-for="role in user.roles"
                             class="small"
                         >

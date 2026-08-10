@@ -118,7 +118,7 @@
                                         <i :class="form.css_icon + ' pt-2'"></i>
                                     </button>
                                     <font-awesome-picker
-                                        class="dropdown-menu dropdown-menu-right"
+                                        class="dropdown-menu dropdown-menu-end"
                                         style="min-width: min(385px,90vw);"
                                         :searchbox="trans('global.select_icon')"
                                         v-on:selectIcon="setIcon"
@@ -141,7 +141,7 @@
                         </button>
                         <button
                             id="logbook-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="!form.title"
                             @click="submit()"
                         >

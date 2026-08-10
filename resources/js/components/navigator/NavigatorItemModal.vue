@@ -41,7 +41,7 @@
                                         }"
                                         @click="setCurrentTab('NavigatorView')"
                                     >
-                                        <i class="fa fa-map-signs mr-2"></i>{{ trans('global.navigator_view.title_singular') }}
+                                        <i class="fa fa-map-signs me-2"></i>{{ trans('global.navigator_view.title_singular') }}
                                     </a>
                                 </li>
                                 <!-- Curriculum -->
@@ -55,7 +55,7 @@
                                         }"
                                         @click="setCurrentTab('Curriculum')"
                                     >
-                                        <i class="fas fa-th mr-2"></i>{{ trans('global.curriculum.title') }}
+                                        <i class="fas fa-th me-2"></i>{{ trans('global.curriculum.title') }}
                                     </a>
                                 </li>
                                 <!-- Content -->
@@ -68,7 +68,7 @@
                                     }"
                                     @click="setCurrentTab('Content')"
                                     >
-                                        <i class="fa fa-align-justify mr-2"></i>{{ trans('global.content.title_singular') }}
+                                        <i class="fa fa-align-justify me-2"></i>{{ trans('global.content.title_singular') }}
                                     </a>
                                 </li> -->
                             </ul>
@@ -216,7 +216,7 @@
                         </button>
                         <button
                             id="navigator-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             @click="submit(method)"
                         >
                             {{ trans('global.save') }}

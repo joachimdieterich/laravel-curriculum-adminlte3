@@ -19,10 +19,10 @@
                                 @click="toggle(exercise.id)"
                             >
                                 <i v-if="toggle_id != exercise.id"
-                                    class="fa fa-caret-right pr-2"
+                                    class="fa fa-caret-right pe-2"
                                 ></i>
                                 <i v-else
-                                    class="fa fa-caret-down pr-2"
+                                    class="fa fa-caret-down pe-2"
                                 ></i>
                             </span>
                             {{ exercise.title }}

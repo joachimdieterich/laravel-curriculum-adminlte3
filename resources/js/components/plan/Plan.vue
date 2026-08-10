@@ -8,11 +8,11 @@
                 <div class="card-title">{{ currentPlan.title }}</div>
                 <div v-if="editable || checkPermission('is_admin')"
                     v-permission="'plan_edit'"
-                    class="card-tools d-flex pr-2 ml-auto no-print"
+                    class="card-tools d-flex pe-2 ms-auto no-print"
                     style="gap: 5px;"
                 >
                     <button
-                        class="btn btn-icon link-muted mr-2 px-1 py-0"
+                        class="btn btn-icon link-muted me-2 px-1 py-0"
                         :title="trans('global.plan.evaluate_user')"
                         :disabled="users.length === 0"
                         @click="openUserModal()"
@@ -27,7 +27,7 @@
                         <i class="fa fa-print"></i>
                     </button>
 
-                    <span class="pr-2 mr-2" style="border-right: 1px solid black;"></span>
+                    <span class="pe-2 me-2" style="border-right: 1px solid black;"></span>
 
                     <span
                         class="custom-switch custom-switch-on-green d-flex align-items-center link-muted pointer"

@@ -72,7 +72,7 @@
                         </button>
                         <button
                             id="exercise-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="!form.title || !form.recommended_iterations"
                             @click="submit()"
                         >

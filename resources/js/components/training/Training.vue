@@ -3,9 +3,9 @@
         <div class="card">
             <div class="card-header">
                 <div class="user-block">
-                    <span class="username ml-0">
+                    <span class="username ms-0">
                         {{ currentTraining.title }}
-                        <span class="description ml-0">
+                        <span class="description ms-0">
                             {{ timePeriod }}
                         </span>
                     </span>

@@ -32,18 +32,18 @@
                                         <th class="border-0" style="width: 0px;"></th>
                                         <th
                                             id="firstname"
-                                            class="border-0 pointer pr-3"
+                                            class="border-0 pointer pe-3"
                                             @click="sortBy(1)"
                                         >
                                             {{ trans('global.firstname') }}
-                                            <i class="fa fa-sort-down ml-1"></i>
+                                            <i class="fa fa-sort-down ms-1"></i>
                                         </th>
                                         <th
-                                            class="border-0 pointer pr-3"
+                                            class="border-0 pointer pe-3"
                                             @click="sortBy(2)"
                                         >
                                             {{ trans('global.lastname') }}
-                                            <i class="fa fa-sort text-gray ml-1"></i>
+                                            <i class="fa fa-sort text-gray ms-1"></i>
                                         </th>
                                         <!-- <th class="border-top-0">{{trans('global.notes')}}</th> -->
                                         <th class="border-0">Status</th>
@@ -64,7 +64,7 @@
                                         <td>
                                             <AchievementIndicator
                                                 v-permission="'achievement_create'"
-                                                class="mr-3"
+                                                class="me-3"
                                                 :objective="objective.default"
                                                 :type="'enabling'"
                                                 :users="selectedUsers"
@@ -86,8 +86,8 @@
                                                 v-model="selectedUsers"
                                             />
                                         </td>
-                                        <td class="pr-3">{{ user.firstname }}</td>
-                                        <td class="pr-3">{{ user.lastname }}</td>
+                                        <td class="pe-3">{{ user.firstname }}</td>
+                                        <td class="pe-3">{{ user.lastname }}</td>
                                         <!-- <td v-if="currentUser(user.id).achievements[0]">
                                             <i style="font-size:18px;"
                                                 class="far fa-sticky-note text-muted pointer"
@@ -128,7 +128,7 @@
                         </button>
                         <button
                             id="certificate-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             @click="globalStore?.closeModal($options.name)"
                         >
                             {{ trans('global.save') }}

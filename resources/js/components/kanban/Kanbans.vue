@@ -56,7 +56,7 @@
 
                 <template v-slot:dropdown>
                     <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -68,13 +68,13 @@
                             @click.prevent="confirmItemDelete(kanban)"
                         >
                             <span>
-                                <i class="fa fa-unlink mr-2"></i>
+                                <i class="fa fa-unlink me-2"></i>
                                 {{ trans('global.kanban.expel') }}
                             </span>
                         </button>
                     </div>
                     <div v-else
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -84,7 +84,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="editKanban(kanban)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.kanban.edit') }}
                         </button>
 
@@ -94,7 +94,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="manageTags(kanban)"
                         >
-                            <i class="fa fa-tag mr-2"></i>
+                            <i class="fa fa-tag me-2"></i>
                             {{ trans('global.tag.title') }}
                         </button>
 
@@ -103,7 +103,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="shareKanban(kanban)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt me-2"></i>
                             {{ trans('global.kanban.share') }}
                         </button>
 
@@ -112,7 +112,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="confirmKanbanCopy(kanban)"
                         >
-                            <i class="fa fa-copy mr-2"></i>
+                            <i class="fa fa-copy me-2"></i>
                             {{ trans('global.kanban.copy') }}
                         </button>
 
@@ -136,7 +136,7 @@
                             @click.prevent="confirmItemDelete(kanban)"
                         >
                             <span>
-                                <i class="fa fa-trash mr-2"></i>
+                                <i class="fa fa-trash me-2"></i>
                                 {{ trans('global.kanban.delete') }}
                             </span>
                         </button>

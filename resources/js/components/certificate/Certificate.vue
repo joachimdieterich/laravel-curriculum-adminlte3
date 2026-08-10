@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-university mr-1"></i>
+                            <i class="fa fa-university me-1"></i>
                             {{ this.certificate.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'certificate_edit'"
-                        class="card-tools pr-2"
+                        class="card-tools pe-2"
                     >
                         <a  @click="editCertificate(certificate)">
                             <i class="fas fa-pencil-alt"></i>
@@ -21,7 +21,7 @@
 
                 <div class="card-body">
                     <strong>
-                        <i class="fa fa-file-alt mr-1"></i>
+                        <i class="fa fa-file-alt me-1"></i>
                         {{ trans('global.certificate.fields.description') }}
                     </strong>
                     <p
@@ -31,7 +31,7 @@
                     <hr>
 
                     <strong>
-                        <i class="fas fa-layer-group mr-1"></i>
+                        <i class="fas fa-layer-group me-1"></i>
                         {{ trans('global.certificate.type') }}
                     </strong>
                     <p class="text-muted">{{ certificate.type }}</p>

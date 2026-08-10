@@ -10,12 +10,12 @@
                     <i class="fa fa-list"></i>
                 </span>
                 <span v-if="currentSlide == 0"
-                    class="pl-2"
+                    class="ps-2"
                 >
                     Glossar-Index
                 </span>
                 <span v-else
-                    class="pl-2"
+                    class="ps-2"
                 >
                     {{ subscriptions[currentSlide-1].content.title }}
                 </span>

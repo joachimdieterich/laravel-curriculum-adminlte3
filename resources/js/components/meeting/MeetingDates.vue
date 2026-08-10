@@ -5,7 +5,7 @@
             class="nav nav-pills"
         >
             <li v-for="date in this.dates"
-                class="nav-item pl-0 pr-2 pb-2 pt-2"
+                class="nav-item ps-0 pe-2 pb-2 pt-2"
                 @click="setGlobalStorage('#meeting_' + meeting.id, '#meetingDates_' + date.id)"
             >
                 <a
@@ -20,7 +20,7 @@
             </li>
 
             <li
-                class="nav-item pl-0 pr-2 pb-2 pt-2"
+                class="nav-item ps-0 pe-2 pb-2 pt-2"
                 @click="setGlobalStorage('#meeting_' + meeting.id, 'new_meeting_date_tab')"
             >
                 <a
@@ -35,7 +35,7 @@
             </li>
 
             <li
-                class="nav-item ml-auto pull-right pl-0 pr-2 pb-2 pt-2"
+                class="nav-item ms-auto pull-right ps-0 pe-2 pb-2 pt-2"
                 @click="setGlobalStorage('#meeting_' + meeting.id, 'new_meeting_date_tab')"
             >
                 <a
@@ -60,7 +60,7 @@
                     class="nav nav-pills"
                 >
                     <li
-                        class="nav-item pl-0 pr-2 pb-2 pt-2"
+                        class="nav-item ps-0 pe-2 pb-2 pt-2"
                         @click="setGlobalStorage('#meeting_date_' + date.id, '#subscribed_agenda_' + date.id); $eventHub.emit('reload_subscribed_agenda', date);"
                     >
                         <a
@@ -73,7 +73,7 @@
                         </a>
                     </li>
                     <li v-for="agenda in date.agendas"
-                        class="nav-item pl-0 pr-2 pb-2 pt-2"
+                        class="nav-item ps-0 pe-2 pb-2 pt-2"
                         @click="setGlobalStorage('#meeting_date_' + date.id, '#agenda_' + agenda.id)"
                     >
                         <a
@@ -86,7 +86,7 @@
                         </a>
                     </li>
                     <li
-                        class="nav-item pl-0 pr-2 pb-2 pt-2"
+                        class="nav-item ps-0 pe-2 pb-2 pt-2"
                         @click="setGlobalStorage('#meeting_date_' + date.id, '#new_meeting_agenda_tab_' + date.id)"
                     >
                         <a

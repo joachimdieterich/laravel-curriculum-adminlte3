@@ -1,5 +1,5 @@
 <template>
-    <ul class="products-list product-list-in-card pl-2 pr-2">
+    <ul class="products-list product-list-in-card ps-2 pe-2">
         <li v-if="subscriptions.length > 0"
             class="d-flex border-bottom"    
         >
@@ -15,7 +15,7 @@
             <div class="d-flex flex-column">
                 <div class="d-flex align-items-center">
                     <i
-                        class="fa fa-qrcode mr-2 pointer"
+                        class="fa fa-qrcode me-2 pointer"
                         @click="setQRCodeId(item.token.id)"
                     ></i>
                     <span
@@ -25,13 +25,13 @@
                         {{ item.token.title }} |
                         <small>{{ diffForHumans(item.token.due_date) }}</small>
                         <span v-if="isExpired(item.token)"
-                            class="badge badge-danger ml-2"
+                            class="badge badge-danger ms-2"
                         >
                             {{ trans('global.expired') }}
                         </span>
                     </span>
                     <a
-                        class="text-danger px-2 py-0 mr-2 vuehover"
+                        class="text-danger px-2 py-0 me-2 vuehover"
                         @click="unsubscribe(item)"
                     >
                         <i class="fa fa-trash"></i>

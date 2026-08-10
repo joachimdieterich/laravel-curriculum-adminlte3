@@ -22,7 +22,7 @@
                     @click="editObjective(entry)"
                 >
                     <i
-                        class="mr-4"
+                        class="me-4"
                         :class="entry.icon"
                     ></i>
                     {{ trans('global.' + entry.model + '.edit') }}
@@ -32,7 +32,7 @@
                     @click="moveObjective(entry)"
                 >
                     <i
-                        class="mr-4"
+                        class="me-4"
                         :class="entry.icon"
                     ></i>
                     {{ trans('global.terminalObjective.move_to_curriculum') }}
@@ -42,7 +42,7 @@
                     @click="resetOrderIds(entry)"
                 >
                     <i
-                        class="mr-4"
+                        class="me-4"
                         :class="entry.icon"
                     ></i>
                     {{ entry.title }}
@@ -52,7 +52,7 @@
                     @click="emitDeleteEvent(entry)"
                 >
                     <i
-                        class="mr-4"
+                        class="me-4"
                         :class="entry.icon"
                     ></i>
                     {{ trans('global.' + entry.model + '.delete') }}
@@ -62,7 +62,7 @@
                     @click="action(entry);"
                 >
                     <i
-                        class="mr-4"
+                        class="me-4"
                         :class="entry.icon"
                     ></i>
                     {{ entry.title }}

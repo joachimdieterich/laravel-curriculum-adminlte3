@@ -10,7 +10,7 @@
                    href="#all"
                    @click="loadNotes('all')"
                    data-toggle="tab">
-                    <i class="fa fa-sticky-note pr-1"></i>
+                    <i class="fa fa-sticky-note pe-1"></i>
                     <span v-if="help">{{ trans('global.note.title') }}</span>
                 </a>
             </li>
@@ -23,7 +23,7 @@
                    href="#users"
                    @click="loadNotes('User')"
                    data-toggle="tab">
-                    <i class="fa fa-user pr-1"></i>
+                    <i class="fa fa-user pe-1"></i>
                     <span v-if="help">{{ trans('global.user.title') }}</span>
                 </a>
             </li>
@@ -36,7 +36,7 @@
                    href="#users"
                    @click="loadNotes('Group')"
                    data-toggle="tab">
-                    <i class="fa fa-users pr-1"></i>
+                    <i class="fa fa-users pe-1"></i>
                     <span v-if="help">{{ trans('global.group.title') }}</span>
                 </a>
             </li>
@@ -49,16 +49,16 @@
                    href="#achievements"
                    @click="loadNotes('Achievement')"
                    data-toggle="tab">
-                    <i class="fa fa-bullseye pr-1"></i>
+                    <i class="fa fa-bullseye pe-1"></i>
                     <span v-if="help">{{ trans('global.achievement.title') }}</span>
                 </a>
             </li>
             <li v-permission="'note_create'"
-                class="nav-item ml-auto small pull-right">
+                class="nav-item ms-auto small pull-right">
                 <a class="nav-link show link-muted"
                    v-if="edit === false"
                    @click="toggleEdit()">
-                    <i class="fa fa-plus pr-1"></i>
+                    <i class="fa fa-plus pe-1"></i>
                 </a>
             </li>
         </ul>
@@ -132,7 +132,7 @@
                 <div class="card-comment"
                      v-for="(item,index) in notes" v-bind:value="item.id"
                 >
-                    <div class="comment-text ml-0"
+                    <div class="comment-text ms-0"
                          @mouseover="hover = item.id"
                          @mouseleave="hover = false"
                          >

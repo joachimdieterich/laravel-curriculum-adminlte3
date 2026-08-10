@@ -27,7 +27,7 @@
                             </label>
                         </span>
                         <button v-if="!toggleView"
-                            class="btn ml-auto"
+                            class="btn ms-auto"
                             :class="classObject"
                             @click="setMode()"
                         >
@@ -77,7 +77,7 @@
 
                         <template v-slot:dropdown>
                             <div
-                                class="dropdown-menu dropdown-menu-right"
+                                class="dropdown-menu dropdown-menu-end"
                                 style="z-index: 1050;"
                                 x-placement="left-start"
                             >
@@ -90,7 +90,7 @@
                                         class="dropdown-item text-secondary"
                                         @click.prevent="editUser(user)"
                                     >
-                                        <i class="fa fa-pencil-alt mr-2"></i>
+                                        <i class="fa fa-pencil-alt me-2"></i>
                                         {{ trans('global.user.edit') }}
                                     </button>
                                     <hr class="my-1"/>
@@ -102,7 +102,7 @@
                                         @click.prevent="confirmItemDelete(user)"
                                     >
                                         <span>
-                                            <i class="fa fa-trash mr-2"></i>
+                                            <i class="fa fa-trash me-2"></i>
                                             {{ trans('global.user.delete') }}
                                         </span>
                                     </button>
@@ -118,7 +118,7 @@
                                         @click.prevent="confirmItemDelete(user)"
                                     >
                                         <span>
-                                            <i class="fa fa-unlink mr-2"></i>
+                                            <i class="fa fa-unlink me-2"></i>
                                             {{ trans('global.user.expel') }}
                                         </span>
                                     </button>

@@ -11,7 +11,7 @@
                         <button v-if="method !== 'post'"
                             v-permission="'objective_delete'"
                             type="button"
-                            class="btn btn-icon mr-2"
+                            class="btn btn-icon me-2"
                             :title="trans('global.delete')"
                             @click="destroy()"
                         >
@@ -96,7 +96,7 @@
                         </button>
                         <button
                             id="grade-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             @click="submit(method)"
                         >
                             {{ trans('global.save') }}

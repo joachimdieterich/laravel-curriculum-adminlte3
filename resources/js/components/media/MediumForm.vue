@@ -39,7 +39,7 @@
                 id="btn_add_Medium"
                 class="btn btn-primary d-flex justify-content-center align-items-center text-white"
             >
-                <i class="fa fa-cloud-upload-alt pr-2"></i>
+                <i class="fa fa-cloud-upload-alt pe-2"></i>
                 {{ trans('global.medium.title_singular') }}
             </a>
         </div>

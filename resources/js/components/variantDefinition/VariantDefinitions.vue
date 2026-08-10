@@ -23,7 +23,7 @@
                 <template
                     v-permission="'organization_type_edit, organization_type_delete'"
                     v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
+                    <div class="dropdown-menu dropdown-menu-end"
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
@@ -31,7 +31,7 @@
                             :name="'edit-variant-definition-' + variantDefinition.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="editVariantDefinition(variantDefinition)">
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.variantDefinition.edit') }}
                         </button>
                         <hr class="my-1">
@@ -41,7 +41,7 @@
                             type="submit"
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(variantDefinition)">
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.variantDefinition.delete') }}
                         </button>
                     </div>

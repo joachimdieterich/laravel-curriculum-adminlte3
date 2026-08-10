@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div class="sidebar-header d-flex align-items-center pr-0">
+        <div class="sidebar-header d-flex align-items-center pe-0">
             <span class="line-clamp">{{ marker.title }}</span>
             <span v-if="marker.owner_id == $userId || checkPermission('is_admin')"
                 v-permission="'map_edit'"
-                class="d-flex pull-right ml-auto mr-1"
+                class="d-flex pull-right ms-auto me-1"
             >
                 <button
                     type="button"
@@ -18,7 +18,7 @@
         </div>
         <div>
             <span v-for="tag in tag_array"
-                class="right badge badge-primary mr-2"
+                class="right badge badge-primary me-2"
             >
                 {{ tag }}
             </span>

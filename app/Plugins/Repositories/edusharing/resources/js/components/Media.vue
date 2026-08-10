@@ -91,7 +91,7 @@
                             :style="'color:' + (screenWidth > 990 ? $textcolor('#F2F4F5') : '#000')"
                         ></i>
                         <div
-                            class="dropdown-menu dropdown-menu-right"
+                            class="dropdown-menu dropdown-menu-end"
                             style="z-index: 1050;"
                             x-placement="left-start"
                         >
@@ -102,7 +102,7 @@
                                 @click.prevent="edit(subscription);"
                             >
                                 <span>
-                                    <i class="fa fa-pencil mr-2"></i>
+                                    <i class="fa fa-pencil me-2"></i>
                                     {{ trans('global.medium.edit') }}
                                 </span>
                             </button>
@@ -116,7 +116,7 @@
                                 @click.prevent="confirmDelete(subscription);"
                             >
                                 <span>
-                                    <i class="fa fa-unlink mr-2"></i>
+                                    <i class="fa fa-unlink me-2"></i>
                                     {{ trans('global.medium.delete_subscription') }}
                                 </span>
                             </button>

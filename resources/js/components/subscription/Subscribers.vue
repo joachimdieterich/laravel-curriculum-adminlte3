@@ -1,6 +1,6 @@
 <template>
     <ul v-if="subscriptions.length != 0"
-        class="products-list product-list-in-card pl-2 pr-2"
+        class="products-list product-list-in-card ps-2 pe-2"
     >
         <li v-if="canEditCheckbox && subscriptions.length > 0"
             class="d-flex border-bottom"
@@ -25,7 +25,7 @@
                 </div>
 
                 <a
-                    class="text-danger px-2 py-0 ml-auto mr-2 vuehover"
+                    class="text-danger px-2 py-0 ms-auto me-2 vuehover"
                     @click="unsubscribe(subscription)"
                 >
                     <i class="fa fa-trash"></i>

@@ -30,7 +30,7 @@
                     <span v-if="!edit || edit_entry != role.id"
                           class="pointer"
                           @click="toggleEdit(role.id)">
-                        <i class="fa fa-pencil-alt float-right pr-2"></i>
+                        <i class="fa fa-pencil-alt float-right pe-2"></i>
                     </span>
                 </td>
             </tr>

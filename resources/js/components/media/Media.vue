@@ -13,7 +13,7 @@
                         @click="show(subscription.medium)"
                     >
                         <i
-                            class="pr-2"
+                            class="pe-2"
                            :class="[iconCss(subscription.medium.mime_type)]"
                         ></i>
                         {{ subscription.medium.title }}
@@ -36,7 +36,7 @@
                            @click.stop="destroyArtefact(subscription.medium.id)"
                         ></i>-->
                         <license
-                            class="pull-right pr-4"
+                            class="pull-right pe-4"
                             :licenseId="subscription.medium.license_id"
                         />
                     </td>

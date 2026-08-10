@@ -322,7 +322,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <label for="imports" class="mr-3 mb-0">
+                                        <label for="imports" class="me-3 mb-0">
                                             {{ trans('global.file') }}
                                         </label>
                                         <div>
@@ -355,7 +355,7 @@
                         </button>
                         <button
                             id="curriculum-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="!form.title"
                             @click="submit()"
                         >

@@ -203,7 +203,7 @@
                         </button>
                         <button
                             id="marker-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="!form.title || !form.latitude || !form.longitude || !form.type_id || !form.category_id"
                             @click="submit()"
                         >

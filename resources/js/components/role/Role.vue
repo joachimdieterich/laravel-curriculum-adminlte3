@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fas fa-user-tag mr-1"></i>
+                            <i class="fas fa-user-tag me-1"></i>
                             {{ this.currentRole.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'is_admin'"
-                        class="card-tools pr-2"
+                        class="card-tools pe-2"
                     >
                         <a @click="editRole(this.currentRole)" role="button">
                             <i class="fas fa-pencil-alt"></i>

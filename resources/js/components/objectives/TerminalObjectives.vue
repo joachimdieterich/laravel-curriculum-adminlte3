@@ -26,7 +26,7 @@
             >
                 <template #item="{ element: type_index }">
                     <li
-                        class="nav-item pl-0 pr-2 pb-2 pt-2"
+                        class="nav-item ps-0 pe-2 pb-2 pt-2"
                         role="presentation"
                     >
                         <a
@@ -45,7 +45,7 @@
                </template>
             </draggable>
             <li v-if="curriculum.type_id === 1"
-                class="form-group py-2 mb-0 ml-auto"
+                class="form-group py-2 mb-0 ms-auto"
             >
                 <Select2
                     id="references"

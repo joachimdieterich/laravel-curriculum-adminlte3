@@ -68,7 +68,7 @@
                             {{ trans('global.close') }}
                         </button>
                         <button
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             @click="submit()"
                             :disabled="selectedUsers.length === 0"
                         >

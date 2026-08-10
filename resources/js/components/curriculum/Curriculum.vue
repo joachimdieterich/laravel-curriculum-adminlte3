@@ -39,7 +39,7 @@
                         aria-controls="content-tab"
                         @click="loaderEvent()"
                     >
-                        <i class="fa fa-align-justify pr-2"></i>
+                        <i class="fa fa-align-justify pe-2"></i>
                         {{ trans('global.content.index') }}
                     </a>
                 </li>
@@ -54,7 +54,7 @@
                         data-toggle="tab"
                         aria-controls="curriculum-tab"
                     >
-                        <i class="fas fa-th pr-2"></i>
+                        <i class="fas fa-th pe-2"></i>
                         {{ trans('global.objective_tab') }}
                     </a>
                 </li>
@@ -69,7 +69,7 @@
                         data-toggle="tab"
                         aria-controls="medium-tab"
                     >
-                        <i class="fa fa-folder-open pr-2"></i>
+                        <i class="fa fa-folder-open pe-2"></i>
                         {{ trans('global.medium.title') }}
                     </a>
                 </li>
@@ -84,7 +84,7 @@
                         data-toggle="tab"
                         aria-controls="glossar-tab"
                     >
-                        <i class="fa fa-book-open pr-2"></i>
+                        <i class="fa fa-book-open pe-2"></i>
                         {{ trans('global.glossar.title_singular') }}
                     </a>
                     <a v-else
@@ -93,33 +93,33 @@
                         class="nav-link link-muted"
                         :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id=' + curriculum.id"
                     >
-                        <i class="fa fa-book-open pr-2"></i>
+                        <i class="fa fa-book-open pe-2"></i>
                         {{trans('global.glossar.create')}}
                     </a>
                 </li>
                 <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
                     v-permission="'certificate_access'"
-                    class="nav-item ml-auto"
+                    class="nav-item ms-auto"
                 >
                     <a
                         id="certificate-nav-tab"
                         class="nav-link link-muted"
                         @click.prevent="generateCertificate()"
                     >
-                        <i class="fa fa-certificate pr-2"></i>
+                        <i class="fa fa-certificate pe-2"></i>
                         {{ trans('global.certificate.generate') }}
                     </a>
                 </li>
                 <li
                     v-permission="'certificate_create'"
-                    class="nav-item ml-auto"
+                    class="nav-item ms-auto"
                 >
                     <a
                         id="certificate-nav-tab"
                         class="nav-link link-muted pointer"
                         @click.prevent="createCertificate()"
                     >
-                        <i class="fa fa-certificate pr-2"></i>
+                        <i class="fa fa-certificate pe-2"></i>
                         {{trans('global.certificate.create')}}
                     </a>
                 </li>

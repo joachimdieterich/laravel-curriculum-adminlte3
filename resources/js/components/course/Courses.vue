@@ -46,7 +46,7 @@
                     v-permission="'course_delete'"
                 >
                     <div
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -58,7 +58,7 @@
                             @click.prevent="confirmItemDelete(course)"
                         >
                             <span>
-                                <i class="fa fa-unlink mr-2"></i>
+                                <i class="fa fa-unlink me-2"></i>
                                 {{ trans('global.course.expel') }}
                             </span>
                         </button>

@@ -12,7 +12,7 @@
                     Ziele / Namen
                     <button
                         type="button"
-                        class="btn btn-icon link-muted ml-1"
+                        class="btn btn-icon link-muted ms-1"
                         :title="trans('global.open_settings')"
                         @click="globalStore.showModal('plan-achievements-options-modal');"
                     >
@@ -50,7 +50,7 @@
                         class="d-flex enabling px-3 w-100"
                     >
                         <span
-                            class="pl-2"
+                            class="ps-2"
                             v-html="ena.title"
                         ></span>
                         <span v-for="(user, index) in users">

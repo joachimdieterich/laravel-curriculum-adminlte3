@@ -33,13 +33,13 @@
                 <template
                     v-permission="'config_edit, config_delete'"
                     v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
+                    <div class="dropdown-menu dropdown-menu-end"
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button :name="'config-edit_' + config.id"
                                 class="dropdown-item text-secondary"
                                 @click.prevent="editConfig(config)">
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.config.edit') }}
                         </button>
                         <hr class="my-1">
@@ -48,7 +48,7 @@
                             type="submit"
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(config)">
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.config.delete') }}
                         </button>
                     </div>

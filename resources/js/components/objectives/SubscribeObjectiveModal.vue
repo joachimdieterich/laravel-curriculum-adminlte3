@@ -80,7 +80,7 @@
                         </button>
                         <button
                             id="grade-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="form.terminal_objective_id.length === 0"
                             @click="submit()"
                         >

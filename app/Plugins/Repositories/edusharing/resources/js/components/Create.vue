@@ -6,7 +6,7 @@
             style="color: #6c757d;"
             @click="openUploadWindow()"
         >
-            <i class="fa fa-upload pr-1"></i>
+            <i class="fa fa-upload pe-1"></i>
             {{ trans('global.medium.upload_cloud') }}
         </button>
         <span>- {{ trans('global.or') }} -</span>
@@ -16,7 +16,7 @@
             style="color: #6c757d;"
             @click="openCloudWindow()"
         >
-            <i class="fa fa-add pr-1"></i>
+            <i class="fa fa-add pe-1"></i>
             {{ trans('global.medium.connect_cloud') }}
         </button>
     </div>

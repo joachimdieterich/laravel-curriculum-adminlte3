@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-swatchbook mr-1"></i>
+                            <i class="fa fa-swatchbook me-1"></i>
                             {{ this.currentSubject.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'organization_edit'"
-                        class="card-tools pr-2">
+                        class="card-tools pe-2">
                         <a  @click="editSubject()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>

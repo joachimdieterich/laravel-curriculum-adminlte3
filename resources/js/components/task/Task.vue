@@ -5,15 +5,15 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-tasks mr-1"></i>
+                            <i class="fa fa-tasks me-1"></i>
                             {{ this.currentTask.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'task_edit'"
-                        class="card-tools pr-2">
+                        class="card-tools pe-2">
                         <a  @click="destroy()">
-                            <i class="fa fa-trash text-danger pr-4"></i>
+                            <i class="fa fa-trash text-danger pe-4"></i>
                         </a>
                         <a  @click="editTask()">
                             <i class="fas fa-pencil-alt"></i>
@@ -24,11 +24,11 @@
                 <div class="card-body">
                     <div class="row small">
                         <span class="col-md-6 col-sm-12 text-muted">
-                            <i class="fa fa-calendar pr-1"></i>
+                            <i class="fa fa-calendar pe-1"></i>
                             {{ task.start_date }}
                         </span>
                             <span class="col-md-6 col-sm-12 text-muted">
-                            <i class="fa fa-calendar-check pr-1"></i>
+                            <i class="fa fa-calendar-check pe-1"></i>
                             {{ task.start_date }}
                         </span>
                     </div>
@@ -43,13 +43,13 @@
                            v-bind:href="'#task_contents_'+task.id"
                            data-toggle="tab"
                            @click="loadContents()">
-                            <i class="fa fa-align-justify pr-2"></i>{{ trans('global.content.title') }}</a>
+                            <i class="fa fa-align-justify pe-2"></i>{{ trans('global.content.title') }}</a>
                     </li>
                     <li class="nav-item small">
                         <a class="nav-link link-muted"
                            v-bind:href="'#task_objectives_'+task.id"
                            data-toggle="tab">
-                            <i class="fa fa-bullseye pr-1"></i>
+                            <i class="fa fa-bullseye pe-1"></i>
                             {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
                         </a>
                     </li>
@@ -57,14 +57,14 @@
                         <a class="nav-link link-muted"
                            v-bind:href="'#task_media_'+task.id"
                            data-toggle="tab">
-                            <i class="fa fa-folder-open pr-2"></i>{{ trans('global.medium.title') }}
+                            <i class="fa fa-folder-open pe-2"></i>{{ trans('global.medium.title') }}
                         </a>
                     </li>
                     <li class="nav-item small">
                         <a class="nav-link link-muted"
                            href="#activity"
                            data-toggle="tab">
-                            <i class="fa fa-paperclip pr-1"></i>{{ trans('global.task.subscriptions') }}
+                            <i class="fa fa-paperclip pe-1"></i>{{ trans('global.task.subscriptions') }}
                         </a>
                     </li>
                     <!--<li class="nav-item small"><a class="nav-link link-muted" href="#timeline" data-toggle="tab">{{ trans('global.history') }}</a></li>-->

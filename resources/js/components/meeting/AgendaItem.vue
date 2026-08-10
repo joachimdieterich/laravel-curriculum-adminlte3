@@ -31,7 +31,7 @@
                     @click="destroy(item.id)"
                 ></i>
 
-                <p class="pt-2 pl-4 mb-0 small">
+                <p class="pt-2 ps-4 mb-0 small">
                     {{ item.subtitle }}
                 </p>
             </h3>

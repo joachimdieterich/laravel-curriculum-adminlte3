@@ -24,17 +24,17 @@
                 class="btn btn-primary pull-right mt-3"
                 @click="expelFromExam()"
             >
-                <i class="fa fa-minus mr-2"></i>
+                <i class="fa fa-minus me-2"></i>
                 {{ trans('global.exam.expel_user') }}
             </button>
             <button v-if="exam.status !== 0"
                 :id="'edit-exam-' + exam.id"
                 type="button"
                 :name="'edit-exam-' + exam.id"
-                class="btn btn-primary pull-left mt-3 mr-2"
+                class="btn btn-primary pull-left mt-3 me-2"
                 @click="getReport()"
             >
-                <i class="fa fa-download mr-2"></i>
+                <i class="fa fa-download me-2"></i>
                 {{ trans('global.exam.download_report') }}
             </button>
         </div>
@@ -61,10 +61,10 @@
                 id="expelFromCurricula"
                 type="button"
                 name="expelFromCurricula"
-                class="btn btn-primary pull-right mt-3 mr-3"
+                class="btn btn-primary pull-right mt-3 me-3"
                 @click="enrolIntoExam()"
             >
-                <i class="fa fa-plus mr-2"></i>
+                <i class="fa fa-plus me-2"></i>
                 {{ trans('global.exam.enrol_user') }}
             </button>
         </div>

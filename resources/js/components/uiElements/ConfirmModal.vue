@@ -38,7 +38,7 @@
                         </button>
                         <button
                             id="confirm-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="processing"
                             @click="processing = true; $emit('confirm');"
                         >

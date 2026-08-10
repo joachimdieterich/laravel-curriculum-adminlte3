@@ -27,7 +27,7 @@
                             aria-controls="description"
                             aria-selected="false"
                         >
-                            <i class="fa fa-info pr-1"></i>
+                            <i class="fa fa-info pe-1"></i>
                             <span v-if="help">{{ trans('global.description') }}</span>
                         </button>
                     </li>
@@ -47,7 +47,7 @@
                             aria-controls="objectives"
                             aria-selected="false"
                         >
-                            <i class="fa fa-sitemap pr-1"></i>
+                            <i class="fa fa-sitemap pe-1"></i>
                             <span v-if="type === 'terminal'">
                                 <span v-if="help">{{ trans('global.subordinate_element') }}</span>
                             </span>
@@ -73,7 +73,7 @@
                             aria-selected="false"
                             @click="loaderContents()"
                         >
-                            <i class="fa fa-align-justify pr-2"></i>
+                            <i class="fa fa-align-justify pe-2"></i>
                             <span v-if="help">{{ trans('global.content.index_alt') }}</span>
                         </button>
                     </li>
@@ -93,7 +93,7 @@
                             aria-controls="media"
                             aria-selected="true"
                         >
-                            <i class="fa fa-folder-open pr-2"></i>
+                            <i class="fa fa-folder-open pe-2"></i>
                             <span v-if="help">{{ trans('global.medium.title') }}</span>
                         </button>
                     </li>
@@ -114,7 +114,7 @@
                             aria-selected="false"
                             @click="loadReferences()"
                         >
-                            <i class="fa fa-project-diagram pr-1"></i>
+                            <i class="fa fa-project-diagram pe-1"></i>
                             <span v-if="help">{{ trans('global.referenceable_types.objective') }}</span>
                         </button>
                     </li>
@@ -136,7 +136,7 @@
                             aria-selected="false"
                             @click="loadAchievements()"
                         >
-                            <i class="far fa-check-circle pr-1"></i>
+                            <i class="far fa-check-circle pe-1"></i>
                             <span v-if="help">{{ trans('global.objective_tab') }}</span>
                         </button>
                     </li>
@@ -158,7 +158,7 @@
                             aria-selected="false"
                             @click="loadPrerequisites()"
                         >
-                            <i class="fa fa-puzzle-piece pr-1"></i>
+                            <i class="fa fa-puzzle-piece pe-1"></i>
                             <span v-if="help">{{ trans('global.prerequisite.title') }}</span>
                         </button>
                     </li>
@@ -178,7 +178,7 @@
                             aria-controls="events"
                             aria-selected="false"
                         >
-                            <i class="fa fa-user-graduate pr-1"></i>
+                            <i class="fa fa-user-graduate pe-1"></i>
                             <span v-if="help">{{ trans('global.eventSubscription.title_alt') }}</span>
                         </button>
                     </li>
@@ -200,17 +200,17 @@
                             aria-selected="false"
                             @click="loadLmsPlugin()"
                         >
-                            <i class="fa fa-graduation-cap pr-1"></i>
+                            <i class="fa fa-graduation-cap pe-1"></i>
                             <span v-if="help">{{ trans('global.lms.title_singular') }}</span>
                         </button>
                     </li>
                     <!-- Help-icon -->
-                    <li class="nav-item ml-auto pull-right">
+                    <li class="nav-item ms-auto pull-right">
                         <a
                             class="nav-link small link-muted pointer"
                             @click="help = !help"
                         >
-                            <i class="fa fa-question pr-1"></i>
+                            <i class="fa fa-question pe-1"></i>
                         </a>
                     </li>
                 </ul>

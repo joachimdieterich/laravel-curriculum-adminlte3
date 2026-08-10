@@ -17,7 +17,7 @@
                     'subscribable_type': '{{  $subscribable_type ?? '' }}',
                     'subscribable_id': '{{  $subscribable_id ?? '' }}',
                 });">
-            <i class="fa fa-cloud-upload-alt pr-2"></i>
+            <i class="fa fa-cloud-upload-alt pe-2"></i>
             {{ trans('global.'.$model.'.title_singular') }}
         </a>
     </span>

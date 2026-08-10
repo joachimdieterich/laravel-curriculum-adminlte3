@@ -17,7 +17,7 @@
             class="m-0"
             style="background-color: #EDEDED"
         >
-            <div class="input-group col-2 mr-0 p-3 float-right">
+            <div class="input-group col-2 me-0 p-3 float-right">
                 <input
                     id="search"
                     type="text"
@@ -41,7 +41,7 @@
             <div class="col-12">
                 <button v-for="(value, id) in tags"
                     type="button"
-                    class="btn btn-default mr-3 mb-3"
+                    class="btn btn-default me-3 mb-3"
                     @click="loader(id, true)"
                 >
                     {{ value }}
@@ -153,11 +153,11 @@
             style="background-color: #EDEDED"
         >
             <div v-if="Object.keys(entries).length > 0"
-                class="row mr-1 pt-3"
+                class="row me-1 pt-3"
             >
                 <span class="col-8"></span>
                 <span v-if="Object.keys(entries).length > 0"
-                    class="col-2 pr-0"
+                    class="col-2 pe-0"
                 >
                     <button v-if="page > 1"
                         type="button"

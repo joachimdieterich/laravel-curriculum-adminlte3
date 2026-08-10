@@ -77,7 +77,7 @@
                 <div class="social-auth-links text-center mb-3">
                     <p>- {{ trans('auth.or') }} -</p>
                     <a href="{{ route('home') }}" class="btn btn-block btn-primary">
-                        <i class="mr-2"></i> {{ trans('global.login_SSO') }}
+                        <i class="me-2"></i> {{ trans('global.login_SSO') }}
                     </a>
                 </div>
             @endif

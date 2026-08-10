@@ -25,7 +25,7 @@
                     v-permission="'organization_edit, organization_delete'"
                 >
                     <div
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -35,7 +35,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="editOrganization(organization)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.organization.edit') }}
                         </button>
                         <hr class="my-1">
@@ -46,7 +46,7 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(organization)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.organization.delete') }}
                         </button>
                     </div>

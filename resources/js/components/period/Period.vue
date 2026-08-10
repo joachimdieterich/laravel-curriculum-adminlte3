@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-history mr-1"></i>
+                            <i class="fa fa-history me-1"></i>
                             {{ this.currentPeriod.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'organization_edit'"
-                        class="card-tools pr-2 pointer"
+                        class="card-tools pe-2 pointer"
                     >
                         <a @click="editPeriod()">
                             <i class="fas fa-pencil-alt"></i>

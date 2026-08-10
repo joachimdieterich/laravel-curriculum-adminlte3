@@ -18,7 +18,7 @@
                         role="tab"
                         @click="setFilter('all')"
                     >
-                        <i class="fas fa-th pr-2"></i>
+                        <i class="fas fa-th pe-2"></i>
                         {{ trans('global.all') }} {{ trans('global.exam.title') }}
                     </a>
                 </li>
@@ -31,7 +31,7 @@
                         role="tab"
                         @click="setFilter('student')"
                     >
-                        <i class="fas fa-university pr-2"></i>
+                        <i class="fas fa-university pe-2"></i>
                         {{ trans('global.my') }} {{ trans('global.exam.title_singular') }}
                     </a>
                 </li>
@@ -83,7 +83,7 @@
 
                 <template v-slot:dropdown>
                     <div
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -91,7 +91,7 @@
                             class="dropdown-item text-secondary"
                             @click="openExam(exam)"
                         >
-                            <i class="fa fa-ranking-star mr-2"></i>
+                            <i class="fa fa-ranking-star me-2"></i>
                             <span>Zur &Uuml;bersicht</span>
                         </button>
                         <button v-if="exam.status !== 0"
@@ -99,7 +99,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="getReport(exam)"
                         >
-                            <i class="fa fa-download mr-2"></i>
+                            <i class="fa fa-download me-2"></i>
                             {{ trans('global.exam.download_report') }}
                         </button>
                         <hr v-permission="'exam_delete'" class="my-1">
@@ -111,7 +111,7 @@
                             @click.prevent="confirmItemDelete(exam)"
                         >
                             <span>
-                                <i class="fa fa-unlink mr-2"></i>{{ trans('global.expel') }}
+                                <i class="fa fa-unlink me-2"></i>{{ trans('global.expel') }}
                             </span>
                         </button>
                     </div>

@@ -199,7 +199,7 @@
                         </button>
                         <button
                             id="medium-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             @click="add()"
                         >
                             {{ trans('global.save') }}

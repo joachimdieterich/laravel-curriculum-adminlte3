@@ -88,7 +88,7 @@
                         <p class="help-block" v-if="form.errors.description" v-text="form.errors.description[0]"></p>
                     </div>
                     <span class="">
-                         <button type="button" class="btn btn-info mr-2" @click="edit = !edit;">{{ trans('global.cancel') }}</button>
+                         <button type="button" class="btn btn-info me-2" @click="edit = !edit;">{{ trans('global.cancel') }}</button>
                          <button class="btn btn-primary" @click="submit()" >{{ trans('global.save') }}</button>
                     </span>
                 </div>

@@ -4,7 +4,7 @@
         style="max-width: 100vw;"
     >
         <span v-if="showNavigators"
-            class="pr-2"
+            class="pe-2"
         >
             <button
                 class="btn btn-icon flex-shrink-0"
@@ -46,7 +46,7 @@
                         @keydown.enter.space="$emit('change-tab', tab)"
                         @keydown.left.right.prevent="moveFocus($event)"
                     >
-                        <i class="fas pr-2" :class="tabIcon(tab)"></i>
+                        <i class="fas pe-2" :class="tabIcon(tab)"></i>
                         {{ tabText(tab) }}
                     </button>
                 </span>
@@ -54,7 +54,7 @@
         </div>
 
         <span v-if="showNavigators"
-            class="pl-2"
+            class="ps-2"
         >
             <button
                 class="btn btn-icon flex-shrink-0"

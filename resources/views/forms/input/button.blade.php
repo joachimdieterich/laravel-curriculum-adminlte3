@@ -7,5 +7,5 @@
         onclick="{{ $onclick }}"
     @endif 
     >
-    <i class="{{ $icon }} mr-2"></i>{{ $label }}
+    <i class="{{ $icon }} me-2"></i>{{ $label }}
 </button>

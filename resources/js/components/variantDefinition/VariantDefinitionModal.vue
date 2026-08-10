@@ -88,7 +88,7 @@
                             <i :class="form.css_icon + ' pt-2'"></i>
                         </button>
                         <font-awesome-picker
-                            class="dropdown-menu dropdown-menu-right"
+                            class="dropdown-menu dropdown-menu-end"
                             style="min-width: 400px;"
                             :searchbox="trans('global.select_icon')"
                             v-on:selectIcon="setIcon"

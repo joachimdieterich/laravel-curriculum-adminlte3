@@ -12,14 +12,14 @@
                     class="bg-gray-light text-muted pointer"
                     @click="openModal()"
                 >
-                    <i class="fa fa-plus pr-2"></i>
+                    <i class="fa fa-plus pe-2"></i>
                     {{ trans('global.task.create') }}
                 </li>
 
                 <li v-for="task in tasks"
                     class="bg-light"
                 >
-                    <div class="icheck-primary d-inline ml-2">
+                    <div class="icheck-primary d-inline ms-2">
                         <input
                             type="checkbox"
                             :id="'todoCheck_' + task.id"
@@ -48,7 +48,7 @@
 
                     <div class="tools">
                         <a @click.prevent="openModal(task)">
-                            <i class="fa fa-pencil-alt mr-3 text-muted"></i>
+                            <i class="fa fa-pencil-alt me-3 text-muted"></i>
                         </a>
                         <a @click.prevent="confirmItemDelete(task)">
                             <i class="fas fa-trash text-danger"></i>

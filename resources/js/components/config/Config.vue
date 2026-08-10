@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-university mr-1"></i>
+                            <i class="fa fa-university me-1"></i>
                             {{ config.key }}
                         </h5>
                     </div>
                     <div
                         v-permission="'config_edit'"
-                        class="card-tools pr-2"
+                        class="card-tools pe-2"
                     >
                         <a @click="editConfig(config)">
                             <i class="fas fa-pencil-alt"></i>
@@ -22,7 +22,7 @@
 
                 <div class="card-body">
                     <strong>
-                        <i class="fa fa-file-alt mr-1"></i>
+                        <i class="fa fa-file-alt me-1"></i>
                         {{ trans('global.config.fields.value') }}
                     </strong>
                     <p
@@ -32,7 +32,7 @@
                     <hr>
 
                     <strong>
-                        <i class="fas fa-layer-group mr-1"></i>
+                        <i class="fas fa-layer-group me-1"></i>
                         {{ trans('global.config.fields.referenceable_type') }}
                     </strong>
                     <p class="text-muted">
@@ -40,13 +40,13 @@
                     </p>
                     <hr>
                     <strong>
-                        <i class="fas fa-magnifying-glass mr-1"></i>
+                        <i class="fas fa-magnifying-glass me-1"></i>
                         {{ trans('global.config.fields.referenceable_id') }}
                     </strong>
                     <p class="text-muted">{{ config.referenceable_id }}</p>
                     <hr>
                     <strong>
-                        <i class="fas fa-magnifying-glass mr-1"></i>
+                        <i class="fas fa-magnifying-glass me-1"></i>
                         {{ trans('global.config.fields.data_type') }}
                     </strong>
                     <p class="text-muted">{{ config.data_type }}</p>

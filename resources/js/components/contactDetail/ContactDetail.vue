@@ -6,7 +6,7 @@
             <div class="card-header">
                 <div class="card-title">
                     <h5 class="m-0">
-                        <i class="far fa-id-card mr-1"></i>
+                        <i class="far fa-id-card me-1"></i>
                         {{ contactDetail.owner.firstname }} {{ contactDetail.owner.lastname }}
                     </h5>
                 </div>
@@ -24,7 +24,7 @@
                 </div>
                 <div v-if="$userId == contactDetail.owner_id"
                     v-permission="'contactdetail_edit'"
-                    class="card-tools mr-3 no-print"
+                    class="card-tools me-3 no-print"
                 >
                     <a
                         href="#"
@@ -38,7 +38,7 @@
 
             <div class="card-body">
                 <strong>
-                    <i class="fas fa-envelope mr-1"></i>
+                    <i class="fas fa-envelope me-1"></i>
                     {{ trans('global.contactDetail.fields.email')}}
                 </strong>
                 <p class="text-muted">{{ contactDetail.email }}</p>
@@ -46,20 +46,20 @@
                 <hr>
 
                 <strong>
-                    <i class="fas fa-phone mr-1"></i>
+                    <i class="fas fa-phone me-1"></i>
                     {{ trans('global.contactDetail.fields.phone')}}
                 </strong>
                 <p class="text-muted">{{ contactDetail.phone }}</p>
 
                 <hr>
 
-                <strong><i class="fa fa-mobile mr-1"></i>
+                <strong><i class="fa fa-mobile me-1"></i>
                     {{ trans('global.contactDetail.fields.mobile')}}
                 </strong>
                 <p class="text-muted">{{ contactDetail.mobile }}</p>
                 <hr>
                 <strong>
-                    <i class="fa fa-clipboard mr-1"></i>
+                    <i class="fa fa-clipboard me-1"></i>
                     {{ trans('global.contactDetail.fields.notes')}}
                 </strong>
                 <p
@@ -87,7 +87,7 @@
             <hr>
 
             <strong>
-                <i class="fa fa-map-marker mr-1"></i>
+                <i class="fa fa-map-marker me-1"></i>
                 {{ trans('global.place') }}
             </strong>
             <p class="text-muted">
@@ -98,7 +98,7 @@
             <hr>
 
             <strong>
-                <i class="fa fa-phone mr-1"></i>
+                <i class="fa fa-phone me-1"></i>
                 {{ trans('global.contactDetail.title_singular') }}
             </strong>
             <p class="text-muted">

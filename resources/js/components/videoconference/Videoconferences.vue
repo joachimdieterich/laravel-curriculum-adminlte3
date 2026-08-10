@@ -16,7 +16,7 @@
                     role="tab"
                     @click="setFilter('all')"
                 >
-                    <i class="fas fa-video pr-2"></i>
+                    <i class="fas fa-video pe-2"></i>
                     {{ trans('global.all') }} {{ trans('global.videoconference.title') }}
                 </a>
             </li>
@@ -29,7 +29,7 @@
                     role="tab"
                     @click="setFilter('by_organization')"
                 >
-                    <i class="fas fa-university pr-2"></i>
+                    <i class="fas fa-university pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                 </a>
             </li>
@@ -45,7 +45,7 @@
                     role="tab"
                     @click="setFilter('owner')"
                 >
-                    <i class="fa fa-user pr-2"></i>
+                    <i class="fa fa-user pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.videoconference.title') }}
                 </a>
             </li>
@@ -58,7 +58,7 @@
                     role="tab"
                     @click="setFilter('shared_with_me')"
                 >
-                    <i class="fa fa-paper-plane pr-2"></i>
+                    <i class="fa fa-paper-plane pe-2"></i>
                     {{ trans('global.shared_with_me') }}
                 </a>
             </li>
@@ -74,7 +74,7 @@
                     role="tab"
                     @click="setFilter('shared_by_me')"
                 >
-                    <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
+                    <i class="fa fa-share-nodes  pe-2"></i>{{ trans('global.shared_by_me') }}
                 </a>
             </li>
         </ul>
@@ -117,7 +117,7 @@
                     v-permission="'videoconference_edit, videoconference_delete'"
                 >
                     <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -128,12 +128,12 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(videoconference)"
                         >
-                            <i class="fa fa-link mr-2"></i>
+                            <i class="fa fa-link me-2"></i>
                             {{ trans('global.videoconference.expel') }}
                         </button>
                     </div>
                     <div v-else
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -143,7 +143,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="editVideoconference(videoconference)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.videoconference.edit') }}
                         </button>
                         <button v-if="$userId == videoconference.owner_id"
@@ -152,7 +152,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="share(videoconference)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt me-2"></i>
                             {{ trans('global.videoconference.share') }}
                         </button>
                         <hr class="my-1">
@@ -163,7 +163,7 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(videoconference)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.videoconference.delete') }}
                         </button>
                     </div>

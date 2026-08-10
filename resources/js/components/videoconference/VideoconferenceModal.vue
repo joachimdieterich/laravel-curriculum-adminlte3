@@ -564,7 +564,7 @@
 
                 <div class="card-footer d-flex align-items-center">
                     <div v-permission="'is_admin'">
-                        <div class="custom-control custom-switch custom-switch-on-green mr-3">
+                        <div class="custom-control custom-switch custom-switch-on-green me-3">
                             <input
                                 v-model="showExtendedSettings"
                                 type="checkbox"
@@ -588,7 +588,7 @@
                         </button>
                         <button
                             id="videoconference-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             :disabled="!form.meetingName"
                             @click="submit()"
                         >

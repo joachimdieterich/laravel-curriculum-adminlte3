@@ -49,7 +49,7 @@
             <div  v-if="view == 'newThreads'">
                 <div class="bg-light p-2">
                     <h5 class="mb-0">
-                        <i class="fa fa-angle-left pr-2"
+                        <i class="fa fa-angle-left pe-2"
                            @click="open('contacts')">
                         </i>
                         {{selectedUser.firstname}} {{selectedUser.lastname}}

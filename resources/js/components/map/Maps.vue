@@ -13,7 +13,7 @@
                     role="tab"
                     @click="setFilter('all')"
                 >
-                    <i class="fas fa-map-location-dot pr-2"></i>
+                    <i class="fas fa-map-location-dot pe-2"></i>
                     {{ trans('global.all') }} {{ trans('global.map.title') }}
                 </a>
             </li>
@@ -26,7 +26,7 @@
                     role="tab"
                     @click="setFilter('by_organization')"
                 >
-                    <i class="fas fa-university pr-2"></i>
+                    <i class="fas fa-university pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                 </a>
             </li>
@@ -42,7 +42,7 @@
                     role="tab"
                     @click="setFilter('owner')"
                 >
-                    <i class="fa fa-user pr-2"></i>
+                    <i class="fa fa-user pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.map.title') }}
                 </a>
             </li>
@@ -55,7 +55,7 @@
                     role="tab"
                     @click="setFilter('shared_with_me')"
                 >
-                    <i class="fa fa-paper-plane pr-2"></i>
+                    <i class="fa fa-paper-plane pe-2"></i>
                     {{ trans('global.shared_with_me') }}
                 </a>
             </li>
@@ -71,7 +71,7 @@
                     role="tab"
                     @click="setFilter('shared_by_me')"
                 >
-                    <i class="fa fa-share-nodes  pr-2"></i>
+                    <i class="fa fa-share-nodes  pe-2"></i>
                     {{ trans('global.shared_by_me') }}
                 </a>
             </li>
@@ -103,7 +103,7 @@
                     v-permission="'map_edit, map_delete'"
                 >
                     <div
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -113,7 +113,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="editMap(map)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.map.edit') }}
                         </button>
 
@@ -122,7 +122,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="shareMap(map)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt me-2"></i>
                             {{ trans('global.map.share') }}
                         </button>
 
@@ -134,7 +134,7 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(map)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.map.delete') }}
                         </button>
                     </div>

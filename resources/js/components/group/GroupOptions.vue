@@ -60,7 +60,7 @@
                                 class="btn btn-default pull-right mt-3"
                                 @click="enrolToCurricula()"
                             >
-                                <i class="fa fa-plus mr-2"></i>
+                                <i class="fa fa-plus me-2"></i>
                                 {{ trans('global.group.enrol') }}
                             </button>
                             <button
@@ -70,7 +70,7 @@
                                 class="btn btn-default pull-right mt-3"
                                 @click="expelFromCurricula()"
                             >
-                                <i class="fa fa-minus mr-2"></i>
+                                <i class="fa fa-minus me-2"></i>
                                 {{ trans('global.group.expel') }}
                             </button>
                         </div>
@@ -89,7 +89,7 @@
                                 class="btn btn-danger pull-right mt-3"
                                 @click="deleteUser()"
                             >
-                                <i class="fa fa-trash mr-2"></i>
+                                <i class="fa fa-trash me-2"></i>
                                 {{ trans('global.group.delete') }}
                             </button>
                         </div>

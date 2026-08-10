@@ -13,13 +13,13 @@
                 <!-- General tools such as edit or delete-->
                 <div class="tools pull-right">
                     <span>
-                        <small v-if="training.begin !== null && training.end !== null" class="badge badge-secondary mr-2">
+                        <small v-if="training.begin !== null && training.end !== null" class="badge badge-secondary me-2">
                             {{ diffForHumans(training.begin) }} - {{ diffForHumans(training.end) }}
                         </small>
-                        <small v-else-if="training.begin !== null" class="badge badge-secondary mr-2">
+                        <small v-else-if="training.begin !== null" class="badge badge-secondary me-2">
                             {{ trans('global.begin') + ' ' + diffForHumans(training.begin) }}
                         </small>
-                        <small v-else-if="training.end !== null" class="badge badge-secondary mr-2">
+                        <small v-else-if="training.end !== null" class="badge badge-secondary me-2">
                             {{ trans('global.end') + ' ' + diffForHumans(training.end) }}
                         </small>
                     </span>
@@ -31,19 +31,19 @@
                             <i class="fa fa-arrow-up px-1"></i>
                         </a>
                         <a v-if="training.subscriptions[0].order_id < max_order_id"
-                            class="text-secondary pointer ml-2"
+                            class="text-secondary pointer ms-2"
                             @click="higher(training)"
                         >
                             <i class="fa fa-arrow-down px-1"></i>
                         </a>
                         <a
-                            class="text-secondary pointer ml-3"
+                            class="text-secondary pointer ms-3"
                             @click="openModal(training)"
                         >
                             <i class="fa fa-pencil-alt px-1"></i>
                         </a>
                         <a v-if="training.owner_id == $userId || deletable || checkPermission('is_admin')"
-                            class="text-danger pointer ml-3"
+                            class="text-danger pointer ms-3"
                             @click="confirmDelete(training)"
                         >
                             <i class="fas fa-trash px-1"></i>
@@ -59,7 +59,7 @@
                     class="btn btn-default btn-flat text-left border-0 rounded-pill mt-2"
                     style="padding: 0.75rem 1.25rem;"
                 >
-                    <i class="fas fa-add pr-1"></i>
+                    <i class="fas fa-add pe-1"></i>
                     {{ trans('global.training.create') }}
                 </button>
             </div>

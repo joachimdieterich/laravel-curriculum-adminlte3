@@ -24,7 +24,7 @@
                 <template
                     v-permission="'metadataset_edit, metadataset_delete'"
                     v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
+                    <div class="dropdown-menu dropdown-menu-end"
                          style="z-index: 1050;"
                          x-placement="left-start">
                         <button
@@ -33,7 +33,7 @@
                             type="submit"
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(metadataset)">
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.metadataset.delete') }}
                         </button>
                     </div>

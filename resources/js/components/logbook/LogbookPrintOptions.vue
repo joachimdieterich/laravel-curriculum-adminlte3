@@ -3,9 +3,9 @@
          class="card col-12">
         <div class="user-block p-2"
         >
-            <div class="username ml-0 pt-2">
+            <div class="username ms-0 pt-2">
                 <span>{{ trans('global.logbook.print') }}</span>
-                <span class="description ml-0">
+                <span class="description ms-0">
                   {{ trans('global.selectDateRange') }}
                 </span>
 

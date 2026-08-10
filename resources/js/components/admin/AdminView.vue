@@ -15,7 +15,7 @@
                     aria-selected="false"
                     @click="loaderEvent('statistics')"
                 >
-                    <i class="fa fa-chart-pie pr-2"></i>{{trans('global.dashboard.statistic')}}
+                    <i class="fa fa-chart-pie pe-2"></i>{{trans('global.dashboard.statistic')}}
                 </a>
             </li>
            <li class="nav-item">
@@ -24,7 +24,7 @@
                     href="/metadatasets"
                     class="nav-link link-muted"
                 >
-                    <i class="fa fa-barcode pr-2"></i>{{trans('global.metadataset.title')}}
+                    <i class="fa fa-barcode pe-2"></i>{{trans('global.metadataset.title')}}
                 </a>
             </li>
             <li class="nav-item">
@@ -33,7 +33,7 @@
                     href="/configs"
                     class="nav-link link-muted"
                 >
-                    <i class="fa fa-cogs pr-2"></i>{{trans('global.config.title')}}
+                    <i class="fa fa-cogs pe-2"></i>{{trans('global.config.title')}}
                 </a>
             </li>
         </ul>
@@ -50,7 +50,7 @@
             >
                 <div class="d-flex flex-wrap align-items-center justify-content-around mt-2">
                     <span class="d-flex align-items-center">
-                        <label class="m-0 mr-2" for="from">{{ trans('global.timeFrom')}}</label>
+                        <label class="m-0 me-2" for="from">{{ trans('global.timeFrom')}}</label>
                         <VueDatePicker
                             v-model="date_begin"
                             model-type="yyyy-MM-dd"
@@ -63,7 +63,7 @@
                         />
                     </span>
                     <span class="d-flex align-items-center">
-                        <label class="m-0 mr-2" for="to">{{ trans('global.timeTo')}}</label>
+                        <label class="m-0 me-2" for="to">{{ trans('global.timeTo')}}</label>
                         <VueDatePicker
                             v-model="date_end"
                             model-type="yyyy-MM-dd"

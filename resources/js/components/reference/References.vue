@@ -9,7 +9,7 @@
                     data-card-widget="collapse"
                     :data-target="'#curriculum_' + curriculum.id"
                 >
-                    <span class="h4 mr-2">{{ curriculum.title }}</span>
+                    <span class="h4 me-2">{{ curriculum.title }}</span>
                     <small>{{ curriculum.organization_type.title }}</small>
                     <span class="pull-right">
                         <i class="fas fa-expand-alt"></i>
@@ -39,7 +39,7 @@
                                 <strong>{{ trans("global.curricula_cross_references_description") }}</strong>
                                 <button
                                     v-permission="'reference_edit'"
-                                    class="btn btn-icon ml-2"
+                                    class="btn btn-icon ms-2"
                                     @click.prevent="open(filtered_reference.reference)"
                                 >
                                     <i class="fa fa-pencil-alt"></i>

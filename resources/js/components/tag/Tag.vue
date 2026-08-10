@@ -5,7 +5,7 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fas fa-user-tag mr-1"></i>
+                            <i class="fas fa-user-tag me-1"></i>
                             {{ this.tag.translation }}
                         </h5>
                     </div>

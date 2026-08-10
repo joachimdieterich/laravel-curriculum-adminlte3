@@ -13,7 +13,7 @@
                     role="tab"
                     @click="setFilter('all')"
                 >
-                    <i class="fas fa-th pr-2"></i>
+                    <i class="fas fa-th pe-2"></i>
                     {{ trans('global.all') }} {{ trans('global.logbook.title') }}
                 </a>
             </li>
@@ -26,7 +26,7 @@
                     role="tab"
                     @click="setFilter('by_organization')"
                 >
-                    <i class="fas fa-university pr-2"></i>
+                    <i class="fas fa-university pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                 </a>
             </li>
@@ -42,7 +42,7 @@
                     role="tab"
                     @click="setFilter('owner')"
                 >
-                    <i class="fa fa-user pr-2"></i>
+                    <i class="fa fa-user pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.logbook.title') }}
                 </a>
             </li>
@@ -55,7 +55,7 @@
                     role="tab"
                     @click="setFilter('shared_with_me')"
                 >
-                    <i class="fa fa-paper-plane pr-2"></i>
+                    <i class="fa fa-paper-plane pe-2"></i>
                     {{ trans('global.shared_with_me') }}
                 </a>
             </li>
@@ -71,7 +71,7 @@
                     role="tab"
                     @click="setFilter('shared_by_me')"
                 >
-                    <i class="fa fa-share-nodes  pr-2"></i>
+                    <i class="fa fa-share-nodes  pe-2"></i>
                     {{ trans('global.shared_by_me') }}
                 </a>
             </li>
@@ -116,7 +116,7 @@
 
                 <template v-slot:dropdown>
                     <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -126,12 +126,12 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(logbook)"
                         >
-                            <i class="fa fa-unlink mr-2"></i>
+                            <i class="fa fa-unlink me-2"></i>
                             {{ trans('global.logbook.expel') }}
                         </button>
                     </div>
                     <div v-else
-                        class="dropdown-menu dropdown-menu-right"
+                        class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
                         x-placement="left-start"
                     >
@@ -140,7 +140,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="editLogbook(logbook)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.logbook.edit') }}
                         </button>
                         <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
@@ -148,7 +148,7 @@
                             class="dropdown-item text-secondary"
                             @click.prevent="shareLogbook(logbook)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt me-2"></i>
                             {{ trans('global.logbook.share') }}
                         </button>
                         <hr class="my-1">
@@ -158,7 +158,7 @@
                             class="dropdown-item py-1 text-red"
                             @click.prevent="confirmItemDelete(logbook)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.logbook.delete') }}
                         </button>
                     </div>

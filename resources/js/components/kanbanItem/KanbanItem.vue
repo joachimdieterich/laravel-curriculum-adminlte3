@@ -45,7 +45,7 @@
                             class="dropdown-item text-secondary py-1"
                             @click="edit()"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt me-2"></i>
                             {{ trans('global.kanbanItem.edit') }}
                         </button>
                         <button
@@ -54,7 +54,7 @@
                             :name="'kanbanItemAddMedia_' + index"
                             @click="addMedia()"
                         >
-                            <i class="fa fa-folder-open mr-2"></i>
+                            <i class="fa fa-folder-open me-2"></i>
                             {{ trans('global.medium.title_singular') }}
                         </button>
                     </div>
@@ -65,7 +65,7 @@
                             class="dropdown-item text-secondary py-1"
                             @click="confirmCopy()"
                         >
-                            <i class="fa fa-copy mr-2"></i>
+                            <i class="fa fa-copy me-2"></i>
                             {{ trans('global.kanbanItem.copy') }}
                         </button>
                     </div>
@@ -78,7 +78,7 @@
                             :name="'kanbanItemDelete_' + index"
                             @click="confirmDeletion()"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash me-2"></i>
                             {{ trans('global.kanbanItem.delete') }}
                         </button>
                     </div>
@@ -173,9 +173,9 @@
                     data-toggle="tooltip"
                 />
     
-                <div class="d-flex ml-auto">
+                <div class="d-flex ms-auto">
                     <button v-if="commentable"
-                        class="btn btn-icon px-2 py-1 mr-2"
+                        class="btn btn-icon px-2 py-1 me-2"
                         :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
                         data-toggle="collapse"
                         :data-target="'#comments_' + item.id"

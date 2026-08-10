@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-university mr-1"></i>
+                            <i class="fa fa-university me-1"></i>
                             {{ organizationType.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'organization_type_edit'"
-                        class="card-tools pr-2">
+                        class="card-tools pe-2">
                         <a @click="editOrganizationType()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
@@ -20,7 +20,7 @@
 
                 <div class="card-body">
                     <strong>
-                        <i class="fas fa-link mr-1"></i>
+                        <i class="fas fa-link me-1"></i>
                         {{ trans('global.organizationType.fields.external_id') }}
                     </strong>
                     <p class="text-muted">
@@ -29,7 +29,7 @@
                     <hr>
 
                     <strong>
-                        <i class="fa fa-map-marker mr-1"></i>
+                        <i class="fa fa-map-marker me-1"></i>
                         {{ trans('global.place') }}
                     </strong>
                     <p class="text-muted">

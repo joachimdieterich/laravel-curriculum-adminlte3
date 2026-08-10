@@ -5,10 +5,10 @@
     >
         <span v-if="edit_settings"
             v-permission="'curriculum_edit'"
-            class="d-flex mr-auto"
+            class="d-flex me-auto"
         >
             <a v-if="(type == 'terminal' && objective.order_id != 0)"
-                class="pointer mr-2"
+                class="pointer me-2"
                 style="color: inherit;"
                 role="button"
                 @click="changeOrder(false)"
@@ -25,7 +25,7 @@
             </a>
 
             <button v-if="(type == 'enabling' && objective.order_id != 0)"
-                class="btn btn-icon btn-sm px-1 py-0 text-secondary mr-1"
+                class="btn btn-icon btn-sm px-1 py-0 text-secondary me-1"
                 :title="trans('global.enablingObjective.move_left')"
                 @click="changeOrder(false)"
             >

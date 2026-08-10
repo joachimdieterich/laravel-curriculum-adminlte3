@@ -7,7 +7,7 @@
             <div class="modal-container share-modal-container">
                 <div class="modal-header">
                     <span class="card-title">
-                        <i class="fa fa-share-alt text-secondary mr-3"></i>
+                        <i class="fa fa-share-alt text-secondary me-3"></i>
                         {{ trans('global.share') }}
                     </span>
                     <button

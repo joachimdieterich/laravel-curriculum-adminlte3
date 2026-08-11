@@ -43,7 +43,7 @@
     }
 
     &.text-secondary:hover { color: #494f54 !important; }
-    &:focus { box-shadow: var(--shadow-default); }
+    &:active { box-shadow: var(--shadow-default); }
     &:focus-visible { box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
-    &.no-focus:focus { box-shadow: none !important; }
+    &.no-focus:active { box-shadow: none !important; }
 }

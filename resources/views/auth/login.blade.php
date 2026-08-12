@@ -44,33 +44,54 @@
             <form action="{{ route('login') }}" method="POST">
                 {{ csrf_field() }}
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="{{ trans('global.login_email') }} / {{ trans('global.user_name') }}" name="email">
-                           <div class="input-group-append">
-                        <div class="input-group-text">
+                    <input
+                        type="text"
+                        name="email"
+                        class="form-control"
+                        placeholder="{{ trans('global.login_email') }} / {{ trans('global.user_name') }}"
+                    />
+                    <div class="input-group-append">
+                        <div class="input-group-text h-100 rounded-start-0 rounded-end">
                             <span class="fas fa-envelope"></span>
                         </div>
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" class="form-control" placeholder="{{ trans('global.login_password') }}" name="password">
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="{{ trans('global.login_password') }}"
+                    />
                     <div class="input-group-append">
-                        <div class="input-group-text">
+                        <div class="input-group-text h-100 rounded-start-0 rounded-end">
                             <span class="fas fa-lock"></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-6">
+                <div class="d-flex justify-content-between">
+                    <div>
                         @if (config('app.guest_user_id') !== null)
-                        <a href="/guest" name="login" class="btn btn-primary btn-block btn-flat">{{ trans('global.login_guest') }}</a>
+                        <a
+                            href="/guest"
+                            name="login"
+                            type="button"
+                            class="btn btn-primary btn-block btn-flat"
+                        >
+                            {{ trans('global.login_guest') }}
+                        </a>
                         @endif
                     </div>
-                    <!-- /.col -->
-                    <div class="col-6">
-                        <button type="submit" name="login" class="btn btn-primary btn-block btn-flat">{{ trans('global.login') }}</button>
+                    <div>
+                        <button
+                            type="submit"
+                            name="login"
+                            class="btn btn-primary btn-block btn-flat"
+                        >
+                            {{ trans('global.login') }}
+                        </button>
                     </div>
-                    <!-- /.col -->
                 </div>
             </form>
             @if (config('app.oidc_host') !== null)
@@ -88,14 +109,11 @@
                     </a>
                 </p>
             @endif
-            <p class="mb-0">
-                @if (config('app.show_impressum') === true)
-                    <a class="" href="{{ route('impressum') }}">Impressum</a>
-                @endif
-            </p>
-            <p class="mb-1">
-
-            </p>
+            @if (config('app.show_impressum') === true)
+                <p class="mb-0">
+                    <a href="{{ route('impressum') }}">Impressum</a>
+                </p>
+            @endif
         </div>
         <!-- /.login-card-body -->
     </div>

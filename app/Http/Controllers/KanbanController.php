@@ -245,7 +245,7 @@ class KanbanController extends Controller
             $kanban->detachTag(trans('global.tag.favourite.singular'));
         }
 
-        return response($kanban);
+        return response()->json($request->input('mark'));
     }
 
     public function hideKanban(Kanban $kanban, HideModelRequest $request)
@@ -257,7 +257,7 @@ class KanbanController extends Controller
             $kanban->detachTag(trans('global.tag.hidden.singular'));
         }
 
-        return response($kanban);
+        return response()->json($request->input('mark'));
     }
 
     private function transformHexColorToRgba($color)

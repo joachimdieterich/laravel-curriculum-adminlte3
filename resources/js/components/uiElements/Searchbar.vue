@@ -32,6 +32,7 @@
                     :class="{'non-extend-search-button': searchTagModelContext === null || !checkPermission('tag_access')}"
                     style="aspect-ratio: 1 / 1;"
                     type="button"
+                    tabindex="-1"
                     @click="prepareEvent(true)"
                 >
                     <i class="fa fa-search"></i>

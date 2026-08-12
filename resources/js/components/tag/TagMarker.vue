@@ -1,16 +1,11 @@
 <template>
     <button
-        :class="buttonClass"
-        :title="active ? titleInactive : titleActive"
-        @click.prevent="active = !active"
+        :title="active ? titleUnmarked : titleMarked"
+        type="button"
+        @click.prevent.stop="active = !active"
     >
-        <i v-if="active"
-           :class="activeIconClass()"
-        ></i>
-        <i v-else
-           :class="inactiveIconClass()"
-        ></i>
-        {{ !active ? this.textInactive : this.textActive }}
+        <i :class="(active ? faIconMarked : faIconUnmarked) + ' ' + iconClass"></i>
+        {{ !active ? this.textUnmarked : this.textMarked }}
     </button>
 </template>
 <script>
@@ -18,75 +13,53 @@ export default {
     name: "TagMarker",
     emits: ['mark-status-changed'],
     props: {
-        faIconActive: {
+        faIconMarked: {
             type: String,
             required: true,
-            title: "Font awesome icon if active"
+            title: "Font awesome icon if model is marked",
         },
-        faIconInactive: {
+        faIconUnmarked: {
             type: String,
             required: true,
-            title: "Font awesome icon if inactive"
+            title: "Font awesome icon if model is unmarked",
         },
         url: {
             type: String,
             required: true,
-            title: "Url to attach/detach tag to a model. E.g. /kanbans/[id]/favour. The [id] is important and reserved for the modelID."
+            title: "Url to attach/detach tag to a model. E.g. /kanbans/[id]/favour. The [id] is important and reserved for the modelID",
         },
         model: {
             type: Object,
             required: true,
         },
-        buttonClass: {
-            type: Object,
-            default: {'btn': true, 'btn-icon': true, 'px-2': true, 'py-1': true}
-        },
         iconClass: {
-            type: Object,
-            default: {'fa': true, 'btn-icon': true, 'px-2': true, 'py-1': true}
+            type: String,
+            default: '',
         },
         isMarked: {
             type: Boolean,
-            title: "If the model is already marked"
+            title: "If the model is already marked",
         },
-        titleActive: {
+        titleMarked: {
             type: String,
-            title: "Title if it's active"
+            default: '',
+            title: "Accessibility-text for button if it is marked (only needed if text is empty)",
         },
-        titleInactive: {
+        titleUnmarked: {
             type: String,
-            title: "Title if it's inactive"
+            default: '',
+            title: "Accessibility-text for button if it is unmarked (only needed if text is empty)",
         },
-        textActive: {
+        textMarked: {
             type: String,
-            title: "Title if it's active"
+            default: '',
+            title: "Button-text if it is marked",
         },
-        textInactive: {
+        textUnmarked: {
             type: String,
-            title: "Title if it's inactive"
-        }
-    },
-    methods: {
-        activeIconClass: function () {
-            let classes = {};
-            classes[this.faIconActive] = true;
-
-            for (let key in this.iconClass) {
-                classes[key] = this.iconClass[key];
-            }
-
-            return classes;
+            default: '',
+            title: "Button-text if it is unmarked",
         },
-        inactiveIconClass: function () {
-            let classes = {};
-            classes[this.faIconInactive] = true;
-
-            for (let key in this.iconClass) {
-                classes[key] = this.iconClass[key];
-            }
-
-            return classes;
-        }
     },
     data: function () {
         return {

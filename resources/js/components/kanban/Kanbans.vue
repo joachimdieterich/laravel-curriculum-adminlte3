@@ -43,17 +43,6 @@
                     <i class="fa fa-2x fa-columns"></i>
                 </template>
 
-                <template v-slot:additional-button>
-                    <favourite
-                        url="/kanbans/[id]/favour"
-                        :model="kanban"
-                        :is-favourited="kanban.is_favourited"
-                        @mark-status-changed="(newKanban) => {
-                            kanbans[index] = newKanban;
-                        }"
-                    />
-                </template>
-
                 <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-end"
@@ -76,7 +65,6 @@
                     <div v-else
                         class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
-                        x-placement="left-start"
                     >
                         <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_edit'"
@@ -116,8 +104,7 @@
                             {{ trans('global.kanban.copy') }}
                         </button>
 
-                        <hide
-                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                        <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
                             url="/kanbans/[id]/hide"
                             :model="kanban"
                             :is-hidden="kanban.is_hidden"

@@ -20,7 +20,7 @@
 
         &.highlight { background-color: #dcdcdca0; color: #212529; }
         &:hover { background-color: #dcdcdc; color: #212529; }
-        &:active, &[aria-expanded="true"] { background-color: #c0c0c0; }
+        &:active, &[aria-expanded="true"] { background-color: #c0c0c0; color: #212529; }
         &.text-danger:hover { color: #a71d2a !important; }
     }
     &.btn-icon-big {

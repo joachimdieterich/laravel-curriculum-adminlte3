@@ -9,7 +9,7 @@
         >
             <button
                 id="brand-menu-dropdown-button"
-                class="btn"
+                class="btn border-0"
                 type="button"
                 @click.stop="toggleBrandMenu()"
             >
@@ -106,7 +106,7 @@
         >
             <button
                 id="user-menu-dropdown-button"
-                class="btn"
+                class="btn border-0"
                 type="button"
                 @click.stop="toggleUserMenu()"
             >

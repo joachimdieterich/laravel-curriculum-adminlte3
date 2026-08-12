@@ -14,6 +14,10 @@
     > .accordion-collapse > div { padding: 1.25rem; }
 }
 
+.dropdown-menu {
+    --bs-dropdown-border-radius: 0.75rem;
+}
+
 .form-check-input {
     @extend .pointer;
 }

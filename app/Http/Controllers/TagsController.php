@@ -103,13 +103,12 @@ class TagsController extends Controller
     {
         abort_unless(\Gate::allows('tag_access'), 403);
 
-        $tag = Tag::findOrCreate(
+        $tag = Tag::findOrCreateFromString(
             $request->input('name'),
         );
 
-        /** @var Role $role */
-        $role = ($request->input('type'))::findOrFail($request->input('taggable_id'));
-        $role->attachTag($tag);
+        $attachableModel = ($request->input('type'))::findOrFail($request->input('taggable_id'));
+        $attachableModel->attachTag($tag);
 
         if (request()->wantsJson()) {
             return $tag;

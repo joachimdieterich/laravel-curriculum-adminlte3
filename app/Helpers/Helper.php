@@ -311,15 +311,23 @@ if (! function_exists('getDataTableWithEntries'))
 
                 $favouriteTagId = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
                 $hiddenTagId = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
+                $tableName = $query->getModel()->getTable();
+                $modelName = $query->getModel()::class;
 
                 // append is_favourite and is_hidden as separate fields
                 // we do it this way, because the built-in function would fire a separate query for each entry
                 $query->addSelect(
-                    DB::raw('CASE WHEN `tags`.`id` = ' . $favouriteTagId . ' THEN 1 ELSE 0 END AS is_favourited'),
-                    DB::raw('CASE WHEN `tags`.`id` = ' . $hiddenTagId . ' THEN 1 ELSE 0 END AS is_hidden')
-                )
-                ->leftJoin('taggables', 'taggables.taggable_id', '=', $query->getModel()->getTable() . '.id')
-                ->leftJoin('tags', 'tags.id', '=', 'taggables.tag_id');
+                    DB::raw('EXISTS(select 1 from `taggables`
+                        where `taggables`.`tag_id` = ' . $favouriteTagId . '
+                        and `taggables`.`taggable_id` = `' . $tableName . '`.`id`
+                        and `taggables`.`taggable_type` = \'' . $modelName . '\'
+                    ) AS is_favourited'),
+                    DB::raw('EXISTS(select 1 from `taggables`
+                        where `taggables`.`tag_id` = ' . $hiddenTagId . '
+                        and `taggables`.`taggable_id` = `' . $tableName . '`.`id`
+                        and `taggables`.`taggable_type` = \'' . $modelName . '"\'
+                    ) AS is_hidden'),
+                );
 
                 // if hidden-tag is not explicitly included in search-tags, exclude hidden entries
                 if ($hiddenTagId !== 0 && !in_array($hiddenTagId, $tags)) {

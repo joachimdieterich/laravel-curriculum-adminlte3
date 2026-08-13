@@ -4,6 +4,7 @@ namespace App\Services\Tag;
 
 use App\User;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Tags\Tag;
 
 trait HasTags
 {
@@ -24,6 +25,16 @@ trait HasTags
         return $morph
             ->where('user_id', $currentUser->id)
             ->ordered();
+    }
+
+    public function attachTag(string | Tag $tag, string | null $type = null)
+    {
+        return $this->attachTags(is_string($tag) ? \App\Tag::findOrCreateFromString($tag) : $tag, $type);
+    }
+
+    public function detachTag(string | Tag $tag, string | null $type = null)
+    {
+        return $this->detachTags(is_string($tag) ? \App\Tag::findOrCreateFromString($tag) : $tag, $type);
     }
 
     public function isFavourited(): Attribute

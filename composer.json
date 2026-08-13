@@ -11,6 +11,8 @@
     "require": {
         "php": "^8.4",
         "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-zip": "*",
         "bacon/bacon-qr-code": "^2.0",
         "barryvdh/laravel-dompdf": "^3.1",
         "barryvdh/laravel-snappy": "^1.0.0",
@@ -18,7 +20,7 @@
         "cmgmyr/messenger": "^2.20",
         "darkaonline/l5-swagger": "^8.3",
         "doctrine/dbal": "^3.0",
-        "edu-sharing/auth-plugin": "10.0.1",
+        "edu-sharing/auth-plugin": "11",
         "guzzlehttp/guzzle": "^7.4",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
@@ -42,9 +44,7 @@
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",
         "select2/select2": "^4.0",
         "spatie/laravel-tags": "^4.10",
-        "yajra/laravel-datatables-oracle": "~12.0",
-        "ext-dom": "*",
-        "ext-zip": "*"
+        "yajra/laravel-datatables-oracle": "~12.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^2.0",

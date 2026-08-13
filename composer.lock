@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "add73845ef46ddf895a26fc64f3a52e9",
+    "content-hash": "e54a5ecde48e2959e974285d7f703961",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1835,16 +1835,16 @@
         },
         {
             "name": "edu-sharing/auth-plugin",
-            "version": "10.0.1",
+            "version": "11.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/edu-sharing/php-auth-plugin.git",
-                "reference": "a76b91059c114a6b544391b7a850dcc43cca46f8"
+                "reference": "67f3ead46b4b6a94f366c11d6d224226db503b99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edu-sharing/php-auth-plugin/zipball/a76b91059c114a6b544391b7a850dcc43cca46f8",
-                "reference": "a76b91059c114a6b544391b7a850dcc43cca46f8",
+                "url": "https://api.github.com/repos/edu-sharing/php-auth-plugin/zipball/67f3ead46b4b6a94f366c11d6d224226db503b99",
+                "reference": "67f3ead46b4b6a94f366c11d6d224226db503b99",
                 "shasum": ""
             },
             "require": {
@@ -1875,9 +1875,9 @@
             "description": "Plugin to provide authentification via Auth By App with a edu-sharing repository",
             "support": {
                 "issues": "https://github.com/edu-sharing/php-auth-plugin/issues",
-                "source": "https://github.com/edu-sharing/php-auth-plugin/tree/10.0.1"
+                "source": "https://github.com/edu-sharing/php-auth-plugin/tree/11.0.0"
             },
-            "time": "2025-10-09T09:54:44+00:00"
+            "time": "2026-07-13T08:26:22+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -16233,5 +16233,5 @@
         "ext-pcntl": "8.3",
         "ext-posix": "8.3"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

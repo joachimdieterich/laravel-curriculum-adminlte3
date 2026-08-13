@@ -29,12 +29,12 @@ trait HasTags
 
     public function attachTag(string | Tag $tag, string | null $type = null)
     {
-        return $this->attachTags(is_string($tag) ? \App\Tag::findOrCreateFromString($tag) : $tag, $type);
+        return $this->attachTags(is_string($tag) ? [\App\Tag::findOrCreateFromString($tag)] : [$tag], $type);
     }
 
     public function detachTag(string | Tag $tag, string | null $type = null)
     {
-        return $this->detachTags(is_string($tag) ? \App\Tag::findOrCreateFromString($tag) : $tag, $type);
+        return $this->detachTags(is_string($tag) ? [\App\Tag::findOrCreateFromString($tag)] : [$tag], $type);
     }
 
     public function isFavourited(): Attribute

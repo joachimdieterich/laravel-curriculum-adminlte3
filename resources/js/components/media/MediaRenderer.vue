@@ -5,7 +5,7 @@
         @click="open()"
     >
         <img v-if="mime === 'image' || mime === 'video' || mime === 'audio' || mime === 'application'"
-            :src="'/media/' + medium.id + '?preview=true'"
+            :src="'/media/' + medium.id + '?preview=true&size=max'"
             :alt="medium.title ?? medium.medium_name"
             class="d-block mw-100 m-auto"
         />

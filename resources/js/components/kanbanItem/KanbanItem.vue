@@ -10,8 +10,8 @@
             class="kanban-item-header px-3 py-2"
             :class="collapse_items && 'collapsed'"
             :style="{ color: textColor, backgroundColor: item.color }"
-            data-toggle="collapse"
-            :data-target="'#item-' + item.id + ' > .kanban-item-body'"
+            data-bs-toggle="collapse"
+            :data-bs-target="'#item-' + item.id + ' > .kanban-item-body'"
             aria-expanded="true"
         >
             <div class="kanban-item-header-title">
@@ -24,80 +24,76 @@
         </div>
 
         <div
-            class="kanban-item-tools d-print-none position-absolute"
+            class="kanban-item-tools d-flex flex-row-reverse d-print-none position-absolute"
             :style="{ color: textColor }"
         >
-            <div v-if="edit_rights || copy_rights || delete_rights"
-                :id="'kanbanItemDropdown_' + index"
-                class="float-right py-0 px-2 pointer"
-                style="background-color: transparent;"
-                data-toggle="dropdown"
-                aria-expanded="false"
-            >
-                <i class="fa fa-ellipsis-v"></i>
-                <div
-                    class="dropdown-menu"
-                    x-placement="top-start"
+            <div class="dropdown">
+                <button v-if="edit_rights || copy_rights || delete_rights"
+                    :id="'kanban-item-dropdown_' + index"
+                    class="btn btn-icon"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
                 >
-                    <div v-if="edit_rights">
-                        <button
-                            :name="'kanbanItemEdit_' + index"
-                            class="dropdown-item text-secondary py-1"
-                            @click="edit()"
-                        >
-                            <i class="fa fa-pencil-alt me-2"></i>
-                            {{ trans('global.kanbanItem.edit') }}
-                        </button>
-                        <button
-                            v-permission="'external_medium_create'"
-                            class="dropdown-item text-secondary py-1"
-                            :name="'kanbanItemAddMedia_' + index"
-                            @click="addMedia()"
-                        >
-                            <i class="fa fa-folder-open me-2"></i>
-                            {{ trans('global.medium.title_singular') }}
-                        </button>
+                    <i class="fa fa-ellipsis-v"></i>
+                    <div class="dropdown-menu">
+                        <div v-if="edit_rights">
+                            <button
+                                :name="'kanban-item-edit_' + index"
+                                class="dropdown-item"
+                                @click="edit()"
+                            >
+                                <i class="fa fa-pencil-alt"></i>
+                                {{ trans('global.kanbanItem.edit') }}
+                            </button>
+                            <button
+                                v-permission="'external_medium_create'"
+                                class="dropdown-item"
+                                :name="'kanban-item-add-media_' + index"
+                                @click="addMedia()"
+                            >
+                                <i class="fa fa-folder-open"></i>
+                                {{ trans('global.medium.title_singular') }}
+                            </button>
+                        </div>
+    
+                        <div v-if="copy_rights">
+                            <button
+                                name="kanban-item-copy"
+                                class="dropdown-item"
+                                @click="confirmCopy()"
+                            >
+                                <i class="fa fa-copy"></i>
+                                {{ trans('global.kanbanItem.copy') }}
+                            </button>
+                        </div>
+    
+                        <div v-if="delete_rights">
+                            <hr class="my-1">
+                            <button
+                                v-permission="'kanban_delete'"
+                                class="dropdown-item text-danger"
+                                :name="'kanban-item-delete_' + index"
+                                @click="confirmDeletion()"
+                            >
+                                <i class="fa fa-trash"></i>
+                                {{ trans('global.kanbanItem.delete') }}
+                            </button>
+                        </div>
                     </div>
-
-                    <div v-if="copy_rights">
-                        <button
-                            name="kanbanItemCopy"
-                            class="dropdown-item text-secondary py-1"
-                            @click="confirmCopy()"
-                        >
-                            <i class="fa fa-copy me-2"></i>
-                            {{ trans('global.kanbanItem.copy') }}
-                        </button>
-                    </div>
-
-                    <div v-if="delete_rights">
-                        <hr class="my-1">
-                        <button
-                            v-permission="'kanban_delete'"
-                            class="dropdown-item py-1 text-red"
-                            :name="'kanbanItemDelete_' + index"
-                            @click="confirmDeletion()"
-                        >
-                            <i class="fa fa-trash me-2"></i>
-                            {{ trans('global.kanbanItem.delete') }}
-                        </button>
-                    </div>
-                </div>
+                </button>
             </div>
-            <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
-                class="float-right py-0 px-1 mx-1 handle pointer"
+            <button v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
+                class="btn btn-icon position-relative handle"
                 @click.stop
             >
-                <span class="position-relative">
-                    <i v-if="editable"
-                       class="fa fa-arrows-up-down-left-right"
-                    ></i>
-                    <i v-if="item.locked"
-                       class="fa fa-lock text-muted position-absolute"
-                       style="left: 8px; top: 10px; cursor: not-allowed;"
-                    ></i>
-                </span>
-            </div>
+                <i v-if="editable"
+                    class="fa fa-arrows-up-down-left-right"
+                ></i>
+                <i v-if="item.locked"
+                    class="fa fa-lock text-muted position-absolute"
+                    style="right: 2px; bottom: 2px; cursor: not-allowed;"
+                ></i>
+            </button>
         </div>
 
         <div
@@ -159,7 +155,7 @@
                     :lastname="item.owner.lastname"
                     :size="25"
                     class="contacts-list-img o"
-                    data-toggle="tooltip"
+                    data-bs-toggle="tooltip"
                 />
                 <Avatar v-if="editors != null"
                     v-for="(editor_user, index) in editorsWithoutOwner"
@@ -170,15 +166,15 @@
                     :lastname="editor_user.lastname"
                     :size="25"
                     class="contacts-list-img"
-                    data-toggle="tooltip"
+                    data-bs-toggle="tooltip"
                 />
     
                 <div class="d-flex ms-auto">
                     <button v-if="commentable"
                         class="btn btn-icon px-2 py-1 me-2"
                         :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
-                        data-toggle="collapse"
-                        :data-target="'#comments_' + item.id"
+                        data-bs-toggle="collapse"
+                        :data-bs-target="'#comments_' + item.id"
                         aria-expanded="false"
                         @click="toggleComments()"
                     >

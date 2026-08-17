@@ -23,7 +23,7 @@ class KanbanItem extends Model
         'replace_links' => 'boolean',
         'visibility' => 'boolean',
         'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
+        'created_at'  => 'datetime:d.m.Y H:i',
         'due_date' => 'datetime',
         'visible_from'  => 'datetime',
         'visible_until'  => 'datetime',

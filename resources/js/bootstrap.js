@@ -10,7 +10,7 @@ try {
     window.Popper = require('popper.js').default; //for tooltips
 
     window.$ = window.jQuery = require('jquery');
-    require('bootstrap');
+    window.bootstrap = require('bootstrap');
 
 } catch (e) {}
 

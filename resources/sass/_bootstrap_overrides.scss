@@ -18,6 +18,19 @@
     --bs-dropdown-border-radius: 0.75rem;
 }
 
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    > i {
+        height: 20px;
+        width: 20px;
+        line-height: 20px;
+        text-align: center;
+    }
+}
+
 .form-check-input {
     @extend .pointer;
 }

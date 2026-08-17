@@ -7,7 +7,6 @@
         faIconUnmarked="fa fa-eye-slash"
         :is-marked="isHidden"
         :model="model"
-        iconClass="me-2"
         :class="classes"
         @mark-status-changed="(newStatus) => {
             this.$emit('hide-status-changed', newStatus)
@@ -37,7 +36,7 @@ export default {
         },
         classes: {
             type: String,
-            default: 'dropdown-item text-secondary',
+            default: 'dropdown-item',
         },
     },
 }

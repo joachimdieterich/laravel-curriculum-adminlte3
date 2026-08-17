@@ -22,6 +22,8 @@
             :class="kanban.collapse_items && 'collapsed'"
             style="top: 10px; right: 10px; line-height: 1; z-index: 10;"
             :style="{ color: textColor }"
+            data-bs-toggle="collapse"
+            :aria-expanded="!kanban.collapseItems"
             @click="toggleCollapseAll"
         >
             <i class="fa fa-angle-up"></i>
@@ -287,8 +289,11 @@ export default {
             }
         },
         toggleCollapseAll(e) {
-            const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'hide' : 'show';
-            $('#kanban-wrapper .kanban-item-body').collapse(collapse);
+            const collapsed = e.target.parentElement.classList.toggle('collapsed');
+            [...this.$el.querySelectorAll('.kanban-item-body')].map(elem => {
+                // check collapse-value, so every element will end up having the same state
+                if (elem.classList.contains('show') === collapsed) new bootstrap.Collapse(elem)
+            });
         },
         setEmbededView() {
             // TODO: needs to be adapted for the new layout in '1531-dashboard' branch
@@ -677,6 +682,7 @@ export default {
         }
     }
     & > .kanban-item-tools {
+        gap: 4px;
         top: 0.5rem;
         right: 0.5rem;
     }

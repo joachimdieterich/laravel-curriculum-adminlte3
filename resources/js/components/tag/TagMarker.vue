@@ -4,7 +4,7 @@
         type="button"
         @click.prevent.stop="active = !active"
     >
-        <i :class="(active ? faIconMarked : faIconUnmarked) + ' ' + iconClass"></i>
+        <i :class="active ? faIconMarked : faIconUnmarked"></i>
         {{ !active ? this.textUnmarked : this.textMarked }}
     </button>
 </template>
@@ -31,10 +31,6 @@ export default {
         model: {
             type: Object,
             required: true,
-        },
-        iconClass: {
-            type: String,
-            default: '',
         },
         isMarked: {
             type: Boolean,

@@ -9,26 +9,20 @@
             class="hide-scrollbars overflow-auto pt-3"
         >
             <div v-for="comment in comments"
-                class="direct-chat-msg"
-                :class="{ 'right': comment.user_id == $userId }"
+                class="mb-2"
             >
-                <div class="direct-chat-infos clearfix">
-                    <span
-                        class="direct-chat-name"
-                        :class="{ 'float-left': comment.user_id != $userId, 'float-right': comment.user_id ==  $userId }"
-                    >
-                        {{ comment.user.firstname }} {{ comment.user.lastname }}
-                    </span>
-                    <span
-                        class="direct-chat-timestamp"
-                        :class="{ 'float-left': comment.user_id == $userId,'float-right': comment.user_id !=  $userId }"
-                    >
-                        {{ comment.created_at }}
-                    </span>
+                <div
+                    class="d-flex justify-content-between"
+                    :class="{ 'flex-row-reverse': comment.user_id == $userId }"
+                    style="font-size: 0.875rem;"
+                >
+                    <span style="font-weight: 600;">{{ comment.user.firstname }} {{ comment.user.lastname }}</span>
+                    <span class="text-secondary">{{ comment.created_at }}</span>
                 </div>
                 <div
                     class="d-flex"
-                    :class="comment.user_id == $userId ? 'flex-row-reverse' : 'flex-row'"
+                    :class="{ 'flex-row-reverse': comment.user_id == $userId }"
+                    style="gap: 0.5rem;"
                 >
                     <img v-if="comment.user.medium_id != null"
                         class="direct-chat-img"
@@ -44,7 +38,7 @@
                         :size="40"
                     />
                     <div
-                        class="direct-chat-text flex-fill"
+                        class="comment flex-fill bg-dark-subtle px-2 py-1 rounded-3"
                         @mouseover="hover = comment.id"
                         @mouseleave="hover = false"
                     >
@@ -85,7 +79,7 @@
                 />
                 <span class="input-group-append">
                     <button
-                        class="btn btn-primary"
+                        class="btn btn-primary rounded-start-0"
                         :disabled="!form.comment"
                         @click.prevent="sendComment()"
                     >
@@ -212,8 +206,8 @@ export default {
 }
 </script>
 <style scoped>
-.direct-chat-text:hover .text-danger { visibility: visible !important; }
+.comment:hover .invisible { visibility: visible !important; }
 @media (max-width: 991px) {
-    .direct-chat-text .text-danger { visibility: visible !important; }
+    .comment .invisible { visibility: visible !important; }
 }
 </style>

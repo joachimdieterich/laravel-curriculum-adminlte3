@@ -46,61 +46,56 @@
                 <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
                     >
                         <button
                             v-permission="'kanban_delete'"
                             :id="'delete-kanban-' + kanban.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
+                            class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(kanban)"
                         >
-                            <span>
-                                <i class="fa fa-unlink me-2"></i>
-                                {{ trans('global.kanban.expel') }}
-                            </span>
+                            <i class="fa fa-unlink"></i>
+                            {{ trans('global.kanban.expel') }}
                         </button>
                     </div>
                     <div v-else
                         class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
                     >
                         <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_edit'"
                             :name="'edit-kanban-' + kanban.id"
-                            class="dropdown-item text-secondary"
+                            class="dropdown-item"
                             @click.prevent="editKanban(kanban)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.kanban.edit') }}
                         </button>
 
                         <button
                             v-permission="'tag_access'"
                             :name="'manage-tags-' + kanban.id"
-                            class="dropdown-item text-secondary"
+                            class="dropdown-item"
                             @click.prevent="manageTags(kanban)"
                         >
-                            <i class="fa fa-tag me-2"></i>
+                            <i class="fa fa-tag"></i>
                             {{ trans('global.tag.title') }}
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban)"
                             :name="'kanban-share_' + kanban.id"
-                            class="dropdown-item text-secondary"
+                            class="dropdown-item"
                             @click.prevent="shareKanban(kanban)"
                         >
-                            <i class="fa fa-share-alt me-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.kanban.share') }}
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban) || kanban.allow_copy"
                             :name="'copy-kanban-' + kanban.id"
-                            class="dropdown-item text-secondary"
+                            class="dropdown-item"
                             @click.prevent="confirmKanbanCopy(kanban)"
                         >
-                            <i class="fa fa-copy me-2"></i>
+                            <i class="fa fa-copy"></i>
                             {{ trans('global.kanban.copy') }}
                         </button>
 
@@ -119,13 +114,11 @@
                             v-permission="'kanban_delete'"
                             :id="'delete-kanban-' + kanban.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
+                            class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(kanban)"
                         >
-                            <span>
-                                <i class="fa fa-trash me-2"></i>
-                                {{ trans('global.kanban.delete') }}
-                            </span>
+                            <i class="fa fa-trash"></i>
+                            {{ trans('global.kanban.delete') }}
                         </button>
 
                     </div>

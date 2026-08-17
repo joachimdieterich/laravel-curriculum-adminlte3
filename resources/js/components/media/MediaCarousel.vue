@@ -2,15 +2,15 @@
     <div
         :id="component_id"
         class="carousel slide ignore"
-        data-interval="false"
+        data-bs-interval="false"
     >
         <div v-if="subscriptions.length > 1"
             class="carousel-indicators"
         >
             <li v-for="(item, index) in subscriptions"
                 :class="{ 'active': index === 0 }"
-                :data-target="'#' + component_id"
-                :data-slide-to="index"
+                :data-bs-target="'#' + component_id"
+                :data-bs-slide-to="index"
                 @click="setSlide(index)">
             </li>
         </div>
@@ -49,7 +49,7 @@
             class="d-print-none carousel-control-prev"
             style="z-index: 20;"
             role="button"
-            data-slide="prev"
+            data-bs-slide="prev"
             :aria-label="trans('pagination.previous')"
             @click="prev()"
         >
@@ -61,7 +61,7 @@
             class="d-print-none carousel-control-next"
             style="z-index: 20;"
             role="button"
-            data-slide="next"
+            data-bs-slide="next"
             :aria-label="trans('pagination.next')"
             @click="next()"
         >

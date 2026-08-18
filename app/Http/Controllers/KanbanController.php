@@ -481,21 +481,24 @@ class KanbanController extends Controller
     protected function copyMediumSubscription(\App\MediumSubscription $subscription, string $model,int $modelId): void
     {
         $usage = null;
-        // if Medium is external, we need to create a new usage
-        if (!is_null($subscription->additional_data)) {
-            $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
-                $model,
-                $modelId,
-                $subscription->additional_data['nodeId'],
-                $subscription->medium()->pluck('owner_id')->first()
-            );
-        }
 
-        $subscription->replicate()->fill([
-            'subscribable_id'   => $modelId,
-            'owner_id'          => auth()->user()->id,
-            'additional_data'   => $usage,
-        ])->save();
+        try { // in case the usage-creation fails
+            // if Medium is external, we need to create a new usage
+            if (!is_null($subscription->additional_data)) {
+                $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                    $model,
+                    $modelId,
+                    $subscription->additional_data['nodeId'],
+                    $subscription->medium()->pluck('owner_id')->first()
+                );
+            }
+
+            $subscription->replicate()->fill([
+                'subscribable_id'   => $modelId,
+                'owner_id'          => auth()->user()->id,
+                'additional_data'   => $usage,
+            ])->save();
+        } catch (\Throwable) {}
     }
 
     protected function validateRequest()

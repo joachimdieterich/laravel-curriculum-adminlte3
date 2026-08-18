@@ -14,76 +14,77 @@
             </span>
         </div>
         <div v-else
-             v-show="showWithSearch"
-            class="d-flex align-items-center"
-            :style="'color:' + $textcolor(status.color)"
+            v-show="showWithSearch"
+            class="d-flex align-items-center justify-content-between"
+            :style="'color: ' + textColor"
         >
-            <div v-if="edit_rights || copy_rights || delete_rights"
-                :id="'kanbanStatusDropdown_' + status.id"
-                class="d-print-none btn btn-flat py-0 ps-0 pull-left"
-                data-toggle="dropdown"
-                aria-expanded="false"
-            >
-                <i
-                    class="fas fa-bars"
-                    :style="'color:' + $textcolor(status.color)"
-                ></i>
-                <div
-                    class="dropdown-menu"
-                    x-placement="top-start"
-                >
-                    <div>
-                        <div v-if="edit_rights">
-                            <button
-                                name="kanbanStatusEdit"
-                                class="dropdown-item text-secondary py-1"
-                                @click="edit()"
-                            >
-                                <i class="fa fa-pencil-alt me-2"></i>
-                                {{ trans('global.kanbanStatus.edit') }}
-                            </button>
-                        </div>
-
-                        <div v-if="copy_rights">
-                            <button
-                                name="kanbanStatusCopy"
-                                class="dropdown-item text-secondary py-1"
-                                @click="confirmCopy()"
-                            >
-                                <i class="fa fa-copy me-2"></i>
-                                {{ trans('global.kanbanStatus.copy') }}
-                            </button>
-                        </div>
-
-                        <div v-if="delete_rights">
-                            <hr class="my-1">
-                            <button
-                                v-permission="'kanban_delete'"
-                                name="kanbanStatusDelete"
-                                class="dropdown-item py-1 text-red"
-                                @click="confirmDeletion()"
-                            >
-                                <i class="fa fa-trash me-2"></i>
-                                {{ trans('global.kanbanStatus.delete') }}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <strong>{{ status.title }}</strong>
-            <div v-if="$userId == kanban_owner_id
-                    || (!status.locked || $userId == status.owner_id)"
-                class="handle d-print-none ms-auto pointer"
-            >
-                <span class="position-relative">
+            <div class="d-flex" style="gap: 0.25rem;">
+                <button v-if="$userId == kanban_owner_id
+                        || (!status.locked || $userId == status.owner_id)"
+                    class="btn position-relative handle d-print-none"
+                    :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                    type="button"
+                    tabindex="-1"
+                >
                     <i v-if="editable"
                         class="fa fa-arrows-up-down-left-right"
                     ></i>
                     <i v-if="status.locked"
                         class="fa fa-lock text-muted position-absolute"
-                        style="left: 8px; top: 10px; cursor: not-allowed;"
+                        style="right: 2px; bottom: 2px; cursor: not-allowed;"
                     ></i>
-                </span>
+                </button>
+                <button v-if="edit_rights || copy_rights || delete_rights"
+                    :id="'kanbanStatusDropdown_' + status.id"
+                    class="btn d-print-none"
+                    :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    :title="trans('global.kanbanStatus.dropdown')"
+                    :aria-label="trans('global.kanbanStatus.dropdown')"
+                >
+                    <i class="fas fa-bars"></i>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <div>
+                            <div v-if="edit_rights">
+                                <button
+                                    name="kanbanStatusEdit"
+                                    class="dropdown-item text-secondary py-1"
+                                    @click="edit()"
+                                >
+                                    <i class="fa fa-pencil-alt me-2"></i>
+                                    {{ trans('global.kanbanStatus.edit') }}
+                                </button>
+                            </div>
+    
+                            <div v-if="copy_rights">
+                                <button
+                                    name="kanbanStatusCopy"
+                                    class="dropdown-item text-secondary py-1"
+                                    @click="confirmCopy()"
+                                >
+                                    <i class="fa fa-copy me-2"></i>
+                                    {{ trans('global.kanbanStatus.copy') }}
+                                </button>
+                            </div>
+    
+                            <div v-if="delete_rights">
+                                <hr class="my-1">
+                                <button
+                                    v-permission="'kanban_delete'"
+                                    name="kanbanStatusDelete"
+                                    class="dropdown-item py-1 text-red"
+                                    @click="confirmDeletion()"
+                                >
+                                    <i class="fa fa-trash me-2"></i>
+                                    {{ trans('global.kanbanStatus.delete') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </div>
@@ -230,6 +231,10 @@ export default {
         }
     },
     computed: {
+        textColor: function() {
+            if (this.status === null || !this.status.color) return;
+            return this.$textcolor(this.status.color);
+        },
         showWithSearch: function () {
             if (typeof this.searchFilter !== 'string') {
                 return true;

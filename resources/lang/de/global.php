@@ -144,6 +144,7 @@ return [
     'selectDateRange' => 'Zeitraum auswählen',
     'visible_from_to' => 'sichtbar von/bis (Datum/Uhrzeit)',
     'visible_until_or_from_to' => 'sichtbar bis oder von/bis (Datum/Uhrzeit)',
+    'fullscreen' => 'Vollbildmodus',
     'hidden' => 'ausgeblendet',
     'expired' => 'abgelaufen',
     'token_expired' => 'Dieser Link ist nicht mehr gültig',
@@ -407,9 +408,8 @@ return [
     'recipient' => 'Empfänger',
     'message_subject' => 'Betreff',
     'comment' => 'Kommentar',
+    'comments' => 'Kommentare',
     'commentable' => 'Kommentare aktivieren',
-    'show_comments' => 'Kommentare anzeigen',
-    'hide_comments' => 'Kommentare ausblenden',
     'send' => 'Senden',
     'reply' => 'Antwort',
     'documents' => 'Dokumente',
@@ -1108,6 +1108,7 @@ return [
         'allow_copy' => 'Pinnwand darf von anderen kopiert werden',
         'delete' => 'Pinnwand löschen',
         'delete_helper' => 'Soll die Pinnwand sowie die zugehörigen Daten gelöscht werden?',
+        'toggle_items' => 'Karten ein-/ausklappen',
     ],
     'kanbanItem' => [
         'title' => 'Karten',
@@ -1121,6 +1122,7 @@ return [
         'deleted' => 'Karte wurde gelöscht!',
         'due_date' => 'Fälligkeitsdatum',
         'expired' => 'abgelaufen',
+        'dropdown' => 'Karten Aktionen',
         'fields' => [
             'order_id' => 'Order ID',
             'kanban_status_id' => 'Status ID',
@@ -1141,6 +1143,7 @@ return [
         'delete' => 'Spalte löschen',
         'delete_helper' => 'Soll die Spalte sowie die zugehörigen Karten gelöscht werden?',
         'deleted' => 'Spalte wurde gelöscht!',
+        'dropdown' => 'Spalten Aktionen',
         'fields' => [
             'order_id' => 'Order ID',
             'kanban_id' => 'Kanban ID',

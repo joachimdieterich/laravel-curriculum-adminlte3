@@ -112,10 +112,7 @@
 </template>
 <script>
 import Modal from '../uiElements/Modal.vue';
-
 import Form from 'form-backend-validation';
-import NewMediumForm from "../media/NewMediumForm.vue";
-import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
 import TagMultiselect from "../tag/TagMultiselect.vue";
@@ -125,8 +122,6 @@ export default {
     components: {
         Modal,
         TagMultiselect,
-        Select2,
-        NewMediumForm,
     },
     props: {
         params: {

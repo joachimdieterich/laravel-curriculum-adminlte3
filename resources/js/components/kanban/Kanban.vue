@@ -9,25 +9,28 @@
             :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
             :alt="kanban.medium.title ?? kanban.medium.medium_name ?? 'background image'"
         />
-        <div v-if="!embeded"
-            class="d-print-none position-absolute pointer"
-            style="top: 10px; left: 10px; line-height: 1; z-index: 10;"
-            :style="{ color: textColor }"
+        <button v-if="!embeded"
+            class="btn d-print-none position-absolute"
+            :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+            style="top: 0.25rem; left: 0.25rem; z-index: 10;"
+            type="button"
+            :title="trans('global.fullscreen')"
+            :aria-label="trans('global.fullscreen')"
             @click="toggleFullscreen"
         >
             <i class="fa fa-expand"></i>
-        </div>
-        <div
-            class="d-print-none position-absolute pointer"
-            :class="kanban.collapse_items && 'collapsed'"
-            style="top: 10px; right: 10px; line-height: 1; z-index: 10;"
-            :style="{ color: textColor }"
-            data-bs-toggle="collapse"
-            :aria-expanded="!kanban.collapseItems"
+        </button>
+        <button
+            class="btn d-print-none position-absolute"
+            :class="[kanban.collapse_items && 'collapsed', textColor === '#000' ? 'btn-icon' : 'btn-icon-alt']"
+            style="top: 0.25rem; right: 0.25rem; z-index: 10;"
+            type="button"
+            :title="trans('global.kanban.toggle_items')"
+            :aria-label="trans('global.kanban.toggle_items')"
             @click="toggleCollapseAll"
         >
             <i class="fa fa-angle-up"></i>
-        </div>
+        </button>
 
         <div
             id="kanban-wrapper"
@@ -70,10 +73,10 @@
                         />
                         <div v-if="editable"
                             :id="'kanbanItemCreateButton_' + index"
-                            class="my-1 w-100 text-center"
+                            class="d-flex justify-content-center my-2"
                         >
                             <button
-                                class="btn btn-flat p-1"
+                                class="btn btn-icon bg-transparent"
                                 @click="openItemModal(status.id)"
                             >
                                 <i class="d-print-none text-white fa fa-2x fa-plus-circle"></i>
@@ -609,7 +612,7 @@ export default {
     computed: {
         textColor: function() {
             if (this.kanban.color == "" || this.kanban.color == null) return;
-            return this.$textcolor(this.kanban.color, '#333333');
+            return this.$textcolor(this.kanban.color);
         },
         columnDragOptions() {
             return {
@@ -654,7 +657,7 @@ export default {
 .kanban-wrapper {
     padding: 2rem;
     overflow-x: auto;
-    overflow-y: clip;    
+    overflow-y: clip;
 }
 .kanban-status {
     background-color: white;
@@ -682,7 +685,7 @@ export default {
         }
     }
     & > .kanban-item-tools {
-        gap: 4px;
+        gap: 0.25rem;
         top: 0.5rem;
         right: 0.5rem;
     }

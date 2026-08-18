@@ -23,16 +23,17 @@
             </div>
         </div>
 
-        <div
-            class="kanban-item-tools d-flex flex-row-reverse d-print-none position-absolute"
-            :style="{ color: textColor }"
-        >
+        <div class="kanban-item-tools d-flex flex-row-reverse d-print-none position-absolute">
             <div class="dropdown">
                 <button v-if="edit_rights || copy_rights || delete_rights"
                     :id="'kanban-item-dropdown_' + index"
-                    class="btn btn-icon"
+                    class="btn d-print-none"
+                    :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                    type="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    :title="trans('global.kanbanItem.dropdown')"
+                    :aria-label="trans('global.kanbanItem.dropdown')"
                 >
                     <i class="fa fa-ellipsis-v"></i>
                     <div class="dropdown-menu">
@@ -83,7 +84,10 @@
                 </button>
             </div>
             <button v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
-                class="btn btn-icon position-relative handle"
+                class="btn position-relative handle"
+                :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                type="button"
+                tabindex="-1"
                 @click.stop
             >
                 <i v-if="editable"
@@ -172,7 +176,7 @@
                 <div class="d-flex ms-auto">
                     <button v-if="commentable"
                         class="btn btn-icon px-2 py-1 me-2"
-                        :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
+                        :title="trans('global.comments')"
                         data-bs-toggle="collapse"
                         :data-bs-target="'#comments_' + item.id"
                         aria-expanded="false"
@@ -285,7 +289,7 @@ export default {
     computed: {
         textColor: function() {
             if (this.item.color == "" || this.item.color == null) return;
-            return this.$textcolor(this.item.color, '#333333');
+            return this.$textcolor(this.item.color);
         },
         hidden: function() { // check if item is hidden based on visible-from/to dates
             return (this.item.visible_from != null || this.item.visible_until != null)

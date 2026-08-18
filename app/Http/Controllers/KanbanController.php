@@ -470,7 +470,9 @@ class KanbanController extends Controller
                 $itemCopy->save();
 
                 foreach ($item->mediaSubscriptions as $mediumSubscription) {
-                    $this->copyMediumSubscription($mediumSubscription, 'App\\KanbanItem', $itemCopy->id);
+                    try {
+                        $this->copyMediumSubscription($mediumSubscription, 'App\\KanbanItem', $itemCopy->id);
+                    } catch (\Throwable) {}
                 }
             }
         }
@@ -482,23 +484,21 @@ class KanbanController extends Controller
     {
         $usage = null;
 
-        try { // in case the usage-creation fails
-            // if Medium is external, we need to create a new usage
-            if (!is_null($subscription->additional_data)) {
-                $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
-                    $model,
-                    $modelId,
-                    $subscription->additional_data['nodeId'],
-                    $subscription->medium()->pluck('owner_id')->first()
-                );
-            }
+        // if Medium is external, we need to create a new usage
+        if (!is_null($subscription->additional_data)) {
+            $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                $model,
+                $modelId,
+                $subscription->additional_data['nodeId'],
+                $subscription->medium()->pluck('owner_id')->first()
+            );
+        }
 
-            $subscription->replicate()->fill([
-                'subscribable_id'   => $modelId,
-                'owner_id'          => auth()->user()->id,
-                'additional_data'   => $usage,
-            ])->save();
-        } catch (\Throwable) {}
+        $subscription->replicate()->fill([
+            'subscribable_id'   => $modelId,
+            'owner_id'          => auth()->user()->id,
+            'additional_data'   => $usage,
+        ])->save();
     }
 
     protected function validateRequest()

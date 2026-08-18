@@ -327,7 +327,9 @@ class KanbanController extends Controller
                 $itemCopy->save();
 
                 foreach ($item->mediaSubscriptions as $mediumSubscription) {
-                    $this->copyMediumSubscription($mediumSubscription, 'App\\KanbanItem', $itemCopy->id);
+                    try {
+                        $this->copyMediumSubscription($mediumSubscription, 'App\\KanbanItem', $itemCopy->id);
+                    } catch (\Throwable) {}
                 }
             }
         }
@@ -338,6 +340,7 @@ class KanbanController extends Controller
     protected function copyMediumSubscription(\App\MediumSubscription $subscription, string $model,int $modelId): void
     {
         $usage = null;
+
         // if Medium is external, we need to create a new usage
         if (!is_null($subscription->additional_data)) {
             $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(

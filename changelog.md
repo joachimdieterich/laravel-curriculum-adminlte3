@@ -1,3 +1,13 @@
+## 1.4.2 (2026-08-13)
+- SharingModal: user-tab has a new dropdown-menu
+- KanbanModal: allowed teacher-role and above to change owner
+- KanbanModal: new MediumForm-component, to allow media on create
+- Curriculum: hid references-field for non-global curricula
+- updated edusharing-plugin to newest version
+- deleted sharing_token column of users-table
+- KanbanApi: changes to delete-endpoint to only allow certain Clients
+- changes to MoodleApi for new Moodle-Plugin
+
 ## 1.4.1 (2026-06-03)
 - User: cache role() for current request to prevent redundant DB-calls
 - Kanban: added embed-view by checking if inside an iframe

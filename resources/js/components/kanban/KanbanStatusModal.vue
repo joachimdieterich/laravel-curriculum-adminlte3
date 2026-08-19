@@ -1,160 +1,82 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ method == 'post' ? trans('global.kanbanStatus.create') : trans('global.kanbanStatus.edit') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
+    <Modal
+        ref="modal"
+        model="kanbanStatus"
+        modalName="kanban-status-modal"
+        :method="method"
+        :processing="processing"
+        :allow-overflow="true"
+        :show-permission-section="hasPermissionsAccess"
+        @save="(form) => submit(form)"
+    >
+        <template #permissions>
+            <div class="form-check form-switch">
+                <input
+                    id="kanban-status-movable"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.movable"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-status-movable"
                 >
-                    <div class="card">
-                        <div class="card-body">
-                            <div>
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    class="form-control"
-                                    maxlength="191"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
-                                    required
-                                />
-                                <p
-                                    v-if="form.errors.title"
-                                    class="help-block"
-                                    v-text="form.errors.title[0]"
-                                ></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.display') }}</span>
-                        </div>
-                        <div class="card-body">
-                            <v-swatches
-                                class="d-flex"
-                                style="height: 42px;"
-                                :swatches="$swatches"
-                                row-length="5"
-                                v-model="form.color"
-                                show-fallback
-                                fallback-input-type="color"
-                            />
-                        </div>
-                    </div>
-
-                    <div v-if="hasPermissionsAccess"
-                        class="card"
-                    >
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.permissions') }}</span>
-                        </div>
-                        <div class="card-body">
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'movable_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.movable"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light"
-                                    :for="'movable_' + form.id"
-                                >
-                                    {{ trans('global.movable') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'editable_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.editable"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light"
-                                    :for="'editable_' + form.id"
-                                >
-                                    {{ trans('global.editable') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'visibility_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.visibility"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light"
-                                    :for="'visibility_' + form.id"
-                                >
-                                    {{ trans('global.visible') }}
-                                </label>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="kanban-status-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="kanban-status-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="!form.title || processing"
-                            @click="submit()"
-                        >
-                            <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
-                            <span v-else>{{ trans('global.save') }}</span>
-                        </button>
-                    </span>
-                </div>
+                    {{ trans('global.movable') }}
+                </label>
             </div>
-        </div>
-    </Transition>
+
+            <div class="form-check form-switch">
+                <input
+                    id="kanban-status-editable"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.editable"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-status-editable"
+                >
+                    {{ trans('global.editable') }}
+                </label>
+            </div>
+            
+            <div class="form-check form-switch">
+                <input
+                    id="kanban-status-visibility"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.visibility"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-status-visibility"
+                >
+                    {{ trans('global.visibility') }}
+                </label>
+            </div>
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import axios from "axios";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
 
 export default {
     name: 'kanban-status-modal',
+    components: { Modal },
     props: {
-        kanban: Object,
+        kanban: {
+            type: Object,
+            required: true,
+        },
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -185,7 +107,8 @@ export default {
         }
     },
     methods: {
-        submit() {
+        submit(formData) {
+            this.form.populate(formData);
             this.form.locked = !this.form.movable;
             this.processing = true;
 
@@ -221,7 +144,7 @@ export default {
         hasPermissionsAccess() {
             return this.method == 'post'
                 || this.form.owner_id == this.$userId
-                || this.$parent.kanban.owner_id == this.$userId
+                || this.kanban.owner_id == this.$userId
                 || this.checkPermission('is_admin');
         },
     },
@@ -238,6 +161,8 @@ export default {
                     this.method = params.method;
                     this.form.movable = !this.form.locked;
                 }
+
+                this.$refs.modal.resetForm(this.form);
             }
         });
     },

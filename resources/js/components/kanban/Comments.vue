@@ -38,7 +38,7 @@
                         :size="40"
                     />
                     <div
-                        class="comment flex-fill bg-dark-subtle px-2 py-1 rounded-3"
+                        class="comment position-relative flex-fill bg-dark-subtle px-2 py-1 rounded-3"
                         @mouseover="hover = comment.id"
                         @mouseleave="hover = false"
                     >
@@ -48,7 +48,7 @@
                                     || checkPermission('is_admin')
                                 "
                                 type="button"
-                                class="d-print-none btn btn-icon text-danger px-2 py-1 me-1 invisible"
+                                class="d-print-none btn btn-icon text-danger px-2 py-1 me-1"
                                 @click="deleteComment(comment)"
                             >
                                 <i class="fa fa-trash"></i>
@@ -205,9 +205,27 @@ export default {
     }
 }
 </script>
-<style scoped>
-.comment:hover .invisible { visibility: visible !important; }
+<style>
+.comment::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: 100%;
+    border: 6px solid #0000;
+    border-right-color: var(--bs-dark-bg-subtle);
+}
+.flex-row-reverse > .comment:before {
+    left: 100%;
+    right: auto;
+    border-left-color: var(--bs-dark-bg-subtle);
+    border-right-color: #0000;
+}
+.comment .fa-trash {
+    opacity: 0%;
+    transition: opacity 0.15s ease-in-out;
+}
+.comment:hover .fa-trash { opacity: 100%; }
 @media (max-width: 991px) {
-    .comment .invisible { visibility: visible !important; }
+    .comment .fa-trash { opacity: 100%; }
 }
 </style>

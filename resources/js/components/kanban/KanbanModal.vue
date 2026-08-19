@@ -6,6 +6,7 @@
         :method="method"
         :processing="processing"
         :require-title="true"
+        :show-description-field="true"
         :show-owner-field="form.id && checkPermission('is_teacher')"
         :show-medium-field="true"
         :show-permission-section="true"

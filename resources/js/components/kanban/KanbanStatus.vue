@@ -1,18 +1,18 @@
 <template>
     <div
         class="kanban-status mx-2"
+        :class="status === null && 'p-0'"
         :style="{ backgroundColor: status?.color }"
     >
-        <div v-if="newStatus"
+        <button v-if="status === null"
             id="kanbanStatusCreate"
-            class="d-flex align-items-center pointer"
-            @click="edit()"
+            class="btn btn-default d-flex align-items-center w-100 p-3 border-0 rounded-3"
+            type="button"
+            @click="openModal()"
         >
-            <span class="text-secondary btn px-1 py-0">
-                <i class="fa fa-plus"></i>
-                {{ trans('global.kanbanStatus.create') }}
-            </span>
-        </div>
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ trans('global.kanbanStatus.create') }}</span>
+        </button>
         <div v-else
             v-show="showWithSearch"
             class="d-flex align-items-center justify-content-between"
@@ -51,10 +51,10 @@
                             <div v-if="edit_rights">
                                 <button
                                     name="kanbanStatusEdit"
-                                    class="dropdown-item text-secondary py-1"
-                                    @click="edit()"
+                                    class="dropdown-item py-1"
+                                    @click="openModal()"
                                 >
-                                    <i class="fa fa-pencil-alt me-2"></i>
+                                    <i class="fa fa-pencil-alt"></i>
                                     {{ trans('global.kanbanStatus.edit') }}
                                 </button>
                             </div>
@@ -62,10 +62,10 @@
                             <div v-if="copy_rights">
                                 <button
                                     name="kanbanStatusCopy"
-                                    class="dropdown-item text-secondary py-1"
+                                    class="dropdown-item py-1"
                                     @click="confirmCopy()"
                                 >
-                                    <i class="fa fa-copy me-2"></i>
+                                    <i class="fa fa-copy"></i>
                                     {{ trans('global.kanbanStatus.copy') }}
                                 </button>
                             </div>
@@ -78,7 +78,7 @@
                                     class="dropdown-item py-1 text-red"
                                     @click="confirmDeletion()"
                                 >
-                                    <i class="fa fa-trash me-2"></i>
+                                    <i class="fa fa-trash"></i>
                                     {{ trans('global.kanbanStatus.delete') }}
                                 </button>
                             </div>
@@ -122,10 +122,6 @@ export default {
             type: Boolean,
             default: true,
         },
-        newStatus: {
-            type: Boolean,
-            default: false,
-        },
         websocket: {
             type: Boolean,
             default: false,
@@ -142,7 +138,6 @@ export default {
             component_id: this.$.uid,
             url: '',
             method: 'patch',
-            event: '',
             edit_rights: false,
             copy_rights: false,
             delete_rights: false,
@@ -151,10 +146,10 @@ export default {
         }
     },
     methods: {
-        edit() {
+        openModal() {
             this.globalStore?.showModal('kanban-status-modal', {
                 status: this.status ?? {},
-                method: this.method,
+                method: this.status === null ? 'post' : 'patch',
             });
         },
         confirmCopy() {
@@ -257,9 +252,7 @@ export default {
             this.searchFilter = filter.searchString.toLowerCase();
         });
 
-        if (this.newStatus) {
-            this.method = 'post';
-        } else {
+        if (this.status !== null) {
             this.edit_rights =
                 this.$userId == this.kanban_owner_id
                 || this.checkPermission('is_admin')
@@ -272,10 +265,8 @@ export default {
                 this.$userId == this.kanban_owner_id
                 || this.checkPermission('is_admin')
                 || this.$userId == this.status.owner_id;
-        }
 
-        // ITEM Events
-        if (this.status !== null) {
+            // ITEM Events
             this.$eventHub.on('kanban-status-force-show-' + this.status.id, (forceShow) => {
                 this.forceShow[forceShow.kanbanItemId] = forceShow.show;
             });

@@ -123,7 +123,7 @@
                         class="d-print-none"
                         :style="'width:' + itemWidth + 'px;'"
                     >
-                        <KanbanStatus :newStatus="true"/>
+                        <KanbanStatus/>
                     </div>
                 </template>
             </draggable>
@@ -266,10 +266,7 @@ export default {
         return {
             kanban: {},
             currentContributors: {},
-            newItem: 0, // track the ID of the status we want to add to
-            newStatus: 0,
             itemWidth: 320,
-            item: null,
             copy_id: null,
             embeded: false,
             delete_id: null,

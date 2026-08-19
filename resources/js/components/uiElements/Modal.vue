@@ -18,7 +18,10 @@
                     </button>
                 </div>
 
-                <div class="modal-body accordion">
+                <div
+                    class="modal-body accordion"
+                    :class="allowOverflow && 'overflow-y-visible'"
+                >
                     <div class="accordion-item">
                         <div v-if="showGeneralHeader"
                             class="accordion-header"
@@ -43,16 +46,16 @@
                                         type="text"
                                         :id="model + '-title'"
                                         :name="model + '-title'"
-                                        class="form-control mb-3"
+                                        class="form-control"
                                         maxlength="191"
                                         v-model.trim="form.title"
                                         :placeholder="trans('global.title') + ' *'"
                                         :required="requireTitle"
                                     />
-                                    <textarea
+                                    <textarea v-if="showDescriptionField"
                                         :id="model + '-description'"
                                         :name="model + '-description'"
-                                        class="form-control"
+                                        class="form-control mt-3"
                                         style="max-height: 35svh;"
                                         rows="4"
                                         :placeholder="trans('global.description')"
@@ -210,10 +213,20 @@ export default {
             default: false,
             description: 'Indicates if the form has been submitted and is being processed',
         },
+        allowOverflow: {
+            type: Boolean,
+            default: false,
+            description: 'Allow content (e. g. color-picker) to overflow outside the modal-body',
+        },
         showGeneralHeader: {
             type: Boolean,
             default: false,
             description: 'Controls the visibility and functionality of the general header section',
+        },
+        showDescriptionField: {
+            type: Boolean,
+            default: false,
+            description: 'Controls the visibility of the description field in the form',
         },
         showOwnerField: {
             type: Boolean,

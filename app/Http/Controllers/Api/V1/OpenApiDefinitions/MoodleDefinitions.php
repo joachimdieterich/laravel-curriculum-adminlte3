@@ -204,6 +204,47 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  * )
  * 
  * @OA\Get(
+ *      path="/v1/moodle/kanbanLink",
+ *      operationId="getKanbanLink",
+ *      tags={"Moodle v1"},
+ *      summary="Get Kanban Token-link",
+ *      description="Returns a URL to the given Kanban, that can be accessed by everyone",
+ *      security={
+ *           {"passport": {"*"}},
+ *      },
+ *      @OA\Parameter(
+ *          name="id",
+ *          description="Kanban-ID",
+ *          required=true,
+ *          in="query",
+ *          @OA\Schema(type="integer")
+ *      ),
+ *      @OA\Parameter(
+ *          name="title",
+ *          description="Title of the Token-link",
+ *          required=true,
+ *          in="query",
+ *          @OA\Schema(type="string")
+ *      ),
+ *      @OA\Parameter(
+ *          name="editable",
+ *          description="Whether users are allowed to create and edit items through this link. Only works on newly created tokens.",
+ *          in="query",
+ *          @OA\Schema(
+ *              type="boolean",
+ *              default=false
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="successful operation",
+ *          @OA\Schema(type="string"),
+ *      ),
+ *      @OA\Response(response=400, description="Missing required field"),
+ *      @OA\Response(response=404, description="Kanban not found"),
+ * )
+ * 
+ * @OA\Get(
  *      path="/v1/moodle/course",
  *      operationId="getCourse",
  *      tags={"Moodle v1"},

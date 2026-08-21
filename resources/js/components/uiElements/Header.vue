@@ -78,7 +78,7 @@
         </div>
 
         <div class="d-flex align-items-center">
-            <button v-if="checkPermission('is_admin')"
+            <button v-if="role.id === 1"
                 type="button"
                 class="btn btn-icon text-dark"
                 data-toggle="collapse"
@@ -145,8 +145,14 @@
 
                 <div>
                     <a :href="'/users/' + user.id">
-                        <i class="fa fa-id-card mr-2 fa-fw text-white"></i>
+                        <i class="fa fa-id-card fa-fw mr-2 text-white"></i>
                         {{ trans('global.myProfile') }}
+                    </a>
+                </div>
+                <div v-if="schooladminRoles || role.id === 1">
+                    <a :href="organizationURL">
+                        <i class="fa fa-university fa-fw mr-2 text-white"></i>
+                        {{ trans('global.organization_management') }}
                     </a>
                 </div>
                 <div v-if="checkPermission('note_access')">
@@ -198,6 +204,11 @@ export default {
         role: {
             type: Object,
             required: true,
+        },
+        schooladminRoles: {
+            type: Number,
+            required: true,
+            description: 'Amount of organizations where the user has the schooladmin-role',
         },
         guestId: {
             type: Number,
@@ -277,6 +288,15 @@ export default {
                 icon: icons[index].trim(),
                 title: titles[index].trim(),
             }));
+        },
+        organizationURL() {
+            let url = '/organizations'; // redirect to listing of organizations
+            // if user is only schooladmin on the currently set organization
+            if (this.schooladminRoles === 1 && this.role.id === 4) {
+                url += '/' + this.user.current_organization_id; // redirect directly to the organization
+            }
+
+            return url;
         },
     },
 }

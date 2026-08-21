@@ -13,6 +13,7 @@
                 :menu="{{ json_encode(config('app.brand_menu')) }}"
                 env="{{ config('app.env') }}"
                 :user="{{ json_encode(auth()->user()) }}"
+                :schooladmin-roles="{{ auth()->user()->roles()->where('roles.id', '=', 4)->count() }}"
                 :role="{{ json_encode(auth()->user()->role()->only('id', 'title')) }}"
                 :guest-id="{{ config('app.guest_user_id') }}"
             ></main-header>

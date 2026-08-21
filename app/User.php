@@ -392,7 +392,7 @@ class User extends Authenticatable
             ->orderByPivot('organization_id');
     }
 
-    public function organizationRolesUsers(): User|HasMany
+    public function organizationRolesUsers(): HasMany
     {
         return $this->hasMany(OrganizationRoleUser::class);
     }

@@ -140,7 +140,7 @@
                     class="d-flex justify-content-center py-2"
                     style="border-bottom: 1px solid white"
                 >
-                    <strong class="text-black">{{ role.title }}</strong>
+                    <strong class="text-black">{{ trans('global.roles.' + role.title) }}</strong>
                 </div>
 
                 <div>

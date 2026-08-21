@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -76,6 +77,7 @@ class HomeController extends Controller
         return auth()->user()->groups()
             ->select('groups.id', 'groups.title', 'grade_id')
             ->with('grade:id,title')
+            ->orderBy('groups.title')
             ->get();
     }
 
@@ -115,9 +117,19 @@ class HomeController extends Controller
 
     public function kanbans(): Collection
     {
-        return auth()->user()->kanbans()
-            ->orderBy('kanbans.title')
-            ->get(['kanbans.id', 'kanbans.title', 'kanbans.owner_id']);
+        $query = auth()->user()->kanbans()->orderBy('kanbans.title');
+        // add withTags so it doesn't fire a query for every single entry
+        $query->with(['tags' => function ($query) {
+            $query->select('id', 'name', 'slug')
+                ->where('user_id', auth()->user()->id);
+        }]);
+
+        $favouriteTag = \App\Tag::findFromString(trans('global.tag.favourite.singular'));
+        $favCount = (clone $query)->withAllTags($favouriteTag)->count();
+
+        if ($favCount !== 0) $query->withAllTags($favouriteTag);
+
+        return $query->select('kanbans.id', 'kanbans.title', 'kanbans.owner_id', DB::raw($favCount . ' AS is_favourited'))->get();
     }
 
     /**

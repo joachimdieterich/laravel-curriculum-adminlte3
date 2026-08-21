@@ -41,7 +41,9 @@
                     <slot name="entry" :entry="entry">
                         <i v-if="!entry.grade"
                             class="fa text-secondary mr-2"
-                            :class="entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
+                            :class="entry.is_favourited
+                                ? 'fa-heart'
+                                : entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
                         ></i>
                         <a :href="'/' + model + '/' + entry.id">
                             <span class="font-weight-bold">{{ entry.title }}</span>

@@ -368,14 +368,9 @@ class User extends Authenticatable
     /**
      * permissions of the current role
      */
-    public function permissions(): Collection
+    public function permissions(): BelongsToMany
     {
-        return DB::table('permissions')
-            ->join('permission_role', 'permission_role.permission_id', '=', 'permissions.id')
-            ->join('organization_role_users', 'organization_role_users.role_id', '=', 'permission_role.role_id')
-            ->where('organization_role_users.organization_id', $this->current_organization_id)
-            ->where('organization_role_users.user_id', $this->id)
-            ->get();
+        return $this->role()->permissions();
     }
 
     public function tasks(): HasManyThrough

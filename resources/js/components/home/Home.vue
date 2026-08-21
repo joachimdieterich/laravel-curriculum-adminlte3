@@ -189,10 +189,12 @@ export default {
     computed: {
         isVisible() {
             const isTeacher = this.checkPermission('is_teacher');
+            const isAdmin = this.checkPermission('is_admin');
+
             return {
                 groups: isTeacher,
                 plans: isTeacher,
-                achievements: true,
+                achievements: !isTeacher || isAdmin, // for testing purposes, show as admin
             };
         },
     },

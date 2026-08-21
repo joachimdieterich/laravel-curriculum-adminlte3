@@ -825,7 +825,7 @@ return [
     'achievement' => [
         'title' => 'Leistungen',
         'title_singular' => 'Leistung',
-        'recent' => 'Neuste Leistungen',
+        'recent' => 'Neueste Leistungen',
     ],
     'progress' => [
         'title' => 'Fortschritte',

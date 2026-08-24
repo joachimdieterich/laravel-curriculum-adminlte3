@@ -40,6 +40,7 @@
 
             <InfoBox v-if="isVisible.achievements"
                 model="achievements"
+                href="#"
                 :text="trans('global.achievement.recent')"
                 icon="fa-trophy"
                 icon-background-class="bg-blue"

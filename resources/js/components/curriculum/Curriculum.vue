@@ -290,6 +290,7 @@ import Contents from '../content/Contents.vue';
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
+import 'datatables.net-select-bs5';
 import {useDatatableStore} from "../../store/datatables";
 import CertificateModal from "../certificate/CertificateModal.vue";
 import GenerateCertificateModal from "../certificate/GenerateCertificateModal.vue";

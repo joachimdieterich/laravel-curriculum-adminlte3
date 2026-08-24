@@ -94,6 +94,7 @@
 import ExamModal from "../exam/ExamModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
+import 'datatables.net-select-bs5';
 import {useDatatableStore} from "../../store/datatables.js";
 import {useGlobalStore} from "../../store/global.js";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";

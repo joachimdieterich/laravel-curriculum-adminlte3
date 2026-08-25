@@ -124,7 +124,7 @@ class HomeController extends Controller
                 ->where('user_id', auth()->user()->id);
         }]);
 
-        $favouriteTag = \App\Tag::findFromString(trans('global.tag.favourite.singular'));
+        $favouriteTag = \App\Tag::findFromString(trans('global.tag.favourite.singular')) ?? 0;
         $favCount = (clone $query)->withAllTags($favouriteTag)->count();
 
         if ($favCount !== 0) $query->withAllTags($favouriteTag);

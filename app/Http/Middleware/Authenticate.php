@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Jumbojett\OpenIDConnectClient;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
@@ -11,18 +12,26 @@ class Authenticate extends Middleware
 {
     public function handle($request, Closure $next, ...$guards) {
         $user_id = auth()->user()?->id;
+        $path = explode('/', $request->getRequestUri());
 
         if (($user_id === null or $user_id == config('app.guest_user_id')) and config('app.env') != 'local') {
             $allow_guest = $request->has('sharing_token')
-                || str_starts_with($request->getRequestUri(), '/navigator')
-                || str_starts_with($request->getRequestUri(), '/eventSubscriptions')
+                || $path[1] === 'navigator'
+                || $path[1] === 'eventSubscriptions'
                 || str_ends_with($request->getPathInfo(), 'startWithPw'); // videoconference-link;
 
-            // if '/curricula/{id}' page (without token)
-            if (!$allow_guest && str_starts_with($request->getRequestUri(), '/curricula/')) {
-                // check if curriculum is accessible for guests
-                // if not, force authentication
-                $allow_guest = \App\Curriculum::select('type_id')->find($request->route('curriculum'))->type_id == 1;
+            if (!$allow_guest) { // without token
+                if (str_starts_with($request->getRequestUri(), '/curricula/')) { // '/curricula/{id}' page
+                    // allow access if curriculum is accessible for guests
+                    $allow_guest = \App\Curriculum::select('type_id')->find($request->route('curriculum'))->type_id == 1;
+                } else if (
+                    str_starts_with($request->getRequestUr(), '/terminalObjectives/') // '/terminalObjectives/{id}' page
+                    || str_starts_with($request->getRequestUr(), '/enablingObjectives/') // '/enablingObjectives/{id}' page
+                ) {
+                    $table = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $path[1]));
+                    $curriculum_id = DB::table($table)->where('id', $path[2])->pluck('curriculum_id')->first();
+                    $allow_guest = \App\Curriculum::select('type_id')->find($curriculum_id)->type_id == 1;
+                }
             }
 
             // skip authentication if authenticated as guest and guest access is allowed

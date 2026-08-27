@@ -25,8 +25,8 @@ class Authenticate extends Middleware
                     // allow access if curriculum is accessible for guests
                     $allow_guest = \App\Curriculum::select('type_id')->find($request->route('curriculum'))->type_id == 1;
                 } else if (
-                    str_starts_with($request->getRequestUr(), '/terminalObjectives/') // '/terminalObjectives/{id}' page
-                    || str_starts_with($request->getRequestUr(), '/enablingObjectives/') // '/enablingObjectives/{id}' page
+                    str_starts_with($request->getRequestUri(), '/terminalObjectives/') // '/terminalObjectives/{id}' page
+                    || str_starts_with($request->getRequestUri(), '/enablingObjectives/') // '/enablingObjectives/{id}' page
                 ) {
                     $table = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $path[1]));
                     $curriculum_id = DB::table($table)->where('id', $path[2])->pluck('curriculum_id')->first();

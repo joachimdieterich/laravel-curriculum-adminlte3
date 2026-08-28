@@ -59,7 +59,7 @@
                         <li v-for="organization in user.organizations"
                            class="small"
                         >
-                            {{ organization.title}} @ {{ getRoleInOrganization(organization)[0].title }}
+                            {{ organization.title }} @ {{ getRoleInOrganization(organization)[0]?.title }}
                         </li>
                     </ul>
                     <hr>
@@ -72,7 +72,7 @@
                         <li v-for="group in user.groups"
                             class="small"
                         >
-                            {{ group.title}} @ {{ getOrganizationOfGroup(group)[0].title }}
+                            {{ group.title }} @ {{ getOrganizationOfGroup(group)[0]?.title }}
                         </li>
                     </ul>
                     <hr>
@@ -85,7 +85,7 @@
                         <li v-for="role in user.roles"
                             class="small"
                         >
-                            {{ role.title}} @ {{ getOrganizationForRole(role)[0].title }}
+                            {{ role.title }} @ {{ getOrganizationForRole(role)[0]?.title }}
                         </li>
                     </ul>
                 </div>

@@ -185,7 +185,9 @@ export default {
         this.id = 'user-avatar' + this.$.uid;
         this.avatar_medium_id = this.medium_id;
 
-        if (this.user_id == null && this.medium_id == null && this.medium == null) {
+        if (this.medium !== null || this.avatar_medium_id !== null) return;
+
+        if (this.user_id == null) {
             this.drawCanvas();
         } else {
             axios.get('/users/' + this.user_id)

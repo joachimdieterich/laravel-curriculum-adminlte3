@@ -40,7 +40,7 @@
 
             <InfoBox v-if="isVisible.achievements"
                 model="achievements"
-                href="#"
+                :disable-link="true"
                 :text="trans('global.achievement.recent')"
                 icon="fa-trophy"
                 icon-background-class="bg-blue"
@@ -131,7 +131,7 @@
                 :text="trans('global.user_management')"
                 icon="fa-user"
                 icon-background-class="bg-blue"
-                :link-only="true"
+                :header-only="true"
             />
         </div>
         <LogbookModal/>

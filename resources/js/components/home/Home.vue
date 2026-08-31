@@ -53,7 +53,7 @@
                         style="gap: 0.5rem;"
                     >
                         <span v-if="entry.history.length > 0"
-                            class="position-relative d-flex align-items-center me-1"
+                            class="position-relative d-flex align-items-center"
                         >
                             <i
                                 class="text-green t-20 me-1"
@@ -67,7 +67,7 @@
                                 class="text-red t-20 me-1"
                                 :class="iconClass(entry.history[0].status, 3)"
                             ></i>
-                            <i class="fa-solid fa-arrow-right-long ml-1"></i>
+                            <i class="fa-solid fa-arrow-right-long ms-1"></i>
                         </span>
                         <span class="d-flex">
                             <i

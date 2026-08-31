@@ -40,38 +40,47 @@
 
             <InfoBox v-if="isVisible.achievements"
                 model="achievements"
+                :disable-link="true"
                 :text="trans('global.achievement.recent')"
                 icon="fa-trophy"
                 icon-background-class="bg-blue"
                 @error="handleError"
             >
                 <template #entry="{ entry }">
-                    <span class="d-flex align-items-center">
+                    <span
+                        class="d-flex flex-lg-nowrap align-items-center"
+                        :class="entry.history.length > 0 && 'flex-wrap'"
+                        style="gap: 0.5rem;"
+                    >
                         <span v-if="entry.history.length > 0"
                             class="position-relative d-flex align-items-center me-1"
                         >
                             <i
-                                class="fa fa-circle t-20 me-1"
-                                :class="achievementColor(entry.history[0].status[0])"
+                                class="text-green t-20 me-1"
+                                :class="iconClass(entry.history[0].status, 1)"
                             ></i>
-                            <i v-if="entry.history[0].status[1] !== '0'"
-                                class="position-absolute far fa-circle-check t-20 text-border-white"
-                                :class="achievementColor(entry.history[0].status[1])"
-                                style="left: 0;"
-                            ></i>
-                            <i class="fa-solid fa-arrow-right-long"></i>
-                        </span>
-                        <span
-                            class="position-relative d-flex me-2"
-                        >
                             <i
-                                class="fa fa-circle t-20"
-                                :class="achievementColor(entry.status[0])"
+                                class="text-orange t-20 me-1"
+                                :class="iconClass(entry.history[0].status, 2)"
                             ></i>
-                            <i v-if="entry.status[1] !== '0'"
-                                class="position-absolute far fa-circle-check t-20 text-border-white"
-                                :class="achievementColor(entry.status[1])"
-                                style="left: 0;"
+                            <i
+                                class="text-red t-20 me-1"
+                                :class="iconClass(entry.history[0].status, 3)"
+                            ></i>
+                            <i class="fa-solid fa-arrow-right-long ml-1"></i>
+                        </span>
+                        <span class="d-flex">
+                            <i
+                                class="text-green t-20 me-1"
+                                :class="iconClass(entry.status, 1)"
+                            ></i>
+                            <i
+                                class="text-orange t-20 me-1"
+                                :class="iconClass(entry.status, 2)"
+                            ></i>
+                            <i
+                                class="text-red t-20"
+                                :class="iconClass(entry.status, 3)"
                             ></i>
                         </span>
                         <span
@@ -122,7 +131,7 @@
                 :text="trans('global.user_management')"
                 icon="fa-user"
                 icon-background-class="bg-blue"
-                :link-only="true"
+                :header-only="true"
             />
         </div>
         <LogbookModal/>
@@ -166,33 +175,29 @@ export default {
         handleError(error) {
             this.toast.error(this.errorMessage(error));
         },
-        achievementColor(status) {
-            let css = 'text-transparent';
-
-            switch (status) {
-                case '1':
-                    css = 'text-green';
-                    break;
-                case '2':
-                    css = 'text-orange'
-                    break;
-                case '3':
-                    css = 'text-red';
-                    break;
-                default:
-                    break;
+        iconClass(status, value) {
+            let classes = 'far fa-circle';
+            // status can't be '00'
+            if (status.charAt(0) === status.charAt(1) && status.charAt(0) == value) {
+                classes = 'fa fa-check-circle';
+            } else if (status.charAt(0) == value) {
+                classes = 'fa fa-circle';
+            } else if (status.charAt(1) == value) {
+                classes = 'far fa-check-circle';
             }
 
-            return css;
+            return classes;
         },
     },
     computed: {
         isVisible() {
             const isTeacher = this.checkPermission('is_teacher');
+            const isAdmin = this.checkPermission('is_admin');
+
             return {
                 groups: isTeacher,
                 plans: isTeacher,
-                achievements: true,
+                achievements: !isTeacher || isAdmin, // for testing purposes, show as admin
             };
         },
     },

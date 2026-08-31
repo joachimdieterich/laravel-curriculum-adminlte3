@@ -70,7 +70,8 @@ class UsersController extends Controller
 
     public function list()
     {
-        abort_unless(\Gate::allows('user_access'), 403);
+        // don't use 'user_access' since this would cause the teacher-role to have access to /users
+        abort_unless(\Gate::allows('user_show'), 403);
 
         if (request()->has(['group_id']))
         {
@@ -424,10 +425,9 @@ class UsersController extends Controller
             ->where('owner_id', $user->id)
             ->update(['owner_id' => $fallback_user->id]);
 
-        //delete unused media
-        foreach ($user->media() as $medium) {
-            Medium::where('id', $medium->id)->delete();
-        }
+        Medium::where('owner_id', $user->id)
+            ->update(['owner_id' => $fallback_user->id]);
+
         DB::table('medium_subscriptions')
             ->where('owner_id', $user->id)
             ->update(['owner_id' => $fallback_user->id]);

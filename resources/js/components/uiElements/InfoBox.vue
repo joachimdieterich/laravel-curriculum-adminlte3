@@ -1,7 +1,10 @@
 <template>
     <div class="mb-3">
         <div class="infobox">
-            <div class="infobox-header">
+            <div
+                class="infobox-header"
+                :class="disableLink && 'infobox-header-muted'"
+            >
                 <button
                     type="button"
                     class="btn infobox-icon elevation-1"
@@ -13,7 +16,8 @@
                     <i class="fa" :class="icon"></i>
                 </button>
                 <span class="flex-fill h3 mx-2">
-                    <a
+                    <span v-if="disableLink" class="px-2">{{ text }}</span>
+                    <a v-else
                         :href="href || '/' + model"
                         class="text-decoration-none px-2"
                     >
@@ -27,7 +31,7 @@
                     <i class="fa fa-2x fa-plus"></i>
                 </button>
             </div>
-            <div v-if="!linkOnly || entries.length > 0"
+            <div v-if="!headerOnly && entries.length > 0"
                 class="infobox-body"
                 tabindex="0"
                 role="group"
@@ -41,7 +45,9 @@
                     <slot name="entry" :entry="entry">
                         <i v-if="!entry.grade"
                             class="fa text-secondary me-2"
-                            :class="entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
+                            :class="entry.is_favourited
+                                ? 'fa-heart'
+                                : entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
                         ></i>
                         <a :href="'/' + model + '/' + entry.id">
                             <span class="font-weight-bold">{{ entry.title }}</span>
@@ -83,11 +89,16 @@ export default {
             type: String,
             default: null, // defaults to this.model
         },
+        disableLink: {
+            type: Boolean,
+            default: false,
+            description: 'disables the links in the header',
+        },
         hasModal: {
             type: Boolean,
             default: false,
         },
-        linkOnly: {
+        headerOnly: {
             type: Boolean,
             default: false,
             description: 'if true, the infobox will only be a link and not fetch any entries',
@@ -100,7 +111,7 @@ export default {
         }
     },
     mounted() {
-        if (!this.linkOnly) this.getEntries();
+        if (!this.headerOnly) this.getEntries();
     },
     methods: {
         getEntries() {
@@ -113,6 +124,7 @@ export default {
                 });
         },
         goToModel(newTab = false) {
+            if (this.disableLink) return;
             if (newTab) window.open(this.href || '/' + this.model, '_blank');
             else window.location.href = this.href || '/' + this.model;
         },
@@ -143,6 +155,7 @@ export default {
         align-items: center;
         padding: 0.5rem;
         
+        &.infobox-header-muted > button:hover { cursor: default; }
         & > .infobox-icon {
             color: #fff;
             height: 70px;

@@ -434,7 +434,7 @@ return [
     'deselect_all' => 'Deselect all',
     'team-management' => 'Teams',
     'team-management-singular' => 'Team',
-    'site_title' => 'curriculum',
+    'site_title' => 'Curriculum',
     'history' => 'History',
     'can_edit' => 'darf bearbeiten',
     'permission' => [

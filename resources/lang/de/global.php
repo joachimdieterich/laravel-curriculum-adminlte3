@@ -446,7 +446,7 @@ return [
     'deselect_all' => 'Alle abwählen',
     'team-management' => 'Teams',
     'team-management-singular' => 'Team',
-    'site_title' => 'curriculum',
+    'site_title' => 'Curriculum',
     'history' => 'Verlauf',
     'can_edit' => 'darf bearbeiten',
     'permission' => [
@@ -825,7 +825,7 @@ return [
     'achievement' => [
         'title' => 'Leistungen',
         'title_singular' => 'Leistung',
-        'recent' => 'Neuste Leistungen',
+        'recent' => 'Neueste Leistungen',
     ],
     'progress' => [
         'title' => 'Fortschritte',

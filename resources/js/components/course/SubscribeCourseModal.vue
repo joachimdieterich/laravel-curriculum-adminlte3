@@ -28,7 +28,6 @@
                                 name="course_subscription"
                                 url="/curricula"
                                 model="curriculum"
-                                :selected="form.curriculum_id"
                                 @selectedValue="(id) => {
                                     this.form.curriculum_id = id;
                                 }"

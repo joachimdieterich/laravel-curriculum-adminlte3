@@ -204,15 +204,6 @@
                 <i class="fa fa-file-pdf"></i>
             </a>
 
-
-            <button v-if="checkPermission('is_admin')"
-                    type="button"
-                    class="btn text-secondary px-2 mx-1"
-                    @click="testWebsocket()"
-            >
-                Test Websockets
-            </button>
-
             <p class="h6">{{ trans('global.owner') }}: {{ initialKanban.owner.firstname + ' ' + initialKanban.owner.lastname }}</p>
         </Teleport>
         <Teleport to="#contributors">
@@ -396,16 +387,6 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
-        },
-        testWebsocket() {
-            for (let i = 0; i < 100; i++) {
-                let even = i % 2 == 0;
-                let order1 = even ? 1 : 2;
-                let order2 = even ? 2 : 1;
-                this.sendChange(
-                    "/kanbanItems/sync",
-                    [{"id":500,"order_id":order1,"kanban_status_id":215},{"id":499,"order_id":order2,"kanban_status_id":215}])
-            }
         },
         openItemModal(status_id) {
             this.globalStore?.showModal('kanban-item-modal', {

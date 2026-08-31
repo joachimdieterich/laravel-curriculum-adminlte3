@@ -75,7 +75,7 @@ class CurriculumController extends Controller
 
         $curricula = Curriculum::select('curricula.*');
 
-        return getDataTableWithEntries($curricula, true);
+        return getDataTableWithEntries($curricula, true, true);
     }
 
     /**

@@ -30,7 +30,17 @@ class OrganizationsController extends Controller
                 );
             }
         }
-        abort_unless(\Gate::allows('organization_access'), 403);
+
+        if (!\Gate::allows('organization_access')) {
+            $validOrg = auth()->user()->organizationRolesUsers()->where('role_id', 4)->pluck('organization_id')->first();
+            if ($validOrg == null) abort(403);
+
+            try {
+                auth()->user()->update(['current_organization_id' => $validOrg]);
+            } catch (\Throwable) {
+                abort(403);
+            }
+        }
 
         return view('organizations.index');
     }

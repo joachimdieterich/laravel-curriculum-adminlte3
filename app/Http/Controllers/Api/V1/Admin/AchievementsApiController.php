@@ -49,7 +49,7 @@ class AchievementsApiController extends Controller
             foreach ($input['referenceable_id'] as $ref_id) {
                 $status = $input['status'];
                 $whitecard = strpos(strtolower($input['status']), 'x');
-                $achievement = Achievement::select('status')
+                $achievement = Achievement::select('id', 'status', 'owner_id', 'updated_at')
                     ->where([
                         'referenceable_type' => 'App\\EnablingObjective',
                         'referenceable_id'   => $ref_id,

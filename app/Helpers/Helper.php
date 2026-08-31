@@ -249,9 +249,10 @@ if (! function_exists('getDataTableWithEntries'))
      * helper function to get all entries for select2 fields
      * @param Illuminate\Database\Eloquent\Builder $query the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
      * @param bool $hasTags does the model have tags?
+     * @param bool $global include ressources that are globally available (e.g. for Curricula)
      * @return \Illuminate\Http\JsonResponse
      */
-    function getDataTableWithEntries($query, $hasTags = false): \Illuminate\Http\JsonResponse
+    function getDataTableWithEntries($query, $hasTags = false, $global = false): \Illuminate\Http\JsonResponse
     {
         $withOwned = false;
         $withSubscribed = false;
@@ -302,6 +303,8 @@ if (! function_exists('getDataTableWithEntries'))
             if ($withSubscribed) $query = getSubscribedModels($query, $withOwned);
             else if ($withOwned) $query->orWhere('owner_id', auth()->user()->id); // only get owned entries
 
+            if ($global && request('filter') === 'all') $query->orWhere('type_id', 1);
+
             // only apply tag-filters if model has tags
             if ($hasTags) {
                 $query->with(['tags' => function ($query) {
@@ -311,15 +314,23 @@ if (! function_exists('getDataTableWithEntries'))
 
                 $favouriteTagId = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
                 $hiddenTagId = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
+                $tableName = $query->getModel()->getTable();
+                $modelName = $query->getModel()::class;
 
                 // append is_favourite and is_hidden as separate fields
                 // we do it this way, because the built-in function would fire a separate query for each entry
                 $query->addSelect(
-                    DB::raw('CASE WHEN `tags`.`id` = ' . $favouriteTagId . ' THEN 1 ELSE 0 END AS is_favourited'),
-                    DB::raw('CASE WHEN `tags`.`id` = ' . $hiddenTagId . ' THEN 1 ELSE 0 END AS is_hidden')
-                )
-                ->leftJoin('taggables', 'taggables.taggable_id', '=', $query->getModel()->getTable() . '.id')
-                ->leftJoin('tags', 'tags.id', '=', 'taggables.tag_id');
+                    DB::raw('EXISTS(select 1 from `taggables`
+                        where `taggables`.`tag_id` = ' . $favouriteTagId . '
+                        and `taggables`.`taggable_id` = `' . $tableName . '`.`id`
+                        and `taggables`.`taggable_type` = \'' . $modelName . '\'
+                    ) AS is_favourited'),
+                    DB::raw('EXISTS(select 1 from `taggables`
+                        where `taggables`.`tag_id` = ' . $hiddenTagId . '
+                        and `taggables`.`taggable_id` = `' . $tableName . '`.`id`
+                        and `taggables`.`taggable_type` = \'' . $modelName . '"\'
+                    ) AS is_hidden'),
+                );
 
                 // if hidden-tag is not explicitly included in search-tags, exclude hidden entries
                 if ($hiddenTagId !== 0 && !in_array($hiddenTagId, $tags)) {

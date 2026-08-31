@@ -8,6 +8,7 @@
         :require-title="true"
         :show-description-field="true"
         :show-owner-field="form.id && checkPermission('is_teacher')"
+        :show-display-section="true"
         :show-medium-field="true"
         :show-permission-section="true"
         @save="(form) => submit(form)"

@@ -6,7 +6,7 @@
             <div class="modal-container">
                 <div class="modal-header">
                     <span class="modal-title">
-                        {{ method === 'post' ? trans('global.' + model + '.create') : trans('global.' + model + '.edit') }}
+                        {{ trans(headerTitle) }}
                     </span>
                     <button
                         type="button"
@@ -76,7 +76,9 @@
                         </div>
                     </div>
 
-                    <div class="accordion-item">
+                    <div v-if="showDisplaySection"
+                        class="accordion-item"
+                    >
                         <div class="accordion-header">
                             <span
                                 class="accordion-button"
@@ -156,7 +158,7 @@
                             class="btn btn-default"
                             @click="globalStore?.closeModal(modalName)"
                         >
-                            {{ trans('global.cancel') }}
+                            {{ cancelLabel }}
                         </button>
                         <button v-if="!hideSaveButton"
                             :id="model + '-save'"
@@ -203,9 +205,13 @@ export default {
             type: String,
             description: 'The HTTP method for the form submission (e.g., "post" or "patch")',
         },
+        title: {
+            type: String,
+            description: 'Translation String for the modal-header',
+        },
         requireTitle: {
             type: Boolean,
-            default: true,
+            default: false,
             description: 'Indicates if the built-in title field is required for form submission',
         },
         processing: {
@@ -235,7 +241,7 @@ export default {
         },
         showDisplaySection: {
             type: Boolean,
-            default: true,
+            default: false,
             description: 'Controls the visibility of the display section in the form',
         },
         showMediumField: {
@@ -252,6 +258,10 @@ export default {
             type: Boolean,
             default: false,
             description: 'Controls the visibility of the permission section in the form',
+        },
+        cancelLabel: {
+            type: String,
+            default: window.trans.global.cancel,
         },
         hideCancelButton: {
             type: Boolean,
@@ -304,6 +314,17 @@ export default {
                     }
                 });
             }
+        },
+    },
+    computed: {
+        headerTitle() {
+            let title = this.title;
+            if (!title) {
+                title = this.method === 'post'
+                    ? 'global.' + this.model + '.create'
+                    : 'global.' + this.model + '.edit';
+            }
+            return title;
         },
     },
 };

@@ -5,6 +5,8 @@
         modalName="kanban-status-modal"
         :method="method"
         :processing="processing"
+        :require-title="true"
+        :show-display-section="true"
         :allow-overflow="true"
         :show-permission-section="hasPermissionsAccess"
         @save="(form) => submit(form)"

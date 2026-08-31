@@ -1,18 +1,19 @@
 <template>
     <div
         :id="component_id"
-        class="carousel slide ignore"
+        class="carousel slide"
         data-bs-interval="false"
     >
         <div v-if="subscriptions.length > 1"
             class="carousel-indicators"
         >
-            <li v-for="(item, index) in subscriptions"
+            <button v-for="(item, index) in subscriptions"
                 :class="{ 'active': index === 0 }"
+                type="button"
                 :data-bs-target="'#' + component_id"
                 :data-bs-slide-to="index"
-                @click="setSlide(index)">
-            </li>
+                @click="setSlide(index)"
+            ></button>
         </div>
         <div class="carousel-inner pointer">
             <div

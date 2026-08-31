@@ -1,18 +1,17 @@
 <template>
     <ul v-if="subscriptions.length != 0"
-        class="products-list product-list-in-card ps-2 pe-2"
+        class="products-list product-list-in-card px-1 mt-3"
     >
         <li v-if="canEditCheckbox && subscriptions.length > 0"
             class="d-flex border-bottom"
         >
             <small class="flex-fill">Name</small>
-            <small>{{ canEditLabel }}</small>
+            <small :id="modelUrl + subscribing_model.split('\\')[1]">{{ canEditLabel }}</small>
         </li>
         <template v-for="subscription in subscriptions">
             <li
                 :id="'subscription_' + subscription.id"
                 :value="subscription.id"
-                style="clear: right;"
                 class="item d-flex align-items-center"
             >
                 <div class="flex-fill">
@@ -24,27 +23,26 @@
                     </span>
                 </div>
 
-                <a
-                    class="text-danger px-2 py-0 ms-auto me-2 vuehover"
+                <button
+                    class="btn btn-icon text-danger ms-auto me-3"
                     @click="unsubscribe(subscription)"
                 >
                     <i class="fa fa-trash"></i>
-                </a>
+                </button>
 
                 <span v-if="canEditCheckbox"
-                    class="custom-control custom-switch custom-switch-on-green"
+                    class="form-check form-switch"
                 >
                     <input
                         :id="'subscription_input' + subscription.id"
-                        v-model="subscription.editable"
+                        class="form-check-input"
                         type="checkbox"
-                        class="custom-control-input pt-1"
+                        role="switch"
+                        :aria-labelledby="modelUrl + subscribing_model.split('\\')[1]"
+                        v-model="subscription.editable"
+                        switch
                         @click="setPermission(subscription.id, subscription.editable)"
                     />
-                    <label
-                        class="custom-control-label"
-                        :for="'subscription_input' + subscription.id"
-                    ></label>
                 </span>
             </li>
         </template>
@@ -82,7 +80,6 @@ export default {
                 console.log(error);
             }
             this.$eventHub.emit('unsubscribe', subscription);
-            //$("#subscription_"+id).hide();
         },
         async setPermission(id, status) { // id of external reference and value in db
             try {
@@ -94,3 +91,13 @@ export default {
     },
 }
 </script>
+<style>
+li.item .fa-trash {
+    opacity: 0%;
+    transition: opacity 0.15s ease-in-out;
+}
+li.item:hover .fa-trash { opacity: 100%; }
+@media (max-width: 991px) {
+    li.item .fa-trash { opacity: 100%; }
+}
+</style>

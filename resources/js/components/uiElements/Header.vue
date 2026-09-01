@@ -151,7 +151,7 @@
                 </div>
                 <div v-if="schooladminRoles || role.id === 1">
                     <a :href="organizationURL">
-                        <i class="fa fa-university fa-fw mr-2 text-white"></i>
+                        <i class="fa fa-university fa-fw me-2 text-white"></i>
                         {{ trans('global.organization_management') }}
                     </a>
                 </div>

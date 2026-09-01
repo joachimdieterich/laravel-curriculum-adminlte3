@@ -270,7 +270,7 @@ p { margin: 0px !important; }
         .status-0 { color: #d2d6de !important; }
         .status-1 { color: #00a65a !important; }
         .status-2 { color: #fd7e14 !important; }
-        .status-3 { color: #dd4b39 !important; }
+        .status-3 { color: #dc3545 !important; }
     }
 }
 </style>

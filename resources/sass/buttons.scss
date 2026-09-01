@@ -47,3 +47,8 @@
     &:focus-visible { box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
     &.no-focus:active { box-shadow: none !important; }
 }
+// override icon positioning
+.btn-icon {
+    & > .fa.fa-share-alt { margin-left: -1px; }
+    & > .fa.fa-file-csv, & > .fa.fa-file-pdf { margin-left: 3px; }
+}

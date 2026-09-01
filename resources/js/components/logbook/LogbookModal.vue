@@ -1,171 +1,27 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ method == 'post' ? trans('global.logbook.create') : trans('global.logbook.edit') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
-                >
-                    <div class="card">
-                        <div class="card-body">
-                            <div
-                                class="form-group"
-                                :class="form.errors.title ? 'has-error' : ''"
-                            >
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    class="form-control"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                                <p v-if="form.errors.title"
-                                    class="help-block"
-                                    v-text="form.errors.title[0]"
-                                ></p>
-                            </div>
-        
-                            <div>
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    class="form-control"
-                                    style="max-height: 50svh;"
-                                    :placeholder="trans('global.description')"
-                                    v-model="form.description"
-                                ></textarea>
-                                <p v-if="form.errors.description"
-                                    class="help-block"
-                                    v-text="form.errors.description[0]"
-                                ></p>
-                            </div>
-
-                            <Select2 v-if="checkPermission('is_admin')"
-                                id="user_id"
-                                css="mb-0 mt-3"
-                                :label="trans('global.change_owner')"
-                                model="User"
-                                url="/users"
-                                :selected="form.owner_id"
-                                @selectedValue="(id) => this.form.owner_id = id[0]"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.display') }}</span>
-                        </div>
-                        
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <v-swatches
-                                    style="height: 42px;"
-                                    :swatches="$swatches"
-                                    row-length="5"
-                                    popover-y="top"
-                                    v-model="form.color"
-                                    show-fallback
-                                    fallback-input-type="color"
-                                />
-                                <MediumForm v-if="form.id"
-                                    :id="'medium_form' + component_id"
-                                    :medium_id="form.medium_id"
-                                    :subscribable_id="form.id"
-                                    subscribable_type="App\Logbook"
-                                    accept="image/*"
-                                    @selectedValue="(id) => {
-                                        // on removal of medium, directly update the resource
-                                        if (this.form.medium_id !== null && id === null) {
-                                            this.$eventHub.emit('logbook-updated', {
-                                                id: this.form.id,
-                                                medium_id: null,
-                                            });
-                                        }
-                                        this.form.medium_id = id;
-                                    }"
-                                />
-                                <div class="dropdown">
-                                    <button
-                                        class="btn btn-default"
-                                        style="width: 42px; padding: 6px 0px;"
-                                        type="button"
-                                        data-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i :class="form.css_icon + ' pt-2'"></i>
-                                    </button>
-                                    <font-awesome-picker
-                                        class="dropdown-menu dropdown-menu-end"
-                                        style="min-width: min(385px,90vw);"
-                                        :searchbox="trans('global.select_icon')"
-                                        v-on:selectIcon="setIcon"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="logbook-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="logbook-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="!form.title"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+    <Modal
+        ref="modal"
+        model="logbook"
+        modalName="logbook-modal"
+        :method="method"
+        :processing="processing"
+        :require-title="true"
+        :show-description-field="true"
+        :show-owner-field="form.id && checkPermission('is_teacher')"
+        :show-display-section="true"
+        :show-medium-field="true"
+        :show-icon-picker="true"
+    ></Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";
-import FontAwesomePicker from '../uiElements/FontAwesomePicker.vue';
-import MediumForm from "../media/MediumForm.vue";
 
 export default {
     name: 'logbook-modal',
     components: {
-        MediumForm,
-        FontAwesomePicker,
-        Select2,
+        Modal,
     },
     setup() {
         const globalStore = useGlobalStore();
@@ -236,6 +92,8 @@ export default {
                         this.method = 'post';
                     }
                 }
+
+                this.$refs.modal.resetForm(this.form);
             }
         });
     },

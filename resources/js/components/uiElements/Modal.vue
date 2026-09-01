@@ -3,7 +3,10 @@
         <div v-if="globalStore.modals[modalName]?.show"
             class="modal-mask"
         >
-            <div class="modal-container">
+            <div
+                class="modal-container"
+                :style="css"
+            >
                 <div class="modal-header">
                     <span class="modal-title">
                         {{ trans(headerTitle) }}
@@ -109,13 +112,12 @@
                                     :subscribable_type="'App\\' + model.charAt(0).toUpperCase() + model.slice(1)"
                                     :allow_fallback_on_create="true"
                                     :medium_id="form.medium_id"
+                                    :multiple="allowMultipleMedia"
                                     @add="(medium) => form.medium_id = medium.id ?? null"
                                     @delete="() => form.medium_id = null"
                                 />
                                 <FontAwesomePicker v-if="showIconPicker"
-                                    class="dropdown-menu dropdown-menu-end"
-                                    style="min-width: min(385px, 90vw);"
-                                    :searchbox="trans('global.select_icon')"
+                                    :button-icon="form.css_icon"
                                     @selectIcon="(icon) => form.css_icon = 'fa fa-' + icon.className"
                                 />
                             </div>
@@ -201,6 +203,10 @@ export default {
             required: true,
             description: 'The name of the modal to control visibility',
         },
+        css: {
+            type: String,
+            description: 'Additional CSS styles for the modal container',
+        },
         method: {
             type: String,
             description: 'The HTTP method for the form submission (e.g., "post" or "patch")',
@@ -248,6 +254,11 @@ export default {
             type: Boolean,
             default: false,
             description: 'Controls the visibility of the medium field in the form',
+        },
+        allowMultipleMedia: {
+            type: Boolean,
+            default: false,
+            description: 'Allows multiple media to be selected in the medium field',
         },
         showIconPicker: {
             type: Boolean,

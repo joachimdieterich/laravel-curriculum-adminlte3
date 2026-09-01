@@ -59,7 +59,7 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style>
 .progress-bar-wrapper {
     background-color: #e5e5e5 !important;
 
@@ -72,9 +72,7 @@ export default {
     padding: 0px 0.75rem;
     top: 0;
 
-    & > .bg-red { box-shadow: 0px 0px 5px #dc354580; }
-    & > .bg-orange { box-shadow: 0px 0px 5px #fd7e1480; }
-    & > .bg-green { box-shadow: 0px 0px 5px #28a74580; }
+    & > .bg-green { background-color: #00a65a !important; }
     & > :first-child::before {
         content: '';
         position: absolute;

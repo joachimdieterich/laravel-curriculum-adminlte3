@@ -31,7 +31,7 @@
                 </button>
 
                 <span v-if="canEditCheckbox"
-                    class="form-check form-switch"
+                    class="form-check form-switch mb-0"
                 >
                     <input
                         :id="'subscription_input' + subscription.id"

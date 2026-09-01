@@ -4,7 +4,7 @@
             class="d-flex border-bottom"    
         >
             <small class="flex-fill">{{ trans('global.title') }}</small>
-            <small>{{ canEditLabel }}</small>
+            <small :id="modelUrl + 'Token'">{{ canEditLabel }}</small>
         </li>
         <li v-for="item in subscriptions"
             :id="'subscription_' + item.token.id"
@@ -30,20 +30,23 @@
                             {{ trans('global.expired') }}
                         </span>
                     </span>
-                    <a
-                        class="text-danger px-2 py-0 me-2 vuehover"
+                    <button
+                        class="btn btn-icon text-danger ms-auto me-3"
                         @click="unsubscribe(item)"
                     >
                         <i class="fa fa-trash"></i>
-                    </a>
+                    </button>
                     <span v-if="canEditCheckbox"
-                        class="pull-right custom-control custom-switch custom-switch-on-green"
+                        class="form-check form-switch mb-0"
                     >
                         <input
                             :id="'subscription_input' + item.token.id"
                             type="checkbox"
-                            class="custom-control-input pt-1"
+                            role="switch"
+                            class="form-check-input"
+                            :aria-labelledby="modelUrl + 'Token'"
                             v-model="item.token.editable"
+                            switch
                             @click="setPermission(item.token.id, item.token.editable)"
                         />
                         <label class="custom-control-label" :for="'subscription_input' + item.token.id"></label>

@@ -1,6 +1,5 @@
 <template>
     <Modal
-        ref="modal"
         model="share"
         modalName="subscribe-modal"
         title="global.share"

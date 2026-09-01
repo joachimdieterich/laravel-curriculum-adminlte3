@@ -173,36 +173,38 @@
             />
         </Teleport>
         <Teleport to="#customTitle">
-            <small v-text="kanban.title"></small>
-            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                type="button"
-                class="btn text-secondary px-2 mx-1"
-                @click="editKanban(kanban)"
-            >
-                <i class="fa fa-pencil-alt"></i>
-            </button>
-
-            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                type="button"
-                class="btn text-secondary px-2 mx-1"
-                @click="share()"
-            >
-                <i class="fa fa-share-alt"></i>
-            </button>
-
-            <a
-                :href="'/export_csv/' + kanban.id"
-                class="btn text-secondary px-1 ms-2"
-            >
-                <i class="fa fa-file-csv"></i>
-            </a>
-
-            <a
-                :href="'/export_pdf/' + kanban.id"
-                class="btn text-secondary px-1 ms-1"
-            >
-                <i class="fa fa-file-pdf"></i>
-            </a>
+            <div class="d-flex align-items-center">
+                <small v-text="kanban.title"></small>
+                <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                    type="button"
+                    class="btn btn-icon text-secondary mx-1"
+                    @click="editKanban(kanban)"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+    
+                <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                    type="button"
+                    class="btn btn-icon text-secondary mx-1"
+                    @click="share()"
+                >
+                    <i class="fa fa-share-alt"></i>
+                </button>
+    
+                <button
+                    :href="'/export_csv/' + kanban.id"
+                    class="btn btn-icon text-secondary mx-1"
+                >
+                    <i class="fa fa-file-csv"></i>
+                </button>
+    
+                <button
+                    :href="'/export_pdf/' + kanban.id"
+                    class="btn btn-icon text-secondary mx-1"
+                >
+                    <i class="fa fa-file-pdf"></i>
+                </button>
+            </div>
 
             <p class="h6">{{ trans('global.owner') }}: {{ initialKanban.owner.firstname + ' ' + initialKanban.owner.lastname }}</p>
         </Teleport>

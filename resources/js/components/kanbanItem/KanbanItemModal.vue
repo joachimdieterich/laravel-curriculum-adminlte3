@@ -1,221 +1,136 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ method == 'post' ? trans('global.kanbanItem.create') : trans('global.kanbanItem.edit') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="close()"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <input
-                                    id="title"
-                                    name="title"
-                                    type="text"
-                                    class="form-control"
-                                    maxlength="191"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
-                                    required
-                                />
-                                <p v-if="form.errors.title"
-                                    class="help-block"
-                                    v-text="form.errors.title[0]"
-                                ></p>
-                            </div>
-
-                            <Editor
-                                :id="'description_' + component_id"
-                                :name="'description_' + component_id"
-                                class="form-control"
-                                licenseKey="gpl"
-                                :init="tinyMCE"
-                                v-model="form.description"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.display') }}</span>
-                        </div>
-                        <div class="card-body d-flex align-items-center">
-                            <v-swatches
-                                class="d-flex"
-                                style="height: 42px;"
-                                :swatches="$swatches"
-                                row-length="5"
-                                popover-y="top"
-                                v-model="form.color"
-                                show-fallback
-                                fallback-input-type="color"
-                            />
-
-                            <NewMediumForm
-                                :subscribable_id="form.id"
-                                :subscribable_type="'App\\KanbanItem'"
-                                :allow_fallback_on_create="true"
-                                :media_subscriptions="form.media_subscriptions"
-                                :multiple="true"
-                                @add="(subscription) => {
-                                    this.form.media_subscriptions.push(...subscription);
-                                }"
-                            />
-                        </div>
-                    </div>
-
-                    <div v-if="hasPermissionsAccess"
-                        class="card"
-                    >
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.permissions') }}</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <VueDatePicker
-                                    id="due_date"
-                                    name="due_date"
-                                    v-model="form.due_date"
-                                    format="dd.MM.yyyy HH:mm"
-                                    :teleport="true"
-                                    locale="de"
-                                    time-picker-inline
-                                    :start-time="{ hours: 23, minutes: 59 }"
-                                    @cleared="form.due_date = ''"
-                                    :select-text="trans('global.ok')"
-                                    :cancel-text="trans('global.close')"
-                                    :placeholder="trans('global.kanbanItem.fields.due_date')"
-                                />
-                            </div>
-
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'replace_links_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.replace_links"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light pointer"
-                                    :for="'replace_links_' + form.id"
-                                >
-                                    {{ trans('global.replace_links') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'movable_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.movable"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light pointer"
-                                    :for="'movable_' + form.id"
-                                >
-                                    {{ trans('global.movable') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'editable_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.editable"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light pointer"
-                                    :for="'editable_' + form.id"
-                                >
-                                    {{ trans('global.editable') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'visibility_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.visibility"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light pointer"
-                                    :for="'visibility_' + form.id"
-                                >
-                                    {{ trans('global.visible') }}
-                                </label>
-                            </span>
-
-                            <VueDatePicker v-if="form.visibility"
-                                id="visible_date"
-                                name="visible_date"
-                                class="mt-2"
-                                v-model="form.visible_date"
-                                range
-                                format="dd.MM.yyyy HH:mm"
-                                :teleport="true"
-                                locale="de"
-                                time-picker-inline
-                                :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
-                                @cleared="form.visible_date = ['', '']"
-                                :select-text="trans('global.ok')"
-                                :cancel-text="trans('global.close')"
-                                :placeholder="trans('global.visible_until_or_from_to')"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="kanban-item-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="close()"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="kanban-item-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="!form.title || processing"
-                            @click="submit()"
-                        >
-                            <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
-                            <span v-else>{{ trans('global.save') }}</span>
-                        </button>
-                    </span>
-                </div>
+    <Modal
+        ref="modal"
+        model="kanbanItem"
+        modalName="kanban-item-modal"
+        css="min-width: min(90vw, 450px);"
+        :method="method"
+        :processing="processing"
+        :require-title="true"
+        :show-display-section="true"
+        :show-medium-field="true"
+        :allow-multiple-media="true"
+        :show-permission-section="hasPermissionsAccess"
+        @save="(form) => submit(form)"
+    >
+        <template #general-extended>
+            <div class="mt-3">
+                <Editor
+                    :id="'description_' + component_id"
+                    :name="'description_' + component_id"
+                    licenseKey="gpl"
+                    :init="tinyMCE"
+                    v-model="form.description"
+                />
             </div>
-        </div>
-    </Transition>
+        </template>
+
+        <template #permissions>
+            <VueDatePicker
+                id="due_date"
+                name="due_date"
+                class="mb-3"
+                v-model="form.due_date"
+                format="dd.MM.yyyy HH:mm"
+                :teleport="true"
+                locale="de"
+                time-picker-inline
+                :start-time="{ hours: 23, minutes: 59 }"
+                @cleared="form.due_date = ''"
+                :select-text="trans('global.ok')"
+                :cancel-text="trans('global.close')"
+                :placeholder="trans('global.kanbanItem.fields.due_date')"
+            />
+
+            <span class="form-check form-switch">
+                <input
+                    id="kanban-item-replace-links"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.replace_links"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-item-replace-links"
+                >
+                    {{ trans('global.replace_links') }}
+                </label>
+            </span>
+            <span class="form-check form-switch">
+                <input
+                    id="kanban-item-movable"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.movable"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-item-movable"
+                >
+                    {{ trans('global.movable') }}
+                </label>
+            </span>
+            <span class="form-check form-switch">
+                <input
+                    id="kanban-item-editable"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.editable"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-item-editable"
+                >
+                    {{ trans('global.editable') }}
+                </label>
+            </span>
+            <span class="form-check form-switch">
+                <input
+                    id="kanban-item-visibility"
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    v-model="form.visibility"
+                    switch
+                />
+                <label
+                    class="form-check-label"
+                    for="kanban-item-visibility"
+                >
+                    {{ trans('global.visible') }}
+                </label>
+            </span>
+
+            <VueDatePicker v-if="form.visibility"
+                id="visible_date"
+                name="visible_date"
+                class="mt-2"
+                v-model="form.visible_date"
+                range
+                format="dd.MM.yyyy HH:mm"
+                :teleport="true"
+                locale="de"
+                time-picker-inline
+                :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
+                @cleared="form.visible_date = ['', '']"
+                :select-text="trans('global.ok')"
+                :cancel-text="trans('global.close')"
+                :placeholder="trans('global.visible_until_or_from_to')"
+            />
+        </template>
+    </Modal>
 </template>
 <script>
-import NewMediumForm from '../media/NewMediumForm.vue';
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import VueDatePicker from "@vuepic/vue-datepicker";
 import Editor from '@tinymce/tinymce-vue';
-import axios from "axios";
 import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
 
@@ -292,6 +207,8 @@ export default {
                         this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
                     }
                 }
+
+                this.$refs.modal.resetForm(this.form);
             }
         });
     },
@@ -299,7 +216,8 @@ export default {
         close() {
             this.globalStore.closeModal(this.$options.name);
         },
-        submit() {
+        submit(formData) {
+            this.form.populate(formData);
             this.form.locked = !this.form.movable;
             // parse dates to local time, so the server won't have to deal with timezones
             this.form.due_date = this.form.due_date?.toLocaleString() ?? null; // undefined will remove the field from the request
@@ -351,9 +269,9 @@ export default {
         },
     },
     components: {
-        VueDatePicker,
+        Modal,
         Editor,
-        NewMediumForm,
+        VueDatePicker,
     },
 }
 </script>

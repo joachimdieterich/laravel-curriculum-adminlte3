@@ -1,3 +1,9 @@
+## 1.4.3 (2026-09-01)
+- Authenticate: fixed objectives of global curricula not being accessible to guests
+- fixed listing users in /groups/{id} for teacher-role
+- replaced favicon
+- set site-title to start with an uppercase letter
+
 ## 1.4.2 (2026-08-13)
 - SharingModal: user-tab has a new dropdown-menu
 - KanbanModal: allowed teacher-role and above to change owner

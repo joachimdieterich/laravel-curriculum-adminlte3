@@ -52,15 +52,13 @@
                     <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
                         :id="'status-' + status.id"
                         :key="'drag_status_' + status.id"
-                        class="flex-column mh-100 collapse show"
+                        class="flex-column mh-100 collapse collapse-horizontal show"
                         :class="status.visible ?? true ? 'd-flex' : 'd-none'"
-                        :style="{
-                            width:  (itemWidth + 16) + 'px',
-                            opacity: !status.visibility ? '0.7' : '1'
-                        }"
+                        :style="{ opacity: !status.visibility ? '0.7' : '1' }"
                         tabindex="-1"
                     >
                         <KanbanStatus
+                            :style="'width:' + itemWidth + 'px;'"
                             :status="status"
                             :editable="editable"
                             :allow_copy="kanban.allow_copy"
@@ -73,13 +71,16 @@
                         />
                         <div v-if="editable"
                             :id="'kanbanItemCreateButton_' + index"
-                            class="d-flex justify-content-center my-2"
+                            class="d-flex justify-content-center m-2"
+                            :style="'width:' + itemWidth + 'px;'"
                         >
                             <button
-                                class="btn btn-icon bg-transparent"
+                                type="button"
+                                class="d-print-none btn btn-icon bg-transparent"
+                                :title="trans('global.kanbanItem.create')"
                                 @click="openItemModal(status.id)"
                             >
-                                <i class="d-print-none text-white fa fa-2x fa-plus-circle"></i>
+                                <i class="text-white fa fa-2x fa-plus-circle"></i>
                             </button>
                         </div>
                         <div v-else class="py-2"></div>
@@ -109,6 +110,7 @@
                                         :index="status.id + '_' + item.id"
                                         :item="item"
                                         :width="itemWidth"
+                                        :style="'width:' + itemWidth + 'px;'"
                                         :kanban_owner_id="kanban.owner_id"
                                         :websocket="websocket && kanban.auto_refresh"
                                         filter=".ignore"
@@ -142,8 +144,8 @@
                 css="primary"
                 @close="show_item_copy = false"
                 @confirm="() => {
-                    this.show_item_copy = false;
-                    this.copyItem();
+                    show_item_copy = false;
+                    copyItem();
                 }"
             />
             <ConfirmModal
@@ -160,8 +162,8 @@
                 css="primary"
                 @close="show_status_copy = false"
                 @confirm="() => {
-                    this.show_status_copy = false;
-                    this.copyStatus();
+                    show_status_copy = false;
+                    copyStatus();
                 }"
             />
             <ConfirmModal
@@ -414,9 +416,11 @@ export default {
             this.show_status_delete = false;
 
             const status_id = this.delete_id;
-            const elem = $('#status-' + status_id);
-            elem.collapse('hide');
-            elem[0].classList.remove('d-flex');
+            const elem = document.querySelector('#status-' + status_id);
+            new bootstrap.Collapse(elem);
+            setTimeout(() => {
+                elem.classList.remove('d-flex');
+            }, 350); // wait for collapse animation to finish before hiding the element
 
             const notification = {
                 component: ToastNotification,
@@ -444,9 +448,9 @@ export default {
         },
         undoStatusDeletion(status_id) {
             this.stopDeletion = true;
-            const elem = $('#status-' + status_id);
-            elem.collapse('show');
-            elem[0].classList.add('d-flex');
+            const elem = document.querySelector('#status-' + status_id);
+            new bootstrap.Collapse(elem);
+            elem.classList.add('d-flex');
         },
         copyItem() {
             axios.get('/kanbanItems/' + this.copy_id + '/copy')
@@ -457,7 +461,7 @@ export default {
 
             const item_id = this.delete_id[0];
             const status_id = this.delete_id[1];
-            $('#item-' + item_id).collapse('hide');
+            new bootstrap.Collapse(document.querySelector('#item-' + item_id));
 
             const notification = {
                 component: ToastNotification,
@@ -485,7 +489,7 @@ export default {
         },
         undoDeletion(item_id) {
             this.stopDeletion = true;
-            $('#item-' + item_id).collapse('show');
+            new bootstrap.Collapse(document.querySelector('#item-' + item_id));
         },
         handleStatusAdded(newStatus) {
             // if the status already exists do nothing

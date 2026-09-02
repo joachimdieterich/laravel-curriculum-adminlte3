@@ -61,12 +61,12 @@ class LogbookController extends Controller
         $input = $this->validateRequest();
 
         $logbook = Logbook::create([
-            'title' => $input['title'],
-            'description' => $input['description'],
-            'medium_id' => $input['medium_id'] ?? null,
-            'color' => $input['color'] ?? '#2980B9',
-            'css_icon' => $input['css_icon'],
-            'owner_id' => auth()->user()->id,
+            'title'         => $input['title'],
+            'description'   => $input['description'],
+            'medium_id'     => $input['medium_id'] ?? null,
+            'color'         => $input['color'] ?? '#2980B9',
+            'css_icon'      => $input['css_icon'],
+            'owner_id'      => auth()->user()->id,
         ]);
 
         if (isset($input['medium_id'])) {
@@ -76,9 +76,7 @@ class LogbookController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
-        if (request()->wantsJson()) {
-            return $logbook;
-        }
+        return $logbook;
     }
 
     /**

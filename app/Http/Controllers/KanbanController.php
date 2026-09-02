@@ -91,11 +91,8 @@ class KanbanController extends Controller
         }
 
         LogController::set(get_class($this) . '@' . __FUNCTION__);
-        if (request()->wantsJson()) {
-            return $kanban;
-        }
 
-        return redirect($kanban->path());
+        return $kanban;
     }
 
 

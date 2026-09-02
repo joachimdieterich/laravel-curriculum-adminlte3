@@ -56,25 +56,22 @@ class LogbookController extends Controller
         abort_unless(limiter(
             'App\\Role',
             auth()->user()->role()->id,
-            'logbook_limiter',
-            'App\\Logbook',
-            'owner_id'), 402); //is there an role limit?
+        ), 402);
 
-        $new_logbook = $this->validateRequest();
+        $input = $this->validateRequest();
 
-        $logbook = Logbook::Create([
-            'title' => $new_logbook['title'],
-            'description' => $new_logbook['description'],
-            'medium_id' => $new_logbook['medium_id'] ?? null,
-            'color' => $new_logbook['color'] ?? '#2980B9',
-            'css_icon' => $new_logbook['css_icon'],
+        $logbook = Logbook::create([
+            'title' => $input['title'],
+            'description' => $input['description'],
+            'medium_id' => $input['medium_id'] ?? null,
+            'color' => $input['color'] ?? '#2980B9',
+            'css_icon' => $input['css_icon'],
             'owner_id' => auth()->user()->id,
         ]);
 
-        //subscribe to model
-        if (isset($new_logbook['subscribable_type']) and isset($new_logbook['subscribable_id'])) {
-            $model = $new_logbook['subscribable_type']::find($new_logbook['subscribable_id']);
-            $logbook->subscribe($model);
+        if (isset($input['medium_id'])) {
+            app(MediumSubscriptionController::class)
+                ->updateTempSubscriptions($input['medium_id'], $logbook->id, 'App\\Logbook');
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);

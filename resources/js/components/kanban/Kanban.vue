@@ -177,7 +177,8 @@
                 <small v-text="kanban.title"></small>
                 <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                     type="button"
-                    class="btn btn-icon text-secondary mx-1"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    :title="trans('global.kanban.edit')"
                     @click="editKanban(kanban)"
                 >
                     <i class="fa fa-pencil-alt"></i>
@@ -185,25 +186,30 @@
     
                 <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                     type="button"
-                    class="btn btn-icon text-secondary mx-1"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    :title="trans('global.share')"
                     @click="share()"
                 >
                     <i class="fa fa-share-alt"></i>
                 </button>
     
-                <button
+                <a
                     :href="'/export_csv/' + kanban.id"
-                    class="btn btn-icon text-secondary mx-1"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    :title="trans('global.csv_export')"
+                    download
                 >
                     <i class="fa fa-file-csv"></i>
-                </button>
+                </a>
     
-                <button
+                <a
                     :href="'/export_pdf/' + kanban.id"
-                    class="btn btn-icon text-secondary mx-1"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    :title="trans('global.pdf_export')"
+                    download
                 >
                     <i class="fa fa-file-pdf"></i>
-                </button>
+                </a>
             </div>
 
             <p class="h6">{{ trans('global.owner') }}: {{ initialKanban.owner.firstname + ' ' + initialKanban.owner.lastname }}</p>

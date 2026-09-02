@@ -438,6 +438,8 @@ return [
     'csvImport' => 'CSV Import',
     'csv_file_to_import' => 'CSV Datei importieren',
     'parse_csv' => 'Parse CSV',
+    'csv_export' => 'Als CSV-Datei exportieren',
+    'pdf_export' => 'Als PDF-Datei exportieren',
     'import_data' => 'Importiere Daten',
     'imported_rows_to_table' => ':rows Zeilen in Tabelle :table importiert',
     'import' => 'Import',

@@ -286,11 +286,7 @@ export default {
         },
     },
     setup() {
-        const globalStore = useGlobalStore();
-
-        return {
-            globalStore,
-        };
+        return { globalStore: useGlobalStore() };
     },
     data() {
         return {
@@ -311,12 +307,13 @@ export default {
             this.form = {
                 id: null,
                 title: '',
-                description: '',
                 owner_id: null,
                 color: '#27AF60',
                 medium_id: null,
                 css_icon: 'fa fa-book',
             };
+            // only add description-field if the built-in textarea is used
+            if (this.showDescriptionField) this.form.description = '';
 
             if (formData) {
                 Object.keys(this.form).forEach(key => {

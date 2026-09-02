@@ -52,7 +52,7 @@
                     {{ timePeriod }}
                     <small
                         style="vertical-align: middle;"
-                        class="badge badge-secondary"
+                        class="badge text-bg-secondary"
                         @click.stop="editSubject()"
                     >
                         <i class="fa fa-book-open"></i>
@@ -461,7 +461,7 @@ export default {
 }
 </script>
 <style scoped>
-.badge-secondary:not(:hover) {
-    background-color: #adb5bd;
+.badge:not(:hover) {
+    background-color: #adb5bd !important;
 }
 </style>

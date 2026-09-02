@@ -1,129 +1,68 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ method == 'post' ? trans('global.logbookEntry.create') : trans('global.logbookEntry.edit') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div
-                                class="form-group"
-                                :class="form.errors.title ? 'has-error' : ''"
-                            >
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    class="form-control"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                                <p
-                                    v-if="form.errors.title"
-                                    class="help-block"
-                                    v-text="form.errors.title[0]"
-                                ></p>
-                            </div>
-        
-                            <div class="form-group">
-                                <Editor
-                                    id="description"
-                                    name="description"
-                                    class="form-control"
-                                    licenseKey="gpl"
-                                    :init="tinyMCE"
-                                    v-model="form.description"
-                                />
-                                <p class="help-block"
-                                   v-if="form.errors.description"
-                                   v-text="form.errors.description[0]"
-                                ></p>
-                            </div>
-
-                            <VueDatePicker
-                                id="date"
-                                name="date"
-                                v-model="form.date"
-                                :range="{ partialRange: false }"
-                                format="dd.MM.yyyy HH:mm"
-                                :teleport="true"
-                                locale="de"
-                                :placeholder="trans('global.selectDateRange')"
-                                :select-text="trans('global.ok')"
-                                :cancel-text="trans('global.close')"
-                                @cleared="form.date = ['', '']"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="logbook-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="logbook-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="!form.title"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
+    <Modal
+        ref="modal"
+        model="logbookEntry"
+        modalName="logbook-entry-modal"
+        :method="method"
+        :processing="processing"
+        :require-title="true"
+        @save="(form) => submit(form)"
+    >
+        <template #general-extended>
+            <div class="mt-3">
+                <Editor
+                    id="description"
+                    name="description"
+                    class="form-control"
+                    licenseKey="gpl"
+                    :init="tinyMCE"
+                    v-model="form.description"
+                />
             </div>
-        </div>
-    </Transition>
+            <div class="mt-3">
+                <VueDatePicker
+                    id="date"
+                    name="date"
+                    v-model="form.date"
+                    :range="{ partialRange: false }"
+                    format="dd.MM.yyyy HH:mm"
+                    :teleport="true"
+                    locale="de"
+                    :placeholder="trans('global.selectDateRange')"
+                    :select-text="trans('global.ok')"
+                    :cancel-text="trans('global.close')"
+                    @cleared="form.date = ['', '']"
+                />
+            </div>        
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 import Editor from "@tinymce/tinymce-vue";
-import MediumForm from "../media/MediumForm.vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
+import {useGlobalStore} from "../../store/global";
+import {useToast} from "vue-toastification";
 
 export default {
     name: 'logbook-entry-modal',
     components: {
-        VueDatePicker,
-        MediumForm,
+        Modal,
         Editor,
-        Select2,
+        VueDatePicker,
     },
     setup() {
-        const globalStore = useGlobalStore();
         return {
-            globalStore,
+            globalStore: useGlobalStore(),
+            toast: useToast(),
         }
     },
     data() {
         return {
             component_id: this.$.uid,
             method: 'post',
+            processing: false,
             form: new Form({
                 id: '',
                 logbook_id: '',
@@ -147,9 +86,11 @@ export default {
         }
     },
     methods: {
-        submit() {
-            this.form.begin = this.form.date[0];
-            this.form.end = this.form.date[1];
+        submit(formData) {
+            this.form.populate(formData);
+            this.processing = true;
+            this.form.begin = this.form.date[0].toLocaleString();
+            this.form.end = this.form.date[1].toLocaleString();
 
             if (this.method === 'patch') {
                 this.update();
@@ -157,14 +98,16 @@ export default {
                 this.add();
             }
 
-            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post('/logbookEntries', this.form)
                 .then(response => {
                     this.$eventHub.emit('logbook-entry-added', response.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.processing = false;
+                    this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
         },
@@ -172,8 +115,11 @@ export default {
             axios.patch('/logbookEntries/' + this.form.id, this.form)
                 .then(response => {
                     this.$eventHub.emit('logbook-entry-updated', response.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.processing = false;
+                    this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
         },
@@ -186,19 +132,17 @@ export default {
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
                 this.globalStore.lockModal(this.$options.name);
-                const params = state.modals[this.$options.name].params;
+                this.processing = false;
                 this.form.reset();
+
+                const params = state.modals[this.$options.name].params;
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
+                    this.method = this.form.id ? 'patch' : 'post';
                     this.form.date = [this.form.begin ?? '', this.form.end ?? ''];
-                    this.form.description = this.$decodeHTMLEntities(params.description);
-                    this.form.logbook_id = params.logbook_id;
-                    if (this.form.id != '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
                 }
+
+                this.$refs.modal.resetForm(this.form);
             }
         });
     },

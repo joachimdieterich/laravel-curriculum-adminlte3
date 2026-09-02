@@ -73,7 +73,7 @@
                 style="top: 0.25rem; right: 0.25rem;"
             >
                 <slot name="additional-button">
-                    <Favourite v-if="item.is_favourited !== undefined"
+                    <Favourite v-if="!showSubscribable && item.is_favourited !== undefined"
                         :url="url + '/[id]/favour'"
                         :model="item"
                         :is-favourited="item.is_favourited"

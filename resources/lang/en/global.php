@@ -426,6 +426,8 @@ return [
     'csvImport' => 'CSV Import',
     'csv_file_to_import' => 'CSV file to import',
     'parse_csv' => 'Parse CSV',
+    'csv_export' => 'Export as CSV',
+    'pdf_export' => 'Export as PDF',
     'import_data' => 'Import data',
     'imported_rows_to_table' => 'Imported :rows rows to :table table',
     'import' => 'Import',

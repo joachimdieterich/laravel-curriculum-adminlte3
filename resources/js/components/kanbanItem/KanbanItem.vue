@@ -2,207 +2,209 @@
     <div
         v-show="showWithSearch(item.title) || showWithSearch(item.description)"
         :id="'item-' + item.id"
-        class="kanban-item collapse show mx-2 mb-3"
+        class="collapse show mx-2"
         :style="!item.visibility || hidden ? 'opacity: 0.7;' : ''"
         tabindex="-1"
     >
-        <div
-            class="kanban-item-header px-3 py-2"
-            :class="collapse_items && 'collapsed'"
-            :style="{ color: textColor, backgroundColor: item.color }"
-            data-bs-toggle="collapse"
-            :data-bs-target="'#item-' + item.id + ' > .kanban-item-body'"
-            aria-expanded="true"
-        >
-            <div class="kanban-item-header-title">
-                {{ item.title }}
-                <i class="fa fa-angle-up d-print-none"></i>
-                <div style="font-size: 10px;">
-                    {{ item.created_at }}
+        <div class="kanban-item">
+            <div
+                class="kanban-item-header px-3 py-2"
+                :class="collapse_items && 'collapsed'"
+                :style="{ color: textColor, backgroundColor: item.color }"
+                data-bs-toggle="collapse"
+                :data-bs-target="'#item-' + item.id + ' > .kanban-item-body'"
+                aria-expanded="true"
+            >
+                <div class="kanban-item-header-title">
+                    {{ item.title }}
+                    <i class="fa fa-angle-up d-print-none"></i>
+                    <div style="font-size: 10px;">
+                        {{ item.created_at }}
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="kanban-item-tools d-flex flex-row-reverse d-print-none position-absolute">
-            <div class="dropdown">
-                <button v-if="edit_rights || copy_rights || delete_rights"
-                    :id="'kanban-item-dropdown_' + index"
-                    class="btn d-print-none"
+    
+            <div class="kanban-item-tools d-flex flex-row-reverse d-print-none position-absolute">
+                <div class="dropdown">
+                    <button v-if="edit_rights || copy_rights || delete_rights"
+                        :id="'kanban-item-dropdown_' + index"
+                        class="btn d-print-none"
+                        :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        :title="trans('global.kanbanItem.dropdown')"
+                        :aria-label="trans('global.kanbanItem.dropdown')"
+                    >
+                        <i class="fa fa-ellipsis-v"></i>
+                        <div class="dropdown-menu">
+                            <div v-if="edit_rights">
+                                <button
+                                    :name="'kanban-item-edit_' + index"
+                                    class="dropdown-item"
+                                    @click="edit()"
+                                >
+                                    <i class="fa fa-pencil-alt"></i>
+                                    {{ trans('global.kanbanItem.edit') }}
+                                </button>
+                                <button
+                                    v-permission="'external_medium_create'"
+                                    class="dropdown-item"
+                                    :name="'kanban-item-add-media_' + index"
+                                    @click="addMedia()"
+                                >
+                                    <i class="fa fa-folder-open"></i>
+                                    {{ trans('global.medium.title_singular') }}
+                                </button>
+                            </div>
+        
+                            <div v-if="copy_rights">
+                                <button
+                                    name="kanban-item-copy"
+                                    class="dropdown-item"
+                                    @click="confirmCopy()"
+                                >
+                                    <i class="fa fa-copy"></i>
+                                    {{ trans('global.kanbanItem.copy') }}
+                                </button>
+                            </div>
+        
+                            <div v-if="delete_rights">
+                                <hr class="my-1">
+                                <button
+                                    v-permission="'kanban_delete'"
+                                    class="dropdown-item text-danger"
+                                    :name="'kanban-item-delete_' + index"
+                                    @click="confirmDeletion()"
+                                >
+                                    <i class="fa fa-trash"></i>
+                                    {{ trans('global.kanbanItem.delete') }}
+                                </button>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <button v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
+                    class="btn position-relative handle"
                     :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
                     type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    :title="trans('global.kanbanItem.dropdown')"
-                    :aria-label="trans('global.kanbanItem.dropdown')"
+                    tabindex="-1"
+                    @click.stop
                 >
-                    <i class="fa fa-ellipsis-v"></i>
-                    <div class="dropdown-menu">
-                        <div v-if="edit_rights">
-                            <button
-                                :name="'kanban-item-edit_' + index"
-                                class="dropdown-item"
-                                @click="edit()"
-                            >
-                                <i class="fa fa-pencil-alt"></i>
-                                {{ trans('global.kanbanItem.edit') }}
-                            </button>
-                            <button
-                                v-permission="'external_medium_create'"
-                                class="dropdown-item"
-                                :name="'kanban-item-add-media_' + index"
-                                @click="addMedia()"
-                            >
-                                <i class="fa fa-folder-open"></i>
-                                {{ trans('global.medium.title_singular') }}
-                            </button>
-                        </div>
-    
-                        <div v-if="copy_rights">
-                            <button
-                                name="kanban-item-copy"
-                                class="dropdown-item"
-                                @click="confirmCopy()"
-                            >
-                                <i class="fa fa-copy"></i>
-                                {{ trans('global.kanbanItem.copy') }}
-                            </button>
-                        </div>
-    
-                        <div v-if="delete_rights">
-                            <hr class="my-1">
-                            <button
-                                v-permission="'kanban_delete'"
-                                class="dropdown-item text-danger"
-                                :name="'kanban-item-delete_' + index"
-                                @click="confirmDeletion()"
-                            >
-                                <i class="fa fa-trash"></i>
-                                {{ trans('global.kanbanItem.delete') }}
-                            </button>
-                        </div>
-                    </div>
+                    <i v-if="editable"
+                        class="fa fa-arrows-up-down-left-right"
+                    ></i>
+                    <i v-if="item.locked"
+                        class="fa fa-lock text-muted position-absolute"
+                        style="right: 2px; bottom: 2px; cursor: not-allowed;"
+                    ></i>
                 </button>
             </div>
-            <button v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
-                class="btn position-relative handle"
-                :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
-                type="button"
-                tabindex="-1"
-                @click.stop
-            >
-                <i v-if="editable"
-                    class="fa fa-arrows-up-down-left-right"
-                ></i>
-                <i v-if="item.locked"
-                    class="fa fa-lock text-muted position-absolute"
-                    style="right: 2px; bottom: 2px; cursor: not-allowed;"
-                ></i>
-            </button>
-        </div>
-
-        <div
-            class="kanban-item-body p-0 bg-white collapse"
-            :class="!collapse_items && 'show'"
-        >
-            <div style="overflow-x: auto;">
-                <div class="text-muted small px-3 py-2">
-                    <span v-if="item.replace_links">
-                        <HtmlRenderer :html-content="item.description.length > 0 ? item.description : '</br>'"/>
-                    </span>
-                    <span v-else v-html="item.description.length > 0 ? item.description : '</br>'"></span>
-                </div>
-            </div>
-            <MediaCarousel v-if="item.media_subscriptions.length > 0"
-                class="clearfix"
-                :subscriptions="item.media_subscriptions"
-                :width="width - 16"
-            />
-        </div>
-
-        <div v-if="item.due_date || (item.visibility && (item.visible_from || item.visible_until))"
-            class="kanban-item-info d-flex flex-column bg-gray-light px-3 py-2"
-            :class="{ 'border-top-0': item.description === null }"
-        >
-            <div v-if="item.due_date"
-                class="d-flex align-items-center"
-            >
-                <div class="due-date flex-fill">{{ trans('global.due_at') }}: {{ postDate() }}</div>
-                <span v-if="expired"
-                    class="badge"
-                >
-                    {{ trans('global.kanbanItem.expired') }}
-                </span>
-            </div>
-            <div v-if="item.visibility && (item.visible_from || item.visible_until)"
-                class="d-flex align-items-center"
-            >
-                <div class="due-date flex-fill">
-                    {{ trans('global.visibility') }}
-                    <span v-if="item.visible_from && new Date() < new Date(item.visible_from)">{{ diffForHumans(item.visible_from) }}</span>
-                    <span v-if="new Date() > new Date(item.visible_from)">{{ trans('global.timeTo') }} {{ diffForHumans(item.visible_until) }}</span>
-                </div>
-                <span v-if="hidden"
-                    class="badge"
-                >
-                    {{ trans('global.hidden') }}
-                </span>
-            </div>
-        </div>
-
-        <div class="kanban-item-footer d-flex flex-column bg-gray-light">
-            <div class="d-flex align-items-center px-3 py-2">
-                <Avatar
-                    :key="item.id + '_editor_' + item.owner.id"
-                    :title="item.owner.firstname + ' ' + item.owner.lastname"
-                    :username="item.owner.username"
-                    :firstname="item.owner.firstname"
-                    :lastname="item.owner.lastname"
-                    :size="25"
-                    class="contacts-list-img o"
-                    data-bs-toggle="tooltip"
-                />
-                <Avatar v-if="editors != null"
-                    v-for="(editor_user, index) in editorsWithoutOwner"
-                    :key="item.id + '_editor_' + index"
-                    :title="editor_user.firstname + ' ' + editor_user.lastname"
-                    :username="editor_user.username"
-                    :firstname="editor_user.firstname"
-                    :lastname="editor_user.lastname"
-                    :size="25"
-                    class="contacts-list-img"
-                    data-bs-toggle="tooltip"
-                />
     
-                <div class="d-flex ms-auto">
-                    <button v-if="commentable"
-                        class="btn btn-icon px-2 py-1 me-2"
-                        :title="trans('global.comments')"
-                        data-bs-toggle="collapse"
-                        :data-bs-target="'#comments_' + item.id"
-                        aria-expanded="false"
-                        @click="toggleComments()"
-                    >
-                        <i class="far fa-comments"></i>
-                        <span v-if="item.comments.length > 0"
-                            class="comment-count bg-success"
-                        >
-                            {{ item.comments.length }}
+            <div
+                class="kanban-item-body p-0 bg-white collapse"
+                :class="!collapse_items && 'show'"
+            >
+                <div style="overflow-x: auto;">
+                    <div class="text-muted small px-3 py-2">
+                        <span v-if="item.replace_links">
+                            <HtmlRenderer :html-content="item.description.length > 0 ? item.description : '</br>'"/>
                         </span>
-                    </button>
-                    <Reaction v-if="favourable"
-                        :model="item"
-                        reaction="like"
-                        url="/kanbanItems"
-                    />
+                        <span v-else v-html="item.description.length > 0 ? item.description : '</br>'"></span>
+                    </div>
+                </div>
+                <MediaCarousel v-if="item.media_subscriptions.length > 0"
+                    class="clearfix"
+                    :subscriptions="item.media_subscriptions"
+                    :width="width - 16"
+                />
+            </div>
+    
+            <div v-if="item.due_date || (item.visibility && (item.visible_from || item.visible_until))"
+                class="kanban-item-info d-flex flex-column bg-gray-light px-3 py-2"
+                :class="{ 'border-top-0': item.description === null }"
+            >
+                <div v-if="item.due_date"
+                    class="d-flex align-items-center"
+                >
+                    <div class="due-date flex-fill">{{ trans('global.due_at') }}: {{ postDate() }}</div>
+                    <span v-if="expired"
+                        class="badge"
+                    >
+                        {{ trans('global.kanbanItem.expired') }}
+                    </span>
+                </div>
+                <div v-if="item.visibility && (item.visible_from || item.visible_until)"
+                    class="d-flex align-items-center"
+                >
+                    <div class="due-date flex-fill">
+                        {{ trans('global.visibility') }}
+                        <span v-if="item.visible_from && new Date() < new Date(item.visible_from)">{{ diffForHumans(item.visible_from) }}</span>
+                        <span v-if="new Date() > new Date(item.visible_from)">{{ trans('global.timeTo') }} {{ diffForHumans(item.visible_until) }}</span>
+                    </div>
+                    <span v-if="hidden"
+                        class="badge"
+                    >
+                        {{ trans('global.hidden') }}
+                    </span>
                 </div>
             </div>
-
-            <Comments v-if="commentable"
-                :websocket="websocket"
-                :comments="item.comments"
-                :model="item"
-                :kanban_owner_id="kanban_owner_id"
-            />
+    
+            <div class="kanban-item-footer d-flex flex-column bg-gray-light">
+                <div class="d-flex align-items-center px-3 py-2">
+                    <Avatar
+                        :key="item.id + '_editor_' + item.owner.id"
+                        :title="item.owner.firstname + ' ' + item.owner.lastname"
+                        :username="item.owner.username"
+                        :firstname="item.owner.firstname"
+                        :lastname="item.owner.lastname"
+                        :size="25"
+                        class="contacts-list-img o"
+                        data-bs-toggle="tooltip"
+                    />
+                    <Avatar v-if="editors != null"
+                        v-for="(editor_user, index) in editorsWithoutOwner"
+                        :key="item.id + '_editor_' + index"
+                        :title="editor_user.firstname + ' ' + editor_user.lastname"
+                        :username="editor_user.username"
+                        :firstname="editor_user.firstname"
+                        :lastname="editor_user.lastname"
+                        :size="25"
+                        class="contacts-list-img"
+                        data-bs-toggle="tooltip"
+                    />
+        
+                    <div class="d-flex ms-auto">
+                        <button v-if="commentable"
+                            class="btn btn-icon px-2 py-1 me-2"
+                            :title="trans('global.comments')"
+                            data-bs-toggle="collapse"
+                            :data-bs-target="'#comments_' + item.id"
+                            aria-expanded="false"
+                            @click="toggleComments()"
+                        >
+                            <i class="far fa-comments"></i>
+                            <span v-if="item.comments.length > 0"
+                                class="comment-count bg-success"
+                            >
+                                {{ item.comments.length }}
+                            </span>
+                        </button>
+                        <Reaction v-if="favourable"
+                            :model="item"
+                            reaction="like"
+                            url="/kanbanItems"
+                        />
+                    </div>
+                </div>
+    
+                <Comments v-if="commentable"
+                    :websocket="websocket"
+                    :comments="item.comments"
+                    :model="item"
+                    :kanban_owner_id="kanban_owner_id"
+                />
+            </div>
         </div>
     </div>
 </template>

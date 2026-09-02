@@ -657,6 +657,8 @@ export default {
 .kanban-items-container {
     height: 0px !important;
     scroll-behavior: smooth;
+
+    & > :not(:first-child) .kanban-item { margin-top: 1rem; }
 }
 .kanban-item {
     position: relative;

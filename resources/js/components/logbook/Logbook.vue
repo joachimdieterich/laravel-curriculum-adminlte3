@@ -1,13 +1,14 @@
 <template>
-    <div class="d-flex flex-column">
+    <div class="d-flex flex-column px-3">
         <div
             v-permission="'logbook_entry_create'"
-            class="px-3 pt-0 pb-3"
+            class="d-print-none pb-3"
         >
             <button
                 id="add-logbook-entry"
                 class="btn btn-success"
-                @click.prevent="openEntryModal()"
+                type="button"
+                @click="openEntryModal()"
             >
                 {{ trans('global.logbookEntry.create') }}
             </button>
@@ -18,34 +19,23 @@
                 @click.p.prevent="togglePrintOptions();"
             >
                 <i class="fa fa-print"></i>
-            </button> <!--<button
-                id="print-logbook"
-                type="button"
-                class="pull-right btn btn-tool pt-3"
-                @click="this.$eventHub.emit('setMediumModalParams', this.$mediumModalParams)"
-            >
-                <i class="fa fa-usert"></i>d
-            </button>-->
+            </button>
         </div>
 
-        <div v-if="showPrintOptions"
-            class="px-3"
-        >
+        <div v-if="showPrintOptions">
             <LogbookPrintOptions
                 :logbook="logbook"
                 :period="period"
             />
         </div>
 
-        <div class="px-3">
-            <LogbookEntry v-for="(entry, index) in entries"
-                v-bind:key="entry.id"
-                :first="index === 0"
-                :entry="entry"
-                :search="search"
-                :logbook="logbook"
-            />
-        </div>
+        <LogbookEntry v-for="(entry, index) in entries"
+            :key="entry.id"
+            :first="index === 0"
+            :entry="entry"
+            :search="search"
+            :logbook="logbook"
+        />
 
         <Teleport to="body">
             <AbsenceModal/>
@@ -61,19 +51,25 @@
             <SubscribeModal/>
         </Teleport>
         <teleport to="#customTitle">
-            <small>{{ logbook.title }}</small>
-            <a v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2 mx-1"
-                @click="editLogbook(logbook)"
-            >
-                <i class="fa fa-pencil-alt"></i>
-            </a>
-            <a v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2"
-                @click="share()"
-            >
-                <i class="fa fa-share-alt"></i>
-            </a>
+            <div class="d-flex align-items-center">
+                <small v-text="logbook.title"></small>
+                <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    :title="trans('global.logbook.edit')"
+                    @click="editLogbook(logbook)"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+                <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    :title="trans('global.share')"
+                    @click="share()"
+                >
+                    <i class="fa fa-share-alt"></i>
+                </button>
+            </div>
         </teleport>
     </div>
 </template>
@@ -119,9 +115,8 @@ export default {
         },
     },
     setup() {
-        const globalStore = useGlobalStore();
         return {
-            globalStore,
+            globalStore: useGlobalStore(),
         }
     },
     data() {

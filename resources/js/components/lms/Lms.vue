@@ -32,7 +32,7 @@
             @click="create()"
         >
             <button
-                class="btn btn-default btn-flat text-left border-0 rounded-pill mt-2"
+                class="btn btn-default btn-flat text-left border-0 rounded-pill"
                 style="padding: 0.75rem 1.25rem;"
             >
                 <i class="fas fa-plus pe-1"></i>

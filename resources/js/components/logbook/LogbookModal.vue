@@ -5,6 +5,7 @@
         modalName="logbook-modal"
         :method="method"
         :processing="processing"
+        :allow-overflow="true"
         :require-title="true"
         :show-description-field="true"
         :show-owner-field="form.id && checkPermission('is_teacher')"

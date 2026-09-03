@@ -12,7 +12,7 @@
                 :class="collapse_items && 'collapsed'"
                 :style="{ color: textColor, backgroundColor: item.color }"
                 data-bs-toggle="collapse"
-                :data-bs-target="'#item-' + item.id + ' > .kanban-item-body'"
+                :data-bs-target="'#item-' + item.id + ' .kanban-item-body'"
                 aria-expanded="true"
             >
                 <div class="kanban-item-header-title">

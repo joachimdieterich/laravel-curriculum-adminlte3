@@ -1,6 +1,6 @@
 <template>
     <div class="mb-3">
-        <div class="infobox">
+        <div class="infobox shadow-layout">
             <div
                 class="infobox-header"
                 :class="disableLink && 'infobox-header-muted'"
@@ -148,7 +148,6 @@ export default {
 .infobox {
     background-color: #fff;
     border-radius: 0.75rem;
-    box-shadow: var(--shadow-layout);
 
     & > .infobox-header {
         display: flex;

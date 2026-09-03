@@ -8,10 +8,6 @@
         >
             <i class="fa fa-arrow-left" style="font-size: 1.5em;"></i>
         </button>
-        <slot name="title"></slot>
-        <slot name="toolbar"
-            id="titleToolbar"
-        ></slot>
         <span id="customTitle"></span>
     </div>
 </template>

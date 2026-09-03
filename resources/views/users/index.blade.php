@@ -1,11 +1,6 @@
 @extends('layouts.master')
 @section('title')
-    <title-component>
-        <template v-slot:title>
-            {{ trans('global.user.title') }}
-        </template>
-        <template v-slot:toolbar></template>
-    </title-component>
+    {{ trans('global.user.title') }}
 @endsection
 @section('breadcrumb')
     <breadcrumbs

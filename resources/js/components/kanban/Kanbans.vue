@@ -1,5 +1,8 @@
 <template>
-    <div class="d-flex flex-column">
+    <div
+        class="d-flex flex-column"
+        :style="{ marginTop: subscribable ? null : '-1.5rem' }"
+    >
         <TabList v-if="!subscribable"
             class="px-3"
             :model="'kanban'"

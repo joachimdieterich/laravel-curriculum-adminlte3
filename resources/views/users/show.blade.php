@@ -2,14 +2,6 @@
 @section('title')
     {{ trans('global.myProfile') }}
 @endsection
-@section('breadcrumb')
-    <breadcrumbs
-        :entries="{{json_encode([
-            ['active'=> false, 'title'=> trans('global.user.title'), 'url' => "/users"],
-            ['active'=> true, 'title'=> trans('global.myProfile')],
-        ])}}"
-    ></breadcrumbs>
-@endsection
 @section('content')
     <user :user="{{ $user }}"></user>
 @can('is_admin')

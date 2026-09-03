@@ -3,61 +3,9 @@
     <div>
         <h4>Tool: {{  isset($exam) ? $exam->tool : 'tool' }}</h4>
     </div>
-
-@endsection
-@section('breadcrumb')
-    <breadcrumbs
-        :entries="{{json_encode([
-            ['active'=> true, 'title'=> trans('global.exam.title')],
-            ['active'=> true, 'title'=>  (isset($exam) ? $exam->test_name : 'exam') ]
-        ])}}"
-    ></breadcrumbs>
 @endsection
 @section('content')
     <exam :exam="{{ $exam }}"></exam>
-
-    {{--<table id="exam-users-datatable"
-           class="table table-hover datatable">
-        <thead>
-        <tr class="tr_selectAll_students">
-            <th class="selectAll-students" width="10"></th>
-            <th>{{ trans('global.user.fields.firstname') }}</th>
-            <th>{{ trans('global.user.fields.lastname') }}</th>
-            <th>{{ trans('global.exam.fields.status') }}</th>
-            <th>{{ trans('global.exam.fields.completed_at') }}</th>
-        </tr>
-        </thead>
-    </table>--}}
-{{--    <div class="row ">
-        <div class="col-sm-12">
-            <div class="btn-group pull-right" role="group" aria-label="...">
-                @include ('forms.input.button', ["onclick" => "expelFromExam()", "field" => "expelFromExam", "type" => "button", "class" => "btn btn-default pull-right mt-3", "icon" => "fa fa-minus", "label" => "Aus Lernstandsanalyse ausschreiben"])
-            </div>
-        </div><!-- ./col-xs-12 -->
-    </div>--}}
-{{--
-    <h3> {{ trans('global.exam.add_remove_users.users_group_title') }} </h3>
-    <table id="users-datatable"
-           class="table table-hover datatable">
-        <thead>
-        <tr class="tr_selectAll_users">
-            <th class="selectAll-users" width="10"></th>
-            <th>{{ trans('global.user.fields.username') }}</th>
-            <th>{{ trans('global.user.fields.firstname') }}</th>
-            <th>{{ trans('global.user.fields.lastname') }}</th>
-            <th>{{ trans('global.user.fields.email') }}</th>
-        </tr>
-        </thead>
-    </table>--}}
-  {{--  <div class="row ">
-        <div class="col-sm-12">
-            <div class="btn-group pull-right" role="group" aria-label="...">
-                @include ('forms.input.button', ["onclick" => "enroleIntoExam()",
-"field" => "enroleIntoExam", "type" => "button", "class" =>
- "btn btn-default pull-right mt-3", "icon" => "fa fa-plus", "label" => "In Lernstandsanalyse einschreiben"])
-            </div>
-        </div><!-- ./col-xs-12 -->
-    </div>--}}
 @endsection
 @section('scripts')
     @parent
@@ -80,75 +28,11 @@
             return $(selector).DataTable().rows({selected: true}).ids().toArray();
         }
 
-     /*   function sendRequest(method, url, ids, data) {
-            if (ids.length === 0) {
-                alert('{{ trans('global.datatables.zero_selected') }}')
-                return
-            }
-            if (confirm('{{ trans('global.areYouSure') }}')) {
-                $.ajax({
-                    headers: {'x-csrf-token': _token},
-                    method: method,
-                    url: url,
-                    data: data
-                })
-                    .done(function () {
-                        location.reload()
-                    })
-            }
-        }*/
-/*
-        function enroleIntoExam() {
-            var ids = getDatatablesIds('#users-datatable');
-            sendRequest('POST', '/exams/' + {{ $exam->exam_id }} + '/users/enrol', ids, {
-                'tool': '{{ $exam->tool }}',
-                "enrollment_list": ids,
-                _method: 'POST'
-            });
-        }
-
-        function expelFromExam() {
-            var ids = getDatatablesIds('#exam-users-datatable');
-            sendRequest('POST', '/exams/' + {{ $exam->exam_id }} + '/users/expel', ids, {
-                'tool': '{{ $exam->tool }}',
-                'expel_list': ids,
-                _method: 'DELETE'
-            });
-        }*/
-
         $(function () {
             let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
 
             let exam_users_table = $('#exam-users-datatable').DataTable({
                 ajax: "{{ url('exams/' . $exam->exam_id . '/list') }}",
-                /*columns: [
-                    {data: 'check'},
-                    {data: 'firstname'},
-                    {data: 'lastname'},
-                    {
-                        data: 'pivot.exam_started',
-                        'render': function (data, type, row) {
-                            if (type === 'display') {
-                                return row.pivot.exam_started && row.pivot.exam_completed_at ?
-                                    '<i class="fa-solid fa-circle" style="color: limegreen"></i>' :
-                                    row.pivot.exam_started ?
-                                        '<i class="fa-solid fa-circle" style="color: orange"></i>' :
-                                        '<i class="fa-solid fa-circle" style="color: red"></i>'
-                            }
-                            return data
-                        }
-                    },
-                    {data: 'pivot.exam_completed_at',
-                        'render': function (data, type, row) {
-                            if (type === 'display') {
-                                if(row.pivot.exam_completed_at) {
-                                    var myDate = new Date(row.pivot.exam_completed_at)
-                                    return myDate.toLocaleDateString('de');
-                                }
-                            }
-                            return data
-                        }},
-                ],*/
                 bStateSave: true,
                 fnStateSave: function (oSettings, oData) {
                     localStorage.setItem('DataTables', JSON.stringify(oData));

@@ -1,41 +1,10 @@
 @extends('layouts.master')
-
 @section('title')
     <title-component></title-component>
 @endsection
-
 @section('contributors')
     <div id="contributors"></div>
 @endsection
-
-@section('breadcrumb')
-    @if (Auth::user()->id == config('app.guest_user_id'))
-        <breadcrumbs
-            :entries="{{json_encode([
-            ['active'=> true, 'title'=> Str::limit($curriculum->title, 10) ]
-        ])}}"
-        ></breadcrumbs>
-    @else
-        @if(isset($course))
-            @can('achievement_access')
-                <breadcrumbs
-                    :entries="{{json_encode([
-                ['active'=> true, 'title'=> trans('global.curriculum.title_singular'), 'url' => "/curricula/" . $course->curriculum_id ],
-                ['active'=> true, 'title'=> Str::limit($course->title, 10) ]
-            ])}}"
-                ></breadcrumbs>
-            @endcan
-        @else
-            <breadcrumbs
-                :entries="{{json_encode([
-                ['active'=> true, 'title'=> trans('global.curriculum.title_singular'), 'url' => "/curricula"],
-                ['active'=> true, 'title'=> Str::limit($curriculum->title, 10) ]
-            ])}}"
-            ></breadcrumbs>
-        @endif
-    @endif
-@endsection
-
 @section('content')
     <Curriculum
         :curriculum="{{ $curriculum }}"

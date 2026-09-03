@@ -2,15 +2,7 @@
 @section('title')
     {{ trans('global.user.import') }}
 @endsection
-@section('breadcrumb')
-    <li class="breadcrumb-item "><a href="/"><i class="fa fa-home"></i></a></li>
-    <li class="breadcrumb-item "><a href="/users">{{ trans('global.user.title') }}</a></li>
-    <li class="breadcrumb-item active">{{ trans('global.user.import') }}</li>
-    <li class="breadcrumb-item "><a href="/documentation" class="text-black-50"><i class="fas fa-question-circle"></i></a></li>
-@endsection
 @section('content')
-
-
 <div class="row ">
     <div class="col-sm-12">
         <div class="card">
@@ -71,5 +63,4 @@
         </div>
     </div><!-- ./col-xs-12 -->
 </div>
-
 @endsection

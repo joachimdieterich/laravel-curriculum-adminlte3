@@ -2,13 +2,6 @@
 @section('title')
     Administration
 @endsection
-@section('breadcrumb')
-    <breadcrumbs
-        :entries="{{json_encode([
-            ['active'=> true, 'title'=> 'Administration', 'url' => "/admin"]
-        ])}}"
-    ></breadcrumbs>
-@endsection
 @section('content')
     <div class="row">
         <admin-view></admin-view>

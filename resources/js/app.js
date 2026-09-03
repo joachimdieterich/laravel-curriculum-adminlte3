@@ -258,7 +258,6 @@ import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce pay
 
 app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
 app.component('admin-view',  defineAsyncComponent(() => import('./components/admin/AdminView.vue')));
-app.component('breadcrumbs',  defineAsyncComponent(() => import('./components/uiElements/Breadcrumbs.vue')));
 
 app.component('certificates', defineAsyncComponent(() => import('./components/certificate/Certificates.vue')));
 app.component('certificate', defineAsyncComponent(() => import('./components/certificate/Certificate.vue')));

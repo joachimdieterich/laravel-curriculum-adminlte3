@@ -140,5 +140,4 @@
         vertical-align: bottom;
     }
 </style>
-
 @endsection

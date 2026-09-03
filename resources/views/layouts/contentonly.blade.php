@@ -32,12 +32,7 @@
         >
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-6 ps-0">
-                        <h1> @yield('title')</h1>
-                    </div>
-                    <div class="d-flex align-items-center col-sm-6 px-0">
-                        @yield('breadcrumb')
-                    </div>
+                    <h1> @yield('title')</h1>
                 </div>
                 @yield('contributors')
             </div>

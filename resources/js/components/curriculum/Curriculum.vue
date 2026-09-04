@@ -23,161 +23,172 @@
         <hr class="clearfix">
         <div class="d-flex flex-column px-3 pb-3">
             <ul
-                class="nav nav-tabs"
+                class="nav nav-tabs align-items-center"
                 role="tablist"
                 aria-label="Curriculum Tabs"
             >
                 <li
                     class="nav-item"
-                    role="tab"
+                    role="presentation"
                 >
-                    <a
+                    <button
+                        id="description-nav-tab"
+                        class="nav-link link-muted"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#description-tab"
+                        aria-controls="description-tab"
+                        aria-selected="false"
+                    >
+                        <i class="fa fa-info"></i>
+                        {{ trans('global.description') }}
+                    </button>
+                </li>
+
+                <li
+                    class="nav-item"
+                    role="presentation"
+                >
+                    <button
                         id="content-nav-tab"
                         class="nav-link link-muted"
-                        href="#content-tab"
-                        data-toggle="tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#content-tab"
                         aria-controls="content-tab"
+                        aria-selected="false"
                         @click="loaderEvent()"
                     >
                         <i class="fa fa-align-justify pe-2"></i>
                         {{ trans('global.content.index') }}
-                    </a>
+                    </button>
                 </li>
+
                 <li
                     class="nav-item"
-                    role="tab"
+                    role="presentation"
                 >
-                    <a
+                    <button
                         id="curriculum-nav-tab"
                         class="nav-link link-muted active"
-                        href="#curriculum-tab"
-                        data-toggle="tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#curriculum-tab"
                         aria-controls="curriculum-tab"
+                        aria-selected="true"
                     >
                         <i class="fas fa-th pe-2"></i>
                         {{ trans('global.objective_tab') }}
-                    </a>
+                    </button>
                 </li>
+
                 <li
                     class="nav-item"
-                    role="tab"
+                    role="presentation"
                 >
-                    <a
+                    <button
                         id="medium-nav-tab"
                         class="nav-link link-muted"
-                        href="#medium-tab"
-                        data-toggle="tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#medium-tab"
                         aria-controls="medium-tab"
+                        aria-selected="false"
                     >
                         <i class="fa fa-folder-open pe-2"></i>
                         {{ trans('global.medium.title') }}
-                    </a>
+                    </button>
                 </li>
+
                 <li
                     class="nav-item"
-                    role="tab"
+                    role="presentation"
                 >
-                    <a v-if="curriculum.glossar != null"
+                    <button v-if="curriculum.glossar != null"
                         id="glossar-nav-tab"
                         class="nav-link link-muted"
-                        href="#glossar-tab"
-                        data-toggle="tab"
+                        type="button"
+                        role="tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#glossar-tab"
                         aria-controls="glossar-tab"
+                        aria-selected="false"
                     >
                         <i class="fa fa-book-open pe-2"></i>
                         {{ trans('global.glossar.title_singular') }}
-                    </a>
-                    <a v-else
-                        v-permission="'glossar_create'"
+                    </button>
+                    <a v-else-if="checkPermission('glossar_create')"
                         id="glossar-nav-tab"
                         class="nav-link link-muted"
                         :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id=' + curriculum.id"
                     >
                         <i class="fa fa-book-open pe-2"></i>
-                        {{trans('global.glossar.create')}}
+                        {{ trans('global.glossar.create') }}
                     </a>
                 </li>
-                <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
+
+                <li v-if="(store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
                     v-permission="'certificate_access'"
                     class="nav-item ms-auto"
                 >
-                    <a
+                    <button
                         id="certificate-nav-tab"
                         class="nav-link link-muted"
+                        type="button"
                         @click.prevent="generateCertificate()"
                     >
                         <i class="fa fa-certificate pe-2"></i>
                         {{ trans('global.certificate.generate') }}
-                    </a>
+                    </button>
                 </li>
-                <li
-                    v-permission="'certificate_create'"
+
+                <li v-if="checkPermission('certificate_create')"
                     class="nav-item ms-auto"
                 >
-                    <a
+                    <button
                         id="certificate-nav-tab"
-                        class="nav-link link-muted pointer"
+                        class="nav-link link-muted"
+                        type="button"
                         @click.prevent="createCertificate()"
                     >
                         <i class="fa fa-certificate pe-2"></i>
-                        {{trans('global.certificate.create')}}
-                    </a>
+                        {{ trans('global.certificate.create') }}
+                    </button>
                 </li>
-                <li
-                    v-permission="'curriculum_print'"
-                    class="nav-item"
+
+                <button
+                    id="config-nav-tab"
+                    class="d-print-none btn btn-icon text-secondary mx-2"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.curriculum.print')"
+                    @click="printCurriculum()"
                 >
-                    <a
-                        id="config-nav-tab"
-                        class="nav-link link-muted pointer"
-                        data-toggle="tooltip"
-                        :title="trans('global.curriculum.print')"
-                        @click="printCurriculum()"
-                    >
-                        <i class="fa fa-print"></i>
-                    </a>
-                </li>
-                <li
-                    class="nav-item"
-                    @click="setGlobalStorage('#curriculum_'+curriculum.id, '#description-tab')"
+                    <i class="fa fa-print"></i>
+                </button>
+
+                <button v-if="checkPermission('is_admin') || $userId == curriculum.owner_id"
+                    id="fix-order-nav-tab"
+                    class="d-print-none btn btn-icon text-secondary mx-2"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.resetOrder')"
+                    @click="resetOrderIds()"
                 >
-                    <a
-                        id="description-nav-tab"
-                        class="nav-link link-muted"
-                        data-toggle="tab"
-                        href="#description-tab"
-                    >
-                        <i class="fa fa-info"></i>
-                    </a>
-                </li>
-                <li
-                    v-permission="'curriculum_edit'"
-                    class="nav-item"
+                    <i class="fa fa-wrench"></i>
+                </button>
+
+                <button v-if="checkPermission('curriculum_create')"
+                    id="export-curriculum-nav-tab"
+                    class="d-print-none btn btn-icon text-secondary ms-2"
+                    data-bs-toggle="tooltip"
+                    data-bs-title="Export Curriculum"
+                    @click="exportCurriculum()"
                 >
-                    <a
-                        id="fix-order-nav-tab"
-                        class="nav-link link-muted pointer"
-                        data-toggle="tooltip"
-                        :title="trans('global.resetOrder')"
-                        @click="resetOrderIds()"
-                    >
-                        <i class="fa fa-wrench"></i>
-                    </a>
-                </li>
-                <li
-                    v-permission="'curriculum_create'"
-                    data-toggle="tooltip"
-                    title="Export curriculum"
-                    class="nav-item"
-                >
-                    <a
-                        id="export-curriculum-nav-tab"
-                        class="nav-link link-muted pointer"
-                        @click="exportCurriculum()"
-                    >
-                        <i class="fas fa-cloud-download-alt"></i>
-                    </a>
-                </li>
+                    <i class="fas fa-cloud-download-alt"></i>
+                </button>
             </ul>
 
             <div
@@ -185,9 +196,38 @@
                 class="tab-content"
             >
                 <div
+                    id="description-tab"
+                    class="tab-pane fade bg-white border-top-0 rounded-bottom-2"
+                    style="border: 1px solid var(--bs-border-color);"
+                    role="tabpanel"
+                    tabindex="0"
+                    aria-labelledby="description-nav-tab"
+                >
+                    <div
+                        class="p-3"
+                        v-html="currentCurriculum.description"
+                    ></div>
+                </div>
+
+                <div
+                    id="content-tab"
+                    class="tab-pane fade"
+                    role="tabpanel"
+                    tabindex="0"
+                    aria-labelledby="content-nav-tab"
+                >
+                    <Contents
+                        ref="Contents"
+                        subscribable_type="App\Curriculum"
+                        :subscribable_id="curriculum.id"
+                    />
+                </div>
+
+                <div
                     id="curriculum-tab"
                     class="tab-pane fade show active"
                     role="tabpanel"
+                    tabindex="0"
                     aria-labelledby="curriculm-nav-tab"
                 >
                     <TerminalObjectives
@@ -196,22 +236,12 @@
                         :settings="settings"
                     />
                 </div>
-                <div
-                    id="content-tab"
-                    class="tab-pane fade"
-                    role="tab"
-                    aria-labelledby="content-nav-tab"
-                >
-                    <contents
-                        ref="Contents"
-                        subscribable_type="App\Curriculum"
-                        :subscribable_id="curriculum.id"
-                    />
-                </div>
+
                 <div
                     id="medium-tab"
                     class="tab-pane fade"
-                    role="tab"
+                    role="tabpanel"
+                    tabindex="0"
                     aria-labelledby="medium-nav-tab"
                 >
                     <Media
@@ -221,24 +251,15 @@
                         format="list"
                     />
                 </div>
+
                 <div v-if="curriculum.glossar != null"
                     id="glossar-tab"
                     class="tab-pane fade"
-                    role="tab"
+                    role="tabpanel"
+                    tabindex="0"
                     aria-labelledby="glossar-nav-tab"
                 >
                     <glossars :glossar="curriculum.glossar"/>
-                </div>
-                <div
-                    id="description-tab"
-                    class="tab-pane fade"
-                    role="tab"
-                    aria-labelledby="description-nav-tab"
-                >
-                    <div
-                        class="card p-3"
-                        v-html="currentCurriculum.description"
-                    ></div>
                 </div>
             </div>
         </div>
@@ -254,24 +275,35 @@
         </Teleport>
 
         <Teleport to="#customTitle">
-            <small>{{ currentCurriculum.title }}</small>
-            <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
-                v-permission="'curriculum_edit'"
-                class="btn btn-flat text-secondary px-2 mx-1"
-                @click="edit()"
-            >
-                <i class="fa fa-pencil-alt"></i>
-            </a>
-
-            <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2"
-                @click="share()"
-            >
-                <i class="fa fa-share-alt"></i>
-            </a>
+            <div class="d-flex align-items-center">
+                <small v-text="currentCurriculum.title"></small>
+                <button v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
+                    v-permission="'curriculum_edit'"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.curriculum.edit')"
+                    @click="edit()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+    
+                <button v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.share')"
+                    @click="share()"
+                >
+                    <i class="fa fa-share-alt"></i>
+                </button>
+            </div>
         </Teleport>
         <Teleport to="#contributors">
-            <contributors-list v-if="Object.values(currentContributors).length > 1" :contributors="currentContributors" :heading="true"></contributors-list>
+            <contributors-list v-if="Object.values(currentContributors).length > 1"
+                :contributors="currentContributors"
+                :heading="true"
+            />
         </Teleport>
     </div>
 </template>
@@ -357,6 +389,8 @@ export default {
     },
     mounted() {
         this.currentCurriculum = this.curriculum;
+
+        this.enableTooltips();
 
         this.store.addToDatatables({
             datatable: 'curriculum-user-datatable',

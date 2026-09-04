@@ -2,7 +2,7 @@
     <div class="d-flex flex-column">
         <div class="px-3">
             <ul
-                class="nav nav-tabs"
+                class="nav nav-tabs align-items-center"
                 role="tablist"
             >
                 <!-- 1 Curricula -->
@@ -220,27 +220,12 @@
                     </button>
                 </li> -->
                 <!-- Help -->
-                <li class="nav-item ms-auto pull-right">
-                    <button
-                        class="nav-link small link-muted pointer"
-                        style="line-height: 24px;"
-                        @click="help = !help"
-                    >
-                        <i class="fa fa-question pe-1" style="font-size: 16px;"></i>
-                    </button>
-                </li>
-                <!-- Edit -->
-                <li
-                    v-permission="'group_edit'"
-                    class="nav-item"
+                <button
+                    class="d-print-none btn btn-icon text-secondary ms-auto"
+                    @click="help = !help"
                 >
-                    <button
-                        class="nav-link link-muted"
-                        @click="editGroup()"
-                    >
-                        <i class="fas fa-pencil-alt"></i>
-                    </button>
-                </li>
+                    <i class="fa fa-question"></i>
+                </button>
             </ul>
 
             <div class="tab-content">
@@ -397,7 +382,15 @@
             <GroupModal/>
         </Teleport>
         <teleport to="#customTitle">
-            <small>{{ this.currentGroup.title }} </small>
+            <div class="d-flex align-items-center">
+                <small v-text="currentGroup.title"></small>
+                <button v-if="checkPermission('group_edit')"
+                    class="btn btn-icon text-secondary ms-2"
+                    @click="editGroup()"
+                >
+                    <i class="fa fa-pencil"></i>
+                </button>
+            </div>
         </teleport>
     </div>
 </template>
@@ -434,10 +427,7 @@ export default {
         //Tests,
     },
     setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+        return { globalStore: useGlobalStore() }
     },
     props: {
         group: {
@@ -463,18 +453,18 @@ export default {
             this.globalStore?.closeModal('group-modal');
         });
 
-        this.$eventHub.on('course-updated', () => {
-            this.loaderCourses()
-        });
+        // this.$eventHub.on('course-updated', () => {
+        //     this.loaderCourses()
+        // });
 
     },
     methods: {
         editGroup() {
             this.globalStore?.showModal('group-modal', this.currentGroup);
         },
-        loaderCourses() {
-            //this.$refs.Courses.loaderEvent();
-        },
+        // loaderCourses() {
+        //     this.$refs.Courses.loaderEvent();
+        // },
         loaderEvent() {
             this.$refs.Contents.loaderEvent();
         },

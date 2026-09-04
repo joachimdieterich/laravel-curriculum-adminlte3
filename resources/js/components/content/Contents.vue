@@ -1,80 +1,79 @@
 <template >
-    <div class="card border-0 mb-0">
-        <div class="card-header px-3">
-            <h3 v-if="subscriptions.length > 0"
-                class="card-title d-flex align-items-center"
+    <div class="bg-white border border-top-0 rounded-bottom-2">
+        <div class="d-flex align-items-center p-3">
+            <div v-if="subscriptions.length > 0"
+                class="d-flex align-items-center"
             >
-                <a
-                    :data-target="'#contentCarousel_' + uid"
-                    data-slide-to="0"
-                    class="btn btn-flat text-secondary p-0"
+                <button
+                    data-bs-slide-to="0"
+                    :data-bs-target="'#content-carousel-' + uid"
+                    class="btn btn-icon text-secondary"
                     @click="setSlide(0)"
                 >
                     <i class="fa fa-list"></i>
-                </a>
-                <span v-if="currentSlide === 0"
-                    class="ps-2"
-                >
-                    Index
-                </span>
+                </button>
+                <span v-if="currentSlide === 0" class="t-18 ms-2">Index</span>
                 <span v-else
-                    class="d-flex align-items-center ps-2"
+                    class="d-flex align-items-center"
                 >
-                    {{ subscriptions[currentSlide-1].content.title }}
-                    <a
-                        class="btn btn-flat text-secondary link-muted py-0 ms-1"
+                    <span class="t-18 mx-2">{{ subscriptions[currentSlide - 1].content.title }}</span>
+                    <button
+                        class="btn btn-icon text-secondary"
                         @click="edit(subscriptions[currentSlide - 1])"
                     >
                         <i class="fa fa-pencil"></i>
-                    </a>
+                    </button>
                 </span>
-            </h3>
-            <h3 v-else class="card-title">
-                <span>
-                    {{ trans('global.content.no_content') }}
-                </span>
-            </h3>
+            </div>
+            <span v-else class="t-18">
+                {{ trans('global.content.no_content') }}
+            </span>
 
-            <div class="card-tools">
+            <div class="d-flex align-items-center gap-2 ms-auto">
                 <button
                     v-permission="subscribable_type + '_content_create'"
-                    class="btn btn-tool"
-                    :aria-label="trans('global.add')"
+                    class="btn btn-icon text-secondary"
+                    type="button"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.content.create')"
                     @click="create()"
                 >
                     <i class="fa fa-plus"></i>
                 </button>
                 <button v-if="subscribable_type === 'App\\Curriculum'"
                     v-permission="subscribable_type + '_content_create'"
-                    class="btn btn-tool"
-                    :aria-label="trans('global.paste')"
-                    @click="this.showContentSubscriptionModal = true"
+                    class="btn btn-icon text-secondary"
+                    type="button"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.paste')"
+                    @click="showContentSubscriptionModal = true"
                 >
                     <i class="fa fa-paste"></i>
                 </button>
                 <button
                     v-permission="subscribable_type + '_content_create'"
-                    class="btn btn-tool"
-                    :aria-label="trans('global.resetOrder')"
-                    data-toggle="tooltip"
-                    data-container="body"
-                    :title="trans('global.resetOrder')"
+                    class="btn btn-icon text-secondary"
+                    type="button"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.resetOrder')"
                     @click.prevent="fixOrderIds()"
                 >
                     <i class="fa fa-wrench"></i>
                 </button>
                 <button v-if="subscriptions.length > 0"
-                    class="btn btn-tool"
-                    :href="'#contentCarousel_' + uid"
-                    :aria-label="trans('pagination.previous')"
+                    class="btn btn-icon text-secondary"
+                    type="button"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('pagination.previous')"
                     @click="prev()"
                 >
                     <i class="fa fa-arrow-left"></i>
                 </button>
                 <button v-if="subscriptions.length > 0"
-                    class="btn btn-tool"
-                    :href="'#contentCarousel_' + uid"
-                    :aria-label="trans('pagination.next')"
+                    class="btn btn-icon text-secondary"
+                    type="button"
+                    data-bs-toggle="tooltip"
+                    :data-bs-target="trans('pagination.next')"
                     @click="next()"
                 >
                     <i class="fa fa-arrow-right"></i>
@@ -83,99 +82,97 @@
         </div>
 
         <div v-if="subscriptions.length !== 0"
-            class="card-content"
+            :id="'content-carousel-' + uid"
+            class="carousel carousel-dark slide border-top"
         >
-            <div
-                :id="'contentCarousel_' + uid"
-                class="carousel slide"
-                data-interval="false"
-            >
-                <ol class="carousel-indicators">
-                    <li
-                        :data-target="'#contentCarousel_' + uid"
-                        data-slide-to="0"
-                        class="active"
-                        @click="setSlide(0)"
-                    ></li>
-                    <li v-for="(item,index) in subscriptions"
-                        data-placement="top"
-                        :title="item.content.title"
-                        :data-target="'#contentCarousel_' + uid"
-                        :data-slide-to="index + 1"
-                        @click="setSlide(index + 1)"
-                    ></li>
-                </ol>
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <ul class="list-unstyled p-3" title="Index">
-                            <li v-for="(item,index) in subscriptions"
-                                class="pb-2"
-                            >
-                                <span class="pointer">
-                                    <span
-                                        :data-target="'#contentCarousel_' + uid"
-                                        :data-slide-to="index + 1"
-                                        @click="setSlide(index + 1)"
-                                    >
-                                        {{ item.content.title }}
-                                    </span>
-                                    <span
-                                        v-permission="subscribable_type + '_content_delete'"
-                                        class="pull-right vuehover"
-                                        :aria-label="trans('global.delete')"
-                                    >
-                                        <a
-                                            class="btn-tool text-danger"
-                                            @click.prevent="confirmDelete(item)"
-                                        >
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                    </span>
-                                    <span
-                                        v-permission="subscribable_type + '_content_edit'"
-                                        class="pull-right vuehover"
-                                        :aria-label="trans('global.edit')"
-                                    >
-                                        <span
-                                            class="btn-tool fa fa-pencil-alt"
-                                            @click.prevent="edit(item)"
-                                        ></span>
-                                    </span>
-                                    <span
-                                        v-permission="subscribable_type + '_content_create'"
-                                        class="pull-right vuehover"
-                                    >
-                                        <span v-if="(item.order_id !== 0)"
-                                            class="btn-tool fa fa-arrow-up"
-                                            aria-label="up"
-                                            @click.prevent="sortEvent(item, -1)"
-                                        ></span>
-
-                                        <span v-if="(subscriptions.length - 1 !== item.order_id)"
-                                            class="btn-tool fa fa-arrow-down"
-                                            aria-label="down"
-                                            @click.prevent="sortEvent(item, 1)"
-                                        ></span>
-                                    </span>
-                                    <br>
-                                    <small
-                                        class="text-muted line-clamp"
-                                        :data-target="'#contentCarousel_' + uid"
-                                        :data-slide-to="index + 1"
-                                        @click="setSlide(index + 1)"
-                                        v-html="item.content.content"
-                                    ></small>
+            <div class="carousel-indicators">
+                <button
+                    class="active"
+                    type="button"
+                    :data-bs-target="'#content-carousel-' + uid"
+                    data-bs-slide-to="0"
+                    aria-current="true"
+                    aria-label="Index"
+                    @click="setSlide(0)"
+                ></button>
+                <button v-for="(item, index) in subscriptions"
+                    type="button"
+                    :data-bs-target="'#content-carousel-' + uid"
+                    :data-bs-slide-to="index + 1"
+                    :aria-label="item.content.title"
+                    @click="setSlide(index + 1)"
+                ></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <ul class="list-unstyled p-3" title="Index">
+                        <li v-for="(item,index) in subscriptions"
+                            class="pb-2"
+                        >
+                            <span class="pointer">
+                                <span
+                                    :data-target="'#content-carousel-' + uid"
+                                    :data-slide-to="index + 1"
+                                    @click="setSlide(index + 1)"
+                                >
+                                    {{ item.content.title }}
                                 </span>
-                            </li>
-                        </ul>
-                    </div>
+                                <span
+                                    v-permission="subscribable_type + '_content_delete'"
+                                    class="pull-right vuehover"
+                                    :aria-label="trans('global.delete')"
+                                >
+                                    <a
+                                        class="btn-tool text-danger"
+                                        @click.prevent="confirmDelete(item)"
+                                    >
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </span>
+                                <span
+                                    v-permission="subscribable_type + '_content_edit'"
+                                    class="pull-right vuehover"
+                                    :aria-label="trans('global.edit')"
+                                >
+                                    <span
+                                        class="btn-tool fa fa-pencil-alt"
+                                        @click.prevent="edit(item)"
+                                    ></span>
+                                </span>
+                                <span
+                                    v-permission="subscribable_type + '_content_create'"
+                                    class="pull-right vuehover"
+                                >
+                                    <span v-if="(item.order_id !== 0)"
+                                        class="btn-tool fa fa-arrow-up"
+                                        aria-label="up"
+                                        @click.prevent="sortEvent(item, -1)"
+                                    ></span>
 
-                    <div v-for="item in subscriptions"
-                        class="carousel-item"
-                        :title="item.content.title"
-                    >
-                        <div class="p-3" v-html="item.content.content"></div>
-                    </div>
+                                    <span v-if="(subscriptions.length - 1 !== item.order_id)"
+                                        class="btn-tool fa fa-arrow-down"
+                                        aria-label="down"
+                                        @click.prevent="sortEvent(item, 1)"
+                                    ></span>
+                                </span>
+                                <br>
+                                <small
+                                    class="text-muted line-clamp"
+                                    :data-target="'#content-carousel-' + uid"
+                                    :data-slide-to="index + 1"
+                                    @click="setSlide(index + 1)"
+                                    v-html="item.content.content"
+                                ></small>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div v-for="item in subscriptions"
+                    class="carousel-item"
+                    :title="item.content.title"
+                >
+                    <div class="p-3" v-html="item.content.content"></div>
                 </div>
             </div>
         </div>
@@ -259,7 +256,7 @@ export default {
             } else {
                 this.currentSlide--;
             }
-            $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
+            $('#content-carousel-' + this.uid).carousel(this.currentSlide);
         },
         next() {
             if (this.currentSlide === this.subscriptions.length) {
@@ -267,7 +264,7 @@ export default {
             } else {
                 this.currentSlide++;
             }
-            $('#contentCarousel_' + this.uid).carousel(this.currentSlide);
+            $('#content-carousel-' + this.uid).carousel(this.currentSlide);
         },
         async sortEvent(contentSubscription,amount) {
             let subscription = {

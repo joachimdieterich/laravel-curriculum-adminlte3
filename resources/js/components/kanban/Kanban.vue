@@ -14,8 +14,8 @@
             :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
             style="top: 0.25rem; left: 0.25rem; z-index: 10;"
             type="button"
-            :title="trans('global.fullscreen')"
-            :aria-label="trans('global.fullscreen')"
+            data-bs-toggle="tooltip"
+            :data-bs-title="trans('global.fullscreen')"
             @click="toggleFullscreen"
         >
             <i class="fa fa-expand"></i>
@@ -25,8 +25,8 @@
             :class="[kanban.collapse_items && 'collapsed', textColor === '#000' ? 'btn-icon' : 'btn-icon-alt']"
             style="top: 0.25rem; right: 0.25rem; z-index: 10;"
             type="button"
-            :title="trans('global.kanban.toggle_items')"
-            :aria-label="trans('global.kanban.toggle_items')"
+            data-bs-toggle="tooltip"
+            :data-bs-title="trans('global.kanban.toggle_items')"
             @click="toggleCollapseAll"
         >
             <i class="fa fa-angle-up"></i>
@@ -180,7 +180,8 @@
                 <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                     type="button"
                     class="d-print-none btn btn-icon text-secondary mx-1"
-                    :title="trans('global.kanban.edit')"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.kanban.edit')"
                     @click="editKanban(kanban)"
                 >
                     <i class="fa fa-pencil-alt"></i>
@@ -189,7 +190,8 @@
                 <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                     type="button"
                     class="d-print-none btn btn-icon text-secondary mx-1"
-                    :title="trans('global.share')"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.share')"
                     @click="share()"
                 >
                     <i class="fa fa-share-alt"></i>
@@ -198,7 +200,8 @@
                 <a
                     :href="'/export_csv/' + kanban.id"
                     class="d-print-none btn btn-icon text-secondary mx-1"
-                    :title="trans('global.csv_export')"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.csv_export')"
                     download
                 >
                     <i class="fa fa-file-csv"></i>
@@ -207,7 +210,8 @@
                 <a
                     :href="'/export_pdf/' + kanban.id"
                     class="d-print-none btn btn-icon text-secondary mx-1"
-                    :title="trans('global.pdf_export')"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.pdf_export')"
                     download
                 >
                     <i class="fa fa-file-pdf"></i>
@@ -559,6 +563,8 @@ export default {
         if (this.embeded) this.setEmbededView();
 
         this.kanban = this.initialKanban;
+
+        this.enableTooltips();
 
         this.startWebsocket();
 

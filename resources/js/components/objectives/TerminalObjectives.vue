@@ -9,13 +9,12 @@
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             {{ trans('global.loading') }}
         </div>
-        <ul
-            id="terminalObjectivesTopNav"
-            class="nav bg-gray-light position-sticky"
-            style="top: 56px; z-index: 100"
+        <div
+            class="d-flex align-items-center position-sticky bg-gray-light p-2"
+            style="top: 52px; z-index: 100"
         >
             <draggable
-                class="nav nav-pills"
+                class="nav nav-pills gap-2"
                 v-model="type_order"
                 v-bind="dragOptions"
                 tag="ul"
@@ -26,43 +25,42 @@
             >
                 <template #item="{ element: type_index }">
                     <li
-                        class="nav-item ps-0 pe-2 pb-2 pt-2"
+                        class="nav-item"
                         role="presentation"
                     >
-                        <a
-                            :id="objective_types[type_index].id + '-tab'"
-                            :href="'#Type-' + objective_types[type_index].id"
+                        <button
+                            :id="'tab-' + objective_types[type_index].id"
                             class="nav-link"
+                            :class="type_index === type_order[0] && 'active'"
                             type="button"
                             role="tab"
-                            data-toggle="tab"
-                            aria-selected="false"
+                            data-bs-toggle="tab"
+                            :data-bs-target="'#Type-' + objective_types[type_index].id"
+                            :aria-controls="'Type-' + objective_types[type_index].id"
+                            :aria-selected="type_index === type_order[0]"
                             @click="setActiveTab(type_index)"
                         >
                             {{ objective_types[type_index].title }}
-                        </a>
+                        </button>
                     </li>
                </template>
             </draggable>
-            <li v-if="curriculum.type_id === 1"
-                class="form-group py-2 mb-0 ms-auto"
-            >
-                <Select2
-                    id="references"
-                    name="references"
-                    css="mb-0"
-                    url="/curricula/references"
-                    model="curriculum"
-                    :showLabel="false"
-                    :placeholder="trans('global.curricula_cross_references')"
-                />
-            </li>
-        </ul>
+            <Select2 v-if="curriculum.type_id === 1"
+                id="references"
+                name="references"
+                class="ms-auto"
+                url="/curricula/references"
+                model="curriculum"
+                :showLabel="false"
+                :placeholder="trans('global.curricula_cross_references')"
+            />
+        </div>
         <hr class="mt-0">
         <div class="tab-content">
-            <div v-for="type in objective_types"
+            <div v-for="(type, index) in objective_types"
                 :id="'Type-' + type.id"
                 class="tab-pane fade"
+                :class="index === type_order[0] && 'show active'"
                 role="tabpanel"
                 :aria-labelledby="type.id + '-tab'"
             >
@@ -316,8 +314,8 @@ export default {
             let firstTab = this.objective_types[this.type_order[0]].id;
             // the 'active'-state does only need to be set programmatically for the initial tab
             // the rest will be handled by the default nav-tabs behaviour
-            $('#' + firstTab + '-tab')[0].classList.add('active');
-            $('#Type-' + firstTab).tab('show'); // doing a click() would also work, but the transition seems to be smoother this way
+            // this.$el.querySelector('#tab-' + firstTab).classList.add('active');
+            // bootstrap.Tab.getInstance('#tab-' + firstTab).show(); // doing a click() would also work, but the transition seems to be smoother this way
         }
 
         $('#objective-tabs-overlay').hide();

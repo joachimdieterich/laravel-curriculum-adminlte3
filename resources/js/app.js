@@ -121,9 +121,12 @@ app.config.globalProperties.getGlobalStorage = (key, value, class_string = "acti
     }
 };
 
-//-> use v-permission in vue3 templates, use checkPermission in scripts
 app.config.globalProperties.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
+};
+
+app.config.globalProperties.enableTooltips = () => {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(elem => new bootstrap.Tooltip(elem));
 };
 
 /**

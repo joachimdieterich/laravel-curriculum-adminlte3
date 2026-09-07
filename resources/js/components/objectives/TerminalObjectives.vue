@@ -77,9 +77,6 @@
                             :objective="terminal"
                             :settings="settings"
                             :max_id="max_ids[type.id]"
-                            @update="(objective) => {
-                                this.globalStore?.closeModal('terminal-objective-modal');
-                            }"
                         />
 
                         <EnablingObjectives
@@ -112,12 +109,10 @@
                 :showConfirm="showConfirm"
                 :title="delete_title"
                 :description="delete_description"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.delete();
+                    showConfirm = false;
+                    deleteObjective();
                 }"
             />
         </Teleport>
@@ -143,11 +138,9 @@ export default {
         },
     },
     setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
         return {
-            globalStore,
-            toast,
+            globalStore: useGlobalStore(),
+            toast: useToast(),
         }
     },
     data() {
@@ -184,7 +177,7 @@ export default {
                     console.log(e);
                 });
         },
-        delete() {
+        deleteObjective() {
             axios.delete('/' + (this.delete_objective.terminal_objective_id === undefined ? 'terminal' : 'enabling') + 'Objectives/' + this.delete_objective.id)
                 .then(response => {
                     this.removeObjective(this.delete_objective);

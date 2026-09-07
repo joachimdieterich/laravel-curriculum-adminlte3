@@ -279,14 +279,14 @@ import SubscribeModal from "../subscription/SubscribeModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
-import {useDatatableStore} from "../../store/datatables";
 import CertificateModal from "../certificate/CertificateModal.vue";
 import GenerateCertificateModal from "../certificate/GenerateCertificateModal.vue";
-import {useGlobalStore} from "../../store/global";
 import ContentModal from "../content/ContentModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MediumExportModal from "../media/MediumExportModal.vue";
 import ContributorsList from "../uiElements/ContributorsList.vue";
+import {useDatatableStore} from "../../store/datatables";
+import {useGlobalStore} from "../../store/global";
 import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
@@ -335,7 +335,7 @@ export default {
                 { title: window.trans.global.user.fields.username, data: 'username', searchable: true },
                 { title: window.trans.global.lastname, data: 'lastname', searchable: true },
                 { title: window.trans.global.firstname, data: 'firstname', searchable: true },
-                { title: window.trans.global.role.title_singular, data: 'role', searchable: true },
+                { title: window.trans.global.role.title_singular, data: 'role' },
                 { title: window.trans.global.progress.title_singular,  data: 'progress' },
             ],
             options : this.$dtOptions,

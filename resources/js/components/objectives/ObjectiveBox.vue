@@ -105,10 +105,7 @@ export default {
         },
     },
     setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+        return { globalStore: useGlobalStore() }
     },
     data() {
         return {

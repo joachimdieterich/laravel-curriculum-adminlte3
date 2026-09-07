@@ -13,7 +13,6 @@
                 <Editor
                     id="description"
                     name="description"
-                    class="form-control"
                     licenseKey="gpl"
                     :init="tinyMCE"
                     v-model="form.description"

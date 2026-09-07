@@ -644,6 +644,8 @@ return [
         'no_content' => 'Keine (zusätzlichen) Inhalte vorhanden.',
         'index' => 'Inhaltsverzeichnis',
         'index_alt' => 'Anregungen zur Unterrichtsgestaltung',
+        'move_up' => 'Inahlt nach oben verschieben',
+        'move_down' => 'Inahlt nach unten verschieben',
         'fields' => [
             'content' => 'Inhalt',
             'content_helper' => '',
@@ -721,8 +723,8 @@ return [
         'edit' => 'Baustein bearbeiten',
         'delete' => 'Baustein löschen',
         'delete_helper' => 'Soll der Baustein sowie die dazugehörigen Daten gelöscht werden?',
-        'move_left' => 'Baustein nach links verschieben',
-        'move_right' => 'Baustein nach rechts verschieben',
+        'move_prev' => 'Baustein an vorheriger Stelle anreihen',
+        'move_next' => 'Baustein an nächster Stelle anreihen',
         'toggle_objectives' => 'Bausteine ein-/ausklappen',
         'fields' => [
             'time_approach' => 'Zeitansatz',

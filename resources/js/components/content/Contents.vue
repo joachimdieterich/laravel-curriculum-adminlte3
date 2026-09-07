@@ -5,9 +5,10 @@
                 class="d-flex align-items-center"
             >
                 <button
-                    data-bs-slide-to="0"
-                    :data-bs-target="'#content-carousel-' + uid"
+                    type="button"
                     class="btn btn-icon text-secondary"
+                    :data-bs-target="'#content-carousel-' + uid"
+                    data-bs-slide-to="0"
                     @click="setSlide(0)"
                 >
                     <i class="fa fa-list"></i>
@@ -18,7 +19,9 @@
                 >
                     <span class="t-18 mx-2">{{ subscriptions[currentSlide - 1].content.title }}</span>
                     <button
+                        type="button"
                         class="btn btn-icon text-secondary"
+                        :aria-label="trans('global.content.edit')"
                         @click="edit(subscriptions[currentSlide - 1])"
                     >
                         <i class="fa fa-pencil"></i>
@@ -30,30 +33,18 @@
             </span>
 
             <div class="d-flex align-items-center gap-2 ms-auto">
-                <button
-                    v-permission="subscribable_type + '_content_create'"
-                    class="btn btn-icon text-secondary"
+                <button v-if="allowCreate"
                     type="button"
+                    class="d-print-none btn btn-icon text-secondary"
                     data-bs-toggle="tooltip"
                     :data-bs-title="trans('global.content.create')"
                     @click="create()"
                 >
                     <i class="fa fa-plus"></i>
                 </button>
-                <button v-if="subscribable_type === 'App\\Curriculum'"
-                    v-permission="subscribable_type + '_content_create'"
-                    class="btn btn-icon text-secondary"
+                <button v-if="allowCreate"
                     type="button"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="trans('global.paste')"
-                    @click="showContentSubscriptionModal = true"
-                >
-                    <i class="fa fa-paste"></i>
-                </button>
-                <button
-                    v-permission="subscribable_type + '_content_create'"
-                    class="btn btn-icon text-secondary"
-                    type="button"
+                    class="d-print-none btn btn-icon text-secondary"
                     data-bs-toggle="tooltip"
                     :data-bs-title="trans('global.resetOrder')"
                     @click.prevent="fixOrderIds()"
@@ -61,19 +52,22 @@
                     <i class="fa fa-wrench"></i>
                 </button>
                 <button v-if="subscriptions.length > 0"
-                    class="btn btn-icon text-secondary"
                     type="button"
+                    class="d-print-none btn btn-icon text-secondary"
+                    :data-bs-target="'#content-carousel-' + uid"
+                    data-bs-slide="prev"
                     data-bs-toggle="tooltip"
-                    :data-bs-title="trans('pagination.previous')"
+                    :aria-label="trans('pagination.previous')"
                     @click="prev()"
                 >
                     <i class="fa fa-arrow-left"></i>
                 </button>
                 <button v-if="subscriptions.length > 0"
-                    class="btn btn-icon text-secondary"
                     type="button"
-                    data-bs-toggle="tooltip"
-                    :data-bs-target="trans('pagination.next')"
+                    class="d-print-none btn btn-icon text-secondary"
+                    :data-bs-target="'#content-carousel-' + uid"
+                    data-bs-slide="next"
+                    :aria-label="trans('pagination.next')"
                     @click="next()"
                 >
                     <i class="fa fa-arrow-right"></i>
@@ -103,69 +97,64 @@
                     @click="setSlide(index + 1)"
                 ></button>
             </div>
-            <div class="carousel-inner">
+            <div class="carousel-inner pb-3">
                 <div class="carousel-item active">
-                    <ul class="list-unstyled p-3" title="Index">
-                        <li v-for="(item,index) in subscriptions"
-                            class="pb-2"
+                    <div class="d-flex flex-column gap-2 p-3">
+                        <div v-for="(item, index) in subscriptions"
+                            class="position-relative btn-icon-hover"
                         >
-                            <span class="pointer">
-                                <span
-                                    :data-target="'#content-carousel-' + uid"
-                                    :data-slide-to="index + 1"
-                                    @click="setSlide(index + 1)"
-                                >
-                                    {{ item.content.title }}
-                                </span>
-                                <span
-                                    v-permission="subscribable_type + '_content_delete'"
-                                    class="pull-right vuehover"
-                                    :aria-label="trans('global.delete')"
-                                >
-                                    <a
-                                        class="btn-tool text-danger"
-                                        @click.prevent="confirmDelete(item)"
-                                    >
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-                                </span>
-                                <span
-                                    v-permission="subscribable_type + '_content_edit'"
-                                    class="pull-right vuehover"
-                                    :aria-label="trans('global.edit')"
-                                >
-                                    <span
-                                        class="btn-tool fa fa-pencil-alt"
-                                        @click.prevent="edit(item)"
-                                    ></span>
-                                </span>
-                                <span
-                                    v-permission="subscribable_type + '_content_create'"
-                                    class="pull-right vuehover"
-                                >
-                                    <span v-if="(item.order_id !== 0)"
-                                        class="btn-tool fa fa-arrow-up"
-                                        aria-label="up"
-                                        @click.prevent="sortEvent(item, -1)"
-                                    ></span>
-
-                                    <span v-if="(subscriptions.length - 1 !== item.order_id)"
-                                        class="btn-tool fa fa-arrow-down"
-                                        aria-label="down"
-                                        @click.prevent="sortEvent(item, 1)"
-                                    ></span>
-                                </span>
+                            <span
+                                class="pointer"
+                                :data-bs-target="'#content-carousel-' + uid"
+                                :data-bs-slide-to="index + 1"
+                                @click="setSlide(index + 1)"
+                            >
+                                <span>{{ item.content.title }}</span>
                                 <br>
                                 <small
                                     class="text-muted line-clamp"
+                                    v-html="item.content.content"
                                     :data-target="'#content-carousel-' + uid"
                                     :data-slide-to="index + 1"
                                     @click="setSlide(index + 1)"
-                                    v-html="item.content.content"
                                 ></small>
                             </span>
-                        </li>
-                    </ul>
+                            <div class="position-absolute top-0 end-0 d-flex gap-2">
+                                <button v-if="allowEdit && item.order_id !== 0"
+                                    type="button"
+                                    class="btn btn-icon btn-hide text-secondary"
+                                    :aria-label="trans('global.content.move_up')"
+                                    @click="sortEvent(item, -1)"
+                                >
+                                    <i class="fa fa-arrow-up"></i>
+                                </button>
+                                <button v-if="allowEdit && subscriptions.length - 1 !== item.order_id"
+                                    type="button"
+                                    class="btn btn-icon btn-hide text-secondary"
+                                    :aria-label="trans('global.content.move_down')"
+                                    @click.prevent="sortEvent(item, 1)"
+                                >
+                                    <i class="fa fa-arrow-down"></i>
+                                </button>
+                                <button v-if="allowEdit"
+                                    type="button"
+                                    class="btn btn-icon btn-hide text-secondary"
+                                    :aria-label="trans('global.content.edit')"
+                                    @click="edit(item)"
+                                >
+                                    <i class="fa fa-pencil-alt"></i>
+                                </button>
+                                <button v-if="allowDelete"
+                                    type="button"
+                                    class="btn btn-icon btn-hide text-danger"
+                                    :aria-label="trans('global.content.delete')"
+                                    @click="confirmDelete(item)"
+                                >
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div v-for="item in subscriptions"
@@ -178,31 +167,20 @@
         </div>
 
         <Teleport to="body">
-            <ContentSubscriptionModal
-                :show="showContentSubscriptionModal"
-                @close="this.showContentSubscriptionModal = false"
-                :params="{
-                    subscribable_type: subscribable_type,
-                    subscribable_id: subscribable_id,
-                }"
-            />
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.content.delete')"
                 :description="trans('global.content.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="() => showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
     </div>
 </template>
 <script>
-import ContentSubscriptionModal from "./ContentSubscriptionModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useGlobalStore} from "../../store/global";
 
@@ -225,25 +203,17 @@ export default {
             default: null,
         },
     },
-    components: {
-        ContentSubscriptionModal,
-        ConfirmModal,
-    },
+    components: { ConfirmModal },
     setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+        return { globalStore: useGlobalStore() }
     },
     data() {
         return {
-            uid: null,
+            uid: this.$.uid,
             subscriptions: [],
-            errors: {},
             currentSlide: 0,
             currentContent: {},
             showConfirm: false,
-            showContentSubscriptionModal: false,
         }
     },
     methods: {
@@ -256,7 +226,6 @@ export default {
             } else {
                 this.currentSlide--;
             }
-            $('#content-carousel-' + this.uid).carousel(this.currentSlide);
         },
         next() {
             if (this.currentSlide === this.subscriptions.length) {
@@ -264,7 +233,6 @@ export default {
             } else {
                 this.currentSlide++;
             }
-            $('#content-carousel-' + this.uid).carousel(this.currentSlide);
         },
         async sortEvent(contentSubscription,amount) {
             let subscription = {
@@ -277,7 +245,7 @@ export default {
             try {
                 this.subscriptions = (await axios.patch('/contentSubscriptions/', subscription)).data.message;
             } catch(error) {
-                this.errors = error.response.data.errors;
+                console.log(error);
             }
         },
         async fixOrderIds() {
@@ -289,11 +257,11 @@ export default {
             try {
                 this.subscriptions = (await axios.patch('/contentSubscriptions/reset', subscription)).data.message;
             } catch(error) {
-                this.errors = error.response.data.errors;
+                console.log(error);
             }
         },
         create() {
-            this.globalStore?.showModal('content-modal',{
+            this.globalStore?.showModal('content-modal', {
                 subscribable_type:  this.subscribable_type,
                 subscribable_id:    this.subscribable_id,
             });
@@ -330,12 +298,11 @@ export default {
                     this.subscriptions = response.data.message;
                 })
                 .catch(e => {
-                    this.errors = e.data.errors;
+                    console.log(e);
                 });
         },
     },
     mounted() {
-        this.uid = this.$.uid;
         this.currentSlide = 0;
 
         this.$eventHub.on('content-added', content => {
@@ -347,6 +314,17 @@ export default {
                 this.subscriptions.find(s => s.content.id == content.id).content = content;
             }
         });
+    },
+    computed: {
+        allowCreate() {
+            return this.checkPermission(this.subscribable_type + '_content_create');
+        },
+        allowEdit() {
+            return this.checkPermission(this.subscribable_type + '_content_edit');
+        },
+        allowDelete() {
+            return this.checkPermission(this.subscribable_type + '_content_delete');
+        },
     },
 }
 </script>

@@ -59,5 +59,6 @@
 // override icon positioning
 .btn-icon {
     & > .fa.fa-share-alt { margin-left: -1px; }
+    & > .fa.fa-cloud-download-alt { margin-top: -1px; }
     & > .fa.fa-file-csv, & > .fa.fa-file-pdf { margin-left: 3px; }
 }

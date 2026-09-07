@@ -1,86 +1,29 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @click.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <span v-if="method === 'post'">
-                            {{ trans('global.content.create') }}
-                        </span>
-                        <span v-if="method === 'patch'">
-                            {{ trans('global.content.edit') }}
-                        </span>
-                    </h3>
-                    <div class="card-tools">
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div
-                                class="form-group"
-                                :class="form.errors.title ? 'has-error' : ''"
-                            >
-                                <input
-                                    id="title"
-                                    type="text"
-                                    name="title"
-                                    class="form-control"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                            </div>
-        
-                            <Editor
-                                id="content"
-                                name="content"
-                                class="form-control"
-                                licenseKey="gpl"
-                                :init="tinyMCE"
-                                v-model="form.content"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="content-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="content-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="!form.title || !form.content"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
+    <Modal
+        ref="modal"
+        model="content"
+        modalName="content-modal"
+        :method="method"
+        :processing="processing"
+        :require-title="true"
+        :disable-save-button="!form.content"
+        @save="(form) => submit(form)"
+    >
+        <template #general-extended>
+            <div class="mt-3">
+                <Editor
+                    id="content"
+                    name="content"
+                    licenseKey="gpl"
+                    :init="tinyMCE"
+                    v-model="form.content"
+                />
             </div>
-        </div>
-    </Transition>
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
 import {useGlobalStore} from "../../store/global";
@@ -88,19 +31,17 @@ import {useGlobalStore} from "../../store/global";
 export default {
     name: 'content-modal',
     components: {
+        Modal,
         Editor,
     },
-    props: {},
     setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+        return { globalStore: useGlobalStore() }
     },
     data() {
         return {
             component_id: this.$.uid,
             method: 'post',
+            processing: false,
             form: new Form({
                 id: '',
                 title: '',
@@ -108,25 +49,39 @@ export default {
                 subscribable_id: null,
                 subscribable_type: null,
             }),
-            tinyMCE: null,
+            tinyMCE: this.$initTinyMCE(
+                [
+                    "autolink", "link", "table", "lists", "code", "autoresize",
+                ],
+                {
+                    callback: 'insertContent',
+                    callbackId: this.component_id,
+                    placeholder: window.trans.global.description + ' *',
+                },
+                "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | link mathjax code",
+                ""
+            ),
         }
     },
     methods: {
-        submit() {
+        submit(formData) {
+            this.form.populate(formData);
+            this.processing = true;
+
             if (this.method == 'patch') {
                 this.update();
             } else {
                 this.add();
             }
-
-            this.globalStore.closeModal(this.$options.name);
         },
         add() {
             axios.post('/contents', this.form)
                 .then(r => {
                     this.$eventHub.emit('content-added', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.processing = false;
                     console.log(e);
                 });
         },
@@ -135,8 +90,10 @@ export default {
                 .then(r => {
                     r.data.subscribable_id = this.form.subscribable_id;
                     this.$eventHub.emit('content-updated', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
+                    this.processing = false;
                     console.log(e);
                 });
         },
@@ -146,34 +103,17 @@ export default {
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
                 this.globalStore.lockModal(this.$options.name);
-                const params = state.modals[this.$options.name].params;
-
+                this.processing = false;
                 this.form.reset();
+                
+                const params = state.modals[this.$options.name].params;
                 if (typeof (params) !== 'undefined') {
                     this.form.subscribable_type = params.subscribable_type;
                     this.form.subscribable_id = params.subscribable_id;
                     this.form.populate(params);
-                    if (this.form.id !== '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
-                    // Editor needs to be re-initialized when the modal is opened again...
-                    this.tinyMCE = this.$initTinyMCE(
-                        [
-                            "autolink", "link", "table", "lists", "code", "autoresize",
-                        ],
-                        {
-                            callback: 'insertContent',
-                            callbackId: this.component_id,
-                            subscribable_type: this.form.subscribable_type, // ...so the subscribable values can be passed to it
-                            subscribable_id: this.form.subscribable_id,
-                            placeholder: window.trans.global.description + ' *',
-                        },
-                        "bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist | curriculummedia link mathjax code",
-                        ""
-                    );
                 }
+
+                this.$refs.modal.resetForm(this.form);
             }
         });
     },

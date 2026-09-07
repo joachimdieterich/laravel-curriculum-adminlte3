@@ -25,15 +25,17 @@
             </a>
 
             <button v-if="(type == 'enabling' && objective.order_id != 0)"
+                type="button"
                 class="btn btn-icon btn-sm px-1 py-0 text-secondary me-1"
-                :title="trans('global.enablingObjective.move_left')"
+                :aria-label="trans('global.enablingObjective.move_prev')"
                 @click="changeOrder(false)"
             >
                 <i class="fa fa-arrow-left"></i>
             </button>
             <button v-if="(type == 'enabling' && max_id != objective.id)"
+                type="button"
                 class="btn btn-icon btn-sm px-1 py-0 text-secondary"
-                :title="trans('global.enablingObjective.move_right')"
+                :aria-label="trans('global.enablingObjective.move_next')"
                 @click="changeOrder(true)"
             >
                 <i class="fa fa-arrow-right"></i>

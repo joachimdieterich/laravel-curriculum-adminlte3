@@ -624,7 +624,9 @@ return [
         'copy' => 'Copy content',
         'no_content' => 'No (further) contents available.',
         'index' => 'Table of contents',
-        'index_alt' => 'Hinweise/Ergänzungen',
+        'index_alt' => 'Contents for lesson planning and design',
+        'move_up' => 'Move content upwards',
+        'move_down' => 'Move content downwards',
         'fields' => [
             'content' => 'Content',
             'content_helper' => '',
@@ -700,8 +702,8 @@ return [
         'edit' => 'Edit enabling objective',
         'delete' => 'Delete enabling objective',
         'delete_helper' => 'Should this enabling objective and all its corresponding data be deleted?',
-        'move_left' => 'Move objective left',
-        'move_right' => 'Move objective right',
+        'move_prev' => 'Insert objective at preceding position',
+        'move_next' => 'Insert objective at next position',
         'toggle_objectives' => 'Show/Hide objectives',
         'fields' => [
             'time_approach' => 'Time approach',

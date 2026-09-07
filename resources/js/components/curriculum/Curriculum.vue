@@ -187,7 +187,7 @@
                     data-bs-title="Export Curriculum"
                     @click="exportCurriculum()"
                 >
-                    <i class="fas fa-cloud-download-alt"></i>
+                    <i class="fa fa-cloud-download-alt"></i>
                 </button>
             </ul>
 
@@ -360,14 +360,10 @@ export default {
         },
     },
     setup() {
-        const store = useDatatableStore();
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-
         return {
-            store,
-            globalStore,
-            toast,
+            toast: useToast(),
+            store: useDatatableStore(),
+            globalStore: useGlobalStore(),
         }
     },
     data() {

@@ -17,7 +17,7 @@
                     <button
                         type="button"
                         class="btn btn-icon-alt"
-                        :title="trans('global.close')"
+                        :aria-label="trans('global.close')"
                         @click="$emit('close')"
                     >
                         <i class="fa fa-times"></i>

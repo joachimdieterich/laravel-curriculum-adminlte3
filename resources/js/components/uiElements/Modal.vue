@@ -14,7 +14,7 @@
                     <button
                         type="button"
                         class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
+                        :aria-label="trans('global.close')"
                         @click="globalStore?.closeModal(modalName)"
                     >
                         <i class="fa fa-times"></i>
@@ -165,7 +165,7 @@
                         <button v-if="!hideSaveButton"
                             :id="model + '-save'"
                             class="btn btn-primary ms-3"
-                            :disabled="processing || (requireTitle && !form.title)"
+                            :disabled="disableSaveButton || processing || (requireTitle && !form.title)"
                             @click="$emit('save', form)"
                         >
                             <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
@@ -283,6 +283,11 @@ export default {
             type: Boolean,
             default: false,
             description: 'Controls the visibility of the save button in the modal footer',  
+        },
+        disableSaveButton: {
+            type: Boolean,
+            default: false,
+            description: "Disables the save button (needed if a required non-title field isn't filled)",
         },
     },
     setup() {

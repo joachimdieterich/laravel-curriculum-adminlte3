@@ -104,33 +104,6 @@
                     </button>
                 </li>
 
-                <li
-                    class="nav-item"
-                    role="presentation"
-                >
-                    <button v-if="curriculum.glossar != null"
-                        id="glossar-nav-tab"
-                        class="nav-link link-muted"
-                        type="button"
-                        role="tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#glossar-tab"
-                        aria-controls="glossar-tab"
-                        aria-selected="false"
-                    >
-                        <i class="fa fa-book-open pe-2"></i>
-                        {{ trans('global.glossar.title_singular') }}
-                    </button>
-                    <a v-else-if="checkPermission('glossar_create')"
-                        id="glossar-nav-tab"
-                        class="nav-link link-muted"
-                        :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id=' + curriculum.id"
-                    >
-                        <i class="fa fa-book-open pe-2"></i>
-                        {{ trans('global.glossar.create') }}
-                    </a>
-                </li>
-
                 <li v-if="(store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
                     v-permission="'certificate_access'"
                     class="nav-item ms-auto"
@@ -251,16 +224,6 @@
                         format="list"
                     />
                 </div>
-
-                <div v-if="curriculum.glossar != null"
-                    id="glossar-tab"
-                    class="tab-pane fade"
-                    role="tabpanel"
-                    tabindex="0"
-                    aria-labelledby="glossar-nav-tab"
-                >
-                    <glossars :glossar="curriculum.glossar"/>
-                </div>
             </div>
         </div>
 
@@ -311,7 +274,6 @@
 import CurriculumModal from "../curriculum/CurriculumModal.vue";
 import Media from "../media/Media.vue";
 import TerminalObjectives from '../objectives/TerminalObjectives.vue'
-import Glossars from '../glossar/Glossars.vue';
 import Contents from '../content/Contents.vue';
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import DataTable from 'datatables.net-vue3';
@@ -339,7 +301,6 @@ export default {
         CertificateModal,
         CurriculumModal,
         TerminalObjectives,
-        Glossars,
         Contents,
         DataTable,
         Media,

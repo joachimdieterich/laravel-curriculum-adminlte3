@@ -141,15 +141,11 @@ export default {
         },
     },
     setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+        return { globalStore: useGlobalStore() }
     },
     data() {
         return {
             subscriptions: {},
-            errors: {},
             currentSlide: 0,
         }
     },
@@ -195,7 +191,7 @@ export default {
                 try {
                     await axios.delete('/glossar/' + this.glossar.id);
                 } catch (error) {
-                    this.errors = error.response.data.errors;
+                    console.log(error);
                 }
                 location.reload();
             }
@@ -205,16 +201,12 @@ export default {
                 .then(response => {
                     this.subscriptions = response.data;
                 })
-                .catch(e => {
-                    this.errors = error.response.data.errors;
-                });
+                .catch(e => console.log(error));
         },
     },
-    beforeMount() {
-        this.loaderEvent();
-    },
     mounted() {
-        this.currentSlide = 0;
+        this.loaderEvent();
+
         this.$eventHub.on('content-added', (content) => {
             this.subscriptions.push(content);
         });

@@ -50,7 +50,6 @@ export default {
     },
     methods: {
         submit(formData) {
-            console.log(formData);
             this.form.populate(formData);
             this.processing = true;
 

@@ -159,7 +159,10 @@ class MapController extends Controller
      */
     public function destroy(Map $map)
     {
-        abort_unless((\Gate::allows('map_delete') and $map->isAccessible()), 403);
+        abort_unless(
+            (\Gate::allows('map_delete') and $map->owner_id == auth()->user()->id)
+            || is_admin()
+        , 403);
 
         $map->delete();
     }

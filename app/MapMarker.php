@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MapMarker extends Model
 {
@@ -64,6 +65,11 @@ class MapMarker extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function map(): BelongsTo|Map
+    {
+        return $this->belongsTo(Map::class);
+    }
+
     public function media()
     {
         return $this->hasManyThrough(
@@ -86,16 +92,14 @@ class MapMarker extends Model
         return $this->hasMany(MapMarkerSubscription::class);
     }
 
-    public function isAccessible()
+    public function isAccessible(): bool
     {
-//Todo: how to check if marker is accessible
-        if (
-           is_admin() // or admin
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->map()->isAccessible();
+    }
+
+    public function isEditable($token = null): bool
+    {
+        return $this->map()->isEditable(auth()->user()->id, $token);
     }
 
     protected static function booted()

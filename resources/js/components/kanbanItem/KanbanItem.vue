@@ -174,10 +174,11 @@
                         data-bs-toggle="tooltip"
                     />
         
-                    <div class="d-flex ms-auto">
+                    <div class="d-flex gap-2 ms-auto">
                         <button v-if="commentable"
-                            class="btn btn-icon px-2 py-1 me-2"
-                            :title="trans('global.comments')"
+                            type="button"
+                            class="btn btn-icon"
+                            :title="trans('global.comment.title')"
                             data-bs-toggle="collapse"
                             :data-bs-target="'#comments_' + item.id"
                             aria-expanded="false"

@@ -407,8 +407,6 @@ return [
     'inbox' => 'Posteingang',
     'recipient' => 'Empfänger',
     'message_subject' => 'Betreff',
-    'comment' => 'Kommentar',
-    'comments' => 'Kommentare',
     'commentable' => 'Kommentare aktivieren',
     'send' => 'Senden',
     'reply' => 'Antwort',
@@ -1134,7 +1132,10 @@ return [
             'visible_until' => 'sichtbar bis (Datum/Uhrzeit)',
         ],
     ],
-    'kanbanItemComment' => [
+    'comment' => [
+        'title' => 'Kommentare',
+        'title_singular' => 'Kommentar',
+        'delete' => 'Kommentar löschen',
         'typing' => 'Jemand schreibt',
     ],
     'kanbanStatus' => [

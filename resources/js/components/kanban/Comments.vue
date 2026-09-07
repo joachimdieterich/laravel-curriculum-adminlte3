@@ -38,7 +38,7 @@
                         :size="40"
                     />
                     <div
-                        class="comment position-relative flex-fill bg-dark-subtle px-2 py-1 rounded-3"
+                        class="comment position-relative flex-fill btn-icon-hover bg-dark-subtle px-2 py-1 rounded-3"
                         @mouseover="hover = comment.id"
                         @mouseleave="hover = false"
                     >
@@ -48,7 +48,8 @@
                                     || checkPermission('is_admin')
                                 "
                                 type="button"
-                                class="d-print-none btn btn-icon text-danger px-2 py-1 me-1"
+                                class="d-print-none btn btn-icon btn-hide text-danger px-2 py-1 me-1"
+                                :aria-label="trans('global.comment.delete')"
                                 @click="deleteComment(comment)"
                             >
                                 <i class="fa fa-trash"></i>
@@ -74,7 +75,7 @@
                     name="message"
                     class="form-control"
                     v-model.trim="form.comment"
-                    :placeholder="trans('global.comment') + '...'"
+                    :placeholder="trans('global.comment.title_singular') + '...'"
                     @keyup.enter="sendComment()"
                 />
                 <span class="input-group-append">
@@ -219,13 +220,5 @@ export default {
     right: auto;
     border-left-color: var(--bs-dark-bg-subtle);
     border-right-color: #0000;
-}
-.comment .fa-trash {
-    opacity: 0%;
-    transition: opacity 0.15s ease-in-out;
-}
-.comment:hover .fa-trash { opacity: 100%; }
-@media (max-width: 991px) {
-    .comment .fa-trash { opacity: 100%; }
 }
 </style>

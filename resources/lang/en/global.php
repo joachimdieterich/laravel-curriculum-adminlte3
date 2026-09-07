@@ -396,8 +396,6 @@ return [
     'inbox' => 'Inbox',
     'recipient' => 'Recipient',
     'message_subject' => 'Subject',
-    'comment' => 'Comment',
-    'comments' => 'Comments',
     'commentable' => 'commentable',
     'send' => 'Send',
     'reply' => 'Reply',
@@ -1106,7 +1104,10 @@ return [
             'visible_until' => 'visible until (date/time)',
         ],
     ],
-    'kanbanItemComment' => [
+    'comment' => [
+        'title' => 'Comments',
+        'title_singular' => 'comment',
+        'delete' => 'Delete comment',
         'typing' => "Someone's typing",
     ],
     'kanbanStatus' => [

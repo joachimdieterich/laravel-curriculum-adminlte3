@@ -34,6 +34,7 @@
             height: 100%;
 
             > :nth-child(1), >:nth-child(2) { flex: 1; }
+            > :nth-child(2) { word-wrap: break-word; }
         }
         &.edusharing-box {
             height: 300px !important;

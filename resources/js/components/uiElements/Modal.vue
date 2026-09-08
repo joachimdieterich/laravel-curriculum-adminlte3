@@ -21,135 +21,137 @@
                     </button>
                 </div>
 
-                <div
-                    class="modal-body accordion"
-                    :class="allowOverflow && 'overflow-y-visible'"
-                >
-                    <div class="accordion-item">
-                        <div v-if="showGeneralHeader"
-                            class="accordion-header"
-                        >
-                            <span
-                                class="accordion-button"
-                                data-bs-toggle="collapse"
-                                :data-bs-target="'#' + model + '-general'"
-                                aria-expanded="true"
-                                :aria-controls="model + '-general'"
-                            >
-                                {{ trans('global.general') }}
-                            </span>
-                        </div>
-                        <div
-                            :id="model + '-general'"
-                            class="accordion-collapse collapse show"
-                        >
-                            <div>
-                                <slot name="general">
-                                    <input
-                                        type="text"
-                                        :id="model + '-title'"
-                                        :name="model + '-title'"
-                                        class="form-control"
-                                        maxlength="191"
-                                        v-model.trim="form.title"
-                                        :placeholder="trans('global.title') + ' *'"
-                                        :required="requireTitle"
-                                    />
-                                    <textarea v-if="showDescriptionField"
-                                        :id="model + '-description'"
-                                        :name="model + '-description'"
-                                        class="form-control mt-3"
-                                        style="max-height: 35svh;"
-                                        rows="4"
-                                        :placeholder="trans('global.description')"
-                                        v-model.trim="form.description"
-                                    ></textarea>
-                                    <Select2 v-if="showOwnerField"
-                                        :id="model + '-owner'"
-                                        css="mt-3"
-                                        :label="trans('global.change_owner')"
-                                        model="User"
-                                        url="/users"
-                                        :selected="form.owner_id"
-                                        @selectedValue="(id) => this.form.owner_id = id[0]"
-                                    />
-                                </slot>
-                                <slot name="general-extended"></slot>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div v-if="showDisplaySection"
-                        class="accordion-item"
+                <slot name="modal-body">
+                    <div
+                        class="modal-body accordion"
+                        :class="allowOverflow && 'overflow-y-visible'"
                     >
-                        <div class="accordion-header">
-                            <span
-                                class="accordion-button"
-                                data-bs-toggle="collapse"
-                                :data-bs-target="'#' + model + '-display'"
-                                aria-expanded="false"
-                                :aria-controls="model + '-display'"
+                        <div class="accordion-item">
+                            <div v-if="showGeneralHeader"
+                                class="accordion-header"
                             >
-                                {{ trans('global.display') }}
-                            </span>
-                        </div>
-                        <div
-                            :id="model + '-display'"
-                            class="accordion-collapse collapse show"
-                        >
-                            <div class="d-flex justify-content-between w-100">
-                                <v-swatches
-                                    style="height: 42px;"
-                                    :swatches="$swatches"
-                                    row-length="5"
-                                    popover-y="top"
-                                    v-model="form.color"
-                                    show-fallback
-                                    fallback-input-type="color"
-                                />
-                                <NewMediumForm v-if="showMediumField"
-                                    :subscribable_id="form.id"
-                                    :subscribable_type="'App\\' + model.charAt(0).toUpperCase() + model.slice(1)"
-                                    :allow_fallback_on_create="true"
-                                    :medium_id="form.medium_id"
-                                    :multiple="allowMultipleMedia"
-                                    @add="(medium) => form.medium_id = medium.id ?? null"
-                                    @delete="() => form.medium_id = null"
-                                />
-                                <FontAwesomePicker v-if="showIconPicker"
-                                    :button-icon="form.css_icon"
-                                    @selectIcon="(icon) => form.css_icon = 'fa fa-' + icon.className"
-                                />
+                                <span
+                                    class="accordion-button"
+                                    data-bs-toggle="collapse"
+                                    :data-bs-target="'#' + model + '-general'"
+                                    aria-expanded="true"
+                                    :aria-controls="model + '-general'"
+                                >
+                                    {{ trans('global.general') }}
+                                </span>
+                            </div>
+                            <div
+                                :id="model + '-general'"
+                                class="accordion-collapse collapse show"
+                            >
+                                <div>
+                                    <slot name="general">
+                                        <input
+                                            type="text"
+                                            :id="model + '-title'"
+                                            :name="model + '-title'"
+                                            class="form-control"
+                                            maxlength="191"
+                                            v-model.trim="form.title"
+                                            :placeholder="trans('global.title') + ' *'"
+                                            :required="requireTitle"
+                                        />
+                                        <textarea v-if="showDescriptionField"
+                                            :id="model + '-description'"
+                                            :name="model + '-description'"
+                                            class="form-control mt-3"
+                                            style="max-height: 35svh;"
+                                            rows="4"
+                                            :placeholder="trans('global.description')"
+                                            v-model.trim="form.description"
+                                        ></textarea>
+                                        <Select2 v-if="showOwnerField"
+                                            :id="model + '-owner'"
+                                            css="mt-3"
+                                            :label="trans('global.change_owner')"
+                                            model="User"
+                                            url="/users"
+                                            :selected="form.owner_id"
+                                            @selectedValue="(id) => form.owner_id = id[0]"
+                                        />
+                                    </slot>
+                                    <slot name="general-extended"></slot>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div v-if="showPermissionSection"
-                        class="accordion-item"
-                    >
-                        <div class="accordion-header">
-                            <span
-                                class="accordion-button"
-                                data-bs-toggle="collapse"
-                                :data-bs-target="'#' + model + '-permissions'"
-                                aria-expanded="false"
-                                :aria-controls="model + '-permissions'"
-                            >
-                                {{ trans('global.permissions') }}
-                            </span>
-                        </div>
-                        <div
-                            :id="model + '-permissions'"
-                            class="accordion-collapse collapse show"
+    
+                        <div v-if="showDisplaySection"
+                            class="accordion-item"
                         >
-                            <div>
-                                <slot name="permissions"></slot>
+                            <div class="accordion-header">
+                                <span
+                                    class="accordion-button"
+                                    data-bs-toggle="collapse"
+                                    :data-bs-target="'#' + model + '-display'"
+                                    aria-expanded="false"
+                                    :aria-controls="model + '-display'"
+                                >
+                                    {{ trans('global.display') }}
+                                </span>
+                            </div>
+                            <div
+                                :id="model + '-display'"
+                                class="accordion-collapse collapse show"
+                            >
+                                <div class="d-flex justify-content-between w-100">
+                                    <v-swatches
+                                        style="height: 42px;"
+                                        :swatches="$swatches"
+                                        row-length="5"
+                                        popover-y="top"
+                                        v-model="form.color"
+                                        show-fallback
+                                        fallback-input-type="color"
+                                    />
+                                    <NewMediumForm v-if="showMediumField"
+                                        :subscribable_id="form.id"
+                                        :subscribable_type="'App\\' + model.charAt(0).toUpperCase() + model.slice(1)"
+                                        :allow_fallback_on_create="true"
+                                        :medium_id="form.medium_id"
+                                        :multiple="allowMultipleMedia"
+                                        @add="(medium) => form.medium_id = medium.id ?? null"
+                                        @delete="() => form.medium_id = null"
+                                    />
+                                    <FontAwesomePicker v-if="showIconPicker"
+                                        :button-icon="form.css_icon"
+                                        @selectIcon="(icon) => form.css_icon = 'fa fa-' + icon.className"
+                                    />
+                                </div>
                             </div>
                         </div>
+    
+                        <div v-if="showPermissionSection"
+                            class="accordion-item"
+                        >
+                            <div class="accordion-header">
+                                <span
+                                    class="accordion-button"
+                                    data-bs-toggle="collapse"
+                                    :data-bs-target="'#' + model + '-permissions'"
+                                    aria-expanded="false"
+                                    :aria-controls="model + '-permissions'"
+                                >
+                                    {{ trans('global.permissions') }}
+                                </span>
+                            </div>
+                            <div
+                                :id="model + '-permissions'"
+                                class="accordion-collapse collapse show"
+                            >
+                                <div>
+                                    <slot name="permissions"></slot>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <slot name="custom"></slot>
                     </div>
-
-                    <slot name="custom"></slot>
-                </div>
+                </slot>
 
                 <div class="modal-footer">
                     <slot name="footer-left"></slot>

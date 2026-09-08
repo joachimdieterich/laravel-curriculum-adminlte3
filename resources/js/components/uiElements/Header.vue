@@ -89,13 +89,22 @@
                 <i class="fa fa-bars px-1"></i>
             </button>
             <a
+                id="home-link"
                 class="text-dark text-decoration-none p-md-2 mx-2"
                 href="/"
             >
-                <button class="d-md-none btn btn-icon bg-lime-accent">
+                <span
+                    class="d-md-none btn btn-icon bg-lime-accent"
+                    :aria-label="trans('global.home')"
+                >
                     <i class="fa fa-home"></i>
-                </button>
-                <strong class="d-none d-md-inline">{{ trans('global.home') }}</strong>
+                </span>
+                <strong
+                    id="home-link-text"
+                    class="d-none d-md-inline position-relative"
+                >
+                    {{ trans('global.home') }}
+                </strong>
             </a>
             <Searchbar/>
         </div>
@@ -301,3 +310,20 @@ export default {
     },
 }
 </script>
+<style>
+#home-link {
+    & #home-link-text::after {
+        content: '';
+        position: absolute;
+        bottom: -0.25rem;
+        left: 0;
+        right: 0;
+        height: 2px;
+        width: 0px;
+        margin-inline: auto;
+        background-color: var(--bs-dark);
+        transition: width 0.2s ease-out;
+    }
+    &:hover #home-link-text::after { width: 100%; }
+}
+</style>

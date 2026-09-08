@@ -7,19 +7,19 @@
         >
             <label v-if="showLabel"
                 :for="id"
-                :class="[(typeof classLeft != 'undefined') ? classLeft : 'p-0 col-sm-12' ]"
+                class="form-label"
             >
                 <span v-if="label != ''" :class="{'full-line': buttonNewLine}">{{ label }}</span>
                 <span v-else>
                     {{ trans('global.' + model + '.title_singular') }}
                 </span>
-                <span v-if="multiple">
-                    <slot name="buttons"></slot>
-                    <span class="btn btn-info deselect-all pull-right" :class="buttonSizeClass" @click="deselectAll">
-                        {{ trans("global.deselect_all") }}
-                    </span>
-                </span>
             </label>
+            <div v-if="multiple" class="d-flex">
+                <slot name="buttons"></slot>
+                <span class="btn btn-info deselect-all ms-auto" :class="buttonSizeClass" @click="deselectAll">
+                    {{ trans("global.deselect_all") }}
+                </span>
+            </div>
 
             <slot name="pre-dropdown"></slot>
 
@@ -85,10 +85,6 @@ export default {
         showLabel: {
             type: Boolean,
             default: true,
-        },
-        classLeft: {
-            type: String,
-            default: 'p-0 col-sm-12',
         },
         classRight: {
             type: String,

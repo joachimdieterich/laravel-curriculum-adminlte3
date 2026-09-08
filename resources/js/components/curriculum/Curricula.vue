@@ -48,22 +48,10 @@
                     ></i>
                 </template>
 
-                <template v-slot:additional-button>
-                    <favourite
-                        url="/curricula/[id]/favour"
-                        :model="curriculum"
-                        :is-favourited="curriculum.is_favourited"
-                        @mark-status-changed="(newCurricula) => {
-                            curricula[index] = newCurricula;
-                        }"
-                    />
-                </template>
-
-                <template v-slot:owner>
+                <template v-if="checkPermission('is_admin')" v-slot:owner>
                     <div
-                        v-permission="'is_admin'"
-                        class="badge-primary position-absolute px-2"
-                        style="top: 100px; left: 0;"
+                        class="owner-badge position-absolute bg-primary px-2"
+                        style="top: 100px; left: -6px;"
                     >
                         {{ curriculum.owner.firstname }} {{ curriculum.owner.lastname }}
                     </div>
@@ -72,78 +60,70 @@
                 <template v-if="curriculum.archived"
                     v-slot:badges
                 >
-                    <p class="text-muted small">
-                        <span
-                            class="btn btn-info btn-xs position-absolute select-all pull-right me-1"
-                            style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
-                        >
-                            <i class="fa fa-archive" aria-hidden="true"></i>
-                            {{ trans('global.curriculum.fields.archived') }}
-                       </span>
-                    </p>
+                    <span
+                        class="btn btn-info btn-xs position-absolute"
+                        style="bottom: 5px; right: 5px;"
+                    >
+                        <i class="fa fa-box-archive"></i>
+                        {{ trans('global.curriculum.fields.archived') }}
+                    </span>
                 </template>
 
                 <template v-slot:dropdown>
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
-                        <button
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <button v-if="ownerOrAdmin(curriculum)"
                             v-permission="'curriculum_edit'"
-                            :name="'curriculum-edit_' + curriculum.id"
-                            class="dropdown-item text-secondary"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="editCurriculum(curriculum)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.curriculum.edit') }}
                         </button>
 
                         <button
                             v-permission="'tag_access'"
-                            :name="'manage-tags-' + curriculum.id"
-                            class="dropdown-item text-secondary"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="manageTags(curriculum)"
                         >
-                            <i class="fa fa-tag me-2"></i>
+                            <i class="fa fa-tag"></i>
                             {{ trans('global.tag.title') }}
                         </button>
 
-                        <button v-if="$userId == curriculum.owner_id"
-                            :name="'curriculum-set_owner_' + curriculum.id"
-                            class="dropdown-item text-secondary"
+                        <button v-if="ownerOrAdmin(curriculum)"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="setOwner(curriculum)"
                         >
-                            <i class="fa fa-user me-2"></i>
+                            <i class="fa fa-user"></i>
                             {{ trans('global.curriculum.edit_owner') }}
                         </button>
 
-                        <button
-                            :name="'curriculum-share_' + curriculum.id"
-                            class="dropdown-item text-secondary"
+                        <button v-if="ownerOrAdmin(curriculum)"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="shareCurriculum(curriculum)"
                         >
-                            <i class="fa fa-share-alt me-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.curriculum.share') }}
                         </button>
-                        <hide
-                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                        <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
                             url="/curricula/[id]/hide"
                             :model="curriculum"
                             :is-hidden="curriculum.is_hidden"
-                            @mark-status-changed="() => {
-                                curriculum.splice(index, 1)
-                            }"
+                            @mark-status-changed="() => curriculum.splice(index, 1)"
                         />
-                        <hr v-permission="'curriculum_delete'" class="my-1">
-                        <button
+
+                        <hr v-if="ownerOrAdmin(curriculum)" class="my-1">
+
+                        <button v-if="ownerOrAdmin(curriculum)"
                             v-permission="'curriculum_delete'"
-                            :id="'delete-curriculum-' + curriculum.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
+                            class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(curriculum)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.curriculum.delete') }}
                         </button>
                     </div>
@@ -158,7 +138,7 @@
             <DataTable
                 id="curriculum-datatable"
                 :columns="columns"
-                :options="dtOptions(this.subscribable_id ? ('/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id) : '/curricula/list')"
+                :options="dtOptions(subscribable_id ? ('/curriculumSubscriptions?subscribable_type=' + subscribable_type + '&subscribable_id=' + subscribable_id) : '/curricula/list')"
                 width="100%"
                 style="display: none;"
             />
@@ -171,15 +151,13 @@
             <MediumModal/>
             <OwnerModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.curriculum.delete')"
                 :description="trans('global.curriculum.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -216,13 +194,11 @@ export default {
     },
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
-        const toast = useToast();
-        const globalStore = useGlobalStore();
 
         return {
             selectedTags, selectedNegativeTags, dtOptions,
-            globalStore,
-            toast,
+            globalStore: useGlobalStore(),
+            toast: useToast(),
         }
     },
     data() {
@@ -300,6 +276,9 @@ export default {
                 $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
             });
         },
+        ownerOrAdmin(curriculum) {
+            return curriculum.owner_id == this.$userId || this.checkPermission('is_admin');
+        },
         destroy() {
             if (this.subscribable) {
                 axios.delete('/curriculumSubscriptions/expel', {
@@ -373,3 +352,24 @@ export default {
     },
 }
 </script>
+<style>
+.owner-badge {
+    &::before {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 0;
+        border-top: 4px solid #1e40af;
+        border-right: 3px solid #1e40af;
+        border-bottom: 4px solid transparent;
+        border-left: 3px solid transparent;
+    }
+    &::after {
+        content: '';
+        position: absolute;
+        left: 100%;
+        border: 0.75rem solid transparent;
+        border-left-color: var(--bs-primary);
+    }
+}
+</style>

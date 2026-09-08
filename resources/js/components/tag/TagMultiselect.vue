@@ -11,24 +11,41 @@
         :label="trans('global.tag.title')"
         :multiple="true"
         :selected="selectedTags"
-        @selectedValue="(data) => {
-            this.$emit('selectedValue', data);
-        }"
-        @cleared="(data) => {
-            this.$emit('cleared', data);
-        }"
-        @opened="(data) => {
-            this.$emit('opened', data);
-        }"
+        @selectedValue="(data) => $emit('selectedValue', data)"
+        @cleared="(data) => $emit('cleared', data)"
+        @opened="(data) => $emit('opened', data)"
     >
-        <template v-slot:pre-dropdown>
-            <drop-down-modal :show-title="false" :show-footer="false" :show="showNewTagForm" classes="mb-1" modal-class="mb-2" modal-css="position: relativ;">
-                <template v-slot:body>
+        <template #buttons>
+            <button
+                type="button"
+                class="btn btn-info btn-sm"
+                @click="showNewTagForm = !showNewTagForm"
+            >
+                {{ trans("global.tag.create_new_title") }}
+            </button>
+        </template>
+        <template #pre-dropdown>
+            <drop-down-modal
+                :show-title="false"
+                :show-footer="false"
+                :show="showNewTagForm"
+                classes="mb-1"
+                modal-class="position-relative mb-2"
+            >
+                <template #body>
                     <div class="input-group">
-                        <input id="name" name="name" class="form-control" type="text" v-model="tag.name" :placeholder="trans('global.tag.name') + ' *'">
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            class="form-control"
+                            maxlength="191"
+                            :placeholder="trans('global.tag.name') + ' *'"
+                            v-model="tag.name"
+                        >
                         <button
-                            id="tag-save"
-                            class="btn btn-primary tag-save-button"
+                            type="submit"
+                            class="btn btn-primary"
                             :disabled="!tag.name"
                             @click="submit()"
                         >
@@ -38,47 +55,39 @@
                 </template>
             </drop-down-modal>
         </template>
-        <template v-slot:buttons>
-            <span class="btn btn-info btn-sm additional-button" @click="showNewTagForm = !showNewTagForm">
-                {{ trans("global.tag.create_new_title") }}
-            </span>
-        </template>
     </Select2>
 </template>
-
 <script>
-import {defineComponent} from 'vue'
-import Select2 from "../forms/Select2.vue";
-import axios from "axios";
-import {useToast} from "vue-toastification";
 import DropDownModal from "../uiElements/DropDownModal.vue";
+import Select2 from "../forms/Select2.vue";
+import {useToast} from "vue-toastification";
 
-export default defineComponent({
+export default {
     name: "TagMultiselect",
-    components: {DropDownModal, Select2},
+    components: {
+        DropDownModal,
+        Select2,
+    },
     props: {
         type: {
-            required: true,
             type: String,
+            required: true,
             title: "The type of the tagged model"
         },
         modelId: {
-            required: true,
             type: [Number, null],
+            required: true,
             title: "ID of the tagged model"
         },
         selectedTags: {
-            required: true,
             type: [Object, Array],
+            required: true,
             default: [],
         }
     },
     emits: ['selectedValue', 'opened', 'cleared', 'tag-attached'],
     setup() {
-        const toast = useToast();
-        return {
-            toast,
-        }
+        return { toast: useToast() }
     },
     data() {
         return {
@@ -89,13 +98,13 @@ export default defineComponent({
         };
     },
     computed: {
-        attachForm: function() {
+        attachForm() {
             return {
                 'name': this.tag.name,
                 'type': this.type,
                 'taggable_id': this.modelId,
             };
-        }
+        },
     },
     methods: {
         resetNewTagForm() {
@@ -105,23 +114,15 @@ export default defineComponent({
         },
         submit() {
             axios.post('/tags/attach', this.attachForm)
-                 .then(r => {
-                     this.$emit("tag-attached", r.data);
-                     this.resetNewTagForm();
-                 })
-                 .catch(e => {
-                     this.toast.error(this.errorMessage(e));
-                     console.log(e.response);
-                 });
+                .then(response => {
+                    this.$emit("tag-attached", response.data);
+                    this.resetNewTagForm();
+                })
+                .catch(e => {
+                    this.toast.error(this.errorMessage(e));
+                    console.log(e.response);
+                });
         },
     }
-})
+}
 </script>
-
-<style>
-    .tag-save-button {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        margin-left: -1px;
-    }
-</style>

@@ -43,19 +43,17 @@
             >
                 <slot name="itemIcon"/>
             </div>
-            <span>
-                <slot name="content">
-                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                        <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                            {{ item[titleField] }}
-                        </h1>
-                        <p class="text-muted small">
-                            {{ htmlToText(item[descriptionField])}}
-                        </p>
-                        <slot name="badges"></slot>
-                    </span>
-                </slot>
-            </span>
+            <slot name="content">
+                <span class="bg-white text-center p-1 overflow-y-auto">
+                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                        {{ item[titleField] }}
+                    </h1>
+                    <p class="text-muted small">
+                        {{ htmlToText(item[descriptionField])}}
+                    </p>
+                    <slot name="badges"></slot>
+                </span>
+            </slot>
 
             <slot name="owner"></slot>
 

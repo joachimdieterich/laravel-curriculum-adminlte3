@@ -52,7 +52,6 @@
                     >
                         <button
                             v-permission="'kanban_delete'"
-                            :id="'delete-kanban-' + kanban.id"
                             type="submit"
                             class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(kanban)"
@@ -66,7 +65,7 @@
                     >
                         <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_edit'"
-                            :name="'edit-kanban-' + kanban.id"
+                            type="button"
                             class="dropdown-item"
                             @click.prevent="editKanban(kanban)"
                         >
@@ -76,7 +75,7 @@
 
                         <button
                             v-permission="'tag_access'"
-                            :name="'manage-tags-' + kanban.id"
+                            type="button"
                             class="dropdown-item"
                             @click.prevent="manageTags(kanban)"
                         >
@@ -85,7 +84,7 @@
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban)"
-                            :name="'kanban-share_' + kanban.id"
+                            type="button"
                             class="dropdown-item"
                             @click.prevent="shareKanban(kanban)"
                         >
@@ -94,7 +93,7 @@
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban) || kanban.allow_copy"
-                            :name="'copy-kanban-' + kanban.id"
+                            type="button"
                             class="dropdown-item"
                             @click.prevent="confirmKanbanCopy(kanban)"
                         >
@@ -115,7 +114,6 @@
 
                         <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_delete'"
-                            :id="'delete-kanban-' + kanban.id"
                             type="submit"
                             class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(kanban)"

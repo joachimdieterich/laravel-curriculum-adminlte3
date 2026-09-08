@@ -94,12 +94,12 @@ class MapMarker extends Model
 
     public function isAccessible(): bool
     {
-        return $this->map()->isAccessible();
+        return $this->map->isAccessible();
     }
 
     public function isEditable($token = null): bool
     {
-        return $this->map()->isEditable(auth()->user()->id, $token);
+        return $this->map->isEditable(auth()->user()->id, $token);
     }
 
     protected static function booted()

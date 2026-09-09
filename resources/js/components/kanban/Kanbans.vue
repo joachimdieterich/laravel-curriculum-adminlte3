@@ -132,11 +132,11 @@
             class="dataTablesWrapper"
         >
             <DataTable
-                id="kanban-datatable"
+                ref="datatable"
                 :columns="columns"
                 :options="dtOptions(this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list')"
-                width="100%"
-                style="display: none;"
+                class="d-none"
+                @xhr="xhrEvent"
             />
         </div>
 
@@ -174,8 +174,6 @@ import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 import Hide from "../tag/Hide.vue";
 import Favourite from "../tag/Favourite.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
@@ -207,14 +205,8 @@ export default {
     },
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
-        const toast = useToast();
-        const globalStore = useGlobalStore();
 
-        return {
-            selectedTags, selectedNegativeTags, dtOptions,
-            globalStore,
-            toast,
-        }
+        return { selectedTags, selectedNegativeTags, dtOptions }
     },
     data() {
         return {
@@ -237,7 +229,14 @@ export default {
         this.globalStore['showSearchbar'] = true;
         this.globalStore['searchTagModelContext'] =  'App\\Kanban';
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
+
+        this.$eventHub.on('filter', (filter) => {
+            this.selectedTags = filter.tags;
+            this.selectedNegativeTags = filter.negativeTags;
+
+            this.dt.search(filter.searchString).draw();
+        });
 
         this.$eventHub.on('kanban-subscription-added', (kanbanSubscription) => {
             this.kanbans.push(kanbanSubscription.kanban);
@@ -277,28 +276,13 @@ export default {
                     canEditCheckbox: true,
                 });
         },
-        loaderEvent() {
-            this.dt = $('#kanban-datatable').DataTable();
-
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
-                let initialLoad = this.dt.rows().data().context[0].iDraw === 1;
-                let data = this.dt.rows({ page: 'current' }).data().toArray();
-                // if user doesn't have any favourited objects, default to 'all'-tab
-                if (initialLoad && data.length === 0) {
-                    this.setFilter('all');
-                    return;
-                }
-
-                this.kanbans = data;
-                $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
-            });
-
-            this.$eventHub.on('filter', (filter) => {
-                this.selectedTags = filter.tags;
-                this.selectedNegativeTags = filter.negativeTags;
-
-                this.dt.search(filter.searchString).draw();
-            });
+        xhrEvent(e, settings, json) {
+            // if user doesn't have any favourited objects, default to 'all'-tab
+            if (json.draw === 1 && json.data.length === 0) {
+                this.setFilter('all');
+                return;
+            }
+            this.kanbans = json.data;
         },
         ownerOrAdmin(kanban) {
             return kanban.owner_id == this.$userId || this.checkPermission('is_admin');

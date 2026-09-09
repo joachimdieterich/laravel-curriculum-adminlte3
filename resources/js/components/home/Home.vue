@@ -116,17 +116,18 @@
                 @error="handleError"
             />
     
-            <InfoBox v-if="isVisible.plans"
+            <InfoBox
                 model="plans"
                 :text="trans('global.plan.title')"
                 icon="fa-clipboard-list"
                 icon-background-class="bg-green"
+                :hide-if-empty="!isVisible.plans"
                 :has-modal="isVisible.plans"
                 @open-modal="openModal('plan-modal')"
                 @error="handleError"
             />
 
-            <InfoBox v-if="checkPermission('is_admin')"
+            <InfoBox v-if="isVisible.users"
                 model="users"
                 :text="trans('global.user_management')"
                 icon="fa-user"
@@ -198,6 +199,7 @@ export default {
                 groups: isTeacher,
                 plans: isTeacher,
                 achievements: !isTeacher || isAdmin, // for testing purposes, show as admin
+                users: isAdmin,
             };
         },
     },

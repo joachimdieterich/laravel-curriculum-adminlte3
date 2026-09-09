@@ -36,6 +36,7 @@ import { createPinia } from "pinia";
 const pinia = createPinia();
 app.use(pinia);
 const globalStore = useGlobalStore();
+app.config.globalProperties.globalStore = globalStore;
 
 window.moment = require('moment/src/moment');
 import 'moment/src/locale/de'; // import german locale for moment.js
@@ -208,6 +209,8 @@ app.use(Toast, {
     maxToasts: 20,
     newestOnTop: true,
 });
+
+app.config.globalProperties.toast = Toast;
 
 /**
  * checks which error message is appropriate for the given error

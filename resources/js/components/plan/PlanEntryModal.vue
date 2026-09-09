@@ -192,7 +192,6 @@ export default {
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                     this.form.date = [new Date(this.form.begin) ?? '', new Date(this.form.end) ?? ''];
-                    this.form.description = this.$decodeHTMLEntities(params.description);
 
                     if (this.form.id != '') {
                         this.method = 'patch';

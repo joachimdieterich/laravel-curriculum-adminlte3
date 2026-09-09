@@ -320,7 +320,6 @@ export default {
                 this.form.reset();
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    this.form.url = this.$decodeHTMLEntities(params.url);
                     if (this.form.id) {
                         this.method = 'patch';
                     } else {

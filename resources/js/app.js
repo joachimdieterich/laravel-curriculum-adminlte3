@@ -55,13 +55,11 @@ import _ from 'lodash'; //needed to get
  */
 app.config.globalProperties.trans = (key, replacements) => {
     let translatedString = _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
-    if (replacements !== undefined && replacements.length === 0) {
-        return translatedString;
+    if (replacements?.length > 0) {
+        replacements.forEach(
+            (key, replacement) => translatedString = translatedString.replace(':' + key, replacement)
+        );
     }
-
-    $.each(replacements, function (key, replacementString) {
-        translatedString = translatedString.replace(':' + key, replacementString);
-    });
 
     return translatedString;
 }
@@ -127,17 +125,6 @@ app.config.globalProperties.checkPermission = (permission) => {
 
 app.config.globalProperties.enableTooltips = () => {
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(elem => new bootstrap.Tooltip(elem));
-};
-
-/**
- * removes HTML-tags of given String via parsing it through a <textarea>
- * @param {String} text
- * @returns raw text without HTML-tags
- */
-app.config.globalProperties.$decodeHTMLEntities = (text) => {
-    return $("<textarea/>")
-        .html(text)
-        .text();
 };
 
 /**
@@ -452,6 +439,7 @@ app.config.globalProperties.$initTinyMCE = function(
                     editor.insertContent('<span id="date" style="background-color: lightgray;">'+ window.trans.global.date + '</span>&nbsp;');
                 }
             });
+            /*
             editor.ui.registry.addButton('usersProgress', {
                 text: window.trans.global.progress.title_singular,
                 onAction: function (_) {
@@ -462,7 +450,7 @@ app.config.globalProperties.$initTinyMCE = function(
                     });
                 }
             });
-
+            */
             editor.ui.registry.addButton('curriculummedia',  {
                 text: window.trans.global.medium.title,
                 icon: 'image',

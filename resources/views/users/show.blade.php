@@ -76,26 +76,4 @@
     </div>
 </div>
 @endcan
-
-@endsection
-
-@section('scripts')
-@parent
-<script>
-
-function setAvatar()
-{
-    $.ajax({
-        headers: {'x-csrf-token': _token},
-            method: 'POST',
-            url: "{{ route('users.setAvatar') }}",
-            data: {
-                medium_id: $('#medium_id').val(),
-                _method: 'PATCH',
-            }
-    })
-    .done(function () { location.reload() })
-}
-</script>
-
 @endsection

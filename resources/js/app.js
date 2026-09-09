@@ -5,7 +5,6 @@
  */
 require('./bootstrap');
 
-//vue
 import { createApp } from 'vue';
 
 /**
@@ -546,11 +545,3 @@ app.directive("inline", (element) => {
 
 //mount vue
 app.mount('#app');
-
-$(document).ready(function () {
-    window._token = $('meta[name="csrf-token"]').attr('content');
-
-    moment.updateLocale('en', {
-        week: {dow: 1} // Monday is the first day of the week
-    });
-});

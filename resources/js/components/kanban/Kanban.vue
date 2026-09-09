@@ -4,10 +4,10 @@
         class="position-relative w-print-auto"
     >
         <img v-if="kanban.medium_id"
-            class="position-absolute p-0 h-100 w-100"
-            style="object-fit: cover;"
-            :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
-            :alt="kanban.medium.title ?? kanban.medium.medium_name ?? 'background image'"
+             class="position-absolute p-0 h-100 w-100"
+             style="object-fit: cover;"
+             :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
+             :alt="kanban.medium.title ?? kanban.medium.medium_name ?? 'background image'"
         />
         <button v-if="!embeded"
             class="btn d-print-none position-absolute"
@@ -122,8 +122,8 @@
                 </template>
                 <template #footer>
                     <div v-if="editable"
-                        class="d-print-none"
-                        :style="'width:' + itemWidth + 'px;'"
+                         class="d-print-none"
+                         :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus/>
                     </div>
@@ -301,14 +301,9 @@ export default {
             });
         },
         setEmbededView() {
-            // TODO: needs to be adapted for the new layout in '1531-dashboard' branch
+            // INFO: section.p-3 also removes 'contributors'
             // delete all elements that are not needed in embeded view
-            document.querySelectorAll('.main-header, .main-sidebar, .main-footer, .content-header')
-                .forEach(el => el.remove());
-            // remove unneded paddings and margins
-            document.getElementById('content')?.classList.remove('content-wrapper');
-            document.getElementsByClassName('content')[0]?.classList.remove('px-3');
-            this.$el.parentElement.style.height = '100vh';
+            document.querySelectorAll('#header, section.p-3, footer').forEach(el => el.remove());
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {
@@ -373,14 +368,14 @@ export default {
                     const item = status.items[i];
                     item.order_id = i;
                     // save the new order_id so it can be updated on the server
-                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: status.id });
+                    itemChanges.push({id: item.id, order_id: item.order_id, kanban_status_id: status.id});
                 }
             } else {
                 // on 'moved to'-status, increase order_id of all items after the moved item
                 for (let i = e.newIndex + 1; i < status.items.length; i++) {
                     const item = status.items[i];
                     item.order_id = i;
-                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: status.id });
+                    itemChanges.push({id: item.id, order_id: item.order_id, kanban_status_id: status.id});
                 }
 
                 // on 'moved from'-status, decrease order_id of all items after the original position
@@ -388,14 +383,14 @@ export default {
                 for (let i = e.oldIndex; i < oldStatus.items.length; i++) {
                     const item = oldStatus.items[i];
                     item.order_id = i;
-                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: oldStatus.id });
+                    itemChanges.push({id: item.id, order_id: item.order_id, kanban_status_id: oldStatus.id});
                 }
             }
 
             this.sendChange("/kanbanItems/sync", itemChanges);
         },
         sendChange(url, changes) {
-            const data = url == '/kanbanItems/sync' ? { items: changes } : { statuses: changes };
+            const data = url == '/kanbanItems/sync' ? {items: changes} : {statuses: changes};
 
             axios.put(url, data)
                 .catch(err => {
@@ -530,7 +525,7 @@ export default {
                 this.$echo
                     .join('App.Kanban.' + this.kanban.id)
                     .here((users) => {
-                        for(let user of users) {
+                        for (let user of users) {
                             this.currentContributors[user.id] = user;
                         }
                     })
@@ -606,7 +601,7 @@ export default {
         this.stopWebsocket();
     },
     computed: {
-        textColor: function() {
+        textColor: function () {
             if (this.kanban.color == "" || this.kanban.color == null) return;
             return this.$textcolor(this.kanban.color);
         },
@@ -650,22 +645,26 @@ export default {
     height: 100%;
     min-height: 400px;
 }
+
 .kanban-wrapper {
     padding: 2rem;
     overflow-x: auto;
     overflow-y: clip;
 }
+
 .kanban-status {
     background-color: white;
     padding: 0.75rem;
     border-radius: 0.5rem;
 }
+
 .kanban-items-container {
     height: 0px !important;
     scroll-behavior: smooth;
 
     & > :not(:first-child) .kanban-item { margin-top: 1rem; }
 }
+
 .kanban-item {
     position: relative;
     border-radius: 0.5rem;
@@ -677,16 +676,21 @@ export default {
         border-top-right-radius: inherit;
         transition: filter 0.25s;
 
-        &:hover { filter: brightness(90%); }
+        &:hover {
+            filter: brightness(90%);
+        }
+
         & > .kanban-item-header-title {
             padding-right: 3rem;
         }
     }
+
     & > .kanban-item-tools {
         gap: 0.25rem;
         top: 0.5rem;
         right: 0.5rem;
     }
+
     & > .kanban-item-info {
         border-top: 1px solid #0002;
         font-size: 0.75rem;
@@ -695,6 +699,7 @@ export default {
             color: #6c757d;
             font-weight: 600;
         }
+
         & .badge {
             border: 1px solid #dc3545;
             background-color: #fff;
@@ -702,6 +707,7 @@ export default {
             font-size: 0.8em;
         }
     }
+
     & > .kanban-item-footer {
         border-top: 1px solid #0002;
         border-bottom-left-radius: inherit;
@@ -716,8 +722,12 @@ export default {
 .kanban-item, .kanban-status { box-shadow: var(--shadow-layout); }
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
-    &:hover, &:focus { opacity: 1 !important; }
+
+    &:hover, &:focus {
+        opacity: 1 !important;
+    }
 }
+
 @media (max-width: 576px) {
     #kanban-container {
         height: 80vh;

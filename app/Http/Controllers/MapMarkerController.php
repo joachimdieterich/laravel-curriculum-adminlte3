@@ -105,9 +105,7 @@ class MapMarkerController extends Controller
      */
     public function destroy(MapMarker $mapMarker)
     {
-        abort_unless(\Gate::allows('map_delete')
-            and ($mapMarker->owner_id === auth()->user()->id or is_admin())
-        , 403);
+        abort_unless(\Gate::allows('map_delete') and $mapMarker->isEditable(), 403);
 
         $mapMarker->delete();
     }

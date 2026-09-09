@@ -1,5 +1,7 @@
 <template>
-    <div class="mb-3">
+    <div v-if="!hideIfEmpty || entries.length > 0"
+        class="mb-3"
+    >
         <div class="infobox shadow-layout">
             <div
                 class="infobox-header"
@@ -15,11 +17,11 @@
                 >
                     <i class="fa" :class="icon"></i>
                 </button>
-                <span class="flex-fill h3 mx-2">
-                    <span v-if="disableLink" class="px-2">{{ text }}</span>
+                <span class="flex-fill h3 mx-2 mb-0">
+                    <div v-if="disableLink" class="px-2">{{ text }}</div>
                     <a v-else
                         :href="href || '/' + model"
-                        class="text-decoration-none px-2"
+                        class="d-block text-decoration-none px-2"
                     >
                         {{ text }}
                     </a>
@@ -88,6 +90,11 @@ export default {
         href: {
             type: String,
             default: null, // defaults to this.model
+        },
+        hideIfEmpty: {
+            type: Boolean,
+            default: false,
+            description: 'Hides the whole component, if there are no entries'
         },
         disableLink: {
             type: Boolean,

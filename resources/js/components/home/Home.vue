@@ -12,6 +12,7 @@
                 :text="trans('global.curriculum.title')"
                 icon="fa-th"
                 icon-background-class="bg-cyan"
+                :hide-if-empty="true"
                 href="/curricula"
                 @error="handleError"
             >
@@ -44,6 +45,7 @@
                 :text="trans('global.achievement.recent')"
                 icon="fa-trophy"
                 icon-background-class="bg-blue"
+                :hide-if-empty="true"
                 @error="handleError"
             >
                 <template #entry="{ entry }">
@@ -134,6 +136,18 @@
                 icon-background-class="bg-blue"
                 :header-only="true"
             />
+
+            <InfoBox
+                model="exams"
+                :disable-link="true"
+                :text="trans('global.exam.title')"
+                icon="fa-ranking-star"
+                icon-background-class="bg-maroon"
+                :hide-if-empty="!isVisible.exams"
+                :has-modal="isVisible.exams"
+                @open-modal="openModal('subscribe-exam-modal')"
+                @error="handleError"
+            />
         </div>
         <LogbookModal/>
         <KanbanModal/>
@@ -147,9 +161,11 @@ import ProgressBar from '../uiElements/ProgressBar.vue';
 import LogbookModal from '../logbook/LogbookModal.vue';
 import KanbanModal from '../kanban/KanbanModal.vue';
 import PlanModal from '../plan/PlanModal.vue';
+import SubscribeExamModal from '../exam/SubscribeExamModal.vue';
 import MediumModal from '../media/MediumModal.vue';
 import { useGlobalStore } from '../../store/global';
 import { useToast } from 'vue-toastification';
+import { isValidDate } from '@fullcalendar/core/internal';
 
 export default {
     name: 'Home',
@@ -198,6 +214,7 @@ export default {
             return {
                 groups: isTeacher,
                 plans: isTeacher,
+                exams: isTeacher,
                 achievements: !isTeacher || isAdmin, // for testing purposes, show as admin
                 users: isAdmin,
             };
@@ -209,6 +226,7 @@ export default {
         LogbookModal,
         KanbanModal,
         PlanModal,
+        SubscribeExamModal,
         MediumModal,
     },
 }

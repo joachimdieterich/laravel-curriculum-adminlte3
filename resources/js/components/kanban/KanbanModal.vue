@@ -25,7 +25,7 @@
             />
         </template>
         <template #permissions>
-            <div class="form-check form-switch">
+            <div class="form-check form-switch mb-2">
                 <input
                     id="kanban-commentable"
                     class="form-check-input"
@@ -42,7 +42,7 @@
                 </label>
             </div>
 
-            <div class="form-check form-switch">
+            <div class="form-check form-switch mb-2">
                 <input
                     id="kanban-auto-refresh"
                     class="form-check-input"
@@ -59,7 +59,7 @@
                 </label>
             </div>
 
-            <div class="form-check form-switch">
+            <div class="form-check form-switch mb-2">
                 <input
                     id="kanban-only-edit-owned-items"
                     class="form-check-input"
@@ -76,7 +76,7 @@
                 </label>
             </div>
 
-            <div class="form-check form-switch">
+            <div class="form-check form-switch mb-2">
                 <input
                     id="kanban-collapse-items"
                     class="form-check-input"

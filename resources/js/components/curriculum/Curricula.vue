@@ -91,6 +91,7 @@
                     >
                         <button
                             v-permission="'curriculum_edit'"
+                            v-if="$userId == curriculum.owner_id || checkPermission('is_admin')"
                             :name="'curriculum-edit_' + curriculum.id"
                             class="dropdown-item text-secondary"
                             @click.prevent="editCurriculum(curriculum)"

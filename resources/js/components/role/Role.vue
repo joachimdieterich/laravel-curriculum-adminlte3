@@ -45,7 +45,7 @@
                                 >
                                     <button
                                         type="button"
-                                        class="btn btn-block"
+                                        class="btn w-100"
                                         :class="permission.checked ? 'btn-success' : 'btn-danger'"
                                         @click="togglePermission(permission)"
                                     >
@@ -59,8 +59,6 @@
             </div>
         </div>
 
-        <tag-card :tags="role.tags"/>
-
         <Teleport to="body">
             <RoleModal/>
         </Teleport>
@@ -69,14 +67,10 @@
 <script>
 import RoleModal from "../role/RoleModal.vue";
 import {useGlobalStore} from "../../store/global";
-import TagCard from "../tag/TagCard.vue";
 
 export default {
     name: "role",
-    components: {
-        RoleModal,
-        TagCard,
-    },
+    components: { RoleModal },
     props: {
         role: {
             default: null,

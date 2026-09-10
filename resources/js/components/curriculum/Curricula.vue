@@ -4,7 +4,7 @@
             class="px-3"
             :model="'curriculum'"
             modelIcon="fa-th"
-            :tabs="['favourite', 'all', 'by_organization', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"
+            :tabs="['favourite', 'all', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"
             :activeTab="filter"
             @change-tab="setFilter"
         />

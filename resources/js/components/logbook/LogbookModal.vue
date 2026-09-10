@@ -30,7 +30,7 @@ export default {
             method: 'post',
             processing: false,
             form: new Form({
-                id: '',
+                id: null,
                 title:  '',
                 description:  '',
                 owner_id: null,

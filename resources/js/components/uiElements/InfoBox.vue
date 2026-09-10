@@ -151,7 +151,7 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style>
 .infobox {
     background-color: #fff;
     border-radius: 0.75rem;
@@ -162,7 +162,7 @@ export default {
         align-items: center;
         padding: 0.5rem;
         
-        &.infobox-header-muted > button:hover { cursor: default; }
+        &.infobox-header-muted > .infobox-icon:hover { cursor: default; }
         & > .infobox-icon {
             color: #fff;
             height: 70px;

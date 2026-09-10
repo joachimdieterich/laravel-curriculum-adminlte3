@@ -115,8 +115,6 @@
 <script>
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 import TagMultiselect from "../tag/TagMultiselect.vue";
 
 export default {
@@ -130,14 +128,6 @@ export default {
             type: Object,
             default: null,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {

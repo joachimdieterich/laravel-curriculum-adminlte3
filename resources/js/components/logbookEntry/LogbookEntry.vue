@@ -321,7 +321,6 @@ import Media from '../media/Media.vue';
 import Lms from '../lms/Lms.vue';
 import Objectives from "../objectives/Objectives.vue";
 import Avatar from "../uiElements/Avatar.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -329,11 +328,6 @@ export default {
         entry: Object,
         first: false,
         editable: false,
-    },
-    setup() {
-        return {
-            globalStore: useGlobalStore(),
-        }
     },
     data() {
         return {

@@ -131,8 +131,6 @@ import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import VueDatePicker from "@vuepic/vue-datepicker";
 import Editor from '@tinymce/tinymce-vue';
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
     name: 'kanban-item-modal',
@@ -173,14 +171,6 @@ export default {
                 "bold underline italic | alignleft aligncenter alignright alignjustify | table",
                 "bullist numlist outdent indent | mathjax link code"
             ),
-        }
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
         }
     },
     mounted() {

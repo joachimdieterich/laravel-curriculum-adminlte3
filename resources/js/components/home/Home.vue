@@ -177,19 +177,9 @@ import KanbanModal from '../kanban/KanbanModal.vue';
 import PlanModal from '../plan/PlanModal.vue';
 import SubscribeExamModal from '../exam/SubscribeExamModal.vue';
 import MediumModal from '../media/MediumModal.vue';
-import { useGlobalStore } from '../../store/global';
-import { useToast } from 'vue-toastification';
 
 export default {
     name: 'Home',
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        };
-    },
     mounted() {
         this.$eventHub.on('logbook-added', (logbook) => {
             window.location.href = '/logbooks/' + logbook.id;

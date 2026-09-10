@@ -68,8 +68,6 @@
 <script>
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
     name: 'kanban-status-modal',
@@ -79,14 +77,6 @@ export default {
             type: Object,
             required: true,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {

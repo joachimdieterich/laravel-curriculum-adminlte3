@@ -18,19 +18,11 @@
 <script>
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
     name: 'logbook-modal',
     components: {
         Modal,
-    },
-    setup() {
-        return {
-            globalStore: useGlobalStore(),
-            toast: useToast(),
-        }
     },
     data() {
         return {

@@ -321,8 +321,6 @@ import MediumForm from "../media/MediumForm.vue";
 import Select2 from "../forms/Select2.vue";
 import TagMultiselect from "../tag/TagMultiselect.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
     name: 'curriculum-modal',
@@ -333,15 +331,6 @@ export default {
         MediumForm,
         Select2,
         VueDatePicker,
-    },
-    props: {},
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {

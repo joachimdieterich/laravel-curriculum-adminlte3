@@ -90,8 +90,6 @@
     </div>
 </template>
 <script>
-import {useGlobalStore} from "../../store/global";
-
 export default {
     name: 'KanbanStatus',
     emits: [
@@ -126,12 +124,6 @@ export default {
             type: Boolean,
             default: false,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {

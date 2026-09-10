@@ -82,7 +82,6 @@ import TaskModal from "../task/TaskModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import LmsModal from "../lms/LmsModal.vue";
 import ContentModal from "../content/ContentModal.vue";
-import {useGlobalStore} from "../../store/global";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 // import SetAchievementsModal from "../plan/SetAchievementsModal.vue";
 import AbsenceModal from "../absence/AbsenceModal.vue";
@@ -113,11 +112,6 @@ export default {
         period: {
             default: null,
         },
-    },
-    setup() {
-        return {
-            globalStore: useGlobalStore(),
-        }
     },
     data() {
         return {

@@ -208,10 +208,8 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeLogbookModal from "./SubscribeLogbookModal.vue";
-import {useGlobalStore} from "../../store/global";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import MediumModal from "../media/MediumModal.vue";
-import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -237,14 +235,6 @@ export default {
             type: Number,
             default: null,
         },
-    },
-    setup() {
-        const toast = useToast();
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {

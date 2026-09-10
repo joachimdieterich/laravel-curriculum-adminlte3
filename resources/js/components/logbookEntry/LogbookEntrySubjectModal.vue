@@ -24,19 +24,12 @@
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'logbook-entry-subject-modal',
     components: {
         Modal,
         Select2,
-    },
-    props: {},
-    setup() {
-        return {
-            globalStore: useGlobalStore(),
-        }
     },
     data() {
         return {

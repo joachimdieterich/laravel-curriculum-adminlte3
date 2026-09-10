@@ -41,8 +41,6 @@ import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Editor from "@tinymce/tinymce-vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
     name: 'logbook-entry-modal',
@@ -50,12 +48,6 @@ export default {
         Modal,
         Editor,
         VueDatePicker,
-    },
-    setup() {
-        return {
-            globalStore: useGlobalStore(),
-            toast: useToast(),
-        }
     },
     data() {
         return {

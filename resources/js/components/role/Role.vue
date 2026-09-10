@@ -66,7 +66,6 @@
 </template>
 <script>
 import RoleModal from "../role/RoleModal.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "role",
@@ -79,12 +78,6 @@ export default {
             type: Array,
             default: [],
         },
-    },
-    setup() { //use database store
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {

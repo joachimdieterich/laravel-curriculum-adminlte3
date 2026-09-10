@@ -236,9 +236,7 @@ import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import ToastNotification from "../uiElements/ToastNotification.vue";
-import {useGlobalStore} from "../../store/global";
 import ContributorsList from "../uiElements/ContributorsList.vue";
-import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -258,14 +256,6 @@ export default {
             type: Boolean,
             default: false,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {

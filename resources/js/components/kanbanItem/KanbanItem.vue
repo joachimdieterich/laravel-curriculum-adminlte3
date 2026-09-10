@@ -215,7 +215,6 @@ import Avatar from '../uiElements/Avatar.vue';
 import Reaction from '../reaction/Reaction.vue';
 import Comments from '../kanban/Comments.vue';
 import HtmlRenderer from "../uiElements/HtmlRenderer.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -267,12 +266,6 @@ export default {
             type: Boolean,
             default: false,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {

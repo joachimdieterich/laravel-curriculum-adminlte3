@@ -2,21 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\Exams\Models\Exam;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Show the application dashboard.
      *
@@ -75,10 +66,9 @@ class HomeController extends Controller
     public function groups(): Collection
     {
         return auth()->user()->groups()
-            ->select('groups.id', 'groups.title', 'grade_id')
             ->with('grade:id,title')
             ->orderBy('groups.title')
-            ->get();
+            ->get(['groups.id', 'groups.title', 'grade_id']);
     }
 
     /**
@@ -110,11 +100,15 @@ class HomeController extends Controller
     public function logbooks(): Collection
     {
         return auth()->user()->logbooks()
-            ->select('logbooks.id', 'logbooks.title', 'logbooks.owner_id')
             ->orderBy('logbooks.title')
-            ->get();
+            ->get(['logbooks.id', 'logbooks.title', 'logbooks.owner_id']);
     }
 
+    /**
+     * Returns favoured kanbans if exists, else all accessible to user
+     * 
+     * @return Collection
+     */
     public function kanbans(): Collection
     {
         $query = auth()->user()->kanbans()->orderBy('kanbans.title');
@@ -140,8 +134,30 @@ class HomeController extends Controller
     public function plans(): Collection
     {
         return auth()->user()->plans()
-            ->select('plans.id', 'plans.title', 'plans.owner_id')
             ->orderBy('plans.title')
-            ->get();
+            ->get(['plans.id', 'plans.title', 'plans.owner_id']);
+    }
+
+    /**
+     * returns the exams of the user
+     */
+    public function exams(): Collection
+    {
+        $exams = null;
+
+        if (is_student()) {
+            $exams = auth()->user()->exams()
+                ->with('group:id,title')
+                ->get(['exams.id', 'exams.tool', 'exams.test_name', 'exams.school_key', 'exams.group_id']);
+            foreach ($exams as $exam) {
+                $exam->login_url = config('test_tools.tools')[$exam->tool]['adapter']->getExamLoginUrl($exam);
+            }
+        } else {
+            $exams = Exam::whereIn('group_id', auth()->user()->groups()->pluck('groups.id'))
+                ->with('group:id,title')
+                ->get(['exams.id', 'exams.exam_id', 'exams.test_name', 'exams.group_id']);
+        }
+
+        return $exams;
     }
 }

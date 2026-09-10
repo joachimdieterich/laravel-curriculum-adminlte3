@@ -30,7 +30,6 @@
         window.Laravel = <?php
         echo json_encode([
             'csrfToken' => csrf_token(),
-            'userId' => Auth::user()->id,
             'permissions' => Auth::user()->permissions()->pluck('title')->toArray()
         ]); ?>;
     </script>

@@ -3,5 +3,5 @@
     {{ trans('global.curriculum.title') }}
 @endsection
 @section('content')
-    <curricula model-url="curricula"></curricula>
+    <Curricula/>
 @endsection

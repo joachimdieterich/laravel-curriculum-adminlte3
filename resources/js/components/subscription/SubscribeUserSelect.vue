@@ -7,18 +7,18 @@
         </label>
 
         <c-select id="subscribe-c-select"
-              model="user"
-              url="/users/list/subscription"
-              @selectedValue="(selectedOption) => {return this.$emit('selectedValue', selectedOption);}"
-              :multiple="false"
-              :grouped-options="true"
-              :search-length-minium="3"
-              placeholderKey="shareSearch"
-              search-query-parameter="search"
-              :handle-fetched-data="(data) => {
+                  model="user"
+                  url="/users/list/subscription"
+                  @selectedValue="(selectedOption) => {return this.$emit('selectedValue', selectedOption);}"
+                  :multiple="false"
+                  :grouped-options="true"
+                  :search-length-minium="3"
+                  placeholderKey="shareSearch"
+                  search-query-parameter="search"
+                  :handle-fetched-data="(data) => {
                   return data;
               }"
-              :clear-search-on-select="()=>{return true;}"
+                  :clear-search-on-select="()=>{return true;}"
         >
             <template v-slot:option="option">
                 <div class="select-option">
@@ -66,16 +66,34 @@ export default {
 :root {
     --select-option-role-color: #6c757d;
 }
-.vs__dropdown-option:hover { --select-option-role-color: var(--vs-dropdown-option--active-color); }
+
+.vs__dropdown-option:hover {
+    --select-option-role-color: var(--vs-dropdown-option--active-color);
+}
 
 .select-user {
     min-width: calc(100% - 48px);;
     display: flex;
     flex-direction: row;
 }
-.select-user-avatar { height: 100%; }
-.select-option      { display: flex; column-gap: 5px; align-items: center; }
-.select-option-name { align-content: center; overflow: hidden; text-overflow: ellipsis; font-size: 1.2rem;}
+
+.select-user-avatar {
+    height: 100%;
+}
+
+.select-option {
+    display: flex;
+    column-gap: 5px;
+    align-items: center;
+}
+
+.select-option-name {
+    align-content: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.2rem;
+}
+
 .select-option-organization-role {
     margin-left: auto;
     order: 3;
@@ -83,16 +101,22 @@ export default {
     width: 40%;
     text-align: right;
 }
+
 .select-option-organizations {
     display: flex;
     column-gap: 5px;
     flex-wrap: wrap;
     justify-content: end;
 }
+
 .select-option-role {
     font-family: "DejaVu Sans", Arial, sans-serif;
     font-style: italic;
     color: var(--select-option-role-color);
+}
+
+#subscribe-c-select {
+    box-shadow: none !important;
 }
 
 /* Tablet and mobile */
@@ -100,11 +124,16 @@ export default {
     .select-option {
         column-gap: 10px;
     }
+
     .select-user {
         max-width: 70%;
         flex-direction: column;
     }
-    .select-option-organizations { justify-content: left; }
+
+    .select-option-organizations {
+        justify-content: left;
+    }
+
     .select-option-organization-role {
         margin-left: unset;
         text-align: left;

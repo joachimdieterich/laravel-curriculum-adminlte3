@@ -28,9 +28,9 @@
         ?>;
 
         window.Laravel = <?php
-        echo json_encode([
-            'csrfToken' => csrf_token(),
-            'permissions' => Auth::user()->permissions()->pluck('title')->toArray()
-        ]); ?>;
+            echo json_encode([
+                'permissions' => Auth::user()->permissions()->pluck('title')->toArray()
+            ]);
+        ?>;
     </script>
 </head>

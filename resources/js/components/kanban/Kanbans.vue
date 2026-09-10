@@ -127,18 +127,13 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="kanban-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                ref="datatable"
-                :columns="columns"
-                :options="dtOptions(this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list')"
-                class="d-none"
-                @xhr="xhrEvent"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            :columns="columns"
+            :options="dtOptions(this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list')"
+            class="d-none"
+            @xhr="xhrEvent"
+        />
 
         <Teleport to="body">
             <TagComponentModal v-if="!subscribable" event-prefix="kanban" model-namespace="\App\Kanban"/>
@@ -214,7 +209,6 @@ export default {
             kanbans: null,
             showConfirm: false,
             showCopy: false,
-            errors: {},
             currentKanban: {},
             columns: [
                 { title: 'id', data: 'id' },
@@ -231,13 +225,6 @@ export default {
 
         this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('filter', (filter) => {
-            this.selectedTags = filter.tags;
-            this.selectedNegativeTags = filter.negativeTags;
-
-            this.dt.search(filter.searchString).draw();
-        });
-
         this.$eventHub.on('kanban-subscription-added', (kanbanSubscription) => {
             this.kanbans.push(kanbanSubscription.kanban);
         });
@@ -250,6 +237,13 @@ export default {
             let kanban = this.kanbans.find(k => k.id === updatedKanban.id);
 
             Object.assign(kanban, updatedKanban);
+        });
+
+        this.$eventHub.on('filter', (filter) => {
+            this.selectedTags = filter.tags;
+            this.selectedNegativeTags = filter.negativeTags;
+
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {

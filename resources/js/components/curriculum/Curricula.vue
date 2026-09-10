@@ -14,24 +14,21 @@
             class="px-3"
         >
             <IndexWidget v-if="checkPermission('curriculum_create')
-                    && (
-                        (filter === 'all' && !this.subscribable_type && !this.subscribable_id)
-                        || filter  === 'owner' || filter === 'favourite'
-                    )"
-                         key="curriculumCreate"
-                         modelName="Curriculum"
-                         url="/curricula"
-                         :create=true
-                         :label="trans('global.curriculum.create')"
+                    && (filter === 'all' || filter  === 'owner' || filter === 'favourite')"
+                key="curriculumCreate"
+                modelName="Curriculum"
+                url="/curricula"
+                :create=true
+                :label="trans('global.curriculum.create')"
             />
 
             <IndexWidget v-for="(curriculum, index) in curricula"
-                         :id="curriculum.id"
-                         :key="'curriculumIndex' + curriculum.id"
-                         :model="curriculum"
-                         modelName="Curriculum"
-                         url="/curricula"
-                         :hidable="true"
+                :id="curriculum.id"
+                :key="'curriculumIndex' + curriculum.id"
+                :model="curriculum"
+                modelName="Curriculum"
+                url="/curricula"
+                :hidable="true"
             >
                 <template v-slot:icon>
                     <i v-if="curriculum.type_id === 1"
@@ -58,7 +55,7 @@
                 </template>
 
                 <template v-if="curriculum.archived"
-                          v-slot:badges
+                    v-slot:badges
                 >
                     <span
                         class="btn btn-info btn-xs position-absolute"
@@ -131,18 +128,13 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="curriculum-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="curriculum-datatable"
-                :columns="columns"
-                :options="dtOptions(subscribable_id ? ('/curriculumSubscriptions?subscribable_type=' + subscribable_type + '&subscribable_id=' + subscribable_id) : '/curricula/list')"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            :columns="columns"
+            :options="dtOptions('/curricula/list')"
+            class="d-none"
+            @xhr="xhrEvent"
+        />
 
         <Teleport to="body">
             <TagComponentModal event-prefix="curriculum" model-namespace="\App\Curriculum"/>
@@ -171,36 +163,19 @@ import DataTablesCore from 'datatables.net-bs5';
 import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import CurriculumModal from "./CurriculumModal.vue";
-import {useGlobalStore} from "../../store/global";
 import OwnerModal from "../user/OwnerModal.vue";
-import {useToast} from "vue-toastification";
 import Favourite from "../tag/Favourite.vue";
 import Hide from "../tag/Hide.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 import TabList from "../uiElements/TabList.vue";
 import TagComponentModal from "../tag/TagComponentModal.vue";
-
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {
-        subscribable_type: {
-            type: String,
-            default: null,
-        },
-        subscribable_id: {
-            type: Number,
-            default: null,
-        },
-    },
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
 
-        return {
-            selectedTags, selectedNegativeTags, dtOptions,
-            globalStore: useGlobalStore(),
-            toast: useToast(),
-        }
+        return { selectedTags, selectedNegativeTags, dtOptions }
     },
     data() {
         return {
@@ -208,7 +183,6 @@ export default {
             curricula: [],
             subscriptions: {},
             showConfirm: false,
-            errors: {},
             currentCurriculum: {},
             columns: [
                 {title: 'id', data: 'id'},
@@ -254,64 +228,36 @@ export default {
         },
         setFilter(filter) {
             this.filter = filter;
-            if (this.subscribable_type && this.subscribable_id) {
-                this.url = '/curriculumSubscriptions?subscribable_type=' + this.subscribable_type + '&subscribable_id=' + this.subscribable_id;
-            } else {
-                this.url = '/curricula/list?filter=' + this.filter;
-            }
-            this.dt.ajax.url(this.url).load();
+            this.dt.ajax.url('/curricula/list?filter=' + this.filter).load();
         },
-        loaderEvent() {
-            this.dt = $('#curriculum-datatable').DataTable();
-
-            this.dt.on('draw.dt', () => {
-                let initialLoad = this.dt.rows().data().context[0].iDraw === 1;
-                let data = this.dt.rows({page: 'current'}).data().toArray();
-                // if user doesn't have any favourited objects, default to 'all'-tab
-                if (initialLoad && data.length === 0) {
-                    this.setFilter('all');
-                    return;
-                }
-
-                this.curricula = data;
-                $('#curriculum-content').insertBefore('#curriculum-datatable-wrapper');
-            });
+        xhrEvent(e, settings, json) {
+            // if user doesn't have any favourited objects, default to 'all'-tab
+            if (json.draw === 1 && json.data.length === 0) {
+                this.setFilter('all');
+                return;
+            }
+            this.curricula = json.data;
         },
         ownerOrAdmin(curriculum) {
             return curriculum.owner_id == this.$userId || this.checkPermission('is_admin');
         },
         destroy() {
-            if (this.subscribable) {
-                axios.delete('/curriculumSubscriptions/expel', {
-                    data: {
-                        model_id: this.currentCurriculum.id,
-                        subscribable_type: this.subscribable_type,
-                        subscribable_id: this.subscribable_id,
-                    }
+            axios.delete('/curricula/' + this.currentCurriculum.id)
+                .then(res => {
+                    let index = this.curricula.indexOf(this.currentCurriculum);
+                    this.curricula.splice(index, 1);
                 })
-                    .then(r => {
-                        this.toast.success(r)
-                    })
-                    .catch(e => {
-                        this.toast.error(e)
-                    });
-            } else {
-                axios.delete('/curricula/' + this.currentCurriculum.id)
-                    .then(res => {
-                        let index = this.curricula.indexOf(this.currentCurriculum);
-                        this.curricula.splice(index, 1);
-                    })
-                    .catch(err => {
-                        console.log(err.response);
-                    });
-            }
+                .catch(e => {
+                    this.toast.error(this.errorMessage(e));
+                    console.log(e.response);
+                });
         },
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
         this.globalStore['searchTagModelContext'] = 'App\\Curriculum';
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
         this.$eventHub.on('curriculum-added', (curriculum) => {
             this.curricula.push(curriculum);
@@ -330,6 +276,7 @@ export default {
         this.$eventHub.on('filter', (filter) => {
             this.selectedTags = filter.tags;
             this.selectedNegativeTags = filter.negativeTags;
+
             this.dt.search(filter.searchString).draw();
         });
 

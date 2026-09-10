@@ -18,33 +18,33 @@
                         (filter === 'all' && !this.subscribable_type && !this.subscribable_id)
                         || filter  === 'owner' || filter === 'favourite'
                     )"
-                key="curriculumCreate"
-                modelName="Curriculum"
-                url="/curricula"
-                :create=true
-                :label="trans('global.curriculum.create')"
+                         key="curriculumCreate"
+                         modelName="Curriculum"
+                         url="/curricula"
+                         :create=true
+                         :label="trans('global.curriculum.create')"
             />
 
             <IndexWidget v-for="(curriculum, index) in curricula"
-                :id="curriculum.id"
-                :key="'curriculumIndex' + curriculum.id"
-                :model="curriculum"
-                modelName="Curriculum"
-                url="/curricula"
-                :hidable="true"
+                         :id="curriculum.id"
+                         :key="'curriculumIndex' + curriculum.id"
+                         :model="curriculum"
+                         modelName="Curriculum"
+                         url="/curricula"
+                         :hidable="true"
             >
                 <template v-slot:icon>
                     <i v-if="curriculum.type_id === 1"
-                        class="fas fa-globe"
+                       class="fas fa-globe"
                     ></i>
                     <i v-else-if="curriculum.type_id === 2"
-                        class="fas fa-university"
+                       class="fas fa-university"
                     ></i>
                     <i v-else-if="curriculum.type_id === 3"
-                        class="fa fa-users"
+                       class="fa fa-users"
                     ></i>
                     <i v-else
-                        class="fa fa-user"
+                       class="fa fa-user"
                     ></i>
                 </template>
 
@@ -70,7 +70,7 @@
                 </template>
 
                 <template v-if="curriculum.archived"
-                    v-slot:badges
+                          v-slot:badges
                 >
                     <p class="text-muted small">
                         <span
@@ -110,9 +110,9 @@
                         </button>
 
                         <button v-if="$userId == curriculum.owner_id"
-                            :name="'curriculum-set_owner_' + curriculum.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="setOwner(curriculum)"
+                                :name="'curriculum-set_owner_' + curriculum.id"
+                                class="dropdown-item text-secondary"
+                                @click.prevent="setOwner(curriculum)"
                         >
                             <i class="fa fa-user mr-2"></i>
                             {{ trans('global.curriculum.edit_owner') }}
@@ -135,8 +135,9 @@
                                 curriculum.splice(index, 1)
                             }"
                         />
-                        <hr v-permission="'curriculum_delete'" class="my-1">
+                        <hr v-if="$userId == curriculum.owner_id || checkPermission('is_admin')" v-permission="'curriculum_delete'" class="my-1">
                         <button
+                            v-if="$userId == curriculum.owner_id || checkPermission('is_admin')"
                             v-permission="'curriculum_delete'"
                             :id="'delete-curriculum-' + curriculum.id"
                             type="submit"
@@ -201,6 +202,7 @@ import Hide from "../tag/Hide.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 import TabList from "../uiElements/TabList.vue";
 import TagComponentModal from "../tag/TagComponentModal.vue";
+
 DataTable.use(DataTablesCore);
 
 export default {
@@ -234,9 +236,9 @@ export default {
             errors: {},
             currentCurriculum: {},
             columns: [
-                { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true },
-                { title: 'description', data: 'description', searchable: true },
+                {title: 'id', data: 'id'},
+                {title: 'title', data: 'title', searchable: true},
+                {title: 'description', data: 'description', searchable: true},
             ],
             filter: 'favourite',
             dt: null,
@@ -261,7 +263,7 @@ export default {
                 owner_id: curriculum.owner_id,
             });
         },
-        shareCurriculum(curriculum){
+        shareCurriculum(curriculum) {
             this.globalStore?.showModal(
                 'subscribe-modal',
                 {
@@ -289,7 +291,7 @@ export default {
 
             this.dt.on('draw.dt', () => {
                 let initialLoad = this.dt.rows().data().context[0].iDraw === 1;
-                let data = this.dt.rows({ page: 'current' }).data().toArray();
+                let data = this.dt.rows({page: 'current'}).data().toArray();
                 // if user doesn't have any favourited objects, default to 'all'-tab
                 if (initialLoad && data.length === 0) {
                     this.setFilter('all');
@@ -304,9 +306,9 @@ export default {
             if (this.subscribable) {
                 axios.delete('/curriculumSubscriptions/expel', {
                     data: {
-                        model_id : this.currentCurriculum.id,
-                        subscribable_type : this.subscribable_type,
-                        subscribable_id : this.subscribable_id,
+                        model_id: this.currentCurriculum.id,
+                        subscribable_type: this.subscribable_type,
+                        subscribable_id: this.subscribable_id,
                     }
                 })
                     .then(r => {
@@ -329,7 +331,7 @@ export default {
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
-        this.globalStore['searchTagModelContext'] =  'App\\Curriculum';
+        this.globalStore['searchTagModelContext'] = 'App\\Curriculum';
 
         this.loaderEvent();
 

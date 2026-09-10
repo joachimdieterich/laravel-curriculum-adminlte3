@@ -12,13 +12,16 @@
                 :text="trans('global.curriculum.title')"
                 icon="fa-th"
                 icon-background-class="bg-cyan"
+                :hide-if-empty="true"
                 href="/curricula"
                 @error="handleError"
             >
                 <template #entry="{ entry }">
                     <a :href="'/courses/' + entry.course_id">
                         <span class="font-weight-bold">{{ entry.title }}</span>
-                        <span class="pull-right w-50">
+                        <span v-if="isVisible.progress"
+                            class="pull-right w-50"
+                        >
                             <ProgressBar
                                 :achievements="entry.achievements"
                                 :maxEntries="entry.enabling_objectives_count"
@@ -44,6 +47,7 @@
                 :text="trans('global.achievement.recent')"
                 icon="fa-trophy"
                 icon-background-class="bg-blue"
+                :hide-if-empty="true"
                 @error="handleError"
             >
                 <template #entry="{ entry }">
@@ -134,11 +138,35 @@
                 icon-background-class="bg-blue"
                 :header-only="true"
             />
+
+            <InfoBox
+                model="exams"
+                :disable-link="true"
+                :text="trans('global.exam.title')"
+                icon="fa-ranking-star"
+                icon-background-class="bg-maroon"
+                :hide-if-empty="!isVisible.exams"
+                :has-modal="isVisible.exams"
+                @open-modal="openModal('subscribe-exam-modal')"
+                @error="handleError"
+            >
+                <template #entry="{ entry }">
+                    <a :href="entry.login_url ?? '/exams/' + entry.exam_id + '/edit'">
+                        <span class="font-weight-bold">
+                            {{ entry.test_name }}
+                        </span>
+                        <span class="link-muted text-decoration-none">
+                            ({{ entry.group.title }})
+                        </span>
+                    </a>
+                </template>
+            </InfoBox>
         </div>
         <LogbookModal/>
         <KanbanModal/>
         <PlanModal/>
         <MediumModal/>
+        <SubscribeExamModal/>
     </div>
 </template>
 <script>
@@ -147,6 +175,7 @@ import ProgressBar from '../uiElements/ProgressBar.vue';
 import LogbookModal from '../logbook/LogbookModal.vue';
 import KanbanModal from '../kanban/KanbanModal.vue';
 import PlanModal from '../plan/PlanModal.vue';
+import SubscribeExamModal from '../exam/SubscribeExamModal.vue';
 import MediumModal from '../media/MediumModal.vue';
 import { useGlobalStore } from '../../store/global';
 import { useToast } from 'vue-toastification';
@@ -165,8 +194,14 @@ export default {
         this.$eventHub.on('logbook-added', (logbook) => {
             window.location.href = '/logbooks/' + logbook.id;
         });
+        this.$eventHub.on('kanban-added', (kanban) => {
+            window.location.href = '/kanbans/' + kanban.id;
+        });
         this.$eventHub.on('plan-added', (plan) => {
             window.location.href = '/plans/' + plan.id;
+        });
+        this.$eventHub.on('exam-added', (exam) => {
+            window.location.href = '/exams/' + exam.exam_id + '/edit';
         });
     },
     methods: {
@@ -196,8 +231,10 @@ export default {
             const isAdmin = this.checkPermission('is_admin');
 
             return {
+                progress: !isTeacher || isAdmin,
                 groups: isTeacher,
                 plans: isTeacher,
+                exams: isTeacher,
                 achievements: !isTeacher || isAdmin, // for testing purposes, show as admin
                 users: isAdmin,
             };
@@ -209,6 +246,7 @@ export default {
         LogbookModal,
         KanbanModal,
         PlanModal,
+        SubscribeExamModal,
         MediumModal,
     },
 }

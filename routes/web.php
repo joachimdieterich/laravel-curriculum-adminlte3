@@ -102,6 +102,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('home/logbooks', 'HomeController@logbooks');
     Route::get('home/kanbans', 'HomeController@kanbans');
     Route::get('home/plans', 'HomeController@plans');
+    Route::get('home/exams', 'HomeController@exams');
 // I
 // J
 // K

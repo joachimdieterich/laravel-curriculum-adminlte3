@@ -91,6 +91,7 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
 .p-margin-0 p { margin-bottom: 0px !important; }
 .pointer { cursor: pointer; }
 .shadow-layout { box-shadow: var(--shadow-layout); }
+.shadow-strong { box-shadow: var(--shadow-strong); }
 .pull-right { float: right !important; }
 .pull-left { float: left !important; }
 // FontAwesome Badges without layers

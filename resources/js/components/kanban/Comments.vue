@@ -29,8 +29,7 @@
                         :src="'/media/' + comment.user.medium_id"
                         alt="User profile picture"
                     />
-                    <avatar v-else
-                        data-toggle="tooltip"
+                    <Avatar v-else
                         :title="comment.user.username"
                         :username="comment.user.username"
                         :firstname="comment.user.firstname"

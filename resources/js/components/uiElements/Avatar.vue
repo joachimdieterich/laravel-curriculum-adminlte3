@@ -1,55 +1,40 @@
 <template>
-    <span :style="'width: ' + size + 'px; height: ' + size + 'px; display: inline-block;'">
-        <div
-            @mouseenter="showPopupDetails ? { mouseenter: entered($event) } : {}"
-            @mouseleave="showPopupDetails ? { mouseleave: left() } : {}"
-            @mousemove="showPopupDetails ? { mousemove: movement($event) } : {}"
-            @touchstart="showPopupDetails ? { touchstart: entered($event) } : {}"
-            @touchend="showPopupDetails ? { touchend: left() } : {}"
-            @touchmove="showPopupDetails ? { touchmove: movement($event) } : {}"
-            :style="'width:' + size + 'px; height:' + size + 'px;'"
+    <div
+        @mouseenter="showPopupDetails ? { mouseenter: entered($event) } : {}"
+        @mouseleave="showPopupDetails ? { mouseleave: left() } : {}"
+        @mousemove="showPopupDetails ? { mousemove: movement($event) } : {}"
+        @touchstart="showPopupDetails ? { touchstart: entered($event) } : {}"
+        @touchend="showPopupDetails ? { touchend: left() } : {}"
+        @touchmove="showPopupDetails ? { touchmove: movement($event) } : {}"
+        :style="'width:' + size + 'px; height:' + size + 'px;'"
+    >
+        <img v-if="medium !== null"
+            class="img-circle img-bordered-sm"
+            :width="size"
+            :height="size"
+            :src="medium"
+        />
+        <img v-else-if="typeof avatar_medium_id === 'number'"
+            class="direct-chat-img"
+            :class="css"
+            :style="'width:' + size + 'px; height:' + size + 'px; float:none !important'"
+            :src="'/media/' + avatar_medium_id"
+        />
+        <canvas v-else
+            :id="id"
+            :class="css"
+            style="border-radius: 50%;"
+            :width="size"
+            :height="size"
+        ></canvas>
+        <div v-if="details.show"
+            class="position-fixed bg-white p-2 rounded-2 shadow-strong"
+            :style="position"
         >
-            <img v-if="medium !== null"
-                 class="img-circle img-bordered-sm"
-                 :width="size"
-                 :height="size"
-                 :src="medium"
-            />
-            <img v-else-if="typeof avatar_medium_id === 'number'"
-                 class="direct-chat-img"
-                 :class="css"
-                 :style="'width:' + size + 'px; height:' + size + 'px; float:none !important'"
-                 :src="'/media/' + avatar_medium_id"
-            />
-            <canvas v-else
-                    :id="id"
-                    :class="css"
-                    style="border-radius: 50%;"
-                    :width="size"
-                    :height="size"
-            ></canvas>
-            <div v-if="details.show"
-                 class="rounded-sm details"
-                 :style="position"
-            >
-                {{ firstname }} {{ lastname }}
-            </div>
+            {{ firstname }} {{ lastname }}
         </div>
-    </span>
+    </div>
 </template>
-<style scoped>
-.details {
-    cursor: default;
-    position: fixed;
-    font-weight: normal;
-    padding: 0.5rem;
-    z-index: 9999;
-    color: black !important;
-    border-radius: 0.3rem;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background: white;
-}
-</style>
 <script>
 export default {
     props: {
@@ -97,7 +82,7 @@ export default {
             component_id: this.$.uid,
             id: this.$.uid,
             avatar_medium_id: null,
-            colours: ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"],
+            colors: ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#95a5a6", "#f39c12", "#d35400", "#c0392b", "#bdc3c7", "#7f8c8d"],
             user: null,
             details: {
                 key: 0,
@@ -141,7 +126,7 @@ export default {
             }
 
             let charIndex = initials.charCodeAt(0) - 65;
-            let colourIndex = charIndex % 19;
+            let colorIndex = charIndex % 19;
 
             this.$nextTick(() => {
                 let canvas = document.getElementById(this.id);
@@ -161,7 +146,7 @@ export default {
                     context.scale(window.devicePixelRatio, window.devicePixelRatio);
                 }
 
-                context.fillStyle = this.colours[colourIndex];
+                context.fillStyle = this.colors[colorIndex];
                 context.fillRect(0, 0, this.size, this.size);
                 context.font = (this.size / 2.5) + "px Arial";
                 context.textAlign = "center";

@@ -1,79 +1,48 @@
 <template>
-    <div class="btn-group">
+    <div class="dropdown d-print-none">
         <button
             type="button"
-            class="dropdown-toggle border-0"
-            style="background-color: transparent;"
-            :style="{ 'color': textcolor }"
-            data-toggle="dropdown"
+            class="btn"
+            :class="textcolor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+            data-bs-toggle="dropdown"
             aria-label="Dropdown menu"
             aria-expanded="false"
         >
-            <span class="caret"></span>
+            <i class="fa fa-caret-down"></i>
         </button>
-        <div
-            class="dropdown-menu position-absolute"
-            x-placement="top-start"
-        >
-            <span v-for="entry in menuEntries">
-                <hr v-if="entry.hr" style="margin: 0.4rem 0;">
-                <button v-else-if="entry.action === 'edit'"
-                    class="dropdown-item"
-                    @click="editObjective(entry)"
-                >
-                    <i
-                        class="me-4"
-                        :class="entry.icon"
-                    ></i>
-                    {{ trans('global.' + entry.model + '.edit') }}
-                </button>
-                <button v-else-if="entry.action === 'move'"
-                    class="dropdown-item"
-                    @click="moveObjective(entry)"
-                >
-                    <i
-                        class="me-4"
-                        :class="entry.icon"
-                    ></i>
-                    {{ trans('global.terminalObjective.move_to_curriculum') }}
-                </button>
-                <button v-else-if="entry.action === 'resetOrderIds'"
-                    class="dropdown-item"
-                    @click="resetOrderIds(entry)"
-                >
-                    <i
-                        class="me-4"
-                        :class="entry.icon"
-                    ></i>
-                    {{ entry.title }}
-                </button>
-                <button v-else-if="entry.action === 'delete'"
-                    class="dropdown-item text-danger"
-                    @click="emitDeleteEvent(entry)"
-                >
-                    <i
-                        class="me-4"
-                        :class="entry.icon"
-                    ></i>
-                    {{ trans('global.' + entry.model + '.delete') }}
-                </button>
-                <button v-else
-                    class="dropdown-item"
-                    @click="action(entry);"
-                >
-                    <i
-                        class="me-4"
-                        :class="entry.icon"
-                    ></i>
-                    {{ entry.title }}
-                </button>
-            </span>
+
+        <div class="dropdown-menu dropdown-menu-end">
+            <button
+                type="button"
+                class="dropdown-item"
+                @click="editObjective()"
+            >
+                <i class="fa fa-pencil"></i>
+                {{ trans('global.' + type + 'Objective.edit') }}
+            </button>
+            <button v-if="type === 'terminal'"
+                type="button"
+                class="dropdown-item"
+                @click="moveObjective()"
+            >
+                <i class="fa fa-repeat"></i>
+                {{ trans('global.terminalObjective.move_to_curriculum') }}
+            </button>
+
+            <hr class="my-1">
+
+            <button
+                type="button"
+                class="dropdown-item text-danger"
+                @click="emitDeleteEvent()"
+            >
+                <i class="fa fa-trash"></i>
+                {{ trans('global.' + type + 'Objective.delete') }}
+            </button>
         </div>
     </div>
 </template>
 <script>
-import { useGlobalStore } from '../../store/global';
-
 export default {
     props: {
         menuEntries: {
@@ -89,34 +58,24 @@ export default {
             default: '#000',
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        };
-    },
-    data() {
-        return {
-            entries: [],
-            errors: {},
-        }
-    },
     methods: {
-        editObjective(entry) {
-            this.globalStore.showModal(entry.value, this.objective);
+        editObjective() {
+            this.globalStore.showModal(this.type + '-objective-modal', this.objective);
         },
-        moveObjective(entry) {
-            this.globalStore.showModal(entry.value, this.objective);
+        moveObjective() {
+            this.globalStore.showModal(this.type + '-objective-modal', this.objective);
         },
         emitDeleteEvent(entry) {
             this.$eventHub.emit('confirm-objective-delete', {
                 objective: this.objective,
-                model: entry.model,
+                model: this.type + 'Objective',
             });
         },
-        action(entry) {
-            this.$modal.show(entry.value);
-        }
+    },
+    computed: {
+        type() {
+            return this.objective.terminal_objective_id ? 'enabling' : 'terminal';
+        },
     },
 }
 </script>

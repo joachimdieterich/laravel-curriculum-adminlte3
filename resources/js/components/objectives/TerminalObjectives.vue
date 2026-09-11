@@ -127,8 +127,6 @@ import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
 import MoveTerminalObjectiveModal from './MoveTerminalObjectiveModal.vue';
 import Select2 from '../forms/Select2.vue';
 import draggable from "vuedraggable";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -136,12 +134,6 @@ export default {
             type: Object,
             default: null,
         },
-    },
-    setup() {
-        return {
-            globalStore: useGlobalStore(),
-            toast: useToast(),
-        }
     },
     data() {
         return {

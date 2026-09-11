@@ -1,6 +1,6 @@
 <template>
     <div
-        class="objective m-0"
+        class="objective"
         :style="{ 'background-color': backgroundcolor, 'border-color': bordercolor }"
     >
         <div v-if="type === 'createterminal'"
@@ -23,17 +23,11 @@
             </div>
         </div>
 
-        <div v-else
-            :id="id"
-            class="d-flex flex-column h-100"
-            style="padding: 0px 10px;"
-        >
-            <!-- don't load Header if it isn't needed -->
+        <div v-else style="display: contents;">
             <Header
                 :objective="objective"
                 :objective_type_id="objective_type_id"
                 :type="type"
-                :menuEntries="menuEntries"
                 :settings="settings"
                 :max_id="max_id"
                 :textcolor="textcolor"
@@ -43,12 +37,19 @@
                 class="flex-fill overflow-hidden pointer"
                 @click.prevent="showDetails()"
             >
-                <div
-                    class="small hide-scrollbars overflow-auto h-100 p-margin-0"
-                    style="background-color: inherit;"
-                    :style="{ 'color': textcolor }"
-                    v-html="objective.title"    
-                ></div>
+                <div class="hide-scrollbars overflow-auto h-100">
+                    <span v-if="type == 'enabling' && objective.level != null"
+                        class="btn-xs me-1 float-start"
+                        :class="objective.level.css_color"
+                    >
+                        {{ objective.level.title }}
+                    </span>
+                    <div
+                        class="small p-margin-0"
+                        :style="{ 'color': textcolor }"
+                        v-html="objective.title"    
+                    ></div>
+                </div>
             </div>
     
             <Footer v-if="settings?.achievements && objective.achievements !== undefined"
@@ -109,31 +110,6 @@ export default {
     },
     data() {
         return {
-            menuEntries:  [
-                {
-                    title: 'Edit',
-                    icon: 'fa fa-pencil-alt',
-                    action: 'edit',
-                    model: this.type + 'Objective',
-                    value: this.type + '-objective-modal',
-                },
-                {
-                    title: 'Move',
-                    icon: 'fa fa-repeat',
-                    action: 'move',
-                    model: this.type + 'Objective',
-                    value: 'move-' + this.type + '-objective-modal',
-                },
-                {
-                    hr: true,
-                },
-                {
-                    title: 'Delete',
-                    icon: 'fa fa-trash',
-                    action: 'delete',
-                    model: this.type + 'Objective',
-                }
-            ],
             visibility: 100,
         }
     },
@@ -183,9 +159,6 @@ export default {
                 return "#000";
             }
         },
-        id: function() {
-            return this.type + '_' + this.objective.id;
-        },
         cross_reference: function() {
             if (typeof this.settings !== "undefined") {
                 return this.settings.cross_reference_curriculum_id;
@@ -220,9 +193,6 @@ export default {
         }.bind(this));
     },
     mounted() {
-        // remove move-enabling option, since this option hasn't been implemented yet
-        if (this.type === 'enabling') this.menuEntries.splice(1, 1);
-
         this.$nextTick(() => {
             MathJax.startup.defaultReady();
         });

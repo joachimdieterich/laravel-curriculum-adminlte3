@@ -1,32 +1,31 @@
 <template>
     <div
-        class="d-flex align-items-center mt-1"
+        class="d-flex align-items-center"
         :style="{ 'color': textcolor }"
     >
         <span v-if="edit_settings"
-            v-permission="'curriculum_edit'"
-            class="d-flex me-auto"
+            class="d-flex d-print-none me-auto"
         >
-            <a v-if="(type == 'terminal' && objective.order_id != 0)"
-                class="pointer me-2"
-                style="color: inherit;"
-                role="button"
+            <button v-if="(type == 'terminal' && objective.order_id != 0)"
+                type="button"
+                class="btn"
+                :class="textcolor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
                 @click="changeOrder(false)"
             >
                 <i class="fa fa-arrow-up"></i>
-            </a>
-            <a v-if="(type == 'terminal' && max_id != objective.id)"
-                class="link-muted pointer"
-                style="color: inherit;"
-                role="button"
+            </button>
+            <button v-if="(type == 'terminal' && max_id != objective.id)"
+                type="button"
+                class="btn"
+                :class="textcolor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
                 @click="changeOrder(true)"
             >
                 <i class="fa fa-arrow-down"></i>
-            </a>
+            </button>
 
             <button v-if="(type == 'enabling' && objective.order_id != 0)"
                 type="button"
-                class="btn btn-icon btn-sm px-1 py-0 text-secondary me-1"
+                class="btn btn-icon text-secondary"
                 :aria-label="trans('global.enablingObjective.move_prev')"
                 @click="changeOrder(false)"
             >
@@ -34,7 +33,7 @@
             </button>
             <button v-if="(type == 'enabling' && max_id != objective.id)"
                 type="button"
-                class="btn btn-icon btn-sm px-1 py-0 text-secondary"
+                class="btn btn-icon text-secondary"
                 :aria-label="trans('global.enablingObjective.move_next')"
                 @click="changeOrder(true)"
             >
@@ -42,38 +41,14 @@
             </button>
         </span>
 
-        <span v-if="(type == 'enabling' && objective.level != null)"
-            class="mx-auto"
-        >
-            <button
-                type="button"
-                class="btn btn-block btn-xs"
-                :class="objective.level.css_color"
-            >
-                {{ objective.level.title }}
-            </button>
-        </span>
-
-        <span v-if="edit_settings"
-            v-permission="'curriculum_edit'"
-            class="ml-auto"
-        >
-            <DropdownButton v-if="type == 'terminal'"
-                :menuEntries="menuEntries"
-                :objective.sync="objective"
-                :textcolor="textcolor"
-            />
-            <DropdownButton v-else-if="type == 'enabling'"
-                :menuEntries="menuEntries"
-                :objective.sync="objective"
-                :textcolor="textcolor"
-            />
-        </span>
+        <DropdownButton v-if="edit_settings && (type == 'terminal' || type == 'enabling')"
+            :objective.sync="objective"
+            :textcolor="textcolor"
+        />
     </div>
 </template>
 <script>
 import DropdownButton from './DropdownButton.vue';
-import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -89,10 +64,6 @@ export default {
             type: String,
             default: null,
         },
-        menuEntries: {
-            type: Array,
-            default: null,
-        },
         settings: {
             type: Object,
             default: null,
@@ -105,12 +76,6 @@ export default {
             type: Number,
             default: null,
         },
-    },
-    setup() {
-        const toast = useToast();
-        return {
-            toast,
-        }
     },
     methods: {
         /**
@@ -137,11 +102,9 @@ export default {
     },
     computed: {
         edit_settings: function() {
-            return this.settings?.edit ?? false;
+            return this.checkPermission('curriculum_edit') && (this.settings?.edit ?? false);
         },
     },
-    components: {
-        DropdownButton,
-    },
+    components: { DropdownButton },
 }
 </script>

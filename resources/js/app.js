@@ -187,7 +187,7 @@ if (document.querySelector("meta[name='user-id']")){
     app.config.globalProperties.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 }
 
-import Toast from 'vue-toastification';
+import Toast, { useToast } from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
 app.use(Toast, {
@@ -196,7 +196,7 @@ app.use(Toast, {
     newestOnTop: true,
 });
 
-app.config.globalProperties.toast = Toast;
+app.config.globalProperties.toast = useToast();
 
 /**
  * checks which error message is appropriate for the given error

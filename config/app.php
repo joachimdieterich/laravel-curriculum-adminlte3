@@ -204,10 +204,6 @@ return [
          */
         Barryvdh\Snappy\ServiceProvider::class,
         /*
-         * Messaging
-         */
-        Cmgmyr\Messenger\MessengerServiceProvider::class,
-        /*
          *  Laravel Excel
          */
         Maatwebsite\Excel\ExcelServiceProvider::class,

@@ -344,14 +344,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('metadatasets/list', 'MetadatasetController@list');
     Route::resource('metadatasets', 'MetadatasetController');
 
-    /* Messages */
-    Route::get('messages', 'MessagesController@index')->name('messages');
-    Route::get('messages/create', 'MessagesController@create')->name('messages.create');
-    Route::post('messages', 'MessagesController@store')->name('messages.store');
-    Route::get('messages/{id}', 'MessagesController@show')->name('messages.show');
-    Route::put('messages/{id}', 'MessagesController@update')->name('messages.update');
-    Route::post('messages/{id}/destroy', 'MessagesController@destroy')->name('messages.destroy');
-
     /* Navigators */
     Route::get('navigators', 'NavigatorController@index')->name('navigators.index');
     Route::get('navigators/{navigator}', 'NavigatorController@show');

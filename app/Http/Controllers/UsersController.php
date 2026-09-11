@@ -432,8 +432,6 @@ class UsersController extends Controller
             ->where('owner_id', $user->id)
             ->update(['owner_id' => $fallback_user->id]);
 
-        //Todo: harddelete messages Cmgmyr\Messenger
-
         $user->notifications()->delete();
 
         $user->organizations()->detach(); //expel

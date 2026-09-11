@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e54a5ecde48e2959e974285d7f703961",
+    "content-hash": "2d1a95b513d596c2c7cbbf3127621265",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -548,77 +548,6 @@
                 }
             ],
             "time": "2025-01-03T16:18:33+00:00"
-        },
-        {
-            "name": "cmgmyr/messenger",
-            "version": "2.32.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cmgmyr/laravel-messenger.git",
-                "reference": "1389a06ace0c197b93682bf61f61448ef399fb39"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cmgmyr/laravel-messenger/zipball/1389a06ace0c197b93682bf61f61448ef399fb39",
-                "reference": "1389a06ace0c197b93682bf61f61448ef399fb39",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/config": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/database": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/support": "^5.5|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
-                "php": "^7.2|^8.0"
-            },
-            "require-dev": {
-                "doctrine/dbal": "^3.1.2|^2.13.3|^4.2",
-                "fakerphp/faker": "^1.16|^1.9.1",
-                "friendsofphp/php-cs-fixer": "^3.2|^2.18",
-                "orchestra/testbench": "^3.0|^4.0|^5.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
-                "phpunit/phpunit": "^8.0|^9.3.3|^10.5|^11.5.3|^12.5.12"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Cmgmyr\\Messenger\\MessengerServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Cmgmyr\\Messenger\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Chris Gmyr",
-                    "email": "cmgmyr@gmail.com",
-                    "homepage": "https://github.com/cmgmyr",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Simple user messaging tool for Laravel",
-            "keywords": [
-                "Messenger",
-                "laravel",
-                "messaging",
-                "user messaging"
-            ],
-            "support": {
-                "issues": "https://github.com/cmgmyr/laravel-messenger/issues",
-                "source": "https://github.com/cmgmyr/laravel-messenger/tree/2.32.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/cmgmyr",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-03-18T03:25:29+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -16228,7 +16157,7 @@
         "ext-dom": "*",
         "ext-zip": "*"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "ext-pcntl": "8.3",
         "ext-posix": "8.3"

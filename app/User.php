@@ -4,8 +4,6 @@ namespace App;
 
 use App\Domains\Exams\Models\Exam;
 use Carbon\Carbon;
-use Cmgmyr\Messenger\Models\Thread;
-use Cmgmyr\Messenger\Traits\Messagable;
 use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -49,7 +47,7 @@ use Laravolt\Avatar\Facade as Avatar;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, SoftDeletes, Notifiable, Messagable, HasFactory;
+    use HasApiTokens, SoftDeletes, Notifiable, HasFactory;
 
     protected $hidden = [
         'password',
@@ -62,13 +60,6 @@ class User extends Authenticatable
         'deleted_at' => 'datetime',
         'email_verified_at'  => 'datetime',
     ];
-
-    /*protected $dates = [
-        'updated_at',
-        'created_at',
-        'deleted_at',
-        'email_verified_at',
-    ];*/
 
     protected $fillable = [
         'username',
@@ -358,11 +349,6 @@ class User extends Authenticatable
                 ->withPivot(['user_id', 'role_id', 'organization_id'])
                 ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
         });
-    }
-
-    public function unreadMessagesCount(): int
-    {
-        return Thread::userUnreadMessagesCount($this->id);
     }
 
     /**

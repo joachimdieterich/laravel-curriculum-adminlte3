@@ -27,7 +27,6 @@
             <div class="kanban-item-tools d-flex flex-row-reverse d-print-none position-absolute">
                 <div class="dropdown">
                     <button v-if="edit_rights || copy_rights || delete_rights"
-                        :id="'kanban-item-dropdown_' + index"
                         class="btn d-print-none"
                         :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
                         type="button"
@@ -37,52 +36,45 @@
                         :aria-label="trans('global.kanbanItem.dropdown')"
                     >
                         <i class="fa fa-ellipsis-v"></i>
-                        <div class="dropdown-menu">
-                            <div v-if="edit_rights">
-                                <button
-                                    :name="'kanban-item-edit_' + index"
-                                    class="dropdown-item"
-                                    @click="edit()"
-                                >
-                                    <i class="fa fa-pencil-alt"></i>
-                                    {{ trans('global.kanbanItem.edit') }}
-                                </button>
-                                <button
-                                    v-permission="'external_medium_create'"
-                                    class="dropdown-item"
-                                    :name="'kanban-item-add-media_' + index"
-                                    @click="addMedia()"
-                                >
-                                    <i class="fa fa-folder-open"></i>
-                                    {{ trans('global.medium.title_singular') }}
-                                </button>
-                            </div>
-        
-                            <div v-if="copy_rights">
-                                <button
-                                    name="kanban-item-copy"
-                                    class="dropdown-item"
-                                    @click="confirmCopy()"
-                                >
-                                    <i class="fa fa-copy"></i>
-                                    {{ trans('global.kanbanItem.copy') }}
-                                </button>
-                            </div>
-        
-                            <div v-if="delete_rights">
-                                <hr class="my-1">
-                                <button
-                                    v-permission="'kanban_delete'"
-                                    class="dropdown-item text-danger"
-                                    :name="'kanban-item-delete_' + index"
-                                    @click="confirmDeletion()"
-                                >
-                                    <i class="fa fa-trash"></i>
-                                    {{ trans('global.kanbanItem.delete') }}
-                                </button>
-                            </div>
-                        </div>
                     </button>
+
+                    <div class="dropdown-menu">
+                        <button v-if="edit_rights"
+                            type="button"
+                            class="dropdown-item"
+                            @click="edit()"
+                        >
+                            <i class="fa fa-pencil-alt"></i>
+                            {{ trans('global.kanbanItem.edit') }}
+                        </button>
+                        <button v-if="edit_rights"
+                            v-permission="'external_medium_create'"
+                            type="button"
+                            class="dropdown-item"
+                            @click="addMedia()"
+                        >
+                            <i class="fa fa-folder-open"></i>
+                            {{ trans('global.medium.title_singular') }}
+                        </button>
+                        <button v-if="copy_rights"
+                            class="dropdown-item"
+                            @click="confirmCopy()"
+                        >
+                            <i class="fa fa-copy"></i>
+                            {{ trans('global.kanbanItem.copy') }}
+                        </button>
+
+                        <hr v-if="delete_rights" class="my-1">
+
+                        <button v-if="delete_rights"
+                            v-permission="'kanban_delete'"
+                            class="dropdown-item text-danger"
+                            @click="confirmDeletion()"
+                        >
+                            <i class="fa fa-trash"></i>
+                            {{ trans('global.kanbanItem.delete') }}
+                        </button>
+                    </div>
                 </div>
                 <button v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
                     class="btn position-relative handle"
@@ -284,7 +276,7 @@ export default {
     },
     computed: {
         textColor: function() {
-            if (this.item.color == "" || this.item.color == null) return;
+            if (this.item.color == "" || this.item.color == null) return '#000';
             return this.$textcolor(this.item.color);
         },
         hidden: function() { // check if item is hidden based on visible-from/to dates

@@ -19,7 +19,7 @@
             :style="'color: ' + textColor"
         >
             <strong>{{ status.title }}</strong>
-            <div class="d-flex" style="gap: 0.25rem;">
+            <div class="d-flex gap-1">
                 <button v-if="$userId == kanban_owner_id
                         || (!status.locked || $userId == status.owner_id)"
                     class="btn position-relative handle d-print-none"
@@ -35,56 +35,51 @@
                         style="right: 2px; bottom: 2px; cursor: not-allowed;"
                     ></i>
                 </button>
-                <button v-if="edit_rights || copy_rights || delete_rights"
-                    :id="'kanbanStatusDropdown_' + status.id"
-                    class="btn d-print-none"
-                    :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    :title="trans('global.kanbanStatus.dropdown')"
-                    :aria-label="trans('global.kanbanStatus.dropdown')"
+                <div v-if="edit_rights || copy_rights || delete_rights"
+                    class="dropdown d-print-none"
                 >
-                    <i class="fas fa-bars"></i>
+                    <button
+                        class="btn"
+                        :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        :title="trans('global.kanbanStatus.dropdown')"
+                        :aria-label="trans('global.kanbanStatus.dropdown')"
+                    >
+                        <i class="fas fa-bars"></i>
+                    </button>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <div>
-                            <div v-if="edit_rights">
-                                <button
-                                    name="kanbanStatusEdit"
-                                    class="dropdown-item py-1"
-                                    @click="openModal()"
-                                >
-                                    <i class="fa fa-pencil-alt"></i>
-                                    {{ trans('global.kanbanStatus.edit') }}
-                                </button>
-                            </div>
-    
-                            <div v-if="copy_rights">
-                                <button
-                                    name="kanbanStatusCopy"
-                                    class="dropdown-item py-1"
-                                    @click="confirmCopy()"
-                                >
-                                    <i class="fa fa-copy"></i>
-                                    {{ trans('global.kanbanStatus.copy') }}
-                                </button>
-                            </div>
-    
-                            <div v-if="delete_rights">
-                                <hr class="my-1">
-                                <button
-                                    v-permission="'kanban_delete'"
-                                    name="kanbanStatusDelete"
-                                    class="dropdown-item py-1 text-red"
-                                    @click="confirmDeletion()"
-                                >
-                                    <i class="fa fa-trash"></i>
-                                    {{ trans('global.kanbanStatus.delete') }}
-                                </button>
-                            </div>
-                        </div>
+                        <button v-if="edit_rights"
+                            type="button"
+                            class="dropdown-item"
+                            @click="openModal()"
+                        >
+                            <i class="fa fa-pencil-alt"></i>
+                            {{ trans('global.kanbanStatus.edit') }}
+                        </button>
+                        <button v-if="copy_rights"
+                            type="button"
+                            class="dropdown-item"
+                            @click="confirmCopy()"
+                        >
+                            <i class="fa fa-copy"></i>
+                            {{ trans('global.kanbanStatus.copy') }}
+                        </button>
+
+                        <hr v-if="delete_rights" class="my-1">
+
+                        <button v-if="delete_rights"
+                            v-permission="'kanban_delete'"
+                            type="button"
+                            class="dropdown-item text-danger"
+                            @click="confirmDeletion()"
+                        >
+                            <i class="fa fa-trash"></i>
+                            {{ trans('global.kanbanStatus.delete') }}
+                        </button>
                     </div>
-                </button>
+                </div>
             </div>
         </div>
     </div>
@@ -219,7 +214,7 @@ export default {
     },
     computed: {
         textColor: function() {
-            if (this.status === null || !this.status.color) return;
+            if (this.status === null || !this.status.color) return '#000';
             return this.$textcolor(this.status.color);
         },
         showWithSearch: function () {

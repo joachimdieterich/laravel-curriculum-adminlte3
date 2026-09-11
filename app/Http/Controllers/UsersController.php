@@ -9,7 +9,6 @@ use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Imports\UsersImport;
 use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
@@ -20,7 +19,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
 
 class UsersController extends Controller
@@ -286,25 +284,6 @@ class UsersController extends Controller
         } else {
             return ($user->medium_id !== null) ? '/media/'.$user->medium_id : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64();
         }
-    }
-
-    public function createImport()
-    {
-        abort_unless(\Gate::allows('user_create'), 403);
-
-        return view('users.import');
-    }
-
-    public function storeImport(Request $request)
-    {
-        abort_unless(\Gate::allows('user_create'), 403);
-
-        $import = $this->validateImportRequest($request);
-
-        $medium = Medium::find($import['medium_id']);
-        Excel::import(new UsersImport($request), storage_path('app'.$medium->path.$medium->medium_name));
-
-        return view('users.import');
     }
 
     public function dsgvoExport($id)

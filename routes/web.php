@@ -418,8 +418,6 @@ Route::group(['middleware' => 'auth'], function () {
     /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
-    Route::get('users/import', 'UsersController@createImport')->name('users.createImport');
-    Route::post('users/import', 'UsersController@storeImport')->name('users.storeImport');
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::get('users', 'UsersController@index')->name('users.index');
     Route::get('users/{user}', 'UsersController@show')->name('users.show');

@@ -37,7 +37,6 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^4.0",
         "laravolt/avatar": "^6.1",
-        "maatwebsite/excel": "^3.1",
         "maize-tech/laravel-markable": "^2.0",
         "mews/purifier": "^3.4",
         "profburial/wkhtmltopdf-binaries-osx": "0.12.1",

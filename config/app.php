@@ -204,10 +204,6 @@ return [
          */
         Barryvdh\Snappy\ServiceProvider::class,
         /*
-         *  Laravel Excel
-         */
-        Maatwebsite\Excel\ExcelServiceProvider::class,
-        /*
          * Image Intervention
          */
         Intervention\Image\Laravel\ServiceProvider::class,
@@ -243,7 +239,6 @@ return [
         'Datatables'   => Yajra\Datatables\Facades\Datatables::class,
         'Eloquent'     => Illuminate\Database\Eloquent\Model::class,
         'Event'        => Illuminate\Support\Facades\Event::class,
-        'Excel'        => Maatwebsite\Excel\Facades\Excel::class,
         'File'         => Illuminate\Support\Facades\File::class,
         'Gate'         => Illuminate\Support\Facades\Gate::class,
         'Hash'         => Illuminate\Support\Facades\Hash::class,

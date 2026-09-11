@@ -1,10 +1,8 @@
 <template>
     <div class="position-relative">
         <div
-            id="objective-tabs-overlay"
-            class="overlay flex-column justify-content-center align-items-center"
-            style="background-color: #fff8 !important; display: flex; z-index: 150;"
-            @click.stop
+            ref="overlay"
+            class="overlay flex-column"
         >
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             {{ trans('global.loading') }}
@@ -55,19 +53,18 @@
                 :placeholder="trans('global.curricula_cross_references')"
             />
         </div>
+
         <hr class="mt-0">
+
         <div class="tab-content">
             <div v-for="(type, index) in objective_types"
                 :id="'Type-' + type.id"
                 class="tab-pane fade"
                 :class="index === type_order[0] && 'show active'"
                 role="tabpanel"
-                :aria-labelledby="type.id + '-tab'"
+                :aria-labelledby="'tab-' + type.id"
             >
-                <div
-                    class="d-flex flex-column"
-                    style="gap: 10px;"
-                >
+                <div class="d-flex flex-column gap-2">
                     <div v-for="terminal in type.terminal_objectives"
                         :id="'terminalObjective_' + terminal.id"
                         class="objectives"
@@ -90,8 +87,7 @@
 
             <div v-if="settings.edit"
                 v-permission="'curriculum_edit'"
-                class="objectives"
-                style="margin: 10px 0px;"
+                class="objectives mt-2"
             >
                 <ObjectiveBox
                     type="createterminal"
@@ -134,10 +130,13 @@ export default {
             type: Object,
             default: null,
         },
+        settings: {
+            type: Object,
+            default: null,
+        },
     },
     data() {
         return {
-            settings: {},
             showConfirm: false,
             delete_objective: null,
             delete_title: null,
@@ -194,8 +193,7 @@ export default {
         },
         handleTypeMoved() {
             // active-state needs to be reset, since it changes to a new index
-            this.$el.querySelector('.nav-link.active').classList.remove('active');
-            document.getElementById(this.activeTypeId + '-tab').classList.add('active');
+            this.$el.querySelector('#tab-' + this.activeTypeId).click();
             // send new order to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", {
                 objective_type_order: this.type_order.map(index => this.objective_types[index].id),
@@ -210,7 +208,7 @@ export default {
             this.type_order.push(this.type_order.length); // index-based
             this.activeTypeId = type.id;
             this.$nextTick(() => { // wait for DOM to be updated
-                $('#' + type.id + '-tab')[0].click(); // switch to new tab
+                this.$el.querySelector('#tab-' + type.id).click();
                 this.handleTypeMoved(); // send new order to the server
             });
         },
@@ -218,7 +216,7 @@ export default {
             // switch tab first, if the current tab is the one to be removed
             if (changeTab && this.activeTypeId === type.id) {
                 this.activeTypeId = this.objective_types[this.type_order[0]].id;
-                $('#' + this.activeTypeId + '-tab')[0].click();
+                this.$el.querySelector('#tab-' + this.activeTypeId).click();
             }
 
             let index = this.objective_types.findIndex(t => t.id === type.id);
@@ -280,7 +278,6 @@ export default {
         },
     },
     async mounted() {
-        this.settings = this.$attrs.settings;
         await this.loaderEvent();
 
         // wait until data is loaded to show the first tab
@@ -295,15 +292,9 @@ export default {
                 this.curriculum.objective_type_order
                 ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
             )[0];
-
-            let firstTab = this.objective_types[this.type_order[0]].id;
-            // the 'active'-state does only need to be set programmatically for the initial tab
-            // the rest will be handled by the default nav-tabs behaviour
-            // this.$el.querySelector('#tab-' + firstTab).classList.add('active');
-            // bootstrap.Tab.getInstance('#tab-' + firstTab).show(); // doing a click() would also work, but the transition seems to be smoother this way
         }
 
-        $('#objective-tabs-overlay').hide();
+        this.$refs.overlay.style.display = 'none';
 
         /////////////////////////////////////////////////////
         //////////////// terminal objectives ////////////////
@@ -322,9 +313,7 @@ export default {
 
         this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
             let type = this.objective_types.find(
-                function(type){
-                    return type.id === updatedTerminal.objective_type_id;
-                }
+                type => type.id === updatedTerminal.objective_type_id
             );
             // objective-type was changed and the new type was not in use before
             if (type === undefined) {
@@ -372,7 +361,7 @@ export default {
                     this.removeType(old_type, false);
                     this.activeTypeId = type.id;
                     this.$nextTick(() => {
-                        $('#' + this.activeTypeId + '-tab')[0].click();
+                        this.$el.querySelector('#tab-' + this.activeTypeId).click();
                     });
                 }
             } else {
@@ -449,7 +438,6 @@ export default {
         this.$eventHub.on('objective-deleted', (deletedObjective) => {
             this.removeObjective(deletedObjective);
         });
-
 
         /////////////////////////////////////////////////////
         ///////////////////////// curriculum ////////////////

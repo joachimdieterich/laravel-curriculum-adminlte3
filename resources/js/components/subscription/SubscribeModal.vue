@@ -113,7 +113,7 @@
                     <div>
                         <button
                             type="button"
-                            class="btn btn-sm btn-outline-success pull-right my-2"
+                            class="btn btn-sm btn-outline-success my-2 float-end"
                             :disabled="nameToken.trim() == ''"
                             @click="createUserToken()"
                         >

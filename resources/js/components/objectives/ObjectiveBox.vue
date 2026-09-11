@@ -52,9 +52,9 @@
                 </div>
             </div>
     
-            <Footer v-if="settings?.achievements && objective.achievements !== undefined"
+            <AchievementIndicator v-if="settings?.achievements && objective.achievements !== undefined"
+                v-permission="'achievement_create'"
                 :objective="objective"
-                :textcolor="textcolor"
                 :type="type"
                 :settings="settings"
             />
@@ -63,8 +63,7 @@
 </template>
 <script>
 import Header from './Header.vue';
-import Footer from './Footer.vue';
-import {useGlobalStore} from "../../store/global";
+import AchievementIndicator from './AchievementIndicator.vue';
 
 export default {
     props: {
@@ -104,9 +103,6 @@ export default {
             type: Number,
             default: null,
         },
-    },
-    setup() {
-        return { globalStore: useGlobalStore() }
     },
     data() {
         return {
@@ -183,14 +179,7 @@ export default {
             } else {
                 this.visibility = 100;
             }
-        }
-    },
-    created: function() {
-        this.$eventHub.on('deleteObjective', function(deletedObjective) {
-            if (this.objective === deletedObjective) {
-                this.deleteEvent();
-            }
-        }.bind(this));
+        },
     },
     mounted() {
         this.$nextTick(() => {
@@ -199,7 +188,7 @@ export default {
     },
     components: {
         Header,
-        Footer,
+        AchievementIndicator,
     },
 }
 </script>

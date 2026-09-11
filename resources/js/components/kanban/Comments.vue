@@ -41,7 +41,7 @@
                         @mouseover="hover = comment.id"
                         @mouseleave="hover = false"
                     >
-                        <div class="d-flex align-items-center pull-right">
+                        <div class="d-flex align-items-center float-end">
                             <button v-if="($userId == comment.user.id && $userId != 8)
                                     || $userId == model.owner_id
                                     || checkPermission('is_admin')
@@ -56,7 +56,7 @@
                             <Reaction
                                 :model="comment"
                                 :websocket="websocket"
-                                class="pull-right"
+                                class="float-end"
                                 reaction="like"
                                 url="/kanbanItemComments"
                             />

@@ -20,7 +20,7 @@
                     <a :href="'/courses/' + entry.course_id">
                         <span class="font-weight-bold">{{ entry.title }}</span>
                         <span v-if="isVisible.progress"
-                            class="pull-right w-50"
+                            class="float-end w-50"
                         >
                             <ProgressBar
                                 :achievements="entry.achievements"

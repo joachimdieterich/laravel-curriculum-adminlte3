@@ -3,7 +3,7 @@
     flex: 1 1 auto;
     flex-wrap: wrap;
     flex-direction: row;
-    gap: 10px;
+    gap: 0.5rem;
 
     .objective {
         display: flex;
@@ -13,7 +13,7 @@
         width: 200px;
         padding: 0.5rem;
         border: 1px solid #d2d6de;
-        border-radius: 10px;
+        border-radius: 0.5rem;
 
         .add-objective {
             padding: 25px;

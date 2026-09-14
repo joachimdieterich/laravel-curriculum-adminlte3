@@ -1,0 +1,1 @@
+The storage/fonts dir is needed for the dompdf package

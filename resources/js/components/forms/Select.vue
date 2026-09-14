@@ -1,78 +1,60 @@
 <template>
-        <slot name="pre-dropdown"></slot>
-        <v-select ref="instance"
-                  :options="options"
-                  :filterable="false"
-                  :multiple="multiple"
-                  :placeholder="placeholder"
-                  :label="label"
-                  v-model="selectedOption"
-                  class="v-select-overflow"
-                  @search="setFetchOptions"
-                  @open="onOpen"
-                  @close="onClose"
-                  @update:model-value="(selectedOption) => {
-                      this.selectedOption = selectedOption;
-                      if (clearSearchOnSelect()) {
-                          this.selectedOption = undefined
-                      }
+    <slot name="label"></slot>
+    <v-select
+        ref="instance"
+        :input-id="inputId"
+        class="v-select-overflow"
+        :options="options"
+        :label="label"
+        :loading="loading"
+        :filterable="false"
+        :multiple="multiple"
+        :searchable="searchable"
+        :placeholder="trans(placeholder)"
+        v-model="selectedOption"
+        :clear-search-on-blur="clearSearchOnSelect"
+        :dropdown-should-open="instance => {
+            return searchLengthMinium === 0
+                ? instance.open && selectedOption !== null || (instance.open && !loading)
+                : search.length >= searchLengthMinium && !loading;
+        }"
+        @open="onOpen"
+        @close="onClose"
+        @search="setFetchOptions"
+        @update:model-value="selectedOption => {
+            selectedOption = selectedOption;
+            if (clearSearchOnSelect()) {
+                selectedOption = undefined
+            }
 
-                      return this.$emit('selectedValue', selectedOption);
-                  }"
-                  :dropdown-should-open="(instance) => {
-                      return this.searchLengthMinium === 0
-                      ? instance.open && selectedOption !== null || (instance.open && !this.loading)
-                      : search.length >= this.searchLengthMinium && !this.loading;
-                  }"
-                  :clear-search-on-blur="clearSearchOnSelect"
-                  :loading="loading"
-                  :searchable="searchable"
-        >
-            <template v-slot:option="option">
-                <slot name="option" :option="option"></slot>
-            </template>
-            <template #list-footer>
-                <li v-show="hasNextPage" ref="load" class="v-select-loader">
-                    {{ trans('global.loading') }}
-                </li>
-            </template>
-            <template #no-options="">
-                <div v-show="!hasNextPage">
-                    {{ trans('global.cselect.no_results') }}
-                </div>
-            </template>
-        </v-select>
+            $emit('selectedValue', selectedOption);
+        }"
+    >
+        <slot name="option" :option="option"></slot>
+        <slot name="list-footer">
+            <li v-show="hasNextPage" ref="load" class="v-select-loader">
+                {{ trans('global.loading') }}
+            </li>
+        </slot>
+        <slot name="no-options">
+            <div v-show="!hasNextPage">
+                {{ trans('global.cselect.no_results') }}
+            </div>
+        </slot>
+    </v-select>
 </template>
-
 <script>
-import {useToast} from "vue-toastification";
 import Avatar from "../uiElements/Avatar.vue";
 
 export default {
     name: "CSelect",
-    components: {Avatar},
-    emits: [
-        'selectedValue'
-    ],
-    setup() {
-        const toast = useToast();
-
-        return {
-            toast,
-        }
-    },
+    components: { Avatar },
+    emits: ['selectedValue'],
     props: {
-        id: {
-            type: String,
-            default: 'c-select',
-            required: true,
-        },
-
         // v-select controlling
         groupedOptions: {
             type: Boolean,
-            required: false,
-            default: false
+            default: false,
         },
         multiple: {
             type: Boolean,
@@ -86,17 +68,18 @@ export default {
             type: Function,
             default: function () {
                 return false;
-            }
+            },
         },
 
         // frontend
+        inputId: { type: String },
         label: {
             type: String,
             default: 'label',
         },
-        placeholderKey: {
+        placeholder: {
             type: String,
-            default: 'pleaseSelect',
+            default: 'global.pleaseSelect',
         },
 
         // search
@@ -112,20 +95,20 @@ export default {
             type: Function,
             default: function (getData) {
                 return getData.results;
-            }
+            },
         },
         handleFetchedSelectedFetchData: {
             type: Function,
             default: function (getData) {
                 return getData[0];
-            }
+            },
         },
         searchLengthMinium: {
             type: Number,
-            default: 0
+            default: 0,
         },
         selected: {
-            default: undefined
+            default: undefined,
         },
     },
     data() {
@@ -140,7 +123,6 @@ export default {
             loading: false,
             selectedOption: null,
             gotEmptyOrNotEnoughFetchResult: false,
-            selectedLabel: '',
         }
     },
     mounted() {
@@ -151,9 +133,6 @@ export default {
         }
     },
     computed: {
-        placeholder() {
-            return window.trans.global[this.placeholderKey];
-        },
         hasNextPage() {
             return this.options.length <= (this.page * this.limit) && !this.gotEmptyOrNotEnoughFetchResult
         },
@@ -165,9 +144,6 @@ export default {
 
             return fullUrl;
         },
-        fullSelectedUrl() {
-            return this.url + '?selected=' + this.selected;
-        }
     },
     methods: {
         handleFetchError(error) {
@@ -204,23 +180,23 @@ export default {
                 .catch(this.handleFetchError);
         },
         async fetchSelected() {
-            return axios.get(this.fullSelectedUrl)
+            return axios.get(this.url + '?selected=' + this.selected)
                 .then((res) => {
-                    this.selectedOption =  this.handleFetchedSelectedFetchData(res.data);
+                    this.selectedOption = this.handleFetchedSelectedFetchData(res.data);
                 })
                 .catch(this.handleFetchError);
         },
         setFetchOptions (search) {
             this.search = search;
 
-            // Only trigger GET-Request if search wasn't triggered again in the last 200ms
+            // Only trigger GET-Request if search wasn't triggered again in the last 300ms
             if (search.length >= this.searchLengthMinium) {
                 clearTimeout(this.fetchTimer);
 
                 this.loading = true;
                 this.fetchTimer = setTimeout(async () => {
                     await this.fetchOptions();
-                }, 200);
+                }, 300);
             }
         },
         async onOpen() {
@@ -237,7 +213,7 @@ export default {
             if (isIntersecting) {
                 const ul = target.offsetParent;
                 const scrollTop = target.offsetParent.scrollTop;
-                await this.fetchOptions( true);
+                await this.fetchOptions(true);
                 ul.scrollTop = scrollTop;
             }
         },

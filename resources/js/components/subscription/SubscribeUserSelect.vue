@@ -10,10 +10,9 @@
                   model="user"
                   url="/users/list/subscription"
                   @selectedValue="(selectedOption) => {return this.$emit('selectedValue', selectedOption);}"
-                  :multiple="false"
                   :grouped-options="true"
                   :search-length-minium="3"
-                  placeholderKey="shareSearch"
+                  placeholder="global.shareSearch"
                   search-query-parameter="search"
                   :handle-fetched-data="(data) => {
                   return data;

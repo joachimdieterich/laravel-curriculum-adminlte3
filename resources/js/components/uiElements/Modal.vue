@@ -183,7 +183,6 @@
 import Select2 from "../forms/Select2.vue";
 import NewMediumForm from "../media/NewMediumForm.vue";
 import FontAwesomePicker from "./FontAwesomePicker.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'Modal',
@@ -291,9 +290,6 @@ export default {
             default: false,
             description: "Disables the save button (needed if a required non-title field isn't filled)",
         },
-    },
-    setup() {
-        return { globalStore: useGlobalStore() };
     },
     data() {
         return {

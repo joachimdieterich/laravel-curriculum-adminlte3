@@ -17,7 +17,6 @@
             <div class="mt-3">
                 <Editor
                     :id="'description_' + component_id"
-                    :name="'description_' + component_id"
                     licenseKey="gpl"
                     :init="tinyMCE"
                     v-model="form.description"
@@ -28,7 +27,6 @@
         <template #permissions>
             <VueDatePicker
                 id="due_date"
-                name="due_date"
                 class="mb-3"
                 v-model="form.due_date"
                 format="dd.MM.yyyy HH:mm"

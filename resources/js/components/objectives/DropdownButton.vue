@@ -63,7 +63,7 @@ export default {
             this.globalStore.showModal(this.type + '-objective-modal', this.objective);
         },
         moveObjective() {
-            this.globalStore.showModal(this.type + '-objective-modal', this.objective);
+            this.globalStore.showModal('move-' + this.type + '-objective-modal', this.objective);
         },
         emitDeleteEvent(entry) {
             this.$eventHub.emit('confirm-objective-delete', {

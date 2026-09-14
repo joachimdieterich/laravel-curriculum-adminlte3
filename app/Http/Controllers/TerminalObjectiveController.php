@@ -27,7 +27,7 @@ class TerminalObjectiveController extends Controller
      * @param Request $request
      * @return Response|TerminalObjective
      */
-    public function store(Request $request): Response|TerminalObjective
+    public function store(Request $request): TerminalObjective
     {
         $curriculum = Curriculum::find(request('curriculum_id'));
         abort_unless($curriculum->isAccessible(), 403);
@@ -38,11 +38,7 @@ class TerminalObjectiveController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
-        if (request()->wantsJson()) {
-            return TerminalObjective::with(['enablingObjectives', 'type'])->find($terminalObjective->id);
-        }
-
-        return response(null, 201);
+        return TerminalObjective::with(['enablingObjectives', 'type'])->find($terminalObjective->id);
     }
 
     /**
@@ -124,7 +120,7 @@ class TerminalObjectiveController extends Controller
     /**
      * do calculations when objective is moved to another curriculum
      *
-     * @param TerminalObjective $old_objective
+     * @param TerminalObjective $objective
      * @param $request
      */
     public function moveToCurriculum($objective, $request)

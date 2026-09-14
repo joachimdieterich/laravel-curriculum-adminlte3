@@ -29,11 +29,11 @@
                 style="top: 8px; right: 16px;"
             >
                 <div v-if="edit_rights || copy_rights || delete_rights"
-                    :id="'kanbanItemDropdown_' + index"
-                    class="float-right py-0 px-2 pointer"
-                    style="background-color: transparent;"
-                    data-toggle="dropdown"
-                    aria-expanded="false"
+                     :id="'kanbanItemDropdown_' + index"
+                     class="float-right py-0 px-2 pointer"
+                     style="background-color: transparent;"
+                     data-toggle="dropdown"
+                     aria-expanded="false"
                 >
                     <i class="fas fa-ellipsis-v"
                        :style="{ 'text-color': textColor }"
@@ -88,8 +88,8 @@
                     </div>
                 </div>
                 <div v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
-                    class="float-right py-0 px-1 mx-1 handle pointer"
-                    @click.stop
+                     class="float-right py-0 px-1 mx-1 handle pointer"
+                     @click.stop
                 >
                     <span class="position-relative"
                           :style="{ 'text-color': textColor }">
@@ -118,21 +118,21 @@
                 </div>
             </div>
             <MediaCarousel v-if="item.media_subscriptions.length > 0"
-                class="clearfix"
-                :subscriptions="item.media_subscriptions"
-                :width="width - 16"
+                           class="clearfix"
+                           :subscriptions="item.media_subscriptions"
+                           :width="width - 16"
             />
         </div>
 
         <div v-if="item.due_date || (item.visibility && (item.visible_from || item.visible_until))"
-            class="card-footer px-3 py-2"
-            :class="{ 'border-top-0': item.description === null }"
+             class="card-footer px-3 py-2"
+             :class="{ 'border-top-0': item.description === null }"
         >
             <div class="w-100">
                 <div v-if="item.due_date">
                     <div class="due-date pull-left">{{ trans('global.due_at') }}: {{ postDate() }}</div>
                     <span v-if="expired"
-                        class="pull-right badge badge-secondary"
+                          class="pull-right badge badge-secondary"
                     >
                         {{ trans('global.kanbanItem.expired') }}
                     </span>
@@ -144,7 +144,7 @@
                         <span v-if="new Date() > new Date(item.visible_from)">{{ trans('global.timeTo') }} {{ diffForHumans(item.visible_until) }}</span>
                     </div>
                     <span v-if="hidden"
-                        class="pull-right badge badge-secondary"
+                          class="pull-right badge badge-secondary"
                     >
                         {{ trans('global.hidden') }}
                     </span>
@@ -164,29 +164,29 @@
                 data-toggle="tooltip"
             />
             <Avatar v-if="editors != null"
-                v-for="(editor_user, index) in editorsWithoutOwner"
-                :key="item.id + '_editor_' + index"
-                :title="editor_user.firstname + ' ' + editor_user.lastname"
-                :username="editor_user.username"
-                :firstname="editor_user.firstname"
-                :lastname="editor_user.lastname"
-                :size="25"
-                class="contacts-list-img"
-                data-toggle="tooltip"
+                    v-for="(editor_user, index) in editorsWithoutOwner"
+                    :key="item.id + '_editor_' + index"
+                    :title="editor_user.firstname + ' ' + editor_user.lastname"
+                    :username="editor_user.username"
+                    :firstname="editor_user.firstname"
+                    :lastname="editor_user.lastname"
+                    :size="25"
+                    class="contacts-list-img"
+                    data-toggle="tooltip"
             />
 
             <div class="d-flex ml-auto">
                 <button v-if="commentable"
-                    class="btn btn-icon px-2 py-1 mr-2"
-                    :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
-                    data-toggle="collapse"
-                    :data-target="'#comments_' + item.id"
-                    aria-expanded="false"
-                    @click="toggleComments()"
+                        class="btn btn-icon px-2 py-1 mr-2"
+                        :title="show_comments ? trans('global.hide_comments') : trans('global.show_comments')"
+                        data-toggle="collapse"
+                        :data-target="'#comments_' + item.id"
+                        aria-expanded="false"
+                        @click="toggleComments()"
                 >
                     <i class="far fa-comments"></i>
                     <span v-if="item.comments.length > 0"
-                        class="comment-count bg-success"
+                          class="comment-count bg-success"
                     >
                         {{ item.comments.length }}
                     </span>
@@ -201,10 +201,10 @@
         </div>
 
         <Comments v-if="commentable"
-            :websocket="websocket"
-            :comments="item.comments"
-            :model="item"
-            :kanban_owner_id="kanban_owner_id"
+                  :websocket="websocket"
+                  :comments="item.comments"
+                  :model="item"
+                  :kanban_owner_id="kanban_owner_id"
         />
     </div>
 </template>
@@ -276,7 +276,7 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            currentItem : {},
+            currentItem: {},
             edit_rights: false,
             copy_rights: false,
             delete_rights: false,
@@ -289,11 +289,11 @@ export default {
         };
     },
     computed: {
-        textColor: function() {
+        textColor: function () {
             if (this.item.color == "" || this.item.color == null) return;
             return this.$textcolor(this.item.color, '#333333');
         },
-        hidden: function() { // check if item is hidden based on visible-from/to dates
+        hidden: function () { // check if item is hidden based on visible-from/to dates
             return (this.item.visible_from != null || this.item.visible_until != null)
                 && (new Date() < new Date(this.item.visible_from) || new Date() > new Date(this.item.visible_until));
         }
@@ -450,7 +450,7 @@ export default {
         this.stopWebsocket();
     },
     watch: {
-        'item.description': function() {
+        'item.description': function () {
             this.$nextTick(() => {
                 MathJax.typeset();
             });
@@ -471,6 +471,7 @@ export default {
     font-size: 12px;
     font-weight: 600;
 }
+
 .badge {
     border: 1px solid #dc3545;
     background-color: #fff;
@@ -479,11 +480,15 @@ export default {
     line-height: 11px;
     vertical-align: middle;
 }
+
 .card-header-title {
     transition: filter 0.25s;
     padding-right: 3.5rem;
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
 }
-.card-header-title:hover { filter: brightness(90%); }
+
+.card-header-title:hover {
+    filter: brightness(90%);
+}
 </style>

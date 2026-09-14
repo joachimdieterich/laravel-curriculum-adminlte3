@@ -28,9 +28,6 @@ class KanbanStatus extends Model
 
     /**
      * Prepare a date for array / JSON serialization.
-     *
-     * @param DateTimeInterface $date
-     * @return string
      */
     protected function serializeDate(DateTimeInterface $date): string
     {
@@ -54,12 +51,10 @@ class KanbanStatus extends Model
 
     /**
      * Accessor that mimics Eloquent dynamic property.
-     *
-     * @return Collection
      */
     public function getEditorsAttribute(): Collection
     {
-        if (!$this->relationLoaded('editors')) {
+        if (! $this->relationLoaded('editors')) {
             $layers = User::whereIn('id', $this->editors_ids)->get();
 
             $this->setRelation('editors', $layers);
@@ -70,8 +65,6 @@ class KanbanStatus extends Model
 
     /**
      * Access editors relation query.
-     *
-     * @return Builder
      */
     public function editors(): Builder
     {
@@ -83,14 +76,13 @@ class KanbanStatus extends Model
      */
     public function getEditorsIdsAttribute($commaSeparatedIds): array
     {
-        return explode(',', $commaSeparatedIds);
+        return explode(',', $commaSeparatedIds ?? '');
     }
 
     /**
      * Mutator for layer_ids property.
      *
-     * @param array|string $ids
-     * @return void
+     * @param  array|string  $ids
      */
     public function setEditorsIdsAttribute($ids): void
     {
@@ -110,7 +102,7 @@ class KanbanStatus extends Model
         return $this->kanban->isEditable($user, $sharing_token);
     }
 
-    public function withRelations(): self|null
+    public function withRelations(): ?self
     {
         return $this
             ->with([

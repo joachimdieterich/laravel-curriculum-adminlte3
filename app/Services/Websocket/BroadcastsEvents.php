@@ -2,7 +2,8 @@
 
 namespace App\Services\Websocket;
 
-use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Database\Eloquent\BroadcastableModelEventOccurred;
 
 trait BroadcastsEvents
 {
@@ -10,12 +11,12 @@ trait BroadcastsEvents
 
     public function broadcastOn($event): array
     {
-        if (!config('broadcasting.active')) {
+        if (! config('broadcasting.active')) {
             return [];
         }
 
         return [
-            new PresenceChannel($this->broadcastChannel())
+            new Channel($this->broadcastChannel()),
         ];
     }
 
@@ -24,5 +25,12 @@ trait BroadcastsEvents
         return [
             'model' => $event === 'deleted' ? $this : $this->withRelations(),
         ];
+    }
+
+    protected function newBroadcastableEvent(string $event): BroadcastableModelEventOccurred
+    {
+        return new BroadcastableModelEventOccurred(
+            $this, $event
+        )->dontBroadcastToCurrentUser();
     }
 }

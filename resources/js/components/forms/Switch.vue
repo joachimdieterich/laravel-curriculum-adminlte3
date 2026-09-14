@@ -5,8 +5,8 @@
             class="form-check-input"
             type="checkbox"
             role="switch"
-            :checked="checked"
-            @change="$emit('update:checked', $event.target.checked)"
+            :checked="modelValue"
+            @change="$emit('update:modelValue', $event.target.checked)"
             switch
         >
         <label
@@ -20,7 +20,7 @@
 <script>
 export default {
     name: "Switch",
-    emits: ['update:checked'],
+    emits: ['update:modelValue'],
     props: {
         id: {
             type: String,
@@ -31,7 +31,7 @@ export default {
             required: true,
             description: 'translation-key to describe the switch'
         },
-        checked: {
+        modelValue: {
             type: Boolean,
             default: false,
         },

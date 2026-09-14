@@ -24,12 +24,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
-use LaravelIdea\Helper\App\_IH_User_QB;
 use Laravolt\Avatar\Facade as Avatar;
 
 /**
  *   @OA\Schema(
  *      required={"id", "username", "firstname", "lastname", "email", "password"},
+ *
  *      @OA\Xml(name="User"),
  *
  *      @OA\Property( property="id", type="integer"),
@@ -49,7 +49,7 @@ use Laravolt\Avatar\Facade as Avatar;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, SoftDeletes, Notifiable, Messagable, HasFactory;
+    use HasApiTokens, HasFactory, Messagable, Notifiable, SoftDeletes;
 
     protected $hidden = [
         'password',
@@ -57,10 +57,10 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
-        'deleted_at' => 'datetime',
-        'email_verified_at'  => 'datetime',
+        'updated_at'        => 'datetime',
+        'created_at'        => 'datetime',
+        'deleted_at'        => 'datetime',
+        'email_verified_at' => 'datetime',
     ];
 
     /*protected $dates = [
@@ -90,9 +90,6 @@ class User extends Authenticatable
 
     /**
      * Prepare a date for array / JSON serialization.
-     *
-     * @param DateTimeInterface $date
-     * @return string
      */
     protected function serializeDate(DateTimeInterface $date): string
     {
@@ -161,12 +158,12 @@ class User extends Authenticatable
 
     public function getEmailVerifiedAtAttribute($value): ?string
     {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format').' '.config('panel.time_format')) : null;
+        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
     }
 
     public function setEmailVerifiedAtAttribute($value): void
     {
-        $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('panel.date_format').' '.config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
+        $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('panel.date_format') . ' ' . config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
     }
 
     public function setPasswordAttribute($input): void
@@ -189,9 +186,9 @@ class User extends Authenticatable
     public function currentGroups(): BelongsToMany
     {
         return $this->belongsToMany('App\Group', 'group_user')
-                    ->where('period_id', $this->current_period_id)
-                    ->where('organization_id', $this->current_organization_id)
-                    ->withTimestamps();
+            ->where('period_id', $this->current_period_id)
+            ->where('organization_id', $this->current_organization_id)
+            ->withTimestamps();
     }
 
     public function groups(): BelongsToMany
@@ -199,7 +196,7 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Group', 'group_user')->withTimestamps();
     }
 
-    public function groupsWithCurriculum($curriculum_id): Collection //todo: used? -> better groups()->with('curricula')
+    public function groupsWithCurriculum($curriculum_id): Collection // todo: used? -> better groups()->with('curricula')
     {
         return DB::table('groups')
             ->join('group_user', 'groups.id', '=', 'group_user.group_id')
@@ -345,7 +342,7 @@ class User extends Authenticatable
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'organization_role_users')
-                ->withPivot(['user_id', 'role_id', 'organization_id']);
+            ->withPivot(['user_id', 'role_id', 'organization_id']);
     }
 
     /**
@@ -353,7 +350,7 @@ class User extends Authenticatable
      */
     public function role(): ?Model
     {
-        return once(function() {
+        return once(function () {
             return $this->belongsToMany(Role::class, 'organization_role_users')
                 ->withPivot(['user_id', 'role_id', 'organization_id'])
                 ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
@@ -405,14 +402,14 @@ class User extends Authenticatable
     public function currentRole()
     {
         return $this->roles()
-                ->where('user_id', '=', $this->id)
-                ->where('organization_id', $this->current_organization_id)
-                ->get();
+            ->where('user_id', '=', $this->id)
+            ->where('organization_id', $this->current_organization_id)
+            ->get();
     }
 
     public function users(): User|BelongsToMany
     {
-        return (auth()->user()->role()->id == 1) ? User::select('id', 'username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id', 'username', 'firstname', 'lastname', 'deleted_at'); //todo, get all users of all organizations not only current
+        return (auth()->user()->role()->id == 1) ? User::select('id', 'username', 'firstname', 'lastname') : Organization::where('id', auth()->user()->current_organization_id)->get()->first()->users()->select('id', 'username', 'firstname', 'lastname', 'deleted_at'); // todo, get all users of all organizations not only current
     }
 
     protected function avatar(): Attribute
@@ -426,17 +423,19 @@ class User extends Authenticatable
 
     public function getAvatarAttribute(): string
     {
-        return ($this->medium_id !== null) ? '/media/'.$this->medium_id : Avatar::create($this->fullName())->toBase64();
+        return ($this->medium_id !== null) ? '/media/' . $this->medium_id : Avatar::create($this->fullName())->toBase64();
     }
 
     public function mayAccessUser(User $user, $context = 'organization'): bool
     {
-        if (is_admin()) return true;
+        if (is_admin()) {
+            return true;
+        }
 
         switch ($context) {
             case 'organization':
                 return $user->organizations()->pluck('organizations.id')->contains($this->current_organization_id);
-            //Todo: check for groups
+                // Todo: check for groups
             default: return false;
         }
     }

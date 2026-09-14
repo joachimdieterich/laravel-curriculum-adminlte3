@@ -113,15 +113,15 @@
                 </div>
             </div>
             <MediaCarousel v-if="item.media_subscriptions.length > 0"
-                class="clearfix"
-                :subscriptions="item.media_subscriptions"
-                :width="width - 16"
+                           class="clearfix"
+                           :subscriptions="item.media_subscriptions"
+                           :width="width - 16"
             />
         </div>
 
         <div v-if="item.due_date || (item.visibility && (item.visible_from || item.visible_until))"
-            class="kanban-item-info d-flex flex-column bg-gray-light px-3 py-2"
-            :class="{ 'border-top-0': item.description === null }"
+             class="kanban-item-info d-flex flex-column bg-gray-light px-3 py-2"
+             :class="{ 'border-top-0': item.description === null }"
         >
             <div v-if="item.due_date"
                 class="d-flex align-items-center"
@@ -172,7 +172,7 @@
                     class="contacts-list-img"
                     data-toggle="tooltip"
                 />
-    
+
                 <div class="d-flex ml-auto">
                     <button v-if="commentable"
                         class="btn btn-icon px-2 py-1 mr-2"
@@ -274,7 +274,7 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            currentItem : {},
+            currentItem: {},
             edit_rights: false,
             copy_rights: false,
             delete_rights: false,
@@ -287,11 +287,11 @@ export default {
         };
     },
     computed: {
-        textColor: function() {
+        textColor: function () {
             if (this.item.color == "" || this.item.color == null) return;
             return this.$textcolor(this.item.color, '#333333');
         },
-        hidden: function() { // check if item is hidden based on visible-from/to dates
+        hidden: function () { // check if item is hidden based on visible-from/to dates
             return (this.item.visible_from != null || this.item.visible_until != null)
                 && (new Date() < new Date(this.item.visible_from) || new Date() > new Date(this.item.visible_until));
         }
@@ -448,7 +448,7 @@ export default {
         this.stopWebsocket();
     },
     watch: {
-        'item.description': function() {
+        'item.description': function () {
             this.$nextTick(() => {
                 MathJax.typeset();
             });

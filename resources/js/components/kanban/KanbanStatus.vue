@@ -4,9 +4,9 @@
         :style="{ backgroundColor: status?.color }"
     >
         <div v-if="newStatus"
-            id="kanbanStatusCreate"
-            class="d-flex align-items-center pointer"
-            @click="edit()"
+             id="kanbanStatusCreate"
+             class="d-flex align-items-center pointer"
+             @click="edit()"
         >
             <span class="text-secondary btn px-1 py-0">
                 <i class="fa fa-plus"></i>
@@ -15,14 +15,14 @@
         </div>
         <div v-else
              v-show="showWithSearch"
-            class="d-flex align-items-center"
-            :style="'color:' + $textcolor(status.color)"
+             class="d-flex align-items-center"
+             :style="'color:' + $textcolor(status.color)"
         >
             <div v-if="edit_rights || copy_rights || delete_rights"
-                :id="'kanbanStatusDropdown_' + status.id"
-                class="d-print-none btn btn-flat py-0 pl-0 pull-left"
-                data-toggle="dropdown"
-                aria-expanded="false"
+                 :id="'kanbanStatusDropdown_' + status.id"
+                 class="d-print-none btn btn-flat py-0 pl-0 pull-left"
+                 data-toggle="dropdown"
+                 aria-expanded="false"
             >
                 <i
                     class="fas fa-bars"
@@ -73,15 +73,15 @@
             <strong>{{ status.title }}</strong>
             <div v-if="$userId == kanban_owner_id
                     || (!status.locked || $userId == status.owner_id)"
-                class="handle d-print-none ml-auto pointer"
+                 class="handle d-print-none ml-auto pointer"
             >
                 <span class="position-relative">
                     <i v-if="editable"
-                        class="fa fa-arrows-up-down-left-right"
+                       class="fa fa-arrows-up-down-left-right"
                     ></i>
                     <i v-if="status.locked"
-                        class="fa fa-lock text-muted position-absolute"
-                        style="left: 8px; top: 10px; cursor: not-allowed;"
+                       class="fa fa-lock text-muted position-absolute"
+                       style="left: 8px; top: 10px; cursor: not-allowed;"
                     ></i>
                 </span>
             </div>

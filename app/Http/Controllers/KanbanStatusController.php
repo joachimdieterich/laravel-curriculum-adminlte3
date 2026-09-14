@@ -5,18 +5,16 @@ namespace App\Http\Controllers;
 use App\Kanban;
 use App\KanbanItem;
 use App\KanbanStatus;
-use App\MediumSubscription;
+use App\Plugins\Repositories\edusharing\Edusharing;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class KanbanStatusController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return KanbanStatus|void
      */
     public function store(Request $request)
@@ -29,16 +27,16 @@ class KanbanStatusController extends Controller
             ->max('order_id');
 
         $kanbanStatus = KanbanStatus::firstOrCreate([
-            'title' => $input['title'],
-            'order_id' => ($order_id === NULL) ? 0 : $order_id + 1,
-            'kanban_id' => $input['kanban_id'],
-            'color'   => $input['color'],
-            'locked' => $input['locked'] ?? false,
-            'editable' => $input['editable'] ?? true,
-            'visibility' => $input['visibility'] ?? true,
-            'visible_from' => $input['visible_from'] ?? NULL,
-            'visible_until' => $input['visible_until'] ?? NULL,
-            'owner_id' => auth()->user()->id,
+            'title'         => $input['title'],
+            'order_id'      => ($order_id === null) ? 0 : $order_id + 1,
+            'kanban_id'     => $input['kanban_id'],
+            'color'         => $input['color'],
+            'locked'        => $input['locked'] ?? false,
+            'editable'      => $input['editable'] ?? true,
+            'visibility'    => $input['visibility'] ?? true,
+            'visible_from'  => $input['visible_from'] ?? null,
+            'visible_until' => $input['visible_until'] ?? null,
+            'owner_id'      => auth()->user()->id,
         ]);
         Kanban::find($input['kanban_id'])->touch('updated_at');
 
@@ -50,8 +48,6 @@ class KanbanStatusController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param KanbanStatus $kanbanStatus
      * @return KanbanStatus|void
      */
     public function update(Request $request, KanbanStatus $kanbanStatus)
@@ -61,15 +57,15 @@ class KanbanStatusController extends Controller
         $input = $this->validateRequest();
 
         $kanbanStatus->update([
-            'title' => $input['title'],
-            'locked' => $input['locked'] ?? false,
-            'editable' => $input['editable'] ?? true,
-            'visibility' => $input['visibility'] ?? true,
-            'visible_from' => $input['visible_from'],
+            'title'         => $input['title'],
+            'locked'        => $input['locked'] ?? false,
+            'editable'      => $input['editable'] ?? true,
+            'visibility'    => $input['visibility'] ?? true,
+            'visible_from'  => $input['visible_from'],
             'visible_until' => $input['visible_until'],
             'color'         => $input['color'],
-            'owner_id' => $kanbanStatus->owner_id, //owner should not be updated
-            'editors_ids' => array_merge($kanbanStatus->editors_ids, [auth()->user()->id])
+            'owner_id'      => $kanbanStatus->owner_id, // owner should not be updated
+            'editors_ids'   => array_merge($kanbanStatus->editors_ids, [auth()->user()->id]),
         ]);
 
         if (request()->wantsJson()) {
@@ -100,11 +96,11 @@ class KanbanStatusController extends Controller
             ->get();
 
         if (request()->wantsJson()) {
-            if ($update_kanban->count() !== 0 OR $new_statuses->count() !== 0 OR $new_items->count() !== 0) {
+            if ($update_kanban->count() !== 0 || $new_statuses->count() !== 0 || $new_items->count() !== 0) {
                 return ['message' => $kanban->withRelations()];
-            } else {
-                return ['message' => 'uptodate'];
             }
+
+            return ['message' => 'uptodate'];
         }
     }
 
@@ -117,16 +113,15 @@ class KanbanStatusController extends Controller
         abort_unless((\Gate::allows('kanban_show') and Kanban::find($kanban_id)->isAccessible()), 403);
 
         foreach ($request->statuses as $status) {
-            $kanbanStatus = KanbanStatus::find($status['id']);
+            $kanbanStatus           = KanbanStatus::find($status['id']);
             $kanbanStatus->order_id = $status['order_id'];
             $kanbanStatus->save();
         }
 
-        LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this) . '@' . __FUNCTION__);
     }
 
     /**
-     * @param KanbanStatus $kanbanStatus
      * @return array|void
      */
     public function destroy(KanbanStatus $kanbanStatus)
@@ -142,26 +137,26 @@ class KanbanStatusController extends Controller
         $order_id = KanbanStatus::where('kanban_id', $status->kanban_id)->max('order_id');
 
         $statusCopy = $status->replicate()->fill([
-            'title'     => '[Kopie] ' . $status->title,
-            'order_id'  => $order_id + 1,
-            'owner_id'  => auth()->user()->id,
+            'title'    => '[Kopie] ' . $status->title,
+            'order_id' => $order_id + 1,
+            'owner_id' => auth()->user()->id,
         ]);
         $statusCopy->save();
 
         foreach ($status->items as $item) {
             $itemCopy = $item->replicate()->fill([
-                'kanban_id'         => $statusCopy->kanban_id,
-                'kanban_status_id'  => $statusCopy->id,
-                'editors_ids'       => [],
-                'owner_id'          => auth()->user()->id,
+                'kanban_id'        => $statusCopy->kanban_id,
+                'kanban_status_id' => $statusCopy->id,
+                'editors_ids'      => [],
+                'owner_id'         => auth()->user()->id,
             ]);
             $itemCopy->save();
 
             foreach ($item->mediaSubscriptions as $mediumSubscription) {
                 $usage = null;
                 // if Medium is external, we need to copy the usage
-                if (!is_null($mediumSubscription->additional_data)) {
-                    $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+                if (! is_null($mediumSubscription->additional_data)) {
+                    $usage = app(Edusharing::class)->createUsage(
                         'App\\KanbanItem',
                         $itemCopy->id,
                         $mediumSubscription->additional_data['nodeId'],
@@ -170,9 +165,9 @@ class KanbanStatusController extends Controller
                 }
 
                 $mediumSubscription->replicate()->fill([
-                    'subscribable_id'   => $itemCopy->id,
-                    'owner_id'          => auth()->user()->id,
-                    'additional_data'   => $usage,
+                    'subscribable_id' => $itemCopy->id,
+                    'owner_id'        => auth()->user()->id,
+                    'additional_data' => $usage,
                 ])->save();
             }
         }
@@ -180,14 +175,14 @@ class KanbanStatusController extends Controller
         Kanban::find($status['kanban_id'])->touch('updated_at'); // to trigger add-event for websockets
 
         return KanbanStatus::with([
-                'items',
-                'items.comments',
-                'items.comments.user',
-                'items.comments.likes',
-                'items.likes',
-                'items.mediaSubscriptions.medium',
-                'items.owner:id,username,firstname,lastname',
-            ])
+            'items',
+            'items.comments',
+            'items.comments.user',
+            'items.comments.likes',
+            'items.likes',
+            'items.mediaSubscriptions.medium',
+            'items.owner:id,username,firstname,lastname',
+        ])
             ->find($statusCopy->id);
     }
 
@@ -195,22 +190,23 @@ class KanbanStatusController extends Controller
     {
         $url = parse_url(request()->headers->get('referer'), PHP_URL_QUERY);
         parse_str($url ?? '', $query);
+
         return $query['sharing_token'] ?? null;
     }
 
-    protected function validateRequest()
+    protected function validateRequest(): array
     {
         return request()->validate([
-            'title' => 'sometimes|required',
-            'kanban_id' => 'sometimes|required|integer',
-            'order_id' => 'sometimes|integer',
-            'locked' => 'sometimes|boolean',
-            'editable' => 'sometimes|boolean',
-            'visibility' => 'sometimes|boolean',
-            'visible_from' => 'sometimes',
+            'title'         => 'sometimes|required',
+            'kanban_id'     => 'sometimes|required|integer',
+            'order_id'      => 'sometimes|integer',
+            'locked'        => 'sometimes|boolean',
+            'editable'      => 'sometimes|boolean',
+            'visibility'    => 'sometimes|boolean',
+            'visible_from'  => 'sometimes',
             'visible_until' => 'sometimes',
-            'editors_id' => 'sometimes',
-            'color' => 'sometimes',
+            'editors_id'    => 'sometimes',
+            'color'         => 'sometimes',
         ]);
     }
 
@@ -221,13 +217,13 @@ class KanbanStatusController extends Controller
                 ->with([
                     'items' => function ($query) use ($kanbanStatus) {
                         $query->where('kanban_id', $kanbanStatus->kanban_id)
-                              ->with(['owner', 'mediaSubscriptions.medium'])
-                              ->orderBy('order_id');
+                            ->with(['owner', 'mediaSubscriptions.medium'])
+                            ->orderBy('order_id');
                     },
                     'items.subscriptions',
                     'items.comments',
                     'items.comments.user',
-                ])->where('id', $kanbanStatus->id)->get()->first()
+                ])->where('id', $kanbanStatus->id)->get()->first(),
         ];
     }
 }

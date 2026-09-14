@@ -8,8 +8,8 @@
             {{ trans('global.loading') }}
         </div>
         <div
-            class="d-flex align-items-center position-sticky bg-gray-light p-2"
-            style="top: 52px; z-index: 100"
+            class="d-flex align-items-center position-sticky bg-gray-light p-2 z-1"
+            style="top: 52px;"
         >
             <draggable
                 class="nav nav-pills gap-2"

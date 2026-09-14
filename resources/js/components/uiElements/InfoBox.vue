@@ -161,7 +161,7 @@ export default {
         align-items: center;
         padding: 0.5rem;
         
-        &.infobox-header-muted > button:hover { cursor: default; }
+        &.infobox-header-muted > .infobox-icon:hover { cursor: default; }
         & > .infobox-icon {
             color: #fff;
             height: 70px;

@@ -64,7 +64,6 @@
                                     id="level_id"
                                     :multiple="false"
                                     :searchable="false"
-                                    model="level"
                                     url="/levels"
                                     label="text"
                                     :selected="this.form.level_id"
@@ -73,9 +72,7 @@
 
                                         return data[0];
                                     }"
-                                    @selectedValue="(level) => {
-                                        this.form.level_id = level.id;
-                                    }"
+                                    @selectedValue="level => form.level_id = level?.id ?? null"
                                 ></c-select>
                             </div>
 

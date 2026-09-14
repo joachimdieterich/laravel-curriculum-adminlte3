@@ -9,69 +9,42 @@
         :show-display-section="true"
         :allow-overflow="true"
         :show-permission-section="hasPermissionsAccess"
-        @save="(form) => submit(form)"
+        @save="form => submit(form)"
     >
         <template #permissions>
-            <div class="form-check form-switch">
-                <input
-                    id="kanban-status-movable"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.movable"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-status-movable"
-                >
-                    {{ trans('global.movable') }}
-                </label>
-            </div>
+            <Switch
+                id="kanban-status-movable"
+                class="mb-2"
+                label="global.movable"
+                v-model="form.movable"
+            />
 
-            <div class="form-check form-switch">
-                <input
-                    id="kanban-status-editable"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.editable"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-status-editable"
-                >
-                    {{ trans('global.editable') }}
-                </label>
-            </div>
-            
-            <div class="form-check form-switch">
-                <input
-                    id="kanban-status-visibility"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.visibility"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-status-visibility"
-                >
-                    {{ trans('global.visibility') }}
-                </label>
-            </div>
+            <Switch
+                id="kanban-status-editable"
+                class="mb-2"
+                label="global.editable"
+                v-model="form.editable"
+            />
+
+            <Switch
+                id="kanban-status-visibility"
+                label="global.visible"
+                v-model="form.visibility"
+            />
         </template>
     </Modal>
 </template>
 <script>
 import Modal from '../uiElements/Modal.vue';
+import Switch from '../forms/Switch.vue';
 import Form from 'form-backend-validation';
 
 export default {
     name: 'kanban-status-modal',
-    components: { Modal },
+    components: {
+        Modal,
+        Switch,
+    },
     props: {
         kanban: {
             type: Object,

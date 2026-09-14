@@ -11,7 +11,7 @@
         :show-display-section="true"
         :show-medium-field="true"
         :show-permission-section="true"
-        @save="(form) => submit(form)"
+        @save="form => submit(form)"
     >
         <template #general-extended>
             <TagMultiselect
@@ -25,90 +25,39 @@
             />
         </template>
         <template #permissions>
-            <div class="form-check form-switch mb-2">
-                <input
-                    id="kanban-commentable"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.commentable"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-commentable"
-                >
-                    {{ trans('global.commentable') }}
-                </label>
-            </div>
+            <Switch
+                id="kanban-commentable"
+                class="mb-2"
+                label="global.commentable"
+                v-model="form.commentable"
+            />
 
-            <div class="form-check form-switch mb-2">
-                <input
-                    id="kanban-auto-refresh"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.auto_refresh"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-auto-refresh"
-                >
-                    {{ trans('global.auto_refresh') }}
-                </label>
-            </div>
+            <Switch
+                id="kanban-auto-refresh"
+                class="mb-2"
+                label="global.auto_refresh"
+                v-model="form.auto_refresh"
+            />
 
-            <div class="form-check form-switch mb-2">
-                <input
-                    id="kanban-only-edit-owned-items"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.only_edit_owned_items"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-only-edit-owned-items"
-                >
-                    {{ trans('global.kanban.only_edit_owned_items') }}
-                </label>
-            </div>
+            <Switch
+                id="kanban-only-edit-owned-items"
+                class="mb-2"
+                label="global.kanban.only_edit_owned_items"
+                v-model="form.only_edit_owned_items"
+            />
 
-            <div class="form-check form-switch mb-2">
-                <input
-                    id="kanban-collapse-items"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.collapse_items"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-collapse-items"
-                >
-                    {{ trans('global.kanban.collapse_items') }}
-                </label>
-            </div>
+            <Switch
+                id="kanban-collapse-items"
+                class="mb-2"
+                label="global.kanban.collapse_items"
+                v-model="form.collapse_items"
+            />
 
-            <div class="form-check form-switch">
-                <input
-                    id="kanban-allow-copy"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.allow_copy"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-allow-copy"
-                >
-                    {{ trans('global.kanban.allow_copy') }}
-                </label>
-            </div>
+            <Switch
+                id="kanban-allow-copy"
+                label="global.kanban.allow_copy"
+                v-model="form.allow_copy"
+            />
         </template>
     </Modal>
 </template>
@@ -116,11 +65,13 @@
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import TagMultiselect from "../tag/TagMultiselect.vue";
+import Switch from '../forms/Switch.vue';
 
 export default {
     name: 'kanban-modal',
     components: {
         Modal,
+        Switch,
         TagMultiselect,
     },
     props: {

@@ -40,70 +40,26 @@
                 :placeholder="trans('global.kanbanItem.fields.due_date')"
             />
 
-            <span class="form-check form-switch">
-                <input
-                    id="kanban-item-replace-links"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.replace_links"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-item-replace-links"
-                >
-                    {{ trans('global.replace_links') }}
-                </label>
-            </span>
-            <span class="form-check form-switch">
-                <input
-                    id="kanban-item-movable"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.movable"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-item-movable"
-                >
-                    {{ trans('global.movable') }}
-                </label>
-            </span>
-            <span class="form-check form-switch">
-                <input
-                    id="kanban-item-editable"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.editable"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-item-editable"
-                >
-                    {{ trans('global.editable') }}
-                </label>
-            </span>
-            <span class="form-check form-switch">
-                <input
-                    id="kanban-item-visibility"
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    v-model="form.visibility"
-                    switch
-                />
-                <label
-                    class="form-check-label"
-                    for="kanban-item-visibility"
-                >
-                    {{ trans('global.visible') }}
-                </label>
-            </span>
+            <Switch
+                id="kanban-item-replace-links"
+                label="global.replace_links"
+                v-model="form.replace_links"
+            />
+            <Switch
+                id="kanban-item-movable"
+                label="global.movable"
+                v-model="form.movable"
+            />
+            <Switch
+                id="kanban-item-editable"
+                label="global.editable"
+                v-model="form.editable"
+            />
+            <Switch
+                id="kanban-item-replace-visibility"
+                label="global.visible"
+                v-model="form.visibility"
+            />
 
             <VueDatePicker v-if="form.visibility"
                 id="visible_date"
@@ -129,9 +85,16 @@ import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import VueDatePicker from "@vuepic/vue-datepicker";
 import Editor from '@tinymce/tinymce-vue';
+import Switch from '../forms/Switch.vue';
 
 export default {
     name: 'kanban-item-modal',
+    components: {
+        Modal,
+        Editor,
+        Switch,
+        VueDatePicker,
+    },
     data() {
         return {
             component_id: this.$.uid,
@@ -255,11 +218,6 @@ export default {
                 || this.$parent.kanban.owner_id == this.$userId
                 || this.checkPermission('is_admin');
         },
-    },
-    components: {
-        Modal,
-        Editor,
-        VueDatePicker,
     },
 }
 </script>

@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Logbook;
-use App\Organization;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 
 class LogbookController extends Controller
 {
@@ -20,59 +17,21 @@ class LogbookController extends Controller
         if (request()->wantsJson())
         {
             return getEntriesForSelect2ByCollection(
-                $this->getLogbooks(),
+                getSubscribedModels(Logbook::class),
                 'logbooks.'
             );
         }
-        else
-        {
-            return view('logbooks.index');
-        }
 
+        return view('logbooks.index');
     }
 
     public function list(Request $request)
     {
         abort_unless(\Gate::allows('logbook_access'), 403);
 
-        if (request()->has(['group_id']))
-        {
-            $request = request()->validate(
-                [
-                    'group_id' => 'required',
-                ]
-            );
-            $group_id = $request['group_id'];
-            $logbooks = Logbook::with('subscriptions')
-                ->whereHas('subscriptions', function ($query) use ($group_id){
-                    $query->where(
-                        function ($query) use ($group_id) {
-                            $query->where('subscribable_type', 'App\\Group')
-                                ->where('subscribable_id', $group_id);
-                        }
-                    );
-                });
-        }
-        else
-        {
-            switch ($request->filter) {
-                case 'owner':           $logbooks = Logbook::where('owner_id', auth()->user()->id);
-                    break;
-                case 'shared_with_me':  $logbooks = $this->getLogbooks(false);
-                    break;
-                case 'shared_by_me':    $logbooks = Logbook::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
-                    break;
-                case 'all':
-                default:                $logbooks = $this->getLogbooks();
-                    break;
-            }
-        }
+        $logbooks = Logbook::select('logbooks.id', 'title', 'description', 'medium_id', 'color', 'css_icon', 'owner_id');
 
-
-        return empty($logbooks) ? '' : DataTables::of($logbooks)
-            //->addColumn('subscribable_id', $logbooks->subscriptions[0]->subscribable_id)
-            ->setRowId('id')
-            ->make(true);
+        return getDataTableWithEntries($logbooks);
     }
 
     /**
@@ -277,39 +236,6 @@ class LogbookController extends Controller
         if ($action === 'delete') {
             abort_unless(auth()->user()->id == $logbook->owner_id || is_admin(), 403); // owner or admin
         }
-    }
-
-    public function getLogbooks($withOwned = true)
-    {
-        $logbooks = Logbook::with('subscriptions')->whereHas('subscriptions', function ($query) {
-            $query->where(
-                function ($query) {
-                    $query->where('subscribable_type', 'App\\Course')
-                        ->whereIn('subscribable_id', auth()->user()->currentGroupEnrolments->pluck('course_id'));
-                }
-            )->orWhere(
-                function ($query) {
-                    $query->where('subscribable_type', 'App\\Organization')
-                        ->where('subscribable_id', auth()->user()->current_organization_id);
-                }
-            )->orWhere(
-                function ($query) {
-                    $query->where('subscribable_type', 'App\\Group')
-                        ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
-                }
-            )->orWhere(
-                function ($query) {
-                    $query->where('subscribable_type', 'App\\User')
-                        ->where('subscribable_id', auth()->user()->id);
-                }
-            );
-        });
-
-        if ($withOwned) {
-            $logbooks = $logbooks->orWhere('owner_id', auth()->user()->id);
-        }
-
-        return $logbooks;
     }
 
     protected function validateRequest()

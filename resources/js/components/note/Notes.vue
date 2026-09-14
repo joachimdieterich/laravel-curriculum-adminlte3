@@ -131,7 +131,7 @@
 
                 <div class="card-comment"
                      v-for="(item,index) in notes" v-bind:value="item.id"
-                     v-if="showNote(item)">
+                >
                     <div class="comment-text ml-0"
                          @mouseover="hover = item.id"
                          @mouseleave="hover = false"

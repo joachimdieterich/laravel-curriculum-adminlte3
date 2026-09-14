@@ -13,7 +13,6 @@ use App\Training;
 use App\TrainingSubscription;
 use App\Exercise;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 
 class PlanController extends Controller
 {
@@ -28,7 +27,7 @@ class PlanController extends Controller
         if (request()->wantsJson())
         {
             return getEntriesForSelect2ByCollection(
-                $this->getPlans(),
+                getSubscribedModels(Plan::class),
                 'plans.'
             );
         }
@@ -38,90 +37,13 @@ class PlanController extends Controller
         }
     }
 
-    public function getPlans($withOwned = true)
-    {
-        $plans = Plan::with('subscriptions')
-            ->whereHas('subscriptions', function ($query) {
-                $query->where(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\Organization')->where('subscribable_id', auth()->user()->current_organization_id);
-                    }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\Group')->whereIn('subscribable_id', auth()->user()->groups->pluck('id'));
-                    }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
-                    }
-                )->orWhere(
-                    function ($query) {
-                        $query->where('subscribable_type', 'App\\User')->where('subscribable_id', auth()->user()->id);
-                    }
-                );
-            })->orWhere('owner_id', auth()->user()->id);
-
-        if ($withOwned) {
-            $plans = $plans->orWhere('owner_id', auth()->user()->id);
-        }
-
-        return $plans;
-    }
-
-    protected function userPlans($withOwned = true)
-    {
-        $userCanSee = auth()->user()->plans;
-
-        foreach (auth()->user()->currentGroups as $group) {
-            $userCanSee = $userCanSee->merge($group->plans);
-        }
-
-        $organization = Organization::find(auth()->user()->current_organization_id)->plans;
-        $userCanSee = $userCanSee->merge($organization);
-
-        if ($withOwned)
-        {
-            $owned = Plan::where('owner_id', auth()->user()->id)->get();
-            $userCanSee = $userCanSee->merge($owned);
-        }
-
-        return $userCanSee->unique();
-    }
-
-    public function list(Request $request)
+    public function list(Request $request): \Illuminate\Http\JsonResponse
     {
         abort_unless(\Gate::allows('plan_access'), 403);
-        $plans = '';
-        if (request()->has(['group_id'])) {
-            $group_id = $request['group_id'];
-            $plans = Plan::with('subscriptions')
-                ->whereHas('subscriptions', function ($query) use ($group_id) {
-                    $query->where(
-                        function ($query) use ($group_id) {
-                            $query->where('subscribable_type', 'App\\Group')
-                                ->where('subscribable_id', $group_id);
-                        }
-                    );
-                });
-        } else {
-            switch ($request->filter)
-            {
-                case 'owner':           $plans = Plan::where('owner_id', auth()->user()->id)->get();
-                    break;
-                case 'shared_with_me':  $plans = $this->userPlans(false);
-                    break;
-                case 'shared_by_me':    $plans = Plan::where('owner_id', auth()->user()->id)->whereHas('subscriptions')->get();
-                    break;
-                case 'all':
-                default:                $plans = $this->userPlans();
-                    break;
-            }
-        }
-        
 
-        return DataTables::of($plans)
-            ->setRowId('id')
-            ->make(true);
+        $plans = Plan::select('id', 'title', 'description', 'medium_id', 'color', 'owner_id');
+
+        return getDataTableWithEntries($plans);
     }
 
     /**

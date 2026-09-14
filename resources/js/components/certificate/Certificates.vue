@@ -1,8 +1,8 @@
-<template >
-    <div class="row">
+<template>
+    <div class="d-flex flex-column">
         <div
             id="certificate-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'certificate_create'"
@@ -57,7 +57,7 @@
 
         <div
             id="certificate-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="certificate-datatable"
@@ -97,7 +97,6 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -110,17 +109,10 @@ export default {
             search: '',
             showConfirm: false,
             url: '/certificates/list',
-            errors: {},
             currentCertificate: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'description', data: 'description', searchable: true },
-                { title: 'body', data: 'body', searchable: true },
-                { title: 'curriculum_id', data: 'curriculum_id', searchable: true },
-                { title: 'organization_id', data: 'organization_id', searchable: true },
-                { title: 'owner_id', data: 'owner_id', searchable: true },
             ],
             options : this.$dtOptions,
             dt: null,

@@ -75,12 +75,12 @@ export default {
 .drop-down-modal {
     position: absolute;
     top: 100%;
-    left: 0;
     right: 0;
     z-index: 1000;
     margin-top: 2px;
     margin-left: -20%;
     width: 120%;
+    min-width: 300px;
 }
 
 .close {

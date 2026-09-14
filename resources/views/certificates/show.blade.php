@@ -11,7 +11,5 @@
     ></breadcrumbs>
 @endsection
 @section('content')
-    <certificate
-        :certificate="{{ $certificate }}"
-    ></certificate>
+    <certificate :certificate="{{ $certificate }}"></certificate>
 @endsection

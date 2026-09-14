@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
-use Yajra\DataTables\DataTables;
 
 class UsersController extends Controller
 {
@@ -74,8 +73,6 @@ class UsersController extends Controller
         // don't use 'user_access' since this would cause the teacher-role to have access to /users
         abort_unless(\Gate::allows('user_show'), 403);
 
-        $rowID = 'id';
-
         if (request()->has(['group_id']))
         {
             $request = request()->validate(
@@ -84,18 +81,16 @@ class UsersController extends Controller
                 ]
             );
             $users = Group::where('id',$request['group_id'])->first()->users();
-            $rowID = 'user_id';
         }
         else
         {
             $users = (auth()->user()->role()->id == 1)
-                ? User::select('id', 'username', 'firstname', 'lastname', 'common_name', 'email', 'medium_id', 'deleted_at')
+                ? User::query()
                 : Organization::find(auth()->user()->current_organization_id)->users();
+            $users->select('users.id', 'username', 'firstname', 'lastname', 'common_name', 'email');
         }
 
-        return DataTables::of($users)
-            ->setRowId($rowID)
-            ->make(true);
+        return \Yajra\DataTables\DataTables::of($users)->make(true);
     }
 
     public function create()
@@ -175,8 +170,11 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        abort_unless(\Gate::allows('user_show'), 403, "Missing permission to view user");
-        abort_unless(auth()->user()->mayAccessUser($user), 403, "No access to view user");
+        // users should be able to view their own profile
+        if ($user->id !== auth()->user()->id) {
+            abort_unless(\Gate::allows('user_show'), 403, "Missing permission to view user");
+            abort_unless(auth()->user()->mayAccessUser($user), 403, "No access to view user");
+        }
 
         if (request()->wantsJson()) {
             return ['user' => $user];
@@ -184,9 +182,13 @@ class UsersController extends Controller
 
         $status_definitions = StatusDefinition::all();
         $user->append('avatar');
-        $user->load('roles');
-        $user->load(['organizations.state', 'organizations.country']);
-        $user->load('groups');
+        $user->load('roles:id,title');
+        $user->load([
+            'organizations:id,title,country_id,state_id,postcode,city,street',
+            'organizations.country:alpha2,lang_de,lang_en',
+            'organizations.state'
+        ]);
+        $user->load('groups:id,title,organization_id');
         $user->load('contactDetail.owner');
 
         return view('users.show')
@@ -243,8 +245,6 @@ class UsersController extends Controller
         ]);
 
         LogController::set('activeOrg', request('current_organization_id')); //set statistics
-
-        return back();
     }
 
     public function setCurrentPeriod()

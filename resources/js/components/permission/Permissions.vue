@@ -1,9 +1,9 @@
 
-<template >
-    <div class="row">
+<template>
+    <div class="d-flex flex-column">
         <div
             id="permission-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'permission_create'"
@@ -55,9 +55,10 @@
                 </template>
             </IndexWidget>
         </div>
+
         <div
             id="permission-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="permission-datatable"
@@ -97,7 +98,6 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -110,10 +110,8 @@ export default {
             permissions: null,
             search: '',
             showConfirm: false,
-            errors: {},
             currentPermission: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],

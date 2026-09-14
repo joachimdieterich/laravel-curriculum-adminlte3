@@ -1,8 +1,8 @@
-<template >
-    <div class="row">
+<template>
+    <div class="d-flex flex-column">
         <div
             id="organization-type-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'organization_type_create'"
@@ -56,7 +56,7 @@
         </div>
         <div
             id="organization-type-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="organization-type-datatable"
@@ -96,7 +96,6 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {
@@ -110,15 +109,10 @@ export default {
             search: '',
             showConfirm: false,
             url: '/organizationTypes/list',
-            errors: {},
             currentOrganizationType: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'external_id', data: 'external_id' },
-                { title: 'country_id', data: 'country_id', searchable: true} ,
-                { title: 'state_id', data: 'state_id', searchable: true },
             ],
             options : this.$dtOptions,
             dt: null,

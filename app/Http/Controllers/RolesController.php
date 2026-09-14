@@ -30,13 +30,11 @@ class RolesController extends Controller
         return view('roles.index');
     }
 
-    public function list()
+    public function list(): \Illuminate\Http\JsonResponse
     {
         abort_unless(Gate::allows('role_access'), 403);
-        $roles = Role::select([
-            'id',
-            'title',
-        ]);
+
+        $roles = Role::select('id', 'title');
 
         return DataTables::of($roles)
             ->filter(function (Builder $query) {
@@ -53,11 +51,6 @@ class RolesController extends Controller
             ->addColumn('tags', function ($roles) {
                 return $roles->tags->toArray();
             })
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
             ->make(true);
     }
 
@@ -96,11 +89,13 @@ class RolesController extends Controller
     {
         abort_unless(Gate::allows('role_show'), 403);
 
-        $role->load('permissions');
+        $role->load('permissions:id,title');
         $role->load('tags');
 
+        $allPermissions = \App\Permission::select('id', 'title')->orderBy('title')->get();
+
         return view('roles.show')
-            ->with(compact('role'));
+            ->with(compact('role', 'allPermissions'));
     }
 
     public function destroy(Role $role)
@@ -112,5 +107,18 @@ class RolesController extends Controller
         if (request()->wantsJson()) {
             return ['message' => $return];
         }
+    }
+
+    public function togglePermission(Role $role, $permissionId)
+    {
+        abort_unless(\Gate::allows('role_edit'), 403);
+
+        if ($role->permissions()->where('id', $permissionId)->exists()) {
+            $role->permissions()->detach($permissionId);
+        } else {
+            $role->permissions()->attach($permissionId);
+        }
+
+        Cache::forget('roles'); //cache should update next time
     }
 }

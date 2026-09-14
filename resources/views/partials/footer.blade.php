@@ -1,16 +1,9 @@
-@if(isset($contentonly))
 <footer
-    class="main-footer py-1 ml-0 w-100 no-print"
-    style="background-color: #737c83;"
->
-@else
-<footer
-    class="main-footer py-1 no-print"
+    class="py-1 no-print"
     style="background-color: #737c83"
 >
-@endif
-    <div class="row">
-        <div class="col-lg-2">
+    <div class="d-flex flex-column flex-lg-row">
+        <div class="col-lg-2 text-center text-sm-left">
             @if (config('app.footer.logo.height'))
             <a href="#">
                 <img

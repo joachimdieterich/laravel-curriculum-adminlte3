@@ -1,37 +1,43 @@
 <template >
-    <div class="row">
-        <div id="navigator-content"
-             class="col-md-12 m-0">
+    <div class="d-flex flex-column">
+        <div
+            id="navigator-content"
+            class="px-3"
+        >
             <IndexWidget
                 v-permission="'navigator_create'"
                 key="'navigatorCreate'"
                 modelName="Navigator"
                 url="/navigators"
                 :create=true
-                :label="trans('global.navigator.create')">
-            </IndexWidget>
-            <IndexWidget
-                v-for="navigator in navigators"
+                :label="trans('global.navigator.create')"
+            />
+            <IndexWidget v-for="navigator in navigators"
                 :key="'navigatorIndex'+navigator.id"
                 :model="navigator"
                 modelName="Navigator"
                 :urlOnly=true
-                :url="navigator.url">
+                :url="navigator.url"
+            >
                 <template v-slot:icon>
                     <i class="fa fa-history"></i>
                 </template>
 
                 <template
                     v-permission="'navigator_edit, navigator_delete'"
-                    v-slot:dropdown>
-                    <div class="dropdown-menu dropdown-menu-right"
-                         style="z-index: 1050;"
-                         x-placement="left-start">
+                    v-slot:dropdown
+                >
+                    <div
+                        class="dropdown-menu dropdown-menu-right"
+                        style="z-index: 1050;"
+                        x-placement="left-start"
+                    >
                         <button
                             v-permission="'navigator_edit'"
                             :name="'edit-navigator-' + navigator.id"
                             class="dropdown-item text-secondary"
-                            @click.prevent="editNavigator(navigator)">
+                            @click.prevent="editNavigator(navigator)"
+                        >
                             <i class="fa fa-pencil-alt mr-2"></i>
                             {{ trans('global.navigator.edit') }}
                         </button>
@@ -41,7 +47,8 @@
                             :id="'delete-navigator-' + navigator.id"
                             type="submit"
                             class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(navigator)">
+                            @click.prevent="confirmItemDelete(navigator)"
+                        >
                             <i class="fa fa-trash mr-2"></i>
                             {{ trans('global.navigator.delete') }}
                         </button>
@@ -49,8 +56,10 @@
                 </template>
             </IndexWidget>
         </div>
-        <div id="navigator-datatable-wrapper"
-             class="w-100 dataTablesWrapper">
+        <div
+            id="navigator-datatable-wrapper"
+            class="dataTablesWrapper"
+        >
             <DataTable
                 id="navigator-datatable"
                 :columns="columns"
@@ -59,11 +68,11 @@
                 :search="search"
                 width="100%"
                 style="display:none;"
-            ></DataTable>
+            />
         </div>
 
         <Teleport to="body">
-            <NavigatorModal></NavigatorModal>
+            <NavigatorModal/>
             <ConfirmModal
                 :showConfirm="this.showConfirm"
                 :title="trans('global.navigator.delete')"
@@ -75,12 +84,10 @@
                     this.showConfirm = false;
                     this.destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
-
-
 <script>
 import NavigatorModal from "../navigator/NavigatorModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
@@ -91,7 +98,6 @@ import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
     setup () {
         const globalStore = useGlobalStore();
         return {
@@ -115,7 +121,7 @@ export default {
                 { title: 'organization', data: 'organization', searchable: true},
             ],
             options : this.$dtOptions,
-            modalMode: 'edit'
+            modalMode: 'edit',
         }
     },
     mounted() {
@@ -137,10 +143,10 @@ export default {
         });
     },
     methods: {
-        editNavigator(navigator){
+        editNavigator(navigator) {
             this.globalStore?.showModal('navigator-modal', navigator);
         },
-        loaderEvent(){
+        loaderEvent() {
             const dt = $('#navigator-datatable').DataTable();
             dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
                 this.navigators = dt.rows({page: 'current'}).data().toArray();
@@ -151,7 +157,7 @@ export default {
                 dt.search(filter).draw();
             });
         },
-        confirmItemDelete(navigator){
+        confirmItemDelete(navigator) {
             this.currentNavigator = navigator;
             this.showConfirm = true;
         },
@@ -173,13 +179,13 @@ export default {
             for (const [key, value] of Object.entries(navigator)) {
                 this.navigators[index][key] = value;
             }
-        }
+        },
     },
     components: {
         ConfirmModal,
         DataTable,
         NavigatorModal,
-        IndexWidget
+        IndexWidget,
     },
 }
 </script>

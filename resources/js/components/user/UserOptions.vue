@@ -1,5 +1,5 @@
 <template >
-    <div class="col-sm-12">
+    <div class="px-3">
         <div class="card">
             <div class="card-header">
                 <ul class="nav nav-pills">

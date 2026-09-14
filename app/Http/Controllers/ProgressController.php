@@ -69,13 +69,16 @@ class ProgressController extends Controller
     public function calculateTerminalObjectiveProgress(string $parent_model, int $parent_id, int $user_id)
     {
         //Parent App\TerminalObjective
-        $enabling_objectives = EnablingObjective::where('terminal_objective_id', $parent_id)->get();
+        $enabling_objectives = EnablingObjective::select('id', 'curriculum_id')
+            ->where('terminal_objective_id', $parent_id)
+            ->get();
 
         $total_achieved = Achievement::where('referenceable_type', 'App\\EnablingObjective')
-                                ->where('user_id', $user_id)
-                                ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
-                                ->whereRaw('(RIGHT(status,1) = "1" OR RIGHT(status,1) = "2")')
-                                ->get();
+            ->where('user_id', $user_id)
+            ->whereIn('referenceable_id', $enabling_objectives->pluck('id'))
+            ->whereRaw('(RIGHT(status,1) = "1" OR RIGHT(status,1) = "2")')
+            ->get();
+
         $progress = Progress::updateOrCreate(
             [
                 'referenceable_type' => $parent_model,
@@ -86,7 +89,6 @@ class ProgressController extends Controller
             [
                 'value' => ($total_achieved->count() / $enabling_objectives->count() * 100),
             ]
-
         );
 
         $this->calculateProgress('App\Curriculum', $enabling_objectives->first()->curriculum_id, $user_id);
@@ -94,13 +96,13 @@ class ProgressController extends Controller
         return $progress;
     }
 
-    public function calculateCurriculumProgress($parent_model, $parent_id, $user_id)
+    public function calculateCurriculumProgress(string $parent_model, int $parent_id, int $user_id)
     {
-        $terminal_objectives = TerminalObjective::where('curriculum_id', $parent_id)->get();
+        $terminal_objective_ids = TerminalObjective::where('curriculum_id', $parent_id)->pluck('id');
         $terminal_objective_progresses = Progress::where('referenceable_type', 'App\\TerminalObjective')
-                ->where('associable_id', $user_id)
-                ->whereIn('referenceable_id', $terminal_objectives->pluck('id'))
-                ->get();
+            ->where('associable_id', $user_id)
+            ->whereIn('referenceable_id', $terminal_objective_ids)
+            ->sum('value');
 
         return Progress::updateOrCreate(
             [
@@ -110,7 +112,7 @@ class ProgressController extends Controller
                 'associable_id' => $user_id,
             ],
             [
-                'value' => floor($terminal_objective_progresses->sum('value') / $terminal_objectives->count()),
+                'value' => floor($terminal_objective_progresses / $terminal_objective_ids->count()),
             ]
         );
     }

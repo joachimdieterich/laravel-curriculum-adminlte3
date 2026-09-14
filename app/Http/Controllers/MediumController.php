@@ -112,4 +112,30 @@ class MediumController extends Controller
     {
         return $this->adapter()->checkIfUserHasSubscription($subscription);
     }
+
+    /**
+     * Display a listing of media throughout all adapters.</br>
+     * Only available to admin users.
+     */
+    public function adminSearch()
+    {
+        abort_unless(is_admin(), 403);
+        $input = request()->only(['showLocal', 'showExternal', 'onlyShowUnsubscribed']);
+        $query = Medium::select(['id', 'title', 'size', 'adapter'])->withCount('subscriptions');
+
+        // if not all adapters are selected, filter by adapter
+        if ($input['showLocal'] !== $input['showExternal']) {
+            if ($input['showLocal'] === 'true') {
+                $query->where('adapter', 'local');
+            } else {
+                $query->where('adapter', '<>', 'local');
+            }
+        }
+        if ($input['onlyShowUnsubscribed'] === 'true') {
+            $query->leftJoin('medium_subscriptions', 'media.id', '=', 'medium_subscriptions.medium_id')
+                ->whereNull('medium_subscriptions.medium_id');
+        }
+        
+        return \Yajra\DataTables\DataTables::of($query)->make(true);
+    }
 }

@@ -1,6 +1,6 @@
 <template>
-    <div class="row">
-        <div class="col-sm-12 py-4">
+    <div class="d-flex flex-column">
+        <div class="p-3">
             <div
                 id="exam-enrolled-user-datatable-wrapper"
                 class="w-100 dataTablesWrapper"
@@ -39,9 +39,9 @@
             </button>
         </div>
 
-        <hr style="width: 100%; border: 1px solid lightgray !important;">
+        <hr class="px-3 w-100">
 
-        <div class="col-sm-12 pt-4">
+        <div class="py-3">
             <div
                 id="exam-expelled-user-datatable-wrapper"
                 class="w-100 dataTablesWrapper"
@@ -61,7 +61,7 @@
                 id="expelFromCurricula"
                 type="button"
                 name="expelFromCurricula"
-                class="btn btn-primary pull-right mt-3"
+                class="btn btn-primary pull-right mt-3 mr-3"
                 @click="enrolIntoExam()"
             >
                 <i class="fa fa-plus mr-2"></i>

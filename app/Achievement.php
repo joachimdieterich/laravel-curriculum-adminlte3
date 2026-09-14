@@ -5,6 +5,7 @@ namespace App;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @OA\Schema(
@@ -45,6 +46,11 @@ class Achievement extends Model
         return $this->morphMany('App\Note', 'notable');
     }
 
+    public function referenceable()
+    {
+        return $this->morphTo();
+    }
+
     public function user()
     {
         return $this->hasOne('App\User', 'id', 'user_id');
@@ -55,9 +61,15 @@ class Achievement extends Model
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
 
+    public function history(): HasMany
+    {
+        return $this->hasMany(AchievementHistory::class);
+    }
+
     public static function booted() {
         static::deleting(function(Achievement $achievement) { // before delete() method call this
             $achievement->notes()->delete();
+            $achievement->history->each->delete();
         });
     }
 }

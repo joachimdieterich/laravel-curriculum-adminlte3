@@ -9,6 +9,7 @@ use Cmgmyr\Messenger\Traits\Messagable;
 use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -86,8 +87,6 @@ class User extends Authenticatable
         'current_organization_id',
         'current_period_id',
     ];
-
-    protected static function booted() {}
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -220,7 +219,7 @@ class User extends Authenticatable
         )->where('subscribable_type', get_class($this));
     }
 
-    public function currentCurriculaEnrolments(): Collection
+    public function currentCurriculaEnrollments(): Collection
     {
         return DB::table('curricula')
             // ->distinct()
@@ -270,16 +269,9 @@ class User extends Authenticatable
         return $this->morphMany('App\MeetingSubscription', 'subscribable');
     }
 
-    public function kanbans(): HasManyThrough
+    public function kanbans(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Kanban',
-            'App\KanbanSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'kanban_id'
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Kanban');
     }
 
     public function lmsReferences(): HasManyThrough
@@ -299,16 +291,9 @@ class User extends Authenticatable
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
     }
 
-    public function logbooks(): HasManyThrough
+    public function logbooks(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Logbook',
-            'App\LogbookSubscription',
-            'subscribable_id', // Foreign key on logbook_subscription table...
-            'id', // Foreign key on logbook table...
-            'id', // Local key on logbook table...
-            'logbook_id' // Local key on logbook_subscription table...
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Logbook');
     }
 
     public function media(): HasMany
@@ -316,16 +301,9 @@ class User extends Authenticatable
         return $this->hasMany('App\Medium', 'owner_id');
     }
 
-    public function plans(): HasManyThrough
+    public function plans(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Plan',
-            'App\PlanSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'plan_id'
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Plan');
     }
 
     public function periods(): Collection
@@ -387,14 +365,9 @@ class User extends Authenticatable
     /**
      * permissions of the current role
      */
-    public function permissions(): Collection
+    public function permissions(): BelongsToMany
     {
-        return DB::table('permissions')
-            ->join('permission_role', 'permission_role.permission_id', '=', 'permissions.id')
-            ->join('organization_role_users', 'organization_role_users.role_id', '=', 'permission_role.role_id')
-            ->where('organization_role_users.organization_id', $this->current_organization_id)
-            ->where('organization_role_users.user_id', $this->id)
-            ->get();
+        return $this->role()->permissions();
     }
 
     public function tasks(): HasManyThrough
@@ -416,7 +389,7 @@ class User extends Authenticatable
             ->orderByPivot('organization_id');
     }
 
-    public function organizationRolesUsers(): User|HasMany
+    public function organizationRolesUsers(): HasMany
     {
         return $this->hasMany(OrganizationRoleUser::class);
     }
@@ -477,27 +450,13 @@ class User extends Authenticatable
             ->withPivot(['login_data', 'exam_completed_at']);
     }
 
-    public function videoconferences(): HasManyThrough
+    public function videoconferences(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Videoconference',
-            'App\VideoconferenceSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'videoconference_id'
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Videoconference');
     }
 
-    public function maps(): HasManyThrough
+    public function maps(): Builder
     {
-        return $this->hasManyThrough(
-            'App\Map',
-            'App\MapSubscription',
-            'subscribable_id',
-            'id',
-            'id',
-            'map_id'
-        )->where('subscribable_type', get_class($this));
+        return getSubscribedModels('App\Map');
     }
 }

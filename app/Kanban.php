@@ -9,6 +9,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @OA\Schema(
@@ -46,8 +47,6 @@ class Kanban extends Model implements Broadcastable
         'created_at'            => 'datetime',
     ];
 
-    protected $appends = ['is_favourited', 'is_hidden'];
-
     /**
      * Prepare a date for array / JSON serialization.
      *
@@ -77,24 +76,25 @@ class Kanban extends Model implements Broadcastable
     public function withRelations(): self|null
     {
         return $this->with([
-            'owner'          => function ($query) {
-                $query->select('id', 'firstname', 'lastname');
-            },
+            'owner:id,firstname,lastname',
             'statuses.items' => function ($query) {
                 $query->with([
                     'comments',
-                    'comments.user',
+                    'comments.user:id,username,firstname,lastname',
                     'comments.likes',
                     'likes',
-                    'mediaSubscriptions.medium',
-                    'owner' => function ($query) {
-                        $query->select('id', 'username', 'firstname', 'lastname');
-                    },
+                    'mediaSubscriptions.medium:id,title,medium_name,mime_type',
+                    'owner:id,username,firstname,lastname',
                 ])->orderBy('order_id');
             },
-            'medium',
+            'medium:id,title,medium_name',
             'tags'
         ])->find($this->id);
+    }
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany('App\\Tag', 'taggable');
     }
 
     public function subscriptions(): HasMany|self
@@ -141,25 +141,7 @@ class Kanban extends Model implements Broadcastable
 
     public function isAccessible(): bool
     {
-        if (
-            auth()->user()->kanbans->contains('id', $this->id) // user enrolled
-            or $this->subscriptions->where('subscribable_type', "App\Group")->whereIn(
-                'subscribable_id',
-                auth()->user()->groups->pluck(
-                    'id'
-                )
-            )->isNotEmpty() // user is enroled in group
-            or $this->subscriptions->where('subscribable_type', "App\Organization")->whereIn(
-                'subscribable_id',
-                auth()->user()->current_organization_id
-            )->isNotEmpty() // user is enroled in organization
-            or $this->owner_id == auth()->user()->id
-            or is_admin()
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return auth()->user()->kanbans()->get(['id'])->contains('id', $this->id) or is_admin();
     }
 
     public function isEditable($user_id = null, $token = null): bool

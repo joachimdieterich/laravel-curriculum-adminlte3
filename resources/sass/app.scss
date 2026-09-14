@@ -19,7 +19,7 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 }
 .dataTablesWrapper {
     width: 100%;
-    padding: 0px 15px;
+    padding: 0px 1rem 1rem;
 }
 
 .vue-swatches__trigger {
@@ -37,9 +37,11 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 // to update adminLTE copy "~admin-lte/build/scss" to "adminLTE";
 @import "rlp/AdminLTE-raw";
 
+@import '_variables.scss';
 @import 'boxes.scss';
 @import 'buttons.scss';
 @import 'cards.scss';
+@import 'header.scss';
 @import 'media.scss';
 @import 'modal.scss';
 @import 'objectives.scss';
@@ -83,6 +85,7 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
     from { background: yellow; }
     to { background: transparent; }
 }
+.bg-lime-accent { background-color: #EAF099 !important; }
 .inset { inset: 0; }
 .p-margin-0 p { margin-bottom: 0px !important; }
 .pointer { cursor: pointer; }

@@ -1,19 +1,19 @@
 <template>
     <div
         id="kanban-container"
-        class="kanban-container w-print-auto"
+        class="position-relative w-print-auto"
     >
         <img v-if="kanban.medium_id"
-            class="position-absolute p-0 h-100 w-100"
-            style="object-fit: cover;"
-            :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
-            alt="background image"
+             class="position-absolute p-0 h-100 w-100"
+             style="object-fit: cover;"
+             :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
+             :alt="kanban.medium.title ?? kanban.medium.medium_name ?? 'background image'"
         />
         <div v-if="!embeded"
-            class="d-print-none position-absolute pointer"
-            style="top: 10px; left: 10px; line-height: 1; z-index: 10;"
-            :style="{ color: textColor }"
-            @click="toggleFullscreen"
+             class="d-print-none position-absolute pointer"
+             style="top: 10px; left: 10px; line-height: 1; z-index: 10;"
+             :style="{ color: textColor }"
+             @click="toggleFullscreen"
         >
             <i class="fa fa-expand"></i>
         </div>
@@ -29,7 +29,7 @@
 
         <div
             id="kanban-wrapper"
-            class="kanban-wrapper position-relative"
+            class="kanban-wrapper position-relative h-100 w-100"
             :style="'background-color: ' + kanban.color + 'B2;'"
         >
             <!-- Columns (Statuses) -->
@@ -39,20 +39,20 @@
                 item-key="id"
                 handle=".handle"
                 class="d-flex m-0 h-100"
-                style="width: max-content; gap: 16px;"
+                style="width: max-content;"
                 :move="isLocked"
                 @end="syncStatusMoved"
             >
                 <template #item="{ element: status, index }">
                     <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
-                          v-show="status.visible ?? true"
                           :id="'status-' + status.id"
                           :key="'drag_status_' + status.id"
-                          :class="{'d-flex': (status.visible ?? true), 'flex-column': true, 'collapse': true, 'show': true, 'mh-100': true}"
+                          class="flex-column mh-100 collapse show"
+                          :class="status.visible ?? true ? 'd-flex' : 'd-none'"
                           :style="{
-                              width:  itemWidth + 'px',
-                              opacity: !status.visibility ? '0.7' : '1'
-                          }"
+                            width:  (itemWidth + 16) + 'px',
+                            opacity: !status.visibility ? '0.7' : '1'
+                        }"
                           tabindex="-1"
                     >
                         <KanbanStatus
@@ -67,8 +67,8 @@
                             @show-with-search="(data) => {status.visible = data.show;}"
                         />
                         <div v-if="editable"
-                            :id="'kanbanItemCreateButton_' + index"
-                            class="my-1 w-100 text-center"
+                             :id="'kanbanItemCreateButton_' + index"
+                             class="my-1 w-100 text-center"
                         >
                             <button
                                 class="btn btn-flat p-1"
@@ -84,7 +84,7 @@
                             item-key="id"
                             handle=".handle"
                             :data-status-id="status.id"
-                            class="kanban-items-container d-flex flex-column hide-scrollbars overflow-auto"
+                            class="kanban-items-container d-flex flex-column flex-fill hide-scrollbars overflow-auto"
                             :move="isLocked"
                             @end="syncItemMoved"
                         >
@@ -93,20 +93,20 @@
                                     <KanbanItem v-if="(item.visibility && visibleFromTo(item.visible_from, item.visible_until))
                                             || ($userId == item.owner_id)
                                             || ($userId == kanban.owner_id)"
-                                        :key="item.id"
-                                        :editable="editable"
-                                        :favourable="favourable"
-                                        :commentable="kanban.commentable"
-                                        :only_edit_owned_items="kanban.only_edit_owned_items"
-                                        :collapse_items="kanban.collapse_items"
-                                        :allow_copy="kanban.allow_copy"
-                                        :ref="'kanbanItemId' + item.id"
-                                        :index="status.id + '_' + item.id"
-                                        :item="item"
-                                        :width="itemWidth"
-                                        :kanban_owner_id="kanban.owner_id"
-                                        :websocket="websocket && kanban.auto_refresh"
-                                        filter=".ignore"
+                                                :key="item.id"
+                                                :editable="editable"
+                                                :favourable="favourable"
+                                                :commentable="kanban.commentable"
+                                                :only_edit_owned_items="kanban.only_edit_owned_items"
+                                                :collapse_items="kanban.collapse_items"
+                                                :allow_copy="kanban.allow_copy"
+                                                :ref="'kanbanItemId' + item.id"
+                                                :index="status.id + '_' + item.id"
+                                                :item="item"
+                                                :width="itemWidth"
+                                                :kanban_owner_id="kanban.owner_id"
+                                                :websocket="websocket && kanban.auto_refresh"
+                                                filter=".ignore"
                                     />
                                 </span>
                             </template>
@@ -115,8 +115,8 @@
                 </template>
                 <template #footer>
                     <div v-if="editable"
-                        class="d-print-none no-border float-left pr-2"
-                        :style="'width:' + itemWidth + 'px;'"
+                         class="d-print-none"
+                         :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus :newStatus="true"/>
                     </div>
@@ -170,17 +170,17 @@
         <Teleport to="#customTitle">
             <small v-text="kanban.title"></small>
             <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                type="button"
-                class="btn text-secondary px-2 mx-1"
-                @click="editKanban(kanban)"
+                    type="button"
+                    class="btn text-secondary px-2 mx-1"
+                    @click="editKanban(kanban)"
             >
                 <i class="fa fa-pencil-alt"></i>
             </button>
 
             <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                type="button"
-                class="btn text-secondary px-2 mx-1"
-                @click="share()"
+                    type="button"
+                    class="btn text-secondary px-2 mx-1"
+                    @click="share()"
             >
                 <i class="fa fa-share-alt"></i>
             </button>
@@ -279,17 +279,12 @@ export default {
         },
         toggleCollapseAll(e) {
             const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'hide' : 'show';
-            $('#kanban-wrapper .card-body').collapse(collapse);
+            $('#kanban-wrapper .kanban-item-body').collapse(collapse);
         },
         setEmbededView() {
-            // TODO: needs to be adapted for the new layout in '1531-dashboard' branch
+            // INFO: section.p-3 also removes 'contributors'
             // delete all elements that are not needed in embeded view
-            document.querySelectorAll('.main-header, .main-sidebar, .main-footer, .content-header')
-                .forEach(el => el.remove());
-            // remove unneded paddings and margins
-            document.getElementById('content')?.classList.remove('content-wrapper');
-            document.getElementsByClassName('content')[0]?.classList.remove('px-3');
-            this.$el.parentElement.style.height = '100vh';
+            document.querySelectorAll('#header, section.p-3, footer').forEach(el => el.remove());
         },
         share() {
             this.globalStore?.showModal('subscribe-modal', {
@@ -354,14 +349,14 @@ export default {
                     const item = status.items[i];
                     item.order_id = i;
                     // save the new order_id so it can be updated on the server
-                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: status.id });
+                    itemChanges.push({id: item.id, order_id: item.order_id, kanban_status_id: status.id});
                 }
             } else {
                 // on 'moved to'-status, increase order_id of all items after the moved item
                 for (let i = e.newIndex + 1; i < status.items.length; i++) {
                     const item = status.items[i];
                     item.order_id = i;
-                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: status.id });
+                    itemChanges.push({id: item.id, order_id: item.order_id, kanban_status_id: status.id});
                 }
 
                 // on 'moved from'-status, decrease order_id of all items after the original position
@@ -369,14 +364,14 @@ export default {
                 for (let i = e.oldIndex; i < oldStatus.items.length; i++) {
                     const item = oldStatus.items[i];
                     item.order_id = i;
-                    itemChanges.push({ id: item.id, order_id: item.order_id, kanban_status_id: oldStatus.id });
+                    itemChanges.push({id: item.id, order_id: item.order_id, kanban_status_id: oldStatus.id});
                 }
             }
 
             this.sendChange("/kanbanItems/sync", itemChanges);
         },
         sendChange(url, changes) {
-            const data = url == '/kanbanItems/sync' ? { items: changes } : { statuses: changes };
+            const data = url == '/kanbanItems/sync' ? {items: changes} : {statuses: changes};
 
             axios.put(url, data)
                 .catch(err => {
@@ -509,7 +504,7 @@ export default {
                 this.$echo
                     .join('App.Kanban.' + this.kanban.id)
                     .here((users) => {
-                        for(let user of users) {
+                        for (let user of users) {
                             this.currentContributors[user.id] = user;
                         }
                     })
@@ -583,7 +578,7 @@ export default {
         this.stopWebsocket();
     },
     computed: {
-        textColor: function() {
+        textColor: function () {
             if (this.kanban.color == "" || this.kanban.color == null) return;
             return this.$textcolor(this.kanban.color, '#333333');
         },
@@ -620,29 +615,100 @@ export default {
     },
 }
 </script>
-<style scoped>
-.kanban-container {
+<style>
+#kanban-container {
     background-color: #fff;
-    position: relative;
-    width: 100%;
-}
-.kanban-wrapper {
+    width: 100vw;
     height: 100%;
-    width: 100%;
+    min-height: 400px;
+}
+
+.kanban-wrapper {
     padding: 2rem;
     overflow-x: auto;
     overflow-y: clip;
 }
-.kanban-items-container { scroll-behavior: smooth; }
-.kanban-items-container > :last-child > .card { margin-bottom: 0; }
-@media (max-width: 991px) {
-    .kanban-container {
-        width: 100vw;
-        margin-left: -1rem;
+
+.kanban-status {
+    background-color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.kanban-items-container {
+    height: 0px !important;
+    scroll-behavior: smooth;
+}
+
+.kanban-item {
+    position: relative;
+    border-radius: 0.5rem;
+
+    & > .kanban-item-header {
+        position: relative;
+        border-bottom: 1px solid #0002;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        transition: filter 0.25s;
+
+        &:hover {
+            filter: brightness(90%);
+        }
+
+        & > .kanban-item-header-title {
+            padding-right: 3rem;
+        }
+    }
+
+    & > .kanban-item-tools {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+
+    & > .kanban-item-info {
+        border-top: 1px solid #0002;
+        font-size: 0.75rem;
+
+        & .due-date {
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        & .badge {
+            border: 1px solid #dc3545;
+            background-color: #fff;
+            color: #dc3545;
+            font-size: 0.8em;
+        }
+    }
+
+    & > .kanban-item-footer {
+        border-top: 1px solid #0002;
+        border-bottom-left-radius: inherit;
+        border-bottom-right-radius: inherit;
+
+        & .comments {
+            border-bottom-left-radius: inherit;
+            border-bottom-right-radius: inherit;
+        }
     }
 }
+
+.kanban-item, .kanban-status {
+    box-shadow: var(--shadow-default);
+}
+
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
-    &:hover, &:focus { opacity: 1 !important; }
+
+    &:hover, &:focus {
+        opacity: 1 !important;
+    }
+}
+
+@media (max-width: 576px) {
+    #kanban-container {
+        height: 80vh;
+    }
 }
 </style>

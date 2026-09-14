@@ -66,12 +66,9 @@ class Map extends Model
     {
 
         if (
-            auth()->user()->maps->contains('id', $this->id) // user enrolled
-            or ($this->subscriptions->where('subscribable_type', "App\Group")->whereIn('subscribable_id', auth()->user()->groups->pluck('id')))->isNotEmpty() //user is enroled in group
-            or ($this->subscriptions->where('subscribable_type', "App\Organization")->whereIn('subscribable_id', auth()->user()->current_organization_id))->isNotEmpty() //user is enroled in group
-            or ($this->owner_id == auth()->user()->id)            // or owner
-            or ((config('app.guest_user_id') != null) ? User::find(config('app.guest_user_id'))->maps->contains('id', $this->id) : false) //or allowed via guest
-            or is_admin() // or admin
+            auth()->user()->maps()->get()->contains('id', $this->id)
+            or ((config('app.guest_user_id') != null) ? User::find(config('app.guest_user_id'))->maps()->get()->contains('id', $this->id) : false) // or allowed via guest
+            or is_admin()
         ) {
             return true;
         } else {

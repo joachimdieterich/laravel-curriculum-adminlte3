@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-wrap">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -11,7 +11,8 @@
                     </div>
                     <div
                         v-permission="'user_edit'"
-                        class="card-tools pr-2">
+                        class="card-tools pr-2"
+                    >
                         <a @click="editUser(user)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
@@ -37,6 +38,19 @@
                 </div>
 
                 <div class="card-body">
+                    <div v-if="user.organizations.length > 1">
+                        <Select2
+                            id="select-organization"
+                            name="select-organization"
+                            url="/organizations"
+                            model="organization"
+                            :label="trans('global.organization.set')"
+                            :placeholder="user.organizations.find(org => org.id === user.current_organization_id).title"
+                            :list="user.organizations.map(org => { return { id: org.id, title: org.title } })"
+                            @selectedValue="(id) => setCurrentOrganization(id[0])"
+                        />
+                        <hr>
+                    </div>
                     <strong>
                         <i class="fa fa-university mr-1"></i>
                         {{ trans('global.organization.title_singular') }}
@@ -45,7 +59,7 @@
                         <li v-for="organization in user.organizations"
                            class="small"
                         >
-                            {{ organization.title}} @ {{ getRoleInOrganization(organization)[0].title }}
+                            {{ organization.title }} @ {{ getRoleInOrganization(organization)[0]?.title }}
                         </li>
                     </ul>
                     <hr>
@@ -58,7 +72,7 @@
                         <li v-for="group in user.groups"
                             class="small"
                         >
-                            {{ group.title}} @ {{ getOrganizationOfGroup(group)[0].title }}
+                            {{ group.title }} @ {{ getOrganizationOfGroup(group)[0]?.title }}
                         </li>
                     </ul>
                     <hr>
@@ -71,7 +85,7 @@
                         <li v-for="role in user.roles"
                             class="small"
                         >
-                            {{ role.title}} @ {{ getOrganizationForRole(role)[0].title }}
+                            {{ role.title }} @ {{ getOrganizationForRole(role)[0]?.title }}
                         </li>
                     </ul>
                 </div>
@@ -138,30 +152,27 @@
         </Teleport>
     </div>
 </template>
-
 <script>
 import UserModal from "../user/UserModal.vue";
 import Avatar from "../uiElements/Avatar.vue";
 import Notes from "../note/Notes.vue";
+import Select2 from "../forms/Select2.vue";
 import ContactDetail from "../contactDetail/ContactDetail.vue";
-import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
-
 
 export default {
     name: "User",
-    components:{
+    components: {
         ContactDetail,
         Avatar,
         UserModal,
-        Notes
+        Notes,
+        Select2,
     },
     props: {
         user: {
-            default: null
-        },
-        status_definitions: {
-            default: null
+            type: Object,
+            default: null,
         },
     },
     setup () {
@@ -182,22 +193,25 @@ export default {
         });
     },
     methods: {
-        editUser(user){
+        editUser(user) {
             this.globalStore?.showModal('user-modal', user);
         },
-        getRoleInOrganization(organization){
-            //console.log(this.user.roles.filter((r) => r.pivot.organization_id == organization.id));
+        setCurrentOrganization(id) {
+            axios.patch('/users/setCurrentOrganization', { current_organization_id: id })
+                .then(() => window.location.reload());
+        },
+        getRoleInOrganization(organization) {
             return this.user.roles.filter((r) => r.pivot.organization_id == organization.id);
         },
-        getOrganizationOfGroup(group){
+        getOrganizationOfGroup(group) {
             return this.user.organizations.filter((o) => o.id == group.organization_id);
         },
-        getOrganizationForRole(role){
+        getOrganizationForRole(role) {
             return this.user.organizations.filter((o) => o.id == role.pivot.organization_id);
         },
-        getCurrentOrganization(){
+        getCurrentOrganization() {
             return this.user.organizations.filter((o) => o.id == this.user.current_organization_id)[0];
-        }
-    }
+        },
+    },
 }
 </script>

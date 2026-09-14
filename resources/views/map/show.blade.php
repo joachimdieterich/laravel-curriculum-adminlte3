@@ -1,4 +1,4 @@
-@extends('layouts.contentonly')
+@extends('layouts.master')
 @section('content')
     <leaflet-map
         :map="{{ $map }}"

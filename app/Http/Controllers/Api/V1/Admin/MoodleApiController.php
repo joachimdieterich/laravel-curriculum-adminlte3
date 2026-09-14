@@ -113,7 +113,6 @@ class MoodleApiController extends Controller
 
     public function getLogbooks(Request $request)
     {
-        $this->validateRequest();
         $user = User::where('common_name', request('common_name'));
         $user = Auth::loginUsingId($user->first()->id);
 
@@ -127,26 +126,41 @@ class MoodleApiController extends Controller
         $logbooks = (new LogbookController())->getLogbooks()->get(); //get all accessible logbooks
 
         return $logbooks->map->only('id', 'title')->unique('id');
-
-
     }
 
     public function getKanbans(Request $request)
     {
-        $this->validateRequest();
-        $user = User::where('common_name', request('common_name'));
-        $user = Auth::loginUsingId($user->first()->id);
+        $userId = User::select('id')->where('common_name', request('common_name'))->first()->id;
+        Auth::loginUsingId($userId);
 
+        return getSubscribedModels(Kanban::select('id', 'title'))->get();
+    }
 
-        $kanbans = (new KanbanController())->userKanbans(); //get all accessible kanbans
-        /*$kanbans = Kanban::where('owner_id', $user->id )
-            ->select('id', 'title')->get()
-            ->merge(
-                $user->kanbans()
-                    ->select('kanbans.id', 'kanbans.title')->get()
-            );*/
-        return $kanbans->map->only('id', 'title')->unique('id');
+    public function getKanbanLink(Request $request)
+    {
+        if (empty(request('title'))) return response()->json("Missing required field 'title'", 400);
+        if (!Kanban::where('id', request('id'))->exists()) return response()->json('Kanban not found', 404);
 
+        $editable = request('editable') ?? false;
+        if (gettype($editable) === 'string') $editable = ($editable === 'true' || $editable === '1');
+
+        $token = KanbanSubscription::firstOrCreate(
+            [
+                'kanban_id' => request('id'),
+                'title'     => request('title'),
+            ],
+            [
+                'subscribable_type' => 'App\User',
+                'subscribable_id'   => config('app.guest_user_id'),
+                'owner_id'          => config('app.guest_user_id'),
+                'sharing_token'     => \Illuminate\Support\Str::uuid(),
+                'editable'          => $editable,
+            ]
+        )->sharing_token;
+
+        $url = config('app.url') . '/kanbans/' . request('id') . '/token?sharing_token=' . $token;
+
+        return response()->json($url);
     }
 
     public function getCourse(Request $request)
@@ -178,7 +192,6 @@ class MoodleApiController extends Controller
 
     public function getGroups(Request $request)
     {
-        $this->validateRequest();
         $user = User::where('common_name', request('common_name'));
         $user = Auth::loginUsingId($user->first()->id);
 

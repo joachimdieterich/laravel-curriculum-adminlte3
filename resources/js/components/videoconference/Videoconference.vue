@@ -1,47 +1,47 @@
 <template >
-    <div class="row">
-        <div class="col-12">
-            <div class="card card-primary">
-                <div class="card-body">
-                    <h5>
-                        {{ videoconference.meetingName }}
-                        <span v-if="videoconference.owner_id == $userId || checkPermission('is_admin')"
-                            class="pointer"
-                        >
-                            <a class="text-secondary p-1">
-                                <i
-                                    class="fa fa-share-alt"
-                                    @click="share()"
-                                ></i>
-                            </a>
-                            <a
-                                class="text-secondary pull-right"
-                                @click="editVideoconference(videoconference)"
-                            >
-                                <i class="fa fa-pencil-alt"></i>
-                            </a>
-                        </span>
-                    </h5>
-                    <hr class="bg-gray mt-0">
-                    <div v-if="loading"
-                        class="text-center"
+    <div class="d-flex flex-column px-3">
+        <div class="card card-primary">
+            <div class="card-body">
+                <h5>
+                    {{ videoconference.meetingName }}
+                    <span v-if="videoconference.owner_id == $userId || checkPermission('is_admin')"
+                        class="pointer"
                     >
-                        <i class="fas fa-2x fa-spinner fa-spin"></i>
-                        <p> {{ loadingMessage }} {{ timerCount }}</p>
-                        <button
-                            class="btn btn-primary pt-2"
-                            @click="toggleTimer()"
+                        <a class="text-secondary p-1">
+                            <i
+                                class="fa fa-share-alt"
+                                @click="share()"
+                            ></i>
+                        </a>
+                        <a
+                            class="text-secondary pull-right"
+                            @click="editVideoconference(videoconference)"
                         >
-                            {{ trans('global.cancel') }}
-                        </button>
-                    </div>
-                    <div v-else
-                        class="row"
+                            <i class="fa fa-pencil-alt"></i>
+                        </a>
+                    </span>
+                </h5>
+                <hr class="bg-gray mt-0">
+                <div v-if="loading"
+                    class="text-center"
+                >
+                    <i class="fas fa-2x fa-spinner fa-spin"></i>
+                    <p> {{ loadingMessage }} {{ timerCount }}</p>
+                    <button
+                        class="btn btn-primary pt-2"
+                        @click="toggleTimer()"
                     >
-                        <div class="col-6">
+                        {{ trans('global.cancel') }}
+                    </button>
+                </div>
+                <div v-else
+                    class="d-flex flex-column"
+                >
+                    <div class="d-flex">
+                        <div class="w-50">
                             {{ videoconference.owner.firstname }} {{ videoconference.owner.lastname }} (Initiator)
                         </div>
-                        <div class="col-6 input-group">
+                        <div class="input-group w-50">
                             <input
                                 type="text"
                                 id="userName"
@@ -69,49 +69,42 @@
                                 </button>
                             </span>
                         </div> <!-- guestName -->
+                    </div>
 
-                        <div v-if="videoconference.owner_id == $userId
-                            || videoconference.moderatorPW == urlParamModeratorPW
-                            || checkPermission('is_admin')
-                            "
-                            class="d-flex pt-4 w-100"
+                    <div v-if="videoconference.owner_id == $userId
+                        || videoconference.moderatorPW == urlParamModeratorPW
+                        || checkPermission('is_admin')
+                        "
+                        class="d-flex pt-3"
+                    >
+                        <a
+                            class="btn btn-light pt-2 ml-auto mr-3"
+                            @click="copyToClipboard('attendee')"
                         >
-                            <a
-                                class="btn btn-light pt-2 ml-auto mr-3"
-                                @click="copyToClipboard('attendee')"
-                            >
-                                <i class="fa fa-copy"></i>
-                                {{ trans('global.videoconference.participant_link') }}
-                            </a>
-                            <a
-                                class="btn btn-light pt-2"
-                                @click="copyToClipboard('moderator')"
-                            >
-                                <i class="fa fa-copy"></i>
-                                {{ trans('global.videoconference.moderator_link') }}
-                            </a>
-                        </div>
+                            <i class="fa fa-copy"></i>
+                            {{ trans('global.videoconference.participant_link') }}
+                        </a>
+                        <a
+                            class="btn btn-light pt-2"
+                            @click="copyToClipboard('moderator')"
+                        >
+                            <i class="fa fa-copy"></i>
+                            {{ trans('global.videoconference.moderator_link') }}
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div
-            v-permission="'is_admin'"
-            class="col-12"
-        >
-            <div v-if="videoconference.owner_id == $userId || checkPermission('is_admin')"
-                class="col-12"
-            >
-                <h5 class="pt-4">{{ trans('global.videoconference.presentations') }}</h5>
-                <hr class="bg-gray mt-0">
-                <Media
-                    ref="videoconferenceMedia"
-                    :subscribable_id="videoconference.id"
-                    subscribable_type="App\Videoconference"
-                    format="list"
-                />
-            </div>
+        <div v-if="videoconference.owner_id == $userId && checkPermission('is_admin')">
+            <h5 class="pt-4">{{ trans('global.videoconference.presentations') }}</h5>
+            <hr class="bg-gray mt-0">
+            <Media
+                ref="videoconferenceMedia"
+                :subscribable_id="videoconference.id"
+                subscribable_type="App\Videoconference"
+                format="list"
+            />
         </div>
 
         <Teleport to="body">

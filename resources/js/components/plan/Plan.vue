@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="d-flex flex-column px-3">
         <div
             class="card position-sticky mb-0"
             style="top: 3.5rem; z-index: 10; border-radius: 0px;"
@@ -55,35 +55,29 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12 pt-2">
-                <draggable
-                    v-model="entries"
-                    v-bind="columnDragOptions"
-                    :disabled="!editable"
-                    itemKey="id"
-                    @start="drag=true"
-                    @end="handleEntryOrder"
-                >
-                    <template #item="{ element: entry }">
-                        <PlanEntry
-                            :key="entry.id"
-                            :entry="entry"
-                            :plan="plan"
-                            :editable="editable"
-                            :showTools="showTools"
-                        />
-                    </template>
-                </draggable>
-            </div>
-
-            <div class="col-12">
-                <PlanEntry v-if="editable && showTools"
+        <draggable
+            v-model="entries"
+            v-bind="columnDragOptions"
+            :disabled="!editable"
+            itemKey="id"
+            @start="drag=true"
+            @end="handleEntryOrder"
+        >
+            <template #item="{ element: entry }">
+                <PlanEntry
+                    :key="entry.id"
+                    :entry="entry"
                     :plan="plan"
-                    :create="true"
+                    :editable="editable"
+                    :showTools="showTools"
                 />
-            </div>
-        </div>
+            </template>
+        </draggable>
+
+        <PlanEntry v-if="editable && showTools"
+            :plan="plan"
+            :create="true"
+        />
         <!-- overlay button in bottom right corner -->
         <!-- <div
             id="corner-button"
@@ -171,7 +165,6 @@ export default {
             subscriptions: {},
             search: '',
             showTools: false,
-            errors: {},
         }
     },
     methods: {

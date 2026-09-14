@@ -1,10 +1,17 @@
 <template>
     <div id="show-achievements">
-        <div id="header" class="d-flex align-items-center py-4">
-            <div id="fixed-header" class="d-flex position-fixed w-100 px-3">    
+        <div
+            id="header"
+            class="d-flex align-items-center pb-3"
+        >
+            <div
+                id="fixed-header"
+                class="d-flex position-fixed w-100 px-3"
+            >    
                 <span class="d-flex align-items-center">
                     Ziele / Namen
                     <button
+                        type="button"
                         class="btn btn-icon link-muted ml-1"
                         :title="trans('global.open_settings')"
                         @click="globalStore.showModal('plan-achievements-options-modal');"
@@ -19,7 +26,10 @@
                 </span>
             </div>
         </div>
-        <div id="achievements">
+        <div
+            id="achievements"
+            class="mt-3"
+        >
             <div v-for="ter in objectives">
                 <div
                     class="terminal pointer px-3"
@@ -32,7 +42,10 @@
                         <span class="fa fa-angle-up"></span>
                     </span>
                 </div>
-                <div :id="'terminal_' + ter.terminal_objective.id" class="collapse show">
+                <div
+                    :id="'terminal_' + ter.terminal_objective.id"
+                    class="collapse show"
+                >
                     <div v-for="ena in ter.terminal_objective.enabling_objectives"
                         class="d-flex enabling px-3 w-100"
                     >
@@ -214,57 +227,50 @@ export default {
             } else { // unfold all collapsed objectives
                 $('.terminal.collapsed').trigger('click');
             }
-        }
+        },
     },
-    components: {
-        PlanAchievementsOptionsModal,
-    },
+    components: { PlanAchievementsOptionsModal },
 }
 </script>
 <style>
-#show-achievements {
-    margin: -15px -16px 0px;
+p { margin: 0px !important; }
+#header > #fixed-header {
+    padding: 1rem 0px;
+    background-color: white;
+    z-index: 1;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
 
-    p { margin: 0px !important; }
-    #header > #fixed-header {
-        padding: 9px 0px;
-        background-color: white;
-        z-index: 1;
-        border-bottom: 3px solid #dee2e6;
+    > span {
+        font-size: 1.25rem;
+        font-weight: 700;
+        min-width: 25%;
+        flex: 1 1 0px;
+    }
+}
+#achievements {
+    > div {
+        > .terminal {
+            padding: 8px 0px;
+            font-size: 1.05rem;
+            border-top: 3px solid #dee2e6;
+            border-bottom: 3px solid #dee2e6;
 
+            &:hover { background-color: #e9ecef; }
+        }
+    }
+    .enabling {
+        padding: 10px 0px;
+
+        &:not(:first-child) { border-top: 1px solid #dee2e6; }
         > span {
-            font-size: 1.25rem;
-            font-weight: 700;
             min-width: 25%;
             flex: 1 1 0px;
         }
-    }
-    #achievements {
-        > div {
-            > .terminal {
-                padding: 8px 0px;
-                font-size: 1.05rem;
-                border-top: 3px solid #dee2e6;
-                border-bottom: 3px solid #dee2e6;
-    
-                &:hover { background-color: #e9ecef; }
-            }
-            &:first-child > .terminal { border-top: none !important; }
-        }
-        .enabling {
-            padding: 10px 0px;
-
-            &:not(:first-child) { border-top: 1px solid #dee2e6; }
-            > span {
-                min-width: 25%;
-                flex: 1 1 0px;
-            }
-            .fa { font-size: 1.5rem; }
-            .status-0 { color: #d2d6de !important; }
-            .status-1 { color: #00a65a !important; }
-            .status-2 { color: #fd7e14 !important; }
-            .status-3 { color: #dd4b39 !important; }
-        }
+        .fa { font-size: 1.5rem; }
+        .status-0 { color: #d2d6de !important; }
+        .status-1 { color: #00a65a !important; }
+        .status-2 { color: #fd7e14 !important; }
+        .status-3 { color: #dd4b39 !important; }
     }
 }
 </style>

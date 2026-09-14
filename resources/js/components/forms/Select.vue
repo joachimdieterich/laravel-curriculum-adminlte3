@@ -11,7 +11,7 @@
                   @search="setFetchOptions"
                   @open="onOpen"
                   @close="onClose"
-                  @option:selected="(selectedOption) => {
+                  @update:model-value="(selectedOption) => {
                       this.selectedOption = selectedOption;
                       if (clearSearchOnSelect()) {
                           this.selectedOption = undefined

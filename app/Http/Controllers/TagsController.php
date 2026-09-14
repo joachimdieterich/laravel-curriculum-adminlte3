@@ -41,24 +41,21 @@ class TagsController extends Controller
         return view('tags.index');
     }
 
-    public function list(DataTables $dt): JsonResponse
+    public function list(): JsonResponse
     {
         abort_unless(\Gate::allows('tag_access'), 403);
 
         $locale = App::currentLocale();
 
-        $builder = Tag::select([
-            "id",
-            "name->{$locale} as translation",
-        ])->where('user_id', auth()->user()->id);
+        $builder = Tag::select("id", "name->{$locale} as translation");
 
-        $data = $dt->eloquent($builder)
+        if (!is_admin()) $builder->where('user_id', auth()->user()->id);
+
+        return DataTables::of($builder)
             ->filterColumn('translation', function (Builder $query, $keyword) use ($locale) {
                 $query->orWhere("name->{$locale}", 'LIKE', "%{$keyword}%");
             })
-            ->setRowId('id');
-
-        return $data->make();
+            ->make(true);
     }
 
     public function store(StoreTagRequest $request)
@@ -106,13 +103,12 @@ class TagsController extends Controller
     {
         abort_unless(\Gate::allows('tag_access'), 403);
 
-        $tag = Tag::findOrCreate(
+        $tag = Tag::findOrCreateFromString(
             $request->input('name'),
         );
 
-        /** @var Role $role */
-        $role = ($request->input('type'))::findOrFail($request->input('taggable_id'));
-        $role->attachTag($tag);
+        $attachableModel = ($request->input('type'))::findOrFail($request->input('taggable_id'));
+        $attachableModel->attachTag($tag);
 
         if (request()->wantsJson()) {
             return $tag;

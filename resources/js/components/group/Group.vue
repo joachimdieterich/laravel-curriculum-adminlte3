@@ -1,6 +1,6 @@
 <template>
-    <div class="row">
-        <div class="col-12">
+    <div class="d-flex flex-column">
+        <div class="px-3">
             <ul
                 class="nav nav-tabs"
                 role="tablist"

@@ -12,4 +12,3 @@
 @section('content')
 <grades></grades>
 @endsection
-

@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-wrap">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -66,20 +66,17 @@
         </div>
 
         <Teleport to="body">
-            <CertificateModal></CertificateModal>
+            <CertificateModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import CertificateModal from "../certificate/CertificateModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "Certificate",
-    components: {
-        CertificateModal
-    },
+    components: { CertificateModal },
     props: {
         certificate: {
             type: Object,
@@ -95,11 +92,6 @@ export default {
             globalStore,
         }
     },
-    data() {
-        return {
-            componentId: this.$.uid,
-        }
-    },
     mounted() {
         this.$eventHub.on('certificate-updated', (certificate) => {
             this.globalStore?.closeModal('certificate-modal');
@@ -110,6 +102,6 @@ export default {
         editCertificate(certificate) {
             this.globalStore?.showModal('certificate-modal', certificate);
         },
-    }
+    },
 }
 </script>

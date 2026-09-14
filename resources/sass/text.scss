@@ -33,7 +33,7 @@
     color: $teal !important;
 }
 .text-olive {
-  color: #3d9970 !important;
+    color: #3d9970 !important;
 }
 .text-lime {
     color: #01ff70 !important;
@@ -50,10 +50,19 @@
 .text-maroon {
     color: $maroon !important;
 }
+.text-transparent {
+    color: transparent !important;
+}
 
 // Text size
-.t-18 {
-    font-size:1.125rem;
+.t-18 { font-size: 1.125rem; }
+.t-20 { font-size: 1.25rem; }
+
+.text-border-black {
+    text-shadow: 1px 0px black, 0px 1px black, -1px 0px black, 0px -1px black;
+}
+.text-border-white {
+    text-shadow: 1px 0px white, 0px 1px white, -1px 0px white, 0px -1px white;
 }
 
 .hyphens {

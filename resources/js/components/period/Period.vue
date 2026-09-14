@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -11,16 +11,15 @@
                     </div>
                     <div
                         v-permission="'organization_edit'"
-                        class="card-tools pr-2 pointer">
-                        <a  @click="editPeriod()">
+                        class="card-tools pr-2 pointer"
+                    >
+                        <a @click="editPeriod()">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                     </div>
-
                 </div>
 
                 <div class="card-body">
-
                     <p class="text-muted">
                         {{ trans('global.period.fields.begin') }}: {{ this.currentPeriod.begin }}<br>
                         {{ trans('global.period.fields.end') }}: {{ this.currentPeriod.end }}
@@ -37,23 +36,20 @@
         </div>
 
         <Teleport to="body">
-            <PeriodModal></PeriodModal>
+            <PeriodModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import PeriodModal from "../period/PeriodModal.vue";
 import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "period",
-    components:{
-        PeriodModal
-    },
+    components: { PeriodModal },
     props: {
         period: {
-            default: null
+            default: null,
         },
     },
     setup () {
@@ -75,12 +71,11 @@ export default {
             this.globalStore?.closeModal('period-modal');
             this.currentPeriod = period;
         });
-
     },
     methods: {
         editPeriod(){
             this.globalStore?.showModal('period-modal', this.currentPeriod);
         },
-    }
+    },
 }
 </script>

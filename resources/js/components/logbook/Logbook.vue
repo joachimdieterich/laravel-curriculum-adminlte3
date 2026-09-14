@@ -1,8 +1,8 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <div
             v-permission="'logbook_entry_create'"
-            class="col-md-12 pl-3 pt-0 pb-2"
+            class="px-3 pt-0 pb-3"
         >
             <button
                 id="add-logbook-entry"
@@ -29,7 +29,7 @@
         </div>
 
         <div v-if="showPrintOptions"
-            class="col-md-12"
+            class="px-3"
         >
             <LogbookPrintOptions
                 :logbook="logbook"
@@ -37,7 +37,7 @@
             />
         </div>
 
-        <div class="col-md-12">
+        <div class="px-3">
             <LogbookEntry v-for="(entry, index) in entries"
                 v-bind:key="entry.id"
                 :first="index === 0"
@@ -46,11 +46,7 @@
                 :logbook="logbook"
             />
         </div>
-        <!-- /.col -->
-<!--
-        <logbook-entry-modal></logbook-entry-modal>
-        <lms-modal></lms-modal>
--->
+
         <Teleport to="body">
             <AbsenceModal/>
             <ContentModal/>

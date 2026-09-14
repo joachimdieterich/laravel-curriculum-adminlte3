@@ -74,14 +74,6 @@ import VSwatches from 'vue3-swatches';
 import 'vue3-swatches/dist/style.css';
 app.use(VSwatches);
 
-app.config.globalProperties.$swatches = [
-    ['#166534', '#16a34a', '#10b981', '#4ade80', '#6ee7b7'], // green
-    ['#1e40af', '#2563eb', '#0ea5e9', '#60a5fa', '#a5b4fc'], // blue
-    ['#581c87', '#a21caf', '#7c3aed', '#a855f7', '#e879f9'], // purple -> pink
-    ['#991b1b', '#dc2626', '#f97316', '#f59e0b', '#facc15'], // red -> orange -> yellow
-    ['#111827', '#78350f', '#9ca3af', '#d1d5db', '#f4f4f4'], // black -> brown -> grey
-];
-
 app.config.globalProperties.$textcolor = (color, dark = '#000', light = '#fff') => {
     if (typeof(color) != 'string') {
         color = 'ffffff';
@@ -289,6 +281,9 @@ app.component('grade', defineAsyncComponent(() => import('./components/grade/Gra
 app.component('groups', defineAsyncComponent(() => import('./components/group/Groups.vue')));
 app.component('group', defineAsyncComponent(() => import('./components/group/Group.vue')));
 
+app.component('main-header', defineAsyncComponent(() => import('./components/uiElements/Header.vue')));
+app.component('home', defineAsyncComponent(() => import('./components/home/Home.vue')));
+
 app.component('maps', defineAsyncComponent(() => import('./components/map/Maps.vue')));
 app.component('leaflet-map', defineAsyncComponent(() => import('./components/map/Map.vue'))); // cannot be "map" -> name map is reserved
 
@@ -309,6 +304,8 @@ app.component('model-limiter', defineAsyncComponent(() => import('./components/c
 app.component('navigators', defineAsyncComponent(() => import('./components/navigator/Navigators.vue')));
 app.component('navigator', defineAsyncComponent(() => import('./components/navigator/Navigator.vue')));
 
+app.component('navigationbar', defineAsyncComponent(() => import('./components/uiElements/Navigationbar.vue')));
+
 app.component('notes', defineAsyncComponent(() => import('./components/note/Notes.vue')));
 
 app.component('objective', defineAsyncComponent(() => import('./components/objectives/Objective.vue')));
@@ -326,8 +323,7 @@ app.component('organization-type', defineAsyncComponent(() => import('./componen
 app.component('kanbans', defineAsyncComponent(() => import('./components/kanban/Kanbans.vue')));
 app.component('kanban', defineAsyncComponent(() => import('./components/kanban/Kanban.vue')));
 
-app.component('searchbar', defineAsyncComponent(() => import('./components/uiElements/Searchbar.vue')));
-app.component('sidebar', defineAsyncComponent(() => import('./components/uiElements/Sidebar.vue')));
+// app.component('sidebar', defineAsyncComponent(() => import('./components/uiElements/Sidebar.vue')));
 
 app.component('subjects', defineAsyncComponent(() => import('./components/subject/Subjects.vue')));
 app.component('subject', defineAsyncComponent(() => import('./components/subject/Subject.vue')));
@@ -495,7 +491,9 @@ app.config.globalProperties.$initTinyMCE = function(
  * Global values
  */
 import {globalValues} from "./globalValues.js";
-app.config.globalProperties.$dtOptions = globalValues.dtOptions;
+app.config.globalProperties.$dtOptions  = globalValues.dtOptions;
+app.config.globalProperties.$swatches   = globalValues.swatches;
+
 app.directive('hide-if-permission', function (el, binding) {
     if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
         el.style.display = 'none';

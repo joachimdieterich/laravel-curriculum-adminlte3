@@ -22,6 +22,15 @@
                 >
                     <div class="card">
                         <div class="card-body">
+                            <Select2 v-if="!subscribable_id"
+                                id="exam-group"
+                                name="exam-group"
+                                css="mb-3"
+                                model="group"
+                                url="/groups"
+                                :selected="form.group_id"
+                                @selectedValue="(id) => form.group_id = id[0]"
+                            />
                             <Select2
                                 id="exams_subscription"
                                 name="exams_subscription"
@@ -31,7 +40,7 @@
                                 option_label="name"
                                 :selected="form.exam_id"
                                 @selectedValue="(id) => {
-                                    this.form.exam_id = id;
+                                    this.form.exam_id = id[0];
                                 }"
                             />
                         </div>
@@ -82,6 +91,7 @@ export default {
             form: new Form({
                 id: '',
                 exam_id: '',
+                group_id: null,
             }),
             subscribable_type: '',
             subscribable_id: '',
@@ -92,10 +102,9 @@ export default {
         submit() {
             let test = this.options.filter((t) => t.id == this.form.exam_id);
 
-            this.sendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.subscribable_id);
+            this.sendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.subscribable_id ?? this.form.group_id);
         },
         async sendCreateExamRequest(tool, test_id, test_name, group_id) {
-            console.log({'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
             await axios.post('/exams', {'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
                 .then(response => {
                     this.$eventHub.emit('exam-added', response.data);

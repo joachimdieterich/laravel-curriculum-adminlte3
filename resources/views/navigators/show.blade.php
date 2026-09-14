@@ -1,5 +1,4 @@
-@extends('layouts.contentonly')
-
+@extends('layouts.master')
 @section('breadcrumb')
     @if (Auth::user()->id == config('app.guest_user_id'))
         <breadcrumbs
@@ -19,6 +18,6 @@
 @section('content')
     <navigator
         :navigator="{{ $navigator }}"
-        :view="{{ $view ?? null }}">
-    </navigator>
+        :view="{{ $view ?? null }}"
+    ></navigator>
 @endsection

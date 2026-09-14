@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <TabList v-if="!subscribable"
             class="px-3"
             :model="'kanban'"
@@ -11,7 +11,7 @@
 
         <div
             id="kanban-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'kanban_create'"
@@ -148,7 +148,7 @@
 
         <div
             id="kanban-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
+            class="dataTablesWrapper"
         >
             <DataTable
                 id="kanban-datatable"
@@ -247,7 +247,6 @@ export default {
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
-                { title: 'tags', data: 'tags' }
             ],
             filter: 'favourite',
             dt: null,
@@ -301,12 +300,15 @@ export default {
             this.dt = $('#kanban-datatable').DataTable();
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
-                let newFilter = this.dt.ajax.json().newFilter;
-                if (newFilter) {
-                    this.setFilter(newFilter);
+                let initialLoad = this.dt.rows().data().context[0].iDraw === 1;
+                let data = this.dt.rows({ page: 'current' }).data().toArray();
+                // if user doesn't have any favourited objects, default to 'all'-tab
+                if (initialLoad && data.length === 0) {
+                    this.setFilter('all');
+                    return;
                 }
 
-                this.kanbans = this.dt.rows({page: 'current'}).data().toArray();
+                this.kanbans = data;
                 $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
             });
 

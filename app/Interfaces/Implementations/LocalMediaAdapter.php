@@ -31,6 +31,7 @@ class LocalMediaAdapter implements MediaInterface
             return Medium::where('owner_id', auth()->user()->id)->orderBy('created_at', 'DESC')->paginate($request->input('per_page'));
         }
 
+        abort_unless(is_admin(), 403);
         return view('media.index');
     }
 

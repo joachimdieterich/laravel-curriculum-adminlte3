@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="d-flex flex-column">
         <div class="col-lg-4 col-sm-12">
             <div class="card card-primary">
                 <div class="card-header">
@@ -57,9 +57,7 @@ import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "OrganizationType",
-    components:{
-        OrganizationTypeModal,
-    },
+    components: { OrganizationTypeModal },
     props: {
         organizationType: {
             type: Object,
@@ -72,12 +70,6 @@ export default {
             globalStore,
         }
     },
-    data() {
-        return {
-            componentId: this.$.uid,
-        }
-    },
-    mounted() {},
     methods: {
         editOrganizationType() {
             this.globalStore?.showModal('organizationtype-modal', this.organizationType);

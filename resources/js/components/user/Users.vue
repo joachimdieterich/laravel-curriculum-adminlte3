@@ -1,9 +1,9 @@
 <template >
     <div>
-        <div class="row">
+        <div class="d-flex flex-column">
             <div
                 id="user-content"
-                class="col-md-12 m-0"
+                class="px-3"
             >
                 <div v-if="create_label_field != 'enrol'"
                     class="row"
@@ -141,6 +141,7 @@
                     </IndexWidget>
                 </div>
             </div>
+
             <div
                 id="user-datatable-wrapper"
                 class="dataTablesWrapper"
@@ -154,6 +155,8 @@
                     :search="search"
                 />
             </div>
+
+            <UserOptions v-if="!subscribable"/>
 
             <Teleport to="body">
                 <UserModal v-if="!subscribable"/>
@@ -171,11 +174,6 @@
                     }"
                 />
             </Teleport>
-        </div>
-        <div v-if="!subscribable"
-            class="row mt-4"
-        >
-            <UserOptions/>
         </div>
     </div>
 </template>

@@ -6,6 +6,7 @@
 /public/js
 /storage/*
 !/storage/framework/
+!/storage/fonts/
 /vendor/*
 
 .env.*.php

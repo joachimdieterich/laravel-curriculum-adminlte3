@@ -1,40 +1,48 @@
 <template>
-    <div
+    <div v-if="showSearchbar"
         id="searchbar"
-        class="input-group mx-3"
-        :class="{'d-none': !showSearchbar}"
+        class="d-flex d-print-none"
     >
-        <input
-            id="searchbar_input"
-            class="form-control rounded-pill h-100 border-0 search-field"
-            type="search"
-            :placeholder="trans('global.search')"
-            :aria-label="trans('global.search')"
-            v-model="filter.searchString"
-            @keydown.enter="prepareEvent(true)"
-        />
-        <div class="position-relative">
-            <button v-if="filter.searchString.length > 0"
-                id="clearSearch"
-                class="btn position-absolute d-flex align-items-center h-100"
-                :class="{'non-extend-clear-search': searchTagModelContext === null || !checkPermission('tag_access')}"
-                type="button"
-                @click="clearSearch()"
+        <div class="position-relative mx-2">
+            <input
+                id="searchbar_input"
+                class="form-control rounded-pill h-100 border-0"
+                type="search"
+                :placeholder="trans('global.search')"
+                :aria-label="trans('global.search')"
+                v-model="filter.searchString"
+                @keydown.enter="prepareEvent(true)"
+            />
+            <div
+                class="position-absolute d-flex align-items-center h-100"
+                style="right: 0; top: 0;"
             >
-                <span class="fa fa-xmark"></span>
-            </button>
-            <button
-                id="searchButton"
-                class="btn position-absolute d-flex align-items-center rounded-pill h-100 border-0"
-                :class="{'non-extend-search-button': searchTagModelContext === null || !checkPermission('tag_access')}"
-                type="button"
-                @click="prepareEvent()"
-            >
-                <span class="fa fa-search"></span>
-            </button>
+                <button v-if="filter.searchString.length > 0"
+                    id="clearSearch"
+                    class="btn d-flex align-items-center px-2"
+                    :class="{'non-extend-clear-search': searchTagModelContext === null || !checkPermission('tag_access')}"
+                    type="button"
+                    @click="clearSearch()"
+                >
+                    <span class="fa fa-xmark"></span>
+                </button>
+                <button
+                    id="searchButton"
+                    class="btn btn-icon d-flex align-items-center bg-lime-accent rounded-pill h-100 w-auto border-0"
+                    :class="{'non-extend-search-button': searchTagModelContext === null || !checkPermission('tag_access')}"
+                    style="aspect-ratio: 1 / 1;"
+                    type="button"
+                    @click="prepareEvent(true)"
+                >
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="position-relative mx-2">
             <button
                 id="extended-search-button"
                 :class="extendedSearchButtonClasses"
+                style="width: 34px;"
                 type="button"
                 @click="toggleModal"
             >
@@ -46,15 +54,13 @@
                     </span>
                 </span>
             </button>
+            <SearchbarDropDownModal
+                :show="showTagModal"
+                @modal-close="toggleModal"
+                @tagSelectionChange="(idArray) => {this.filter.tags = idArray;}"
+                @negativTagSelectionChange="(idArray) => {this.filter.negativeTags = idArray;}"
+            />
         </div>
-        <SearchbarDropDownModal
-            :show="showTagModal"
-            @modal-close="toggleModal"
-            @tagSelectionChange="(idArray) => {this.filter.tags = idArray;}"
-            @negativTagSelectionChange="(idArray) => {this.filter.negativeTags = idArray;}"
-        >
-
-        </SearchbarDropDownModal>
     </div>
 </template>
 <script>
@@ -62,7 +68,7 @@ import SearchbarDropDownModal from "./SearchbarDropDownModal.vue";
 import {useGlobalStore} from "../../store/global.js";
 
 export default {
-    components: {SearchbarDropDownModal},
+    components: { SearchbarDropDownModal },
     setup () {
         const globalStore = useGlobalStore();
 
@@ -90,10 +96,10 @@ export default {
             clearTimeout(this.timer);
 
             if (forced) { // forced == Enter or button-click
-                this.fireEvent();
+                if (this.filtered) this.fireEvent();
                 return;
-            } else if (this.filter.searchString.length < 3 && (this.filter.tags.length == 0 && this.filter.negativeTags.length == 0)) {
-                if (this.filtered) this.removeFilter();
+            } else if (this.filter.searchString.length === 0 && (this.filter.tags.length == 0 && this.filter.negativeTags.length == 0)) {
+                this.removeFilter();
                 return;
             }
 
@@ -130,11 +136,12 @@ export default {
                 color = ' active-extended-search-button';
             }
 
-            return 'btn position-absolute d-flex align-items-center rounded-pill h-100 border-0' + color;
+            return 'btn btn-icon d-flex align-items-center bg-lime-accent rounded-pill h-100 border-0' + color;
         }
     },
     mounted() {
         this.showSearchbar = this.globalStore['showSearchbar'];
+        this.searchTagModelContext = this.globalStore['searchTagModelContext'];
     },
     watch: {
         'globalStore.showSearchbar': function (newValue) {
@@ -143,101 +150,41 @@ export default {
         'globalStore.searchTagModelContext': function (newValue) {
             this.searchTagModelContext = newValue;
         },
-        'filter.searchString': function() { this.prepareEvent(); },
-        'filter.tags': function() { this.prepareEvent(); },
-        'filter.negativeTags': function() { this.prepareEvent(); }
-    }
+        filter: {
+            handler() { this.prepareEvent(); },
+            deep: true,
+        },
+    },
 }
 </script>
 <style scoped>
+#searchbar_input {
+    padding-right: 0px;
+    transition: padding 0.4s ease;
+
+    &:not(:placeholder-shown) { padding-right: 60px; }
+}
 .tag-count {
     position: absolute;
     border-radius: 100%;
-    text-align: center;
-    font-weight: bold;
-    background-color: red;
-    color: white;
-    top: 0;
-    right: 0;
-
+    top: -4px;
+    right: -4px;
     height: 18px;
     width: 18px;
-    line-height: 16px;
+    line-height: 18px;
     font-size: 9px !important;
 }
-#searchButton {
-    background-color: #EAF099;
-    z-index: 10;
-    right: 36px;
-}
-#searchButton::before {
-    content: 'Suche';
-    width: 0;
-    overflow: hidden;
-    text-align: left;
-    transition: width 0.2s ease-out;
-}
-.non-extend-search-button {
-    right: 0 !important;
-}
-.non-extend-clear-search {
-    right: 40px !important;
-}
-.non-active-extended-search-button {
-    background-color: #EAF099;
-}
 .active-extended-search-button {
-    background-color: #007bff;
+    background-color: #007bff !important;
 }
 #extended-search-button {
     z-index: 9;
-    right: 0;
     padding-left: 47px;
-}
-.search-field {
-    padding-right: 9rem;
-}
-#clearSearch {
-    z-index: 20;
-    right: 80px;
-}
-#clearSearch:focus {
-    box-shadow: none;
 }
 input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance: none;
-}
-@media only screen and (max-width: 400px) {
-    /* more specific selector to overwrite 576px rules */
-    div#searchbar > input {
-        transition: width 0.5s ease-out, padding 0.5s ease !important;
-
-        &:not(:focus-within) {
-            padding: 0 40px 0 0 !important;
-
-            & + div > #searchButton::before { content: none; }
-        }
-    }
-}
-@media only screen and (max-width: 576px) {
-    #searchbar {
-        > input {
-            width: calc(100vw - 183px);
-            max-width: 248px;
-            transition: width 0.5s ease-out, padding 0.4s ease;
-        }
-        &:not(:focus-within) > input {
-            width: 0;
-            padding: 0 95px 0 0 !important;
-
-            & + div {
-                > #clearSearch { display: none !important; }
-                > #searchButton::before { width: 55px; }
-            }
-        }
-    }
 }
 </style>

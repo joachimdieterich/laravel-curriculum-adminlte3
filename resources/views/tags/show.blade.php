@@ -11,7 +11,5 @@
     ></breadcrumbs>
 @endsection
 @section('content')
-    <tag
-        :tag="{{ $tag }}">
-    </tag>
+    <tag :tag="{{ $tag }}"></tag>
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Period;
+use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\DataTables;
 
 class PeriodController extends Controller
@@ -15,31 +16,18 @@ class PeriodController extends Controller
             );
         }
 
-
         abort_unless(\Gate::allows('period_access'), 403);
 
         return view('periods.index');
     }
 
-    public function list()
+    public function list(): JsonResponse
     {
         abort_unless(\Gate::allows('period_access'), 403);
-        $periods = Period::select([
-            'id',
-            'title',
-            'begin',
-            'end',
-        ]);
+        $periods = Period::select('id', 'title', 'begin', 'end');
 
-        return DataTables::of($periods)
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
-            ->make(true);
+        return DataTables::of($periods)->make(true);
     }
-
 
     public function store()
     {

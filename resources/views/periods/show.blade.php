@@ -11,7 +11,5 @@
     ></breadcrumbs>
 @endsection
 @section('content')
-    <period
-        :period="{{ $period }}"
-    ></period>
+    <period :period="{{ $period }}"></period>
 @endsection

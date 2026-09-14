@@ -35,44 +35,10 @@ class CourseController extends Controller
         LogController::set(get_class($this).'@'.__FUNCTION__, $course->curriculum_id);
 
         $curriculum = Curriculum::with([
-            'terminalObjectives',
-            'terminalObjectives.media',
-            'terminalObjectives.mediaSubscriptions',
-            'terminalObjectives.achievements' => function ($query) {
-                $query->where('user_id', auth()->user()->id);
-            },
-            'terminalObjectives.enablingObjectives',
-            'terminalObjectives.enablingObjectives.media',
-            'terminalObjectives.enablingObjectives.mediaSubscriptions',
-            'terminalObjectives.enablingObjectives.achievements' => function ($query) {
-                $query->where('user_id', auth()->user()->id);
-            },
             'contentSubscriptions.content',
             'glossar.contents',
-            'media',
         ])
         ->find($course->curriculum_id);
-
-        $objectiveTypes = \App\ObjectiveType::select('objective_types.id', 'objective_types.title', 'objective_types.uuid')
-            ->join('terminal_objectives', 'objective_types.id', '=', 'terminal_objectives.objective_type_id')
-            ->join('curricula', 'curricula.id', '=', 'terminal_objectives.curriculum_id')
-            ->where('curricula.id', $curriculum->id)
-            ->distinct()
-            ->get();
-
-        $certificates = Certificate::where([
-            ['curriculum_id', '=', $course->curriculum_id],
-            ['organization_id', '=', auth()->user()->current_organization_id],
-        ])
-        ->orWhere([
-            ['curriculum_id', '=', $course->curriculum_id],
-            ['global', '=', 1],
-        ])
-        ->orWhere([
-            ['type', '=', 'group'],
-            ['global', '=', 1],
-        ])
-        ->get();
 
         $settings = json_encode([
             'course' => true,
@@ -83,9 +49,7 @@ class CourseController extends Controller
 
         return view('curricula.show')
             ->with(compact('curriculum'))
-            ->with(compact('objectiveTypes'))
             ->with(compact('course'))
-            ->with(compact('certificates'))
             ->with(compact('settings'));
     }
 

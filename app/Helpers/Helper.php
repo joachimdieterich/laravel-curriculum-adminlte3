@@ -2,8 +2,10 @@
 
 use App\User;
 use Illuminate\Support\Facades\DB;
+use App\Tag;
 use App\Medium;
 use App\MediumSubscription;
+use Illuminate\Database\Eloquent\Builder;
 
 if (! function_exists('getEntriesForSelect2ByModel')) {
     /**
@@ -203,6 +205,158 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
         );
 
         return response()->json($results);
+    }
+}
+
+if (! function_exists('getSubscribedModels'))
+{
+    /**
+     * generalized function to get all entries of a model that are subscribed to the user
+     * @param string|Builder $model either model::class or a builder-instance, e.g. $user->kanbans()
+     * @param bool $withOwned also get entries owned by the user
+     * @return Builder
+     */
+    function getSubscribedModels($model, $withOwned = true): Builder
+    {
+        // parse model to a query-builder if classname is given
+        if (is_string($model)) $model = $model::query();
+
+        $model->whereHas('subscriptions', function ($q) {
+            $q->where(function ($q) {
+                $q->where('subscribable_type', 'App\\User')
+                    ->where('subscribable_id', auth()->user()->id);
+            })->orWhere(function ($q) {
+                $q->where('subscribable_type', 'App\\Group')
+                    ->whereIn('subscribable_id', auth()->user()->groups()->pluck('groups.id'));
+            })
+            ->orWhere(function ($q) {
+                $q->where('subscribable_type', 'App\\Organization')
+                    ->whereIn('subscribable_id', auth()->user()->organizations()->pluck('organizations.id'));
+            });
+        });
+
+        if ($withOwned) {
+            $model->orWhere('owner_id', auth()->user()->id);
+        }
+
+        return $model;
+    }
+}
+
+if (! function_exists('getDataTableWithEntries'))
+{
+    /**
+     * helper function to get all entries for select2 fields
+     * @param Illuminate\Database\Eloquent\Builder $query the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
+     * @param bool $hasTags does the model have tags?
+     * @param bool $global include ressources that are globally available (e.g. for Curricula)
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function getDataTableWithEntries($query, $hasTags = false, $global = false): \Illuminate\Http\JsonResponse
+    {
+        $withOwned = false;
+        $withSubscribed = false;
+        $tags = $hasTags ? request('tags') ?? [] : null;
+        $negativeTags = $hasTags ? request('negativeTags') ?? [] : null;
+
+        // requests from /groups/{id} only need entries that are shared with the group
+        if (request()->has(['group_id'])) {
+            $group_id = request()->validate([
+                'group_id' => 'required|integer',
+            ])['group_id'];
+
+            $query->whereHas('subscriptions', function ($q) use ($group_id) {
+                $q->where([
+                    'subscribable_type' => 'App\\Group',
+                    'subscribable_id' => $group_id,
+                ]);
+            });
+        } else {
+            // set flags based on TabList-filter
+            switch (request('filter')) {
+                case 'owner':           $withOwned = true;
+                    break;
+                case 'shared_with_me':  $withSubscribed = true;
+                    break;
+                case 'shared_by_me':    $query->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
+                    break;
+                case 'by_organization': $query->whereHas('subscriptions', function ($query) {
+                                            $query->where([
+                                                'subscribable_type' => 'App\\Organization',
+                                                'subscribable_id' => auth()->user()->current_organization_id,
+                                            ]);
+                                        });
+                    break;
+                case 'all':             $withSubscribed = $withOwned = true;
+                    break;
+                case 'hidden':          $withSubscribed = $withOwned = true;
+                                        $tags[] = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
+                    break;
+                case 'favourite':
+                default:                $withSubscribed = $withOwned = true;
+                                        if ($hasTags) $tags[] = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
+                    break;
+            }
+        }
+
+        try {
+            if ($withSubscribed) $query = getSubscribedModels($query, $withOwned);
+            else if ($withOwned) $query->orWhere('owner_id', auth()->user()->id); // only get owned entries
+
+            if ($global && request('filter') === 'all') $query->orWhere('type_id', 1);
+
+            // only apply tag-filters if model has tags
+            if ($hasTags) {
+                $query->with(['tags' => function ($query) {
+                    $query->select('id', 'name', 'slug')
+                        ->where('user_id', auth()->user()->id);
+                }]);
+
+                $favouriteTagId = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
+                $hiddenTagId = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
+                $tableName = $query->getModel()->getTable();
+                $modelName = $query->getModel()::class;
+
+                // append is_favourite and is_hidden as separate fields
+                // we do it this way, because the built-in function would fire a separate query for each entry
+                $query->addSelect(
+                    DB::raw('EXISTS(select 1 from `taggables`
+                        where `taggables`.`tag_id` = ' . $favouriteTagId . '
+                        and `taggables`.`taggable_id` = `' . $tableName . '`.`id`
+                        and `taggables`.`taggable_type` = \'' . $modelName . '\'
+                    ) AS is_favourited'),
+                    DB::raw('EXISTS(select 1 from `taggables`
+                        where `taggables`.`tag_id` = ' . $hiddenTagId . '
+                        and `taggables`.`taggable_id` = `' . $tableName . '`.`id`
+                        and `taggables`.`taggable_type` = \'' . $modelName . '"\'
+                    ) AS is_hidden'),
+                );
+
+                // if hidden-tag is not explicitly included in search-tags, exclude hidden entries
+                if ($hiddenTagId !== 0 && !in_array($hiddenTagId, $tags)) {
+                    $negativeTags[] = $hiddenTagId;
+                }
+
+                // apply filter
+                if (!empty($tags)) {
+                    $tags = Tag::whereIn('id', $tags)->get();
+                    $query->withAllTags($tags);
+                }
+
+                // apply negative-filter
+                if (!empty($negativeTags)) {
+                    $negativeTags = Tag::whereIn('id', $negativeTags)->get();
+                    $query->withoutTags($negativeTags);
+                }
+            }
+    
+            return \Yajra\DataTables\DataTables::of($query)->make(true);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'error' => 'An error occurred while fetching the data.',
+                'message' => $th->getMessage(),
+            ], 500);
+        }
     }
 }
 

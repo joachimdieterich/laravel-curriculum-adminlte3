@@ -167,7 +167,6 @@ export default {
         FontAwesomePicker,
         Select2,
     },
-    props: {},
     setup() {
         const globalStore = useGlobalStore();
         return {

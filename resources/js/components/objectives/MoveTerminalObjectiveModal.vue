@@ -1,88 +1,40 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">{{ trans('global.terminalObjective.move_to_curriculum') }}</span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
-                >
-                    <div class="card">
-                        <div class="card-body">
-                            <Select2
-                                id="curriculum_id"
-                                name="curriculum_id"
-                                url="/curricula?owner"
-                                model="curriculum"
-                                css="mb-1"
-                                :label="trans('global.curriculum.title_singular') + ' *'"
-                                :selected="form.curriculum_id"
-                                @selectedValue="(id) => {
-                                    this.form.curriculum_id = id[0];
-                                }"
-                            />
-    
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="enablingObjective-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="enablingObjective-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="!form.curriculum_id || form.curriculum_id == currentCurriculum"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+    <Modal
+        model="terminalObjective"
+        modalName="move-terminal-objective-modal"
+        title="global.terminalObjective.move_to_curriculum"
+        :processing="processing"
+        :allow-overflow="true"
+        @save="submit"
+    >
+        <template #general>
+            <Select2
+                id="curriculum_id"
+                name="curriculum_id"
+                url="/curricula?owner"
+                model="curriculum"
+                css="mb-1"
+                :label="trans('global.curriculum.title_singular') + ' *'"
+                :selected="form.curriculum_id"
+                @selectedValue="id => form.curriculum_id = id[0]"
+            />
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'move-terminal-objective-modal',
     components: {
+        Modal,
         Select2,
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
-            currentCurriculum: null,
+            processing: false,
             form: new Form({
                 id: null,
                 curriculum_id: null,
@@ -94,24 +46,29 @@ export default {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params;
+                this.processing = false;
                 this.form.reset();
+
+                const params = state.modals[this.$options.name].params;
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
-                    this.currentCurriculum = params.curriculum_id
                 }
             }
         });
     },
     methods: {
         submit() {
+            this.processing = true;
+
             axios.patch('/terminalObjectives/' + this.form.id, this.form)
                 .then(response => {
                     this.$eventHub.emit('objective-deleted', response.data);
                     this.globalStore.closeModal(this.$options.name);
                 })
-                .catch(response => {
-                    console.log(response);
+                .catch(e => {
+                    console.log(e);
+                    this.processing = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },

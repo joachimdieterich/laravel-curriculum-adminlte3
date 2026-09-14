@@ -11,7 +11,7 @@
         :show-medium-field="true"
         :allow-multiple-media="true"
         :show-permission-section="hasPermissionsAccess"
-        @save="(form) => submit(form)"
+        @save="form => submit(form)"
     >
         <template #general-extended>
             <div class="mt-3">
@@ -42,16 +42,19 @@
 
             <Switch
                 id="kanban-item-replace-links"
+                class="mb-2"
                 label="global.replace_links"
                 v-model="form.replace_links"
             />
             <Switch
                 id="kanban-item-movable"
+                class="mb-2"
                 label="global.movable"
                 v-model="form.movable"
             />
             <Switch
                 id="kanban-item-editable"
+                class="mb-2"
                 label="global.editable"
                 v-model="form.editable"
             />

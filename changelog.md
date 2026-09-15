@@ -1,3 +1,19 @@
+## 2.0.0 (2026-09-15)
+- new dashboard
+- removed sidebar (still accessible for admin-role)
+- generalized structure of site-layout
+- generalized calls for listing ressources to a Helper-function
+- removed filtering for current_organization_id when listing ressources
+- removed adminLTE-package and corresponding files
+- created AchievementHistory model
+- cached translations and permissions
+- MapMarker: fixed delete-condition
+- AuthGates: changed logic to check for current_org before getting role
+- Telescope: fixed URI-tag containing query-parameters
+- changed structure of BRAND_MENU (.env)
+- CurriculaAPI: removed tags from 'index'-endpoint
+- MoodleAPI: added getKanbanLink-endpoint
+
 ## 1.4.3 (2026-09-01)
 - Authenticate: fixed objectives of global curricula not being accessible to guests
 - fixed listing users in /groups/{id} for teacher-role
@@ -18,7 +34,7 @@
 - User: cache role() for current request to prevent redundant DB-calls
 - Kanban: added embed-view by checking if inside an iframe
 - Kanban: fixed 'create PDF' throwing 500
-- Videoconference: fixed endCallback if vs couldn't be found
+- Videoconference: fixed endCallback if vc couldn't be found
 - added 503-response if OIDC-service isn't available
 - imported Curricula are now stored with type_id = 4 (user-type)
 - fixed error if current_organization_id isn't set

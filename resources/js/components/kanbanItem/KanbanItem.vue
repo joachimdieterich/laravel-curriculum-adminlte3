@@ -262,7 +262,7 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            currentItem : {},
+            currentItem: {},
             edit_rights: false,
             copy_rights: false,
             delete_rights: false,
@@ -275,11 +275,11 @@ export default {
         };
     },
     computed: {
-        textColor: function() {
+        textColor: function () {
             if (this.item.color == "" || this.item.color == null) return '#000';
             return this.$textcolor(this.item.color);
         },
-        hidden: function() { // check if item is hidden based on visible-from/to dates
+        hidden: function () { // check if item is hidden based on visible-from/to dates
             return (this.item.visible_from != null || this.item.visible_until != null)
                 && (new Date() < new Date(this.item.visible_from) || new Date() > new Date(this.item.visible_until));
         }
@@ -436,7 +436,7 @@ export default {
         this.stopWebsocket();
     },
     watch: {
-        'item.description': function() {
+        'item.description': function () {
             this.$nextTick(() => {
                 MathJax.typeset();
             });

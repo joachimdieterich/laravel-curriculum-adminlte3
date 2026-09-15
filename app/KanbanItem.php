@@ -2,11 +2,20 @@
 
 namespace App;
 
+use App\Http\Controllers\MediumSubscriptionController;
 use App\Services\Websocket\BroadcastsEvents;
 use DateTimeInterface;
 use Illuminate\Broadcasting\Channel;
-use Maize\Markable\Markable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Broadcast;
+use Maize\Markable\Markable;
 use Mews\Purifier\Casts\CleanHtml;
 
 class KanbanItem extends Model
@@ -17,16 +26,16 @@ class KanbanItem extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'description' => CleanHtml::class, // cleans both when getting and setting the value
-        'locked' => 'boolean',
-        'editable' => 'boolean',
+        'description'   => CleanHtml::class, // cleans both when getting and setting the value
+        'locked'        => 'boolean',
+        'editable'      => 'boolean',
         'replace_links' => 'boolean',
-        'visibility' => 'boolean',
-        'updated_at' => 'datetime',
-        'created_at'  => 'datetime:d.m.Y H:i',
-        'due_date' => 'datetime',
+        'visibility'    => 'boolean',
+        'updated_at'    => 'datetime',
+        'created_at'    => 'datetime:d.m.Y H:i',
+        'due_date'      => 'datetime',
         'visible_from'  => 'datetime',
-        'visible_until'  => 'datetime',
+        'visible_until' => 'datetime',
     ];
 
     protected static array $marks = [
@@ -35,15 +44,15 @@ class KanbanItem extends Model
 
     public function broadcastOn($event): array
     {
-        if (!config('broadcasting.active')) {
+        if (! config('broadcasting.active')) {
             return [];
         }
 
         $defaultChannels = [
-            new Channel($this->broadcastChannel())
+            new Channel($this->broadcastChannel()),
         ];
 
-        $diff = $this->getDirty();
+        $diff                = $this->getDirty();
         $updatedAtColumnName = $this->getUpdatedAtColumn();
 
         // If the only changed column is the updated_at (touch) just proceed normal
@@ -51,7 +60,7 @@ class KanbanItem extends Model
             return $defaultChannels;
         }
 
-        $diffWithoutUpdatedAtAndOrderId = array_filter($diff, static function($key) use($updatedAtColumnName) {
+        $diffWithoutUpdatedAtAndOrderId = array_filter($diff, static function ($key) use ($updatedAtColumnName) {
             return $key !== $updatedAtColumnName && $key !== 'order_id';
         }, ARRAY_FILTER_USE_KEY);
 
@@ -63,7 +72,7 @@ class KanbanItem extends Model
         return $defaultChannels;
     }
 
-    public function withRelations(): self|null
+    public function withRelations(): ?self
     {
         return $this->with(
             'comments',
@@ -76,79 +85,76 @@ class KanbanItem extends Model
 
     /**
      * Prepare a date for array / JSON serialization.
-     *
-     * @param  \DateTimeInterface  $date
-     * @return string
      */
-    protected function serializeDate(DateTimeInterface $date)
+    protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function path()
+    public function path(): string
     {
-        return route('kanban.show', $this->id);
+        return route('kanbans.show', $this->id);
     }
 
-    public function kanban()
+    public function kanban(): BelongsTo
     {
         return $this->belongsTo(Kanban::class);
     }
 
-    public function comments()
+    public function comments(): HasMany|self
     {
         return $this->hasMany(KanbanItemComment::class);
     }
 
-    public function subscribable()
+    public function subscribable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function subscriptions()
+    public function subscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanItemSubscription::class);
     }
 
-    public function userSubscriptions()
+    public function userSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanItemSubscription::class)
             ->where('subscribable_type', 'App\User');
     }
 
-    public function groupSubscriptions()
+    public function groupSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanItemSubscription::class)
             ->where('subscribable_type', 'App\Group');
     }
 
-    public function organizationSubscriptions()
+    public function organizationSubscriptions(): HasMany|self
     {
         return $this->hasMany(KanbanItemSubscription::class)
             ->where('subscribable_type', 'App\Organization');
     }
 
-    public function status()
+    public function status(): HasOne|self
     {
         return $this->hasOne(KanbanStatus::class);
     }
 
-    public function owner()
+    public function owner(): HasOne|self
     {
         return $this->hasOne('App\User', 'id', 'owner_id');
     }
 
-    public function mediaSubscriptions()
+    public function mediaSubscriptions(): MorphMany
     {
         return $this->morphMany('App\MediumSubscription', 'subscribable');
     }
 
-    public function taskSubscription()
+    public function taskSubscription(): MorphMany
     {
         return $this->morphMany('App\TaskSubscription', 'subscribable');
     }
 
-    public function media()
+    public function media(): HasManyThrough|self
     {
         return $this->hasManyThrough(
             'App\Medium',
@@ -162,12 +168,10 @@ class KanbanItem extends Model
 
     /**
      * Accessor that mimics Eloquent dynamic property.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getEditorsAttribute()
+    public function getEditorsAttribute(): Collection
     {
-        if (!$this->relationLoaded('editors')) {
+        if (! $this->relationLoaded('editors')) {
             $layers = User::whereIn('id', $this->editors_ids)->get();
 
             $this->setRelation('editors', $layers);
@@ -177,58 +181,53 @@ class KanbanItem extends Model
     }
 
     /**
-     * Access editors relation query.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Access editors relation query
      */
-    public function editors($select = NULL)
+    public function editors(?array $select = null): User|Collection|array
     {
-        if ($select == NULL){
+        if ($select === null) {
             return User::whereIn('id', $this->editors_ids);
-        } else {
-            return User::whereIn('id', $this->editors_ids)->select($select)->get();
         }
+
+        return User::whereIn('id', $this->editors_ids)->select($select)->get();
     }
 
     /**
      * Accessor for editors_ids property.
-     *
-     * @return array
      */
-    public function getEditorsIdsAttribute($commaSeparatedIds)
+    public function getEditorsIdsAttribute($commaSeparatedIds): array
     {
-
         return explode(',', $commaSeparatedIds);
     }
 
     /**
      * Mutator for layer_ids property.
-     *
-     * @param  array|string|id $ids
-     * @return void
      */
-    public function setEditorsIdsAttribute($ids)
+    public function setEditorsIdsAttribute(array|string $ids): void
     {
         $this->attributes['editors_ids'] = is_string($ids) ? $ids : implode(',', array_filter($ids)); // array filter removes empty entries.
     }
 
-    public function isAccessible()
+    public function isAccessible(): bool
     {
         return $this->kanban->isAccessible();
     }
 
-    public function isEditable($user = null, $sharing_token = null)
+    public function isEditable($user = null, $sharing_token = null): bool
     {
         return $this->kanban->isEditable($user, $sharing_token);
     }
-    protected static function booted()
+
+    protected static function booted(): void
     {
-        static::deleting(function (KanbanItem $item) {
+        static::deleting(static function (KanbanItem $item) {
             $item->mediaSubscriptions->each(function (MediumSubscription $subscription) {
                 // hack to skip setting medium_id of model to null
-                if (is_null($subscription->additional_data)) $subscription->additional_data = true;
+                if (is_null($subscription->additional_data)) {
+                    $subscription->additional_data = true;
+                }
                 // can't call delete()-function of MediumSubscription-model (in general)
-                app(\App\Http\Controllers\MediumSubscriptionController::class)->destroy($subscription);
+                app(MediumSubscriptionController::class)->destroy($subscription);
             });
         });
     }

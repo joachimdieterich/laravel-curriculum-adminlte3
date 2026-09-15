@@ -82,6 +82,7 @@ class CurriculaApiController extends Controller
             // since these attributes are casted as 'CleanHTML' they will always be wrapped with a 'p'-tag
             $curriculum->mergeCasts(['description' => 'string']);
             $curriculum->description = strip_tags($curriculum->description);
+            $curriculum->makeHidden('tags', 'is_favourited', 'is_hidden');
 
             // terminal-objectives
             foreach ($curriculum->terminalObjectives as $terminal) {

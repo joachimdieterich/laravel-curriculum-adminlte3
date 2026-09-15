@@ -28,7 +28,7 @@
                     tabindex="-1"
                 >
                     <i v-if="editable"
-                        class="fa fa-arrows-up-down-left-right"
+                       class="fa fa-arrows-up-down-left-right"
                     ></i>
                     <i v-if="status.locked"
                         class="fa fa-lock text-muted position-absolute"

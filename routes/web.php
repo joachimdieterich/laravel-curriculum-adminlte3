@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LogController;
+use App\User;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/home');
@@ -9,11 +10,11 @@ Route::get('/localLogin', 'Auth\LoginController@localLogin')->name('localLogin')
 Route::get('/localLogout', 'Auth\LoginController@localLogout');
 Auth::routes(['register' => false]);
 
-Route::get('eventSubscriptions/embed', 'EventSubscriptionController@embed')->name('eventSubscriptions.embed'); //embeddable routes
+Route::get('eventSubscriptions/embed', 'EventSubscriptionController@embed')->name('eventSubscriptions.embed'); // embeddable routes
 Route::get('videoconferences/endCallback', 'VideoconferenceController@endCallback'); // called via bbb server (with meeting id)
 
 // don't authenticate requests that are made after the initial blade-file request
-Route::withoutMiddleware('auth')->group(function() {
+Route::withoutMiddleware('auth')->group(function () {
 // A
     Route::post('achievements', 'AchievementController@store');
 
@@ -62,7 +63,7 @@ Route::withoutMiddleware('auth')->group(function() {
     Route::get('curricula/{curriculum}/export', 'CurriculumExportController@export')->name('curricula.export');
 // D
 // E
-    /*** Enabling-Objectives ***/
+/*** Enabling-Objectives ***/
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
     Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
     Route::get('enablingObjectives/{enablingObjective}/achievements/{group?}', 'EnablingObjectiveController@showAchievements')->name('enablingObjectives.showAchievements');
@@ -321,7 +322,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('groups', 'GroupsController');
 
     Route::get('kanbans', 'KanbanController@index')->name('kanbans.index');
-    Route::get('kanbans/{kanban}', 'KanbanController@show');
+    Route::get('kanbans/{kanban}', 'KanbanController@show')->name('kanbans.show');
     Route::get('kanbans/{kanban}/token', 'KanbanController@getKanbanByToken');
 
     Route::resource('levels', 'LevelController')
@@ -379,12 +380,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('print/content/{content}', 'PrintController@content')->name('print.content');
     Route::get('print/glossar/{glossar}', 'PrintController@glossar')->name('print.glossar');
     Route::get('print/{model}/{id}', 'PrintController@model')->name('print.model');
-    /*Route::get('print/curriculum/{curriculum}', 'PrintController@curriculum')->name('print.curriculum');*/
+    /* Route::get('print/curriculum/{curriculum}', 'PrintController@curriculum')->name('print.curriculum'); */
     Route::get('print/curriculum/{curriculum}/references', 'PrintController@references')->name('print.references');
 
     Route::resource('progresses', 'ProgressController');
 
-    /* reference(Subscription)  */
+    /* reference(Subscription) */
     Route::resource('references', 'ReferenceController');
     Route::resource('referenceSubscriptions', 'ReferenceSubscriptionController');
 
@@ -431,16 +432,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('videoconferences/{videoconference}/startWithPw', 'VideoconferenceController@show');
 });
 
-
 if (config('app.guest_user_id') !== null) {
     Route::get('/guest', function () {
-        if (Auth::user() == null) {       //if no user is authenticated authenticate guest
+        if (Auth::user() == null) {       // if no user is authenticated authenticate guest
             LogController::set('guestLogin');
             LogController::setStatistics();
             Auth::loginUsingId((config('app.guest_user_id')), true);
         }
-        if (\App\User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first() != null) { //use guests default navigator
-            return redirect('/navigators/' . \App\User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first()->id);
+        if (User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first() != null) { // use guests default navigator
+            return redirect('/navigators/' . User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first()->id);
         } else {
             return redirect('/');
         }

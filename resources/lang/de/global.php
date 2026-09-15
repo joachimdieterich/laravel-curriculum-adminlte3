@@ -739,7 +739,7 @@ return [
     'medium' => [
         'title' => 'Medien',
         'title_singular' => 'Medium',
-        'add' => 'Medien hinzufügen',
+        'add' => 'Medium hinzufügen',
         'create' => 'Medium erstellen',
         'edit' => 'Medium bearbeiten',
         'upload' => 'Medien/Medium hochladen',

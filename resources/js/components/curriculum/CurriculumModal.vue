@@ -79,7 +79,6 @@
                                 <div>
                                     <input
                                         id="title"
-                                        name="title"
                                         type="text"
                                         class="form-control mb-3"
                                         maxlength="191"
@@ -90,7 +89,6 @@
                                     <div class="mb-3">
                                         <Editor
                                             id="description"
-                                            name="description"
                                             licenseKey="gpl"
                                             :init="tinyMCE"
                                             v-model="form.description"
@@ -103,23 +101,22 @@
                                         model="User"
                                         url="/users"
                                         :selected="form.owner_id"
-                                        @selectedValue="(id) => form.owner_id = id[0]"
+                                        @selectedValue="id => form.owner_id = id[0]"
                                     />
                                     <div class="mb-3">
                                         <TagMultiselect
                                             type="App\Curriculum"
                                             :model-id="form.id"
                                             :selectedTags="selectedTags"
-                                            @selectedValue="(data) => form.tags = data"
+                                            @selectedValue="data => form.tags = data"
                                             @cleared="() => form.tags = []"
-                                            @tag-attached="(tag) => updateSelectedTags(tag.id)"
+                                            @tag-attached="tag => updateSelectedTags(tag.id)"
                                         />
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="author">{{ trans('global.curriculum.fields.author') }}</label>
                                         <input
                                             id="author"
-                                            name="author"
                                             type="text"
                                             class="form-control"
                                             maxlength="191"
@@ -130,7 +127,6 @@
                                         <label class="form-label" for="publisher">{{ trans('global.curriculum.fields.publisher') }}</label>
                                         <input
                                             id="publisher"
-                                            name="publisher"
                                             type="text"
                                             class="form-control"
                                             maxlength="191"
@@ -141,7 +137,6 @@
                                         <label class="form-label" for="city">{{ trans('global.curriculum.fields.city') }}</label>
                                         <input
                                             id="city"
-                                            name="city"
                                             type="text"
                                             class="form-control"
                                             maxlength="191"
@@ -166,7 +161,7 @@
                                         url="/grades"
                                         :label="trans('global.grade.title_singular') + ' *'"
                                         :selected="form.grade_id"
-                                        @selectedValue="(id) => form.grade_id = id"
+                                        @selectedValue="id => form.grade_id = id"
                                     />
                                     <Select2
                                         :id="'subject_id'"
@@ -175,7 +170,7 @@
                                         url="/subjects"
                                         :label="trans('global.subject.title_singular') + ' *'"
                                         :selected="form.subject_id"
-                                        @selectedValue="(id) => form.subject_id = id"
+                                        @selectedValue="id => form.subject_id = id"
                                     />
                                     <Select2
                                         id="organization_type_id"
@@ -184,7 +179,7 @@
                                         url="/organizationTypes"
                                         :label="trans('global.organizationType.title_singular') + ' *'"
                                         :selected="form.organization_type_id"
-                                        @selectedValue="(id) => form.organization_type_id = id"
+                                        @selectedValue="id => form.organization_type_id = id"
                                     />
                                     <Select2 v-if="checkPermission('is_admin')"
                                         id="type_id"
@@ -193,7 +188,7 @@
                                         url="/curriculumTypes"
                                         :label="trans('global.curriculumtype.title_singular') + ' *'"
                                         :selected="form.type_id"
-                                        @selectedValue="(id) => form.type_id = id"
+                                        @selectedValue="id => form.type_id = id"
                                     />
                                     <Select2
                                         id="country_id"
@@ -204,7 +199,7 @@
                                         url="/countries"
                                         :label="trans('global.country.title_singular') + ' *'"
                                         :selected="form.country_id"
-                                        @selectedValue="(id) => {
+                                        @selectedValue="id => {
                                             form.country_id = id;
                                             form.state_id = null;
                                         }"
@@ -217,21 +212,29 @@
                                         :url="'/countries/' + form.country_id + '/states'"
                                         :term="form.country_id"
                                         :selected="form.state_id"
-                                        @selectedValue="(id) => form.state_id = id"
+                                        @selectedValue="id => form.state_id = id"
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        <div class="card">
-                            <div
-                                class="card-header border-bottom"
-                                data-card-widget="collapse"
-                            >
-                                <span class="card-title">{{ trans('global.display') }}</span>
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span
+                                    class="accordion-button"
+                                    aria-expanded="true"
+                                    aria-controls="curriculum-display"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#curriculum-display"
+                                >
+                                    {{ trans('global.display') }}
+                                </span>
                             </div>
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
+                            <div
+                                id="curriculum-display"
+                                class="accordion-collapse collapse show"
+                            >
+                                <div class="d-flex justify-content-between">
                                     <v-swatches
                                         style="height: 42px;"
                                         :swatches="$swatches"
@@ -242,49 +245,41 @@
                                         fallback-input-type="color"
                                     />
 
-                                    <MediumForm v-if="form.id"
-                                        :id="'medium_form' + component_id"
-                                        :medium_id="form.medium_id"
-                                        accept="image/*"
+                                    <NewMediumForm
                                         :subscribable_id="form.id"
                                         subscribable_type="App\Curriculum"
-                                        @selectedValue="(id) => {
-                                            // on removal of medium, directly update the resource
-                                            if (this.form.medium_id !== null && id === null) {
-                                                this.$eventHub.emit('curriculum-updated', {
-                                                    id: this.form.id,
-                                                    medium_id: null,
-                                                });
-                                            }
-                                            this.form.medium_id = id;
-                                        }"
+                                        :allow_fallback_on_create="true"
+                                        :medium_id="form.medium_id"
+                                        @add="medium => form.medium_id = medium.id ?? null"
+                                        @delete="() => form.medium_id = null"
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        <div class="card">
-                            <div
-                                class="card-header border-bottom"
-                                data-card-widget="collapse"
-                            >
-                                <span class="card-title">{{ trans('global.settings') }}</span>
-                            </div>
-                            <div class="card-body">
-                                <span class="custom-control custom-switch custom-switch-on-green">
-                                    <input
-                                        v-model="form.archived"
-                                        type="checkbox"
-                                        class="custom-control-input pt-1"
-                                        :id="'archived_' + form.id"
-                                    />
-                                    <label
-                                        class="custom-control-label text-muted"
-                                        :for="'archived_' + form.id"
-                                    >
-                                        {{ trans('global.curriculum.fields.archived') }}
-                                    </label>
+                        <div class="accordion-item">
+                            <div class="accordion-header">
+                                <span
+                                    class="accordion-button"
+                                    aria-expanded="true"
+                                    aria-controls="curriculum-settings"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#curriculum-settings"
+                                >
+                                    {{ trans('global.settings') }}
                                 </span>
+                            </div>
+                            <div
+                                id="curriculum-settings"
+                                class="accordion-collapse collapse show"
+                            >
+                                <div>
+                                    <Switch
+                                        id="curriculum-archived"
+                                        label="global.curriculum.fields.archived"
+                                        v-model="form.archived"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -317,10 +312,11 @@
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
-import MediumForm from "../media/MediumForm.vue";
+import NewMediumForm from '../media/NewMediumForm.vue';
 import Select2 from "../forms/Select2.vue";
 import TagMultiselect from "../tag/TagMultiselect.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
+import Switch from '../forms/Switch.vue';
 
 export default {
     name: 'curriculum-modal',
@@ -328,9 +324,10 @@ export default {
         Modal,
         TagMultiselect,
         Editor,
-        MediumForm,
+        NewMediumForm,
         Select2,
         VueDatePicker,
+        Switch,
     },
     data() {
         return {

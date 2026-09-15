@@ -1,222 +1,168 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            style="z-index: 10000000 !important;"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ method == 'post' ? trans('global.medium.add') : trans('global.medium.edit') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
+    <Modal
+        model="medium"
+        modalName="medium-modal"
+        zIndex="2000"
+        :title="'global.medium.add'"
+        :show-footer="tab !== 'external'"
+        @save="add()"
+    >
+        <template #modal-body>
+            <div class="modal-body d-md-flex">
+                <!-- left side of menu (only visible to admins) -->
+                <div v-if="checkPermission('is_admin')"
+                    style="border-right: 1px solid lightgrey"
+                >
+                    <ul class="nav flex-column">
+                        <li class="nav-link text-sm">
+                            <a
+                                href="#upload"
+                                class="link-muted"
+                                data-bs-toggle="tab"
+                                @click="setTab('upload');"
+                            >
+                                {{ trans('global.medium.upload') }}
+                            </a>
+                        </li>
+                        <li class="nav-link text-sm">
+                            <a
+                                href="#local-media"
+                                class="link-muted"
+                                data-bs-toggle="tab"
+                                @click="setTab('media');"
+                            >
+                                {{ trans('global.medium.title') }}
+                            </a>
+                        </li>
+                        <li
+                            v-permission="'external_medium_create'"
+                            class="nav-link text-sm"
+                        >
+                            <a
+                                href="#external"
+                                class="link-muted active show"
+                                data-bs-toggle="tab"
+                                @click="setTab('external')"
+                            >
+                                {{ trans('global.externalRepositorySubscription.title_singular') }}
+                            </a>
+                        </li>
+                    </ul>
                 </div>
 
-                <div class="modal-body">
-                    <div class="d-md-flex">
-                        <!-- left side of menu only visible to admins -->
-                        <div
-                            v-permission="'is_admin'"
-                            style="border-right: 1px solid lightgrey"
+                <div class="p-1 flex-fill">
+                    <div class="tab-content">
+                        <div v-if="checkPermission('is_admin')"
+                            id="upload"
+                            class="tab-pane"
                         >
-                            <ul class="nav flex-column">
-                                <li
-                                    v-permission="'is_admin'"
-                                    class="nav-link text-sm"
+                            <form v-if="isInitial || isSaving"
+                                action="javascript:void(0)"
+                                enctype="multipart/form-data"
+                                method="post"
+                                @submit.prevent="uploadSubmit"
+                            >
+                                <div v-if="message != ''"
+                                    class="alert alert-success"
                                 >
-                                    <a
-                                        href="#upload"
-                                        class="link-muted"
-                                        data-bs-toggle="tab"
-                                        @click="setTab('upload');"
-                                    >
-                                        {{ trans('global.medium.upload') }}
-                                    </a>
-                                </li>
-                                <li
-                                    v-permission="'is_admin'"
-                                    class="nav-link text-sm"
-                                >
-                                    <a
-                                        href="#local-media"
-                                        class="link-muted"
-                                        data-bs-toggle="tab"
-                                        @click="setTab('media');"
-                                    >
-                                        {{ trans('global.medium.title') }}
-                                    </a>
-                                </li>
-    <!--                            <li class="nav-link text-sm"
-                                    v-can="'link_create'">
-                                    <a class="link-muted"
-                                    data-bs-toggle="tab"
-                                    @click="setTab('link')">
-                                        {{ trans('global.medium.link') }}
-                                    </a>
-                                </li>-->
-                                <li
-                                    v-permission="'external_medium_create'"
-                                    class="nav-link text-sm"
-                                >
-                                    <a
-                                        href="#external"
-                                        class="link-muted active show"
-                                        data-bs-toggle="tab"
-                                        @click="setTab('external')"
-                                    >
-                                        {{ trans('global.externalRepositorySubscription.title_singular') }}
-                                    </a>
-                                </li>
-                            </ul>
+                                    {{ message }}
+                                </div>
+                                <div class="dropbox text-secondary p-1 m-1">
+                                    <input
+                                        id="file"
+                                        name="file"
+                                        type="file"
+                                        class="input-file"
+                                        multiple
+                                        :disabled="isSaving"
+                                        :accept="accept"
+                                        ref="file"
+                                        @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+                                        required
+                                    />
+                                    <p v-if="isInitial">
+                                        <i class="fa fa-upload"></i><br>
+                                        <span v-html="trans('global.medium.upload_helper')"></span>
+                                    </p>
+                                    <p v-if="isSaving">
+                                        {{ fileCount }} {{ trans('global.medium.upload') }}...
+                                    </p>
+                                </div>
+                            </form>
+
+                            <div v-if="progressBar"
+                                class="progress"
+                            >
+                                <div
+                                    class="progress-bar" role="progressbar"
+                                    :style="{width: progressBar + '%'}"
+                                    :aria-valuenow="progressBar"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
                         </div>
 
-                        <div class="p-1 flex-fill">
-                            <div class="tab-content">
+                        <div v-if="checkPermission('is_admin')"
+                            id="local-media"
+                            class="tab-pane m-2"
+                        >
+                            <div
+                                id="media_create_datatable_filter"
+                                class="dataTables_filter"
+                            >
+                                <input
+                                    id="media_search_datatable"
+                                    name="media_search_datatable"
+                                    type="search"
+                                    class="form-control form-control-sm"
+                                    v-model="search"
+                                    placeholder="Suchbegriff"
+                                    aria-controls="media_create_datatable"
+                                />
+                            </div>
+                            <div style="width: 600px;">
                                 <div
-                                    v-permission="'is_admin'"
-                                    id="upload"
-                                    class="tab-pane"
+                                    id="media-datatable-wrapper"
+                                    class="w-100 dataTablesWrapper"
                                 >
-                                    <form v-if="isInitial || isSaving"
-                                        action="javascript:void(0)"
-                                        enctype="multipart/form-data"
-                                        method="post"
-                                        @submit.prevent="uploadSubmit"
-                                    >
-                                        <div v-if="message != ''"
-                                            class="alert alert-success"
-                                        >
-                                            {{ message }}
-                                        </div>
-                                        <div class="dropbox text-secondary p-1 m-1">
-                                            <input
-                                                id="file"
-                                                name="file"
-                                                type="file"
-                                                class="input-file"
-                                                multiple
-                                                :disabled="isSaving"
-                                                :accept="accept"
-                                                ref="file"
-                                                @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
-                                                required
-                                            />
-                                            <p v-if="isInitial">
-                                                <i class="fa fa-upload"></i><br>
-                                                <span v-html="trans('global.medium.upload_helper')"></span>
-                                            </p>
-                                            <p v-if="isSaving">
-                                                {{ fileCount }} {{ trans('global.medium.upload') }}...
-                                            </p>
-                                        </div>
-                                    </form>
-
-                                    <div v-if="progressBar"
-                                        class="progress"
-                                    >
-                                        <div
-                                            class="progress-bar" role="progressbar"
-                                            :style="{width: progressBar + '%'}"
-                                            :aria-valuenow="progressBar"
-                                            aria-valuemin="0"
-                                            aria-valuemax="100"
-                                        ></div>
-                                    </div>
+                                    <DataTable
+                                        id="media-datatable"
+                                        :columns="columns"
+                                        :options="options"
+                                        ajax="/media/list"
+                                        :search="search"
+                                    />
                                 </div>
+                            </div>
+                        </div>
 
-                                <div v-if="checkPermission('is_admin')"
-                                    id="local-media"
-                                    class="tab-pane m-2"
-                                >
-                                    <div
-                                        id="media_create_datatable_filter"
-                                        class="dataTables_filter"
-                                    >
-                                        <input
-                                            id="media_search_datatable"
-                                            name="media_search_datatable"
-                                            type="search"
-                                            class="form-control form-control-sm"
-                                            v-model="search"
-                                            placeholder="Suchbegriff"
-                                            aria-controls="media_create_datatable"
-                                        />
-                                    </div>
-                                    <div style="width: 600px;">
-                                        <div
-                                            id="media-datatable-wrapper"
-                                            class="w-100 dataTablesWrapper"
-                                        >
-                                            <DataTable
-                                                id="media-datatable"
-                                                :columns="columns"
-                                                :options="options"
-                                                ajax="/media/list"
-                                                :search="search"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div
-                                    v-permission="'external_medium_create'"
-                                    id="external"
-                                    class="position-relative tab-pane active show"
-                                >
-                                    <RepositoryPluginCreate :model="form"/>
-                                    <div v-if="postProcess"
-                                        :id="'loading_' + component_id"
-                                        class="overlay d-flex align-items-center justify-content-center w-100 h-100"
-                                    >
-                                        <i class="fa fa-spinner fa-pulse fa-fw"></i>
-                                        <span>Fertigstellen...</span>
-                                    </div>
-                                </div>
+                        <div
+                            id="external"
+                            class="position-relative tab-pane active show"
+                        >
+                            <RepositoryPluginCreate :model="form"/>
+                            <div v-if="postProcess"
+                                :id="'loading_' + component_id"
+                                class="overlay d-flex align-items-center justify-content-center w-100 h-100"
+                            >
+                                <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                <span>Fertigstellen...</span>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div v-if="tab !== 'external'"
-                    class="modal-footer"
-                >
-                    <span class="pull-right">
-                        <button
-                            id="medium-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="medium-save"
-                            class="btn btn-primary ms-3"
-                            @click="add()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
             </div>
-        </div>
-    </Transition>
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
 import RepositoryPluginCreate from '../../../../app/Plugins/Repositories/edusharing/resources/js/components/Create.vue';
-import {useGlobalStore} from "../../store/global.js";
 
 DataTable.use(DataTablesCore);
 
@@ -225,14 +171,9 @@ const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED =
 export default {
     name: 'medium-modal',
     components: {
+        Modal,
         RepositoryPluginCreate,
         DataTable,
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
@@ -415,11 +356,7 @@ export default {
 
                 this.form.populate(params);
 
-                if (this.form.id !== '') {
-                    this.method = 'patch';
-                } else {
-                    this.method = 'post';
-                }
+                this.method = this.form.id ? 'patch' : 'post'
             }
         });
 

@@ -2,6 +2,7 @@
     <Transition name="modal">
         <div v-if="globalStore.modals[modalName]?.show"
             class="modal-mask"
+            :style="zIndex && { 'z-index': zIndex }"
         >
             <div
                 class="modal-container"
@@ -114,7 +115,7 @@
                                         :allow_fallback_on_create="true"
                                         :medium_id="form.medium_id"
                                         :multiple="allowMultipleMedia"
-                                        @add="(medium) => form.medium_id = medium.id ?? null"
+                                        @add="medium => form.medium_id = medium.id ?? null"
                                         @delete="() => form.medium_id = null"
                                     />
                                     <FontAwesomePicker v-if="showIconPicker"
@@ -153,10 +154,12 @@
                     </div>
                 </slot>
 
-                <div class="modal-footer">
+                <div v-if="showFooter"
+                    class="modal-footer"
+                >
                     <slot name="footer-left"></slot>
                     <span class="pull-right">
-                        <button v-if="!hideCancelButton"
+                        <button v-if="showCancelButton"
                             :id="model + '-cancel'"
                             type="button"
                             class="btn btn-default"
@@ -164,7 +167,7 @@
                         >
                             {{ cancelLabel }}
                         </button>
-                        <button v-if="!hideSaveButton"
+                        <button v-if="showSaveButton"
                             :id="model + '-save'"
                             class="btn btn-primary ms-3"
                             :disabled="disableSaveButton || processing || (requireTitle && !form.title)"
@@ -203,6 +206,10 @@ export default {
             type: String,
             required: true,
             description: 'The name of the modal to control visibility',
+        },
+        zIndex: {
+            type: Number,
+            description: 'Set the z-index of the modal to a specific value',
         },
         css: {
             type: String,
@@ -275,14 +282,18 @@ export default {
             type: String,
             default: window.trans.global.cancel,
         },
-        hideCancelButton: {
+        showFooter: {
             type: Boolean,
-            default: false,
+            default: true,
+        },
+        showCancelButton: {
+            type: Boolean,
+            default: true,
             description: 'Controls the visibility of the cancel button in the modal footer',
         },
-        hideSaveButton: {
+        showSaveButton: {
             type: Boolean,
-            default: false,
+            default: true,
             description: 'Controls the visibility of the save button in the modal footer',  
         },
         disableSaveButton: {

@@ -1,4 +1,6 @@
 .accordion-item {
+    border-radius: 0 !important;
+
     &:last-child { border-bottom: 0; }
     > .accordion-header {
         &:hover {

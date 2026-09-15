@@ -115,7 +115,7 @@ class CurriculumController extends Controller
             'type_id'               => format_select_input($input['type_id']),
             'state_id'              => format_select_input($input['state_id']),
             'country_id'            => format_select_input($input['country_id']),
-            'medium_id'             => $input['medium_id'],
+            'medium_id'             => $input['medium_id'] ?? null,
             'variants'              => $this->formatVariantsField(
                                             $input['variants'] ?? NULL,
                                             $input['variant_default_title'] ?? NULL,
@@ -126,20 +126,9 @@ class CurriculumController extends Controller
         ]);
         $curriculum->tags()->sync($request->input('tags'));
 
-        switch ($curriculum->type_id) {
-            case 2: // organization
-                CurriculumSubscription::updateOrCreate([
-                    'curriculum_id' => $curriculum->id,
-                    'subscribable_type' => 'App\Organization',
-                    'subscribable_id' => auth()->user()->current_organization_id,
-                ], [
-                    'editable' => true,
-                    'owner_id' => auth()->user()->id,
-                ]);
-                break;
-            case 3: // group
-                //Todo: if type_id == 3 there should be an option to add group_id
-                break;
+        if (isset($input['medium_id'])) {
+            app(MediumSubscriptionController::class)
+                ->updateTempSubscriptions($input['medium_id'], $curriculum->id, 'App\\Curriculum');
         }
 
         LogController::set(get_class($this).'@'.__FUNCTION__);

@@ -5,7 +5,7 @@
         title="global.share"
         :allow-overflow="true"
         :cancel-label="trans('global.close')"
-        :hide-save-button="true"
+        :show-save-button="false"
     >
         <template #general>
             <TabList

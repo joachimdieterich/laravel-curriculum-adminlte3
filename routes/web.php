@@ -305,8 +305,6 @@ Route::group(['middleware' => 'auth'], static function () {
     Route::get('enablingObjectives/{enablingObjective}', 'EnablingObjectiveController@show');
 
     /* plugin even management */
-    Route::post('eventSubscriptions/destroySubscription', 'EventSubscriptionController@destroySubscription')->name('eventSubscriptions.destroySubscription');
-    Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
 
     Route::resource('eventSubscriptions', 'EventSubscriptionController');
@@ -353,7 +351,6 @@ Route::group(['middleware' => 'auth'], static function () {
     Route::post('messages', 'MessagesController@store')->name('messages.store');
     Route::get('messages/{id}', 'MessagesController@show')->name('messages.show');
     Route::put('messages/{id}', 'MessagesController@update')->name('messages.update');
-    Route::post('messages/{id}/destroy', 'MessagesController@destroy')->name('messages.destroy');
 
     /* Navigators */
     Route::get('navigators', 'NavigatorController@index')->name('navigators.index');

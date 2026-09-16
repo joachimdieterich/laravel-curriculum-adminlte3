@@ -26,7 +26,6 @@
 
         <template #permissions>
             <VueDatePicker
-                id="due_date"
                 class="mb-3"
                 v-model="form.due_date"
                 format="dd.MM.yyyy HH:mm"
@@ -34,7 +33,6 @@
                 locale="de"
                 time-picker-inline
                 :start-time="{ hours: 23, minutes: 59 }"
-                @cleared="form.due_date = ''"
                 :select-text="trans('global.ok')"
                 :cancel-text="trans('global.close')"
                 :placeholder="trans('global.kanbanItem.fields.due_date')"
@@ -65,8 +63,6 @@
             />
 
             <VueDatePicker v-if="form.visibility"
-                id="visible_date"
-                name="visible_date"
                 class="mt-2"
                 v-model="form.visible_date"
                 range
@@ -114,7 +110,7 @@ export default {
                 owner_id: null,
                 color: '#f4f4f4',
                 media_subscriptions: [],
-                due_date: '',
+                due_date: null,
                 movable: true, // replaces 'locked' to match shown translation
                 locked: false, // actual value that gets sent to backend
                 editable: true,

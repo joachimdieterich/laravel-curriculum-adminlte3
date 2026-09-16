@@ -2,7 +2,7 @@
     <Modal
         model="medium"
         modalName="medium-modal"
-        zIndex="2000"
+        :z-index="2000"
         :title="'global.medium.add'"
         :show-footer="tab !== 'external'"
         @save="add()"

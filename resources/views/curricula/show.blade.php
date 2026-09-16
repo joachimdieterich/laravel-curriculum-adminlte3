@@ -1,6 +1,10 @@
 @extends('layouts.master')
 @section('title')
-    <title-component></title-component>
+    <title-component
+        :show-back-button="true"
+        back-button-title="global.back_to_overview"
+        back-button-url="/curricula/"
+    />
 @endsection
 @section('contributors')
     <div id="contributors"></div>

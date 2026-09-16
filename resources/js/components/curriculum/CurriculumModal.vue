@@ -144,8 +144,9 @@
                                         />
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label" for="author">{{ trans('global.curriculum.fields.date') }}</label>
+                                        <label class="form-label" for="dp-input-curriculum-date">{{ trans('global.curriculum.fields.date') }}</label>
                                         <VueDatePicker
+                                            uid="curriculum-date"
                                             v-model="form.date"
                                             format="dd.MM.yyy HH:mm"
                                             :teleport="true"
@@ -336,7 +337,7 @@ export default {
             processing: false,
             files: null,
             form: new Form({
-                id:'',
+                id: null,
                 title: '',
                 description: '',
                 author: '',

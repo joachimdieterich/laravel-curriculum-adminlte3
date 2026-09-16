@@ -1,106 +1,65 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ trans('global.referenceable_types.link') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
+    <Modal
+        model="subscribe-objective"
+        modalName="subscribe-objective-modal"
+        title="global.referenceable_types.link"
+        :processing="processing"
+        :allow-overflow="true"
+        :disable-save-button="form.terminal_objective_id.length === 0"
+        @save="submit()"
+    >
+        <template #general>
+            <Select2
+                id="curriculum_id"
+                css="mb-3"
+                url="/curricula"
+                model="curriculum"
+                option_id="id"
+                option_label="title"
+                @selectedValue="id => form.curriculum_id = id[0]"
+            />
 
-                <div
-                    class="modal-body"
-                    style="overflow: visible;"
-                >
-                    <div class="card">
-                        <div class="card-body">
-                            <Select2
-                                id="curriculum_id"
-                                name="curriculum_id"
-                                url="/curricula"
-                                model="curriculum"
-                                option_id="id"
-                                option_label="title"
-                                @selectedValue="(id) => {
-                                    this.form.curriculum_id = id[0];
-                                }"
-                            />
+            <Select2 v-if="form.curriculum_id"
+                id="terminalObjectives_id"
+                css="mb-3"
+                :url="'/curricula/' + form.curriculum_id + '/terminalObjectives'"
+                model="terminalObjective"
+                :multiple="true"
+                option_id="id"
+                option_label="title"
+                @cleared="() => {
+                    form.terminal_objective_id = [];
+                    form.enabling_objective_id = [];
+                }"
+                @selectedValue="id => {
+                    form.terminal_objective_id = id;
+                    form.enabling_objective_id = [];
+                }"
+            />
 
-                            <Select2 v-if="form.curriculum_id"
-                                id="terminalObjectives_id"
-                                name="terminalObjectives_id"
-                                :url="'/curricula/' + form.curriculum_id + '/terminalObjectives'"
-                                model="terminalObjective"
-                                :multiple="true"
-                                option_id="id"
-                                option_label="title"
-                                @selectedValue="(id) => {
-                                    this.form.terminal_objective_id = id;
-                                    this.form.enabling_objective_id = [];
-                                }"
-                            />
-
-                            <Select2 v-if="form.terminal_objective_id.length === 1"
-                                id="enablingObjectives_id"
-                                name="enablingObjectives_id"
-                                :url="'/terminalObjectives/' + form.terminal_objective_id[0] + '/enablingObjectives'"
-                                model="enablingObjective"
-                                :multiple="true"
-                                option_id="id"
-                                option_label="title"
-                                selected="null"
-                                @selectedValue="(id) => {
-                                    this.form.enabling_objective_id = id;
-                                }"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="grade-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="grade-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="form.terminal_objective_id.length === 0"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+            <Select2 v-if="form.terminal_objective_id.length === 1"
+                id="enablingObjectives_id"
+                :url="'/terminalObjectives/' + form.terminal_objective_id[0] + '/enablingObjectives'"
+                model="enablingObjective"
+                :multiple="true"
+                option_id="id"
+                option_label="title"
+                selected="null"
+                @cleared="form.enabling_objective_id = []"
+                @selectedValue="id => form.enabling_objective_id = id"
+            />
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
-import axios from 'axios';
 
 export default {
     name: 'subscribe-objective-modal',
     components: {
+        Modal,
         Select2,
     },
     props: {
@@ -109,15 +68,10 @@ export default {
             default: null,
         },
     },
-    setup() { //use database store
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
     data() {
         return {
             component_id: this.$.uid,
+            processing: false,
             form: new Form({
                 id: null,
                 subscribable_type: null,
@@ -130,6 +84,7 @@ export default {
     },
     methods: {
         submit() {
+            this.processing = true;
             const type = this.form.enabling_objective_id.length === 0 ? 'terminal' : 'enabling';
 
             axios.post('/' + type + 'ObjectiveSubscriptions', {
@@ -147,7 +102,9 @@ export default {
                 this.globalStore.closeModal(this.$options.name);
             })
             .catch(e => {
-                console.log(e.response);
+                console.log(e);
+                this.processing = false;
+                this.toast.error(this.errorMessage(e));
             });
         },
     },
@@ -155,8 +112,10 @@ export default {
         this.globalStore.registerModal(this.$options.name);
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params;
+                this.processing = false,
                 this.form.reset();
+
+                const params = state.modals[this.$options.name].params;
                 if (typeof (params) !== 'undefined') {
                     this.form.populate(params);
                 }
@@ -165,6 +124,3 @@ export default {
     },
 }
 </script>
-<style>
-.select2-selection__rendered { white-space: normal !important; }
-</style>

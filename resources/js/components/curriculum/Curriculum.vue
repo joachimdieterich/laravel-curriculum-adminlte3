@@ -20,7 +20,6 @@
             </div>
         </div>
 
-        <hr class="clearfix">
         <div class="d-flex flex-column px-3 pb-3">
             <ul
                 class="nav nav-tabs align-items-center"
@@ -170,8 +169,7 @@
             >
                 <div
                     id="description-tab"
-                    class="tab-pane fade bg-white border-top-0 rounded-bottom-2"
-                    style="border: 1px solid var(--bs-border-color);"
+                    class="tab-pane fade bg-white border border-top-0 rounded-bottom-2"
                     role="tabpanel"
                     tabindex="0"
                     aria-labelledby="description-nav-tab"
@@ -238,7 +236,7 @@
         </Teleport>
 
         <Teleport to="#customTitle">
-            <div class="d-flex align-items-center">
+            <div class="d-flex">
                 <small v-text="currentCurriculum.title"></small>
                 <button v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
                     v-permission="'curriculum_edit'"

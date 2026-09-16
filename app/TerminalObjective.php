@@ -26,7 +26,7 @@ class TerminalObjective extends Model
         'description' => CleanHtml::class,
         'visibility' => 'boolean',
         'referencing_curriculum_id' => 'object',
-        'updated_at' => 'datetime',
+        'updated_at' => 'datetime:d.m.Y H:i',
         'created_at'  => 'datetime',
     ];
 

@@ -86,7 +86,7 @@
                         aria-controls="'logbook-description-' + entry.id"
                         aria-selected="true"
                     >
-                        <i class="fa fa-info p-0"></i>
+                        <i class="fa fa-info"></i>
                         <span v-if="help" class="ps-2">{{ trans('global.logbook.fields.description') }}</span>
                     </button>
                 </li>
@@ -104,8 +104,8 @@
                         role="tab"
                         @click="loaderEvent()"
                     >
-                        <i class="fa fa-align-justify pe-1"></i>
-                        <span v-if="help">{{ trans('global.content.title') }}</span>
+                        <i class="fa fa-align-justify"></i>
+                        <span v-if="help" class="ps-2">{{ trans('global.content.title') }}</span>
                     </button>
                 </li>
 
@@ -120,8 +120,8 @@
                         type="button"
                         role="tab"
                     >
-                        <i class="fa fa-tasks pe-1"></i>
-                        <span v-if="help">{{ trans('global.task.title') }}</span>
+                        <i class="fa fa-tasks"></i>
+                        <span v-if="help" class="ps-2">{{ trans('global.task.title') }}</span>
                     </button>
                 </li>
 
@@ -136,8 +136,8 @@
                         type="button"
                         role="tab"
                     >
-                        <i class="fa fa-photo-video pe-1"></i>
-                        <span v-if="help">{{ trans('global.medium.title') }}</span>
+                        <i class="fa fa-photo-video"></i>
+                        <span v-if="help" class="ps-2">{{ trans('global.medium.title') }}</span>
                     </button>
                 </li>
 
@@ -152,8 +152,8 @@
                         type="button"
                         role="tab"
                     >
-                        <i class="fa fa-sitemap pe-1"></i>
-                        <span v-if="help">
+                        <i class="fa fa-sitemap"></i>
+                        <span v-if="help" class="ps-2">
                             {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
                         </span>
                     </button>
@@ -172,8 +172,8 @@
                         role="tab"
                         @click="loaderAbsences()"
                     >
-                        <i class="fa fa-users-slash pe-1"></i>
-                        <span v-if="help">{{ trans('global.absences.title') }}</span>
+                        <i class="fa fa-users-slash"></i>
+                        <span v-if="help" class="ps-2">{{ trans('global.absences.title') }}</span>
                     </button>
                 </li>
 
@@ -189,13 +189,16 @@
                         role="tab"
                         @click="loadLmsPlugin()"
                     >
-                        <i class="fa fa-graduation-cap pe-1"></i>
-                        <span v-if="help">{{ trans('global.lms.title_singular') }}</span>
+                        <i class="fa fa-graduation-cap"></i>
+                        <span v-if="help" class="ps-2">{{ trans('global.lms.title_singular') }}</span>
                     </button>
                 </li>
 
                 <button
+                    type="button"
                     class="d-print-none btn btn-icon text-secondary ms-auto"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.toggle_navigation')"
                     @click="help = !help"
                 >
                     <i class="fa fa-question"></i>

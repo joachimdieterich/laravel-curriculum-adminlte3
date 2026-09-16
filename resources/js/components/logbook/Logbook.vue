@@ -56,7 +56,8 @@
                 <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                     type="button"
                     class="d-print-none btn btn-icon text-secondary mx-1"
-                    :title="trans('global.logbook.edit')"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.logbook.edit')"
                     @click="editLogbook(logbook)"
                 >
                     <i class="fa fa-pencil-alt"></i>
@@ -64,7 +65,8 @@
                 <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
                     type="button"
                     class="d-print-none btn btn-icon text-secondary mx-1"
-                    :title="trans('global.share')"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.share')"
                     @click="share()"
                 >
                     <i class="fa fa-share-alt"></i>
@@ -154,6 +156,9 @@ export default {
         this.$eventHub.on('logbook-updated', (logbook) => {
             Object.assign(this.currentLogbook, logbook);
         });
+
+        // build popper-tooltips after nextTick to also enable them in child-components
+        this.$nextTick(() => this.enableTooltips());
     },
     methods: {
         openEntryModal() {

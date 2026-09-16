@@ -20,8 +20,6 @@
             </div>
             <div class="mt-3">
                 <VueDatePicker
-                    id="date"
-                    name="date"
                     v-model="form.date"
                     :range="{ partialRange: false }"
                     format="dd.MM.yyyy HH:mm"
@@ -55,7 +53,7 @@ export default {
             method: 'post',
             processing: false,
             form: new Form({
-                id: '',
+                id: null,
                 logbook_id: '',
                 title: '',
                 description: '',

@@ -42,7 +42,7 @@
                 >
                     <i class="fa fa-plus"></i>
                 </button>
-                <button v-if="allowCreate"
+                <button v-if="allowCreate && subscriptions.length > 0"
                     type="button"
                     class="d-print-none btn btn-icon text-secondary"
                     data-bs-toggle="tooltip"
@@ -57,6 +57,7 @@
                     :data-bs-target="'#content-carousel-' + uid"
                     data-bs-slide="prev"
                     data-bs-toggle="tooltip"
+                    :data-bs-title="trans('pagination.previous')"
                     :aria-label="trans('pagination.previous')"
                     @click="prev()"
                 >
@@ -67,6 +68,8 @@
                     class="d-print-none btn btn-icon text-secondary"
                     :data-bs-target="'#content-carousel-' + uid"
                     data-bs-slide="next"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('pagination.next')"
                     :aria-label="trans('pagination.next')"
                     @click="next()"
                 >

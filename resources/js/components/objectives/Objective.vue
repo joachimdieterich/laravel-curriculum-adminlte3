@@ -1,58 +1,56 @@
 <template>
-    <div class="d-flex flex-column">
-        <div class="card bg-transparent px-3 m-0">
-            <div class="card-header bg-white">
+    <div>
+        <div class="d-flex flex-column px-3 pb-3">
+            <div class="p-3 border-bottom bg-white">
                 <span v-html="currentObjective.title" class="p-margin-0"></span>
             </div>
 
-            <div class="card-body p-0">
-                <hr class="clearfix">
+            <div class="d-flex flex-column mt-2">
                 <ul
-                    class="nav nav-tabs"
+                    class="nav nav-tabs align-items-center"
                     role="tablist"
+                    :aria-label="trans('global.' + type + 'Objective.title_singular') + ' Tabs'"
                 >
                     <!-- 1 Description -->
                     <li
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_' + objective.id, '#objective_view_description_tab_' + objective.id)"
                     >
                         <button
-                            id="description-tab"
-                            class="nav-link small link-muted"
-                            data-toggle="tab"
-                            data-target="#description"
+                            id="description-nav-tab"
+                            class="nav-link link-muted"
                             type="button"
                             role="tab"
-                            aria-controls="description"
+                            data-bs-toggle="tab"
+                            data-bs-target="#description-tab"
+                            aria-controls="description-tab"
                             aria-selected="false"
                         >
-                            <i class="fa fa-info pe-1"></i>
-                            <span v-if="help">{{ trans('global.description') }}</span>
+                            <i class="fa fa-info"></i>
+                            <span v-if="help" class="ps-2">{{ trans('global.description') }}</span>
                         </button>
                     </li>
                     <!-- 2 Objectives -->
                     <li
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_' + objective.id, '#objective_view_related_objectives_' + objective.id)"
                     >
                         <button
-                            id="objectives-tab"
-                            class="nav-link small link-muted"
-                            data-toggle="tab"
-                            data-target="#objectives"
+                            id="objectives-nav-tab"
+                            class="nav-link link-muted"
                             type="button"
                             role="tab"
-                            aria-controls="objectives"
+                            data-bs-toggle="tab"
+                            data-bs-target="#objectives-tab"
+                            aria-controls="objectives-tab"
                             aria-selected="false"
                         >
-                            <i class="fa fa-sitemap pe-1"></i>
+                            <i class="fa fa-sitemap"></i>
                             <span v-if="type === 'terminal'">
-                                <span v-if="help">{{ trans('global.subordinate_element') }}</span>
+                                <span v-if="help" class="ps-2">{{ trans('global.subordinate_element') }}</span>
                             </span>
                             <span v-else>
-                                <span v-if="help">{{ trans('global.superordinate_element_singular') }}</span>
+                                <span v-if="help" class="ps-2">{{ trans('global.superordinate_element_singular') }}</span>
                             </span>
                         </button>
                     </li>
@@ -60,62 +58,59 @@
                     <li
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_' + objective.id, '#objective_view_content_tab_' + objective.id)"
                     >
                         <button
-                            id="content-tab"
-                            class="nav-link small link-muted"
-                            data-toggle="tab"
-                            data-target="#contents"
+                            id="content-nav-tab"
+                            class="nav-link link-muted"
                             type="button"
                             role="tab"
-                            aria-controls="contents"
+                            data-bs-toggle="tab"
+                            data-bs-target="#content-tab"
+                            aria-controls="content-tab"
                             aria-selected="false"
                             @click="loaderContents()"
                         >
-                            <i class="fa fa-align-justify pe-2"></i>
-                            <span v-if="help">{{ trans('global.content.index_alt') }}</span>
+                            <i class="fa fa-align-justify"></i>
+                            <span v-if="help" class="ps-2">{{ trans('global.content.index_alt') }}</span>
                         </button>
                     </li>
                     <!-- 4 Media -->
                     <li
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_' + objective.id, '#objective_view_tab_media_' + objective.id)"
                     >
                         <button
-                            id="media-tab"
-                            class="nav-link small link-muted active"
-                            data-toggle="tab"
-                            data-target="#media"
+                            id="media-nav-tab"
+                            class="nav-link link-muted active"
                             type="button"
                             role="tab"
-                            aria-controls="media"
+                            data-bs-toggle="tab"
+                            data-bs-target="#media-tab"
+                            aria-controls="media-tab"
                             aria-selected="true"
                         >
-                            <i class="fa fa-folder-open pe-2"></i>
-                            <span v-if="help">{{ trans('global.medium.title') }}</span>
+                            <i class="fa fa-folder-open"></i>
+                            <span v-if="help" class="ps-2">{{ trans('global.medium.title') }}</span>
                         </button>
                     </li>
                     <!-- 5 References -->
                     <li
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_' + objective.id, '#objective_view_references_' + objective.id)"
                     >
                         <button
-                            id="references-tab"
-                            class="nav-link small link-muted"
-                            data-toggle="tab"
-                            data-target="#references"
+                            id="references-nav-tab"
+                            class="nav-link link-muted"
                             type="button"
                             role="tab"
-                            aria-controls="references"
+                            data-bs-toggle="tab"
+                            data-bs-target="#references-tab"
+                            aria-controls="references-tab"
                             aria-selected="false"
                             @click="loadReferences()"
                         >
-                            <i class="fa fa-project-diagram pe-1"></i>
-                            <span v-if="help">{{ trans('global.referenceable_types.objective') }}</span>
+                            <i class="fa fa-project-diagram"></i>
+                            <span v-if="help" class="ps-2">{{ trans('global.referenceable_types.objective') }}</span>
                         </button>
                     </li>
                     <!-- 6 Achievements -->
@@ -123,21 +118,20 @@
                         v-permission="'achievement_access'"
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_' + objective.id, '#objective_view_achievements_' + objective.id)"
                     >
                         <button
-                            id="achievements-tab"
-                            class="nav-link small link-muted"
-                            data-toggle="tab"
-                            data-target="#achievements"
+                            id="achievements-nav-tab"
+                            class="nav-link link-muted"
                             type="button"
                             role="tab"
-                            aria-controls="achievements"
+                            data-bs-toggle="tab"
+                            data-bs-target="#achievements-tab"
+                            aria-controls="achievements-tab"
                             aria-selected="false"
                             @click="loadAchievements()"
                         >
-                            <i class="far fa-check-circle pe-1"></i>
-                            <span v-if="help">{{ trans('global.objective_tab') }}</span>
+                            <i class="far fa-check-circle"></i>
+                            <span v-if="help" class="ps-2">{{ trans('global.objective_tab') }}</span>
                         </button>
                     </li>
                     <!-- 7 Prerequisites -->
@@ -145,41 +139,39 @@
                         v-permission="'prerequisite_access'"
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_' + objective.id, '#objective_view_prerequisites_' + objective.id)"
                     >
                         <button
-                            id="prerequisites-tab"
-                            class="nav-link small link-muted"
-                            data-toggle="tab"
-                            data-target="#prerequisites"
+                            id="prerequisites-nav-tab"
+                            class="nav-link link-muted"
                             type="button"
                             role="tab"
-                            aria-controls="prerequisites"
+                            data-bs-toggle="tab"
+                            data-bs-target="#prerequisites-tab"
+                            aria-controls="prerequisites-tab"
                             aria-selected="false"
                             @click="loadPrerequisites()"
                         >
-                            <i class="fa fa-puzzle-piece pe-1"></i>
-                            <span v-if="help">{{ trans('global.prerequisite.title') }}</span>
+                            <i class="fa fa-puzzle-piece"></i>
+                            <span v-if="help" class="ps-2">{{ trans('global.prerequisite.title') }}</span>
                         </button>
                     </li>
                     <!-- 8 Eventmanagement -->
                     <li
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_events_'+objective.id)"
                     >
                         <button
-                            id="events-tab"
-                            class="nav-link small link-muted"
-                            data-toggle="tab"
-                            data-target="#events"
+                            id="events-nav-tab"
+                            class="nav-link link-muted"
                             type="button"
                             role="tab"
-                            aria-controls="events"
+                            data-bs-toggle="tab"
+                            data-bs-target="#events-tab"
+                            aria-controls="events-tab"
                             aria-selected="false"
                         >
-                            <i class="fa fa-user-graduate pe-1"></i>
-                            <span v-if="help">{{ trans('global.eventSubscription.title_alt') }}</span>
+                            <i class="fa fa-user-graduate"></i>
+                            <span v-if="help" class="ps-2">{{ trans('global.eventSubscription.title_alt') }}</span>
                         </button>
                     </li>
                     <!-- 9 LMS -->
@@ -187,41 +179,41 @@
                         v-permission="'lms_access'"
                         class="nav-item"
                         role="presentation"
-                        @click="setGlobalStorage('#objective_view_'+objective.id, '#objective_view_lms_'+objective.id)"
                     >
                         <button
-                            id="lms-tab"
-                            class="nav-link small link-muted"
-                            data-toggle="tab"
-                            data-target="#lms"
+                            id="lms-nav-tab"
+                            class="nav-link link-muted"
                             type="button"
                             role="tab"
-                            aria-controls="lms"
+                            data-bs-toggle="tab"
+                            data-bs-target="#lms-tab"
+                            aria-controls="lms-tab"
                             aria-selected="false"
                             @click="loadLmsPlugin()"
                         >
-                            <i class="fa fa-graduation-cap pe-1"></i>
-                            <span v-if="help">{{ trans('global.lms.title_singular') }}</span>
+                            <i class="fa fa-graduation-cap"></i>
+                            <span v-if="help" class="ps-2">{{ trans('global.lms.title_singular') }}</span>
                         </button>
                     </li>
                     <!-- Help-icon -->
-                    <li class="nav-item ms-auto pull-right">
-                        <a
-                            class="nav-link small link-muted pointer"
-                            @click="help = !help"
-                        >
-                            <i class="fa fa-question pe-1"></i>
-                        </a>
-                    </li>
+                    <button
+                        type="button"
+                        class="d-print-none btn btn-icon text-secondary ms-auto"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.toggle_navigation')"
+                        @click="help = !help"
+                    >
+                        <i class="fa fa-question"></i>
+                    </button>
                 </ul>
 
                 <div class="tab-content bg-white">
                     <!-- 1 Description -->
                     <div
-                        id="description"
-                        class="tab-pane fade p-3"
+                        id="description-tab"
+                        class="tab-pane fade p-3 border border-top-0 rounded-bottom-2"
                         role="tabpanel"
-                        aria-labelledby="description-tab"
+                        aria-labelledby="description-nav-tab"
                     >
                         <Variants v-if="objective.curriculum.variants?.length > 0"
                             :model="currentObjective"
@@ -230,22 +222,22 @@
                             :variant_order="variant_order"
                         />
                         <div v-else style="margin-top: -10px;">
-                            <div class="d-flex justify-content-between pb-1">
-                                <small>{{ trans('global.enablingObjective.fields.time_approach') }}: {{ currentObjective.time_approach }}</small>
+                            <div class="d-flex flex-column flex-sm-row justify-content-between pb-1">
+                                <small>{{ trans('global.enablingObjective.fields.time_approach') }}: {{ currentObjective.time_approach ?? '-/-' }}</small>
                                 <small>{{ trans('global.updated_at') }}: {{ currentObjective.updated_at }}</small>
                             </div>
                             <span
-                                v-html="currentObjective.description?.length > 0 ? currentObjective.description : trans('global.no_description')"
                                 class="p-margin-0"
+                                v-html="currentObjective.description?.length > 0 ? currentObjective.description : trans('global.no_description')"
                             ></span>
                         </div>
                     </div>
                     <!-- 2 Objectives -->
                     <div
-                        id="objectives"
-                        class="tab-pane fade px-3 pt-1"
+                        id="objectives-tab"
+                        class="tab-pane fade p-2 border border-top-0 rounded-bottom-2"
                         role="tabpanel"
-                        aria-labelledby="objectives-tab"
+                        aria-labelledby="objectives-nav-tab"
                     >
                         <div class="objectives">
                             <ObjectiveBox v-if="type === 'enabling'"
@@ -261,10 +253,10 @@
                     </div>
                     <!-- 3 Contents-->
                     <div
-                        id="contents"
+                        id="content-tab"
                         class="tab-pane fade"
                         role="tabpanel"
-                        aria-labelledby="content-tab"
+                        aria-labelledby="content-nav-tab"
                     >
                         <span>
                             <Contents v-if="type === 'enabling'"
@@ -281,29 +273,25 @@
                     </div>
                     <!-- 4 Media -->
                     <div
-                        id="media"
-                        class="tab-pane fade show active"
+                        id="media-tab"
+                        class="tab-pane fade show active border border-top-0 rounded-bottom-2"
                         role="tabpanel"
-                        aria-labelledby="media-tab"
+                        aria-labelledby="media-nav-tab"
                     >
-                        <div>
-                            <div id="sub_medium">
-                                <ObjectiveMedia
-                                    ref="Media"
-                                    :model="model"
-                                    :objective="objective"
-                                    :repository="repository"
-                                    :type="type"
-                                />
-                            </div>
-                        </div>
+                        <ObjectiveMedia
+                            ref="Media"
+                            :model="model"
+                            :objective="objective"
+                            :repository="repository"
+                            :type="type"
+                        />
                     </div>
                     <!-- 5 References-->
                     <div
-                        id="references"
-                        class="tab-pane fade pt-2"
+                        id="references-tab"
+                        class="tab-pane fade p-2 border border-top-0 rounded-bottom-2"
                         role="tabpanel"
-                        aria-labelledby="references-tab"
+                        aria-labelledby="references-nav-tab"
                     >
                         <div
                             v-permission="'objective_edit'"
@@ -329,14 +317,14 @@
                         />
                     </div>
                     <!-- 6 Achievements-->
-                    <div
+                    <div v-if="type === 'enabling'"
                         v-permission="'achievement_access'"
-                        id="achievements"
-                        class="tab-pane fade pt-2 box"
+                        id="achievements-tab"
+                        class="tab-pane fade p-2 border border-top-0 rounded-bottom-2"
                         role="tabpanel"
-                        aria-labelledby="achievements-tab"
+                        aria-labelledby="achievements-nav-tab"
                     >
-                        <Achievements v-if="type === 'enabling'"
+                        <Achievements
                             ref="Achievements"
                             :objective="objective"
                             :type="type"
@@ -346,10 +334,10 @@
                     <!-- 7 Prerequisites -->
                     <div
                         v-permission="'prerequisite_create, objective_edit'"
-                        id="prerequisites"
-                        class="tab-pane fade px-3 pt-2"
+                        id="prerequisites-tab"
+                        class="tab-pane fade p-3 border border-top-0 rounded-bottom-2"
                         role="tabpanel"
-                        aria-labelledby="prerequisites-tab"
+                        aria-labelledby="prerequisites-nav-tab"
                     >
                         <div class="card-tools">
                             <button
@@ -367,10 +355,10 @@
                     </div>
                     <!-- 8 Eventmanagement -->
                     <div
-                        id="events"
-                        class="tab-pane fade pt-2"
+                        id="events-tab"
+                        class="tab-pane fade p-3 border border-top-0 rounded-bottom-2"
                         role="tabpanel"
-                        aria-labelledby="events-tab"
+                        aria-labelledby="events-nav-tab"
                     >
                         <Eventmanagement
                             ref="eventPlugin"
@@ -381,10 +369,10 @@
                     <!-- 9 LMS -->
                     <div
                         v-permission="'lms_access'"
-                        id="lms"
-                        class="tab-pane fade pt-0"
+                        id="lms-tab"
+                        class="tab-pane fade p-2 border border-top-0 rounded-bottom-2"
                         role="tabpanel"
-                        aria-labelledby="lms-tab"
+                        aria-labelledby="lms-nav-tab"
                     >
                         <Lms
                             ref="LmsPlugin"
@@ -420,13 +408,18 @@
             <EnablingObjectiveModal/>
         </Teleport>
         <Teleport to="#customTitle">
-            <small>{{ trans('global.details') }}</small>
-            <a v-if="editable"
-                class="btn btn-flat text-secondary px-2 mx-1"
-                @click="editObjective()"
-            >
-                <i class="fa fa-pencil-alt"></i>
-            </a>
+            <div class="d-flex">
+                <small>{{ trans('global.details') }}</small>
+                <button v-if="editable"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.' + type + 'Objective.edit')"
+                    @click="editObjective()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+            </div>
         </Teleport>
     </div>
 </template>
@@ -446,15 +439,13 @@ import Lms from "../lms/Lms.vue";
 import LmsModal from "../lms/LmsModal.vue";
 import References from "../reference/References.vue";
 import Quotes from "../quote/Quotes.vue";
-import {useGlobalStore} from "../../store/global";
 import MediumModal from "../media/MediumModal.vue";
 import ReferenceObjectiveModal from "../reference/ReferenceObjectiveModal.vue";
 import PrerequisiteObjectiveModal from "../prerequisites/PrerequisiteObjectiveModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
-import { nextTick } from "vue";
 
 export default {
-    name: "objective",
+    name: "Objective",
     components: {
         SubscribeModal,
         PrerequisiteObjectiveModal,
@@ -490,12 +481,6 @@ export default {
             default: false,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
     data() {
         return {
             componentId: this.$.uid,
@@ -523,20 +508,6 @@ export default {
             this.type = 'terminal';
             this.model = 'App\\TerminalObjective';
         }
-
-        await nextTick(); // wait for DOM to render
-        const ref = this.$el.querySelectorAll('a[href*="#"]');
-        ref.forEach(elem => {
-            // manually create event to scroll reference into view
-            elem.addEventListener('click', (e) => {
-                e.preventDefault(); // default would scroll reference to top (hiding it behind the header)
-                const target = document.querySelector(elem.attributes.href.value);
-                target.scrollIntoView({ block: 'center' });
-                target.classList.add('target'); // classname to trigger highlight-animation
-                // remove class after animation finishes, so the highlight-animation can be triggered again
-                setTimeout(() => target.classList.remove('target'), 1500);
-            });
-        });
 
         //event listener
         this.$eventHub.on('terminal-objective-updated', (updatedObjective) => {
@@ -566,6 +537,8 @@ export default {
             this.globalStore?.closeModal('lms-modal');
             this.loadLmsPlugin()
         });
+
+        this.$nextTick(() => this.enableTooltips());
     },
     methods: {
         show() {

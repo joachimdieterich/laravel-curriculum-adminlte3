@@ -21,7 +21,7 @@
         "@fullcalendar/vue3": "^6.1.11",
         "@tinymce/tinymce-vue": "^6.0.1",
         "@vitejs/plugin-vue": "^6.0.1",
-        "@vuepic/vue-datepicker": "^8.7.0",
+        "@vuepic/vue-datepicker": "^14.0.0",
         "axios": "^1.20.0",
         "bootstrap": "^5.3.8",
         "chart.js": "^4.0.0",

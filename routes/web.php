@@ -1,5 +1,7 @@
 <?php
 
+// @php-cs-fixer-ignore statement_indentation
+
 use App\Http\Controllers\LogController;
 use App\User;
 use Illuminate\Support\Facades\Route;
@@ -55,15 +57,15 @@ Route::withoutMiddleware('auth')->group(function () {
     Route::get('curricula/{curriculum}/terminalObjectives', 'CurriculumController@getTerminalObjectives')->name('curricula.getTerminalObjectives');
     Route::put('curricula/{curriculum}/variantDefinitions', 'CurriculumController@setVariantDefinitions');
     Route::resource('curricula', 'CurriculumController');
-    Route::post('curriculumSubscriptions/expel', 'CurriculumSubscriptionController@expel')->name('curriculumSubscriptions.expel');
     Route::resource('curriculumSubscriptions', 'CurriculumSubscriptionController');
     Route::resource('curriculumTypes', 'CurriculumTypeController');
-    // Import/Export
+
+    /*** Curricula Import/Export ***/
     Route::post('curricula/import/store', 'CurriculumImportController@store')->name('curricula.import.store');
     Route::get('curricula/{curriculum}/export', 'CurriculumExportController@export')->name('curricula.export');
 // D
 // E
-/*** Enabling-Objectives ***/
+    /*** Enabling-Objectives ***/
     Route::get('enablingObjectives/{enablingObjective}/referenceSubscriptionSiblings', 'EnablingObjectiveController@referenceSubscriptionSiblings');
     Route::get('enablingObjectives/{enablingObjective}/quoteSubscriptions', 'EnablingObjectiveController@quoteSubscriptions');
     Route::get('enablingObjectives/{enablingObjective}/achievements/{group?}', 'EnablingObjectiveController@showAchievements')->name('enablingObjectives.showAchievements');
@@ -129,7 +131,7 @@ Route::withoutMiddleware('auth')->group(function () {
     Route::get('kanbanStatuses/{status}/copy', 'KanbanStatusController@copyStatus');
     Route::put('kanbanStatuses/sync', 'KanbanStatusController@sync')->name('kanbanStatuses.sync');
     Route::resource('kanbanStatuses', 'KanbanStatusController');
-    // Comments
+    // KanbanItemComments
     Route::post('kanbanItemComments/{kanbanItemComment}/react', 'KanbanItemCommentController@reaction')->name('kanbanItemCommentController.react');
     Route::resource('kanbanItemComment', 'KanbanItemCommentController');
 // L
@@ -261,9 +263,9 @@ Route::withoutMiddleware('auth')->group(function () {
     Route::resource('videoconferenceSubscriptions', 'VideoconferenceSubscriptionController');
 });
 
-// only authenticate requests that return a blade-file (initial requests) to avoid reduntant authentication
+// only authenticate requests that return a blade-file (initial requests) to avoid redundant authentication
 // keep the resource-routes in here, unless the index/show routes are specifically defined
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth'], static function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
@@ -302,7 +304,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('enablingObjectives/{enablingObjective}', 'EnablingObjectiveController@show');
 
-    /* plugin eventmanagment */
+    /* plugin even management */
     Route::post('eventSubscriptions/destroySubscription', 'EventSubscriptionController@destroySubscription')->name('eventSubscriptions.destroySubscription');
     Route::post('eventSubscriptions/search', 'EventSubscriptionController@search')->name('eventSubscriptions.search');
     Route::post('eventSubscriptions/getEvents', 'EventSubscriptionController@getEvents')->name('eventSubscriptions.getEvents');
@@ -372,7 +374,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('organizations', 'OrganizationsController');
 
-    /* organizationtype */
+    /* organization type */
     Route::resource('organizationTypes', 'OrganizationTypesController');
 
     /* period */
@@ -387,8 +389,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('print/content/{content}', 'PrintController@content')->name('print.content');
     Route::get('print/glossar/{glossar}', 'PrintController@glossar')->name('print.glossar');
-    Route::get('print/{model}/{id}', 'PrintController@model')->name('print.model');
-    /* Route::get('print/curriculum/{curriculum}', 'PrintController@curriculum')->name('print.curriculum'); */
     Route::get('print/curriculum/{curriculum}/references', 'PrintController@references')->name('print.references');
 
     Route::resource('progresses', 'ProgressController');
@@ -409,7 +409,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     /*** Tags ***/
     Route::get('tags/list', 'TagsController@list');
-    Route::get('tags/type', 'TagsController@type');
     Route::post('tags/attach', 'TagsController@attach');
     Route::patch('tags/model', 'TagsController@saveModelTags');
     Route::resource('tags', 'TagsController');
@@ -443,16 +442,17 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 if (config('app.guest_user_id') !== null) {
-    Route::get('/guest', function () {
-        if (Auth::user() == null) {       // if no user is authenticated authenticate guest
+    Route::get('/guest', static function () {
+        if (Auth::user() === null) {       // if no user is authenticated, authenticate guest
             LogController::set('guestLogin');
             LogController::setStatistics();
             Auth::loginUsingId((config('app.guest_user_id')), true);
         }
-        if (User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first() != null) { // use guests default navigator
+
+        if (User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first() !== null) { // use guests default navigator
             return redirect('/navigators/' . User::find(config('app.guest_user_id'))->organizations()->first()->navigators()->first()->id);
-        } else {
-            return redirect('/');
         }
+
+        return redirect('/');
     });
 }

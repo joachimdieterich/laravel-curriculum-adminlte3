@@ -122,6 +122,10 @@ class HomeController extends Controller
         $favCount = (clone $query)->withAllTags($favouriteTag)->count();
 
         if ($favCount !== 0) $query->withAllTags($favouriteTag);
+        else {
+            $negativeTag = \App\Tag::findFromString(trans('global.tag.hidden.singular')) ?? 0;
+            $query->withoutTags($negativeTag);
+        }
 
         return $query->select('kanbans.id', 'kanbans.title', 'kanbans.owner_id', DB::raw($favCount . ' AS is_favourited'))->get();
     }

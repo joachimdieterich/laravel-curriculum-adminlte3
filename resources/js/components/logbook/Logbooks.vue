@@ -117,48 +117,46 @@
                 <template v-slot:dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
                     >
                         <button
-                            :id="'delete-logbook-' + logbook.id"
+                            v-permission="'logbook_delete'"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
+                            class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(logbook)"
                         >
-                            <i class="fa fa-unlink me-2"></i>
+                            <i class="fa fa-unlink"></i>
                             {{ trans('global.logbook.expel') }}
                         </button>
                     </div>
                     <div v-else
                         class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
                     >
-                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
-                            :name="'logbook-edit_' + logbook.id"
-                            class="dropdown-item text-secondary"
+                        <button v-if="ownerOrAdmin(logbook)"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="editLogbook(logbook)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.logbook.edit') }}
                         </button>
-                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
-                            :name="'logbook-share_' + logbook.id"
-                            class="dropdown-item text-secondary"
+                        <button v-if="ownerOrAdmin(logbook)"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="shareLogbook(logbook)"
                         >
-                            <i class="fa fa-share-alt me-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.logbook.share') }}
                         </button>
-                        <hr class="my-1">
-                        <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
-                            :id="'delete-logbook-' + logbook.id"
+
+                        <hr v-if="ownerOrAdmin(logbook)" class="my-1">
+
+                        <button v-if="ownerOrAdmin(logbook)"
+                            v-permission="'logbook_delete'"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
+                            class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(logbook)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.logbook.delete') }}
                         </button>
                     </div>
@@ -315,6 +313,9 @@ export default {
                         console.log(e);
                     });
             }
+        },
+        ownerOrAdmin(logbook) {
+            return logbook.owner_id == this.$userId || this.checkPermission('is_admin');
         },
     },
     mounted() {

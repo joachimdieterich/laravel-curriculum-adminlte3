@@ -14,7 +14,7 @@
                 modelIcon="fa-share"
                 :tabs="tabs"
                 :activeTab="filter"
-                @change-tab="(newFilter) => filter = newFilter"
+                @change-tab="newFilter => filter = newFilter"
             />
 
             <div class="tab-content pt-2">
@@ -25,9 +25,7 @@
                     role="tabpanel"
                 >
                     <subscribe-user-select
-                        @selectedValue="(option) => {
-                            subscribe('App\\User', option.value.user.id);
-                        }"
+                        @selectedValue="option => subscribe('App\\User', option.value.user.id)"
                     />
                     <Subscribers v-if="subscribers.subscriptions != undefined"
                         :modelUrl="modelUrl"
@@ -49,9 +47,7 @@
                         name="group_subscription_select"
                         url="/groups"
                         model="group"
-                        @selectedValue="(id) => {
-                            subscribe('App\\Group', id[0])
-                        }"
+                        @selectedValue="id => subscribe('App\\Group', id[0])"
                     />
                     <Subscribers v-if="subscribers.subscriptions != undefined"
                         :modelUrl="modelUrl"
@@ -73,9 +69,7 @@
                         name="organization_subscription_select"
                         url="/organizations"
                         model="organization"
-                        @selectedValue="(id) => {
-                            subscribe('App\\Organization', id[0])
-                        }"
+                        @selectedValue="id => subscribe('App\\Organization', id[0])"
                     />
                     <Subscribers v-if="subscribers.subscriptions != undefined"
                         :modelUrl="modelUrl"
@@ -128,7 +122,7 @@
                         :canEditLabel="canEditLabel"
                         :canEditCheckbox="canEditCheckbox"
                         :subscriptions="subscribers.tokens"
-                        @tokenDeleted="(item) => {
+                        @tokenDeleted="item => {
                             let index = subscribers.tokens.indexOf(item);
                             subscribers.tokens.splice(index, 1);
                         }"
@@ -146,26 +140,26 @@ import Tokens from "./Tokens.vue";
 import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 import CSelect from "../forms/Select.vue";
 import SubscribeUserSelect from "./SubscribeUserSelect.vue";
 
 export default {
     name: 'subscribe-modal',
+    components: {
+        Modal,
+        SubscribeUserSelect,
+        CSelect,
+        TabList,
+        Subscribers,
+        Tokens,
+        VueDatePicker,
+        Select2,
+    },
     props: {
         params: {
             type: Object,
             default: null,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {
@@ -268,15 +262,5 @@ export default {
             this.subscribers.subscriptions.splice(index, 1);
         });
     },
-    components: {
-        Modal,
-        SubscribeUserSelect,
-        CSelect,
-        TabList,
-        Subscribers,
-        Tokens,
-        VueDatePicker,
-        Select2,
-    }
 }
 </script>

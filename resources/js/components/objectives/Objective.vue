@@ -278,13 +278,7 @@
                         role="tabpanel"
                         aria-labelledby="media-nav-tab"
                     >
-                        <ObjectiveMedia
-                            ref="Media"
-                            :model="model"
-                            :objective="objective"
-                            :repository="repository"
-                            :type="type"
-                        />
+                        <Media :model="objective"/>
                     </div>
                     <!-- 5 References-->
                     <div
@@ -424,7 +418,6 @@
     </div>
 </template>
 <script>
-import Media from "../media/Media.vue";
 import Contents from '../content/Contents.vue';
 import ContentModal from "../content/ContentModal.vue";
 import TerminalObjectiveModal from "./TerminalObjectiveModal.vue";
@@ -434,7 +427,7 @@ import Prerequisites from "../prerequisites/Prerequisites.vue";
 import Eventmanagement from "../../../../app/Plugins/Eventmanagement/resources/js/components/Events.vue";
 import ObjectiveBox from "./ObjectiveBox.vue";
 import Variants from "./Variants.vue";
-import ObjectiveMedia from "./ObjectiveMedia.vue";
+import Media from '../../../../app/Plugins/Repositories/edusharing/resources/js/components/Media.vue';
 import Lms from "../lms/Lms.vue";
 import LmsModal from "../lms/LmsModal.vue";
 import References from "../reference/References.vue";
@@ -451,7 +444,7 @@ export default {
         PrerequisiteObjectiveModal,
         ReferenceObjectiveModal,
         MediumModal,
-        ObjectiveMedia,
+        Media,
         Quotes,
         References,
         Lms,
@@ -465,7 +458,6 @@ export default {
         TerminalObjectiveModal,
         Contents,
         ContentModal,
-        Media,
     },
     props: {
         objective: {
@@ -510,11 +502,7 @@ export default {
         }
 
         //event listener
-        this.$eventHub.on('terminal-objective-updated', (updatedObjective) => {
-            Object.assign(this.currentObjective, updatedObjective);
-        });
-
-        this.$eventHub.on('enabling-objective-updated', (updatedObjective) => {
+        this.$eventHub.on(this.type + '-objective-updated', (updatedObjective) => {
             Object.assign(this.currentObjective, updatedObjective);
         });
 
@@ -549,12 +537,7 @@ export default {
             });
         },
         editObjective() {
-            switch (this.type) {
-                case "enabling":    this.globalStore?.showModal('enabling-objective-modal', this.objective);
-                    break;
-                case "terminal":    this.globalStore?.showModal('terminal-objective-modal', this.objective);
-                    break;
-            }
+            this.globalStore?.showModal(this.type + '-objective-modal', this.objective);
         },
         //Loader
         loaderContents: function() {

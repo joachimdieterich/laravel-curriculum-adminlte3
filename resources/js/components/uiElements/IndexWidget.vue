@@ -85,8 +85,7 @@
                         || checkPermission('is_admin')
                         || hidable
                     "
-                    :id="modelName + 'Dropdown_' + item.id"
-                    class="btn border-0"
+                    class="btn"
                     :class="buttonClass(item.color)"
                     type="button"
                     data-bs-toggle="dropdown"

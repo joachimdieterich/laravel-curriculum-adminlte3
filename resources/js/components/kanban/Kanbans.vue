@@ -105,9 +105,7 @@
                             url="/kanbans/[id]/hide"
                             :model="kanban"
                             :is-hidden="kanban.is_hidden"
-                            @mark-status-changed="() => {
-                                kanbans.splice(index, 1)
-                            }"
+                            @mark-status-changed="kanbans.splice(index, 1)"
                         />
 
                         <hr v-if="ownerOrAdmin(kanban)" class="my-1"/>
@@ -121,7 +119,6 @@
                             <i class="fa fa-trash"></i>
                             {{ trans('global.kanban.delete') }}
                         </button>
-
                     </div>
                 </template>
             </IndexWidget>

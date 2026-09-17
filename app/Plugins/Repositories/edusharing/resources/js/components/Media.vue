@@ -1,18 +1,22 @@
 <template>
-    <div>
+    <div class="position-relative">
+        <div v-if="loading"
+            class="overlay"
+        >
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+        </div>
+
         <ul
             class="nav nav-tabs px-2"
             role="tablist"
         >
             <li v-if="$userId != 8"
                 class="btn btn-sm btn-outline-secondary m-2"
-                v-bind:class="[(currentTab === 1) ? 'active' : '']"
+                :class="currentTab === 1 && 'active'"
                 id="edusharing_mediathek-nav"
-                data-toggle="pill"
-                href="#edusharing_mediathek"
                 role="tab"
-                aria-controls="edusharing_mediathek"
-                aria-selected="true"
+                :aria-selected="currentTab === 1"
                 @click="setCurrentTab(1); loader(false);"
             >
                 <i class="fa fa-globe"></i>
@@ -21,35 +25,26 @@
 
             <li
                 class="btn btn-sm btn-outline-secondary m-2 "
-                v-bind:class="[(currentTab === 3) ? 'active' : '']"
+                :class="currentTab === 3 && 'active'"
                 id="edusharing_my_files-nav"
-                data-toggle="pill"
-                href="#edusharing_my_files"
                 role="tab"
-                aria-controls="edusharing_my_files"
-                aria-selected="true"
-                @click="setCurrentTab(3);loader(false)"
+                :aria-selected="currentTab === 3"
+                @click="setCurrentTab(3); loader(false)"
             >
                 <i class="fa fa-user"></i>
                 {{ trans('global.my_files') }}
             </li>
         </ul>
-        <div
-            id="loading"
-            class="overlay text-center w-100"
-        >
-            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-            <span class="sr-only">Loading...</span>
-        </div>
 
-        <div class="px-2">
+        <div class="d-flex flex-column flex-lg-row gap-2 p-2">
             <!-- Add Media -->
             <div v-if="model.curriculum.type_id !== 1"
                 v-permission="'external_medium_create, is_teacher'"
-                :id="'media-add'"
-                class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important; border-color: #F2F4F5; border-style: solid !important;"
+                class="box box-objective nav-item-box-image pointer m-0"
+                style="border-color: #F2F4F5;"
+                tabindex="0"
                 @click="addMedia()"
+                @keyup.enter.space="addMedia()"
             >
                 <a>
                     <div class="d-flex align-items-center justify-content-center">
@@ -65,83 +60,71 @@
     
             <!-- Media uploaded from Curriculum -->
             <div v-for="subscription in filteredMedia"
-                class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important;"
+                class="box box-objective nav-item-box-image pointer m-0"
                 :style="{ 'border-color': borderColor(subscription) }"
+                tabindex="0"
             >
                 <a class="text-decoration-none">
-                    <div>
+                    <div class="position-relative">
                         <RenderUsage :medium="subscription.medium"/>
                     </div>
-                    <span>
-                        <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
-                            {{ subscription.medium.title ?? subscription.medium.name }}
-                            <p class="text-muted small mt-1" v-html="subscription.medium.description"></p>
-                        </span>
+                    <span class="bg-white text-center overflow-y-auto p-1">
+                        {{ subscription.medium.title ?? subscription.medium.name }}
+                        <p class="text-muted small mt-1" v-html="subscription.medium.description"></p>
                     </span>
 
-                    <div v-if="subscription.owner_id == $userId"
-                        class="btn btn-flat position-absolute pull-right"
-                        style="top: 0; right: 0; background-color: transparent;"
-                        data-toggle="dropdown"
+                    <button v-if="subscription.owner_id == $userId || checkPermission('is_admin')"
+                        type="button"
+                        class="btn btn-icon position-absolute text-dark"
+                        style="top: 0.25rem; right: 0.25rem;"
+                        data-bs-toggle="dropdown"
                         aria-expanded="false"
+                        @click.stop
                     >
-                        <i
-                            class="fa fa-ellipsis-v"
-                            :style="'color:' + (screenWidth > 990 ? $textcolor('#F2F4F5') : '#000')"
-                        ></i>
-                        <div
-                            class="dropdown-menu dropdown-menu-end"
-                            style="z-index: 1050;"
-                            x-placement="left-start"
-                        >
+                        <i class="fa fa-ellipsis-v"></i>
+
+                        <div class="dropdown-menu dropdown-menu-end">
                             <button
-                                id="edit-medium-item"
-                                class="dropdown-item py-1 text-secondary"
                                 type="button"
+                                class="dropdown-item"
                                 @click.prevent="edit(subscription);"
                             >
-                                <span>
-                                    <i class="fa fa-pencil me-2"></i>
-                                    {{ trans('global.medium.edit') }}
-                                </span>
+                                <i class="fa fa-pencil"></i>
+                                {{ trans('global.medium.edit') }}
                             </button>
 
                             <hr class="my-1">
 
                             <button
-                                id="delete-medium-item"
-                                class="dropdown-item py-1 text-red"
                                 type="button"
+                                class="dropdown-item text-danger"
                                 @click.prevent="confirmDelete(subscription);"
                             >
-                                <span>
-                                    <i class="fa fa-unlink me-2"></i>
-                                    {{ trans('global.medium.delete_subscription') }}
-                                </span>
+                                <i class="fa fa-unlink"></i>
+                                {{ trans('global.medium.delete_subscription') }}
                             </button>
                         </div>
-                    </div>
+                    </button>
                 </a>
             </div>
     
             <!-- Media linked from Edusharing -->
             <div v-for="medium in filteredExternalMedia"
                 :id="medium.node_id"
-                class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important; border-color: #F2F4F5;"
+                class="box box-objective nav-item-box-image pointer m-0"
+                style="border-color: #F2F4F5;"
                 @click="show(medium)"
             >
                 <a class="text-decoration-none">
                     <div>
                         <div
                             class="nav-item-box-image-size h-100 w-100"
-                            :style="{ 'background-image': 'url(' + href(medium) + ')' }"
+                            :style="{ 'background-image': 'url(' + medium.thumb + ')' }"
                         ></div>
                         <div
                             class="symbol"
                             style="height: 24px;"
-                            :style="{ 'background': 'white url(' + iconUrl(medium) + ') no-repeat center', 'background-size': '24px' }"
+                            :style="{ 'background': 'white url(' + medium.iconURL + ') no-repeat center', 'background-size': '24px' }"
                         ></div>
                     </div>
         
@@ -160,10 +143,10 @@
                 </a>
             </div>
     
-            <div v-if="media !== null"
+            <div v-if="media !== null && [0].length > maxItems"
                 class="row w-100 pt-1"
             >
-                <span v-if="[0].length > maxItems">
+                <span>
                     <span class="col-6">
                         <button
                             type="button"
@@ -209,9 +192,13 @@
 import RenderUsage from "./RenderUsage.vue";
 import MediumEditModal from "../../../../../../../resources/js/components/media/MediumEditModal.vue";
 import ConfirmModal from "../../../../../../../resources/js/components/uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../../../../../../resources/js/store/global.js";
 
 export default {
+    components: {
+        RenderUsage,
+        ConfirmModal,
+        MediumEditModal,
+    },
     props: {
         model: {
             type: Object,
@@ -221,10 +208,10 @@ export default {
     data() {
         return {
             component_id: this._uid,
+            loading: true,
             media: null,
             externalMedia: null,
             externalMyMedia: null,
-            commonName: null,
             page: 0,
             maxItems: 50,
             currentTab: 1,
@@ -232,15 +219,9 @@ export default {
             currentSubscription: null,
         }
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore
-        }
-    },
     methods: {
         async loader(reload = true) {
-            $("#loading").show();
+            this.loading = true;
 
             try {
                 // only send request for media once
@@ -278,28 +259,28 @@ export default {
                     })).data[0];
                 }
             } catch(error) {
-                $("#loading").hide();
+                this.loading = false;
             }
 
-            $("#loading").hide();
+            this.loading = false;
         },
         confirmDelete(mediumSubscription) {
             this.currentSubscription = mediumSubscription;
             this.showConfirm = true;
         },
-        async unlinkMedium() { //(id, value) { //id of external reference and value in db
+        async unlinkMedium() {
             const mediumSubscription = this.currentSubscription;
+
             axios.delete('/media/' + mediumSubscription.medium_id, {
                 data: {
                     subscribable_type: mediumSubscription.subscribable_type,
                     subscribable_id:   mediumSubscription.subscribable_id,
                 },
             })
-                .then(res => {
-                    this.loader();
-                })
-                .catch(err => {
-                    console.log(err);
+                .then(res => this.loader())
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         subscribable_type() { // can't be computed property
@@ -316,12 +297,6 @@ export default {
         show(medium) {
             window.open(medium.path, '_blank');
         },
-        href(medium) {
-            return medium.thumb;
-        },
-        iconUrl(medium) {
-            return medium.iconURL;
-        },
         lastPage() {
             this.page = this.page - 1
             if (this.page == -1) {
@@ -334,7 +309,7 @@ export default {
             this.page = this.page + 1;
             this.loader();
         },
-        setCurrentTab(id){
+        setCurrentTab(id) {
             this.currentTab = id;
         },
         addMedia() {
@@ -349,12 +324,15 @@ export default {
         },
     },
     mounted() {
-        this.$eventHub.on('medium-added', (e) => {
+        this.loader();
+
+        this.$eventHub.on('medium-added', e => {
             if (this.component_id == e.id) {
                 this.loader();
             }
         });
-        this.$eventHub.on('medium-updated', (data) => {
+
+        this.$eventHub.on('medium-updated', data => {
             let subscription = this.media.find(m => m.medium_id === data.medium.id);
             subscription.additional_data = data.additional_data ?? subscription.additional_data;
             Object.assign(subscription.medium, data.medium);
@@ -371,14 +349,6 @@ export default {
                 ? this.externalMedia
                 : this.externalMyMedia;
         },
-        screenWidth() {
-            return window.innerWidth;
-        }
-    },
-    components: {
-        RenderUsage,
-        ConfirmModal,
-        MediumEditModal,
     },
 }
 </script>

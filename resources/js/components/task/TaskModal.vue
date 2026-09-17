@@ -50,7 +50,8 @@
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
-import VueDatePicker from '@vuepic/vue-datepicker';
+import { VueDatePicker } from "@vuepic/vue-datepicker";
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
     name: 'task-modal',

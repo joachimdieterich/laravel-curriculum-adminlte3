@@ -88,7 +88,7 @@
 import Form from 'form-backend-validation';
 import {useGlobalStore} from "../../store/global";
 import Editor from '@tinymce/tinymce-vue';
-import VueDatePicker from '@vuepic/vue-datepicker';
+import { VueDatePicker } from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {

@@ -143,7 +143,7 @@ import Modal from '../uiElements/Modal.vue';
 import TabList from "../uiElements/TabList.vue";
 import Subscribers from "./Subscribers.vue";
 import Tokens from "./Tokens.vue";
-import VueDatePicker from '@vuepic/vue-datepicker';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Select2 from "../forms/Select2.vue";
 import {useGlobalStore} from "../../store/global";

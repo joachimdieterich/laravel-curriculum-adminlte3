@@ -221,23 +221,23 @@ if (! function_exists('getSubscribedModels'))
         // parse model to a query-builder if classname is given
         if (is_string($model)) $model = $model::query();
 
-        $model->whereHas('subscriptions', function ($q) {
-            $q->where(function ($q) {
-                $q->where('subscribable_type', 'App\\User')
-                    ->where('subscribable_id', auth()->user()->id);
-            })->orWhere(function ($q) {
-                $q->where('subscribable_type', 'App\\Group')
-                    ->whereIn('subscribable_id', auth()->user()->groups()->pluck('groups.id'));
-            })
-            ->orWhere(function ($q) {
-                $q->where('subscribable_type', 'App\\Organization')
-                    ->whereIn('subscribable_id', auth()->user()->organizations()->pluck('organizations.id'));
+        $model->where(function ($q) use ($withOwned) {
+            $q->whereHas('subscriptions', function ($q) {
+                $q->where(function ($q) {
+                    $q->where('subscribable_type', 'App\\User')
+                        ->where('subscribable_id', auth()->user()->id);
+                })->orWhere(function ($q) {
+                    $q->where('subscribable_type', 'App\\Group')
+                        ->whereIn('subscribable_id', auth()->user()->groups()->pluck('groups.id'));
+                })
+                ->orWhere(function ($q) {
+                    $q->where('subscribable_type', 'App\\Organization')
+                        ->whereIn('subscribable_id', auth()->user()->organizations()->pluck('organizations.id'));
+                });
             });
-        });
 
-        if ($withOwned) {
-            $model->orWhere('owner_id', auth()->user()->id);
-        }
+            if ($withOwned) $q->orWhere('owner_id', auth()->user()->id);
+        });
 
         return $model;
     }

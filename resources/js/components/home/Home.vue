@@ -13,7 +13,7 @@
                 icon="fa-th"
                 icon-background-class="bg-cyan"
                 href="/curricula"
-                :has-modal="true"
+                :has-modal="isVisible.courses"
                 @open-modal="openModal('curriculum-modal')"
                 @error="handleError"
             >
@@ -238,6 +238,7 @@ export default {
             const isAdmin = this.checkPermission('is_admin');
 
             return {
+                courses: isTeacher,
                 progress: !isTeacher || isAdmin,
                 groups: isTeacher,
                 plans: isTeacher,

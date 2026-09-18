@@ -72,17 +72,19 @@ class EnablingObjectiveController extends Controller
                 'referenceSubscriptions.siblings.referenceable',
                 'quoteSubscriptions.siblings.quotable',
                 'achievements' => function ($query) {
-                    $query->where('user_id', auth()->user()->id)->with(['owner', 'user']);
+                    $query->where('user_id', auth()->user()->id)->with([
+                        'owner:id,firstname,lastname',
+                        'user:id,firstname,lastname',
+                        'history'
+                    ]);
                 },
             ])
             ->find($enablingObjective->id);
 
-        $repository = Config::where('key', 'repository')->first() ?? 'false';
         $editable = $objective->curriculum->isEditable();
 
         return view('objectives.show')
             ->with(compact('objective'))
-            ->with(compact('repository'))
             ->with(compact('editable'));
     }
 
@@ -244,7 +246,8 @@ class EnablingObjectiveController extends Controller
     /**
      * Display the specified resource with achievements.
      *
-     * @param  \App\EnablingObjective  $enablingObjective
+     * @param \App\EnablingObjective $enablingObjective
+     * @param \App\Group|null $group
      * @return array
      */
     public function showAchievements(EnablingObjective $enablingObjective, $group = null)
@@ -254,36 +257,33 @@ class EnablingObjectiveController extends Controller
         if ($group == 'null') {
             $user_ids = [auth()->user()->id];
         } else {
-            if (auth()->user()->groups->contains($group) //check if user is allowed to see group
-                or is_admin()) {
+            //check if user is allowed to see group
+            if (auth()->user()->groups->contains($group) || is_admin()) {
                 $user_ids = Group::find($group)->users()->get()->pluck('id');
             } else {
                 $user_ids = [auth()->user()->id];
             }
         }
 
-        $result = ['objective' => EnablingObjective::with(
-                ['achievements' => function ($query) use ($user_ids) {
-                    $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
+        $result = [
+            'objective' => EnablingObjective::with([
+                'achievements' => function ($query) use ($user_ids) {
+                    $query->whereIn('user_id', $user_ids)->with([
+                        'owner:id,firstname,lastname',
+                        'user:id,firstname,lastname'
+                    ]);
                 },
-                ])->find($enablingObjective->id),
-            'users' => User::select([
-                'users.id',
-                'firstname',
-                'lastname',
-            ])
+            ])->find($enablingObjective->id),
+            'users' => User::select(['users.id', 'firstname', 'lastname'])
                 ->join('group_user', 'users.id', '=', 'group_user.user_id')
                 ->join('organization_role_users', 'organization_role_users.user_id', '=', 'group_user.user_id')
                 ->where('group_user.group_id', '=', $group)
                 ->where('organization_role_users.organization_id', '=', auth()->user()->current_organization_id)
-                ->where('organization_role_users.role_id', '=', 6) //6 == student
+                ->where('organization_role_users.role_id', '=', 6) // 6 == student
                 ->get(),
-            'groups' => auth()->user()->currentGroupEnrolments()->where('curriculum_id', $enablingObjective->curriculum_id)->get(),
         ];
 
-        if (request()->wantsJson()) {
-            return $result;
-        }
+        return $result;
     }
 
     protected function validateRequest()

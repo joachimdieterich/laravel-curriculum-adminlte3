@@ -293,7 +293,7 @@
                         >
                             <button
                                 class="dropdown-item"
-                                @click.prevent="show()"
+                                @click="openReferencesModal()"
                             >
                                 <i class="fa fa-plus pull-right"></i>
                             </button>
@@ -322,7 +322,6 @@
                             ref="Achievements"
                             :objective="objective"
                             :type="type"
-                            :settings="setting"
                         />
                     </div>
                     <!-- 7 Prerequisites -->
@@ -336,7 +335,7 @@
                         <div class="card-tools">
                             <button
                                 class="dropdown-item"
-                                @click.prevent="this.globalStore?.showModal('prerequisite-objective-modal');"
+                                @click="openPrerequisitesModal"
                             >
                                 <i class="fa fa-plus pull-right"></i>
                             </button>
@@ -464,10 +463,6 @@ export default {
             type: Object,
             default: null,
         },
-        repository: {
-            type: Object,
-            default: null,
-        },
         editable: {
             type: Boolean,
             default: false,
@@ -513,7 +508,6 @@ export default {
             this.loadReferences();
         });
         this.$eventHub.on('prerequisite-added', () => {
-            this.globalStore?.closeModal('prerequisite-objective-modal');
             this.loadPrerequisites();
         });
 
@@ -529,11 +523,17 @@ export default {
         this.$nextTick(() => this.enableTooltips());
     },
     methods: {
-        show() {
+        openReferencesModal() {
             this.globalStore?.showModal('reference-objective-modal', {
                 subscribable_type: this.model,
                 subscribable_id: this.objective.id,
                 url: '/referenceSubscriptions',
+            });
+        },
+        openPrerequisitesModal() {
+            this.globalStore?.showModal('prerequisite-objective-modal', {
+                successor_type: this.model,
+                successor_id: this.objective.id,
             });
         },
         editObjective() {

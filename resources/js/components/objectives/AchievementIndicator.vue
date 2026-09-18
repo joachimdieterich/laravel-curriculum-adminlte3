@@ -29,7 +29,7 @@
         <span v-if="objective.achievements?.length === 1"
             class="text-nowrap lh-1 ml-1"
         >
-            {{ new Date(objective.achievements[0].updated_at).toLocaleDateString() }}
+            {{ objective.achievements[0]?.updated_at.slice(0, 10) }}
         </span>
     </div>
 </template>

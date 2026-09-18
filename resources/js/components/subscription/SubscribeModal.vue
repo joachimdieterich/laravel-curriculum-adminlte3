@@ -24,7 +24,7 @@
                     class="tab-pane fade active show"
                     role="tabpanel"
                 >
-                    <subscribe-user-select
+                    <SubscribeUserSelect
                         @selectedValue="option => subscribe('App\\User', option.value.user.id)"
                     />
                     <Subscribers v-if="subscribers.subscriptions != undefined"
@@ -234,7 +234,7 @@ export default {
             if (state.modals[this.$options.name].show) {
                 const params = state.modals[this.$options.name].params;
 
-                if (typeof (params) !== 'undefined') {
+                if (params) {
                     this.resetComponent();
                     this.modelUrl = params.modelUrl;
                     this.modelId = params.modelId;

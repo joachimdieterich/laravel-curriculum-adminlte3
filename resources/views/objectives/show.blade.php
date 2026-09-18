@@ -8,8 +8,6 @@
 @endsection
 @section('content')
     <Objective
-        ref="curriculumView"
-        :repository="{{ $repository }}"
         :objective="{{ $objective }}"
         :editable="{{ json_encode($editable) }}"
     />

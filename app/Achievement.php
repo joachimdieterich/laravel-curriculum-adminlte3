@@ -26,8 +26,8 @@ class Achievement extends Model
 
     protected $casts = [
         'status' => 'string',
-        'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
+        'updated_at' => 'datetime:d.m.Y H:i',
+        'created_at'  => 'datetime:d.m.Y H:i',
     ];
 
     /**

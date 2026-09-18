@@ -11,9 +11,6 @@
                 >
                     <span class="h4 me-2">{{ curriculum.title }}</span>
                     <small>{{ curriculum.organization_type.title }}</small>
-                    <span class="pull-right">
-                        <i class="fas fa-expand-alt"></i>
-                    </span>
                 </div>
             </div>
             <div
@@ -39,15 +36,25 @@
                                 <strong>{{ trans("global.curricula_cross_references_description") }}</strong>
                                 <button
                                     v-permission="'reference_edit'"
+                                    type="button"
                                     class="btn btn-icon ms-2"
-                                    @click.prevent="open(filtered_reference.reference)"
+                                    @click="open(filtered_reference.reference)"
                                 >
                                     <i class="fa fa-pencil-alt"></i>
+                                </button>
+                                <button
+                                    v-permission="'reference_delete'"
+                                    type="button"
+                                    class="btn btn-icon text-danger ms-2"
+                                    @click="destroy(filtered_reference)"
+                                >
+                                    <i class="fa fa-trash"></i>
                                 </button>
                             </div>
                             <div v-html="filtered_reference.reference.description"></div>
                         </div>
                     </div>
+
                     <hr style="clear:both;">
                 </div>
             </div>
@@ -56,9 +63,9 @@
 </template>
 <script>
 import ObjectiveBox from '../objectives/ObjectiveBox.vue';
-import {useGlobalStore} from "../../store/global";
 
 export default {
+    components: { ObjectiveBox },
     props: {
         objective: {
             type: Object,
@@ -67,13 +74,7 @@ export default {
             type: String,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
-    data: function() {
+    data() {
         return {
             reference_subscriptions: [],
             curricula_list: [],
@@ -117,9 +118,16 @@ export default {
                 url: '/references',
             });
         },
-    },
-    components: {
-        ObjectiveBox,
+        destroy(reference) {
+            axios.delete('/references/' + reference.reference_id)
+                .then(r => {
+                    this.$eventHub.emit('reference-deleted', r.data);
+                })
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
+                });
+        },
     },
 }
 </script>

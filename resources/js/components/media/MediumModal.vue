@@ -178,7 +178,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
             tab: 'external',
             progressBar: false,
             subscribable_type: null,
@@ -253,6 +252,7 @@ export default {
             formData.append('subscribable_id', this.form.subscribable_id);
             formData.append('repository', this.form.repository);
             formData.append('public', this.form.public ?? 1);
+
             axios.post('/media', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -342,8 +342,9 @@ export default {
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
                 this.globalStore.lockModal(this.$options.name);
-                const params = state.modals[this.$options.name].params;
                 this.reset();
+
+                const params = state.modals[this.$options.name].params;
 
                 this.postProcess = false;
                 this.subscribeSelected = params.subscribeSelected;
@@ -355,8 +356,6 @@ export default {
                 this.currentStatus = STATUS_INITIAL;
 
                 this.form.populate(params);
-
-                this.method = this.form.id ? 'patch' : 'post'
             }
         });
 

@@ -134,10 +134,7 @@ export default {
     },
     methods: {
         openModal() {
-            this.globalStore?.showModal('kanban-status-modal', {
-                status: this.status ?? {},
-                method: this.status === null ? 'post' : 'patch',
-            });
+            this.globalStore?.showModal('kanban-status-modal', this.status ?? {});
         },
         confirmCopy() {
             this.$eventHub.emit('kanban-show-copy', {
@@ -152,11 +149,14 @@ export default {
             });
         },
         handleItemAdded(newItem) {
+            if (this.status.id !== newItem.status_id) return;
             // Add newly created item to our column
             this.status.items.push(newItem);
         },
         handleItemUpdated(updatedItem) {
-            let item = this.status.items.find(s => s.id === updatedItem.id);
+            let item = this.status.items.find(item => item.id === updatedItem.id);
+
+            if (item === undefined) return;
 
             Object.assign(item, updatedItem);
 
@@ -235,7 +235,7 @@ export default {
     mounted() {
         this.startWebsocket();
 
-        this.$eventHub.on('filter', (filter) => {
+        this.$eventHub.on('filter', filter => {
             this.searchFilter = filter.searchString.toLowerCase();
         });
 
@@ -257,10 +257,10 @@ export default {
             this.$eventHub.on('kanban-status-force-show-' + this.status.id, (forceShow) => {
                 this.forceShow[forceShow.kanbanItemId] = forceShow.show;
             });
-            this.$eventHub.on('kanban-item-added-' + this.status.id, (item) => {
+            this.$eventHub.on('kanbanItem-added', item => {
                 this.handleItemAdded(item);
             });
-            this.$eventHub.on('kanban-item-updated-' + this.status.id, (item) => {
+            this.$eventHub.on('kanbanItem-updated', item => {
                 this.handleItemUpdated(item);
             });
             this.$eventHub.on('kanban-item-deleted-' + this.status.id, (id) => {

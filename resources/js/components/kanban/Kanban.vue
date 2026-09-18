@@ -554,18 +554,18 @@ export default {
         this.startWebsocket();
 
         // KANBAN Events
-        this.$eventHub.on('kanban-updated', (updatedKanban) => {
+        this.$eventHub.on('kanban-updated', updatedKanban => {
             this.kanban = updatedKanban;
         });
 
         // STATUS Events
-        this.$eventHub.on('kanban-status-created', (status) => {
+        this.$eventHub.on('kanbanStatus-added', status => {
             this.handleStatusAdded(status);
         });
-        this.$eventHub.on('kanban-status-updated', (status) => {
+        this.$eventHub.on('kanbanStatus-updated', status => {
             this.handleStatusUpdated(status);
         });
-        this.$eventHub.on('kanban-status-deleted', (status_id) => {
+        this.$eventHub.on('kanban-status-deleted', status_id => {
             this.handleStatusDeleted(status_id);
         });
 

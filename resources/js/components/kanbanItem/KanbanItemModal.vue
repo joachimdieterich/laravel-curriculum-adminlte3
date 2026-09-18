@@ -4,14 +4,15 @@
         model="kanbanItem"
         modalName="kanban-item-modal"
         css="min-width: min(90vw, 450px);"
-        :method="method"
-        :processing="processing"
+        :form="form"
         :require-title="true"
         :show-display-section="true"
         :show-medium-field="true"
         :allow-multiple-media="true"
         :show-permission-section="hasPermissionsAccess"
-        @save="form => submit(form)"
+        :intercept-save="true"
+        @opened="preProcessing()"
+        @save="postProcessing()"
     >
         <template #general-extended>
             <div class="mt-3">
@@ -30,11 +31,13 @@
                 v-model="form.due_date"
                 format="dd.MM.yyyy HH:mm"
                 :teleport="true"
-                locale="de"
                 time-picker-inline
                 :start-time="{ hours: 23, minutes: 59 }"
-                :select-text="trans('global.ok')"
-                :cancel-text="trans('global.close')"
+                :day-names="['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']"
+                :action-row="{
+                    selectBtnLabel: 'OK',
+                    cancelBtnLabel: trans('global.close'),
+                }"
                 :placeholder="trans('global.kanbanItem.fields.due_date')"
             />
 
@@ -68,12 +71,14 @@
                 range
                 format="dd.MM.yyyy HH:mm"
                 :teleport="true"
-                locale="de"
                 time-picker-inline
                 :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
-                @cleared="form.visible_date = ['', '']"
-                :select-text="trans('global.ok')"
-                :cancel-text="trans('global.close')"
+                @cleared="form.visible_date = null"
+                :day-names="['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']"
+                :action-row="{
+                    selectBtnLabel: 'OK',
+                    cancelBtnLabel: trans('global.close'),
+                }"
                 :placeholder="trans('global.visible_until_or_from_to')"
             />
         </template>
@@ -98,8 +103,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            medium: null,
             processing: false,
             form: new Form({
                 id: null,
@@ -134,86 +137,45 @@ export default {
             ),
         }
     },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
-                this.globalStore.lockModal(this.$options.name);
-                this.processing = false;
-                this.form.reset();
-                
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params.item);
-                    this.method = params.method;
-                    this.form.movable = !this.form.locked;
-
-                    if (this.form.media_subscriptions.length > 0) this.medium = this.form.media_subscriptions[0].medium;
-                    else this.medium = null; // needs to be reset
-
-                    if (this.form.visible_from == null && this.form.visible_until != null) {
-                        this.form.visible_date = [this.form.visible_until, null]; // second date needs to be null
-                    } else {
-                        // unset dates need to be set to empty strings, becuase null will show 1970-01-01T00:00:00.000Z
-                        this.form.visible_date = [this.form.visible_from ?? '', this.form.visible_until ?? ''];
-                    }
-                }
-
-                this.$refs.modal.resetForm(this.form);
-            }
-        });
-    },
     methods: {
-        close() {
-            this.globalStore.closeModal(this.$options.name);
+        preProcessing() {
+            this.form.movable = !this.form.locked;
+
+            if (this.form.visible_from) {
+                this.form.visible_date = [this.form.visible_from, this.form.visible_until];
+            } else if (this.form.visible_until) {
+                this.form.visible_date = [this.form.visible_until, null];
+            }
         },
-        submit(formData) {
-            this.form.populate(formData);
+        postProcessing() {
             this.form.locked = !this.form.movable;
+
             // parse dates to local time, so the server won't have to deal with timezones
             this.form.due_date = this.form.due_date?.toLocaleString() ?? null; // undefined will remove the field from the request
-            if (this.form.visible_date[1] === null) {
-                this.form.visible_until = this.form.visible_date[0].toLocaleString();
+
+            if (this.form.visible_date === null) {
+                this.form.visible_from = null;
+                this.form.visible_until = null;
             } else {
-                this.form.visible_from = this.form.visible_date[0].toLocaleString();
-                this.form.visible_until = this.form.visible_date[1].toLocaleString();
+                if (this.form.visible_date[1] === null) {
+                    this.form.visible_until = this.form.visible_date[0].toLocaleString();
+                } else {
+                    this.form.visible_from = this.form.visible_date[0].toLocaleString();
+                    this.form.visible_until = this.form.visible_date[1].toLocaleString();
+                }
             }
 
-            this.processing = true;
-
-            if (this.method == 'patch') {
-                this.update();
-            } else {
+            // let the modal-component handle the submit-request
+            if (this.form.id) this.$refs.modal.update();
+            else {
                 this.form.media_subscriptions = this.form.media_subscriptions.map(m => m.medium_id);
-                this.add();
+                this.$refs.modal.add();
             }
-        },
-        add() {
-            axios.post('/kanbanItems', this.form)
-                .then(r => {
-                    this.$eventHub.emit('kanban-item-added-' + this.form.kanban_status_id, r.data);
-                    this.close()
-                })
-                .catch(e => {
-                    this.toast.error(this.errorMessage(e));
-                    console.log(e);
-                });
-        },
-        update() {
-            axios.patch('/kanbanItems/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('kanban-item-updated-' + r.data.kanban_status_id, r.data);
-                    this.close();
-                })
-                .catch(e => {
-                    console.log(e);
-                    this.toast.error(this.errorMessage(e));
-                });
         },
     },
     computed: {
         hasPermissionsAccess() {
-            return this.method == 'post'
+            return !this.form.id
                 || this.form.owner_id == this.$userId
                 || this.$parent.kanban.owner_id == this.$userId
                 || this.checkPermission('is_admin');

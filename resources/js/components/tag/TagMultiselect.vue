@@ -11,9 +11,9 @@
         :label="trans('global.tag.title')"
         :multiple="true"
         :selected="selectedTags"
-        @selectedValue="(data) => $emit('selectedValue', data)"
-        @cleared="(data) => $emit('cleared', data)"
-        @opened="(data) => $emit('opened', data)"
+        @selectedValue="data => $emit('selectedValue', data)"
+        @cleared="data => $emit('cleared', data)"
+        @opened="data => $emit('opened', data)"
     >
         <template #buttons>
             <button
@@ -60,7 +60,6 @@
 <script>
 import DropDownModal from "../uiElements/DropDownModal.vue";
 import Select2 from "../forms/Select2.vue";
-import {useToast} from "vue-toastification";
 
 export default {
     name: "TagMultiselect",
@@ -86,9 +85,6 @@ export default {
         }
     },
     emits: ['selectedValue', 'opened', 'cleared', 'tag-attached'],
-    setup() {
-        return { toast: useToast() }
-    },
     data() {
         return {
             showNewTagForm: false,
@@ -100,9 +96,9 @@ export default {
     computed: {
         attachForm() {
             return {
-                'name': this.tag.name,
-                'type': this.type,
-                'taggable_id': this.modelId,
+                name: this.tag.name,
+                type: this.type,
+                taggable_id: this.modelId,
             };
         },
     },
@@ -119,10 +115,10 @@ export default {
                     this.resetNewTagForm();
                 })
                 .catch(e => {
+                    console.log(e);
                     this.toast.error(this.errorMessage(e));
-                    console.log(e.response);
                 });
         },
-    }
+    },
 }
 </script>

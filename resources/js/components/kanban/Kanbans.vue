@@ -252,6 +252,7 @@ export default {
             this.globalStore?.showModal('tag-component-modal', kanban);
         },
         editKanban(kanban) {
+            kanban.tags = kanban.tags.map(tag => tag.id);
             this.globalStore?.showModal('kanban-modal', kanban);
         },
         shareKanban(kanban) {

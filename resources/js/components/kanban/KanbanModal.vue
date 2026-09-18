@@ -1,27 +1,24 @@
 <template>
     <Modal
-        ref="modal"
         model="kanban"
         modalName="kanban-modal"
-        :method="method"
-        :processing="processing"
+        :form="form"
         :require-title="true"
         :show-description-field="true"
         :show-owner-field="form.id && checkPermission('is_teacher')"
         :show-display-section="true"
         :show-medium-field="true"
         :show-permission-section="true"
-        @save="form => submit(form)"
     >
         <template #general-extended>
             <TagMultiselect
                 class="mt-3"
                 type="App\Kanban"
                 :model-id="form.id"
-                :selectedTags="selectedTags"
-                @selectedValue="(data) => form.tags = data"
-                @cleared="() => form.tags = []"
-                @tag-attached="(tag) => updateSelectedTags(tag.id)"
+                :selectedTags="form.tags"
+                @selectedValue="data => form.tags = data"
+                @cleared="form.tags = []"
+                @tag-attached="tag => form.tags.push(tag)"
             />
         </template>
         <template #permissions>
@@ -83,8 +80,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            processing: false,
             form: new Form({
                 id: null,
                 title:  '',
@@ -99,83 +94,7 @@ export default {
                 allow_copy: true,
                 tags: [],
             }),
-            selectedTags: []
         }
-    },
-    computed: {
-        textColor: function() {
-            return this.$textcolor(this.form.color, '#333333');
-        }
-    },
-    methods: {
-        submit(formData) {
-            this.form.populate(formData);
-            this.processing = true;
-
-            if (this.method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post('/kanbans', this.form)
-                .then(r => {
-                    this.$eventHub.emit('kanban-added', r.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.processing = false;
-                    this.toast.error(this.errorMessage(e));
-                    console.log(e.response);
-                });
-        },
-        update() {
-            axios.patch('/kanbans/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('kanban-updated', r.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.processing = false;
-                    this.toast.error(this.errorMessage(e));
-                    console.log(e.response);
-                });
-        },
-        getSelectedTags(tags) {
-            if (tags && tags[0] && tags[0]?.name){
-                return tags.map(p => p.id);
-            }
-
-            return tags;
-        },
-        updateSelectedTags(newTag) {
-            if (newTag !== undefined) {
-                this.form.tags.push(newTag)
-            }
-
-            this.selectedTags = this.getSelectedTags(this.form.tags);
-        }
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
-                this.globalStore.lockModal(this.$options.name);
-                this.processing = false;
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    params.tags = this.getSelectedTags(params.tags);
-                    this.form.populate(params);
-                    this.method = this.form.id ? 'patch' : 'post';
-                    this.updateSelectedTags();
-                }
-
-                this.$refs.modal.resetForm(this.form);
-            }
-        });
     },
 }
 </script>

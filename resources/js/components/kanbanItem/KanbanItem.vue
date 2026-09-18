@@ -305,10 +305,7 @@ export default {
             });
         },
         edit() {
-            this.globalStore?.showModal('kanban-item-modal', {
-                item: this.item,
-                method: 'patch',
-            });
+            this.globalStore?.showModal('kanban-item-modal', this.item);
         },
         addMedia() {
             this.globalStore?.showModal('medium-modal', {

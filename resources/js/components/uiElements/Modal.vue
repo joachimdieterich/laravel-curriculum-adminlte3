@@ -190,7 +190,8 @@ import FontAwesomePicker from "./FontAwesomePicker.vue";
 
 export default {
     name: 'Modal',
-    emits: ['save'],
+    emits: ['opened', 'save'],
+    expose: ['add', 'update'],
     components: {
         Select2,
         NewMediumForm,
@@ -300,14 +301,16 @@ export default {
             default: false,
             description: "Disables the save button (needed if a required non-title field isn't filled)",
         },
+        interceptSave: {
+            type: Boolean,
+            default: false,
+            description: 'stop the default submit-logic or intercept to enable post-processing of the form-data',
+        },
     },
     data() {
         return {
             method: 'post',
             processing: false,
-    //         // we're not using the Form-plugin, since two Form-objects can't be merged,
-    //         // and we want to keep the form data in the parent component
-    //         form: {},
         };
     },
     mounted() {
@@ -327,6 +330,8 @@ export default {
                 if (params) {
                     this.form.populate(params);
                     this.method = this.form.id ? 'patch' : 'post';
+                    // use this event to pre-process form-data in the parent-component
+                    this.$emit('opened');
                 }
             }
         });
@@ -338,8 +343,9 @@ export default {
         submit() {
             this.processing = true;
             this.$emit('save', this.form);
-            // don't call the default endpoints (needed for medium-modal)
-            if (!this.form) return;
+            // stop/intercept the default submit-logic
+            // when intercepting, the parent should call this components add()/update()
+            if (this.interceptSave || !this.form) return;
 
             this.method == 'post'
                 ? this.add()

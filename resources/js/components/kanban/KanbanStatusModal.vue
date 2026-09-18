@@ -1,15 +1,12 @@
 <template>
     <Modal
-        ref="modal"
         model="kanbanStatus"
         modalName="kanban-status-modal"
-        :method="method"
-        :processing="processing"
+        :form="form"
         :require-title="true"
         :show-display-section="true"
         :allow-overflow="true"
         :show-permission-section="hasPermissionsAccess"
-        @save="form => submit(form)"
     >
         <template #permissions>
             <Switch
@@ -54,8 +51,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            processing: false,
             form: new Form({
                 id: '',
                 title: '',
@@ -71,65 +66,13 @@ export default {
             }),
         }
     },
-    methods: {
-        submit(formData) {
-            this.form.populate(formData);
-            this.form.locked = !this.form.movable;
-            this.processing = true;
-
-            if (this.method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post('/kanbanStatuses', this.form)
-                .then(r => {
-                    this.$eventHub.emit('kanban-status-created', r.data);
-                    this.globalStore?.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.toast.error(this.errorMessage(e));
-                    console.log(e);
-                });
-        },
-        update() {
-            axios.patch('/kanbanStatuses/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('kanban-status-updated', r.data);
-                    this.globalStore?.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.toast.error(this.errorMessage(e));
-                });
-        },
-    },
     computed: {
         hasPermissionsAccess() {
-            return this.method == 'post'
+            return !this.form.id
                 || this.form.owner_id == this.$userId
                 || this.kanban.owner_id == this.$userId
                 || this.checkPermission('is_admin');
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                this.processing = false;
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params.status);
-                    this.method = params.method;
-                    this.form.movable = !this.form.locked;
-                }
-
-                this.$refs.modal.resetForm(this.form);
-            }
-        });
     },
 }
 </script>

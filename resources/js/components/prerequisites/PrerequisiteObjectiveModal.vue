@@ -1,187 +1,66 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-             class="modal-mask"
-        >
-        <div class="modal-container">
-            <div class="card-header">
-                <h3 class="card-title">
-                    {{ trans('global.prerequisite.create') }}
-                </h3>
-                <div class="card-tools">
-                    <button
-                        v-permission="'objective_delete'"
-                        v-if="method !== 'post'"
-                        type="button"
-                        class="btn btn-tool"
-                        @click="del()">
-                        <i class="fa fa-trash text-danger"></i>
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-tool draggable" >
-                        <i class="fa fa-arrows-alt"></i>
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-tool"
-                        @click="globalStore?.closeModal($options.name)">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
+    <Modal
+        model="prerequisite"
+        modalName="prerequisite-objective-modal"
+        title="global.prerequisite.create"
+        :form="form"
+        :allow-overflow="true"
+    >
+        <template #general>
+            <Select2 v-if="!form.id"
+                id="select-prerequisite-curriculum"
+                css="mb-3"
+                url="/curricula"
+                model="curriculum"
+                @selectedValue="id => form.curriculum_id = id"
+            />
 
-            <div class="card-body" style="max-height: 80vh; overflow-y: auto;">
-                <div v-if="method === 'post'" class="form-group ">
-                    <Select2
-                        id="curriculum_id"
-                        name="curriculum_id"
-                        url="/curricula"
-                        model="curriculum"
-                        option_id="id"
-                        option_label="title"
-                        :selected="this.form.curriculum_id"
-                        @selectedValue="(id) => {
-                            this.form.curriculum_id = id;
-                        }"
-                    >
-                    </Select2>
-                </div>
-                    <div v-if="this.form.curriculum_id"
-                     class="form-group ">
-                    <Select2
-                        id="terminalObjectives_id"
-                        name="terminalObjectives_id"
-                        :url="'/curricula/' + this.form.curriculum_id + '/terminalObjectives'"
-                        model="terminalObjective"
-                        option_id="id"
-                        option_label="title"
-                        :selected="null"
-                        @selectedValue="(id) => {
-                            this.form.terminal_objective_id = id;
-                        }"
-                    >
-                    </Select2>
-                </div>
-                <div v-if="this.form.terminal_objective_id"
-                class="form-group ">
-                    <Select2
-                        id="enablingObjectives_id"
-                        name="enablingObjectives_id"
-                        :url="'/terminalObjectives/' + this.form.terminal_objective_id + '/enablingObjectives'"
-                        model="enablingObjective"
-                        option_id="id"
-                        option_label="title"
-                        selected="null"
-                        @selectedValue="(id) => {
-                            this.form.enabling_objective_id = id;
-                        }"
-                    >
-                    </Select2>
-                </div>
-            </div>
+            <Select2 v-if="form.curriculum_id"
+                id="terminalObjectives_id"
+                css="mb-3"
+                :url="'/curricula/' + form.curriculum_id + '/terminalObjectives'"
+                model="terminalObjective"
+                @selectedValue="id => form.terminal_objective_id = id"
+            />
 
-            <div class="card-footer">
-                 <span class="pull-right">
-                     <button
-                         id="grade-cancel"
-                         type="button"
-                         class="btn btn-default"
-                         @click="this.globalStore?.closeModal('prerequisite-objective-modal')">
-                         {{ trans('global.cancel') }}
-                     </button>
-                     <button
-                         id="grade-save"
-                         class="btn btn-primary"
-                         @click="submit(method)" >
-                         {{ trans('global.save') }}
-                     </button>
-                </span>
-            </div>
-        </div>
-    </div>
-    </Transition>
+            <Select2 v-if="form.terminal_objective_id"
+                id="enablingObjectives_id"
+                css="mb-3"
+                :url="'/terminalObjectives/' + this.form.terminal_objective_id + '/enablingObjectives'"
+                model="enablingObjective"
+                @selectedValue="id => form.enabling_objective_id = id"
+            />
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'prerequisite-objective-modal',
     components: {
+        Modal,
         Select2,
     },
     props: {
         params: {
-            type: Object
-        },  //{ 'modelId': curriculum.id, 'modelUrl': 'curriculum' , 'shareWithToken': true, 'canEditCheckbox': false}
-    },
-    setup() { //use database store
-        const globalStore = useGlobalStore();
-        return {
-            globalStore
-        }
+            type: Object,
+        },
     },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            url: '/prerequisites',
             form: new Form({
-                'id': null,
-                'successor_type': null,
-                'successor_id': null,
-                'curriculum_id': null,
-                'terminal_objective_id': null,
-                'enabling_objective_id': null,
+                id: null,
+                successor_type: null,
+                successor_id: null,
+                curriculum_id: null,
+                terminal_objective_id: null,
+                enabling_objective_id: null,
             }),
         }
     },
-    methods: {
-        submit(method) {
-            if (method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post(this.url, this.form)
-                .then(r => {
-                    this.$eventHub.emit('prerequisite-added', r.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
-        },
-        update() {
-            axios.patch(this.url + '/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('prerequisite-updated', r.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
-        },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params;
-                this.form.reset();
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    if (this.form.id !== '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
-                }
-            }
-        });
-    },
 }
 </script>
-

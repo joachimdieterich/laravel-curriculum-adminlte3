@@ -16,7 +16,7 @@
                         type="button"
                         class="btn btn-icon text-secondary"
                         :aria-label="trans('global.close')"
-                        @click="globalStore?.closeModal(modalName)"
+                        @click="close()"
                     >
                         <i class="fa fa-times"></i>
                     </button>
@@ -73,7 +73,7 @@
                                             model="User"
                                             url="/users"
                                             :selected="form.owner_id"
-                                            @selectedValue="(id) => form.owner_id = id[0]"
+                                            @selectedValue="id => form.owner_id = id[0]"
                                         />
                                     </slot>
                                     <slot name="general-extended"></slot>
@@ -99,7 +99,7 @@
                                 :id="model + '-display'"
                                 class="accordion-collapse collapse show"
                             >
-                                <div class="d-flex justify-content-between w-100">
+                                <div class="d-flex align-items-center justify-content-between w-100">
                                     <v-swatches
                                         style="height: 42px;"
                                         :swatches="$swatches"
@@ -116,11 +116,11 @@
                                         :medium_id="form.medium_id"
                                         :multiple="allowMultipleMedia"
                                         @add="medium => form.medium_id = medium.id ?? null"
-                                        @delete="() => form.medium_id = null"
+                                        @delete="form.medium_id = null"
                                     />
                                     <FontAwesomePicker v-if="showIconPicker"
                                         :button-icon="form.css_icon"
-                                        @selectIcon="(icon) => form.css_icon = 'fa fa-' + icon.className"
+                                        @selectIcon="icon => form.css_icon = 'fa fa-' + icon.className"
                                     />
                                 </div>
                             </div>
@@ -163,7 +163,7 @@
                             :id="model + '-cancel'"
                             type="button"
                             class="btn btn-default"
-                            @click="globalStore?.closeModal(modalName)"
+                            @click="close()"
                         >
                             {{ cancelLabel }}
                         </button>
@@ -171,7 +171,7 @@
                             :id="model + '-save'"
                             class="btn btn-primary ms-3"
                             :disabled="disableSaveButton || processing || (requireTitle && !form.title)"
-                            @click="$emit('save', form)"
+                            @click="submit()"
                         >
                             <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
                             <span v-else>{{ trans('global.save') }}</span>
@@ -183,6 +183,7 @@
     </Transition>
 </template>
 <script>
+import Form from "form-backend-validation";
 import Select2 from "../forms/Select2.vue";
 import NewMediumForm from "../media/NewMediumForm.vue";
 import FontAwesomePicker from "./FontAwesomePicker.vue";
@@ -190,7 +191,6 @@ import FontAwesomePicker from "./FontAwesomePicker.vue";
 export default {
     name: 'Modal',
     emits: ['save'],
-    expose: ['resetForm'],
     components: {
         Select2,
         NewMediumForm,
@@ -207,6 +207,14 @@ export default {
             required: true,
             description: 'The name of the modal to control visibility',
         },
+        form: {
+            type: Form,
+            description: 'This property is required, except for non-standard modals',
+        },
+        url: {
+            type: String,
+            description: "URL to POST/PATCH endpoint, defaults to '/' + this.model + 's'",
+        },
         zIndex: {
             type: Number,
             description: 'Set the z-index of the modal to a specific value',
@@ -214,10 +222,6 @@ export default {
         css: {
             type: String,
             description: 'Additional CSS styles for the modal container',
-        },
-        method: {
-            type: String,
-            description: 'The HTTP method for the form submission (e.g., "post" or "patch")',
         },
         title: {
             type: String,
@@ -227,11 +231,6 @@ export default {
             type: Boolean,
             default: false,
             description: 'Indicates if the built-in title field is required for form submission',
-        },
-        processing: {
-            type: Boolean,
-            default: false,
-            description: 'Indicates if the form has been submitted and is being processed',
         },
         allowOverflow: {
             type: Boolean,
@@ -304,38 +303,68 @@ export default {
     },
     data() {
         return {
-            // we're not using the Form-plugin, since two Form-objects can't be merged,
-            // and we want to keep the form data in the parent component
-            form: {},
+            method: 'post',
+            processing: false,
+    //         // we're not using the Form-plugin, since two Form-objects can't be merged,
+    //         // and we want to keep the form data in the parent component
+    //         form: {},
         };
     },
     mounted() {
-        this.resetForm();
+        // non-standard modals should declare their own logic
+        if (!this.form) return;
+
+        this.globalStore.registerModal(this.modalName);
+        this.globalStore.$subscribe((mutation, state) => {
+            if (state.modals[this.modalName].show && !state.modals[this.modalName].lock) {
+                // locking the modal means that it won't accept further state-changes
+                // caused by opening another modal, while this one is still open
+                this.globalStore.lockModal(this.modalName);
+                this.processing = false;
+                this.form.reset();
+                
+                const params = state.modals[this.modalName].params;
+                if (params) {
+                    this.form.populate(params);
+                    this.method = this.form.id ? 'patch' : 'post';
+                }
+            }
+        });
     },
     methods: {
-        /**
-         * exposed function that should only be called from the parent component
-         * @param formData populate the form
-         */
-        resetForm(formData = null) {
-            this.form = {
-                id: null,
-                title: '',
-                owner_id: null,
-                color: '#27AF60',
-                medium_id: null,
-                css_icon: 'fa fa-book',
-            };
-            // only add description-field if the built-in textarea is used
-            if (this.showDescriptionField) this.form.description = '';
+        close() {
+            this.globalStore.closeModal(this.modalName);
+        },
+        submit() {
+            this.processing = true;
+            this.$emit('save', this.form);
+            // don't call the default endpoints (needed for medium-modal)
+            if (!this.form) return;
 
-            if (formData) {
-                Object.keys(this.form).forEach(key => {
-                    if (formData.hasOwnProperty(key)) {
-                        this.form[key] = formData[key];
-                    }
-                });
-            }
+            this.method == 'post'
+                ? this.add()
+                : this.update();
+        },
+        add() {
+            axios.post(this.endpoint, this.form)
+                .then(response => {
+                    this.$eventHub.emit(this.model + '-added', response.data);
+                    this.close();
+                })
+                .catch(e => this.processError(e));
+        },
+        update() {
+            axios.patch(this.endpoint + '/' + this.form.id, this.form)
+                .then(response => {
+                    this.$eventHub.emit(this.model + '-updated', response.data);
+                    this.close();
+                })
+                .catch(e => this.processError(e));
+        },
+        processError(e) {
+            console.log(e);
+            this.processing = false;
+            this.toast.error(this.errorMessage(e));
         },
     },
     computed: {
@@ -347,6 +376,9 @@ export default {
                     : 'global.' + this.model + '.edit';
             }
             return title;
+        },
+        endpoint() {
+            return this.url ?? '/' + this.model + 's';
         },
     },
 };

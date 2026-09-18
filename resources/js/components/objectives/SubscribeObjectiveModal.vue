@@ -14,37 +14,35 @@
                 css="mb-3"
                 url="/curricula"
                 model="curriculum"
-                option_id="id"
-                option_label="title"
-                @selectedValue="id => form.curriculum_id = id[0]"
+                @selectedValue="id => {
+                    form.curriculum_id = id[0];
+                    $refs.terminal.deselectAll();
+                }"
             />
 
             <Select2 v-if="form.curriculum_id"
+                ref="terminal"
                 id="terminalObjectives_id"
                 css="mb-3"
                 :url="'/curricula/' + form.curriculum_id + '/terminalObjectives'"
                 model="terminalObjective"
                 :multiple="true"
-                option_id="id"
-                option_label="title"
                 @cleared="() => {
                     form.terminal_objective_id = [];
-                    form.enabling_objective_id = [];
+                    $refs.enabling.deselectAll();
                 }"
                 @selectedValue="id => {
                     form.terminal_objective_id = id;
-                    form.enabling_objective_id = [];
+                    $refs.enabling.deselectAll();
                 }"
             />
 
             <Select2 v-if="form.terminal_objective_id.length === 1"
+                ref="enabling"
                 id="enablingObjectives_id"
                 :url="'/terminalObjectives/' + form.terminal_objective_id[0] + '/enablingObjectives'"
                 model="enablingObjective"
                 :multiple="true"
-                option_id="id"
-                option_label="title"
-                selected="null"
                 @cleared="form.enabling_objective_id = []"
                 @selectedValue="id => form.enabling_objective_id = id"
             />

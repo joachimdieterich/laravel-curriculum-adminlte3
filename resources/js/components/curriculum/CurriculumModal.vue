@@ -3,10 +3,9 @@
         ref="modal"
         model="curriculum"
         modalName="curriculum-modal"
-        :method="method"
-        :processing="processing"
+        url="/curricula"
+        :form="form"
         :disable-save-button="!form.title"
-        @save="submit(form)"
     >
         <template #modal-body>
             <div class="modal-body accordion">
@@ -107,10 +106,10 @@
                                         <TagMultiselect
                                             type="App\Curriculum"
                                             :model-id="form.id"
-                                            :selectedTags="selectedTags"
+                                            :selectedTags="form.tags"
                                             @selectedValue="data => form.tags = data"
-                                            @cleared="() => form.tags = []"
-                                            @tag-attached="tag => updateSelectedTags(tag.id)"
+                                            @cleared="form.tags = []"
+                                            @tag-attached="tag => form.tags.push(tag)"
                                         />
                                     </div>
                                     <div class="mb-3">
@@ -334,8 +333,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            processing: false,
             files: null,
             form: new Form({
                 id: null,
@@ -357,7 +354,6 @@ export default {
                 archived: false,
                 tags: [],
             }),
-            selectedTags: [],
             tinyMCE: this.$initTinyMCE(
                 [
                     "autolink", "link", "lists", "autoresize",
@@ -370,91 +366,20 @@ export default {
             ),
         }
     },
-    computed: {
-        textColor: function() {
-            return this.$textcolor(this.form.color, '#333333');
-        }
-    },
     methods: {
-        submit(formData) {
-            this.form.populate(formData);
-            this.processing = true;
-
-            if (this.method === 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post('/curricula', this.form)
-                .then(r => {
-                    this.$eventHub.emit('curriculum-added', r.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.processing = false;
-                    this.toast.error(this.errorMessage(e));
-                    console.log(e.response);
-                });
-        },
-        update() {
-            axios.patch('/curricula/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('curriculum-updated', r.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(error => {
-                    this.processing = false;
-                    this.toast.error(this.errorMessage(e));
-                    console.log(error);
-                });
-        },
         onChange($events) {
             this.files = $events.target.files;
 
             axios.post('curricula/import/store', this.files)
                 .then(r => {
                     this.$eventHub.emit('curriculum-imported', r.data);
+                    this.globalStore.closeModal(this.$options.name);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
-        getSelectedTags(tags) {
-            if (tags && tags[0] && tags[0]?.name){
-                return tags.map(p => p.id);
-            }
-
-            return tags;
-        },
-        updateSelectedTags(newTag) {
-            if (newTag !== undefined) {
-                this.form.tags.push(newTag)
-            }
-
-            this.selectedTags = this.getSelectedTags(this.form.tags);
-        }
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
-                this.globalStore.lockModal(this.$options.name);
-                this.processing = false;
-                this.form.reset();
-                
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    params.tags = this.getSelectedTags(params.tags);
-                    this.form.populate(params);
-                    this.updateSelectedTags();
-                    this.method = this.form.id ? 'patch' : 'post';
-                }
-
-                this.$refs.modal.resetForm(this.form);
-            }
-        });
     },
 }
 </script>

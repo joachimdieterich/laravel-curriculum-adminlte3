@@ -284,8 +284,6 @@ import MediumModal from "../media/MediumModal.vue";
 import MediumExportModal from "../media/MediumExportModal.vue";
 import ContributorsList from "../uiElements/ContributorsList.vue";
 import {useDatatableStore} from "../../store/datatables";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -320,9 +318,7 @@ export default {
     },
     setup() {
         return {
-            toast: useToast(),
             store: useDatatableStore(),
-            globalStore: useGlobalStore(),
         }
     },
     data() {
@@ -354,7 +350,7 @@ export default {
         });
         this.dt = $('#curriculum-user-datatable').DataTable();
 
-        this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {
+        this.$eventHub.on('curriculum-updated', updatedCurriculum => {
             Object.assign(this.currentCurriculum, updatedCurriculum);
         });
 
@@ -365,32 +361,33 @@ export default {
     },
     methods: {
         createCertificate() {
-            this.globalStore?.showModal('certificate-modal', {
+            this.globalStore.showModal('certificate-modal', {
                 curriculum_id: this.curriculum.id
             });
         },
         edit() {
-            this.globalStore?.showModal('curriculum-modal', this.curriculum);
+            this.curriculum.tags = this.curriculum.tags.map(tag => tag.id ?? tag);
+            this.globalStore.showModal('curriculum-modal', this.curriculum);
         },
         loaderEvent: function() {
             this.$refs.Contents.loaderEvent();
         },
         generateCertificate() {
-            this.globalStore?.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});
+            this.globalStore.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});
         },
         printCurriculum() {
             axios.get('/curricula/' + this.curriculum.id + '/print')
                 .then(response => window.location.href = response.data.path);
         },
         exportCurriculum() {
-            this.globalStore?.showModal('medium-export-modal', {
+            this.globalStore.showModal('medium-export-modal', {
                 id: this.curriculum.id,
                 url: '/curricula/' + this.curriculum.id + '/export',
                 header: window.trans.global.curriculum.export,
             });
         },
         share() {
-            this.globalStore?.showModal('subscribe-modal', {
+            this.globalStore.showModal('subscribe-modal', {
                 modelId: this.curriculum.id,
                 modelUrl: 'curriculum',
                 shareWithUsers: true,

@@ -299,7 +299,7 @@ export default {
         /////////////////////////////////////////////////////
         //////////////// terminal objectives ////////////////
         /////////////////////////////////////////////////////
-        this.$eventHub.on('terminal-objective-added', (terminal) => {
+        this.$eventHub.on('terminalObjective-added', (terminal) => {
             const type = terminal.type;
             let obj_type = this.objective_types.find(t => t.id === type.id);
             if (obj_type === undefined) {
@@ -311,7 +311,7 @@ export default {
             }
         });
 
-        this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
+        this.$eventHub.on('terminalObjective-updated', (updatedTerminal) => {
             let type = this.objective_types.find(
                 type => type.id === updatedTerminal.objective_type_id
             );
@@ -397,7 +397,7 @@ export default {
         /////////////////////////////////////////////////////
         //////////////// enabling objectives ////////////////
         /////////////////////////////////////////////////////
-        this.$eventHub.on('enabling-objective-added', (enabling) => {
+        this.$eventHub.on('enablingObjective-added', (enabling) => {
             let terminal;
             for (const type of this.objective_types) {
                 terminal = type.terminal_objectives.find(terminal => terminal.id === enabling.terminal_objective_id);
@@ -407,7 +407,7 @@ export default {
             terminal.enabling_objectives.push(enabling);
         });
 
-        this.$eventHub.on('enabling-objective-updated', (updatedEnabling) => {
+        this.$eventHub.on('enablingObjective-updated', (updatedEnabling) => {
             let terminal;
             for (const type of this.objective_types) {
                 terminal = type.terminal_objectives.find(terminal => terminal.id === updatedEnabling.terminal_objective_id);

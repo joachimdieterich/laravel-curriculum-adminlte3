@@ -182,7 +182,7 @@
                     class="d-print-none btn btn-icon text-secondary mx-1"
                     data-bs-toggle="tooltip"
                     :data-bs-title="trans('global.kanban.edit')"
-                    @click="editKanban(kanban)"
+                    @click="editKanban()"
                 >
                     <i class="fa fa-pencil-alt"></i>
                 </button>
@@ -273,8 +273,9 @@ export default {
         };
     },
     methods: {
-        editKanban(kanban) {
-            this.globalStore?.showModal('kanban-modal', kanban);
+        editKanban() {
+            this.kanban.tags = this.kanban.tags.map(tag => tag.id ?? tag);
+            this.globalStore.showModal('kanban-modal', this.kanban);
         },
         toggleFullscreen() {
             if (document.fullscreenElement) {
@@ -296,7 +297,7 @@ export default {
             document.querySelectorAll('#header, section.p-3, footer').forEach(el => el.remove());
         },
         share() {
-            this.globalStore?.showModal('subscribe-modal', {
+            this.globalStore.showModal('subscribe-modal', {
                 modelId: this.kanban.id,
                 modelUrl: 'kanban',
                 shareWithUsers: true,
@@ -388,7 +389,7 @@ export default {
                 });
         },
         openItemModal(status_id) {
-            this.globalStore?.showModal('kanban-item-modal', {
+            this.globalStore.showModal('kanban-item-modal', {
                 kanban_id: this.kanban.id,
                 kanban_status_id: status_id,
                 color: this.kanban.statuses.find(s => s.id === status_id).color,

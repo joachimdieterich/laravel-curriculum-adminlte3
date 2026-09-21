@@ -252,15 +252,14 @@ export default {
             this.dt.ajax.url('/kanbans/list?filter=' + this.filter).load();
         },
         manageTags(kanban) {
-            this.globalStore?.showModal('tag-component-modal', kanban);
+            this.globalStore.showModal('tag-component-modal', kanban);
         },
         editKanban(kanban) {
-            kanban.tags = kanban.tags.map(tag => tag.id);
-            this.globalStore?.showModal('kanban-modal', kanban);
+            kanban.tags = kanban.tags.map(tag => tag.id ?? tag);
+            this.globalStore.showModal('kanban-modal', kanban);
         },
         shareKanban(kanban) {
-            this.globalStore?.showModal(
-                'subscribe-modal',
+            this.globalStore.showModal('subscribe-modal',
                 {
                     modelId: kanban.id,
                     modelUrl: 'kanban' ,

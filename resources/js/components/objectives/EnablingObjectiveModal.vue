@@ -2,11 +2,9 @@
     <Modal
         model="enablingObjective"
         modalName="enabling-objective-modal"
-        :method="method"
-        :processing="processing"
+        :form="form"
         :show-general-header="true"
         :show-permission-section="true"
-        @save="submit"
     >
         <template #general>
             <div class="mb-3">
@@ -87,10 +85,8 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            processing: false,
             form: new Form({
-                id: '',
+                id: null,
                 title: '',
                 description: '',
                 time_approach: '',
@@ -129,56 +125,6 @@ export default {
                 ""
             ),
         }
-    },
-    methods: {
-        submit() {
-            this.processing = true;
-
-            if (this.method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post('/enablingObjectives', this.form)
-                .then(r => {
-                    this.$eventHub.emit('enabling-objective-added', r.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    console.log(e);
-                    this.processing = false;
-                    this.toast.error(this.form.description.length > 65535 ? this.trans('global.error.too_long') : this.trans('global.error.default'));
-                });
-        },
-        update() {
-            axios.patch('/enablingObjectives/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('enabling-objective-updated', r.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    console.log(e);
-                    this.processing = false;
-                    this.toast.error(this.form.description.length > 65535 ? this.trans('global.error.too_long') : this.trans('global.error.default'));
-                });
-        },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                this.processing = false;
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    this.method = this.form.id ? 'patch' : 'post';
-                }
-            }
-        });
     },
 }
 </script>

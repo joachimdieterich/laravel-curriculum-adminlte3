@@ -344,7 +344,7 @@ export default {
             this.processing = true;
             this.$emit('save', this.form);
             // stop/intercept the default submit-logic
-            // when intercepting, the parent should call this components add()/update()
+            // when intercepting, the parent can still call this components add()/update() afterwards
             if (this.interceptSave || !this.form) return;
 
             this.method == 'post'

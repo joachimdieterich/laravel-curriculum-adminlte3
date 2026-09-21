@@ -3,9 +3,10 @@
         model="terminalObjective"
         modalName="move-terminal-objective-modal"
         title="global.terminalObjective.move_to_curriculum"
-        :processing="processing"
+        :form="form"
         :allow-overflow="true"
-        @save="submit"
+        :intercept-save="true"
+        @save="submit()"
     >
         <template #general>
             <Select2
@@ -34,7 +35,6 @@ export default {
     },
     data() {
         return {
-            processing: false,
             form: new Form({
                 id: null,
                 curriculum_id: null,
@@ -42,24 +42,8 @@ export default {
             }),
         }
     },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                this.processing = false;
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                }
-            }
-        });
-    },
     methods: {
         submit() {
-            this.processing = true;
-
             axios.patch('/terminalObjectives/' + this.form.id, this.form)
                 .then(response => {
                     this.$eventHub.emit('objective-deleted', response.data);
@@ -67,7 +51,6 @@ export default {
                 })
                 .catch(e => {
                     console.log(e);
-                    this.processing = false;
                     this.toast.error(this.errorMessage(e));
                 });
         },

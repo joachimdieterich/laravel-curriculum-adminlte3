@@ -206,17 +206,18 @@ export default {
     },
     methods: {
         manageTags(curriculum) {
-            this.globalStore?.showModal('tag-component-modal', curriculum);
+            this.globalStore.showModal('tag-component-modal', curriculum);
         },
         confirmItemDelete(curriculum) {
             this.currentCurriculum = curriculum;
             this.showConfirm = true;
         },
         editCurriculum(curriculum) {
-            this.globalStore?.showModal('curriculum-modal', curriculum);
+            curriculum.tags = curriculum.tags.map(tag => tag.id ?? tag);
+            this.globalStore.showModal('curriculum-modal', curriculum);
         },
         setOwner(curriculum) {
-            this.globalStore?.showModal('owner-modal', {
+            this.globalStore.showModal('owner-modal', {
                 model_id: curriculum.id,
                 model: 'curriculum',
                 model_url: 'curricula',
@@ -224,7 +225,7 @@ export default {
             });
         },
         shareCurriculum(curriculum) {
-            this.globalStore?.showModal(
+            this.globalStore.showModal(
                 'subscribe-modal',
                 {
                     modelId: curriculum.id,
@@ -270,21 +271,21 @@ export default {
 
         this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('curriculum-added', (curriculum) => {
+        this.$eventHub.on('curriculum-added', curriculum => {
             this.curricula.push(curriculum);
         });
-        this.$eventHub.on('curriculum-imported', (curricula) => {
-            this.globalStore?.closeModal('curriculum-modal');
+        this.$eventHub.on('curriculum-imported', curricula => {
+            this.globalStore.closeModal('curriculum-modal');
             this.loaderEvent(); //todo -> use global widget to get add working
         });
 
-        this.$eventHub.on('curriculum-updated', (updatedCurriculum) => {
+        this.$eventHub.on('curriculum-updated', updatedCurriculum => {
             let cur = this.curricula.find(c => c.id === updatedCurriculum.id);
 
             Object.assign(cur, updatedCurriculum);
         });
 
-        this.$eventHub.on('filter', (filter) => {
+        this.$eventHub.on('filter', filter => {
             this.selectedTags = filter.tags;
             this.selectedNegativeTags = filter.negativeTags;
 
@@ -292,7 +293,7 @@ export default {
         });
 
         this.$eventHub.on('owner-updated', (owner) => {
-            this.globalStore?.closeModal('owner-modal');
+            this.globalStore.closeModal('owner-modal');
             this.loaderEvent();
         });
     },

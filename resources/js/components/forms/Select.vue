@@ -21,16 +21,16 @@
         @open="onOpen"
         @close="onClose"
         @search="setFetchOptions"
-        @update:model-value="selectedOption => {
-            selectedOption = selectedOption;
-            if (clearSearchOnSelect()) {
-                selectedOption = undefined
-            }
+        @update:model-value="newOption => {
+            selectedOption = clearSearchOnSelect() ? undefined : newOption;
 
-            $emit('selectedValue', selectedOption);
+            $emit('selectedValue', newOption);
         }"
     >
-        <slot name="option" :option="option"></slot>
+        <!-- pass the slot to the parent -->
+        <template #option="option">
+            <slot name="option" :option="option"></slot>
+        </template>
         <slot name="list-footer">
             <li v-show="hasNextPage" ref="load" class="v-select-loader">
                 {{ trans('global.loading') }}
@@ -44,11 +44,8 @@
     </v-select>
 </template>
 <script>
-import Avatar from "../uiElements/Avatar.vue";
-
 export default {
     name: "CSelect",
-    components: { Avatar },
     emits: ['selectedValue'],
     props: {
         // v-select controlling

@@ -1,25 +1,20 @@
 <template>
     <div id="subscribe-c-select_form_group" class="form-group c-select-form-group">
         <label for="subscribe-c-select_form_group" class="p-0 col-sm-12">
-            <span>
-                {{ trans('global.user.title_singular') }}
-            </span>
+            <span>{{ trans('global.user.title_singular') }}</span>
         </label>
 
-        <c-select id="subscribe-c-select"
-                  model="user"
-                  url="/users/list/subscription"
-                  @selectedValue="(selectedOption) => {return this.$emit('selectedValue', selectedOption);}"
-                  :grouped-options="true"
-                  :search-length-minium="3"
-                  placeholder="global.shareSearch"
-                  search-query-parameter="search"
-                  :handle-fetched-data="(data) => {
-                  return data;
-              }"
-                  :clear-search-on-select="()=>{return true;}"
+        <CSelect
+            url="/users/list/subscription"
+            @selectedValue="selectedOption => this.$emit('selectedValue', selectedOption)"
+            :grouped-options="true"
+            :search-length-minium="3"
+            placeholder="global.shareSearch"
+            search-query-parameter="search"
+            :handle-fetched-data="data => data"
+            :clear-search-on-select="() => { return true; }"
         >
-            <template v-slot:option="option">
+            <template #option="option">
                 <div class="select-option">
                     <span class="select-user-avatar">
                         <img class="v-select-icon img-circle color-white select-user-avatar" alt="" :src="option.option.value.icon">
@@ -39,20 +34,16 @@
                     </div>
                 </div>
             </template>
-        </c-select>
+        </CSelect>
     </div>
 </template>
-
 <script>
-import Avatar from "../uiElements/Avatar.vue";
 import CSelect from "../forms/Select.vue";
 
 export default {
     name: "SubscribeUserSelect",
-    components: {CSelect, Avatar},
-    emits: [
-        'selectedValue'
-    ],
+    components: { CSelect },
+    emits: ['selectedValue'],
     data() {
         return {
             componentId: this.$.uid,
@@ -60,7 +51,6 @@ export default {
     },
 }
 </script>
-
 <style scoped>
 :root {
     --select-option-role-color: #6c757d;

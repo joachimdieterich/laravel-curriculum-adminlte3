@@ -53,7 +53,7 @@
                         :id="'status-' + status.id"
                         :key="'drag_status_' + status.id"
                         class="flex-column mh-100 collapse collapse-horizontal show"
-                        :class="status.visible ?? true ? 'd-flex' : 'd-none'"
+                        :class="(!status.visible ?? false) && 'd-none'"
                         :style="{ opacity: !status.visibility ? '0.7' : '1' }"
                         tabindex="-1"
                     >
@@ -407,9 +407,6 @@ export default {
             const status_id = this.delete_id;
             const elem = document.querySelector('#status-' + status_id);
             new bootstrap.Collapse(elem);
-            setTimeout(() => {
-                elem.classList.remove('d-flex');
-            }, 350); // wait for collapse animation to finish before hiding the element
 
             const notification = {
                 component: ToastNotification,
@@ -710,6 +707,7 @@ export default {
     }
 }
 .kanban-item, .kanban-status { box-shadow: var(--shadow-layout); }
+[id^="status"] { display: flex; }
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
 

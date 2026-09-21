@@ -44,7 +44,7 @@
     overflow-y: auto;
     padding: 0;
 
-    .form-control { box-shadow: var(--shadow-subtle); }
+    .form-control, .form-check-input { box-shadow: var(--shadow-subtle); }
 }
 .modal-footer {
     background-color: #f2f4f5;

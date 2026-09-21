@@ -15,8 +15,8 @@
             <button
                 id="print-logbook"
                 type="button"
-                class="btn btn-tool pt-3 float-end"
-                @click.p.prevent="togglePrintOptions();"
+                class="btn btn-icon text-secondary float-end"
+                @click="togglePrintOptions()"
             >
                 <i class="fa fa-print"></i>
             </button>

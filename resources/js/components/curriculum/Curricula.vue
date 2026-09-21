@@ -30,7 +30,7 @@
                 url="/curricula"
                 :hidable="true"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i v-if="curriculum.type_id === 1"
                        class="fas fa-globe"
                     ></i>
@@ -45,7 +45,7 @@
                     ></i>
                 </template>
 
-                <template v-if="checkPermission('is_admin')" v-slot:owner>
+                <template v-if="checkPermission('is_admin')" #owner>
                     <div
                         class="owner-badge position-absolute bg-primary px-2"
                         style="top: 100px; left: -6px;"
@@ -54,9 +54,7 @@
                     </div>
                 </template>
 
-                <template v-if="curriculum.archived"
-                    v-slot:badges
-                >
+                <template v-if="curriculum.archived" #badges>
                     <span
                         class="btn btn-info btn-xs position-absolute"
                         style="bottom: 5px; right: 5px;"
@@ -66,13 +64,13 @@
                     </span>
                 </template>
 
-                <template v-slot:dropdown>
+                <template #dropdown>
                     <div class="dropdown-menu dropdown-menu-end">
                         <button v-if="ownerOrAdmin(curriculum)"
                             v-permission="'curriculum_edit'"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="editCurriculum(curriculum)"
+                            @click="editCurriculum(curriculum)"
                         >
                             <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.curriculum.edit') }}
@@ -82,7 +80,7 @@
                             v-permission="'tag_access'"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="manageTags(curriculum)"
+                            @click="manageTags(curriculum)"
                         >
                             <i class="fa fa-tag"></i>
                             {{ trans('global.tag.title') }}
@@ -91,7 +89,7 @@
                         <button v-if="ownerOrAdmin(curriculum)"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="setOwner(curriculum)"
+                            @click="setOwner(curriculum)"
                         >
                             <i class="fa fa-user"></i>
                             {{ trans('global.curriculum.edit_owner') }}
@@ -100,7 +98,7 @@
                         <button v-if="ownerOrAdmin(curriculum)"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="shareCurriculum(curriculum)"
+                            @click="shareCurriculum(curriculum)"
                         >
                             <i class="fa fa-share-alt"></i>
                             {{ trans('global.curriculum.share') }}
@@ -118,7 +116,7 @@
                             v-permission="'curriculum_delete'"
                             type="submit"
                             class="dropdown-item text-danger"
-                            @click.prevent="confirmItemDelete(curriculum)"
+                            @click="confirmItemDelete(curriculum)"
                         >
                             <i class="fa fa-trash"></i>
                             {{ trans('global.curriculum.delete') }}

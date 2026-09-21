@@ -120,7 +120,7 @@
                             v-permission="'logbook_delete'"
                             type="submit"
                             class="dropdown-item text-danger"
-                            @click.prevent="confirmItemDelete(logbook)"
+                            @click="confirmItemDelete(logbook)"
                         >
                             <i class="fa fa-unlink"></i>
                             {{ trans('global.logbook.expel') }}
@@ -132,7 +132,7 @@
                         <button v-if="ownerOrAdmin(logbook)"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="editLogbook(logbook)"
+                            @click="editLogbook(logbook)"
                         >
                             <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.logbook.edit') }}
@@ -140,7 +140,7 @@
                         <button v-if="ownerOrAdmin(logbook)"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="shareLogbook(logbook)"
+                            @click="shareLogbook(logbook)"
                         >
                             <i class="fa fa-share-alt"></i>
                             {{ trans('global.logbook.share') }}
@@ -152,7 +152,7 @@
                             v-permission="'logbook_delete'"
                             type="submit"
                             class="dropdown-item text-danger"
-                            @click.prevent="confirmItemDelete(logbook)"
+                            @click="confirmItemDelete(logbook)"
                         >
                             <i class="fa fa-trash"></i>
                             {{ trans('global.logbook.delete') }}

@@ -122,8 +122,8 @@
                 </template>
                 <template #footer>
                     <div v-if="editable"
-                         class="d-print-none"
-                         :style="'width:' + itemWidth + 'px;'"
+                        class="d-print-none"
+                        :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus/>
                     </div>
@@ -389,12 +389,9 @@ export default {
         },
         openItemModal(status_id) {
             this.globalStore?.showModal('kanban-item-modal', {
-                item: {
-                    kanban_id: this.kanban.id,
-                    kanban_status_id: status_id,
-                    color: this.kanban.statuses.find(s => s.id === status_id).color,
-                },
-                method: 'post',
+                kanban_id: this.kanban.id,
+                kanban_status_id: status_id,
+                color: this.kanban.statuses.find(s => s.id === status_id).color,
             });
         },
         copyStatus() {

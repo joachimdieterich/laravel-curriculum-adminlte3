@@ -21,7 +21,7 @@
             <div class="d-flex gap-1">
                 <button v-if="$userId == kanban_owner_id
                         || (!status.locked || $userId == status.owner_id)"
-                    class="btn position-relative handle d-print-none"
+                    class="btn handle d-print-none"
                     :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
                     type="button"
                     tabindex="-1"

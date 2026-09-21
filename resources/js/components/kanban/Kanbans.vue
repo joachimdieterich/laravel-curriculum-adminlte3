@@ -27,7 +27,7 @@
                 :subscribable_type="subscribable_type"
                 :label="trans('global.kanban.' + createLabel)"
             >
-                <template v-slot:itemIcon>
+                <template #itemIcon>
                     <i v-if="subscribable" class="fa fa-2x fa-link text-muted"></i>
                 </template>
             </IndexWidget>
@@ -40,11 +40,11 @@
                 :showSubscribable="subscribable"
                 :hidable="true"
             >
-                <template v-slot:itemIcon>
+                <template #itemIcon>
                     <i class="fa fa-2x fa-columns"></i>
                 </template>
 
-                <template v-slot:dropdown>
+                <template #dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-end"
                     >
@@ -52,7 +52,7 @@
                             v-permission="'kanban_delete'"
                             type="submit"
                             class="dropdown-item text-danger"
-                            @click.prevent="confirmItemDelete(kanban)"
+                            @click="confirmItemDelete(kanban)"
                         >
                             <i class="fa fa-unlink"></i>
                             {{ trans('global.kanban.expel') }}
@@ -65,7 +65,7 @@
                             v-permission="'kanban_edit'"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="editKanban(kanban)"
+                            @click="editKanban(kanban)"
                         >
                             <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.kanban.edit') }}
@@ -75,7 +75,7 @@
                             v-permission="'tag_access'"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="manageTags(kanban)"
+                            @click="manageTags(kanban)"
                         >
                             <i class="fa fa-tag"></i>
                             {{ trans('global.tag.title') }}
@@ -84,7 +84,7 @@
                         <button v-if="ownerOrAdmin(kanban)"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="shareKanban(kanban)"
+                            @click="shareKanban(kanban)"
                         >
                             <i class="fa fa-share-alt"></i>
                             {{ trans('global.kanban.share') }}
@@ -93,7 +93,7 @@
                         <button v-if="ownerOrAdmin(kanban) || kanban.allow_copy"
                             type="button"
                             class="dropdown-item"
-                            @click.prevent="confirmKanbanCopy(kanban)"
+                            @click="confirmKanbanCopy(kanban)"
                         >
                             <i class="fa fa-copy"></i>
                             {{ trans('global.kanban.copy') }}
@@ -112,7 +112,7 @@
                             v-permission="'kanban_delete'"
                             type="submit"
                             class="dropdown-item text-danger"
-                            @click.prevent="confirmItemDelete(kanban)"
+                            @click="confirmItemDelete(kanban)"
                         >
                             <i class="fa fa-trash"></i>
                             {{ trans('global.kanban.delete') }}

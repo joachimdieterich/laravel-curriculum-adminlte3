@@ -77,7 +77,7 @@
                     </div>
                 </div>
                 <button v-if="(!item.locked || $userId == item.owner_id) || $userId == kanban_owner_id"
-                    class="btn position-relative handle"
+                    class="btn handle"
                     :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
                     type="button"
                     tabindex="-1"

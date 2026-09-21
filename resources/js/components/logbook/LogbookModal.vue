@@ -10,7 +10,7 @@
         :show-display-section="true"
         :show-medium-field="true"
         :show-icon-picker="true"
-    ></Modal>
+    />
 </template>
 <script>
 import Modal from '../uiElements/Modal.vue';

@@ -9,7 +9,6 @@
                 <li
                     class="nav-item"
                     role="presentation"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_curriculum_' + group.id)"
                 >
                     <button
                         id="curricula-tab"
@@ -22,7 +21,7 @@
                         aria-selected="true"
                     >
                         <i class="fas fa-th"></i>
-                        <span v-if="help">{{ trans('global.curriculum.title') }}</span>
+                        <span v-if="help" class="ps-2">{{ trans('global.curriculum.title') }}</span>
                     </button>
                 </li>
                 <!-- 2 Users -->
@@ -30,7 +29,6 @@
                     v-permission="'group_enrolment'"
                     class="nav-item"
                     role="presentation"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_users_' + group.id);"
                 >
                     <button
                         id="users-tab"
@@ -43,7 +41,7 @@
                         aria-selected="false"
                     >
                         <i class="fa fa-users"></i>
-                        <span v-if="help">{{ trans('global.user.title') }}</span>
+                        <span v-if="help" class="ps-2">{{ trans('global.user.title') }}</span>
                     </button>
                 </li>
                 <!-- 3 Logbooks -->
@@ -51,7 +49,6 @@
                     v-permission="'logbook_access'"
                     class="nav-item"
                     role="presentation"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_logbooks_' + group.id);"
                 >
                     <button
                         id="logbooks-tab"
@@ -64,7 +61,7 @@
                         aria-selected="false"
                     >
                         <i class="fas fa-book"></i>
-                        <span v-if="help">{{ trans('global.logbook.title') }}</span>
+                        <span v-if="help" class="ps-2">{{ trans('global.logbook.title') }}</span>
                     </button>
                 </li>
                 <!-- 4 Kanbans -->
@@ -72,7 +69,6 @@
                     v-permission="'kanban_access'"
                     class="nav-item"
                     role="presentation"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_kanbans_' + group.id);"
                 >
                     <button
                         id="kanbans-tab"
@@ -85,7 +81,7 @@
                         aria-selected="false"
                     >
                         <i class="fa fa-columns"></i>
-                        <span v-if="help">{{ trans('global.kanban.title') }}</span>
+                        <span v-if="help" class="ps-2">{{ trans('global.kanban.title') }}</span>
                     </button>
                 </li>
                 <!-- 5 Tasks -->
@@ -93,7 +89,6 @@
                     v-permission="'task_access'"
                     class="nav-item"
                     role="presentation"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_tasks_' + group.id);"
                 >
                     <button
                         id="tasks-tab"
@@ -106,7 +101,7 @@
                         aria-selected="false"
                     >
                         <i class="fas fa-tasks"></i>
-                        <span v-if="help">{{ trans('global.task.title') }}</span>
+                        <span v-if="help" class="ps-2">{{ trans('global.task.title') }}</span>
                     </button>
                 </li> -->
                 <!-- 6 Plans -->
@@ -114,7 +109,6 @@
                     v-permission="'plan_access'"
                     class="nav-item"
                     role="presentation"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_plans_' + group.id);"
                 >
                     <button
                         id="plans-tab"
@@ -127,7 +121,7 @@
                         aria-selected="false"
                     >
                         <i class="fa fa-clipboard-list"></i>
-                        <span v-if="help">{{ trans('global.plan.title') }}</span>
+                        <span v-if="help" class="ps-2">{{ trans('global.plan.title') }}</span>
                     </button>
                 </li>
                 <!-- 7 Exams -->
@@ -135,7 +129,6 @@
                     v-permission="'exam_access'"
                     class="nav-item"
                     role="presentation"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_exams_' + group.id);"
                 >
                     <button
                         id="exams-tab"
@@ -148,7 +141,7 @@
                         aria-selected="false"
                     >
                         <i class="fa-solid fa-ranking-star"></i>
-                        <span v-if="help">{{ trans('global.exam.title') }}</span>
+                        <span v-if="help" class="ps-2">{{ trans('global.exam.title') }}</span>
                     </button>
                 </li>
                 <!-- 8 Videoconferences -->
@@ -156,7 +149,6 @@
                     v-permission="'videoconference_access'"
                     class="nav-item"
                     role="presentation"
-                    @click="setGlobalStorage('#group_' + group.id, '#group_videoconference_' + group.id);"
                 >
                     <a
                         id="videoconferences-tab"
@@ -169,7 +161,7 @@
                         aria-selected="false"
                     >
                         <i class="fa-solid fa-video"></i>
-                        <span v-if="help">{{ trans('global.videoconference.title') }}</span>
+                        <span v-if="help" class="ps-2">{{ trans('global.videoconference.title') }}</span>
                     </a>
                 </li>
                 <!-- 9 Glossar -->
@@ -270,7 +262,6 @@
                     <Logbooks
                         ref="Logbooks"
                         :reference="group"
-                        delete_label_field="expel"
                         subscribable_type="App\Group"
                         :subscribable_id="group.id"
                         :subscribable="true"
@@ -285,7 +276,6 @@
                 >
                     <Kanbans
                         ref="Kanbans"
-                        delete_label_field="expel"
                         subscribable_type="App\Group"
                         :subscribable_id="group.id"
                         :subscribable="true"
@@ -400,7 +390,6 @@ import Videoconferences from "../videoconference/Videoconferences.vue";
 import Courses from "../course/Courses.vue";
 //import Glossars from "../glossar/Glossars.vue";
 import Media from "../media/Media.vue";
-import Contents from "../content/Contents.vue";
 import Users from "../user/Users.vue";
 import Logbooks from "../logbook/Logbooks.vue";
 import Kanbans from "../kanban/Kanbans.vue";
@@ -408,7 +397,6 @@ import Kanbans from "../kanban/Kanbans.vue";
 import Plans from "../plan/Plans.vue";
 import Exams from "../exam/Exams.vue";
 //import Tests from "../tests/Tests_Exams_View.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     components: {
@@ -418,16 +406,12 @@ export default {
         Courses,
         Media,
         //Glossars,
-        Contents,
         Logbooks,
         Kanbans,
         //Tasks,
         Plans,
         Exams,
         //Tests,
-    },
-    setup() {
-        return { globalStore: useGlobalStore() }
     },
     props: {
         group: {
@@ -448,37 +432,13 @@ export default {
 
         this.currentGroup = this.group;
 
-        this.$eventHub.on('group-updated', (group) => {
+        this.$eventHub.on('group-updated', group => {
             this.currentGroup = group;
-            this.globalStore?.closeModal('group-modal');
         });
-
-        // this.$eventHub.on('course-updated', () => {
-        //     this.loaderCourses()
-        // });
-
     },
     methods: {
         editGroup() {
             this.globalStore?.showModal('group-modal', this.currentGroup);
-        },
-        // loaderCourses() {
-        //     this.$refs.Courses.loaderEvent();
-        // },
-        loaderEvent() {
-            this.$refs.Contents.loaderEvent();
-        },
-        loadGroupUsers() {
-            this.$refs.Users.loaderEvent();
-        },
-        loadLogbooks() {
-            this.$refs.Logbooks.loaderEvent();
-        },
-        loadPlans() {
-            this.$refs.Plans.loaderEvent();
-        },
-        loadTasks() {
-            this.$refs.Tasks.loaderEvent();
         },
     },
 }

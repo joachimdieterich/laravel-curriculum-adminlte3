@@ -25,12 +25,10 @@
                 :subscribe="subscribable"
                 :subscribable_id="subscribable_id"
                 :subscribable_type="subscribable_type"
-                :label="trans('global.kanban.' + create_label_field)"
+                :label="trans('global.kanban.' + createLabel)"
             >
                 <template v-slot:itemIcon>
-                    <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x fa-link text-muted"
-                    ></i>
+                    <i v-if="subscribable" class="fa fa-2x fa-link text-muted"></i>
                 </template>
             </IndexWidget>
 
@@ -140,8 +138,8 @@
             <SubscribeKanbanModal v-if="subscribable"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
-                :title="trans('global.kanban.' + delete_label_field)"
-                :description="trans('global.kanban.' + delete_label_field +'_helper')"
+                :title="trans('global.kanban.' + deleteLabel)"
+                :description="trans('global.kanban.' + deleteLabel +'_helper')"
                 @close="showConfirm = false"
                 @confirm="destroy()"
             />
@@ -173,18 +171,23 @@ import TagComponentModal from "../tag/TagComponentModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        TagComponentModal,
+        Hide,
+        Favourite,
+        SubscribeModal,
+        SubscribeKanbanModal,
+        MediumModal,
+        ConfirmModal,
+        DataTable,
+        KanbanModal,
+        IndexWidget,
+        TabList,
+    },
     props: {
         subscribable: {
             type: Boolean,
             default: false,
-        },
-        create_label_field: {
-            type: String,
-            default: 'create',
-        },
-        delete_label_field: {
-            type: String,
-            default: 'delete',
         },
         subscribable_type: {
             type: String,
@@ -332,18 +335,13 @@ export default {
             }
         },
     },
-    components: {
-        TagComponentModal,
-        Hide,
-        Favourite,
-        SubscribeModal,
-        SubscribeKanbanModal,
-        MediumModal,
-        ConfirmModal,
-        DataTable,
-        KanbanModal,
-        IndexWidget,
-        TabList,
+    computed: {
+        createLabel() {
+            return this.subscribable ? 'enrol' : 'create';
+        },
+        deleteLabel() {
+            return this.subscribable ? 'expel' : 'delete';
+        },
     },
 }
 </script>

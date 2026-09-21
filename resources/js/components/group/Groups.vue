@@ -5,19 +5,20 @@
                 id="group-content"
                 class="px-3"
             >
-                <div class="row">
-                    <div class="col-md-12 m-0 pb-2">
-                        <button
-                            class="pull-right btn"
-                            :class="classObject"
-                            @click="setMode()"
-                        >
-                            {{ trans('global.select') }}
-                        </button>
-                    </div>
+                <div v-if="checkPermission('is_schooladmin')"
+                    class="d-flex justify-content-end"
+                >
+                    <button
+                        type="button"
+                        class="btn"
+                        :class="btnClass"
+                        @click="setMode()"
+                    >
+                        {{ trans('global.select') }}
+                    </button>
                 </div>
-                <IndexWidget
-                    v-permission="'group_create'"
+
+                <IndexWidget v-if="checkPermission('group_create')"
                     key="groupCreate"
                     modelName="Group"
                     url="/groups"
@@ -31,34 +32,31 @@
                     storeTitle="groups"
                     url="/groups"
                 >
-                    <template v-slot:icon>
+                    <template #icon>
                         <i class="fa fa-layer-group"></i>
                     </template>
 
-                    <template v-slot:dropdown
+                    <template #dropdown
                         v-permission="'group_edit, group_delete'"
                     >
-                        <div
-                            class="dropdown-menu dropdown-menu-end"
-                            style="z-index: 1050;"
-                            x-placement="left-start"
-                        >
+                        <div class="dropdown-menu dropdown-menu-end">
                             <button
                                 v-permission="'group_edit'"
-                                :name="'edit-group-' + group.id"
-                                class="dropdown-item text-secondary"
-                                @click.prevent="editGroup(group)"
+                                type="button"
+                                class="dropdown-item"
+                                @click="editGroup(group)"
                             >
                                 <i class="fa fa-pencil-alt me-2"></i>
                                 {{ trans('global.group.edit') }}
                             </button>
+
                             <hr class="my-1">
+
                             <button
                                 v-permission="'group_delete'"
-                                :id="'delete-group-' + group.id"
                                 type="submit"
-                                class="dropdown-item py-1 text-red"
-                                @click.prevent="confirmItemDelete(group)"
+                                class="dropdown-item text-danger"
+                                @click="confirmItemDelete(group)"
                             >
                                 <i class="fa fa-trash me-2"></i>
                                 {{ trans('global.group.delete') }}
@@ -66,54 +64,44 @@
                         </div>
                     </template>
 
-                    <template v-slot:badges>
-                        <p>
-                            <span
-                                class="btn btn-info btn-xs position-absolute me-1"
-                                style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
-                            >
-                                <i class="fa fa-university"></i>
-                                {{ group.organization }}
-                            </span>
-                        </p>
+                    <template #badges>
+                        <span
+                            class="btn btn-info btn-xs position-absolute"
+                            style="bottom: 5px; right: 5px;"
+                        >
+                            <i class="fa fa-university"></i>
+                            {{ group.organization }}
+                        </span>
                     </template>
                 </IndexWidget>
             </div>
-            <div
-                id="group-datatable-wrapper"
-                class="dataTablesWrapper"
-            >
-                <DataTable
-                    id="group-datatable"
-                    :columns="columns"
-                    :options="options"
-                    ajax="/groups/list"
-                    :search="search"
-                    width="100%"
-                    style="display: none;"
-                />
-            </div>
+
+            <DataTable
+                ref="datatable"
+                :columns="columns"
+                :options="options"
+                ajax="/groups/list"
+                class="d-none"
+                @xhr="(e, settings, json) => groups = json.data"
+            />
+
+            <GroupOptions v-if="checkPermission('is_schooladmin')"
+                class="mt-4"
+            />
 
             <Teleport to="body">
                 <GroupModal/>
                 <ConfirmModal
-                    :showConfirm="this.showConfirm"
+                    :showConfirm="showConfirm"
                     :title="trans('global.group.delete')"
                     :description="trans('global.group.delete_helper')"
-                    @close="() => {
-                        this.showConfirm = false;
-                    }"
+                    @close="showConfirm = false"
                     @confirm="() => {
-                        this.showConfirm = false;
-                        this.destroy();
+                        showConfirm = false;
+                        destroy();
                     }"
                 />
             </Teleport>
-        </div>
-        <div v-if="checkPermission('is_schooladmin')"
-            class="mt-4"
-        >
-            <GroupOptions/>
         </div>
     </div>
 </template>
@@ -125,15 +113,20 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useDatatableStore} from "../../store/datatables";
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        ConfirmModal,
+        DataTable,
+        GroupModal,
+        GroupOptions,
+        IndexWidget,
+    },
     data() {
         return {
             component_id: this.$.uid,
             groups: null,
-            search: '',
             showConfirm: false,
             currentGroup: {},
             columns: [
@@ -146,30 +139,25 @@ export default {
         }
     },
     setup() {
-        const globalStore = useGlobalStore();
-        const store = useDatatableStore();
-        return {
-            store,
-            globalStore,
-        }
+        return { store: useDatatableStore() }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('group-added', (group) => {
+        this.$eventHub.on('group-added', group => {
             this.groups.push(group);
         });
 
-        this.$eventHub.on('group-updated', (updatedGroup) => {
+        this.$eventHub.on('group-updated', updatedGroup => {
             let group = this.groups.find(g => g.id === updatedGroup.id);
 
             Object.assign(group, updatedGroup);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
@@ -181,15 +169,7 @@ export default {
             });
         },
         editGroup(group) {
-            this.globalStore?.showModal('group-modal', group);
-        },
-        loaderEvent() {
-            this.dt = $('#group-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.groups = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#group-content').insertBefore('#group-datatable-wrapper');
-            });
+            this.globalStore.showModal('group-modal', group);
         },
         confirmItemDelete(group) {
             this.currentGroup = group;
@@ -201,26 +181,17 @@ export default {
                     let index = this.groups.indexOf(this.currentGroup);
                     this.groups.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
                 });
         },
     },
     computed: {
-        classObject() {
-            if (this.store.getDatatable('groups')?.select === true) {
-                return 'btn-dark'
-            } else {
-                return 'btn-light'
-            }
+        btnClass() {
+            return this.store.getDatatable('groups')?.select === true
+                ? 'btn-dark'
+                : 'btn-outline-dark';
         },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        GroupModal,
-        GroupOptions,
-        IndexWidget,
     },
 }
 </script>

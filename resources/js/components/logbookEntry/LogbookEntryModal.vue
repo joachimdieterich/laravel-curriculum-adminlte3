@@ -3,10 +3,12 @@
         ref="modal"
         model="logbookEntry"
         modalName="logbook-entry-modal"
-        :method="method"
-        :processing="processing"
+        url="/logbookEntries"
+        :form="form"
         :require-title="true"
-        @save="(form) => submit(form)"
+        :intercept-save="true"
+        @opened="preProcessing()"
+        @save="postProcessing()"
     >
         <template #general-extended>
             <div class="mt-3">
@@ -18,19 +20,20 @@
                     v-model="form.description"
                 />
             </div>
-            <div class="mt-3">
-                <VueDatePicker
-                    v-model="form.date"
-                    :range="{ partialRange: false }"
-                    format="dd.MM.yyyy HH:mm"
-                    :teleport="true"
-                    locale="de"
-                    :placeholder="trans('global.selectDateRange')"
-                    :select-text="trans('global.ok')"
-                    :cancel-text="trans('global.close')"
-                    @cleared="form.date = ['', '']"
-                />
-            </div>        
+
+            <VueDatePicker
+                class="mt-3"
+                v-model="form.date"
+                :range="{ partialRange: false }"
+                format="dd.MM.yyyy HH:mm"
+                time-picker-inline
+                :teleport="true"
+                locale="de"
+                :placeholder="trans('global.selectDateRange')"
+                :select-text="trans('global.ok')"
+                :cancel-text="trans('global.close')"
+                @cleared="form.date = ['', '']"
+            />      
         </template>
     </Modal>
 </template>
@@ -51,8 +54,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            processing: false,
             form: new Form({
                 id: null,
                 logbook_id: '',
@@ -76,65 +77,16 @@ export default {
         }
     },
     methods: {
-        submit(formData) {
-            this.form.populate(formData);
-            this.processing = true;
+        preProcessing() {
+            this.form.date = [this.form.begin ?? '', this.form.end ?? ''];
+        },
+        postProcessing() {
             this.form.begin = this.form.date[0].toLocaleString();
             this.form.end = this.form.date[1].toLocaleString();
 
-            if (this.method === 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-
+            if (this.form.id) this.$refs.modal.update();
+            else this.$refs.modal.add();
         },
-        add() {
-            axios.post('/logbookEntries', this.form)
-                .then(response => {
-                    this.$eventHub.emit('logbook-entry-added', response.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.processing = false;
-                    this.toast.error(this.errorMessage(e));
-                    console.log(e.response);
-                });
-        },
-        update() {
-            axios.patch('/logbookEntries/' + this.form.id, this.form)
-                .then(response => {
-                    this.$eventHub.emit('logbook-entry-updated', response.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.processing = false;
-                    this.toast.error(this.errorMessage(e));
-                    console.log(e.response);
-                });
-        },
-        setIcon(selectedIcon) {
-            this.form.css_icon = 'fa fa-' + selectedIcon.className;
-        },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
-                this.globalStore.lockModal(this.$options.name);
-                this.processing = false;
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    this.method = this.form.id ? 'patch' : 'post';
-                    this.form.date = [this.form.begin ?? '', this.form.end ?? ''];
-                }
-
-                this.$refs.modal.resetForm(this.form);
-            }
-        });
     },
 }
 </script>

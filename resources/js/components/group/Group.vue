@@ -213,7 +213,10 @@
                 </li> -->
                 <!-- Help -->
                 <button
+                    type="button"
                     class="d-print-none btn btn-icon text-secondary ms-auto"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.toggle_navigation')"
                     @click="help = !help"
                 >
                     <i class="fa fa-question"></i>
@@ -375,7 +378,10 @@
             <div class="d-flex align-items-center">
                 <small v-text="currentGroup.title"></small>
                 <button v-if="checkPermission('group_edit')"
+                    type="button"
                     class="btn btn-icon text-secondary ms-2"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.group.edit')"
                     @click="editGroup()"
                 >
                     <i class="fa fa-pencil"></i>
@@ -432,13 +438,15 @@ export default {
 
         this.currentGroup = this.group;
 
+        this.enableTooltips();
+
         this.$eventHub.on('group-updated', group => {
             this.currentGroup = group;
         });
     },
     methods: {
         editGroup() {
-            this.globalStore?.showModal('group-modal', this.currentGroup);
+            this.globalStore.showModal('group-modal', this.currentGroup);
         },
     },
 }

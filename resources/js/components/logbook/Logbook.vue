@@ -131,29 +131,29 @@ export default {
         this.currentLogbook = this.logbook;
 
         // entry events
-        this.$eventHub.on('logbook-entry-added', (entry) => {
+        this.$eventHub.on('logbookEntry-added', entry => {
             this.entries.push(entry);
         });
 
-        this.$eventHub.on('logbook-entry-updated', (updated) => {
+        this.$eventHub.on('logbookEntry-updated', updated => {
             const index = this.entries.findIndex(entry => entry.id === updated.id);
 
             Object.assign(this.entries[index], updated);
         });
 
-        this.$eventHub.on('logbook-entry-deleted', (deletedEntry) => {
+        this.$eventHub.on('logbook-entry-deleted', deletedEntry => {
             let index = this.entries.indexOf(deletedEntry);
             this.entries.splice(index, 1);
         });
 
-        this.$eventHub.on('update-subject-badge', (data) => {
+        this.$eventHub.on('update-subject-badge', data => {
             let entry = this.entries.find(e => e.id === data.entry_id);
 
             entry.subject = data.subject;
         });
 
         // logbook events
-        this.$eventHub.on('logbook-updated', (logbook) => {
+        this.$eventHub.on('logbook-updated', logbook => {
             Object.assign(this.currentLogbook, logbook);
         });
 

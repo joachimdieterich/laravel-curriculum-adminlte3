@@ -264,7 +264,7 @@ export default {
         }
 
         this.$eventHub.on('filter', filter => {
-            this.dt.search(filter).draw();
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {

@@ -2,6 +2,7 @@
     <Modal
         model="kanbanStatus"
         modalName="kanban-status-modal"
+        url="/kanbanStatuses"
         :form="form"
         :require-title="true"
         :show-display-section="true"

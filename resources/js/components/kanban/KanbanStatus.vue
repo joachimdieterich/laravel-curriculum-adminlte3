@@ -13,8 +13,7 @@
             <i class="fa fa-plus me-1"></i>
             <span>{{ trans('global.kanbanStatus.create') }}</span>
         </button>
-        <div v-else
-            v-show="showWithSearch"
+        <div v-else-if="showWithSearch"
             class="d-flex align-items-center justify-content-between"
             :style="'color: ' + textColor"
         >

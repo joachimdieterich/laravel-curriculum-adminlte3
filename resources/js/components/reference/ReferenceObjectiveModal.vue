@@ -19,7 +19,7 @@
                 }"
             />
 
-            <Select2 v-if="this.form.curriculum_id"
+            <Select2 v-if="form.curriculum_id"
                 id="select-reference-terminal"
                 css="mb-3"
                 :url="'/curricula/' + form.curriculum_id + '/terminalObjectives'"

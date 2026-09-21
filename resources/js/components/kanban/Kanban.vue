@@ -49,7 +49,7 @@
                 @end="syncStatusMoved"
             >
                 <template #item="{ element: status, index }">
-                    <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
+                    <span v-if="status.visibility || ownerOrAdmin || status.owner_id == $userId"
                         :id="'status-' + status.id"
                         :key="'drag_status_' + status.id"
                         class="flex-column mh-100 collapse collapse-horizontal show"
@@ -67,7 +67,7 @@
                             :key="status.id"
                             :websocket="websocket && kanban.auto_refresh"
                             filter=".ignore"
-                            @show-with-search="(data) => {status.visible = data.show;}"
+                            @show-with-search="data => status.visible = data.show"
                         />
                         <div v-if="editable"
                             :id="'kanbanItemCreateButton_' + index"
@@ -97,8 +97,8 @@
                             <template #item="{ element: item }">
                                 <span :key="'drag_item_' + item.id">
                                     <KanbanItem v-if="(item.visibility && visibleFromTo(item.visible_from, item.visible_until))
-                                            || ($userId == item.owner_id)
-                                            || ($userId == kanban.owner_id)"
+                                            || item.owner_id == $userId
+                                            || ownerOrAdmin"
                                         :key="item.id"
                                         :editable="editable"
                                         :favourable="favourable"
@@ -588,6 +588,9 @@ export default {
         this.stopWebsocket();
     },
     computed: {
+        ownerOrAdmin() {
+            return this.kanban.owner_id == this.$userId || this.checkPermission('is_admin');
+        },
         textColor: function () {
             if (this.kanban.color == "" || this.kanban.color == null) return;
             return this.$textcolor(this.kanban.color);

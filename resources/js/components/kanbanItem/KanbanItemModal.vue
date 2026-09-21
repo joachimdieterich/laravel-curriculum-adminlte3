@@ -32,12 +32,10 @@
                 format="dd.MM.yyyy HH:mm"
                 :teleport="true"
                 time-picker-inline
+                locale="de"
+                :select-text="trans('global.ok')"
+                :cancel-text="trans('global.close')"
                 :start-time="{ hours: 23, minutes: 59 }"
-                :day-names="['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']"
-                :action-row="{
-                    selectBtnLabel: 'OK',
-                    cancelBtnLabel: trans('global.close'),
-                }"
                 :placeholder="trans('global.kanbanItem.fields.due_date')"
             />
 
@@ -72,14 +70,12 @@
                 format="dd.MM.yyyy HH:mm"
                 :teleport="true"
                 time-picker-inline
+                locale="de"
+                :select-text="trans('global.ok')"
+                :cancel-text="trans('global.close')"
+                :placeholder="trans('global.visible_until_or_from_to')"
                 :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
                 @cleared="form.visible_date = null"
-                :day-names="['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']"
-                :action-row="{
-                    selectBtnLabel: 'OK',
-                    cancelBtnLabel: trans('global.close'),
-                }"
-                :placeholder="trans('global.visible_until_or_from_to')"
             />
         </template>
     </Modal>
@@ -87,7 +83,7 @@
 <script>
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import { VueDatePicker } from "@vuepic/vue-datepicker";
+import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 import Editor from '@tinymce/tinymce-vue';
 import Switch from '../forms/Switch.vue';

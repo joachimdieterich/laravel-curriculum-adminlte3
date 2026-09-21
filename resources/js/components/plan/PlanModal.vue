@@ -210,7 +210,7 @@ import Select2 from "../forms/Select2.vue";
 import Editor from '@tinymce/tinymce-vue';
 import MediumForm from "../media/MediumForm.vue";
 import {useGlobalStore} from "../../store/global";
-import { VueDatePicker } from "@vuepic/vue-datepicker";
+import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {

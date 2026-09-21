@@ -316,7 +316,7 @@ import Editor from '@tinymce/tinymce-vue';
 import NewMediumForm from '../media/NewMediumForm.vue';
 import Select2 from "../forms/Select2.vue";
 import TagMultiselect from "../tag/TagMultiselect.vue";
-import { VueDatePicker } from '@vuepic/vue-datepicker';
+import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Switch from '../forms/Switch.vue';
 

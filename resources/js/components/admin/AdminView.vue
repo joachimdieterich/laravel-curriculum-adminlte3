@@ -238,7 +238,7 @@
 import Logins from '../statistic/Logins.vue';
 import PieChart from "../statistic/PieChart.vue";
 import Models from "../statistic/Models.vue";
-import { VueDatePicker } from "@vuepic/vue-datepicker";
+import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {

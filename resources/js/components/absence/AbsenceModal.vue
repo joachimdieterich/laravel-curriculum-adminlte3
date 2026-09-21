@@ -108,7 +108,7 @@
 <script>
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
-import { VueDatePicker } from "@vuepic/vue-datepicker";
+import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 import {useGlobalStore} from "../../store/global";
 import Select2 from "../forms/Select2.vue";

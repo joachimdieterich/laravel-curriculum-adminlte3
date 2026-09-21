@@ -3,5 +3,5 @@
     <title-component></title-component>
 @endsection
 @section('content')
-    <group :group="{{ $group }}"></group>
+    <Group :group="{{ $group }}"/>
 @endsection

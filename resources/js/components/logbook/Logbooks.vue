@@ -90,12 +90,10 @@
                 :subscribe="subscribable"
                 :subscribable_id="subscribable_id"
                 :subscribable_type="subscribable_type"
-                :label="trans('global.logbook.' + create_label_field)"
+                :label="trans('global.logbook.' + createLabel)"
             >
-                <template v-slot:itemIcon>
-                    <i v-if="create_label_field == 'enrol'"
-                        class="fa fa-2x fa-link text-muted"
-                    ></i>
+                <template #itemIcon>
+                    <i v-if="subscribable" class="fa fa-2x fa-link text-muted"></i>
                 </template>
             </IndexWidget>
 
@@ -107,14 +105,14 @@
                 url="/logbooks"
                 :showSubscribable="subscribable"
             >
-                <template v-slot:itemIcon>
+                <template #itemIcon>
                     <i v-if="logbook.css_icon"
                         class="fa-2x"
                         :class="logbook.css_icon"
                     ></i>
                 </template>
 
-                <template v-slot:dropdown>
+                <template #dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-end"
                     >
@@ -164,20 +162,14 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="logbook-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="logbook-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            :columns="columns"
+            :options="options"
+            :ajax="url"
+            class="d-none"
+            @xhr="(e, settings, json) => logbooks = json.data"
+        />
 
         <Teleport to="body">
             <LogbookModal v-if="!subscribable"/>
@@ -186,14 +178,12 @@
             <SubscribeLogbookModal v-if="subscribable"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
-                :title="trans('global.logbook.' + delete_label_field)"
-                :description="trans('global.logbook.' + delete_label_field + '_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                :title="trans('global.logbook.' + deleteLabel)"
+                :description="trans('global.logbook.' + deleteLabel + '_helper')"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -211,19 +201,20 @@ import MediumModal from "../media/MediumModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        SubscribeModal,
+        MediumModal,
+        ConfirmModal,
+        SubscribeLogbookModal,
+        DataTable,
+        IndexWidget,
+        LogbookModal,
+    },
     props: {
         reference : Object,
         subscribable: {
             type: Boolean,
             default: false,
-        },
-        create_label_field: {
-            type: String,
-            default: 'enrol',
-        },
-        delete_label_field: {
-            type: String,
-            default: 'delete',
         },
         subscribable_type: {
             type: String,
@@ -242,7 +233,6 @@ export default {
             search: '',
             showConfirm: false,
             url: this.subscribable ? '/logbooks/list?group_id=' + this.subscribable_id : '/logbooks/list',
-            errors: {},
             currentLogbook: {},
             columns: [
                 { title: 'id', data: 'id' },
@@ -253,6 +243,30 @@ export default {
             filter: 'all',
             dt: null,
         }
+    },
+    mounted() {
+        this.globalStore['showSearchbar'] = true;
+
+        this.dt = this.$refs.datatable.dt;
+
+        if (this.subscribable) {
+            this.$eventHub.on('logbook-subscription-added', (logbookSubscription) => {
+                this.logbooks.push(logbookSubscription.logbook);
+            });
+        } else {
+            this.$eventHub.on('logbook-added', (logbook) => {
+                this.logbooks.push(logbook);
+            });
+
+            this.$eventHub.on('logbook-updated', (updatedLogbook) => {
+                let logbook = this.logbooks.find(l => l.id === updatedLogbook.id);
+                Object.assign(logbook, updatedLogbook);
+            });
+        }
+
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter).draw();
+        });
     },
     methods: {
         confirmItemDelete(logbook) {
@@ -279,14 +293,6 @@ export default {
             this.filter = filter;
             this.url = '/logbooks/list?filter=' + this.filter;
             this.dt.ajax.url(this.url).load();
-        },
-        loaderEvent() {
-            this.dt = $('#logbook-datatable').DataTable();
-            this.dt.on('draw.dt', () => {
-                this.logbooks = this.dt.rows({ page: 'current' }).data().toArray();
-
-                $('#logbook-content').insertBefore('#logbook-datatable-wrapper');
-            });
         },
         destroy() {
             if (this.subscribable) {
@@ -318,38 +324,13 @@ export default {
             return logbook.owner_id == this.$userId || this.checkPermission('is_admin');
         },
     },
-    mounted() {
-        this.globalStore['showSearchbar'] = true;
-
-        this.loaderEvent();
-
-        if (this.subscribable) {
-            this.$eventHub.on('logbook-subscription-added', (logbookSubscription) => {
-                this.logbooks.push(logbookSubscription.logbook);
-            });
-        } else {
-            this.$eventHub.on('logbook-added', (logbook) => {
-                this.logbooks.push(logbook);
-            });
-
-            this.$eventHub.on('logbook-updated', (updatedLogbook) => {
-                let logbook = this.logbooks.find(l => l.id === updatedLogbook.id);
-                Object.assign(logbook, updatedLogbook);
-            });
-        }
-
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
-        });
-    },
-    components: {
-        SubscribeModal,
-        MediumModal,
-        ConfirmModal,
-        SubscribeLogbookModal,
-        DataTable,
-        IndexWidget,
-        LogbookModal,
+    computed: {
+        createLabel() {
+            return this.subscribable ? 'enrol' : 'create';
+        },
+        deleteLabel() {
+            return this.subscribable ? 'expel' : 'delete';
+        },
     },
 }
 </script>

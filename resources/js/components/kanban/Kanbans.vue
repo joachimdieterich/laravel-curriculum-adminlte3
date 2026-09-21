@@ -125,7 +125,7 @@
         <DataTable
             ref="datatable"
             :columns="columns"
-            :options="dtOptions(this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list')"
+            :options="dtOptions(subscribable ? '/kanbans/list?group_id=' + subscribable_id : '/kanbans/list')"
             class="d-none"
             @xhr="xhrEvent"
         />

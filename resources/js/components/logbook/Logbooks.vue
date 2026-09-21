@@ -166,7 +166,7 @@
             ref="datatable"
             :columns="columns"
             :options="options"
-            :ajax="url"
+            :ajax="subscribable ? '/logbooks/list?group_id=' + subscribable_id : '/logbooks/list'"
             class="d-none"
             @xhr="(e, settings, json) => logbooks = json.data"
         />
@@ -232,7 +232,6 @@ export default {
             subscriptions: {},
             search: '',
             showConfirm: false,
-            url: this.subscribable ? '/logbooks/list?group_id=' + this.subscribable_id : '/logbooks/list',
             currentLogbook: {},
             columns: [
                 { title: 'id', data: 'id' },
@@ -289,10 +288,9 @@ export default {
                     canEditCheckbox: true,
                 });
         },
-        setFilter(filter)  {
+        setFilter(filter) {
             this.filter = filter;
-            this.url = '/logbooks/list?filter=' + this.filter;
-            this.dt.ajax.url(this.url).load();
+            this.dt.ajax.url('/logbooks/list?filter=' + this.filter).load();
         },
         destroy() {
             if (this.subscribable) {

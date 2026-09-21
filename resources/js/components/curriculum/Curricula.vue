@@ -172,6 +172,19 @@ import TagComponentModal from "../tag/TagComponentModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        TagComponentModal,
+        TabList,
+        Hide,
+        Favourite,
+        OwnerModal,
+        IndexWidget,
+        MediumModal,
+        DataTable,
+        SubscribeModal,
+        ConfirmModal,
+        CurriculumModal,
+    },
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
 
@@ -284,19 +297,6 @@ export default {
             this.globalStore?.closeModal('owner-modal');
             this.loaderEvent();
         });
-    },
-    components: {
-        TagComponentModal,
-        TabList,
-        Hide,
-        Favourite,
-        OwnerModal,
-        IndexWidget,
-        MediumModal,
-        DataTable,
-        SubscribeModal,
-        ConfirmModal,
-        CurriculumModal,
     },
 }
 </script>

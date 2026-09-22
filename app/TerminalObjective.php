@@ -159,7 +159,7 @@ class TerminalObjective extends Model
 
     public static function booted(): void
     {
-        static::deleting(static function (TerminalObjective $terminal) { // before delete() method call this
+        static::deleting(function (TerminalObjective $terminal) { // before delete() method call this
             $terminal->achievements()->delete();
             $terminal->subscriptions()->delete();
             $terminal->mediaSubscriptions()->delete();
@@ -171,10 +171,10 @@ class TerminalObjective extends Model
             $terminal->successors()->delete();
             $terminal->enablingObjectives->each->delete();
         });
-        static::deleted(static function (TerminalObjective $terminal) {
+        static::deleted(function (TerminalObjective $terminal) {
             $terminal->curriculum()->get()->first()?->touch();
         });
-        static::saved(static function (TerminalObjective $terminal) {
+        static::saved(function (TerminalObjective $terminal) {
             $terminal->curriculum()->get()->first()?->touch();
         });
     }

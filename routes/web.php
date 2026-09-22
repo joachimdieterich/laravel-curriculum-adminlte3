@@ -265,7 +265,7 @@ Route::withoutMiddleware('auth')->group(function () {
 
 // only authenticate requests that return a blade-file (initial requests) to avoid redundant authentication
 // keep the resource-routes in here, unless the index/show routes are specifically defined
-Route::group(['middleware' => 'auth'], static function () {
+Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::get('/admin', 'AdminController@index')->name('admin.index');
@@ -439,7 +439,7 @@ Route::group(['middleware' => 'auth'], static function () {
 });
 
 if (config('app.guest_user_id') !== null) {
-    Route::get('/guest', static function () {
+    Route::get('/guest', function () {
         if (Auth::user() === null) {       // if no user is authenticated, authenticate guest
             LogController::set('guestLogin');
             LogController::setStatistics();

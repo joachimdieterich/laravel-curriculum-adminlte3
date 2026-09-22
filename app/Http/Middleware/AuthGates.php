@@ -18,7 +18,7 @@ class AuthGates
 
         if ($user) {
             // TTL is set to 15 minutes, as permissions are not expected to change frequently
-            $rolePermissions = Cache::remember('role-permissions', now()->addMinutes(15), static function () {
+            $rolePermissions = Cache::remember('role-permissions', now()->addMinutes(15), function () {
                 $roles = Role::with('permissions')->get();
 
                 $permissionsArray = [];
@@ -57,7 +57,7 @@ class AuthGates
             }
 
             foreach ($rolePermissions as $permission => $roles) {
-                Gate::define($permission, static function () use ($current_role_id, $roles) {
+                Gate::define($permission, function () use ($current_role_id, $roles) {
                     return in_array($current_role_id, $roles);
                 });
             }

@@ -95,11 +95,11 @@
                 modelName="Map"
                 url="/maps"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-map-location-dot"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'map_edit, map_delete'"
                 >
                     <div
@@ -142,20 +142,15 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="map-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="map-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            id="map-datatable"
+            :columns="columns"
+            :options="options"
+            ajax="/maps/list"
+            class="d-none"
+            @xhr="(e, settings, json) => maps = json.data"
+        />
 
         <Teleport to="body">
             <MapModal/>
@@ -165,12 +160,10 @@
                 :showConfirm="showConfirm"
                 :title="trans('global.map.delete')"
                 :description="trans('global.map.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -184,25 +177,22 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        SubscribeModal,
+        DataTable,
+        MapModal,
+        IndexWidget,
+        MediumModal,
     },
     data() {
         return {
             component_id: this.$.uid,
             maps: null,
-            search: '',
             showConfirm: false,
-            url: '/maps/list',
-            errors: {},
             currentMap: {},
             columns: [
                 { title: 'id', data: 'id' },
@@ -217,51 +207,39 @@ export default {
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('map-added', (map) => {
+        this.$eventHub.on('map-added', map => {
             this.maps.push(map);
         });
 
-        this.$eventHub.on('map-updated', (updatedMap) => {
+        this.$eventHub.on('map-updated', updatedMap => {
             let map = this.maps.find(m => m.id === updatedMap.id);
 
             Object.assign(map, updatedMap);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            this.url = '/maps/list?filter=' + this.filter
-            this.dt.ajax.url(this.url).load();
+            this.dt.ajax.url('/maps/list?filter=' + this.filter).load();
         },
         editMap(map) {
-            this.globalStore?.showModal('map-modal', map);
+            this.globalStore.showModal('map-modal', map);
         },
         shareMap(map) {
-            this.globalStore?.showModal(
-                'subscribe-modal',
-                {
-                    modelId: map.id,
-                    modelUrl: 'map' ,
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: true,
-                    canEditCheckbox: true,
-                });
-        },
-        loaderEvent() {
-            this.dt = $('#map-datatable').DataTable();
-
-            this.dt.on('draw.dt', () => {
-                this.maps = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#map-content').insertBefore('#map-datatable-wrapper');
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: map.id,
+                modelUrl: 'map' ,
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
             });
         },
         confirmItemDelete(map) {
@@ -274,18 +252,10 @@ export default {
                     let index = this.maps.indexOf(this.currentMap);
                     this.maps.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
                 });
         },
-    },
-    components: {
-        ConfirmModal,
-        SubscribeModal,
-        DataTable,
-        MapModal,
-        IndexWidget,
-        MediumModal,
     },
 }
 </script>

@@ -124,6 +124,7 @@
 
         <DataTable
             ref="datatable"
+            id="kanban-datatable"
             :columns="columns"
             :options="dtOptions(subscribable ? '/kanbans/list?group_id=' + subscribable_id : '/kanbans/list')"
             class="d-none"
@@ -191,7 +192,7 @@ export default {
         },
         subscribable_type: {
             type: String,
-            default: '',
+            default: null,
         },
         subscribable_id: {
             type: Number,
@@ -259,16 +260,15 @@ export default {
             this.globalStore.showModal('kanban-modal', kanban);
         },
         shareKanban(kanban) {
-            this.globalStore.showModal('subscribe-modal',
-                {
-                    modelId: kanban.id,
-                    modelUrl: 'kanban' ,
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: true,
-                    canEditCheckbox: true,
-                });
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: kanban.id,
+                modelUrl: 'kanban' ,
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
+            });
         },
         xhrEvent(e, settings, json) {
             // if user doesn't have any favourited objects, default to 'all'-tab

@@ -89,10 +89,10 @@
                 :subscribe="subscribable"
                 :subscribable_id="subscribable_id"
                 :subscribable_type="subscribable_type"
-                :label="trans('global.plan.' + create_label_field)"
+                :label="trans('global.plan.' + createLabel)"
             >
-                <template v-slot:itemIcon>
-                    <i v-if="create_label_field == 'enrol'"
+                <template #itemIcon>
+                    <i v-if="subscribable"
                         class="fa fa-2x fa-link text-muted"
                     ></i>
                 </template>
@@ -104,11 +104,11 @@
                 url="/plans"
                 :showSubscribable="subscribable"
             >
-                <template v-slot:itemIcon>
+                <template #itemIcon>
                     <i class="fa fa-2x fa-clipboard-list"></i>
                 </template>
 
-                <template v-slot:dropdown>
+                <template #dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-end"
                         style="z-index: 1050;"
@@ -176,20 +176,16 @@
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="plan-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="plan-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="plan-datatable"
+            :columns="columns"
+            :options="options"
+            :ajax="subscribable ? '/plans/list?group_id=' + subscribable_id : '/plans/list'"
+            class="d-none"
+            @xhr="(e, settings, json) => plans = json.data"
+        />
 
         <Teleport to="body">
             <PlanModal v-if="!subscribable"/>
@@ -198,14 +194,12 @@
             <SubscribePlanModal v-if="subscribable"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
-                :title="trans('global.plan.' + delete_label_field)"
-                :description="trans('global.plan.' + delete_label_field +'_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                :title="trans('global.plan.' + deleteLabel)"
+                :description="trans('global.plan.' + deleteLabel +'_helper')"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
             <ConfirmModal v-if="!subscribable"
@@ -213,12 +207,10 @@
                 :title="trans('global.plan.copy')"
                 :description="trans('global.plan.copy_helper')"
                 css='primary'
-                @close="() => {
-                    this.showCopy = false;
-                }"
+                @close="showCopy = false"
                 @confirm="() => {
-                    this.showCopy = false;
-                    this.copy();
+                    showCopy = false;
+                    copy();
                 }"
             />
         </Teleport>
@@ -233,44 +225,38 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        PlanModal,
+        SubscribeModal,
+        SubscribePlanModal,
+        MediumModal,
+        ConfirmModal,
+        DataTable,
+        IndexWidget,
+    },
     props: {
         subscribable: {
             type: Boolean,
             default: false,
         },
-        create_label_field: {
+        subscribable_type: {
             type: String,
-            default: 'create'
+            default: null,
         },
-        delete_label_field: {
-            type: String,
-            default: 'delete'
+        subscribable_id: {
+            type: Number,
+            default: null,
         },
-        subscribable_type: '',
-        subscribable_id: '',
-    },
-    setup () {
-        const toast = useToast();
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {
             component_id: this.$.uid,
             plans: null,
-            search: '',
             showConfirm: false,
             showCopy: false,
-            url: this.subscribable ? '/plans/list?group_id=' + this.subscribable_id : '/plans/list',
-            errors: {},
             currentPlan: {},
             columns: [
                 { title: 'id', data: 'id' },
@@ -284,53 +270,41 @@ export default {
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('plan-subscription-added', (planSubscription) => {
+        this.$eventHub.on('plan-subscription-added', planSubscription => {
             this.plans.push(planSubscription.plan);
         });
 
-        this.$eventHub.on('plan-added', (plan) => {
+        this.$eventHub.on('plan-added', plan => {
             this.plans.push(plan);
         });
 
-        this.$eventHub.on('plan-updated', (plan) => {
+        this.$eventHub.on('plan-updated', plan => {
             this.update(plan);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            this.url = '/plans/list?filter=' + this.filter;
-            this.dt.ajax.url(this.url).load();
+            this.dt.ajax.url('/plans/list?filter=' + this.filter).load();
         },
         editPlan(plan) {
-            this.globalStore?.showModal('plan-modal', plan);
+            this.globalStore.showModal('plan-modal', plan);
         },
         sharePlan(plan) {
-            this.globalStore?.showModal(
-                'subscribe-modal',
-                {
-                    modelId: plan.id,
-                    modelUrl: 'plan' ,
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: false,
-                    canEditCheckbox: true,
-                });
-        },
-        loaderEvent() {
-            this.dt = $('#plan-datatable').DataTable();
-
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.plans = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#plan-content').insertBefore('#plan-datatable-wrapper');
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: plan.id,
+                modelUrl: 'plan' ,
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: false,
+                canEditCheckbox: true,
             });
         },
         confirmDelete(plan) {
@@ -368,8 +342,8 @@ export default {
                         let index = this.plans.indexOf(this.currentPlan);
                         this.plans.splice(index, 1);
                     })
-                    .catch(err => {
-                        console.log(err.response);
+                    .catch(e => {
+                        console.log(e);
                     });
             }
         },
@@ -378,14 +352,13 @@ export default {
             Object.assign(plan, updatedPlan);
         }
     },
-    components: {
-        PlanModal,
-        SubscribeModal,
-        SubscribePlanModal,
-        MediumModal,
-        ConfirmModal,
-        DataTable,
-        IndexWidget,
+    computed: {
+        createLabel() {
+            return this.subscribable ? 'enrol' : 'create';
+        },
+        deleteLabel() {
+            return this.subscribable ? 'expel' : 'delete';
+        },
     },
 }
 </script>

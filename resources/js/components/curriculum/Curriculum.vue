@@ -3,21 +3,16 @@
         <div v-if="Object.keys(course).length"
             v-permission="'achievement_access'"
         >
-            <div
-                id="user-datatable-wrapper"
-                class="dataTablesWrapper"
-            >
-                <DataTable
-                    id="curriculum-user-datatable"
-                    :columns="columns"
-                    :options="options"
-                    :ajax="'/courses/list?course_id=' + course.id"
-                    :search="search"
-                    width="100%"
-                    @select="updateAchievements"
-                    @deselect="updateAchievements"
-                />
-            </div>
+            <DataTable
+                ref="datatable"
+                id="curriculum-user-datatable"
+                :columns="columns"
+                :options="options"
+                :ajax="'/courses/list?course_id=' + course.id"
+                class="w-100"
+                @select="updateAchievements"
+                @deselect="updateAchievements"
+            />
         </div>
 
         <div class="d-flex flex-column px-3 pb-3">
@@ -330,10 +325,9 @@ export default {
                 { title: window.trans.global.lastname, data: 'lastname', searchable: true },
                 { title: window.trans.global.firstname, data: 'firstname', searchable: true },
                 { title: window.trans.global.role.title_singular, data: 'role' },
-                { title: window.trans.global.progress.title_singular,  data: 'progress' },
+                { title: window.trans.global.progress.title_singular, data: 'progress' },
             ],
             options : this.$dtOptions,
-            search: '',
             dt: null,
             currentContributors: {},
         }
@@ -348,7 +342,8 @@ export default {
             select: (this.store.getDatatable('curriculum-user-datatable')?.select) ? false : true,
             selectedItems: [],
         });
-        this.dt = $('#curriculum-user-datatable').DataTable();
+
+        this.dt = this.$refs.datatable.dt;
 
         this.$eventHub.on('curriculum-updated', updatedCurriculum => {
             Object.assign(this.currentCurriculum, updatedCurriculum);
@@ -369,7 +364,7 @@ export default {
             this.curriculum.tags = this.curriculum.tags.map(tag => tag.id ?? tag);
             this.globalStore.showModal('curriculum-modal', this.curriculum);
         },
-        loaderEvent: function() {
+        loaderEvent() {
             this.$refs.Contents.loaderEvent();
         },
         generateCertificate() {

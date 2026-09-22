@@ -3,5 +3,5 @@
     {{ trans('global.user.title') }}
 @endsection
 @section('content')
-    <users create_label_field="create"></users>
+    <Users/>
 @endsection

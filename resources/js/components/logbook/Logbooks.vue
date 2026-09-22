@@ -164,6 +164,7 @@
 
         <DataTable
             ref="datatable"
+            id="logbook-datatable"
             :columns="columns"
             :options="options"
             :ajax="subscribable ? '/logbooks/list?group_id=' + subscribable_id : '/logbooks/list'"
@@ -211,7 +212,6 @@ export default {
         LogbookModal,
     },
     props: {
-        reference : Object,
         subscribable: {
             type: Boolean,
             default: false,
@@ -273,20 +273,18 @@ export default {
             this.showConfirm = true;
         },
         editLogbook(logbook) {
-            this.globalStore?.showModal('logbook-modal', logbook);
+            this.globalStore.showModal('logbook-modal', logbook);
         },
         shareLogbook(logbook) {
-            this.globalStore?.showModal(
-                'subscribe-modal',
-                {
-                    modelId: logbook.id,
-                    modelUrl: 'logbook' ,
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: false,
-                    canEditCheckbox: true,
-                });
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: logbook.id,
+                modelUrl: 'logbook' ,
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: false,
+                canEditCheckbox: true,
+            });
         },
         setFilter(filter) {
             this.filter = filter;

@@ -128,6 +128,7 @@
 
         <DataTable
             ref="datatable"
+            id="curriculum-datatable"
             :columns="columns"
             :options="dtOptions('/curricula/list')"
             class="d-none"
@@ -225,18 +226,15 @@ export default {
             });
         },
         shareCurriculum(curriculum) {
-            this.globalStore.showModal(
-                'subscribe-modal',
-                {
-                    modelId: curriculum.id,
-                    modelUrl: 'curriculum',
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: true,
-                    canEditCheckbox: false,
-                }
-            );
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: curriculum.id,
+                modelUrl: 'curriculum',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: false,
+            });
         },
         setFilter(filter) {
             this.filter = filter;

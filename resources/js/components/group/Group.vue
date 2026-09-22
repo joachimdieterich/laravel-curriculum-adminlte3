@@ -247,12 +247,9 @@
                 >
                     <Users
                         ref="Users"
-                        :reference="group"
-                        delete_label_field="expel"
                         subscribable_type="App\Group"
                         :subscribable_id="group.id"
                         :subscribable="true"
-                        create_label_field="enrol"
                     />
                 </div>
                 <!-- 3 Logbooks -->
@@ -264,7 +261,6 @@
                 >
                     <Logbooks
                         ref="Logbooks"
-                        :reference="group"
                         subscribable_type="App\Group"
                         :subscribable_id="group.id"
                         :subscribable="true"
@@ -282,7 +278,6 @@
                         subscribable_type="App\Group"
                         :subscribable_id="group.id"
                         :subscribable="true"
-                        create_label_field="enrol"
                     />
                 </div>
                 <!-- 5 Tasks -->
@@ -308,11 +303,9 @@
                 >
                     <Plans
                         ref="Plans"
-                        delete_label_field="expel"
                         subscribable_type="App\Group"
                         :subscribable_id="group.id"
                         :subscribable="true"
-                        create_label_field="enrol"
                     />
                 </div>
                 <!-- 7 Exams -->
@@ -343,8 +336,6 @@
                         subscribable_type="App\Group"
                         :subscribable_id="group.id"
                         :subscribable="true"
-                        create_label_field="enrol"
-                        delete_label_field="expel"
                     />
                 </div>
                 <!-- 9 Glossar -->

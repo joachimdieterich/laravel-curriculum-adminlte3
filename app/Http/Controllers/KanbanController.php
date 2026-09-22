@@ -6,7 +6,8 @@ use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Http\Requests\Tags\HideModelRequest;
 use App\Kanban;
 use App\KanbanSubscription;
-use App\Tag;
+use App\MediumSubscription;
+use App\Plugins\Repositories\edusharing\Edusharing;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Gate;
@@ -62,7 +63,6 @@ class KanbanController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return Application|RedirectResponse|Redirector|object
      */
     public function store(Request $request)
@@ -98,7 +98,6 @@ class KanbanController extends Controller
         return redirect($kanban->path());
     }
 
-
     /**Display the specified resource.
      *
      * @param Kanban $kanban
@@ -111,17 +110,17 @@ class KanbanController extends Controller
             $token == null and ( // token-links are subscribed to the guest-user
                 // so we need to check if a guest-user is accessing through a token
                 auth()->user()->id == config('app.guest_user_id')
-                or !$kanban->isAccessible()
+                or ! $kanban->isAccessible()
             ),
             403
         );
 
         $kanban = $kanban->withRelations();
 
-        $may_edit = $kanban->isEditable(auth()->user()->id, $token);
+        $may_edit   = $kanban->isEditable(auth()->user()->id, $token);
         $may_favour = auth()->user()->id != config('app.guest_user_id');
 
-        $is_shared           = $kanban->owner_id !== auth()->user()->id; //Auth::user()->sharing_token !== null;
+        $is_shared           = $kanban->owner_id !== auth()->user()->id; // Auth::user()->sharing_token !== null;
         $is_websocket_active = config('broadcasting.active');
 
         LogController::set(get_class($this) . '@' . __FUNCTION__, $kanban->id);
@@ -132,9 +131,6 @@ class KanbanController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param Kanban $kanban
-     * @return never
      */
     public function edit(Kanban $kanban): never
     {
@@ -144,8 +140,6 @@ class KanbanController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param Kanban  $kanban
      * @return Kanban|Application|RedirectResponse|Redirector|object|null
      */
     public function update(Request $request, Kanban $kanban)
@@ -153,10 +147,10 @@ class KanbanController extends Controller
         abort_unless((Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
         $input = $this->validateRequest();
         $kanban->update([
-            'title'                 => $input['title'] ?? $kanban->title,
-            'description'           => $input['description'],
-            'color'                 => $input['color'] ?? $kanban->color,
-            'medium_id'             => $input['medium_id'],
+            'title'       => $input['title'] ?? $kanban->title,
+            'description' => $input['description'],
+            'color'       => $input['color'] ?? $kanban->color,
+            'medium_id'   => $input['medium_id'],
             // ?? $kanban->medium_id, -> to get medium unsubscribe working
             'commentable'           => $input['commentable'],
             'auto_refresh'          => $input['auto_refresh'],
@@ -177,7 +171,6 @@ class KanbanController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Kanban $kanban
      * @return bool|null
      */
     public function destroy(Kanban $kanban)
@@ -189,7 +182,7 @@ class KanbanController extends Controller
 
     public function exportKanbanCsv(Kanban $kanban)
     {
-        $h[]      = [
+        $h[] = [
             trans('global.kanbanStatus.title'),
             trans('global.kanbanItem.fields.title'),
             trans('global.kanbanItem.fields.description'),
@@ -214,7 +207,7 @@ class KanbanController extends Controller
                             preg_replace('~<a href="(?!https?://)[^"]+">(.*?)</a>~', '$1', $k->description)
                         ),
                         $k->created_at,
-                        $k->owner->fullName()
+                        $k->owner->fullName(),
                     ]
                 );
             }
@@ -231,9 +224,9 @@ class KanbanController extends Controller
 
     public function exportKanbanPdf(Kanban $kanban)
     {
-        $pdf = PDF::loadView('exports.kanban.pdf', ['kanban' => $kanban])->setPaper('a4', 'landscape');
+        $pdf = Pdf::loadView('exports.kanban.pdf', ['kanban' => $kanban])->setPaper('a4', 'landscape');
 
-        return $pdf->download($kanban->title . '.pdf');
+        return $pdf->download(str_replace(['/', '\\'], ['-', '-'], $kanban->title) . '.pdf');
     }
 
     public function favourKanban(Kanban $kanban, FavouriteModelRequest $request)
@@ -273,7 +266,7 @@ class KanbanController extends Controller
 
         $subscription = KanbanSubscription::where('sharing_token', $input['sharing_token'])->get()->first();
 
-        if (!isset($subscription)) {
+        if (! isset($subscription)) {
             abort(410, 'global.token_deleted');
         }
 
@@ -293,8 +286,7 @@ class KanbanController extends Controller
         abort_unless(
             (Gate::allows('kanban_create') and $kanban->allow_copy)
             || $kanban->owner_id == auth()->user()->id
-            || is_admin()
-        , 403);
+            || is_admin(), 403);
 
         $kanbanCopy = $kanban->replicate()->fill([
             'title'    => $kanban->title . date(' [Y.m.d_H:i:s]'),
@@ -329,7 +321,8 @@ class KanbanController extends Controller
                 foreach ($item->mediaSubscriptions as $mediumSubscription) {
                     try {
                         $this->copyMediumSubscription($mediumSubscription, 'App\\KanbanItem', $itemCopy->id);
-                    } catch (\Throwable) {}
+                    } catch (\Throwable) {
+                    }
                 }
             }
         }
@@ -337,13 +330,13 @@ class KanbanController extends Controller
         return $kanbanCopy;
     }
 
-    protected function copyMediumSubscription(\App\MediumSubscription $subscription, string $model,int $modelId): void
+    protected function copyMediumSubscription(MediumSubscription $subscription, string $model, int $modelId): void
     {
         $usage = null;
 
         // if Medium is external, we need to create a new usage
-        if (!is_null($subscription->additional_data)) {
-            $usage = app(\App\Plugins\Repositories\edusharing\Edusharing::class)->createUsage(
+        if (! is_null($subscription->additional_data)) {
+            $usage = app(Edusharing::class)->createUsage(
                 $model,
                 $modelId,
                 $subscription->additional_data['nodeId'],
@@ -352,9 +345,9 @@ class KanbanController extends Controller
         }
 
         $subscription->replicate()->fill([
-            'subscribable_id'   => $modelId,
-            'owner_id'          => auth()->user()->id,
-            'additional_data'   => $usage,
+            'subscribable_id' => $modelId,
+            'owner_id'        => auth()->user()->id,
+            'additional_data' => $usage,
         ])->save();
     }
 

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  *   @OA\Schema(
  *      required={"id", "title", "grade_id", "period_id", "organization_id"},
+ *
  *      @OA\Xml(name="Group"),
  *
  *      @OA\Property( property="id", type="integer"),
@@ -29,7 +30,7 @@ class Group extends Model
 
     protected $casts = [
         'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     /* protected $dates = [  --> change v.10
@@ -57,9 +58,14 @@ class Group extends Model
         return $this->belongsToMany(User::class, 'group_user')->withTimestamps();
     }
 
+    public function curriculumSubscriptions()
+    {
+        return $this->morphOne('App\CurriculumSubscription', 'subscribable');
+    }
+
     public function curricula()
     {
-        return  $this->hasManyThrough(
+        return $this->hasManyThrough(
             'App\Curriculum',
             'App\CurriculumSubscription',
             'subscribable_id',
@@ -104,6 +110,12 @@ class Group extends Model
     {
         return $this->hasMany('App\Domains\Exams\Models\Exam', 'group_id', 'id');
     }
+
+    public function kanbanSubscriptions()
+    {
+        return $this->morphOne('App\KanbanSubscription', 'subscribable');
+    }
+
     public function kanbans()
     {
         return $this->hasManyThrough(
@@ -114,6 +126,11 @@ class Group extends Model
             'id',
             'kanban_id'
         )->where('subscribable_type', get_class($this));
+    }
+
+    public function videoconferenceSubscription()
+    {
+        return $this->morphOne('App\VideoconferenceSubscription', 'subscribable');
     }
 
     public function videoconferences()
@@ -128,6 +145,11 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function mapSubscription()
+    {
+        return $this->morphOne('App\MapSubscription', 'subscribable');
+    }
+
     public function maps()
     {
         return $this->hasManyThrough(
@@ -140,6 +162,11 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
+    public function lmsReferenceSubscription()
+    {
+        return $this->morphOne('App\LmsReferenceSubscription', 'subscribable');
+    }
+
     public function lmsReferences()
     {
         return $this->hasManyThrough(
@@ -150,6 +177,11 @@ class Group extends Model
             'id',
             'lms_reference_id'
         )->where('subscribable_type', get_class($this));
+    }
+
+    public function planSubscription()
+    {
+        return $this->morphOne('App\PlanSubscription', 'subscribable');
     }
 
     public function plans()
@@ -181,16 +213,24 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function isAccessible()
+    public function isAccessible(): bool
     {
-        if (
-            auth()->user()->groups->contains($this)
-            or ($this->organization_id == auth()->user()->current_organization_id)
-            or is_admin()
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return auth()->user()->groups->contains($this)
+               or ($this->organization_id == auth()->user()->current_organization_id)
+               or is_admin();
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Group $group) {
+            $group->kanbanSubscriptions()->delete();
+            $group->curriculumSubscriptions()->delete();
+            $group->lmsReferenceSubscription()->delete();
+            $group->mapSubscription()->delete();
+            $group->planSubscription()->delete();
+            $group->logbookSubscription()->delete();
+            $group->videoconferenceSubscription()->delete();
+            $group->exams()->delete();
+        });
     }
 }

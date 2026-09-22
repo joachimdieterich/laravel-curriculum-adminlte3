@@ -6,22 +6,23 @@ use App\Http\Controllers\LogController;
 use App\Interfaces\MediaInterface;
 use App\Medium;
 use App\MediumSubscription;
-use Illuminate\Http\Request;
 use App\Plugins\Repositories\edusharing\Edusharing;
 use EduSharingApiClient\EduSharingAuthHelper;
 use EduSharingApiClient\EduSharingHelperBase;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class EdusharingMediaAdapter implements MediaInterface
 {
     public static function __set_state(array $an_array): object
     {
-        return new self();
+        return new self;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -39,10 +40,12 @@ class EdusharingMediaAdapter implements MediaInterface
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
+        abort_unless(auth()->user() !== null, 401);
+
         $base = new EduSharingHelperBase(
             config('medium.repositories.edusharing.repo_url'),
             config('medium.repositories.edusharing.priv_key'),
@@ -53,11 +56,10 @@ class EdusharingMediaAdapter implements MediaInterface
 
         $ticket = $authHelper->getTicketForUser(auth()->user()->common_name);
 
-        if (request()->wantsJson())
-        {
+        if (request()->wantsJson()) {
             return [
-                'uploadIframeUrl' => config('medium.repositories.edusharing.upload_iframe_url').'&ticket='.$ticket,
-                'cloudIframeUrl' => config('medium.repositories.edusharing.cloud_iframe_url').'&ticket='.$ticket,
+                'uploadIframeUrl' => config('medium.repositories.edusharing.upload_iframe_url') . '&ticket=' . $ticket,
+                'cloudIframeUrl'  => config('medium.repositories.edusharing.cloud_iframe_url') . '&ticket=' . $ticket,
             ];
         }
         abort(404);
@@ -68,27 +70,26 @@ class EdusharingMediaAdapter implements MediaInterface
         $input = $this->validateRequest();
 
         $medium = Medium::create([
-            'adapter'       => $input['repository'],
-            'external_id'   => $input['external_id'],
-            'path'          => $input['path'],
-            'thumb_path'    => $input['thumb_path'],
-            'medium_name'   => $input['medium_name']    ?? '',
-            'title'         => $input['title']          ?? $input['medium_name'],
-            'description'   => $input['description']    ?? '',
-            'author'        => $input['author']         ?? '',
-            'publisher'     => $input['publisher']      ?? '',
-            'city'          => $input['city']           ?? '',
-            'date'          => date('Y-m-d_H-i-s'),
-            'size'          => $input['size']           ?? 0,
-            'mime_type'     => $input['mimetype']       ?? 'edusharing',
-            'license_id'    => $input['license_id']     ?? 1,
-            'public'        => $input['public']         ?? 1,   //default is public --> permission check over edusharing
+            'adapter'     => $input['repository'],
+            'external_id' => $input['external_id'],
+            'path'        => $input['path'],
+            'thumb_path'  => $input['thumb_path'],
+            'medium_name' => $input['medium_name'] ?? '',
+            'title'       => $input['title'] ?? $input['medium_name'],
+            'description' => $input['description'] ?? '',
+            'author'      => $input['author'] ?? '',
+            'publisher'   => $input['publisher'] ?? '',
+            'city'        => $input['city'] ?? '',
+            'date'        => date('Y-m-d_H-i-s'),
+            'size'        => $input['size'] ?? 0,
+            'mime_type'   => $input['mimetype'] ?? 'edusharing',
+            'license_id'  => $input['license_id'] ?? 1,
+            'public'      => $input['public'] ?? 1,   // default is public --> permission check over edusharing
 
             'owner_id' => auth()->user()->id,
         ]);
 
-        if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null'))
-        {
+        if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
             $this->createUsage(
                 $medium->id,
                 $input['subscribable_type'],
@@ -98,7 +99,7 @@ class EdusharingMediaAdapter implements MediaInterface
 
             // if a medium was added to a model with a 'medium_id'-column
             if (
-                !str_ends_with($input['subscribable_type'], 'Create') &&
+                ! str_ends_with($input['subscribable_type'], 'Create') &&
                 \Schema::hasColumn(app($input['subscribable_type'])->getTable(), 'medium_id')
             ) {
                 // instantly update its value, so the subscription can't end up as a data-corpse
@@ -107,15 +108,14 @@ class EdusharingMediaAdapter implements MediaInterface
             }
         }
 
-        LogController::set(get_class($this).'@'.__FUNCTION__, null, 1);
+        LogController::set(get_class($this) . '@' . __FUNCTION__, null, 1);
 
         return response()->json(
             MediumSubscription::where([
                 ['medium_id', $medium->id],
                 ['subscribable_type', $input['subscribable_type'] ?? null],
                 ['subscribable_id', $input['subscribable_id'] ?? null],
-            ])->with('medium')->first()
-        , 201);
+            ])->with('medium')->first(), 201);
     }
 
     public function show(Medium $medium)
@@ -124,69 +124,62 @@ class EdusharingMediaAdapter implements MediaInterface
         /*if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
             return request('download') ? redirect($medium->path) : redirect($medium->thumb_path);
         }*/
-        $params = $this->validateRequest();
+        $params        = $this->validateRequest();
         $subscriptions = [];
 
         if (isset($params['model'])) {
-            $class = 'App\\'.$params['model'];
+            $class = 'App\\' . $params['model'];
             $model = (new $class)::find($params['model_id']);
 
-            if ($model->isAccessible() AND $model->medium_id == $medium->id) {
-                $subscriptions = MediumSubscription::where('subscribable_type','App\\'.$params['model'])
-                    ->where('subscribable_id',$params['model_id'])
+            if ($model->isAccessible() and $model->medium_id == $medium->id) {
+                $subscriptions = MediumSubscription::where('subscribable_type', 'App\\' . $params['model'])
+                    ->where('subscribable_id', $params['model_id'])
                     ->where('medium_id', $medium->id)->get();
             }
         }
 
-        if (count($subscriptions) === 0) $subscriptions = $medium->subscriptions;
+        if (count($subscriptions) === 0) {
+            $subscriptions = $medium->subscriptions;
+        }
 
         // check if at least one subscription allows access
-        foreach ($subscriptions as $subscription)
-        {
-            if (!$this->checkIfUserHasSubscription($subscription) || $subscription->additional_data == null) continue;
+        foreach ($subscriptions as $subscription) {
+            if (! $this->checkIfUserHasSubscription($subscription) || $subscription->additional_data == null) {
+                continue;
+            }
 
             $edusharing = new Edusharing;
-            if (request('download'))
-            {
+            if (request('download')) {
                 $url = $edusharing->getRedirectUrl($subscription->additional_data, 'download', $subscription->owner_id);
                 if (request()->wantsJson()) {
                     return $url;
                 } else {
                     return redirect($url);
                 }
-            }
-            else if (request('content'))
-            {
+            } elseif (request('content')) {
                 $url = $edusharing->getRedirectUrl($subscription->additional_data, 'content', $subscription->owner_id);
                 if (request()->wantsJson()) {
                     return $url;
                 } else {
                     return redirect($url);
                 }
-            }
-            else if (request('preview'))
-            {
+            } elseif (request('preview')) {
                 $url = $edusharing->getPreview($subscription->additional_data, $subscription->owner_id);
 
-                if ($url->content == "")
-                {
+                if ($url->content == '') {
                     return redirect($url->info['redirect_url']);
-                }
-                else
-                {
+                } else {
                     return response($url->content)->header('Content-Type', 'image/png');
                 }
-            }
-            else
-            {
+            } else {
                 $node = $edusharing->getNodeByUsage($subscription->additional_data, $subscription->owner_id);
                 if (request()->wantsJson()) {
                     return [
                         'detailsSnippet' => $node['detailsSnippet'],
-                        'downloadUrl' => $node['node']['downloadUrl'],
-                        'preview' => $node['node']['preview'],
-                        'title' => $node['node']['title'],
-                        'name' => $node['node']['name'],
+                        'downloadUrl'    => $node['node']['downloadUrl'],
+                        'preview'        => $node['node']['preview'],
+                        'title'          => $node['node']['title'],
+                        'name'           => $node['node']['name'],
                     ];
                 } else {
                     $url = $node['node']['preview']['url'];
@@ -199,26 +192,22 @@ class EdusharingMediaAdapter implements MediaInterface
             }
         }
 
-        abort(403, "No permission to view Edusharing media");
+        abort(403, 'No permission to view Edusharing media');
     }
 
-    public function thumb(Medium $medium, $size) //todo: return smaller images/files/thumbs
+    public function thumb(Medium $medium, $size) // todo: return smaller images/files/thumbs
     {
 
         // Medium is public (sharing_level_id == 1) or user is owner
-        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id))
-        {
+        if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
             return redirect($medium->thumb_path);
         }
 
-        /* checkIfUserHasSubscription and visibility*/
-        if ($medium->subscriptions())
-        {
-            foreach ($medium->subscriptions as $subscription)
-            {
-                if ($this->checkIfUserHasSubscription($subscription))
-                {
-                    return redirect($medium->thumb_path); //return file or url
+        /* checkIfUserHasSubscription and visibility */
+        if ($medium->subscriptions()) {
+            foreach ($medium->subscriptions as $subscription) {
+                if ($this->checkIfUserHasSubscription($subscription)) {
+                    return redirect($medium->thumb_path); // return file or url
                 }
             }
         }
@@ -236,14 +225,11 @@ class EdusharingMediaAdapter implements MediaInterface
     {
         abort_unless(\Gate::allows('external_medium_edit'), 403);
 
-        if ($medium->owner_id === auth()->user()->id or is_admin())
-        {
+        if ($medium->owner_id === auth()->user()->id or is_admin()) {
             $medium->update($this->validateRequest());
 
             return response()->json($medium);
-        }
-        else
-        {
+        } else {
             return response()->json(['errors' => 'Only file-owner can edit'], 403);
         }
     }
@@ -257,10 +243,9 @@ class EdusharingMediaAdapter implements MediaInterface
          * - if not -> delete only medium_subscription
          */
         $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id']))
-        {
+        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $subscribable_type = $input['subscribable_type'];
-            $subscribable_id = $input['subscribable_id'];
+            $subscribable_id   = $input['subscribable_id'];
 
             $subscription = MediumSubscription::where([
                 ['subscribable_type', $subscribable_type],
@@ -278,13 +263,11 @@ class EdusharingMediaAdapter implements MediaInterface
             $subscription->delete();
         }
 
-        if ($medium->subscriptions()->count() <= 1)
-        {
+        if ($medium->subscriptions()->count() <= 1) {
             $medium->delete();
         }
 
-        if (request()->wantsJson())
-        {
+        if (request()->wantsJson()) {
             return ['message' => true];
         }
     }
@@ -293,10 +276,8 @@ class EdusharingMediaAdapter implements MediaInterface
     {
         try {
             $edusharing = new Edusharing;
-            $usage = $edusharing->createUsage($subscribable_type, $subscribable_id, $external_id);
-        }
-        catch (\Exception $e)
-        {
+            $usage      = $edusharing->createUsage($subscribable_type, $subscribable_id, $external_id);
+        } catch (\Exception $e) {
             dump($e->getMessage());
         }
 
@@ -307,37 +288,38 @@ class EdusharingMediaAdapter implements MediaInterface
                 'subscribable_id'   => $subscribable_id,
             ],
             [
-                'sharing_level_id'  => 1,
-                'visibility'        => 1,
-                'additional_data'   => $usage ?? '',
-                'owner_id'          => auth()->user()->id,
+                'sharing_level_id' => 1,
+                'visibility'       => 1,
+                'additional_data'  => $usage ?? '',
+                'owner_id'         => auth()->user()->id,
             ]);
         $subscribe->save();
     }
 
     public function checkIfUserHasSubscription($subscription)
     {
-        if (str_ends_with($subscription->subscribable_type, 'Create') || is_admin()) return true;
+        abort_unless(auth()->user() !== null, 401);
+
+        if (str_ends_with($subscription->subscribable_type, 'Create') || is_admin()) {
+            return true;
+        }
 
         switch ($subscription->subscribable_type) {
             case "App\Organization":
                 if (in_array($subscription->subscribable_id, auth()->user()->organizations()->pluck('organization_id')->toArray())
-                    and ($subscription->visibility == 1))
-                {
+                    and ($subscription->visibility == 1)) {
                     return true;
                 }
                 break;
             case "App\Group":
                 if (in_array($subscription->subscribable_id, auth()->user()->groups()->pluck('groups.id')->toArray())
-                    and ($subscription->visibility == 1))
-                {
+                    and ($subscription->visibility == 1)) {
                     return true;
                 }
                 break;
             case "App\User":
                 if ($subscription->subscribable_id == auth()->user()->id
-                    and ($subscription->visibility == 1))
-                {
+                    and ($subscription->visibility == 1)) {
                     return true;
                 }
                 break;
@@ -345,7 +327,7 @@ class EdusharingMediaAdapter implements MediaInterface
             case "App\Kanban":
             case "App\KanbanStatus":
             case "App\KanbanItem":
-                    return true; // media in kanbans should always be accessible
+                return true; // media in kanbans should always be accessible
                 break;
             default:
                 return $subscription->subscribable->isAccessible();
@@ -356,27 +338,27 @@ class EdusharingMediaAdapter implements MediaInterface
     protected function validateRequest()
     {
         return request()->validate([
-            'path' => 'sometimes',
-            'thumb_path' => 'sometimes',
-            'external_id' => 'sometimes',
-            'adapter' => 'sometimes',
+            'path'              => 'sometimes',
+            'thumb_path'        => 'sometimes',
+            'external_id'       => 'sometimes',
+            'adapter'           => 'sometimes',
             'subscribable_type' => 'sometimes',
-            'subscribable_id' => 'sometimes',
-            'repository' => 'sometimes',
-            'artefact' => 'sometimes',
-            'file.*' => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
-            'medium_name' => 'sometimes|string|nullable',
-            'model' => 'sometimes',
-            'model_id' => 'sometimes',
-            'title' => 'sometimes',
-            'size' => 'sometimes',
-            'mimetype' => 'sometimes',
-            'description' => 'sometimes',
-            'author' => 'sometimes',
-            'publisher' => 'sometimes',
-            'city' => 'sometimes',
-            'license_id' => 'sometimes',
-            'public' => 'sometimes',
+            'subscribable_id'   => 'sometimes',
+            'repository'        => 'sometimes',
+            'artefact'          => 'sometimes',
+            'file.*'            => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
+            'medium_name'       => 'sometimes|string|nullable',
+            'model'             => 'sometimes',
+            'model_id'          => 'sometimes',
+            'title'             => 'sometimes',
+            'size'              => 'sometimes',
+            'mimetype'          => 'sometimes',
+            'description'       => 'sometimes',
+            'author'            => 'sometimes',
+            'publisher'         => 'sometimes',
+            'city'              => 'sometimes',
+            'license_id'        => 'sometimes',
+            'public'            => 'sometimes',
         ]);
     }
 }

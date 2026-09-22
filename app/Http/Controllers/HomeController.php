@@ -31,9 +31,8 @@ class HomeController extends Controller
      */
     public function courses(): Collection
     {
-        $user      = auth()->user();
-        $period_id = $user->current_period_id;
-        $org_ids   = $user->organizations()->pluck('organizations.id');
+        $user = auth()->user();
+        $org_ids = $user->organizations()->pluck('organizations.id');
 
         // similar to user()->currentCurriculaEnrollments, but with all enroled organizations
         return Curriculum::select(
@@ -45,7 +44,6 @@ class HomeController extends Controller
             ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_subscriptions.subscribable_id')
             ->join('groups', 'groups.id', '=', 'group_user.group_id')
             ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
-            ->where('groups.period_id', $period_id)
             ->whereIn('groups.organization_id', $org_ids)
             ->where('group_user.user_id', $user->id)
             ->orderBy('curricula.title')
@@ -116,6 +114,9 @@ class HomeController extends Controller
 
         if ($favCount !== 0) {
             $query->withAllTags($favouriteTag);
+        } else {
+            $negativeTag = Tag::findFromString(trans('global.tag.hidden.singular')) ?? 0;
+            $query->withoutTags($negativeTag);
         }
 
         return $query->select('kanbans.id', 'kanbans.title', 'kanbans.owner_id', DB::raw($favCount . ' AS is_favourited'))->get();

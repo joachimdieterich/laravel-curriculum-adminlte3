@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\CurriculumSubscription;
 use App\Group;
 use App\Http\Controllers\Controller;
 use App\OrganizationRoleUser;
@@ -20,25 +19,23 @@ class GroupsApiController extends Controller
     public function store()
     {
         return Group::firstOrCreate([
-            'title'             => request()->input('title'),
-            'grade_id'          => request()->input('grade_id'),
-            'period_id'         => $this->getPeriod()->id,
-            'organization_id'   => request()->input('organization_id'),
-            'common_name'   => request()->input('common_name'),
+            'title'           => request()->input('title'),
+            'grade_id'        => request()->input('grade_id'),
+            'period_id'       => $this->getPeriod()->id,
+            'organization_id' => request()->input('organization_id'),
+            'common_name'     => request()->input('common_name'),
         ]);
-
-        //return Group::create($this->filteredRequest());
     }
 
     public function update(Group $group)
     {
         if (
             $group->update([
-                'title'             => (request()->input('title')) ?: $group->title,
-                'grade_id'          => (request()->input('grade_id')) ?: $group->grade_id,
-                'period_id'         => ($this->getPeriod()->id) ?: $group->period_id,
-                'organization_id'   => (request()->input('organization_id')) ?: $group->organization_id,
-                'common_name'       => (request()->input('common_name')) ?: $group->common_name,
+                'title'           => (request()->input('title')) ?: $group->title,
+                'grade_id'        => (request()->input('grade_id')) ?: $group->grade_id,
+                'period_id'       => ($this->getPeriod()->id) ?: $group->period_id,
+                'organization_id' => (request()->input('organization_id')) ?: $group->organization_id,
+                'common_name'     => (request()->input('common_name')) ?: $group->common_name,
             ])
         ) {
             return $group->fresh();
@@ -55,36 +52,25 @@ class GroupsApiController extends Controller
         return $group->users;
     }
 
-    public function destroy(Group $group)
+    public function destroy(Group $group): ?array
     {
-
-        // first delete all relations
-        CurriculumSubscription::where('subscribable_type', "App\Group")
-            ->where('subscribable_id', $group->id)
-            ->delete();
-        //$group->curricula()->detach();
-        $group->users()->detach();
-
-        //todo: delete subscriptions ( eg. kanban), yet no relation in Group.php
-
-        if ($group->delete()) {
-            return ['message' => 'Successful deleted'];
-        }
+        return ['message' => $group->delete() ? 'Successful deleted' : 'Deletion failed'];
     }
 
     public function enrol()
     {
         $group = Group::findOrFail(request()->input('group_id'));
-        $user = User::findOrFail(request()->input('user_id'));
+        $user  = User::findOrFail(request()->input('user_id'));
 
-        OrganizationRoleUser::firstOrCreate([
-            'user_id' => $user->id,
-            'organization_id' => $group->organization->id, ],
-            ['role_id' => 6], //enrol as student
+        OrganizationRoleUser::firstOrCreate(
+            [
+                'user_id'         => $user->id,
+                'organization_id' => $group->organization->id,
+            ],
+            ['role_id' => 6], // enrol as student
         );
 
-        $return[] = $user->groups()->syncWithoutDetaching(request()->input('group_id'),
-        );
+        $return[] = $user->groups()->syncWithoutDetaching(request()->input('group_id'));
 
         return $return;
     }
@@ -97,32 +83,29 @@ class GroupsApiController extends Controller
         }
     }
 
-    protected function filteredRequest()
-    {
-        return array_filter(request()->all()); //filter to ignore fields with null values
-    }
-
     /**
      * @return Period
      */
     private function getPeriod()
     {
-        if ((request()->input('period')) and strtolower(request()->input('period')) != 'null') {
-            $dates = explode('/', request()->input('period'), 2); //get begin and end of period
+        if ((request()->input('period')) && strtolower(request()->input('period')) != 'null') {
+            $dates = explode('/', request()->input('period'), 2); // get begin and end of period
 
             return Period::firstOrCreate(
                 [
                     'title' => request()->input('period'),
                 ],
                 [
-                    'begin' => Carbon::createFromDate(ltrim($dates[0], '('))->format('Y-m-d h:m:s'),
-                    'end' => Carbon::createFromDate(rtrim($dates[1], ')'))->format('Y-m-d h:m:s'),
-                    'owner_id' => 1, //api call
+                    'begin'    => Carbon::createFromDate(ltrim($dates[0], '('))->format('Y-m-d h:m:s'),
+                    'end'      => Carbon::createFromDate(rtrim($dates[1], ')'))->format('Y-m-d h:m:s'),
+                    'owner_id' => 1, // api call
                 ]);
-        } elseif ((request()->input('period_id')) and strtolower(request()->input('period_id')) != 'null') {
-            return Period::find(request()->input('period_id'));
-        } else {
-            return Period::find(1); //fallback
         }
+
+        if ((request()->input('period_id')) && strtolower(request()->input('period_id')) != 'null') {
+            return Period::find(request()->input('period_id'));
+        }
+
+        return Period::find(1); // fallback
     }
 }

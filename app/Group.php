@@ -113,7 +113,7 @@ class Group extends Model
 
     public function kanbanSubscriptions()
     {
-        return $this->morphOne('App\KanbanSubscription', 'subscribable');
+        return $this->morphMany('App\KanbanSubscription', 'subscribable');
     }
 
     public function kanbans()
@@ -128,9 +128,9 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function videoconferenceSubscription()
+    public function videoconferenceSubscriptions()
     {
-        return $this->morphOne('App\VideoconferenceSubscription', 'subscribable');
+        return $this->morphMany('App\VideoconferenceSubscription', 'subscribable');
     }
 
     public function videoconferences()
@@ -145,9 +145,9 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function mapSubscription()
+    public function mapSubscriptions()
     {
-        return $this->morphOne('App\MapSubscription', 'subscribable');
+        return $this->morphMany('App\MapSubscription', 'subscribable');
     }
 
     public function maps()
@@ -162,9 +162,9 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function lmsReferenceSubscription()
+    public function lmsReferenceSubscriptions()
     {
-        return $this->morphOne('App\LmsReferenceSubscription', 'subscribable');
+        return $this->morphMany('App\LmsReferenceSubscription', 'subscribable');
     }
 
     public function lmsReferences()
@@ -179,9 +179,9 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function planSubscription()
+    public function planSubscriptions()
     {
-        return $this->morphOne('App\PlanSubscription', 'subscribable');
+        return $this->morphMany('App\PlanSubscription', 'subscribable');
     }
 
     public function plans()
@@ -196,7 +196,7 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function logbookSubscription()
+    public function logbookSubscriptions()
     {
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
     }
@@ -225,11 +225,11 @@ class Group extends Model
         static::deleting(function (Group $group) {
             $group->kanbanSubscriptions()->delete();
             $group->curriculumSubscriptions()->delete();
-            $group->lmsReferenceSubscription()->delete();
-            $group->mapSubscription()->delete();
-            $group->planSubscription()->delete();
-            $group->logbookSubscription()->delete();
-            $group->videoconferenceSubscription()->delete();
+            $group->lmsReferenceSubscriptions()->delete();
+            $group->mapSubscriptions()->delete();
+            $group->planSubscriptions()->delete();
+            $group->logbookSubscriptions()->delete();
+            $group->videoconferenceSubscriptions()->delete();
             $group->exams()->delete();
         });
     }

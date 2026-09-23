@@ -22,21 +22,21 @@ class Exam extends Model
         'tutorial_key',
         'group_id',
         'created_by',
-        'updated_by'
+        'updated_by',
     ];
 
     protected $casts = [
-        'id' => 'integer',
-        'tool' => 'string',
+        'id'           => 'integer',
+        'tool'         => 'string',
         'test_booklet' => 'string',
-        'subject' => 'string',
-        'school_key' => 'string',
+        'subject'      => 'string',
+        'school_key'   => 'string',
         'tutorial_key' => 'string',
-        'status' => 'integer',
-        'group_id' => 'integer',
-        'created_by' => 'integer',
-        'created_at' => 'date:Y-m-d',
-        'updated_at' => 'date:Y-m-d'
+        'status'       => 'integer',
+        'group_id'     => 'integer',
+        'created_by'   => 'integer',
+        'created_at'   => 'date:Y-m-d',
+        'updated_at'   => 'date:Y-m-d',
     ];
 
     public function getRouteKeyName()
@@ -67,5 +67,4 @@ class Exam extends Model
     {
         return Carbon::createFromTimeString($value)->format('d.m.Y');
     }
-
 }

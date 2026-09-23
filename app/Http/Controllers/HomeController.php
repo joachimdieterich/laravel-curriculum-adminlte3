@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Curriculum;
 use App\Domains\Exams\Models\Exam;
+use App\Tag;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -11,7 +14,7 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
     public function index()
     {
@@ -25,26 +28,22 @@ class HomeController extends Controller
 
     /**
      * Returns the courses of the user
-     * 
-     * @return Collection
      */
     public function courses(): Collection
     {
         $user = auth()->user();
-        $period_id = $user->current_period_id;
         $org_ids = $user->organizations()->pluck('organizations.id');
 
         // similar to user()->currentCurriculaEnrollments, but with all enroled organizations
-        return \App\Curriculum::select(
-                'curricula.id', 'curricula.title', 'groups.title AS group_title',
-                'curriculum_subscriptions.id AS course_id',
-                'curriculum_subscriptions.subscribable_id AS group_id'
-            )
+        return Curriculum::select(
+            'curricula.id', 'curricula.title', 'groups.title AS group_title',
+            'curriculum_subscriptions.id AS course_id',
+            'curriculum_subscriptions.subscribable_id AS group_id'
+        )
             ->leftjoin('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
             ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_subscriptions.subscribable_id')
             ->join('groups', 'groups.id', '=', 'group_user.group_id')
             ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
-            ->where('groups.period_id', $period_id)
             ->whereIn('groups.organization_id', $org_ids)
             ->where('group_user.user_id', $user->id)
             ->orderBy('curricula.title')
@@ -60,8 +59,6 @@ class HomeController extends Controller
 
     /**
      * Returns the groups of the user
-     * 
-     * @return Collection
      */
     public function groups(): Collection
     {
@@ -73,8 +70,6 @@ class HomeController extends Controller
 
     /**
      * Returns the 10 most recent achievements of the user
-     * 
-     * @return Collection
      */
     public function achievements(): Collection
     {
@@ -84,7 +79,7 @@ class HomeController extends Controller
             ->limit(10)
             ->with([
                 'referenceable:id,title',
-                'history' => function($query) {
+                'history' => function ($query) {
                     $query->orderBy('created_at', 'desc')->limit(1);
                 },
                 'history.owner',
@@ -94,8 +89,6 @@ class HomeController extends Controller
 
     /**
      * Returns the logbooks of the user
-     * 
-     * @return Collection
      */
     public function logbooks(): Collection
     {
@@ -106,8 +99,6 @@ class HomeController extends Controller
 
     /**
      * Returns favoured kanbans if exists, else all accessible to user
-     * 
-     * @return Collection
      */
     public function kanbans(): Collection
     {
@@ -118,18 +109,21 @@ class HomeController extends Controller
                 ->where('user_id', auth()->user()->id);
         }]);
 
-        $favouriteTag = \App\Tag::findFromString(trans('global.tag.favourite.singular')) ?? 0;
-        $favCount = (clone $query)->withAllTags($favouriteTag)->count();
+        $favouriteTag = Tag::findFromString(trans('global.tag.favourite.singular')) ?? 0;
+        $favCount     = (clone $query)->withAllTags($favouriteTag)->count();
 
-        if ($favCount !== 0) $query->withAllTags($favouriteTag);
+        if ($favCount !== 0) {
+            $query->withAllTags($favouriteTag);
+        } else {
+            $negativeTag = Tag::findFromString(trans('global.tag.hidden.singular')) ?? 0;
+            $query->withoutTags($negativeTag);
+        }
 
         return $query->select('kanbans.id', 'kanbans.title', 'kanbans.owner_id', DB::raw($favCount . ' AS is_favourited'))->get();
     }
 
     /**
      * Returns the plans of the user
-     * 
-     * @return Collection
      */
     public function plans(): Collection
     {

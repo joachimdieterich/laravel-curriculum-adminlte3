@@ -1,3 +1,10 @@
+## 2.0.1 (2026-09-17)
+- Home: set Curricula-InfoBox to always be visible
+- Home: added Curriculum-Modal
+- Home: fixed hidden kanbans being listed
+- Home: removed filtering courses by the users current_period_id
+- Helper: fixed grouping of where-clause, fixing non-functional search
+
 ## 2.0.0 (2026-09-15)
 - new dashboard
 - removed sidebar (still accessible for admin-role)

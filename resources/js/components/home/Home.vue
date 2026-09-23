@@ -12,8 +12,9 @@
                 :text="trans('global.curriculum.title')"
                 icon="fa-th"
                 icon-background-class="bg-cyan"
-                :hide-if-empty="true"
                 href="/curricula"
+                :has-modal="isVisible.courses"
+                @open-modal="openModal('curriculum-modal')"
                 @error="handleError"
             >
                 <template #entry="{ entry }">
@@ -34,21 +35,21 @@
             </InfoBox>
 
             <InfoBox v-if="isVisible.groups"
-                model="groups"
-                :text="trans('global.group.title')"
-                icon="fa-users"
-                icon-background-class="bg-purple"
-                @error="handleError"
+                     model="groups"
+                     :text="trans('global.group.title')"
+                     icon="fa-users"
+                     icon-background-class="bg-purple"
+                     @error="handleError"
             />
 
             <InfoBox v-if="isVisible.achievements"
-                model="achievements"
-                :disable-link="true"
-                :text="trans('global.achievement.recent')"
-                icon="fa-trophy"
-                icon-background-class="bg-blue"
-                :hide-if-empty="true"
-                @error="handleError"
+                     model="achievements"
+                     :disable-link="true"
+                     :text="trans('global.achievement.recent')"
+                     icon="fa-trophy"
+                     icon-background-class="bg-blue"
+                     :hide-if-empty="true"
+                     @error="handleError"
             >
                 <template #entry="{ entry }">
                     <span
@@ -104,7 +105,7 @@
                 model="logbooks"
                 :text="trans('global.logbook.title')"
                 icon="fa-book"
-                icon-background-class="bg-red"    
+                icon-background-class="bg-red"
                 :has-modal="true"
                 @open-modal="openModal('logbook-modal')"
                 @error="handleError"
@@ -119,7 +120,7 @@
                 @open-modal="openModal('kanban-modal')"
                 @error="handleError"
             />
-    
+
             <InfoBox
                 model="plans"
                 :text="trans('global.plan.title')"
@@ -132,11 +133,11 @@
             />
 
             <InfoBox v-if="isVisible.users"
-                model="users"
-                :text="trans('global.user_management')"
-                icon="fa-user"
-                icon-background-class="bg-blue"
-                :header-only="true"
+                     model="users"
+                     :text="trans('global.user_management')"
+                     icon="fa-user"
+                     icon-background-class="bg-blue"
+                     :header-only="true"
             />
 
             <InfoBox
@@ -162,6 +163,7 @@
                 </template>
             </InfoBox>
         </div>
+        <CurriculumModal/>
         <LogbookModal/>
         <KanbanModal/>
         <PlanModal/>
@@ -170,6 +172,7 @@
     </div>
 </template>
 <script>
+import '@vuepic/vue-datepicker/dist/main.css';
 import InfoBox from '../uiElements/InfoBox.vue';
 import ProgressBar from '../uiElements/ProgressBar.vue';
 import LogbookModal from '../logbook/LogbookModal.vue';
@@ -177,10 +180,14 @@ import KanbanModal from '../kanban/KanbanModal.vue';
 import PlanModal from '../plan/PlanModal.vue';
 import SubscribeExamModal from '../exam/SubscribeExamModal.vue';
 import MediumModal from '../media/MediumModal.vue';
+import CurriculumModal from "../curriculum/CurriculumModal.vue";
 
 export default {
     name: 'Home',
     mounted() {
+        this.$eventHub.on('curriculum-added', (curriculum) => {
+            window.location.href = '/curricula/' + curriculum.id;
+        });
         this.$eventHub.on('logbook-added', (logbook) => {
             window.location.href = '/logbooks/' + logbook.id;
         });
@@ -221,6 +228,7 @@ export default {
             const isAdmin = this.checkPermission('is_admin');
 
             return {
+                courses: isTeacher,
                 progress: !isTeacher || isAdmin,
                 groups: isTeacher,
                 plans: isTeacher,
@@ -231,6 +239,7 @@ export default {
         },
     },
     components: {
+        CurriculumModal,
         InfoBox,
         ProgressBar,
         LogbookModal,

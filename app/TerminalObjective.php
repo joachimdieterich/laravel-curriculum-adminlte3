@@ -21,19 +21,19 @@ class TerminalObjective extends Model
         'objective_type_id',
         'visibility',
     ];
+
     protected $casts = [
-        'title' => CleanHtml::class,
-        'description' => CleanHtml::class,
-        'visibility' => 'boolean',
+        'title'                     => CleanHtml::class,
+        'description'               => CleanHtml::class,
+        'visibility'                => 'boolean',
         'referencing_curriculum_id' => 'object',
-        'updated_at' => 'datetime:d.m.Y H:i',
-        'created_at'  => 'datetime',
+        'updated_at'                => 'datetime:d.m.Y H:i',
+        'created_at'                => 'datetime',
     ];
 
     /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param  \DateTimeInterface  $date
      * @return string
      */
     protected function serializeDate(DateTimeInterface $date)
@@ -159,7 +159,7 @@ class TerminalObjective extends Model
 
     public static function booted(): void
     {
-        static::deleting(static function(TerminalObjective $terminal) { // before delete() method call this
+        static::deleting(function (TerminalObjective $terminal) { // before delete() method call this
             $terminal->achievements()->delete();
             $terminal->subscriptions()->delete();
             $terminal->mediaSubscriptions()->delete();
@@ -171,11 +171,11 @@ class TerminalObjective extends Model
             $terminal->successors()->delete();
             $terminal->enablingObjectives->each->delete();
         });
-        static::deleted(static function(TerminalObjective $terminal) {
-            Curriculum::find($terminal->curriculum()->get()->first()->id)?->touch();
+        static::deleted(function (TerminalObjective $terminal) {
+            $terminal->curriculum()->get()->first()?->touch();
         });
-        static::saved(static function(TerminalObjective $terminal) {
-            Curriculum::find($terminal->curriculum()->get()->first()->id)?->touch();
+        static::saved(function (TerminalObjective $terminal) {
+            $terminal->curriculum()->get()->first()?->touch();
         });
     }
 }

@@ -23,12 +23,12 @@ class EnablingObjective extends Model
     ];
 
     protected $casts = [
-        'title' => CleanHtml::class,
-        'description' => CleanHtml::class,
-        'visibility' => 'boolean',
+        'title'                     => CleanHtml::class,
+        'description'               => CleanHtml::class,
+        'visibility'                => 'boolean',
         'referencing_curriculum_id' => 'object',
-        'updated_at' => 'datetime:d.m.Y H:i',
-        'created_at'  => 'datetime',
+        'updated_at'                => 'datetime:d.m.Y H:i',
+        'created_at'                => 'datetime',
     ];
 
     protected $with = ['terminalObjective', 'level:id,title,css_color'];
@@ -36,7 +36,6 @@ class EnablingObjective extends Model
     /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param  \DateTimeInterface  $date
      * @return string
      */
     protected function serializeDate(DateTimeInterface $date)
@@ -162,7 +161,7 @@ class EnablingObjective extends Model
 
     public static function booted(): void
     {
-        static::deleting(static function(EnablingObjective $enabling) { // before delete() method call this
+        static::deleting(function (EnablingObjective $enabling) { // before delete() method call this
             $enabling->subscriptions()->delete();
             $enabling->mediaSubscriptions()->delete();
             $enabling->quoteSubscriptions()->delete();
@@ -172,11 +171,11 @@ class EnablingObjective extends Model
             $enabling->referenceSubscriptions()->delete();
             $enabling->achievements->each->delete();
         });
-        static::deleted(static function(EnablingObjective $enabling) {
-            Curriculum::find($enabling->curriculum()->get()->first()->id)?->touch();
+        static::deleted(function (EnablingObjective $enabling) {
+            $enabling->curriculum()->get()->first()?->touch();
         });
-        static::saved(static function(EnablingObjective $enabling) {
-            Curriculum::find($enabling->curriculum()->get()->first()->id)?->touch();
+        static::saved(function (EnablingObjective $enabling) {
+            $enabling->curriculum()->get()->first()?->touch();
         });
     }
 }

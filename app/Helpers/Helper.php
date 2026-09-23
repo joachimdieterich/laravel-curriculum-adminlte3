@@ -1,38 +1,40 @@
 <?php
 
-use App\User;
-use Illuminate\Support\Facades\DB;
-use App\Tag;
+use App\Config;
 use App\Medium;
 use App\MediumSubscription;
+use App\Tag;
+use App\User;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 if (! function_exists('getEntriesForSelect2ByModel')) {
     /**
      * helper function to paginate on select2 fields
-     * @param $model
-     * @param string|array $field one or multiple fields to search term
-     * @param string $orderby
-     * @param string $text
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @param  string|array  $field  one or multiple fields to search term
+     * @param  string  $orderby
+     * @param  string  $text
+     * @return JsonResponse
      */
     function getEntriesForSelect2ByModel($model, $field = 'title', $orderby = 'title', $text = 'title', $id = 'id')
     {
         $input = request()->validate([
-            'page' => 'sometimes|integer',
-            'term' => 'sometimes|string|max:255|nullable',
+            'page'     => 'sometimes|integer',
+            'term'     => 'sometimes|string|max:255|nullable',
             'selected' => 'sometimes|nullable',
         ]);
 
-        if (request()->has('selected'))
-        {
-            //dump($input['selected']);
-            //dump($model::whereIn($id, (array)$input['selected'])->get());
-            return response()->json($model::whereIn($id, explode(",", $input['selected']))->get());
-        }
-        else
-        {
-            $page = $input['page'] ?? 1;
+        if (request()->has('selected')) {
+            // dump($input['selected']);
+            // dump($model::whereIn($id, (array)$input['selected'])->get());
+            return response()->json($model::whereIn($id, explode(',', $input['selected']))->get());
+        } else {
+            $page        = $input['page'] ?? 1;
             $resultCount = 25;
 
             $offset = ($page - 1) * $resultCount;
@@ -41,7 +43,7 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 
             $count = $model::where(   // count all enties FIRST with filter to get pagination working
                 function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
+                    foreach ((array) $field as $f) {
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
@@ -49,59 +51,54 @@ if (! function_exists('getEntriesForSelect2ByModel')) {
 
             $entries = $model::where(
                 function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
+                    foreach ((array) $field as $f) {
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
                 ->orderBy($orderby)
                 ->skip($offset)
                 ->take($resultCount)
-                ->get([DB::raw( $id . ' as id,' . $text . ' as text')]); //match given $text and $id to get proper values
+                ->get([DB::raw($id . ' as id,' . $text . ' as text')]); // match given $text and $id to get proper values
 
-            $endCount = $offset + $resultCount;
+            $endCount  = $offset + $resultCount;
             $morePages = $count > $endCount;
 
-            $results = array(
-                "results" => $entries,
-                "pagination" => array(
-                    "more" => $morePages
-                )
-            );
+            $results = [
+                'results'    => $entries,
+                'pagination' => [
+                    'more' => $morePages,
+                ],
+            ];
 
             return response()->json($results);
         }
 
-
     }
 }
 
-if (! function_exists('getEntriesForSelect2ByCollection'))
-{
+if (! function_exists('getEntriesForSelect2ByCollection')) {
     /**
      * helper function to paginate on select2 fields. Actually needs a Builder instead of a Collection
-     * @param $collection
-     * @param string $table
-     * @param string|array $field one or multiple table-columns to filter by
-     * @param string $orderby
-     * @param string $text
-     * @param string $id column to use as id
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @param  string  $table
+     * @param  string|array  $field  one or multiple table-columns to filter by
+     * @param  string  $orderby
+     * @param  string  $text
+     * @param  string  $id  column to use as id
+     * @return JsonResponse
      */
-    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
+    function getEntriesForSelect2ByCollection($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id')
     {
         $input = request()->validate([
-            'page' => 'sometimes|integer',
-            'term' => 'sometimes|string|max:255|nullable',
+            'page'     => 'sometimes|integer',
+            'term'     => 'sometimes|string|max:255|nullable',
             'selected' => 'sometimes|nullable',
         ]);
 
-        if (request()->has('selected'))
-        {
-            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->get());
-        }
-        else
-        {
-            $page = $input['page'];
+        if (request()->has('selected')) {
+            return response()->json($collection->whereIn($table . $id, (array) $input['selected'])->get());
+        } else {
+            $page        = $input['page'];
             $resultCount = 25;
 
             $offset = ($page - 1) * $resultCount;
@@ -110,7 +107,7 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
 
             $count = $collection->where(  // count all entries FIRST with filter to get pagination working
                 function ($query) use ($field, $term) {
-                    foreach ((array)$field as $f) {
+                    foreach ((array) $field as $f) {
                         $query->orWhere($f, 'LIKE', '%' . $term . '%');
                     }
                 })
@@ -124,43 +121,42 @@ if (! function_exists('getEntriesForSelect2ByCollection'))
                 ->select([$table . $id, DB::raw($text . ' as text')])
                 ->get();
 
-            $endCount = $offset + $resultCount;
+            $endCount  = $offset + $resultCount;
             $morePages = $count > $endCount;
 
-            $results = array(
-                "results" => $entries,
-                "pagination" => array(
-                    "more" => $morePages
-                )
-            );
+            $results = [
+                'results'    => $entries,
+                'pagination' => [
+                    'more' => $morePages,
+                ],
+            ];
 
             return response()->json($results);
         }
     }
 }
 
-if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
-{
+if (! function_exists('getEntriesForSelect2ByCollectionAlternative')) {
     /**
      * helper function to paginate on select2 fields. Actually needs a Collection, not a Builder
-     * @param $collection
-     * @param string $table
-     * @param string|array $field one or multiple table-columns to filter by
-     * @param string $orderby
-     * @param string $text
-     * @param string $id column to use as id
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @param  string  $table
+     * @param  string|array  $field  one or multiple table-columns to filter by
+     * @param  string  $orderby
+     * @param  string  $text
+     * @param  string  $id  column to use as id
+     * @return JsonResponse
      */
-    function getEntriesForSelect2ByCollectionAlternative($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id' )
+    function getEntriesForSelect2ByCollectionAlternative($collection, $table = '', $field = 'title', $orderby = 'title', $text = 'title', $id = 'id')
     {
         $input = request()->validate([
-            'page' => 'sometimes|integer',
-            'term' => 'sometimes|string|max:255|nullable',
+            'page'     => 'sometimes|integer',
+            'term'     => 'sometimes|string|max:255|nullable',
             'selected' => 'sometimes|nullable',
         ]);
 
         if (request()->has('selected')) {
-            return response()->json($collection->whereIn($table . $id, (array)$input['selected'])->values());
+            return response()->json($collection->whereIn($table . $id, (array) $input['selected'])->values());
         }
 
         $page        = $input['page'];
@@ -168,8 +164,8 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
 
         $offset = ($page - 1) * $resultCount;
 
-        $term = strtolower($input['term']); // str_contains is case sensitive
-        $allEntries = $collection->filter(function($obj) use ($field, $term) {
+        $term       = strtolower($input['term']); // str_contains is case sensitive
+        $allEntries = $collection->filter(function ($obj) use ($field, $term) {
             // if any match is true, return the entry
             return array_any(
                 (array) $field,
@@ -179,16 +175,16 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
             );
         });
 
-        $count = Count($allEntries);
+        $count = count($allEntries);
 
         $entries = $allEntries
             ->sortBy($orderby, SORT_NATURAL)
             ->skip($offset)
             ->take($resultCount)
-            ->select([$table.$id, $text])
-            ->map(function($entry) use ($table, $id, $text) {
+            ->select([$table . $id, $text])
+            ->map(function ($entry) use ($table, $id, $text) {
                 return [
-                    'id' => $entry[$table.$id],
+                    'id'   => $entry[$table . $id],
                     'text' => $entry[$text],
                 ];
             })
@@ -197,67 +193,69 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative'))
         $endCount  = $offset + $resultCount;
         $morePages = $count > $endCount;
 
-        $results = array(
-            "results" => $entries,
-            "pagination" => array(
-                "more" => $morePages
-            )
-        );
+        $results = [
+            'results'    => $entries,
+            'pagination' => [
+                'more' => $morePages,
+            ],
+        ];
 
         return response()->json($results);
     }
 }
 
-if (! function_exists('getSubscribedModels'))
-{
+if (! function_exists('getSubscribedModels')) {
     /**
      * generalized function to get all entries of a model that are subscribed to the user
-     * @param string|Builder $model either model::class or a builder-instance, e.g. $user->kanbans()
-     * @param bool $withOwned also get entries owned by the user
-     * @return Builder
+     *
+     * @param  string|Builder  $model  either model::class or a builder-instance, e.g. $user->kanbans()
+     * @param  bool  $withOwned  also get entries owned by the user
      */
     function getSubscribedModels($model, $withOwned = true): Builder
     {
         // parse model to a query-builder if classname is given
-        if (is_string($model)) $model = $model::query();
-
-        $model->whereHas('subscriptions', function ($q) {
-            $q->where(function ($q) {
-                $q->where('subscribable_type', 'App\\User')
-                    ->where('subscribable_id', auth()->user()->id);
-            })->orWhere(function ($q) {
-                $q->where('subscribable_type', 'App\\Group')
-                    ->whereIn('subscribable_id', auth()->user()->groups()->pluck('groups.id'));
-            })
-            ->orWhere(function ($q) {
-                $q->where('subscribable_type', 'App\\Organization')
-                    ->whereIn('subscribable_id', auth()->user()->organizations()->pluck('organizations.id'));
-            });
-        });
-
-        if ($withOwned) {
-            $model->orWhere('owner_id', auth()->user()->id);
+        if (is_string($model)) {
+            $model = $model::query();
         }
+
+        $model->where(function ($q) use ($withOwned) {
+            $q->whereHas('subscriptions', function ($q) {
+                $q->where(function ($q) {
+                    $q->where('subscribable_type', 'App\\User')
+                        ->where('subscribable_id', auth()->user()->id);
+                })->orWhere(function ($q) {
+                    $q->where('subscribable_type', 'App\\Group')
+                        ->whereIn('subscribable_id', auth()->user()->groups()->pluck('groups.id'));
+                })
+                    ->orWhere(function ($q) {
+                        $q->where('subscribable_type', 'App\\Organization')
+                            ->whereIn('subscribable_id', auth()->user()->organizations()->pluck('organizations.id'));
+                    });
+            });
+
+            if ($withOwned) {
+                $q->orWhere('owner_id', auth()->user()->id);
+            }
+        });
 
         return $model;
     }
 }
 
-if (! function_exists('getDataTableWithEntries'))
-{
+if (! function_exists('getDataTableWithEntries')) {
     /**
      * helper function to get all entries for select2 fields
-     * @param Illuminate\Database\Eloquent\Builder $query the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
-     * @param bool $hasTags does the model have tags?
-     * @param bool $global include ressources that are globally available (e.g. for Curricula)
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @param  Builder  $query  the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
+     * @param  bool  $hasTags  does the model have tags?
+     * @param  bool  $global  include ressources that are globally available (e.g. for Curricula)
      */
-    function getDataTableWithEntries($query, $hasTags = false, $global = false): \Illuminate\Http\JsonResponse
+    function getDataTableWithEntries($query, $hasTags = false, $global = false): JsonResponse
     {
-        $withOwned = false;
+        $withOwned      = false;
         $withSubscribed = false;
-        $tags = $hasTags ? request('tags') ?? [] : null;
-        $negativeTags = $hasTags ? request('negativeTags') ?? [] : null;
+        $tags           = $hasTags ? request('tags') ?? [] : null;
+        $negativeTags   = $hasTags ? request('negativeTags') ?? [] : null;
 
         // requests from /groups/{id} only need entries that are shared with the group
         if (request()->has(['group_id'])) {
@@ -268,7 +266,7 @@ if (! function_exists('getDataTableWithEntries'))
             $query->whereHas('subscriptions', function ($q) use ($group_id) {
                 $q->where([
                     'subscribable_type' => 'App\\Group',
-                    'subscribable_id' => $group_id,
+                    'subscribable_id'   => $group_id,
                 ]);
             });
         } else {
@@ -281,29 +279,36 @@ if (! function_exists('getDataTableWithEntries'))
                 case 'shared_by_me':    $query->where('owner_id', auth()->user()->id)->whereHas('subscriptions');
                     break;
                 case 'by_organization': $query->whereHas('subscriptions', function ($query) {
-                                            $query->where([
-                                                'subscribable_type' => 'App\\Organization',
-                                                'subscribable_id' => auth()->user()->current_organization_id,
-                                            ]);
-                                        });
+                    $query->where([
+                        'subscribable_type' => 'App\\Organization',
+                        'subscribable_id'   => auth()->user()->current_organization_id,
+                    ]);
+                });
                     break;
                 case 'all':             $withSubscribed = $withOwned = true;
                     break;
                 case 'hidden':          $withSubscribed = $withOwned = true;
-                                        $tags[] = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
+                    $tags[]                             = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
                     break;
                 case 'favourite':
                 default:                $withSubscribed = $withOwned = true;
-                                        if ($hasTags) $tags[] = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
+                    if ($hasTags) {
+                        $tags[] = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
+                    }
                     break;
             }
         }
 
         try {
-            if ($withSubscribed) $query = getSubscribedModels($query, $withOwned);
-            else if ($withOwned) $query->orWhere('owner_id', auth()->user()->id); // only get owned entries
+            if ($withSubscribed) {
+                $query = getSubscribedModels($query, $withOwned);
+            } elseif ($withOwned) {
+                $query->orWhere('owner_id', auth()->user()->id);
+            } // only get owned entries
 
-            if ($global && request('filter') === 'all') $query->orWhere('type_id', 1);
+            if ($global && request('filter') === 'all') {
+                $query->orWhere('type_id', 1);
+            }
 
             // only apply tag-filters if model has tags
             if ($hasTags) {
@@ -313,9 +318,9 @@ if (! function_exists('getDataTableWithEntries'))
                 }]);
 
                 $favouriteTagId = Tag::findFromString(trans('global.tag.favourite.singular'))?->id ?? 0;
-                $hiddenTagId = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
-                $tableName = $query->getModel()->getTable();
-                $modelName = $query->getModel()::class;
+                $hiddenTagId    = Tag::findFromString(trans('global.tag.hidden.singular'))?->id ?? 0;
+                $tableName      = $query->getModel()->getTable();
+                $modelName      = $query->getModel()::class;
 
                 // append is_favourite and is_hidden as separate fields
                 // we do it this way, because the built-in function would fire a separate query for each entry
@@ -333,27 +338,27 @@ if (! function_exists('getDataTableWithEntries'))
                 );
 
                 // if hidden-tag is not explicitly included in search-tags, exclude hidden entries
-                if ($hiddenTagId !== 0 && !in_array($hiddenTagId, $tags)) {
+                if ($hiddenTagId !== 0 && ! in_array($hiddenTagId, $tags)) {
                     $negativeTags[] = $hiddenTagId;
                 }
 
                 // apply filter
-                if (!empty($tags)) {
+                if (! empty($tags)) {
                     $tags = Tag::whereIn('id', $tags)->get();
                     $query->withAllTags($tags);
                 }
 
                 // apply negative-filter
-                if (!empty($negativeTags)) {
+                if (! empty($negativeTags)) {
                     $negativeTags = Tag::whereIn('id', $negativeTags)->get();
                     $query->withoutTags($negativeTags);
                 }
             }
-    
-            return \Yajra\DataTables\DataTables::of($query)->make(true);
-        } catch (\Throwable $th) {
+
+            return DataTables::of($query)->make(true);
+        } catch (Throwable $th) {
             return response()->json([
-                'error' => 'An error occurred while fetching the data.',
+                'error'   => 'An error occurred while fetching the data.',
                 'message' => $th->getMessage(),
             ], 500);
         }
@@ -384,7 +389,6 @@ if (! function_exists('getImmediateChildrenByTagName')) {
      * have the tagname specified in $tagName. Non-recursive
      * Source: http://stackoverflow.com/questions/3049648/php-domelementgetelementsbytagname-anyway-to-get-just-the-immediate-matching
      *
-     * @param  DOMElement  $element
      * @param  string  $tagName
      * @return array
      */
@@ -407,15 +411,15 @@ if (! function_exists('relativeToAbsolutePaths')) {
         return preg_replace_callback(
             '/<img\s+[^>]*(src="\/media\/(.*?)")(\s+[^>]*)?[^>]*>/mi',
             function ($match) {
-                $media = App\Medium::find($match[2]);
+                $media = Medium::find($match[2]);
 
                 if (! file_exists($media->absolutePath())) {
-                    return ''; //"<!--File does not exist-->"; //todo: remove from db?
+                    return ''; // "<!--File does not exist-->"; //todo: remove from db?
                 }
                 if ($media !== null) {
-                    return str_replace($match[1], 'src="'.$media->absolutePath().'"' , $match[0]);
+                    return str_replace($match[1], 'src="' . $media->absolutePath() . '"', $match[0]);
                 } else {
-                    return ''; //"<!--Image not available-->";
+                    return ''; // "<!--Image not available-->";
                 }
             },
             $input
@@ -504,13 +508,14 @@ if (! function_exists('find_all_files')) {
     function find_all_files($dir)
     {
         $result = [];
-        $root = scandir($dir);
+        $root   = scandir($dir);
         foreach ($root as $value) {
             if ($value === '.' || $value === '..') {
                 continue;
             }
             if (is_file("$dir/$value")) {
                 $result[] = "$dir/$value";
+
                 continue;
             }
             foreach (find_all_files("$dir/$value") as $value) {
@@ -526,12 +531,12 @@ if (! function_exists('now_online')) {
     function now_online()
     {
 
-         // Get time session life time from config.
+        // Get time session life time from config.
         $time = time() - (config('session.lifetime') * 60);
 
         // Total login users (user can be log on 2 devices will show once.)
         $totalActiveUsers = DB::table('sessions')
-                 ->where('last_activity', '>=', $time)->
+            ->where('last_activity', '>=', $time)->
          count(DB::raw('DISTINCT user_id'));
 
         return $totalActiveUsers;
@@ -545,7 +550,7 @@ if (! function_exists('today_online')) {
 
         // Total login users (user can be log on 2 devices will show once.)
         $totalActiveUsers = DB::table('sessions')
-                 ->where('last_activity', '>=', $time)->
+            ->where('last_activity', '>=', $time)->
          count(DB::raw('DISTINCT user_id'));
 
         return $totalActiveUsers;
@@ -557,7 +562,7 @@ if (! function_exists('is_admin')) {
     {
         $user = $user ?? auth()->user();
 
-        return $user->role()?->id == 1;
+        return $user?->role()?->id === 1;
     }
 }
 
@@ -616,13 +621,13 @@ if (! function_exists('checkForEmbeddedMedia')) {
     function subscribeMediaToModel($model, $medium)
     {
         $subscribe = MediumSubscription::updateOrCreate([
-            'medium_id' => $medium->id,
+            'medium_id'         => $medium->id,
             'subscribable_type' => get_class($model),
-            'subscribable_id' => $model->id,
+            'subscribable_id'   => $model->id,
         ], [
             'sharing_level_id' => 1, // has to be global = 1
-            'visibility' => 1, // has to be public  = 1
-            'owner_id' => auth()->user()->id,
+            'visibility'       => 1, // has to be public  = 1
+            'owner_id'         => auth()->user()->id,
         ]);
         $subscribe->save();
     }
@@ -632,51 +637,51 @@ if (! function_exists('str_replace_special_chars')) {
     function str_replace_special_chars($string)
     {
         $replace = [
-            '&lt;' => '', '&gt;' => '', '&#039;' => '', '&amp;' => '',
+            '&lt;'   => '', '&gt;' => '', '&#039;' => '', '&amp;' => '',
             '&quot;' => '', 'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'Ae',
             '&Auml;' => 'A', 'Å' => 'A', 'Ā' => 'A', 'Ą' => 'A', 'Ă' => 'A', 'Æ' => 'Ae',
-            'Ç' => 'C', 'Ć' => 'C', 'Č' => 'C', 'Ĉ' => 'C', 'Ċ' => 'C', 'Ď' => 'D', 'Đ' => 'D',
-            'Ð' => 'D', 'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ē' => 'E',
-            'Ę' => 'E', 'Ě' => 'E', 'Ĕ' => 'E', 'Ė' => 'E', 'Ĝ' => 'G', 'Ğ' => 'G',
-            'Ġ' => 'G', 'Ģ' => 'G', 'Ĥ' => 'H', 'Ħ' => 'H', 'Ì' => 'I', 'Í' => 'I',
-            'Î' => 'I', 'Ï' => 'I', 'Ī' => 'I', 'Ĩ' => 'I', 'Ĭ' => 'I', 'Į' => 'I',
-            'İ' => 'I', 'Ĳ' => 'IJ', 'Ĵ' => 'J', 'Ķ' => 'K', 'Ł' => 'L', 'Ľ' => 'L',
-            'Ĺ' => 'L', 'Ļ' => 'L', 'Ŀ' => 'L', 'Ñ' => 'N', 'Ń' => 'N', 'Ň' => 'N',
-            'Ņ' => 'N', 'Ŋ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O',
-            'Ö' => 'Oe', '&Ouml;' => 'Oe', 'Ø' => 'O', 'Ō' => 'O', 'Ő' => 'O', 'Ŏ' => 'O',
-            'Œ' => 'OE', 'Ŕ' => 'R', 'Ř' => 'R', 'Ŗ' => 'R', 'Ś' => 'S', 'Š' => 'S',
-            'Ş' => 'S', 'Ŝ' => 'S', 'Ș' => 'S', 'Ť' => 'T', 'Ţ' => 'T', 'Ŧ' => 'T',
-            'Ț' => 'T', 'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U', 'Ü' => 'Ue', 'Ū' => 'U',
+            'Ç'      => 'C', 'Ć' => 'C', 'Č' => 'C', 'Ĉ' => 'C', 'Ċ' => 'C', 'Ď' => 'D', 'Đ' => 'D',
+            'Ð'      => 'D', 'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ē' => 'E',
+            'Ę'      => 'E', 'Ě' => 'E', 'Ĕ' => 'E', 'Ė' => 'E', 'Ĝ' => 'G', 'Ğ' => 'G',
+            'Ġ'      => 'G', 'Ģ' => 'G', 'Ĥ' => 'H', 'Ħ' => 'H', 'Ì' => 'I', 'Í' => 'I',
+            'Î'      => 'I', 'Ï' => 'I', 'Ī' => 'I', 'Ĩ' => 'I', 'Ĭ' => 'I', 'Į' => 'I',
+            'İ'      => 'I', 'Ĳ' => 'IJ', 'Ĵ' => 'J', 'Ķ' => 'K', 'Ł' => 'L', 'Ľ' => 'L',
+            'Ĺ'      => 'L', 'Ļ' => 'L', 'Ŀ' => 'L', 'Ñ' => 'N', 'Ń' => 'N', 'Ň' => 'N',
+            'Ņ'      => 'N', 'Ŋ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O',
+            'Ö'      => 'Oe', '&Ouml;' => 'Oe', 'Ø' => 'O', 'Ō' => 'O', 'Ő' => 'O', 'Ŏ' => 'O',
+            'Œ'      => 'OE', 'Ŕ' => 'R', 'Ř' => 'R', 'Ŗ' => 'R', 'Ś' => 'S', 'Š' => 'S',
+            'Ş'      => 'S', 'Ŝ' => 'S', 'Ș' => 'S', 'Ť' => 'T', 'Ţ' => 'T', 'Ŧ' => 'T',
+            'Ț'      => 'T', 'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U', 'Ü' => 'Ue', 'Ū' => 'U',
             '&Uuml;' => 'Ue', 'Ů' => 'U', 'Ű' => 'U', 'Ŭ' => 'U', 'Ũ' => 'U', 'Ų' => 'U',
-            'Ŵ' => 'W', 'Ý' => 'Y', 'Ŷ' => 'Y', 'Ÿ' => 'Y', 'Ź' => 'Z', 'Ž' => 'Z',
-            'Ż' => 'Z', 'Þ' => 'T', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a',
-            'ä' => 'ae', '&auml;' => 'ae', 'å' => 'a', 'ā' => 'a', 'ą' => 'a', 'ă' => 'a',
-            'æ' => 'ae', 'ç' => 'c', 'ć' => 'c', 'č' => 'c', 'ĉ' => 'c', 'ċ' => 'c',
-            'ď' => 'd', 'đ' => 'd', 'ð' => 'd', 'è' => 'e', 'é' => 'e', 'ê' => 'e',
-            'ë' => 'e', 'ē' => 'e', 'ę' => 'e', 'ě' => 'e', 'ĕ' => 'e', 'ė' => 'e',
-            'ƒ' => 'f', 'ĝ' => 'g', 'ğ' => 'g', 'ġ' => 'g', 'ģ' => 'g', 'ĥ' => 'h',
-            'ħ' => 'h', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i', 'ī' => 'i',
-            'ĩ' => 'i', 'ĭ' => 'i', 'į' => 'i', 'ı' => 'i', 'ĳ' => 'ij', 'ĵ' => 'j',
-            'ķ' => 'k', 'ĸ' => 'k', 'ł' => 'l', 'ľ' => 'l', 'ĺ' => 'l', 'ļ' => 'l',
-            'ŀ' => 'l', 'ñ' => 'n', 'ń' => 'n', 'ň' => 'n', 'ņ' => 'n', 'ŉ' => 'n',
-            'ŋ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'oe',
+            'Ŵ'      => 'W', 'Ý' => 'Y', 'Ŷ' => 'Y', 'Ÿ' => 'Y', 'Ź' => 'Z', 'Ž' => 'Z',
+            'Ż'      => 'Z', 'Þ' => 'T', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a',
+            'ä'      => 'ae', '&auml;' => 'ae', 'å' => 'a', 'ā' => 'a', 'ą' => 'a', 'ă' => 'a',
+            'æ'      => 'ae', 'ç' => 'c', 'ć' => 'c', 'č' => 'c', 'ĉ' => 'c', 'ċ' => 'c',
+            'ď'      => 'd', 'đ' => 'd', 'ð' => 'd', 'è' => 'e', 'é' => 'e', 'ê' => 'e',
+            'ë'      => 'e', 'ē' => 'e', 'ę' => 'e', 'ě' => 'e', 'ĕ' => 'e', 'ė' => 'e',
+            'ƒ'      => 'f', 'ĝ' => 'g', 'ğ' => 'g', 'ġ' => 'g', 'ģ' => 'g', 'ĥ' => 'h',
+            'ħ'      => 'h', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i', 'ī' => 'i',
+            'ĩ'      => 'i', 'ĭ' => 'i', 'į' => 'i', 'ı' => 'i', 'ĳ' => 'ij', 'ĵ' => 'j',
+            'ķ'      => 'k', 'ĸ' => 'k', 'ł' => 'l', 'ľ' => 'l', 'ĺ' => 'l', 'ļ' => 'l',
+            'ŀ'      => 'l', 'ñ' => 'n', 'ń' => 'n', 'ň' => 'n', 'ņ' => 'n', 'ŉ' => 'n',
+            'ŋ'      => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'oe',
             '&ouml;' => 'oe', 'ø' => 'o', 'ō' => 'o', 'ő' => 'o', 'ŏ' => 'o', 'œ' => 'oe',
-            'ŕ' => 'r', 'ř' => 'r', 'ŗ' => 'r', 'š' => 's', 'ù' => 'u', 'ú' => 'u',
-            'û' => 'u', 'ü' => 'ue', 'ū' => 'u', '&uuml;' => 'ue', 'ů' => 'u', 'ű' => 'u',
-            'ŭ' => 'u', 'ũ' => 'u', 'ų' => 'u', 'ŵ' => 'w', 'ý' => 'y', 'ÿ' => 'y',
-            'ŷ' => 'y', 'ž' => 'z', 'ż' => 'z', 'ź' => 'z', 'þ' => 't', 'ß' => 'ss',
-            'ſ' => 'ss', 'ый' => 'iy', 'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'G',
-            'Д' => 'D', 'Е' => 'E', 'Ё' => 'YO', 'Ж' => 'ZH', 'З' => 'Z', 'И' => 'I',
-            'Й' => 'Y', 'К' => 'K', 'Л' => 'L', 'М' => 'M', 'Н' => 'N', 'О' => 'O',
-            'П' => 'P', 'Р' => 'R', 'С' => 'S', 'Т' => 'T', 'У' => 'U', 'Ф' => 'F',
-            'Х' => 'H', 'Ц' => 'C', 'Ч' => 'CH', 'Ш' => 'SH', 'Щ' => 'SCH', 'Ъ' => '',
-            'Ы' => 'Y', 'Ь' => '', 'Э' => 'E', 'Ю' => 'YU', 'Я' => 'YA', 'а' => 'a',
-            'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e', 'ё' => 'yo',
-            'ж' => 'zh', 'з' => 'z', 'и' => 'i', 'й' => 'y', 'к' => 'k', 'л' => 'l',
-            'м' => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's',
-            'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c', 'ч' => 'ch',
-            'ш' => 'sh', 'щ' => 'sch', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e',
-            'ю' => 'yu', 'я' => 'ya',
+            'ŕ'      => 'r', 'ř' => 'r', 'ŗ' => 'r', 'š' => 's', 'ù' => 'u', 'ú' => 'u',
+            'û'      => 'u', 'ü' => 'ue', 'ū' => 'u', '&uuml;' => 'ue', 'ů' => 'u', 'ű' => 'u',
+            'ŭ'      => 'u', 'ũ' => 'u', 'ų' => 'u', 'ŵ' => 'w', 'ý' => 'y', 'ÿ' => 'y',
+            'ŷ'      => 'y', 'ž' => 'z', 'ż' => 'z', 'ź' => 'z', 'þ' => 't', 'ß' => 'ss',
+            'ſ'      => 'ss', 'ый' => 'iy', 'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'G',
+            'Д'      => 'D', 'Е' => 'E', 'Ё' => 'YO', 'Ж' => 'ZH', 'З' => 'Z', 'И' => 'I',
+            'Й'      => 'Y', 'К' => 'K', 'Л' => 'L', 'М' => 'M', 'Н' => 'N', 'О' => 'O',
+            'П'      => 'P', 'Р' => 'R', 'С' => 'S', 'Т' => 'T', 'У' => 'U', 'Ф' => 'F',
+            'Х'      => 'H', 'Ц' => 'C', 'Ч' => 'CH', 'Ш' => 'SH', 'Щ' => 'SCH', 'Ъ' => '',
+            'Ы'      => 'Y', 'Ь' => '', 'Э' => 'E', 'Ю' => 'YU', 'Я' => 'YA', 'а' => 'a',
+            'б'      => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e', 'ё' => 'yo',
+            'ж'      => 'zh', 'з' => 'z', 'и' => 'i', 'й' => 'y', 'к' => 'k', 'л' => 'l',
+            'м'      => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's',
+            'т'      => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c', 'ч' => 'ch',
+            'ш'      => 'sh', 'щ' => 'sch', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e',
+            'ю'      => 'yu', 'я' => 'ya',
         ];
 
         $string = str_replace(array_keys($replace), $replace, $string);
@@ -697,7 +702,7 @@ if (! function_exists('limiter')) {
      */
     function limiter($referenceable_type = 'App\\Role', $referenceable_id = 1, $key = 'logbook_limiter', $model = 'App\Logbook', $model_key = 'owner_id')
     {
-        $limit = optional(App\Config::where([
+        $limit = optional(Config::where([
             ['referenceable_type', '=', $referenceable_type],
             ['referenceable_id', '=', $referenceable_id],
             ['key', '=', $key],
@@ -711,21 +716,22 @@ if (! function_exists('limiter')) {
     }
 }
 
-if (! function_exists('getOAuthClientId'))
-{
+if (! function_exists('getOAuthClientId')) {
     /**
      * Decodes bearer-token and returns its Client-ID
-     * 
+     *
      * @return int|null
      */
     function getOAuthClientId()
     {
-        if (request()->bearerToken() === null) return null;
+        if (request()->bearerToken() === null) {
+            return null;
+        }
 
-        return (int)\Firebase\JWT\JWT::decode(
+        return (int) JWT::decode(
             request()->bearerToken(),
-            new \Firebase\JWT\Key(
-                \File::get(storage_path('oauth-public.key')),
+            new Key(
+                File::get(storage_path('oauth-public.key')),
                 'RS256'
             )
         )->aud;

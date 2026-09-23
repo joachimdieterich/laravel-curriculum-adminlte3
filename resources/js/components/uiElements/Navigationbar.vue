@@ -17,12 +17,12 @@
                 class="nav-group d-flex flex-column gap-1 py-2"
             >
                 <div v-if="tab.title"
-                    class="nav-group-title"
+                     class="nav-group-title"
                 >
                     <strong>{{ trans(tab.title) }}</strong>
                 </div>
                 <div v-for="entry in tab.entries"
-                    class="nav-entry"
+                     class="nav-entry"
                 >
                     <a
                         :href="entry.href"
@@ -42,7 +42,7 @@ import Select2 from '../forms/Select2.vue';
 
 export default {
     name: "Navigationbar",
-    components: { Select2 },
+    components: {Select2},
     props: {
         organizations: {
             type: Array,
@@ -182,7 +182,7 @@ export default {
     },
     methods: {
         setCurrentOrganization(id) {
-            axios.patch('/users/setCurrentOrganization', { current_organization_id: id })
+            axios.patch('/users/setCurrentOrganization', {current_organization_id: id})
                 .then(() => window.location.reload());
         },
     },
@@ -202,7 +202,7 @@ export default {
     & .nav-entry {
         font-size: 1.125rem;
         white-space: nowrap;
-        
+
         & a {
             border-radius: 10px;
             transition: background-color 0.2s ease;
@@ -210,10 +210,12 @@ export default {
             &:hover:not(.active), &:focus-visible:not(.active) {
                 background-color: #e5e5e5;
             }
+
             &.active {
                 background-color: #007bff;
                 color: white !important;
             }
+
             & > .fa {
                 width: 24px;
                 max-height: 24px;
@@ -222,6 +224,7 @@ export default {
         }
     }
 }
+
 /* element is placed in master.blade */
 #background-mask {
     position: absolute;
@@ -232,6 +235,9 @@ export default {
     &.collapsing, &.show {
         height: 100%;
     }
-    &.show { background-color: rgba(0, 0, 0, 0.25); }
+
+    &.show {
+        background-color: rgba(0, 0, 0, 0.25);
+    }
 }
 </style>

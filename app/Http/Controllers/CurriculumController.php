@@ -101,7 +101,7 @@ class CurriculumController extends Controller
 
         $this->checkPermissions($input['type_id']);
 
-        $curriculum = Curriculum::firstOrCreate([
+        $curriculum = Curriculum::create([
             'title'                 => $input['title'],
             'description'           => $input['description'],
             'author'                => $input['author'],
@@ -121,7 +121,7 @@ class CurriculumController extends Controller
                                             $input['variant_default_title'] ?? NULL,
                                             $input['variant_default_description'] ?? NULL
                                         ),
-            'archived'              =>  $input['archived'] ?? false,
+            'archived'              => $input['archived'] ?? false,
             'owner_id'              => auth()->user()->id,
         ]);
         $curriculum->tags()->sync($request->input('tags'));
@@ -133,9 +133,7 @@ class CurriculumController extends Controller
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
 
-        if (request()->wantsJson()) {
-            return $curriculum->with('owner')->find($curriculum->id);
-        }
+        return $curriculum->with('owner:id,firstname,lastname')->find($curriculum->id);
     }
 
     /**

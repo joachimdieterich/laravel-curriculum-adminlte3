@@ -26,7 +26,7 @@ class KanbanStatusController extends Controller
             ->where('kanban_id', $input['kanban_id'])
             ->max('order_id');
 
-        $kanbanStatus = KanbanStatus::firstOrCreate([
+        $kanbanStatus = KanbanStatus::create([
             'title'         => $input['title'],
             'order_id'      => ($order_id === null) ? 0 : $order_id + 1,
             'kanban_id'     => $input['kanban_id'],
@@ -38,11 +38,10 @@ class KanbanStatusController extends Controller
             'visible_until' => $input['visible_until'] ?? null,
             'owner_id'      => auth()->user()->id,
         ]);
+
         Kanban::find($input['kanban_id'])->touch('updated_at');
 
-        if (request()->wantsJson()) {
-            return $kanbanStatus;
-        }
+        return $kanbanStatus;
     }
 
     /**

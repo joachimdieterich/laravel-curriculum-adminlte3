@@ -1,58 +1,45 @@
 <template>
     <div class="d-flex flex-column px-3">
         <div
-            class="card position-sticky mb-0"
-            style="top: 3.5rem; z-index: 10; border-radius: 0px;"
+            class="position-sticky bg-white mb-0"
+            style="top: 52px; z-index: 10; border-radius: 0px;"
         >
-            <div class="card-header d-flex align-items-center">
-                <div class="card-title">{{ currentPlan.title }}</div>
+            <div class="d-flex align-items-center p-3 border-bottom">
+                <div class="t-18">{{ currentPlan.title }}</div>
                 <div v-if="editable || checkPermission('is_admin')"
                     v-permission="'plan_edit'"
-                    class="card-tools d-flex pe-2 ms-auto no-print"
-                    style="gap: 5px;"
+                    class="d-print-none d-flex gap-2 pe-2 ms-auto"
                 >
                     <button
-                        class="btn btn-icon link-muted me-2 px-1 py-0"
+                        class="btn btn-icon text-secondary"
                         :title="trans('global.plan.evaluate_user')"
                         :disabled="users.length === 0"
                         @click="openUserModal()"
                     >
                         <i class="fa fa-chart-simple"></i>
                     </button>
-                    <button
+                    <!-- <button
                         class="btn btn-icon link-muted px-1"
                         :title="trans('global.plan.print')"
                         @click="window.print()"
                     >
                         <i class="fa fa-print"></i>
-                    </button>
+                    </button> -->
 
-                    <span class="pe-2 me-2" style="border-right: 1px solid black;"></span>
+                    <span style="border-right: 1px solid black;"></span>
 
-                    <span
-                        class="custom-switch custom-switch-on-green d-flex align-items-center link-muted pointer"
-                        @click.self.prevent="showTools = !showTools"
-                    >
-                        <input
-                            id="edit_toggle"
-                            type="checkbox"
-                            class="custom-control-input"
-                            v-model="showTools"
-                        />
-                        <label
-                            for="edit_toggle"
-                            class="custom-control-label"
-                        >
-                            {{ trans('global.edit') }}
-                        </label>
-                    </span>
+                    <Switch
+                        id="plan-edit"
+                        class="d-flex align-items-center gap-2"
+                        label="global.edit"
+                        v-model="showTools"
+                    />
                 </div>
             </div>
         </div>
-        <div class="card rounded-0">
-            <div class="card-body">
-                <div class="overflow-auto" v-html="description"></div>
-            </div>
+
+        <div class="d-flex bg-white p-3 mb-3">
+            <div class="overflow-auto" v-html="description"></div>
         </div>
 
         <draggable
@@ -78,6 +65,7 @@
             :plan="plan"
             :create="true"
         />
+
         <!-- overlay button in bottom right corner -->
         <!-- <div
             id="corner-button"
@@ -87,6 +75,7 @@
         >
             <i class="fa fa-users"></i>
         </div> -->
+
         <Teleport to="body">
             <PlanModal/>
             <MediumModal/>
@@ -100,16 +89,22 @@
             <SubscribeObjectiveModal :users="users"/>
         </Teleport>
         <Teleport to="#customTitle">
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
                 <small>{{ currentPlan.title }}</small>
                 <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                    class="btn btn-icon link-muted px-2 mx-1"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.plan.edit')"
                     @click="editPlan()"
                 >
                     <i class="fa fa-pencil-alt"></i>
                 </button>
                 <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                    class="btn btn-icon link-muted px-2"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.share')"
                     @click="share()"
                 >
                     <i class="fa fa-share-alt"></i>
@@ -119,6 +114,7 @@
     </div>
 </template>
 <script>
+import Switch from "../forms/Switch.vue";
 import draggable from "vuedraggable";
 import PlanModal from "./PlanModal.vue";
 import PlanEntry from './PlanEntry.vue';
@@ -131,10 +127,23 @@ import TrainingModal from "../training/TrainingModal.vue";
 import LmsModal from "../lms/LmsModal.vue";
 import SetAchievementsModal from "./SetAchievementsModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
+    components: {
+        Switch,
+        PlanModal,
+        PlanEntry,
+        PlanEntryModal,
+        MediumModal,
+        GenerateCertificateModal,
+        SelectUsersModal,
+        SubscribeObjectiveModal,
+        TrainingModal,
+        LmsModal,
+        SetAchievementsModal,
+        SubscribeModal,
+        draggable,
+    },
     props: {
         plan: {
             type: Object,
@@ -148,14 +157,6 @@ export default {
             type: Object,
             default: null,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {
@@ -194,55 +195,58 @@ export default {
             this.globalStore.showModal('plan-modal', this.currentPlan);
         },
         share() {
-            this.globalStore.showModal('subscribe-modal',
-                {
-                    modelId: this.plan.id,
-                    modelUrl: 'plan',
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: false,
-                    canEditCheckbox: true,
-                });
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: this.plan.id,
+                modelUrl: 'plan',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: false,
+                canEditCheckbox: true,
+            });
         },
         openUserModal() {
             this.globalStore.showModal('select-users-modal');
         },
         handleEntryOrder(e) {
             if (e.newIndex === e.oldIndex) return;
+
             this.entry_order = this.entries.map(entry => entry.id);
             this.updateEntryOrder();
         },
         updateEntryOrder() {
-            // Send the current order of entries to the server
-            axios.put("/plans/" + this.plan.id + "/syncEntriesOrder", {entry_order: this.entry_order})
+            // send the current order of entries to the server
+            axios.put("/plans/" + this.plan.id + "/syncEntriesOrder", { entry_order: this.entry_order })
                 .catch(e => {
-                    this.toast.error(this.errorMessage(e));
                     console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },
     mounted() {
+        this.enableTooltips();
+
         this.loaderEvent();
 
-        this.$eventHub.on('plan-updated', (updatedPlan) => {
+        this.$eventHub.on('plan-updated', updatedPlan => {
             Object.assign(this.currentPlan, updatedPlan);
         });
 
-        this.$eventHub.on('users-selected', (users) => {
+        this.$eventHub.on('users-selected', users => {
             window.open('/plans/' + this.plan.id + '/getUserAchievements/' + users.map(u => u.id));
         });
+
         // ENTRY events
-        this.$eventHub.on('plan-entry-added', (entry) => {
+        this.$eventHub.on('planEntry-added', entry => {
             this.entries.push(entry);
             this.entry_order.push(entry.id);
             this.updateEntryOrder();
         });
-        this.$eventHub.on('plan-entry-updated', (updatedEntry) => {
+        this.$eventHub.on('planEntry-updated', updatedEntry => {
             let entry = this.entries.find(e => e.id === updatedEntry.id);
             Object.assign(entry, updatedEntry);
         });
-        this.$eventHub.on('plan-entry-deleted', (entry) => {
+        this.$eventHub.on('plan-entry-deleted', entry => {
             let index = this.entries.indexOf(entry);
             this.entries.splice(index, 1);
             this.entry_order.splice(index, 1);
@@ -272,20 +276,6 @@ export default {
                 disabled: !this.editable
             };
         },
-    },
-    components: {
-        PlanModal,
-        PlanEntry,
-        PlanEntryModal,
-        MediumModal,
-        GenerateCertificateModal,
-        SelectUsersModal,
-        SubscribeObjectiveModal,
-        TrainingModal,
-        LmsModal,
-        SetAchievementsModal,
-        SubscribeModal,
-        draggable,
     },
 }
 </script>

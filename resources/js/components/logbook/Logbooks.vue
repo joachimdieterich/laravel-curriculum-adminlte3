@@ -98,7 +98,6 @@
             </IndexWidget>
 
             <IndexWidget v-for="logbook in logbooks"
-                :id="logbook.id"
                 :key="'logbookIndex' + logbook.id"
                 :model="logbook"
                 modelName="Logbook"

@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div>
         <div class="col-12 pt-2">
             <div class="card">
                 <button v-if="create"
@@ -19,8 +19,8 @@
                     >
                         <div
                             class="card-header collapsed"
-                            data-toggle="collapse"
-                            :data-target="'#plan-entry-' + entry.id + ' > .card-body'"
+                            data-bs-toggle="collapse"
+                            :data-bs-target="'#plan-entry-' + entry.id + ' > .card-body'"
                             aria-expanded="false"
                         >
                             <i
@@ -94,17 +94,16 @@
                 </div>
             </div>
         </div>
+
         <Teleport to="body">
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.planEntry.delete')"
                 :description="trans('global.planEntry.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.delete(this.entry);
+                    showConfirm = false;
+                    destroy(entry);
                 }"
             />
         </Teleport>
@@ -168,7 +167,7 @@ export default {
         openConfirm() {
             this.showConfirm = true;
         },
-        delete(entry) {
+        destroy(entry) {
             axios.delete('/planEntries/' + entry.id)
                 .then(response => {
                     this.$eventHub.emit("plan-entry-deleted", entry);

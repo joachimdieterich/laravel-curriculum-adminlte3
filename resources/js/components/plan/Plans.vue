@@ -92,9 +92,7 @@
                 :label="trans('global.plan.' + createLabel)"
             >
                 <template #itemIcon>
-                    <i v-if="subscribable"
-                        class="fa fa-2x fa-link text-muted"
-                    ></i>
+                    <i v-if="subscribable" class="fa fa-2x fa-link text-muted"></i>
                 </template>
             </IndexWidget>
             <IndexWidget v-for="plan in plans"
@@ -111,65 +109,56 @@
                 <template #dropdown>
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
                     >
                         <button
                             v-permission="'plan_delete'"
-                            :id="'delete-plan-' + plan.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmDelete(plan)"
+                            class="dropdown-item text-danger"
+                            @click="confirmDelete(plan)"
                         >
-                            <i class="fa fa-unlink me-2"></i>
+                            <i class="fa fa-unlink"></i>
                             {{ trans('global.plan.expel') }}
                         </button>
                     </div>
                     <div v-else
                         class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
                     >
-                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                            v-permission="'plan_edit'"
-                            :name="'edit-plan-' + plan.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editPlan(plan)"
+                        <button v-if="ownerOrAdmin(plan)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editPlan(plan)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.plan.edit') }}
                         </button>
 
-                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                            :name="'plan-share_' + plan.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="sharePlan(plan)"
+                        <button v-if="ownerOrAdmin(plan)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="sharePlan(plan)"
                         >
-                            <i class="fa fa-share-alt me-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.plan.share') }}
                         </button>
 
                         <button v-if="plan.allow_copy"
-                            :name="'copy-plan-' + plan.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="confirmCopy(plan)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="confirmCopy(plan)"
                         >
-                            <i class="fa fa-copy me-2"></i>
+                            <i class="fa fa-copy"></i>
                             {{ trans('global.plan.copy') }}
                         </button>
 
-                        <hr v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                            class="my-1"
-                        />
+                        <hr v-if="ownerOrAdmin(plan)" class="my-1"/>
 
-                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                        <button v-if="ownerOrAdmin(plan)"
                             v-permission="'plan_delete'"
-                            :id="'delete-plan-' + plan.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmDelete(plan)"
+                            class="dropdown-item text-danger"
+                            @click="confirmDelete(plan)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.plan.delete') }}
                         </button>
                     </div>
@@ -181,7 +170,7 @@
             ref="datatable"
             id="plan-datatable"
             :columns="columns"
-            :options="options"
+            :options="$dtOptions"
             :ajax="subscribable ? '/plans/list?group_id=' + subscribable_id : '/plans/list'"
             class="d-none"
             @xhr="(e, settings, json) => plans = json.data"
@@ -262,7 +251,6 @@ export default {
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             filter: 'all',
             dt: null,
         }
@@ -350,7 +338,10 @@ export default {
         update(updatedPlan) {
             let plan = this.plans.find(plan => plan.id === updatedPlan.id);
             Object.assign(plan, updatedPlan);
-        }
+        },
+        ownerOrAdmin(plan) {
+            return plan.owner_id == this.$userId || this.checkPermission('is_admin');
+        },
     },
     computed: {
         createLabel() {

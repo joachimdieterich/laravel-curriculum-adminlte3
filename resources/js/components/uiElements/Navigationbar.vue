@@ -190,7 +190,7 @@ export default {
 </script>
 <style>
 #navigationbar {
-    z-index: 100;
+    z-index: 90;
     
     & > #nav-wrapper {
         width: 300px;
@@ -229,7 +229,7 @@ export default {
 #background-mask {
     position: absolute;
     background-color: transparent;
-    z-index: 99;
+    z-index: 80;
     transition: background-color 0.3s ease;
 
     &.collapsing, &.show {

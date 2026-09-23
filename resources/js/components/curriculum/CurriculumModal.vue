@@ -9,7 +9,7 @@
     >
         <template #modal-body>
             <div class="modal-body accordion">
-                <div v-if="method === 'post'"
+                <div v-if="!form.id"
                     class="nav nav-pills justify-content-center gap-2 border-bottom p-3"
                     role="tablist"
                 >

@@ -3,19 +3,18 @@
         model="logbookEntrySubject"
         modalName="logbook-entry-subject-modal"
         title="global.logbookEntry.subject"
-        :processing="processing"
+        :form="form"
         :allow-overflow="true"
+        :intercept-save="true"
         @save="submit()"
     >
         <template #general>
             <Select2
-                :id="'subject_' + component_id "
-                :name="'subject_' + component_id "
-                option_id="id"
+                id="logbook-entry-subject"
                 url="/subjects"
                 model="subject"
                 :selected="form.subject_id"
-                @selectedValue="(id) => form.subject_id = id"
+                @selectedValue="id => form.subject_id = id"
             />
         </template>
     </Modal>
@@ -34,17 +33,14 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            processing: false,
             form: new Form({
-                id: '',
-                subject_id:'',
+                id: null,
+                subject_id: null,
             }),
         }
     },
     methods: {
         submit() {
-            this.processing = true;
-
             axios.patch('/logbookEntries/' + this.form.id + '/setSubject', this.form)
                 .then(response => {
                     this.globalStore.closeModal(this.$options.name);
@@ -54,24 +50,11 @@ export default {
                     });
                 })
                 .catch(e => {
+                    console.log(e);
                     this.processing = false;
                     console.log(e.response);
                 });
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                this.processing = false;
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                }
-            }
-        });
     },
 }
 </script>

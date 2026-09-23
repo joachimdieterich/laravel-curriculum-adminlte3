@@ -381,13 +381,7 @@
         <Teleport to="body">
             <ContentModal/>
             <ReferenceObjectiveModal/>
-            <PrerequisiteObjectiveModal
-                :params="{
-                    successor_type: model,
-                    successor_id: objective.id,
-                    url: '/prerequisites',
-                }"
-            />
+            <PrerequisiteObjectiveModal/>
             <LmsModal
                 :params="{
                     referenceable_type: model,
@@ -512,11 +506,9 @@ export default {
         });
 
         this.$eventHub.on('lms-added', () => {
-            this.globalStore?.closeModal('lms-modal');
             this.loadLmsPlugin();
         });
         this.$eventHub.on('lms-updated', (lms) => {
-            this.globalStore?.closeModal('lms-modal');
             this.loadLmsPlugin()
         });
 
@@ -527,7 +519,6 @@ export default {
             this.globalStore.showModal('reference-objective-modal', {
                 subscribable_type: this.model,
                 subscribable_id: this.objective.id,
-                url: '/referenceSubscriptions',
             });
         },
         openPrerequisitesModal() {

@@ -2,9 +2,13 @@
     <Modal
         model="lms"
         modalName="lms-modal"
+        url="/lmsReferences"
         title="global.lms.title_singular"
+        :form="form"
         :allow-overflow="true"
         :disable-save-button="!form.course_id"
+        :intercept-save="true"
+        @opened="preProcessing()"
         @save="submit()"
     >
         <template #general>
@@ -86,6 +90,7 @@ export default {
             component_id: this.$.uid,
             form: new Form({
                 id: null,
+                plugin: 'moodle',
                 referenceable_type: null,
                 referenceable_id: null,
                 course_id: null,
@@ -103,6 +108,12 @@ export default {
         }
     },
     methods: {
+        preProcessing() {
+            if (this.courses.length === 0) {
+                this.loader();
+                this.loadCourses();
+            }
+        },
         loader() {
             this.course_contents = [];
             this.course_content_items = [];
@@ -122,10 +133,11 @@ export default {
             this.loading = true;
             this.course_content_items = [];
             this.course_item = null;
+
             axios.post('/lmsReferences/get', {
-                    plugin: 'moodle',
-                    ws_function: 'core_course_get_courses_by_field',
-                })
+                plugin: 'moodle',
+                ws_function: 'core_course_get_courses_by_field',
+            })
                 .then(r => {
                     this.courses = r.data.entries;
                     this.loading = false;
@@ -180,47 +192,10 @@ export default {
                 url: this.course_content_items[index].url,
             };
         },
-        submit() {
-            axios.post('/lmsReferences', {
-                plugin: 'moodle',
-                course_id: this.form.course_id,
-                course_content_id: this.form.course_content_id,
-                course_item: this.form.course_item,
-                referenceable_type: this.form.referenceable_type,
-                referenceable_id: this.form.referenceable_id,
-                sharing_level: this.form.sharing_level,
-            })
-                .then(r => {
-                    this.globalStore.closeModal('lms-modal');
-                    this.$eventHub.emit('lms-added', r.data);
-                })
-                .catch(e => {
-                    console.log(e);
-                    this.toast.error(this.errorMessage(e));
-                });
-        },
         onNewToken() {
             this.token = true;
             this.loadCourses();
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                }
-
-                if (this.courses.length === 0) {
-                    this.loader();
-                    this.loadCourses();
-                }
-            }
-        });
     },
 }
 </script>

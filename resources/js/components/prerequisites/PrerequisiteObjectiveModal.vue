@@ -44,11 +44,6 @@ export default {
         Modal,
         Select2,
     },
-    props: {
-        params: {
-            type: Object,
-        },
-    },
     data() {
         return {
             component_id: this.$.uid,

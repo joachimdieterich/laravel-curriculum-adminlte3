@@ -343,7 +343,7 @@ export default {
             selectedItems: [],
         });
 
-        this.dt = this.$refs.datatable.dt;
+        this.dt = this.$refs.datatable?.dt;
 
         this.$eventHub.on('curriculum-updated', updatedCurriculum => {
             Object.assign(this.currentCurriculum, updatedCurriculum);

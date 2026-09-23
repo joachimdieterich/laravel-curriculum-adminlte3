@@ -293,7 +293,7 @@ export default {
                 }
             );
             this.reset();
-            this.globalStore?.closeModal(this.$options.name);
+            this.globalStore.closeModal(this.$options.name);
         },
         reset() {
             this.globalStore.resetSelectedMedia();

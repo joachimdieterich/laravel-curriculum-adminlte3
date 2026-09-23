@@ -524,20 +524,20 @@ export default {
     },
     methods: {
         openReferencesModal() {
-            this.globalStore?.showModal('reference-objective-modal', {
+            this.globalStore.showModal('reference-objective-modal', {
                 subscribable_type: this.model,
                 subscribable_id: this.objective.id,
                 url: '/referenceSubscriptions',
             });
         },
         openPrerequisitesModal() {
-            this.globalStore?.showModal('prerequisite-objective-modal', {
+            this.globalStore.showModal('prerequisite-objective-modal', {
                 successor_type: this.model,
                 successor_id: this.objective.id,
             });
         },
         editObjective() {
-            this.globalStore?.showModal(this.type + '-objective-modal', this.objective);
+            this.globalStore.showModal(this.type + '-objective-modal', this.objective);
         },
         //Loader
         loaderContents: function() {

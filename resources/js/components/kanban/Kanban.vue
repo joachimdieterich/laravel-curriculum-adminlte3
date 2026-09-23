@@ -502,14 +502,11 @@ export default {
         startWebsocket() {
             if (this.websocket === true && this.kanban.auto_refresh === true) {
                 this.$echo
-                    .join('App.Kanban.' + this.kanban.id)
+                    .join('App.Kanban.Room.' + this.kanban.id)
                     .here((users) => {
                         for (let user of users) {
                             this.currentContributors[user.id] = user;
                         }
-                    })
-                    .listen('.KanbanUpdated', (payload) => {
-                        this.$eventHub.emit('kanban-updated', payload.model);
                     })
                     .joining((user) => {
                         this.currentContributors[user.id] = user;
@@ -518,6 +515,12 @@ export default {
                     .leaving((user) => {
                         delete this.currentContributors[user.id];
                         this.toast.info(this.trans('global.websockets.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
+                    });
+                this.$echo
+                    .channel('App.Kanban.' + this.kanban.id)
+                    .listen('.KanbanUpdated', (payload) => {
+                        console.log(payload);
+                        this.$eventHub.emit('kanban-updated', payload.model);
                     });
             }
         },

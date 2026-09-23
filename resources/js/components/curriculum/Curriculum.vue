@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="Object.keys(course).length"
-            v-permission="'achievement_access'"
+             v-permission="'achievement_access'"
         >
             <div
                 id="user-datatable-wrapper"
@@ -78,23 +78,23 @@
                     role="tab"
                 >
                     <a v-if="curriculum.glossar != null"
-                        id="glossar-nav-tab"
-                        class="nav-link link-muted"
-                        href="#glossar-tab"
-                        data-toggle="tab"
-                        aria-controls="glossar-tab"
+                       id="glossar-nav-tab"
+                       class="nav-link link-muted"
+                       href="#glossar-tab"
+                       data-toggle="tab"
+                       aria-controls="glossar-tab"
                     >
                         <i class="fa fa-book-open pr-2"></i>
                         {{ trans('global.glossar.title_singular') }}
                     </a>
                     <a v-else
-                        v-permission="'glossar_create'"
-                        id="glossar-nav-tab"
-                        class="nav-link link-muted"
-                        :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id=' + curriculum.id"
+                       v-permission="'glossar_create'"
+                       id="glossar-nav-tab"
+                       class="nav-link link-muted"
+                       :href="'/glossar/create?subscribable_type=App\\Curriculum&subscribable_id=' + curriculum.id"
                     >
                         <i class="fa fa-book-open pr-2"></i>
-                        {{trans('global.glossar.create')}}
+                        {{ trans('global.glossar.create') }}
                     </a>
                 </li>
                 <li v-if="(this.store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
@@ -120,7 +120,7 @@
                         @click.prevent="createCertificate()"
                     >
                         <i class="fa fa-certificate pr-2"></i>
-                        {{trans('global.certificate.create')}}
+                        {{ trans('global.certificate.create') }}
                     </a>
                 </li>
                 <li
@@ -222,10 +222,10 @@
                     />
                 </div>
                 <div v-if="curriculum.glossar != null"
-                    id="glossar-tab"
-                    class="tab-pane fade"
-                    role="tab"
-                    aria-labelledby="glossar-nav-tab"
+                     id="glossar-tab"
+                     class="tab-pane fade"
+                     role="tab"
+                     aria-labelledby="glossar-nav-tab"
                 >
                     <glossars :glossar="curriculum.glossar"/>
                 </div>
@@ -256,16 +256,16 @@
         <Teleport to="#customTitle">
             <small>{{ currentCurriculum.title }}</small>
             <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
-                v-permission="'curriculum_edit'"
-                class="btn btn-flat text-secondary px-2 mx-1"
-                @click="edit()"
+               v-permission="'curriculum_edit'"
+               class="btn btn-flat text-secondary px-2 mx-1"
+               @click="edit()"
             >
                 <i class="fa fa-pencil-alt"></i>
             </a>
 
             <a v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2"
-                @click="share()"
+               class="btn btn-flat text-secondary px-2"
+               @click="share()"
             >
                 <i class="fa fa-share-alt"></i>
             </a>
@@ -294,6 +294,7 @@ import MediumModal from "../media/MediumModal.vue";
 import MediumExportModal from "../media/MediumExportModal.vue";
 import ContributorsList from "../uiElements/ContributorsList.vue";
 import {useToast} from "vue-toastification";
+
 DataTable.use(DataTablesCore);
 
 export default {
@@ -343,13 +344,13 @@ export default {
             componentId: this.$.uid,
             currentCurriculum: {},
             columns: [
-                { title: window.trans.global.user.fields.username, data: 'username', searchable: true },
-                { title: window.trans.global.lastname, data: 'lastname', searchable: true },
-                { title: window.trans.global.firstname, data: 'firstname', searchable: true },
-                { title: window.trans.global.role.title_singular, data: 'role', searchable: true },
-                { title: window.trans.global.progress.title_singular,  data: 'progress' },
+                {title: window.trans.global.user.fields.username, data: 'username', searchable: true},
+                {title: window.trans.global.lastname, data: 'lastname', searchable: true},
+                {title: window.trans.global.firstname, data: 'firstname', searchable: true},
+                {title: window.trans.global.role.title_singular, data: 'role', searchable: true},
+                {title: window.trans.global.progress.title_singular, data: 'progress'},
             ],
-            options : this.$dtOptions,
+            options: this.$dtOptions,
             search: '',
             dt: null,
             currentContributors: {},
@@ -383,7 +384,7 @@ export default {
         edit() {
             this.globalStore?.showModal('curriculum-modal', this.curriculum);
         },
-        loaderEvent: function() {
+        loaderEvent: function () {
             this.$refs.Contents.loaderEvent();
         },
         generateCertificate() {
@@ -413,7 +414,7 @@ export default {
         },
         resetOrderIds() {
             axios.patch('/curricula/' + this.curriculum.id + '/resetOrderIds')
-            .then(r => window.location.reload());
+                .then(r => window.location.reload());
         },
         updateAchievements() {
             let selection = this.dt.rows('.selected').data().toArray();
@@ -424,14 +425,11 @@ export default {
         startWebsocket() {
             if (this.settings.websocket === true) {
                 this.$echo
-                    .join('App.Curriculum.' + this.curriculum.id)
+                    .join('App.Curriculum.Room.' + this.curriculum.id)
                     .here((users) => {
-                        for(let user of users) {
+                        for (let user of users) {
                             this.currentContributors[user.id] = user;
                         }
-                    })
-                    .listen('.CurriculumUpdated', (payload) => {
-                        this.$eventHub.emit('curriculum-updated', payload.model);
                     })
                     .joining((user) => {
                         this.currentContributors[user.id] = user;
@@ -441,6 +439,11 @@ export default {
                         delete this.currentContributors[user.id];
                         this.toast.info(this.trans('global.websockets.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
                     });
+                this.$echo
+                    .channel('App.Curriculum.' + this.curriculum.id)
+                    .listen('.CurriculumUpdated', (payload) => {
+                        this.$eventHub.emit('curriculum-updated', payload.model);
+                    })
             }
         },
         stopWebsocket() {

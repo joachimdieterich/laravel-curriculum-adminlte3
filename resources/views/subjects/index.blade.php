@@ -3,5 +3,5 @@
     {{ trans('global.subject.title') }}
 @endsection
 @section('content')
-    <subjects></subjects>
+    <Subjects/>
 @endsection

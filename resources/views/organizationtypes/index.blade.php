@@ -3,5 +3,5 @@
     {{ trans('global.organizationtype.title') }}
 @endsection
 @section('content')
-    <organization-types></organization-types>
+    <Organization-Types/>
 @endsection

@@ -3,5 +3,5 @@
     {{ trans('global.certificate.title') }}
 @endsection
 @section('content')
-    <certificates></certificates>
+    <Certificates/>
 @endsection

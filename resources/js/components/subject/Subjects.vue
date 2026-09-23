@@ -18,11 +18,11 @@
                 modelName="Subject"
                 url="/subjects"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-swatchbook"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'subject_edit, subject_delete'"
                 >
                     <div
@@ -54,33 +54,27 @@
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="subject-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="subject-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="subject-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/subjects/list"
+            class="d-none"
+            @xhr="(e, settings, json) => subjects = json.data"
+        />
 
         <Teleport to="body">
             <SubjectModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.subject.delete')"
                 :description="trans('global.subject.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -92,62 +86,49 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        SubjectModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             subjects: null,
-            search: '',
             showConfirm: false,
-            url: '/subjects/list',
             currentRole: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             dt: null,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('subject-added', (subject) => {
+        this.$eventHub.on('subject-added', subject => {
             this.subjects.push(subject);
         });
 
-        this.$eventHub.on('subject-updated', (updatedSubject) => {
+        this.$eventHub.on('subject-updated', updatedSubject => {
             let subject = this.subjects.find(s => s.id === updatedSubject.id);
-
             Object.assign(subject, updatedSubject);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editSubject(subject) {
-            this.globalStore?.showModal('subject-modal', subject);
-        },
-        loaderEvent() {
-            this.dt = $('#subject-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.subjects = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#subject-content').insertBefore('#subject-datatable-wrapper');
-            });
+            this.globalStore.showModal('subject-modal', subject);
         },
         confirmItemDelete(subject) {
             this.currentRole = subject;
@@ -159,16 +140,10 @@ export default {
                     let index = this.subjects.indexOf(this.currentRole);
                     this.subjects.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
                 });
         },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        SubjectModal,
-        IndexWidget,
     },
 }
 </script>

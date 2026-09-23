@@ -3,5 +3,5 @@
     {{ trans('global.certificate.title_singular') }}
 @endsection
 @section('content')
-    <certificate :certificate="{{ $certificate }}"></certificate>
+    <Certificate :certificate="{{ $certificate }}"/>
 @endsection

@@ -3,5 +3,5 @@
     {{ trans('global.grade.title') }}
 @endsection
 @section('content')
-    <grades></grades>
+    <Grades/>
 @endsection

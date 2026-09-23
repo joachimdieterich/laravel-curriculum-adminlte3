@@ -18,11 +18,11 @@
                 url="/tags"
                 title-field="translation"
             >
-                <template v-slot:icon>
+                <template #:icon>
                     <i class="fas fa-tag"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #:dropdown
                           v-permission="'tag_edit, tag_delete'"
                 >
                     <div
@@ -54,32 +54,27 @@
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="tag-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="tag-datatable"
-                :columns="columns"
-                :options="options"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="tag-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/tags/list"
+            class="d-none"
+            @xhr="(e, settings, json) => tags = json.data"
+        />
 
         <Teleport to="body">
             <TagModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.tag.delete')"
                 :description="trans('global.tag.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -91,26 +86,21 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import TagModal from "./TagModal.vue";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 DataTable.use(DataTablesCore);
 
 export default {
     name: 'Tags',
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        TagModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             tags: null,
-            search: '',
             showConfirm: false,
             currentTag: {},
             columns: [
@@ -122,43 +112,24 @@ export default {
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('tag-added', (tag) => {
+        this.$eventHub.on('tag-added', tag => {
             this.tags.push(tag);
         });
 
-        this.$eventHub.on('tag-updated', (tag) => {
-            this.update(tag);
+        this.$eventHub.on('tag-updated', updatedTag => {
+            const tag = this.tags.find(t => t.id === updatedTag.id);
+            Object.assign(tag, updatedTag);
         });
-    },
-    computed: {
-        options: function() {
-            let options = this.$dtOptions;
 
-            options.ajax = {
-                url: '/tags/list',
-            };
-
-            return options;
-        },
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
+        });
     },
     methods: {
         editTag(tag) {
-            this.globalStore?.showModal('tag-modal', tag);
-        },
-        loaderEvent() {
-            this.dt = $('#tag-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes
-                this.tags = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#tag-content').insertBefore('#tag-datatable-wrapper');
-            });
-
-            this.$eventHub.on('filter', (filter) => {
-                this.dt.search(filter).draw();
-            });
-
+            this.globalStore.showModal('tag-modal', tag);
         },
         confirmItemDelete(tag) {
             this.currentTag = tag;
@@ -170,21 +141,11 @@ export default {
                     let index = this.tags.indexOf(this.currentTag);
                     this.tags.splice(index, 1);
                 })
-                .catch(err => {
-                    this.toast.error(this.trans('global.expel_error'));
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
-        update(updatedTag) {
-            const tag = this.tags.find(r => r.id === updatedTag.id);
-
-            Object.assign(tag, updatedTag);
-        },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        TagModal,
-        IndexWidget,
     },
 }
 </script>

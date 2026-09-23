@@ -18,11 +18,11 @@
                 modelName="Certificate"
                 url="/certificates"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-university"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'certificate_edit, certificate_delete'"
                 >
                     <div
@@ -55,33 +55,26 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="certificate-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="certificate-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            id="certificate-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/certificates/list"
+            class="d-none"
+            @xhr="(e, settings, json) => certificates = json.data"
+        />
 
         <Teleport to="body">
             <CertificateModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.certificate.delete')"
                 :description="trans('global.certificate.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -93,61 +86,48 @@ import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        DataTable,
+        CertificateModal,
+        IndexWidget,
+        ConfirmModal,
     },
     data() {
         return {
             certificates: null,
-            search: '',
             showConfirm: false,
-            url: '/certificates/list',
             currentCertificate: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             dt: null,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('certificate-added', (certificate) => {
+        this.$eventHub.on('certificate-added', certificate => {
             this.certificates.push(certificate);
         });
 
-        this.$eventHub.on('certificate-updated', (updatedCertificate) => {
+        this.$eventHub.on('certificate-updated', updatedCertificate => {
             let certificate = this.certificates.find(c => c.id === updatedCertificate.id);
-
             Object.assign(certificate, updatedCertificate);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editCertificate(certificate)  {
-            this.globalStore?.showModal('certificate-modal', certificate);
-        },
-        loaderEvent() {
-            this.dt = $('#certificate-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.certificates = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#curriculum-content').insertBefore('#certificate-datatable-wrapper');
-            });
+            this.globalStore.showModal('certificate-modal', certificate);
         },
         confirmItemDelete(certificate) {
             this.currentCertificate = certificate;
@@ -159,16 +139,10 @@ export default {
                     let index = this.certificates.indexOf(this.currentCertificate);
                     this.certificates.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
                 });
         },
-    },
-    components: {
-        DataTable,
-        CertificateModal,
-        IndexWidget,
-        ConfirmModal,
     },
 }
 </script>

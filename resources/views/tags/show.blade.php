@@ -3,5 +3,5 @@
     {{ trans('global.tag.title_singular') }}
 @endsection
 @section('content')
-    <tag :tag="{{ $tag }}"></tag>
+    <Tag :tag="{{ $tag }}"/>
 @endsection

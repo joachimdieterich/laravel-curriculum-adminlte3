@@ -18,10 +18,10 @@
                 modelName="Organization"
                 url="/organizations"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-university"></i>
                 </template>
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'organization_edit, organization_delete'"
                 >
                     <div
@@ -53,33 +53,27 @@
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="organization-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="organization-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="organization-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/organizations/list"
+            class="d-none"
+            @xhr="(e, settings, json) => organizations = json.data"
+        />
 
         <Teleport to="body">
             <OrganizationModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.organization.delete')"
                 :description="trans('global.organization.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -91,62 +85,49 @@ import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        DataTable,
+        OrganizationModal,
+        IndexWidget,
+        ConfirmModal,
     },
     data() {
         return {
             component_id: this.$.uid,
             organizations: null,
-            search: '',
             showConfirm: false,
-            url: '/organizations/list',
             currentOrganization: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             dt: null,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('organization-added', (organization) => {
+        this.$eventHub.on('organization-added', organization => {
             this.organizations.push(organization);
         });
 
-        this.$eventHub.on('organization-updated', (updatedOrganization) => {
+        this.$eventHub.on('organization-updated', updatedOrganization => {
             let organization = this.organizations.find(o => o.id === updatedOrganization.id);
-
             Object.assign(organization, updatedOrganization);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editOrganization(organization) {
-            this.globalStore?.showModal('organization-modal', organization);
-        },
-        loaderEvent() {
-            this.dt = $('#organization-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.organizations = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#organization-content').insertBefore('#organization-datatable-wrapper');
-            });
+            this.globalStore.showModal('organization-modal', organization);
         },
         confirmItemDelete(organization) {
             this.showConfirm = true;
@@ -158,16 +139,10 @@ export default {
                     let index = this.organizations.indexOf(this.currentOrganization);
                     this.organizations.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
                 });
         },
-    },
-    components: {
-        DataTable,
-        OrganizationModal,
-        IndexWidget,
-        ConfirmModal,
     },
 }
 </script>

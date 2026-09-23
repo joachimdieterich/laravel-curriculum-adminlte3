@@ -18,11 +18,11 @@
                 modelName="Grade"
                 url="/grades"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fas fa-layer-group"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'grade_edit, grade_delete'"
                 >
                     <div
@@ -54,20 +54,16 @@
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="grade-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="grade-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="grade-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/grades/list"
+            class="d-none"
+            @xhr="(e, settings, json) => grades = json.data"
+        />
 
         <Teleport to="body">
             <GradeModal/>
@@ -75,12 +71,10 @@
                 :showConfirm="this.showConfirm"
                 :title="trans('global.grade.delete')"
                 :description="trans('global.grade.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -91,63 +85,50 @@ import GradeModal from "../grade/GradeModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import {useGlobalStore} from "../../store/global";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        GradeModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             grades: null,
-            search: '',
             showConfirm: false,
-            url: '/grades/list',
             currentGrade: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
             ],
-            options : this.$dtOptions,
             dt: null,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('grade-added', (grade) => {
+        this.$eventHub.on('grade-added', grade => {
             this.grades.push(grade);
         });
 
-        this.$eventHub.on('grade-updated', (updatedGrade) => {
+        this.$eventHub.on('grade-updated', updatedGrade => {
             let grade = this.grades.find(g => g.id === updatedGrade.id);
-
             Object.assign(grade, updatedGrade);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editGrade(grade) {
-            this.globalStore?.showModal('grade-modal', grade);
-        },
-        loaderEvent() {
-            this.dt = $('#grade-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.grades = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#grade-content').insertBefore('#grade-datatable-wrapper');
-            });
+            this.globalStore.showModal('grade-modal', grade);
         },
         confirmItemDelete(grade) {
             this.currentGrade = grade;
@@ -160,15 +141,9 @@ export default {
                     this.grades.splice(index, 1);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
                 });
         },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        GradeModal,
-        IndexWidget,
     },
 }
 </script>

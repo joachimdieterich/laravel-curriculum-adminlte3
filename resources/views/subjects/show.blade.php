@@ -3,5 +3,5 @@
     {{ trans('global.subject.title_singular') }}
 @endsection
 @section('content')
-    <subject :subject="{{ $subject }}"></subject>
+    <Subject :subject="{{ $subject }}"/>
 @endsection

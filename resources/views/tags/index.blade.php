@@ -3,5 +3,5 @@
     {{ trans('global.tag.title') }}
 @endsection
 @section('content')
-    <tags></tags>
+    <Tags/>
 @endsection

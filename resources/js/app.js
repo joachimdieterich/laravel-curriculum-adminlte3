@@ -47,10 +47,10 @@ app.config.globalProperties.$echo = echo;
 /**
  * search for key in language file
  * @param {String} key
- * @param {Object} replacements
+ * @param {Object|null} replacements
  * @returns translated String or key if not found
  */
-app.config.globalProperties.trans = (key, replacements) => {
+app.config.globalProperties.trans = (key, replacements = null) => {
     let translatedString = window.trans;
 
     key.split('.').forEach(k => {
@@ -66,7 +66,7 @@ app.config.globalProperties.trans = (key, replacements) => {
         if (translatedString === undefined) translatedString = key;
     }
 
-    if (replacements?.length > 0) {
+    if (replacements !== null) {
         replacements.forEach(
             (key, replacement) => translatedString = translatedString.replace(':' + key, replacement)
         );

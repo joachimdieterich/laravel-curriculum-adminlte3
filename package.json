@@ -36,7 +36,6 @@
         "leaflet": "^1.9.3",
         "leaflet-extra-markers": "^1.2.2",
         "leaflet.markercluster": "^1.5.3",
-        "lodash": "^4.17.23",
         "mathjax": "^3.2.2",
         "mitt": "^3.0.1",
         "moment": "^2.29.4",

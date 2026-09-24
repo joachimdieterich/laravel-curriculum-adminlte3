@@ -44,9 +44,6 @@ import 'moment/src/locale/de'; // import german locale for moment.js
 import echo from './echo.js';
 app.config.globalProperties.$echo = echo;
 
-// use trans function like in blade
-import _ from 'lodash'; //needed to get
-
 /**
  * search for key in language file
  * @param {String} key
@@ -54,7 +51,21 @@ import _ from 'lodash'; //needed to get
  * @returns translated String or key if not found
  */
 app.config.globalProperties.trans = (key, replacements) => {
-    let translatedString = _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
+    let translatedString = window.trans;
+
+    key.split('.').forEach(k => {
+        if (translatedString === undefined) return;
+        translatedString = translatedString[k];
+    });
+
+    // if full key doesn't exist
+    if (translatedString === undefined) {
+        // fallback to 'global.' + last key
+        translatedString = window.trans['global'][key.split('.').splice(-1)];
+        // if fallback doesn't exist return the key
+        if (translatedString === undefined) translatedString = key;
+    }
+
     if (replacements?.length > 0) {
         replacements.forEach(
             (key, replacement) => translatedString = translatedString.replace(':' + key, replacement)

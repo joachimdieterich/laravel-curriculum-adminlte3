@@ -1,4 +1,3 @@
-window._ = require('lodash');
 window.Popper = require('popper.js'); //for tooltips
 window.$ = window.jQuery = require('jquery');
 window.bootstrap = require('bootstrap');

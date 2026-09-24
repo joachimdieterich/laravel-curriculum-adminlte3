@@ -525,6 +525,7 @@ export default {
         },
         stopWebsocket() {
             if (this.websocket === true && this.kanban.auto_refresh === true) {
+                this.$echo.leave('App.Kanban.Room' + this.kanban.id);
                 this.$echo.leave('App.Kanban.' + this.kanban.id);
             }
         },

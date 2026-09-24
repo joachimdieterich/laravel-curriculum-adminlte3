@@ -448,7 +448,8 @@ export default {
         },
         stopWebsocket() {
             if (this.settings.websocket === true) {
-                this.$echo.leave('App.Kanban.' + this.kanban.id);
+                this.$echo.leave('App.Curriculum.Room' + this.curriculum.id);
+                this.$echo.leave('App.Curriculum.' + this.curriculum.id);
             }
         },
     }

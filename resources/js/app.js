@@ -486,12 +486,6 @@ import {globalValues} from "./globalValues.js";
 app.config.globalProperties.$dtOptions  = globalValues.dtOptions;
 app.config.globalProperties.$swatches   = globalValues.swatches;
 
-app.directive('hide-if-permission', function (el, binding) {
-    if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
-        el.style.display = 'none';
-    }
-});
-
 /**
  * Custom Vue directive "permission" to check against permissions.
  * csv with permissions.
@@ -525,10 +519,6 @@ app.directive('permission', function (el, binding, vnode) {
                 el.parentNode.removeChild(vnode.el);
             }
         }
-});
-
-app.directive("inline", (element) => {
-    element.replaceWith(...element.children);
 });
 
 //mount vue

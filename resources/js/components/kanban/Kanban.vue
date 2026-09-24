@@ -519,7 +519,6 @@ export default {
                 this.$echo
                     .channel('App.Kanban.' + this.kanban.id)
                     .listen('.KanbanUpdated', (payload) => {
-                        console.log(payload);
                         this.$eventHub.emit('kanban-updated', payload.model);
                     });
             }

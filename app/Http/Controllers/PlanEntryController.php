@@ -105,17 +105,13 @@ class PlanEntryController extends Controller
     public function destroy(PlanEntry $planEntry)
     {
         $user_id = auth()->user()->id;
-        abort_unless(\Gate::allows('plan_delete') and (
+        abort_unless(\Gate::allows('plan_delete') && (
             is_admin()
             or $planEntry->owner_id == $user_id
-            or Plan::find($planEntry->plan_id)->owner_id == $user_id
-        ), 403, "No permission to delete entry, only plan-owner or entry-owner");
+            or Plan::select('owner_id')->find($planEntry->plan_id)->owner_id == $user_id
+        ), 403);
 
         $planEntry->delete();
-
-        if (request()->wantsJson()) {
-            return true;
-        }
     }
 
     protected function validateRequest()

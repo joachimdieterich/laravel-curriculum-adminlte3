@@ -1,8 +1,8 @@
 <template>
     <div class="d-flex flex-column px-3">
         <div
-            class="position-sticky bg-white mb-0"
-            style="top: 52px; z-index: 10; border-radius: 0px;"
+            class="position-sticky bg-white mb-0 z-1"
+            style="top: 52px;"
         >
             <div class="d-flex align-items-center p-3 border-bottom">
                 <div class="t-18">{{ currentPlan.title }}</div>
@@ -11,20 +11,15 @@
                     class="d-print-none d-flex gap-2 pe-2 ms-auto"
                 >
                     <button
+                        type="button"
                         class="btn btn-icon text-secondary"
-                        :title="trans('global.plan.evaluate_user')"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.plan.evaluate_user')"
                         :disabled="users.length === 0"
                         @click="openUserModal()"
                     >
                         <i class="fa fa-chart-simple"></i>
                     </button>
-                    <!-- <button
-                        class="btn btn-icon link-muted px-1"
-                        :title="trans('global.plan.print')"
-                        @click="window.print()"
-                    >
-                        <i class="fa fa-print"></i>
-                    </button> -->
 
                     <span style="border-right: 1px solid black;"></span>
 
@@ -38,13 +33,18 @@
             </div>
         </div>
 
-        <div class="d-flex bg-white p-3 mb-3">
+        <div class="position-relative d-flex bg-white p-3 mb-3 rounded-bottom-2">
+            <div
+                class="position-absolute start-0 bottom-0 w-100 shadow-layout"
+                style="height: calc(100% + 4rem);"
+            ></div>
             <div class="overflow-auto" v-html="description"></div>
         </div>
 
         <draggable
             v-model="entries"
             v-bind="columnDragOptions"
+            class="d-flex flex-column gap-3 mb-3"
             :disabled="!editable"
             itemKey="id"
             @start="drag=true"
@@ -61,10 +61,7 @@
             </template>
         </draggable>
 
-        <PlanEntry v-if="editable && showTools"
-            :plan="plan"
-            :create="true"
-        />
+        <PlanEntry v-if="editable && showTools"/>
 
         <!-- overlay button in bottom right corner -->
         <!-- <div
@@ -279,3 +276,17 @@ export default {
     },
 }
 </script>
+<style>
+.plan-entry-wrapper {
+    border-left: 3px solid transparent;
+}
+.plan-entry-header {
+    transition: background 0.3s ease;
+
+    &:hover { background-color: #e9ecef; }
+}
+.plan-entry-tools {
+    top: 0.5rem;
+    right: 0.5rem;
+}
+</style>

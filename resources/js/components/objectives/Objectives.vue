@@ -13,18 +13,17 @@
                         :objective="terminal"
                         :settings="settings"
                     />
-                    <div class="d-flex d-sm-none align-items-center justify-content-center pb-1">
-                        <button
-                            class="btn collapse-objectives collapsed py-0 w-100"
-                            :title="trans('global.enablingObjective.toggle_objectives')"
-                            data-toggle="collapse"
-                            :data-target="'#enabling-objectives-' + terminal.id"
-                            :aria-controls="'enabling-objectives-' + terminal.id"
-                            aria-expanded="false"
-                        >
-                            <i class="fa fa-angles-down"></i>
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        class="d-sm-none btn collapse-objectives collapsed border-0 shadow-none w-100"
+                        :title="trans('global.enablingObjective.toggle_objectives')"
+                        data-bs-toggle="collapse"
+                        :data-bs-target="'#enabling-objectives-' + terminal.id"
+                        :aria-controls="'enabling-objectives-' + terminal.id"
+                        aria-expanded="false"
+                    >
+                        <i class="fa fa-angles-down"></i>
+                    </button>
                 </div>
 
                 <div

@@ -2,7 +2,7 @@
     <div>
         <button v-if="entry === null"
             type="button"
-            class="btn btn-outline-dark text-left p-0"
+            class="btn btn-outline-dark text-left p-0 mb-3"
             @click="openModal()"
         >
             <div class="plan-entry card-header border-0">
@@ -52,6 +52,7 @@
                                 || plan.owner_id == $userId
                                 || checkPermission('is_admin')
                             "
+                            type="button"
                             class="btn btn-icon text-danger"
                             :title="trans('global.planEntry.delete')"
                             @click="openConfirm()"

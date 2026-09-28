@@ -811,11 +811,11 @@ return [
         ],
     ],
     'referenceable_types' => [
-        'objective' => 'Querverweise',
+        'reference' => 'Querverweise',
         'add_reference' => 'Querverweise hinzufügen',
         'navigator_view' => 'Navigator-Ansicht verknüpfen',
         'curriculum' => 'Curriculum verknüpfen',
-        'link' => 'Curriculum-Bereich/Baustein verknüpfen',
+        'objective' => 'Curriculum-Bereich/Baustein verknüpfen',
         'content' => 'Text verknüpfen',
         'medium' => 'Medium (file, url) verknüpfen',
     ],

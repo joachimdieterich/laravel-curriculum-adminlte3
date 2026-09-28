@@ -787,13 +787,13 @@ return [
         ],
     ],
     'referenceable_types' => [
-        'objective' => 'Link terminal/enabling objective',
+        'reference' => 'Reference',
         'add_reference' => 'Add reference',
         'navigator_view' => 'Link a navigator view',
-        'curriculum' => 'Link a curriculum',
-        'link' => 'Link curriculum-objective',
-        'content' => 'Link a text',
-        'medium' => 'Link a medium (file, url)',
+        'curriculum' => 'Link curriculum',
+        'objective' => 'Link curriculum-objective',
+        'content' => 'Link text',
+        'medium' => 'Link medium (file, url)',
     ],
     'course' => [
         'title' => 'Courses',

@@ -174,7 +174,7 @@
                             @click="submit()"
                         >
                             <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
-                            <span v-else>{{ trans('global.save') }}</span>
+                            <span v-else>{{ trans(saveLabel) }}</span>
                         </button>
                     </span>
                 </div>
@@ -278,18 +278,22 @@ export default {
             default: false,
             description: 'Controls the visibility of the permission section in the form',
         },
-        cancelLabel: {
-            type: String,
-            default: window.trans.global.cancel,
-        },
         showFooter: {
             type: Boolean,
             default: true,
+        },
+        cancelLabel: {
+            type: String,
+            default: window.trans.global.cancel,
         },
         showCancelButton: {
             type: Boolean,
             default: true,
             description: 'Controls the visibility of the cancel button in the modal footer',
+        },
+        saveLabel: {
+            type: String,
+            default: window.trans.global.save,
         },
         showSaveButton: {
             type: Boolean,
@@ -331,7 +335,7 @@ export default {
                     this.form.populate(params);
                     this.method = this.form.id ? 'patch' : 'post';
                     // use this event to pre-process form-data in the parent-component
-                    this.$emit('opened');
+                    this.$emit('opened', params);
                 }
             }
         });

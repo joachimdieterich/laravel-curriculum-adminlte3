@@ -3,7 +3,7 @@
         model="reference"
         modalName="reference-objective-modal"
         url="/referenceSubscriptions"
-        title="global.referenceable_types.objective"
+        title="global.referenceable_types.reference"
         :form="form"
         :allow-overflow="true"
         :disable-save-button="!form.terminal_objective_id"

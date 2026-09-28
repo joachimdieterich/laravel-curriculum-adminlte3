@@ -35,7 +35,7 @@
 
         <div class="position-relative d-flex bg-white p-3 mb-3 rounded-bottom-2">
             <div
-                class="position-absolute start-0 bottom-0 w-100 shadow-layout"
+                class="position-absolute start-0 bottom-0 w-100 rounded-bottom-2 shadow-layout"
                 style="height: calc(100% + 4rem);"
             ></div>
             <div class="overflow-auto" v-html="description"></div>

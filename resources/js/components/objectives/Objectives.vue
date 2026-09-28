@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="d-flex flex-column"
-        style="gap: 10px;"
-    >
+    <div class="d-flex flex-column gap-2">
         <div v-for="terminal in terminal_objectives"
             class="d-flex"
         >
@@ -40,38 +37,42 @@
                     />
                 </div>
             </div>
-            <div class="card-tools">
-                <span v-if="editable && showTools">
-                    <button
-                        class="btn btn-icon text-danger"
-                        :title="trans('global.terminalObjective.remove')"
-                        @click="destroy(terminal)"
-                    >
-                        <i class="fas fa-trash pointer p-1"></i>
-                    </button>
-                </span>
-            </div>
-        </div>
-        <div v-if="editable && showTools"
-            @click="openModal()"
-        >
-            <button
-                class="btn btn-default btn-flat text-left border-0 rounded-pill"
-                style="padding: 0.75rem 1.25rem;"
+            <span v-if="editable && showTools"
+                style="margin-right: -0.5rem;"
             >
-                <i class="fas fa-add pe-1"></i>
-                {{ trans('global.referenceable_types.link') }}
+                <button
+                    type="button"
+                    class="btn btn-icon text-danger"
+                    :title="trans('global.terminalObjective.remove')"
+                    @click="destroy(terminal)"
+                >
+                    <i class="fa fa-trash"></i>
+                </button>
+            </span>
+        </div>
+
+        <div v-if="editable && showTools">
+            <button
+                type="button"
+                class="btn btn-default border-0 mb-1 rounded-pill"
+                style="padding: 0.75rem 1.25rem;"
+                @click="openModal()"
+            >
+                <i class="fa fa-add pe-1"></i>
+                {{ trans('global.referenceable_types.objective') }}
             </button>
         </div>
     </div>
 </template>
-
 <script>
 import ObjectiveBox from './ObjectiveBox.vue';
 import EnablingObjectives from './EnablingObjectives.vue';
-import {useGlobalStore} from "../../store/global";
 
 export default {
+    components: {
+        ObjectiveBox,
+        EnablingObjectives,
+    },
     props: {
         owner_id: {
             type: Number,
@@ -94,12 +95,6 @@ export default {
             default: null,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
     data() {
         return {
             settings: {
@@ -111,7 +106,6 @@ export default {
             terminal_objectives: [],
             enablingCall: null,
             terminalCall: null,
-            errors: {},
         }
     },
     computed: {
@@ -180,12 +174,13 @@ export default {
                 terminal_objective_id: subscription.id,
                 enabling_objective_id: subscription.enabling_objectives.map(e => e.id),
             })
-            .then((res) => {
-                this.terminal_objectives.splice(this.terminal_objectives.findIndex(sub => sub.id === subscription.id), 1);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+                .then(res => {
+                    this.terminal_objectives.splice(this.terminal_objectives.findIndex(sub => sub.id === subscription.id), 1);
+                })
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
+                });
         },
         handleAchievementsEvent(data) {
             let achievements;
@@ -226,16 +221,5 @@ export default {
             }
         });
     },
-    components: {
-        ObjectiveBox,
-        EnablingObjectives,
-    }
 }
 </script>
-<style scoped>
-.collapse-objectives {
-    transition: transform 0.4s ease;
-
-    &:not(.collapsed) { transform: rotate3d(1, 0, 0, 180deg); }
-}
-</style>

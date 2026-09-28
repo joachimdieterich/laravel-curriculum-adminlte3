@@ -2,7 +2,7 @@
     <Modal
         model="subscribe-objective"
         modalName="subscribe-objective-modal"
-        title="global.referenceable_types.link"
+        title="global.referenceable_types.objective"
         :processing="processing"
         :allow-overflow="true"
         :disable-save-button="form.terminal_objective_id.length === 0"

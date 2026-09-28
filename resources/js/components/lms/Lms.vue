@@ -1,49 +1,50 @@
 <template>
-    <div
-        :id="'#lms_' + referenceable_id"
-        class="col-12 px-0"
-    >
-        <table v-if="entries.length"
-            id="sidebar_media_datatable"
-            class="table table-hover datatable media_table"
+    <div>
+        <div v-if="entries.length > 0"
+            class="p-3 border-bottom"    
         >
-            <tr v-for="entry in entries">
-                <td>
-                    <a
-                        :href="entry.value.course_item.url"
-                        target="_blank"
-                    >
-                        <img v-if="entry.value.course_item.modicon" :src="entry.value.course_item.modicon" height="16px"/>
-                        <i v-else class="fa fa-graduation-cap link-muted"></i>
-                        {{ entry.value.course_item?.name }}
-                    </a>
-                    <a v-if="editable"
-                        v-permission="'lms_delete'"
-                        class="text-danger pull-right pointer"
-                        @click.prevent="del(entry.id)"
-                    >
-                        <i class="fa fa-trash"></i>
-                    </a>
-                </td>
-            </tr>
-        </table>
+            {{ trans('global.lms.title_singular') }}
+        </div>
+        <div v-for="entry in entries"
+            class="d-flex justify-content-between px-3 py-2 border-top bg-gray-light"
+        >
+            <a
+                :href="entry.value.course_item.url"
+                target="_blank"
+                class="d-flex align-items-center gap-1 link-underline-hover"
+            >
+                <img v-if="entry.value.course_item.modicon"
+                    :src="entry.value.course_item.modicon"
+                    height="20px"
+                />
+                <i v-else class="fa fa-graduation-cap link-muted"></i>
+                {{ entry.value.course_item?.name }}
+            </a>
+            <button v-if="editable"
+                v-permission="'lms_delete'"
+                class="btn btn-icon text-danger"
+                @click="destroy(entry.id)"
+            >
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+
         <div v-if="editable"
             v-permission="'lms_create'"
-            @click="create()"
         >
             <button
-                class="btn btn-default btn-flat text-left border-0 rounded-pill"
+                type="button"
+                class="btn btn-default border-0 mt-2 rounded-pill"
                 style="padding: 0.75rem 1.25rem;"
+                @click="openModal()"
             >
-                <i class="fas fa-plus pe-1"></i>
+                <i class="fa fa-plus pe-1"></i>
                 {{ trans('global.lms.add') }}
             </button>
         </div>
     </div>
 </template>
 <script>
-import {useGlobalStore} from "../../store/global";
-
 export default {
     props: {
         referenceable_type: {
@@ -59,12 +60,6 @@ export default {
             default: false,
         },
     },
-    setup () {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore
-        }
-    },
     data() {
         return {
             entries: [],
@@ -79,28 +74,29 @@ export default {
                 referenceable_type: this.referenceable_type,
                 referenceable_id: this.referenceable_id,
             })
-            .then(r => {
-                this.lms_url = r.data.lms_url;
-                this.entries = r.data.entries;
-            })
-            .catch(err => {
-                console.log(err.response);
-            });
+                .then(r => {
+                    this.lms_url = r.data.lms_url;
+                    this.entries = r.data.entries;
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         },
-        create() {
-            this.globalStore?.showModal('lms-modal',{
+        openModal() {
+            this.globalStore.showModal('lms-modal',{
                 referenceable_type: this.referenceable_type,
                 referenceable_id: this.referenceable_id,
             });
         },
-        del(id) {
+        destroy(id) {
             axios.delete('/lmsReferences/' + id)
                 .then(res => {
                     const index = this.entries.findIndex(item => item.id === id);
                     this.entries.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },

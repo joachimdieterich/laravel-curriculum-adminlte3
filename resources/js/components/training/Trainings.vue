@@ -1,80 +1,89 @@
-<template >
+<template>
     <div>
-        <div class="card mb-0">
+        <div class="mb-0">
             <div v-if="trainings.length > 0"
-                class="card-header"
+                class="p-3 border-bottom"
             >
                 {{ trans('global.training.title') }}
             </div>
             <div v-for="training in trainings"
-                class="card-footer"
+                class="d-block d-sm-flex align-items-center justify-content-between px-3 py-2 border-top bg-gray-light"
             >
-                <a :href="'/trainings/' + training.id">{{ training.title }}</a>
-                <!-- General tools such as edit or delete-->
-                <div class="tools pull-right">
-                    <span>
-                        <small v-if="training.begin !== null && training.end !== null" class="badge badge-secondary me-2">
+                <a
+                    :href="'/trainings/' + training.id"
+                    class="link-underline-hover"
+                >
+                    {{ training.title }}
+                </a>
+                <div class="d-flex align-items-center gap-2 float-end">
+                    <span class="d-contents">
+                        <small v-if="training.begin !== null && training.end !== null" class="badge text-bg-secondary">
                             {{ diffForHumans(training.begin) }} - {{ diffForHumans(training.end) }}
                         </small>
-                        <small v-else-if="training.begin !== null" class="badge badge-secondary me-2">
+                        <small v-else-if="training.begin !== null" class="badge text-bg-secondary">
                             {{ trans('global.begin') + ' ' + diffForHumans(training.begin) }}
                         </small>
-                        <small v-else-if="training.end !== null" class="badge badge-secondary me-2">
+                        <small v-else-if="training.end !== null" class="badge text-bg-secondary">
                             {{ trans('global.end') + ' ' + diffForHumans(training.end) }}
                         </small>
                     </span>
-                    <span v-if="editable && showTools">
-                        <a v-if="training.subscriptions[0].order_id > 0"
-                            class="text-secondary pointer"
+                    <span v-if="editable && showTools"
+                        class="d-contents"
+                    >
+                        <button v-if="training.subscriptions[0].order_id > 0"
+                            type="button"
+                            class="btn btn-icon text-secondary"
                             @click="lower(training)"
                         >
                             <i class="fa fa-arrow-up px-1"></i>
-                        </a>
-                        <a v-if="training.subscriptions[0].order_id < max_order_id"
-                            class="text-secondary pointer ms-2"
+                        </button>
+                        <button v-if="training.subscriptions[0].order_id < max_order_id"
+                            type="button"
+                            class="btn btn-icon text-secondary"
                             @click="higher(training)"
                         >
                             <i class="fa fa-arrow-down px-1"></i>
-                        </a>
-                        <a
-                            class="text-secondary pointer ms-3"
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-icon text-secondary"
                             @click="openModal(training)"
                         >
                             <i class="fa fa-pencil-alt px-1"></i>
-                        </a>
-                        <a v-if="training.owner_id == $userId || deletable || checkPermission('is_admin')"
-                            class="text-danger pointer ms-3"
+                        </button>
+                        <button v-if="training.owner_id == $userId || deletable || checkPermission('is_admin')"
+                            type="button"
+                            class="btn btn-icon text-danger"
                             @click="confirmDelete(training)"
                         >
                             <i class="fas fa-trash px-1"></i>
-                        </a>
+                        </button>
                     </span>
                 </div>
             </div>
 
-            <div v-if="editable && showTools"
-                @click="openModal()"
-            >
+            <div v-if="editable && showTools">
                 <button
-                    class="btn btn-default btn-flat text-left border-0 rounded-pill mt-2"
+                    type="button"
+                    class="btn btn-default border-0 mb-1 mt-2 rounded-pill"
                     style="padding: 0.75rem 1.25rem;"
+                    @click="openModal()"
                 >
                     <i class="fas fa-add pe-1"></i>
                     {{ trans('global.training.create') }}
                 </button>
             </div>
         </div>
+
         <Teleport to="body">
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.training.delete')"
                 :description="trans('global.training.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy(this.training);
+                    showConfirm = false;
+                    destroy(training);
                 }"
             />
         </Teleport>
@@ -84,9 +93,6 @@
 import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
-import '@vuepic/vue-datepicker/dist/main.css';
-import axios from "axios";
 
 export default {
     components: {
@@ -115,12 +121,6 @@ export default {
             default: null,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
     data() {
         return {
             component_id: this.$.uid,
@@ -134,18 +134,15 @@ export default {
         this.loaderEvent();
 
         // TRAINING events
-        this.$eventHub.on('training-added', (e) => {
-            if (this.subscribable_id === e.id) {
-                this.trainings.push(e.training);
-                this.max_order_id = e.training.subscriptions[0].order_id;
+        this.$eventHub.on('training-added', training => {
+            if (this.subscribable_id === training.subscriptions[0].subscribable_id) {
+                this.trainings.push(training);
+                this.max_order_id = training.subscriptions[0].order_id;
             }
         });
-        this.$eventHub.on('training-updated', (e) => {
-            if (this.subscribable_id === e.id) {
-                Object.assign(
-                    this.trainings.find(training => training.id === e.training.id),
-                    e.training
-                );
+        this.$eventHub.on('training-updated', training => {
+            if (this.subscribable_id === training.subscriptions[0].subscribable_id) {
+                Object.assign(this.trainings.find(t => t.id === training.id), training);
             }
         });
     },
@@ -173,10 +170,10 @@ export default {
             this.training = training;
             this.showConfirm = true;
         },
-        destroy(training) {
-            axios.delete('/trainings/' + training.id)
+        destroy() {
+            axios.delete('/trainings/' + this.training.id)
                 .then(response => {
-                    let index = this.trainings.indexOf(training);
+                    let index = this.trainings.indexOf(this.training);
                     // decrease the order_id of each training below the deleted training
                     for (let i = index + 1; i < this.trainings.length; i++) {
                         this.trainings[i].subscriptions[0].order_id -= 1;
@@ -187,6 +184,7 @@ export default {
                 })
                 .catch(e => {
                     console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         /**
@@ -215,7 +213,7 @@ export default {
                     console.log(e);
                 });
         },
-        diffForHumans: function (date) {
+        diffForHumans(date) {
             return moment(date).locale(window.navigator.language).fromNow();
         },
     },

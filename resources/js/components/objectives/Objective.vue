@@ -110,7 +110,7 @@
                             @click="loadReferences()"
                         >
                             <i class="fa fa-project-diagram"></i>
-                            <span v-if="help" class="ps-2">{{ trans('global.referenceable_types.objective') }}</span>
+                            <span v-if="help" class="ps-2">{{ trans('global.referenceable_types.reference') }}</span>
                         </button>
                     </li>
                     <!-- 6 Achievements -->

@@ -14,7 +14,7 @@
              style="margin-bottom: 0px !important">
             <div class="card-header">
                  <h3 class="card-title">
-                    {{ trans('global.referenceable_types.objective') }}
+                    {{ trans('global.referenceable_types.reference') }}
                  </h3>
 
                  <div class="card-tools">

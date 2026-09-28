@@ -27,4 +27,9 @@
             > div { font-size: 100px; }
         }
     }
+    .collapse-objectives {
+        transition: transform 0.4s ease;
+
+        &:not(.collapsed) { transform: rotate3d(1, 0, 0, 180deg); }
+    }
 }

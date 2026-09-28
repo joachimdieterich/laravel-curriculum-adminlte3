@@ -7,9 +7,7 @@
         :form="form"
         :allow-overflow="true"
         :disable-save-button="!form.course_id"
-        :intercept-save="true"
         @opened="preProcessing()"
-        @save="submit()"
     >
         <template #general>
             <Token v-if="!token && !loading"

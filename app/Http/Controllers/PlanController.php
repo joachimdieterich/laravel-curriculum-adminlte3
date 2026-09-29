@@ -71,18 +71,19 @@ class PlanController extends Controller
             'title'             => $input['title'],
             'description'       => $input['description'],
             'color'             => $input['color'],
-            'begin'             => $input['begin'],
-            'end'               => $input['end'],
-            'duration'          => $input['duration'],
-            'type_id'           => format_select_input($input['type_id']),
+            'begin'             => $input['begin'] ?? NULL,
+            'end'               => $input['end'] ?? NULL,
+            'duration'          => $input['duration'] ?? NULL,
+            'type_id'           => $input['type_id'],
             'owner_id'          => auth()->user()->id,
         ]);
 
-        // checkForEmbeddedMedia($plan, 'description'); // subscribe embedded media
-
-        if (request()->wantsJson()) {
-            return $plan;
+        if (isset($input['medium_id'])) {
+            app(MediumSubscriptionController::class)
+                ->updateTempSubscriptions($input['medium_id'], $plan->id, 'App\\Plan');
         }
+
+        return $plan;
     }
 
     /**
@@ -136,21 +137,13 @@ class PlanController extends Controller
         abort_unless((\Gate::allows('plan_edit') and $plan->isAccessible()), 403);
         $input = $this->validateRequest();
 
-        if (isset($input['type_id'])) {
-            $input['type_id'] = format_select_input($input['type_id']); //hack to prevent array to string conversion
-        }
-
         if (!is_admin()) {
             $input['owner_id'] = auth()->user()->id;
         }
 
         $plan->update($input);
 
-        // checkForEmbeddedMedia($plan, 'description');// subscribe embedded media
-
-        if (request()->wantsJson()) {
-            return $plan;
-        }
+        return $plan;
     }
 
     /**

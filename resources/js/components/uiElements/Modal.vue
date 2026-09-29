@@ -48,9 +48,8 @@
                                 <div>
                                     <slot name="general">
                                         <input
-                                            type="text"
                                             :id="model + '-title'"
-                                            :name="model + '-title'"
+                                            type="text"
                                             class="form-control"
                                             maxlength="191"
                                             v-model.trim="form.title"

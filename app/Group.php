@@ -230,7 +230,7 @@ class Group extends Model
             $group->planSubscription()->delete();
             $group->logbookSubscription()->delete();
             $group->videoconferenceSubscription()->delete();
-            $group->exams()->delete();
+            $group->exams->each->delete();
         });
     }
 }

@@ -131,7 +131,6 @@ class IleaPlusToolAdapter implements TestToolkitInterface
             return new Response($e->getMessage(), $e->getCode());
         }
 
-        $exam->delete();
         return new Response('Successfully removed exam', Response::HTTP_OK);
     }
 

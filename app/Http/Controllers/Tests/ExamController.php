@@ -122,7 +122,8 @@ class ExamController extends Controller
 
     public function delete(Exam $exam, TestToolkitInterface $testToolkit)
     {
-        return $testToolkit->deleteExam($exam);
+        return $exam->delete();
+        // return $testToolkit->deleteExam($exam);
     }
 
     public function getExamStatus(Exam $exam, TestToolkitInterface $testToolkit)

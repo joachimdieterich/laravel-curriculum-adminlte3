@@ -2,7 +2,6 @@
 
 namespace App;
 
-
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -10,7 +9,7 @@ class Tag extends \Spatie\Tags\Tag
 {
     protected static function booted(): void
     {
-        static::created(static function (Tag $tag) {
+        static::created(function (Tag $tag) {
             if ($tag->translation ?? null || empty($tag->getTranslations('name'))) {
                 return;
             }
@@ -18,7 +17,7 @@ class Tag extends \Spatie\Tags\Tag
             $tag->translation = $tag->getTranslations('name')[$tag->getLocale()];
         });
 
-        static::retrieved(static function (Tag $tag) {
+        static::retrieved(function (Tag $tag) {
             if ($tag->translation ?? null || empty($tag->getTranslations('name'))) {
                 return;
             }
@@ -26,8 +25,8 @@ class Tag extends \Spatie\Tags\Tag
             $tag->translation = $tag->getTranslations('name')[$tag->getLocale()];
         });
 
-        static::saving(static function (Tag $tag) {
-            if (!isset($tag->translation)) {
+        static::saving(function (Tag $tag) {
+            if (! isset($tag->translation)) {
                 return;
             }
 
@@ -66,7 +65,7 @@ class Tag extends \Spatie\Tags\Tag
 
                 return [
                     'count'  => $builder->count(),
-                    'result' => $builder->get($get)
+                    'result' => $builder->get($get),
                 ];
             }
         );
@@ -87,7 +86,7 @@ class Tag extends \Spatie\Tags\Tag
 
                 return [
                     'count'  => $builder->count(),
-                    'result' => $builder->get($get)
+                    'result' => $builder->get($get),
                 ];
             }
         );
@@ -104,7 +103,7 @@ class Tag extends \Spatie\Tags\Tag
 
         $tag = static::findFromString($name, $type, $locale);
 
-        if (!$tag) {
+        if (! $tag) {
             $tag = static::create([
                 'name'    => [$locale => $name],
                 'type'    => $type,
@@ -120,7 +119,7 @@ class Tag extends \Spatie\Tags\Tag
         ?string $type = null,
         ?string $locale = null,
         ?User $currentUser = null
-    ): Tag|null {
+    ): ?Tag {
         $currentUser = $currentUser ?? auth()->user();
         $locale      = $locale ?? static::getLocale();
 

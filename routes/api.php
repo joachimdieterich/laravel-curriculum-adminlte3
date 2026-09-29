@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\V1\Admin\UsersApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => 'v1',
+    'prefix'    => 'v1',
     'namespace' => 'Api\V1',
 ], function () {
     Route::get('about', 'AboutApiController@index');
@@ -13,8 +13,8 @@ Route::group([
  * Auth Routes
  */
 Route::group([
-    'prefix' => 'v1',
-    'as' => 'auth.',
+    'prefix'    => 'v1',
+    'as'        => 'auth.',
     'namespace' => 'Api\V1\Auth',
 ], function () {
     Route::post('login', 'AuthController@login');
@@ -34,19 +34,18 @@ Route::group([
     ( 'metadata_password', 'yourPassword', NULL, NULL, 'string', '2020-07-15 11:18:21', '2020-07-15 11:18:21');
  */
 Route::group([
-    'prefix' => 'v1',
-    'as' => 'admin.',
+    'prefix'    => 'v1',
+    'as'        => 'admin.',
     'namespace' => 'Api\V1\Admin',
 ], function () {
     Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
     Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
 
-
     /**
      * Oauth login for access, but common_name for user simulation
      */
     Route::group([
-        'as' => 'simulate.',
+        'as'         => 'simulate.',
         'middleware' => ['client_credentials', 'simulate'],
     ], function () {
         /*** Videoconferences ***/
@@ -59,69 +58,69 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'v1',
-    'as' => 'admin.',
-    'namespace' => 'Api\V1\Admin',
+    'prefix'     => 'v1',
+    'as'         => 'admin.',
+    'namespace'  => 'Api\V1\Admin',
     'middleware' => 'client_credentials',
-], function () {
+],
+    function () {
+        //    Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
+        //    Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
+        Route::apiResource('curricula', 'CurriculaApiController');
+        // index-Route needs to be defined after Resource-Route, otherwise it will be overridden
+        Route::get('curricula', 'CurriculaApiController@index')->middleware('throttle:1,10');
+        Route::apiResource('permissions', 'PermissionsApiController');
 
-//    Route::get('curricula/metadatasets', 'CurriculaApiController@getAllMetadatasets');
-//    Route::get('curricula/{curriculum}/metadataset', 'CurriculaApiController@getSingleMetadataset');
-    Route::apiResource('curricula', 'CurriculaApiController');
-    // index-Route needs to be defined after Resource-Route, otherwise it will be overridden
-    Route::get('curricula', 'CurriculaApiController@index')->middleware('throttle:1,10');
-    Route::apiResource('permissions', 'PermissionsApiController');
+        Route::apiResource('roles', 'RolesApiController');
 
-    Route::apiResource('roles', 'RolesApiController');
+        Route::get('users/{user}/dashboard', 'UsersApiController@dashboard');
+        Route::get('users/{user}/groups', 'UsersApiController@withGroups');
+        Route::get('users/{user}/organizations', 'UsersApiController@withOrganizations');
+        Route::get('users/{user}/roles', 'UsersApiController@withRoles');
+        Route::delete('users/{user}/force', 'UsersApiController@forceDestroy');
+        Route::apiResource('users', 'UsersApiController');
 
-    Route::get('users/{user}/dashboard', 'UsersApiController@dashboard');
-    Route::get('users/{user}/groups', 'UsersApiController@withGroups');
-    Route::get('users/{user}/organizations', 'UsersApiController@withOrganizations');
-    Route::get('users/{user}/roles', 'UsersApiController@withRoles');
-    Route::delete('users/{user}/force', 'UsersApiController@forceDestroy');
-    Route::apiResource('users', 'UsersApiController');
+        Route::put('organizations/enrol', 'OrganizationsApiController@enrol');
+        Route::delete('organizations/expel', 'OrganizationsApiController@expel');
+        Route::get('organizations/{organization}/members', 'OrganizationsApiController@members');
+        Route::apiResource('organizations', 'OrganizationsApiController');
 
-    Route::put('organizations/enrol', 'OrganizationsApiController@enrol');
-    Route::delete('organizations/expel', 'OrganizationsApiController@expel');
-    Route::get('organizations/{organization}/members', 'OrganizationsApiController@members');
-    Route::apiResource('organizations', 'OrganizationsApiController');
+        Route::apiResource('organizationtypes', 'OrganizationTypesApiController');
 
-    Route::apiResource('organizationtypes', 'OrganizationTypesApiController');
+        Route::apiResource('grades', 'GradesApiController');
 
-    Route::apiResource('grades', 'GradesApiController');
+        Route::apiResource('periods', 'PeriodsApiController');
 
-    Route::apiResource('periods', 'PeriodsApiController');
+        Route::apiResource('subjects', 'SubjectsApiController');
 
-    Route::apiResource('subjects', 'SubjectsApiController');
+        Route::put('groups/enrol', 'GroupsApiController@enrol');
+        Route::delete('groups/expel', 'GroupsApiController@expel');
+        Route::get('groups/{group}/members', 'GroupsApiController@members');
+        Route::apiResource('groups', 'GroupsApiController');
 
-    Route::put('groups/enrol', 'GroupsApiController@enrol');
-    Route::delete('groups/expel', 'GroupsApiController@expel');
-    Route::get('groups/{group}/members', 'GroupsApiController@members');
-    Route::apiResource('groups', 'GroupsApiController');
+        Route::apiResource('countries', 'CountriesApiController');
+        Route::apiResource('states', 'StatesApiController');
 
-    Route::apiResource('countries', 'CountriesApiController');
-    Route::apiResource('states', 'StatesApiController');
+        Route::apiResource('achievements', 'AchievementsApiController');
+        Route::get('achievements', 'AchievementsApiController@getAchievements');
 
-    Route::apiResource('achievements', 'AchievementsApiController');
-    Route::get('achievements', 'AchievementsApiController@getAchievements');
+        Route::get('moodle/getModelTypes', 'MoodleApiController@getModelTypes');
+        Route::get('moodle/curricula', 'MoodleApiController@getCurricula');
+        Route::get('moodle/curricula/{curriculum}/terminalObjectives', 'MoodleApiController@getTerminalObjectives');
+        Route::get('moodle/curricula/terminalObjectives/{terminalObjective}/enablingObjectives', 'MoodleApiController@getEnablingObjectivesByTerminalObjectiveId');
+        Route::get('moodle/curricula/{curriculum}/enablingObjectives', 'MoodleApiController@getEnablingObjectives');
+        Route::get('moodle/logbooks', 'MoodleApiController@getLogbooks');
+        Route::get('moodle/kanbans', 'MoodleApiController@getKanbans');
+        Route::get('moodle/kanbanLink', 'MoodleApiController@getKanbanLink');
+        Route::get('moodle/groups', 'MoodleApiController@getGroups');
+        Route::get('moodle/course', 'MoodleApiController@getCourse');
+        Route::post('moodle/groups/enrol', 'MoodleApiController@enrolToGroup');
+        Route::post('moodle/users/enrol', 'MoodleApiController@enrolUsers');
+        Route::post('moodle/users/expel', 'MoodleApiController@expelUsers');
 
-    Route::get('moodle/getModelTypes', 'MoodleApiController@getModelTypes');
-    Route::get('moodle/curricula', 'MoodleApiController@getCurricula');
-    Route::get('moodle/curricula/{curriculum}/terminalObjectives', 'MoodleApiController@getTerminalObjectives');
-    Route::get('moodle/curricula/terminalObjectives/{terminalObjective}/enablingObjectives', 'MoodleApiController@getEnablingObjectivesByTerminalObjectiveId');
-    Route::get('moodle/curricula/{curriculum}/enablingObjectives', 'MoodleApiController@getEnablingObjectives');
-    Route::get('moodle/logbooks', 'MoodleApiController@getLogbooks');
-    Route::get('moodle/kanbans', 'MoodleApiController@getKanbans');
-    Route::get('moodle/kanbanLink', 'MoodleApiController@getKanbanLink');
-    Route::get('moodle/groups', 'MoodleApiController@getGroups');
-    Route::get('moodle/course', 'MoodleApiController@getCourse');
-    Route::post('moodle/groups/enrol', 'MoodleApiController@enrolToGroup');
-    Route::post('moodle/users/enrol', 'MoodleApiController@enrolUsers');
-    Route::post('moodle/users/expel', 'MoodleApiController@expelUsers');
+        Route::post('kanbans/{kanban}/enrol', 'KanbansApiController@enrolToKanban');
+        Route::post('kanbans/{kanban}/expel', 'KanbansApiController@expelFromKanban');
+        Route::get('kanbans/{kanban}/subscriptions', 'KanbansApiController@subscriptions');
+        Route::apiResource('kanbans', 'KanbansApiController');
 
-    Route::post('kanbans/{kanban}/enrol', 'KanbansApiController@enrolToKanban');
-    Route::post('kanbans/{kanban}/expel', 'KanbansApiController@expelFromKanban');
-    Route::get('kanbans/{kanban}/subscriptions', 'KanbansApiController@subscriptions');
-    Route::apiResource('kanbans', 'KanbansApiController');
-
-});
+    });

@@ -11,15 +11,13 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
     public function register(): void
     {
         $this->hideSensitiveRequestDetails();
 
         // Add Telescope tag status
-        Telescope::tag(static function (IncomingEntry $entry) {
+        Telescope::tag(function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
                 return [
                     $entry->content['response_status'],
@@ -30,12 +28,12 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
             return [];
         });
 
-        Telescope::filter(static function (IncomingEntry $entry) {
+        Telescope::filter(function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
                 // don't filter requests that take too long to process (default 1000ms)
                 if (
                     $entry->content['duration'] >= config('telescope.duration_filter')
-                    && !str_starts_with($entry->content['uri'], '/media')
+                    && ! str_starts_with($entry->content['uri'], '/media')
                 ) {
                     return true;
                 }
@@ -60,8 +58,6 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
     /**
      * Prevent sensitive request details from being logged by Telescope.
-     *
-     * @return void
      */
     protected function hideSensitiveRequestDetails(): void
     {

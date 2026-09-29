@@ -7,6 +7,7 @@ use App\Interfaces\MediaInterface;
 use App\Medium;
 use App\MediumSubscription;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Intervention\Image\Laravel\Facades\Image;
 use Yajra\DataTables\DataTables;
@@ -15,13 +16,13 @@ class LocalMediaAdapter implements MediaInterface
 {
     public static function __set_state(array $an_array): object
     {
-        return new self();
+        return new self;
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -32,6 +33,7 @@ class LocalMediaAdapter implements MediaInterface
         }
 
         abort_unless(is_admin(), 403);
+
         return view('media.index');
     }
 
@@ -50,7 +52,7 @@ class LocalMediaAdapter implements MediaInterface
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -59,19 +61,21 @@ class LocalMediaAdapter implements MediaInterface
 
     public function store(Request $request)
     {
-        if ($request->hasFile('file')) { //if size == 0 increase upload_max_filesize in php.ini
+        if ($request->hasFile('file')) { // if size == 0 increase upload_max_filesize in php.ini
             $input = $this->validateRequest();
 
             $files = $request->file('file');
-            if (gettype($files) == 'object') $files = [$files];
+            if (gettype($files) == 'object') {
+                $files = [$files];
+            }
 
-            $uploaded = new Collection();
-            $pathPrefix = '/users/'.auth()->user()->id;//.'/';
+            $uploaded   = new Collection;
+            $pathPrefix = '/users/' . auth()->user()->id; // .'/';
             foreach ($files as $file) {
-                $cleanFilename = $this->cleanFileName(time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
-                $filename = $cleanFilename.'.'.$file->getClientOriginalExtension(); //todo: filename should be editable
+                $cleanFilename = $this->cleanFileName(time() . '_' . pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+                $filename      = $cleanFilename . '.' . $file->getClientOriginalExtension(); // todo: filename should be editable
 
-                if ($file->storeAs($pathPrefix.$input['path'], $filename, config('filesystems.default'))) {
+                if ($file->storeAs($pathPrefix . $input['path'], $filename, config('filesystems.default'))) {
                     $uploaded->push($this->onStore($file, $filename, $input));
                     if (($input['subscribable_type'] !== 'null') and ($input['subscribable_id'] !== 'null')) {
                         $this->subscribe($uploaded->last(), $input['subscribable_type'], $input['subscribable_id']);
@@ -79,13 +83,14 @@ class LocalMediaAdapter implements MediaInterface
                 }
             }
 
-            LogController::set(get_class($this).'@'.__FUNCTION__, null, (is_array($files)) ? count($files) : 1);
+            LogController::set(get_class($this) . '@' . __FUNCTION__, null, (is_array($files)) ? count($files) : 1);
 
             return response()->json($uploaded->all());
         }
     }
 
-    private function cleanFileName($string) {
+    private function cleanFileName($string)
+    {
         $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
         $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
 
@@ -94,9 +99,11 @@ class LocalMediaAdapter implements MediaInterface
 
     public function show(Medium $medium)
     {
+        abort_unless(auth()->user() !== null, 401);
+
         /* id link */
         if ($medium->mime_type != 'url') {
-            $path = storage_path('app'.$medium->path.$medium->medium_name);
+            $path = storage_path('app' . $medium->path . $medium->medium_name);
             if (! file_exists($path)) {
                 abort(404, "File doesn't exist");
             }
@@ -105,39 +112,39 @@ class LocalMediaAdapter implements MediaInterface
         // Medium is public (sharing_level_id == 1) or user is owner
         if ($medium->public or $medium->owner_id == auth()->user()->id or is_admin()) {
             return $medium->mime_type != 'url'
-                ? response()->file($path, ['Content-Disposition' => 'filename="'.$medium->medium_name.'"'])
-                : redirect($medium->path); //return file or url
+                ? response()->file($path, ['Content-Disposition' => 'filename="' . $medium->medium_name . '"'])
+                : redirect($medium->path); // return file or url
         }
 
-        /* checkIfUserHasSubscription and visibility*/
+        /* checkIfUserHasSubscription and visibility */
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
-                    return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
+                    return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); // return file or url
                 }
             }
         }
 
-        /* check if User has access to model->medium_id*/
+        /* check if User has access to model->medium_id */
         $params = $this->validateRequest();
         if (isset($params['model'])) {
-            $class = 'App\\'.$params['model'];
-            $model = (new $class)::where('id',$params['model_id'] )->get()->first();
+            $class = 'App\\' . $params['model'];
+            $model = (new $class)::where('id', $params['model_id'])->get()->first();
 
-            if ($model->isAccessible() && ($model->medium_id == $medium->id)){
-                return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); //return file or url
+            if ($model->isAccessible() && ($model->medium_id == $medium->id)) {
+                return ($medium->mime_type != 'url') ? response()->file($path) : redirect($medium->path); // return file or url
             }
         }
 
-        abort(403, "No permission to view local media");
+        abort(403, 'No permission to view local media');
     }
 
     public function thumb(Medium $medium, $size)
     {
         /* id link */
         if (($medium->mime_type != 'url')) {
-            $path = storage_path('app'.$medium->path.$medium->medium_name);
-            $thumb_path = storage_path('app'.$medium->path.'th_'.$size.'_'.$medium->medium_name);
+            $path       = storage_path('app' . $medium->path . $medium->medium_name);
+            $thumb_path = storage_path('app' . $medium->path . 'th_' . $size . '_' . $medium->medium_name);
 
             if (! file_exists($path)) {
                 abort(404);
@@ -156,14 +163,14 @@ class LocalMediaAdapter implements MediaInterface
          * Medium is public (sharing_level_id == 1) or user is owner
          */
         if (($medium->public == true) or ($medium->owner_id == auth()->user()->id)) {
-            return ($medium->mime_type != 'url') ? $img->response('jpg') : redirect($medium->path); //return file or url
+            return ($medium->mime_type != 'url') ? $img->response('jpg') : redirect($medium->path); // return file or url
         }
 
-        /* checkIfUserHasSubscription and visibility*/
+        /* checkIfUserHasSubscription and visibility */
         if ($medium->subscriptions()) {
             foreach ($medium->subscriptions as $subscription) {
                 if ($this->checkIfUserHasSubscription($subscription)) {
-                    return ($medium->mime_type != 'url') ? $img->response('jpg') : redirect($medium->path); //return file or url
+                    return ($medium->mime_type != 'url') ? $img->response('jpg') : redirect($medium->path); // return file or url
                 }
             }
         }
@@ -202,7 +209,7 @@ class LocalMediaAdapter implements MediaInterface
         $input = $this->validateRequest();
         if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
             $subscribable_type = $input['subscribable_type'];
-            $subscribable_id = $input['subscribable_id'];
+            $subscribable_id   = $input['subscribable_id'];
 
             MediumSubscription::where([
                 ['subscribable_type', $subscribable_type],
@@ -212,7 +219,9 @@ class LocalMediaAdapter implements MediaInterface
                 ->delete();
         }
 
-        if (request()->wantsJson()) return true;
+        if (request()->wantsJson()) {
+            return true;
+        }
     }
 
     public function checkIfUserHasSubscription($subscription)
@@ -241,25 +250,25 @@ class LocalMediaAdapter implements MediaInterface
                 return true;
                 break;
             default:
-                if ($subscription->subscribable->isAccessible())
-                {
+                if ($subscription->subscribable->isAccessible()) {
                     return true;
                 }
                 break;
         }
+
         return false;
     }
 
     public function subscribe($medium, $subscribable_type, $subscribable_id, $sharing_level_id = 1, $visibility = 1)
     {
         $subscribe = MediumSubscription::updateOrCreate([
-            'medium_id' => $medium->id,
+            'medium_id'         => $medium->id,
             'subscribable_type' => $subscribable_type,
-            'subscribable_id' => $subscribable_id,
+            'subscribable_id'   => $subscribable_id,
         ], [
             'sharing_level_id' => $sharing_level_id,
-            'visibility' => $visibility,
-            'owner_id' => auth()->user()->id,
+            'visibility'       => $visibility,
+            'owner_id'         => auth()->user()->id,
         ]);
         $subscribe->save();
 
@@ -268,21 +277,21 @@ class LocalMediaAdapter implements MediaInterface
 
     protected function onStore($file, $filename, $input)
     {
-        $pathPrefix = '/users/'.auth()->user()->id.'/';
+        $pathPrefix = '/users/' . auth()->user()->id . '/';
 
         return Medium::create([
-            'path'          => $pathPrefix.(($input['path'] == '') ? '' : $input['path'].'/'),
-            'medium_name'   => $filename,
-            'title'         => $input['title']          ?? $file->getClientOriginalName(),
-            'description'   => $input['description']    ?? '',
-            'author'        => auth()->user()->username,
-            'publisher'     => $input['publisher']      ?? '',
-            'city'          => $input['city']           ?? '',
-            'date'          => date('Y-m-d_H-i-s'),
-            'size'          => $file->getSize(),
-            'mime_type'     => $file->getMimeType(),
-            'license_id'    => $input['license_id']     ?? 2,
-            'public'        => (int) ($input['public']         ?? 0),   //default not public
+            'path'        => $pathPrefix . (($input['path'] == '') ? '' : $input['path'] . '/'),
+            'medium_name' => $filename,
+            'title'       => $input['title'] ?? $file->getClientOriginalName(),
+            'description' => $input['description'] ?? '',
+            'author'      => auth()->user()->username,
+            'publisher'   => $input['publisher'] ?? '',
+            'city'        => $input['city'] ?? '',
+            'date'        => date('Y-m-d_H-i-s'),
+            'size'        => $file->getSize(),
+            'mime_type'   => $file->getMimeType(),
+            'license_id'  => $input['license_id'] ?? 2,
+            'public'      => (int) ($input['public'] ?? 0),   // default not public
 
             'owner_id' => auth()->user()->id,
         ]);
@@ -291,25 +300,25 @@ class LocalMediaAdapter implements MediaInterface
     protected function validateRequest()
     {
         return request()->validate([
-            'path' => 'sometimes',
-            'thumb_path' => 'sometimes',
-            'external_id' => 'sometimes',
-            'adapter' => 'sometimes',
+            'path'              => 'sometimes',
+            'thumb_path'        => 'sometimes',
+            'external_id'       => 'sometimes',
+            'adapter'           => 'sometimes',
             'subscribable_type' => 'sometimes',
-            'subscribable_id' => 'sometimes',
-            'repository' => 'sometimes',
-            'artefact' => 'sometimes',
-            'file.*' => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
-            'model' => 'sometimes',
-            'model_id' => 'sometimes',
+            'subscribable_id'   => 'sometimes',
+            'repository'        => 'sometimes',
+            'artefact'          => 'sometimes',
+            'file.*'            => 'sometimes|mimes:jpg,jpeg,png,gif,bmp,tiff,tif,ico,svg,mov,mp4,m4v,mpeg,mpg,mp3,m4a,m4b,wav,mid,avi,ppt,pps,pptx,doc,docx,pdf,xls,xlsx,xps,odt,odp,ods,odg,odc,odb,odf,key,numbers,pages,csv,txt,rtx,rtf,zip,psd,xcf',
+            'model'             => 'sometimes',
+            'model_id'          => 'sometimes',
 
-            'title' => 'sometimes',
+            'title'       => 'sometimes',
             'description' => 'sometimes',
-            'author' => 'sometimes',
-            'publisher' => 'sometimes',
-            'city' => 'sometimes',
-            'license_id' => 'sometimes',
-            'public' => 'sometimes',
+            'author'      => 'sometimes',
+            'publisher'   => 'sometimes',
+            'city'        => 'sometimes',
+            'license_id'  => 'sometimes',
+            'public'      => 'sometimes',
         ]);
     }
 }

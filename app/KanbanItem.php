@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Facades\Broadcast;
 use Maize\Markable\Markable;
 use Mews\Purifier\Casts\CleanHtml;
 
@@ -60,7 +59,7 @@ class KanbanItem extends Model
             return $defaultChannels;
         }
 
-        $diffWithoutUpdatedAtAndOrderId = array_filter($diff, static function ($key) use ($updatedAtColumnName) {
+        $diffWithoutUpdatedAtAndOrderId = array_filter($diff, function ($key) use ($updatedAtColumnName) {
             return $key !== $updatedAtColumnName && $key !== 'order_id';
         }, ARRAY_FILTER_USE_KEY);
 
@@ -220,7 +219,7 @@ class KanbanItem extends Model
 
     protected static function booted(): void
     {
-        static::deleting(static function (KanbanItem $item) {
+        static::deleting(function (KanbanItem $item) {
             $item->mediaSubscriptions->each(function (MediumSubscription $subscription) {
                 // hack to skip setting medium_id of model to null
                 if (is_null($subscription->additional_data)) {

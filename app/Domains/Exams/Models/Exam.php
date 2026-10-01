@@ -6,6 +6,7 @@ use App\Group;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use App\Domains\Tests\Services\IleaPlusToolAdapter;
 
 class Exam extends Model
 {
@@ -66,5 +67,12 @@ class Exam extends Model
     public function getCreatedAtAttribute($value)
     {
         return Carbon::createFromTimeString($value)->format('d.m.Y');
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Exam $exam) {
+            app(IleaPlusToolAdapter::class)->deleteExam($exam);
+        });
     }
 }

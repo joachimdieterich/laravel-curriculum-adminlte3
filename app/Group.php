@@ -60,7 +60,7 @@ class Group extends Model
 
     public function curriculumSubscriptions()
     {
-        return $this->morphOne('App\CurriculumSubscription', 'subscribable');
+        return $this->morphMany('App\CurriculumSubscription', 'subscribable');
     }
 
     public function curricula()
@@ -113,7 +113,7 @@ class Group extends Model
 
     public function kanbanSubscriptions()
     {
-        return $this->morphOne('App\KanbanSubscription', 'subscribable');
+        return $this->morphMany('App\KanbanSubscription', 'subscribable');
     }
 
     public function kanbans()
@@ -130,7 +130,7 @@ class Group extends Model
 
     public function videoconferenceSubscription()
     {
-        return $this->morphOne('App\VideoconferenceSubscription', 'subscribable');
+        return $this->morphMany('App\VideoconferenceSubscription', 'subscribable');
     }
 
     public function videoconferences()
@@ -147,7 +147,7 @@ class Group extends Model
 
     public function mapSubscription()
     {
-        return $this->morphOne('App\MapSubscription', 'subscribable');
+        return $this->morphMany('App\MapSubscription', 'subscribable');
     }
 
     public function maps()
@@ -164,7 +164,7 @@ class Group extends Model
 
     public function lmsReferenceSubscription()
     {
-        return $this->morphOne('App\LmsReferenceSubscription', 'subscribable');
+        return $this->morphMany('App\LmsReferenceSubscription', 'subscribable');
     }
 
     public function lmsReferences()
@@ -181,7 +181,7 @@ class Group extends Model
 
     public function planSubscription()
     {
-        return $this->morphOne('App\PlanSubscription', 'subscribable');
+        return $this->morphMany('App\PlanSubscription', 'subscribable');
     }
 
     public function plans()
@@ -230,7 +230,7 @@ class Group extends Model
             $group->planSubscription()->delete();
             $group->logbookSubscription()->delete();
             $group->videoconferenceSubscription()->delete();
-            $group->exams()->delete();
+            $group->exams->each->delete();
         });
     }
 }

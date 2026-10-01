@@ -286,7 +286,7 @@ export default {
         },
         toggleCollapseAll(e) {
             const collapsed = e.target.parentElement.classList.toggle('collapsed');
-            [...this.$el.querySelectorAll('.kanban-item-body')].map(elem => {
+            [...this.$el.querySelectorAll('.kanban-item-body')].forEach(elem => {
                 // check collapse-value, so every element will end up having the same state
                 if (elem.classList.contains('show') === collapsed) new bootstrap.Collapse(elem)
             });

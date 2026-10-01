@@ -64,7 +64,7 @@ import Switch from "../forms/Switch.vue";
 
 export default {
     name: 'generate-certificate-modal',
-    components:{
+    components: {
         Modal,
         Switch,
         Select2,

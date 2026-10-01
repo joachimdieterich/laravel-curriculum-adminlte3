@@ -278,7 +278,7 @@ export default {
 </script>
 <style>
 .plan-entry-wrapper {
-    border-left: 3px solid transparent;
+    border-left: 0.25rem solid transparent;
 }
 .plan-entry-header {
     transition: background 0.3s ease;

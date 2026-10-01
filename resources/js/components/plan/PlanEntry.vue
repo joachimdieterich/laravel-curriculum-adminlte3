@@ -2,13 +2,11 @@
     <div>
         <button v-if="entry === null"
             type="button"
-            class="btn btn-outline-dark text-left p-0 mb-3"
+            class="btn btn-outline-primary text-left mb-3"
             @click="openModal()"
         >
-            <div class="plan-entry card-header border-0">
-                <i class="fas fa-add pe-1"></i>
-                {{ trans('global.planEntry.create') }}
-            </div>
+            <i class="fas fa-add pe-1"></i>
+            {{ trans('global.planEntry.create') }}
         </button>
         <div v-else
             class="plan-entry-wrapper rounded-1 shadow-layout"

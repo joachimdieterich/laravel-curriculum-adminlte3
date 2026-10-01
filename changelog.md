@@ -1,3 +1,9 @@
+## 2.0.2 (2026-10-01)
+- Home: fixed Curriculum-Modal being visible for students
+- fixed deletion of Exams
+- deleted curriculum_group table
+- changed two foreign-keys to onDelete('cascade')
+
 ## 2.0.1 (2026-09-17)
 - Home: set Curricula-InfoBox to always be visible
 - Home: added Curriculum-Modal

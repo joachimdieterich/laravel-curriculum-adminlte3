@@ -5,6 +5,7 @@
             class="form-check-input"
             type="checkbox"
             role="switch"
+            :disabled="disabled"
             :checked="modelValue"
             @change="$emit('update:modelValue', $event.target.checked)"
             switch
@@ -30,6 +31,10 @@ export default {
             type: String,
             required: true,
             description: 'translation-key to describe the switch'
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
         },
         modelValue: {
             type: Boolean,

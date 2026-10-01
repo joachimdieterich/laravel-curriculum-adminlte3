@@ -72,7 +72,7 @@ export default {
     padding: 0px 0.75rem;
     top: 0;
 
-    & > .bg-green { background-color: #00a65a !important; }
+    & > .bg-green { background-color: var(--achievements-green) !important; }
     & > :first-child::before {
         content: '';
         position: absolute;

@@ -1,19 +1,17 @@
 <template>
     <div id="show-achievements">
-        <div
-            id="header"
-            class="d-flex align-items-center pb-3"
-        >
+        <div class="d-flex align-items-center pb-3">
             <div
                 id="fixed-header"
-                class="d-flex position-fixed w-100 px-3"
+                class="d-flex position-fixed w-100 p-3 bg-white z-1"
             >    
-                <span class="d-flex align-items-center">
+                <span class="d-flex align-items-center gap-2">
                     Ziele / Namen
                     <button
                         type="button"
-                        class="btn btn-icon link-muted ms-1"
-                        :title="trans('global.open_settings')"
+                        class="btn btn-icon text-secondary"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.open_settings')"
                         @click="globalStore.showModal('plan-achievements-options-modal');"
                     >
                         <i class="fa fa-gear"></i>
@@ -28,26 +26,24 @@
         </div>
         <div
             id="achievements"
-            class="mt-3"
+            class="p-margin-0 mt-3"
         >
             <div v-for="ter in objectives">
                 <div
-                    class="terminal pointer px-3"
-                    data-toggle="collapse"
-                    :data-target="'#terminal_' + ter.terminal_objective.id"
+                    class="terminal d-flex align-items-center gap-2 pointer t-18 px-3 py-2"
+                    data-bs-toggle="collapse"
+                    :data-bs-target="'#terminal-' + ter.terminal_objective.id"
                     aria-expanded="true"
                 >
-                    <span>
-                        {{ htmlToText(ter.terminal_objective.title) }}
-                        <span class="fa fa-angle-up"></span>
-                    </span>
+                    <span>{{ htmlToText(ter.terminal_objective.title) }}</span>
+                    <span class="fa fa-angle-up"></span>
                 </div>
                 <div
-                    :id="'terminal_' + ter.terminal_objective.id"
+                    :id="'terminal-' + ter.terminal_objective.id"
                     class="collapse show"
                 >
                     <div v-for="ena in ter.terminal_objective.enabling_objectives"
-                        class="d-flex enabling px-3 w-100"
+                        class="d-flex enabling px-3 py-2 w-100"
                     >
                         <span
                             class="ps-2"
@@ -79,6 +75,7 @@
                 </div>
             </div>
         </div>
+
         <Teleport to="body">
             <PlanAchievementsOptionsModal/>
         </Teleport>
@@ -86,9 +83,10 @@
 </template>
 <script>
 import PlanAchievementsOptionsModal from './PlanAchievementsOptionsModal.vue';
-import {useGlobalStore} from "../../store/global";
 
 export default {
+    components: { PlanAchievementsOptionsModal },
+    exposed: ['filterByTimespan', 'toggleUnset', 'toggleObjectives'],
     props: {
         terminal: {
             type: Array,
@@ -103,18 +101,14 @@ export default {
             default: null,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
     data() {
         return {
             objectives: [],
         }
     },
     mounted() {
+        this.enableTooltips();
+
         let obj = [];
         // set needed attributes to terminal-objective as placeholder
         let ter = { terminal_objective: this.enabling[0]?.enabling_objective.terminal_objective };
@@ -142,7 +136,7 @@ export default {
     },
     methods: {
         filterByTimespan(date) {
-            const elements = $('[data-date]');
+            const elements = document.querySelectorAll('[data-date]');
             // if timespan got cleared, show all objectives again
             if (date == null) {
                 for (const element of elements) {
@@ -222,23 +216,16 @@ export default {
             }
         },
         toggleObjectives(bool) {
-            if (bool) { // collapse all unfolded objectives
-                $('.terminal:not(.collapsed)').trigger('click');
-            } else { // unfold all collapsed objectives
-                $('.terminal.collapsed').trigger('click');
-            }
+            [...this.$el.querySelectorAll('[id^=terminal]')].forEach(elem => {
+                if (elem.classList.contains('show') === bool) new bootstrap.Collapse(elem);
+            });
         },
     },
-    components: { PlanAchievementsOptionsModal },
 }
 </script>
 <style>
-p { margin: 0px !important; }
-#header > #fixed-header {
-    padding: 1rem 0px;
-    background-color: white;
-    z-index: 1;
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+#fixed-header {
+    box-shadow: var(--shadow-default);
 
     > span {
         font-size: 1.25rem;
@@ -248,29 +235,25 @@ p { margin: 0px !important; }
     }
 }
 #achievements {
-    > div {
-        > .terminal {
-            padding: 8px 0px;
-            font-size: 1.05rem;
-            border-top: 3px solid #dee2e6;
-            border-bottom: 3px solid #dee2e6;
+    .terminal {
+        border-top: 3px solid #dee2e6;
+        border-bottom: 3px solid #dee2e6;
+        transition: border-bottom-width 0.2s ease-out, background-color 0.3s ease;
 
-            &:hover { background-color: #e9ecef; }
-        }
+        &:hover { background-color: #e9ecef; }
+        &.collapsed { border-bottom-width: 0px; }
     }
     .enabling {
-        padding: 10px 0px;
-
         &:not(:first-child) { border-top: 1px solid #dee2e6; }
         > span {
             min-width: 25%;
             flex: 1 1 0px;
         }
         .fa { font-size: 1.5rem; }
-        .status-0 { color: #d2d6de !important; }
-        .status-1 { color: #00a65a !important; }
-        .status-2 { color: #fd7e14 !important; }
-        .status-3 { color: #dc3545 !important; }
+        .status-0 { color: var(--achievements-gray) !important; }
+        .status-1 { color: var(--achievements-green) !important; }
+        .status-2 { color: var(--achievements-orange) !important; }
+        .status-3 { color: var(--achievements-red) !important; }
     }
 }
 </style>

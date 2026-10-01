@@ -1,90 +1,54 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">{{ trans(title) }}</span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <table
-                                id="user-table"
-                                class="table m-0 border-top-0"
+    <Modal
+        model="user"
+        modalName="select-users-modal"
+        title="global.select_users"
+        :intercept-save="true"
+        @save="submit()"
+    >
+        <template #general>
+            <table
+                id="user-table"
+                class="table m-0 border-top-0"
+            >
+                <thead>
+                    <tr class="border-top-0">
+                        <th style="width: 0px;"></th>
+                        <th>{{ trans('global.users') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="user in users">
+                        <td class="text-center">
+                            <input
+                                :id="'user-' + user.id"
+                                class="pointer"
+                                :type="multiple ? 'checkbox' : 'radio'"
+                                :value="user"
+                                v-model="selectedUsers"
+                                :aria-describedby="'user-' + user.id"
+                            />
+                        </td>
+                        <td>
+                            <label
+                                :for="'user-' + user.id"
+                                class="font-weight-normal m-0 pointer"
                             >
-                                <thead>
-                                    <tr class="border-top-0">
-                                        <th style="width: 0px;"></th>
-                                        <th>{{ trans('users') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="user in users">
-                                        <td class="text-center">
-                                            <input
-                                                :id="'user_' + user.id"
-                                                name="user"
-                                                class="pointer"
-                                                :type="multiple ? 'checkbox' : 'radio'"
-                                                :value="user"
-                                                v-model="selectedUsers"
-                                                :aria-describedby="'user-' + user.id"
-                                            />
-                                        </td>
-                                        <td :id="'user-' + user.id">
-                                            <label
-                                                :for="'user_' + user.id"
-                                                class="font-weight-normal m-0 pointer"
-                                            >
-                                                {{ user.firstname }} {{ user.lastname }}
-                                            </label>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore.closeModal($options.name)"
-                        >
-                            {{ trans('global.close') }}
-                        </button>
-                        <button
-                            class="btn btn-primary ms-3"
-                            @click="submit()"
-                            :disabled="selectedUsers.length === 0"
-                        >
-                            {{ trans(submitText) }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+                                {{ user.firstname }} {{ user.lastname }}
+                            </label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </template>
+    </Modal>
 </template>
 <script>
-import {useGlobalStore} from "../../store/global";
+import Modal from '../uiElements/Modal.vue';
 
 export default {
     name: 'select-users-modal',
+    components: { Modal },
     props: {
         users: {
             type: Array,
@@ -94,20 +58,6 @@ export default {
             type: Boolean,
             default: false,
         },
-        title: { // needs to be a translation-string
-            type: String,
-            default: 'global.select_users',
-        },
-        submitText: {
-            type: String,
-            default: 'global.save',
-        }
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
@@ -125,9 +75,6 @@ export default {
             // reset selection when mode changes
             this.selectedUsers = [];
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
     },
 }
 </script>

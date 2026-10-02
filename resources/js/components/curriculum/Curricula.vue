@@ -45,7 +45,7 @@
                     ></i>
                 </template>
 
-                <template v-if="checkPermission('is_admin')" #owner>
+                <template v-if="isAdmin" #owner>
                     <div
                         class="owner-badge position-absolute bg-primary px-2"
                         style="top: 100px; left: -6px;"
@@ -249,7 +249,7 @@ export default {
             this.curricula = json.data;
         },
         ownerOrAdmin(curriculum) {
-            return curriculum.owner_id == this.$userId || this.checkPermission('is_admin');
+            return curriculum.owner_id == this.$userId || this.isAdmin;
         },
         destroy() {
             axios.delete('/curricula/' + this.currentCurriculum.id)
@@ -261,6 +261,11 @@ export default {
                     this.toast.error(this.errorMessage(e));
                     console.log(e.response);
                 });
+        },
+    },
+    computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
         },
     },
     mounted() {

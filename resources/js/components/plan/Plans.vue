@@ -340,10 +340,13 @@ export default {
             Object.assign(plan, updatedPlan);
         },
         ownerOrAdmin(plan) {
-            return plan.owner_id == this.$userId || this.checkPermission('is_admin');
+            return plan.owner_id == this.$userId || this.isAdmin;
         },
     },
     computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
         createLabel() {
             return this.subscribable ? 'enrol' : 'create';
         },

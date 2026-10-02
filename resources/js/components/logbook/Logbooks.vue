@@ -316,10 +316,13 @@ export default {
             }
         },
         ownerOrAdmin(logbook) {
-            return logbook.owner_id == this.$userId || this.checkPermission('is_admin');
+            return logbook.owner_id == this.$userId || this.isAdmin;
         },
     },
     computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
         createLabel() {
             return this.subscribable ? 'enrol' : 'create';
         },

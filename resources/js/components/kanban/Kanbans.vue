@@ -279,7 +279,7 @@ export default {
             this.kanbans = json.data;
         },
         ownerOrAdmin(kanban) {
-            return kanban.owner_id == this.$userId || this.checkPermission('is_admin');
+            return kanban.owner_id == this.$userId || this.isAdmin;
         },
         confirmItemDelete(kanban) {
             this.currentKanban = kanban;
@@ -335,6 +335,9 @@ export default {
         },
     },
     computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
         createLabel() {
             return this.subscribable ? 'enrol' : 'create';
         },

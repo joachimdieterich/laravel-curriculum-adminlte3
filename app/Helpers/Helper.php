@@ -355,7 +355,8 @@ if (! function_exists('getDataTableWithEntries')) {
                 }
             }
 
-            return DataTables::of($query)->make(true);
+            // return description as raw, in case it contains HTML
+            return DataTables::of($query)->rawColumns(['description'])->make(true);
         } catch (Throwable $th) {
             return response()->json([
                 'error'   => 'An error occurred while fetching the data.',

@@ -99,42 +99,36 @@
                     <i class="fa fa-map-location-dot"></i>
                 </template>
 
-                <template #dropdown
+                <template v-if="ownerOrAdmin(map)" #dropdown
                     v-permission="'map_edit, map_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
-                            v-permission="'map_edit'"
-                            :name="'edit-map-' + map.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editMap(map)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editMap(map)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.map.edit') }}
                         </button>
 
                         <button
-                            :name="'map-share_' + map.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="shareMap(map)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="shareMap(map)"
                         >
-                            <i class="fa fa-share-alt me-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.map.share') }}
                         </button>
 
                         <hr class="my-1">
+
                         <button
-                            v-permission="'map_delete'"
-                            :id="'delete-map-' + map.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(map)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(map)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.map.delete') }}
                         </button>
                     </div>
@@ -255,6 +249,14 @@ export default {
                 .catch(e => {
                     console.log(e);
                 });
+        },
+        ownerOrAdmin(map) {
+            return map.owner_id == this.$userId || this.isAdmin;
+        },
+    },
+    computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
         },
     },
 }

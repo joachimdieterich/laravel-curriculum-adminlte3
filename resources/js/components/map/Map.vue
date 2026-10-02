@@ -5,88 +5,106 @@
     >
         <div
             id="sidebar"
-            class="sidebar border-0"
+            class="position-absolute d-flex flex-row"
         >
             <!-- navigation tabs -->
-            <div class="sidebar-tabs bg-transparent">
-                <ul role="tablist" class="bg-white">
-                    <li class="active">
-                        <a
-                            id="home-nav-tab"
-                            href="#ll-home"
-                            role="tab"
-                            data-toggle="tab"
-                            aria-controls="ll-home"
-                            aria-selected="true"
-                        >
-                            <i class="fa fa-bars"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            id="layer-nav-tab"
-                            href="#ll-layer"
-                            role="tab"
-                            data-toggle="tab"
-                            aria-controls="ll-layer"
-                            aria-selected="false"
-                        >
-                            <i class="fa fa-layer-group"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            id="marker-nav-tab"
-                            href="#ll-marker"
-                            role="tab"
-                            data-toggle="tab"
-                            aria-controls="ll-marker"
-                            aria-selected="false"
-                        >
-                            <i class="fa fa-location-dot"></i>
-                        </a>
-                    </li>
-                    <!-- <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li> -->
-                    <hr v-if="editable"/>
-                    <li v-if="editable">
-                        <a
-                            role="button"
-                            class="pointer"
-
-                            @click="createMarker()"
-                        >
-                            <i class="fa fa-plus"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <ul
+                class="nav nav-pills flex-column mb-auto rounded-start-3 bg-white"
+                role="tablist"
+            >
+                <li
+                    class="nav-item"
+                    role="presentation"
+                >
+                    <button
+                        type="button"
+                        id="home-nav-tab"
+                        class="nav-link btn btn-light w-100 shadow-none active"
+                        role="tab"
+                        data-bs-toggle="pill"
+                        data-bs-target="#ll-home"
+                        aria-controls="ll-home"
+                        aria-selected="true"
+                    >
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </li>
+                <li
+                    class="nav-item"
+                    role="presentation"
+                >
+                    <button
+                        type="button"
+                        id="layer-nav-tab"
+                        class="nav-link btn btn-light w-100 shadow-none"
+                        role="tab"
+                        data-bs-toggle="pill"
+                        data-bs-target="#ll-layer"
+                        aria-controls="ll-layer"
+                        aria-selected="false"
+                    >
+                        <i class="fa fa-layer-group"></i>
+                    </button>
+                </li>
+                <li
+                    class="nav-item"
+                    role="presentation"
+                >
+                    <button
+                        type="button"
+                        id="marker-nav-tab"
+                        class="nav-link btn btn-light w-100 shadow-none"
+                        role="tab"
+                        data-bs-toggle="pill"
+                        data-bs-target="#ll-marker"
+                        aria-controls="ll-marker"
+                        aria-selected="false"
+                    >
+                        <i class="fa fa-location-dot"></i>
+                    </button>
+                </li>
+                <!-- <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li> -->
+                <hr v-if="editable"/>
+                <li v-if="editable">
+                    <button
+                        type="button"
+                        class="btn btn-light w-100 shadow-none"
+                        @click="createMarker()"
+                    >
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </li>
+            </ul>
 
             <!-- tab panes -->
-            <div class="sidebar-content">
+            <div class="tab-content rounded-end-3 bg-white h-100">
                 <div
                     id="ll-home"
-                    class="sidebar-pane active"
+                    class="tab-pane fade show active"
                     role="tabpanel"
                     aria-labelledby="home-nav-tab"
+                    tabindex="0"
                 >
-                    <div class="sidebar-header d-flex align-items-center pe-0">
-                        <span class="line-clamp">{{ map.title }}</span>
+                    <div class="tab-header d-flex align-items-center ps-3 bg-primary">
+                        <span class="t-20 line-clamp">{{ map.title }}</span>
                         <span v-if="map.owner_id == $userId || checkPermission('is_admin')"
                             v-permission="'map_edit'"
-                            class="d-flex pull-right ms-auto me-1"
+                            class="d-print-none d-flex gap-2 ms-auto me-1"
                         >
                             <button
                                 type="button"
-                                class="btn btn-icon-alt mx-1"
-                                :title="trans('global.map.edit')"
+                                class="btn btn-icon-alt"
+                                data-bs-toggle="tooltip"
+                                :data-bs-title="trans('global.map.edit')"
                                 @click="editMap(map)"
                             >
                                 <i class="fas fa-pencil-alt p-2"></i>
                             </button>
                             <button
                                 type="button"
-                                class="btn btn-icon-alt mx-1"
-                                :title="trans('global.map.share')"
+                                class="btn btn-icon-alt"
+                                data-bs-toggle="tooltip"
+                                :data-bs-title="trans('global.map.share')"
                                 @click="share()"
                             >
                                 <i class="fa fa-share-alt p-2"></i>
@@ -94,96 +112,98 @@
                         </span>
                     </div>
 
-                    <span class="pb-2">
-                        <div class="h5 mt-2">{{ map.subtitle }}</div>
-                        <span class="right badge badge-primary">{{ map.type.title }}</span>
-                    </span>
-
-                    <div v-if="map.description"
-                        class="py-2 p-margin-0"
-                        v-html="map.description"
-                    ></div>
-
-                    <h5 class="pt-2">{{ trans('global.entries') }}</h5>
-                    <ul class="todo-list">
-                        <li v-for="marker in markers"
-                            class="d-flex align-items-center show-hidden-animate"
-                            @mouseover="showMarkerPopup(marker)"
-                            @mouseleave="hideMarkerPopup(marker)"
-                        >
-                            <i class="fa fa-location-dot pe-2"></i>
-                            <button
-                                class="btn btn-link p-0 text-decoration-none"
-                                type="button"
-                                tabindex="0"
-                                @click="setCurrentMarker(marker)"
+                    <div class="d-flex flex-column gap-2 px-3 py-2">
+                        <div>
+                            <div class="h5">{{ map.subtitle }}</div>
+                            <span class="badge rounded-pill text-bg-primary">{{ map.type.title }}</span>
+                        </div>
+    
+                        <div v-if="map.description"
+                            class="p-margin-0"
+                            v-html="map.description"
+                        ></div>
+    
+                        <h5 class="pt-2">{{ trans('global.entries') }}</h5>
+                        <ul class="todo-list">
+                            <li v-for="marker in markers"
+                                class="d-flex align-items-center show-hidden-animate"
+                                @mouseover="showMarkerPopup(marker)"
+                                @mouseleave="hideMarkerPopup(marker)"
                             >
-                                {{ marker.title }}
-                            </button>
-                            <span v-if="editable"
-                                class="d-flex align-items-center ms-auto"
-                                style="height: 0px;"
-                            >
+                                <i class="fa fa-location-dot pe-2"></i>
                                 <button
-                                    class="btn btn-icon d-print-none text-secondary px-1 hide-lg"
                                     type="button"
-                                    @click="edit(marker)"
+                                    class="btn btn-link p-0 text-decoration-none"
+                                    @click="setCurrentMarker(marker)"
                                 >
-                                    <i class="fa fa-pencil-alt"></i>
+                                    {{ marker.title }}
                                 </button>
-                                <button
-                                    class="btn btn-icon d-print-none text-danger ms-2 px-1 hide-lg"
-                                    type="button"
-                                    @click="confirmItemDelete(marker)"
+                                <span v-if="editable"
+                                    class="d-print-none d-flex align-items-center gap-2 ms-auto"
+                                    style="height: 0px;"
                                 >
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </span>
-                        </li>
-                    </ul>
+                                    <button
+                                        type="button"
+                                        class="btn btn-icon text-secondary hide-lg"
+                                        @click="edit(marker)"
+                                    >
+                                        <i class="fa fa-pencil-alt"></i>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-icon text-danger hide-lg"
+                                        @click="confirmItemDelete(marker)"
+                                    >
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div
                     id="ll-layer"
-                    class="sidebar-pane"
+                    class="tab-pane fade"
                     role="tabpanel"
                     aria-labelledby="layer-nav-tab"
+                    tabindex="0"
                 >
-                    <h1 class="sidebar-header">Ebenen</h1>
+                    <div class="tab-header d-flex align-items-center ps-3 bg-primary">
+                        <span class="t-20">Ebenen</span>
+                    </div>
 
-                    <Select2
-                        :id="'mapMarkerType' + component_id"
-                        :name="'mapMarkerType' + component_id"
-                        url="/mapMarkerTypes"
-                        model="mapMarkerType"
-                        :selected="form.type_id"
-                        @selectedValue="(id) => {
-                            this.form.type_id = id;
-                        }"
-                    />
-                    <Select2
-                        :id="'mapMarkerCategory' + component_id"
-                        :name="'mapMarkerCategory' + component_id"
-                        url="/mapMarkerCategories"
-                        model="mapMarkerCategory"
-                        :selected="form.category_id"
-                        @selectedValue="(id) => {
-                            this.form.category_id = id;
-                        }"
-                    />
-                    <button
-                        class="btn btn-primary pull-right"
-                        @click="loader()"
-                    >
-                        <i class="fa fa-check"></i>
-                    </button>
+                    <div class="d-flex flex-column gap-3 px-3 py-2">
+                        <Select2
+                            :id="'mapMarkerType' + component_id"
+                            url="/mapMarkerTypes"
+                            model="mapMarkerType"
+                            :selected="form.type_id"
+                            @selectedValue="id => form.type_id = id[0]"
+                        />
+                        <Select2
+                            :id="'mapMarkerCategory' + component_id"
+                            url="/mapMarkerCategories"
+                            model="mapMarkerCategory"
+                            :selected="form.category_id"
+                            @selectedValue="id => form.category_id = id[0]"
+                        />
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            @click="loader()"
+                        >
+                            <i class="fa fa-check"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div
                     id="ll-marker"
-                    class="sidebar-pane"
+                    class="tab-pane fade"
                     role="tabpanel"
                     aria-labelledby="marker-nav-tab"
+                    tabindex="0"
                 >
                     <div v-if="currentMarker">
                         <div v-if="currentMarker.ARTIKEL == undefined">
@@ -193,7 +213,9 @@
                             />
                         </div>
                         <div v-else>
-                            <h1 class="sidebar-header">{{ currentMarker.ARTIKEL }}</h1>
+                            <div class="tab-header d-flex align-items-center ps-3 bg-primary">
+                                <span class="t-20">{{ currentMarker.ARTIKEL }}</span>
+                            </div>
         
                             <div v-if="currentMarker.BEZ_1_2.length > 2"
                                 class="py-0 pt-2"
@@ -251,8 +273,8 @@
                     </div>
                 </div>
 
-                <!-- <div class="sidebar-pane" id="ll-search">
-                    <h1 class="sidebar-header">{{ currentMarker?.title }}</h1>
+                <!-- <div class="tab-pane fade" id="ll-search">
+                    <div class="tab-header d-flex align-items-center ps-3 bg-primary">{{ currentMarker?.title }}</div>
 
                     <div
                         class="form-group"
@@ -274,7 +296,7 @@
             </div>
         </div>
 
-        <div id="map" class="sidebar-map user-select-none h-100"></div>
+        <div id="map" class="user-select-none h-100"></div>
 
         <Teleport to="body">
             <MapModal/>
@@ -295,13 +317,11 @@
     </div>
 </template>
 <script>
-import axios from 'axios';
-import "leaflet/dist/leaflet.js";
 import {Icon} from 'leaflet';
-import "sidebar-v2/js/leaflet-sidebar.js";
+import "leaflet/dist/leaflet.js";
 import "leaflet.markercluster/dist/leaflet.markercluster.js";
-import Form from "form-backend-validation";
 import "leaflet-extra-markers/dist/js/leaflet.extra-markers.js"
+import Form from "form-backend-validation";
 import MarkerView from "./MarkerView.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";
@@ -311,8 +331,6 @@ import Select2 from "../forms/Select2.vue";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
-import { useGlobalStore } from "../../store/global";
-import { useToast } from 'vue-toastification';
 
 export default {
     components: {
@@ -333,14 +351,6 @@ export default {
             default: false,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
-    },
     data() {
         return {
             component_id: this.$.uid,
@@ -358,8 +368,8 @@ export default {
             currentMarker: null,
             clusterGroup: {}, // layer of 'markercluster'-plugin, which is wrapped around all markers
             form: new Form({
-                type_id: '',
-                category_id: '',
+                type_id: null,
+                category_id: null,
             }),
             showConfirm: false,
             clickedCoordinates: null,
@@ -367,7 +377,7 @@ export default {
     },
     methods: {
         createMarker() {
-            this.globalStore?.showModal('map-marker-modal', {
+            this.globalStore.showModal('map-marker-modal', {
                 map_id: this.map.id,
                 type_id: this.form.type_id,
                 category_id: this.form.category_id,
@@ -380,8 +390,9 @@ export default {
                     this.currentMarker = this.markers[0];
                     this.generateClusterGroup();
                 })
-                .catch(err => {
-                    console.log(err);
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         generateClusterGroup() {
@@ -457,8 +468,9 @@ export default {
                 .then(res => {
                     this.processNominatimReply(res.data);
                 })
-                .catch(err => {
-                    console.log(err);
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         showMarkerPopup(marker) {
@@ -481,10 +493,10 @@ export default {
             }
         },
         showClearMap() {
-            let markerElements = $('.leaflet-marker-pane, .leaflet-shadow-pane');
+            let markerElements = this.$el.querySelectorAll('.leaflet-marker-pane, .leaflet-shadow-pane');
 
             // hide markers from map
-            markerElements.each((index, element) => element.classList.add('d-none'));
+            markerElements.forEach((element) => element.classList.add('d-none'));
 
             const message = this.trans('global.map.click_for_coordinates');
             // add toast-notification to inform user
@@ -504,7 +516,7 @@ export default {
             this.mapCanvas.on('click', (e) => {
                 this.clickedCoordinates = e.latlng;
                 // show markers again
-                markerElements.each((index, element) => element.classList.remove('d-none'));
+                markerElements.forEach((element) => element.classList.remove('d-none'));
                 // only trigger event once
                 this.mapCanvas.off('click');
                 this.mapCanvas.off('mouseover')
@@ -570,24 +582,6 @@ export default {
             this.sidebar.open('ll-marker');
             this.leafletMarkers.find(m => m.options.id === marker.id).openPopup();
         },
-        syncSelect2() {
-            $("#type_id").select2({
-                dropdownParent: $("#type_id").parent(),
-                allowClear: false
-            }).on('select2:select', function (e) {
-                this.form.type_id = e.params.data.element.value
-            }.bind(this))
-                .val(this.form.type_id)
-                .trigger('change');
-            $("#category_id").select2({
-                dropdownParent: $("#category_id").parent(),
-                allowClear: false
-            }).on('select2:select', function (e) {
-                this.form.category_id = e.params.data.element.value
-            }.bind(this))
-                .val(this.form.category_id)
-                .trigger('change');
-        },
         confirmItemDelete(marker) {
             this.currentMarker = marker;
             this.showConfirm = true;
@@ -612,13 +606,13 @@ export default {
                 });
         },
         editMap(currentMap) {
-            this.globalStore?.showModal('map-modal', currentMap);
+            this.globalStore.showModal('map-modal', currentMap);
         },
         edit(marker) {
-            this.globalStore?.showModal('map-marker-modal', marker);
+            this.globalStore.showModal('map-marker-modal', marker);
         },
         share() {
-            this.globalStore?.showModal('subscribe-modal', {
+            this.globalStore.showModal('subscribe-modal', {
                 modelId: this.map.id,
                 modelUrl: 'map',
                 shareWithUsers: true,
@@ -754,14 +748,19 @@ export default {
         });
 
         this.$eventHub.on('map-updated', (map) => {
-            this.globalStore?.closeModal('map-modal');
             window.location.reload();
         });
+
+        // remove the placeholder-element for the title
+        document.querySelector('section.p-3')?.remove();
+
+        this.enableTooltips();
 
         this.form.type_id = this.map.type_id;
         this.form.category_id = this.map.category_id;
 
-        this.mapCanvas = L.map('map').setView([this.map.latitude, this.map.longitude], this.map.zoom);
+        this.mapCanvas = L.map('map', { zoomControl: false })
+            .setView([this.map.latitude, this.map.longitude], this.map.zoom);
 
         // default icon-url throws an error (apparently a common problem)
         // so we need to rebind the file-locations
@@ -781,8 +780,6 @@ export default {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.mapCanvas);
 
-        this.sidebar = L.control.sidebar('sidebar').addTo(this.mapCanvas);
-
         this.bordersGroup = L.geoJSON().addTo(this.mapCanvas);
 
         this.getBorder();
@@ -801,20 +798,38 @@ export default {
 </script>
 <style>
 @import "leaflet/dist/leaflet.css";
-@import "sidebar-v2/css/leaflet-sidebar.css";
 @import "leaflet.markercluster/dist/MarkerCluster.css";
 @import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 @import "leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
-.sidebar {
-    z-index: 1000 !important;
 
-    & > .sidebar-tabs > ul,
-    & > .sidebar-tabs > ul > li:last-child {
-        border-bottom-left-radius: 4px;
+#sidebar {
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+
+    & > ul {
+        & button { border-radius: 0; }
+        & li:first-child button {
+            border-top-left-radius: 0.5rem;
+        }
+        & li:last-child button {
+            border-bottom-left-radius: 0.5rem;
+        }
     }
-    &.collapsed > .sidebar-tabs > ul,
-    &.collapsed > .sidebar-tabs > ul > li:last-child {
-        border-bottom-right-radius: 4px;
+
+}
+.tab-content {
+    width: 400px;
+
+    & .tab-header {
+        height: 40px;
+        border-top-right-radius: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .tab-content {
+        width: calc(100vw - 2rem - 50px);
     }
 }
 </style>

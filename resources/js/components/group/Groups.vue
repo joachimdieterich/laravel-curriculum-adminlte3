@@ -73,7 +73,7 @@
                             @click.stop="filterByOrg(group.organization.title)"
                         >
                             <i class="fa fa-university"></i>
-                            {{ group.organization }}
+                            {{ group.organization.title }}
                         </button>
                     </template>
                 </IndexWidget>

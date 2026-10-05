@@ -1,4 +1,4 @@
-window.Popper = require('popper.js'); //for tooltips
+window.Popper = require('@popperjs/core'); // for tooltips
 window.$ = window.jQuery = require('jquery');
 window.bootstrap = require('bootstrap');
 

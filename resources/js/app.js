@@ -135,6 +135,7 @@ app.config.globalProperties.checkPermission = (permission) => {
 };
 
 app.config.globalProperties.enableTooltips = () => {
+    if (/Mobi/i.test(window.navigator.userAgent)) return; // disable tooltips on mobile devices
     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(elem => new bootstrap.Tooltip(elem));
 };
 

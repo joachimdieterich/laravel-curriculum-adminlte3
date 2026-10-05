@@ -65,13 +65,16 @@
                     </template>
 
                     <template #badges>
-                        <span
+                        <button
+                            type="button"
                             class="btn btn-info btn-xs position-absolute"
                             style="bottom: 5px; right: 5px;"
+                            tabindex="-1"
+                            @click.stop="filterByOrg(group.organization.title)"
                         >
                             <i class="fa fa-university"></i>
                             {{ group.organization }}
-                        </span>
+                        </button>
                     </template>
                 </IndexWidget>
             </div>
@@ -184,6 +187,9 @@ export default {
                 .catch(e => {
                     console.log(e);
                 });
+        },
+        filterByOrg(title) {
+            this.globalStore['search'] = title;
         },
     },
     computed: {

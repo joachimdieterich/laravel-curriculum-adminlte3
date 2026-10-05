@@ -10,6 +10,7 @@
             <!-- navigation tabs -->
             <ul
                 class="nav nav-pills flex-column mb-auto rounded-start-3 bg-white"
+                style="width: 50px;"
                 role="tablist"
             >
                 <li
@@ -21,12 +22,13 @@
                         id="home-nav-tab"
                         class="nav-link btn btn-light w-100 shadow-none active"
                         role="tab"
-                        data-bs-toggle="pill"
+                        data-bs-toggle="tab"
                         data-bs-target="#ll-home"
                         aria-controls="ll-home"
                         aria-selected="true"
+                        @click="handleTab($event, 'home')"
                     >
-                        <i class="fa fa-bars"></i>
+                        <i class="fa" :class="(!tabCollapsed && activeTab === 'home') ? 'fa-xmark' : 'fa-bars'"></i>
                     </button>
                 </li>
                 <li
@@ -38,12 +40,13 @@
                         id="layer-nav-tab"
                         class="nav-link btn btn-light w-100 shadow-none"
                         role="tab"
-                        data-bs-toggle="pill"
+                        data-bs-toggle="tab"
                         data-bs-target="#ll-layer"
                         aria-controls="ll-layer"
                         aria-selected="false"
+                        @click="handleTab($event, 'layer')"
                     >
-                        <i class="fa fa-layer-group"></i>
+                        <i class="fa" :class="(!tabCollapsed && activeTab === 'layer') ? 'fa-xmark' : 'fa-layer-group'"></i>
                     </button>
                 </li>
                 <li
@@ -55,12 +58,13 @@
                         id="marker-nav-tab"
                         class="nav-link btn btn-light w-100 shadow-none"
                         role="tab"
-                        data-bs-toggle="pill"
+                        data-bs-toggle="tab"
                         data-bs-target="#ll-marker"
                         aria-controls="ll-marker"
                         aria-selected="false"
+                        @click="handleTab($event, 'marker')"
                     >
-                        <i class="fa fa-location-dot"></i>
+                        <i class="fa" :class="(!tabCollapsed && activeTab === 'marker') ? 'fa-xmark' : 'fa-location-dot'"></i>
                     </button>
                 </li>
                 <!-- <li><a href="#ll-search" role="tab"><i class="fa fa-search"></i></a></li> -->
@@ -69,6 +73,8 @@
                     <button
                         type="button"
                         class="btn btn-light w-100 shadow-none"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.marker.create')"
                         @click="createMarker()"
                     >
                         <i class="fa fa-plus"></i>
@@ -77,222 +83,227 @@
             </ul>
 
             <!-- tab panes -->
-            <div class="tab-content rounded-end-3 bg-white h-100">
-                <div
-                    id="ll-home"
-                    class="tab-pane fade show active"
-                    role="tabpanel"
-                    aria-labelledby="home-nav-tab"
-                    tabindex="0"
-                >
-                    <div class="tab-header d-flex align-items-center ps-3 bg-primary">
-                        <span class="t-20 line-clamp">{{ map.title }}</span>
-                        <span v-if="map.owner_id == $userId || checkPermission('is_admin')"
-                            v-permission="'map_edit'"
-                            class="d-print-none d-flex gap-2 ms-auto me-1"
-                        >
-                            <button
-                                type="button"
-                                class="btn btn-icon-alt"
-                                data-bs-toggle="tooltip"
-                                :data-bs-title="trans('global.map.edit')"
-                                @click="editMap(map)"
+            <div
+                id="tab-content-wrapper"
+                class="collapse show collapse-horizontal"
+            >
+                <div class="tab-content rounded-end-3 bg-white h-100">
+                    <div
+                        id="ll-home"
+                        class="tab-pane fade show active"
+                        role="tabpanel"
+                        aria-labelledby="home-nav-tab"
+                        tabindex="0"
+                    >
+                        <div class="tab-header d-flex align-items-center ps-3 bg-primary">
+                            <span class="t-20 line-clamp" :title="map.title">{{ map.title }}</span>
+                            <span v-if="map.owner_id == $userId || checkPermission('is_admin')"
+                                v-permission="'map_edit'"
+                                class="d-print-none d-flex gap-2 ms-auto me-1"
                             >
-                                <i class="fas fa-pencil-alt p-2"></i>
-                            </button>
-                            <button
-                                type="button"
-                                class="btn btn-icon-alt"
-                                data-bs-toggle="tooltip"
-                                :data-bs-title="trans('global.map.share')"
-                                @click="share()"
-                            >
-                                <i class="fa fa-share-alt p-2"></i>
-                            </button>
-                        </span>
-                    </div>
-
-                    <div class="d-flex flex-column gap-2 px-3 py-2">
-                        <div>
-                            <div class="h5">{{ map.subtitle }}</div>
-                            <span class="badge rounded-pill text-bg-primary">{{ map.type.title }}</span>
-                        </div>
-    
-                        <div v-if="map.description"
-                            class="p-margin-0"
-                            v-html="map.description"
-                        ></div>
-    
-                        <h5 class="pt-2">{{ trans('global.entries') }}</h5>
-                        <ul class="todo-list">
-                            <li v-for="marker in markers"
-                                class="d-flex align-items-center show-hidden-animate"
-                                @mouseover="showMarkerPopup(marker)"
-                                @mouseleave="hideMarkerPopup(marker)"
-                            >
-                                <i class="fa fa-location-dot pe-2"></i>
                                 <button
                                     type="button"
-                                    class="btn btn-link p-0 text-decoration-none"
-                                    @click="setCurrentMarker(marker)"
+                                    class="btn btn-icon-alt"
+                                    data-bs-toggle="tooltip"
+                                    :data-bs-title="trans('global.map.edit')"
+                                    @click="editMap(map)"
                                 >
-                                    {{ marker.title }}
+                                    <i class="fas fa-pencil-alt"></i>
                                 </button>
-                                <span v-if="editable"
-                                    class="d-print-none d-flex align-items-center gap-2 ms-auto"
-                                    style="height: 0px;"
+                                <button
+                                    type="button"
+                                    class="btn btn-icon-alt"
+                                    data-bs-toggle="tooltip"
+                                    :data-bs-title="trans('global.map.share')"
+                                    @click="share()"
                                 >
-                                    <button
-                                        type="button"
-                                        class="btn btn-icon text-secondary hide-lg"
-                                        @click="edit(marker)"
-                                    >
-                                        <i class="fa fa-pencil-alt"></i>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="btn btn-icon text-danger hide-lg"
-                                        @click="confirmItemDelete(marker)"
-                                    >
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div
-                    id="ll-layer"
-                    class="tab-pane fade"
-                    role="tabpanel"
-                    aria-labelledby="layer-nav-tab"
-                    tabindex="0"
-                >
-                    <div class="tab-header d-flex align-items-center ps-3 bg-primary">
-                        <span class="t-20">Ebenen</span>
-                    </div>
-
-                    <div class="d-flex flex-column gap-3 px-3 py-2">
-                        <Select2
-                            :id="'mapMarkerType' + component_id"
-                            url="/mapMarkerTypes"
-                            model="mapMarkerType"
-                            :selected="form.type_id"
-                            @selectedValue="id => form.type_id = id[0]"
-                        />
-                        <Select2
-                            :id="'mapMarkerCategory' + component_id"
-                            url="/mapMarkerCategories"
-                            model="mapMarkerCategory"
-                            :selected="form.category_id"
-                            @selectedValue="id => form.category_id = id[0]"
-                        />
-                        <button
-                            type="button"
-                            class="btn btn-primary"
-                            @click="loader()"
-                        >
-                            <i class="fa fa-check"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div
-                    id="ll-marker"
-                    class="tab-pane fade"
-                    role="tabpanel"
-                    aria-labelledby="marker-nav-tab"
-                    tabindex="0"
-                >
-                    <div v-if="currentMarker">
-                        <div v-if="currentMarker.ARTIKEL == undefined">
-                            <MarkerView
-                                :marker="currentMarker"
-                                :editable="editable"
-                            />
+                                    <i class="fa fa-share-alt"></i>
+                                </button>
+                            </span>
                         </div>
-                        <div v-else>
-                            <div class="tab-header d-flex align-items-center ps-3 bg-primary">
-                                <span class="t-20">{{ currentMarker.ARTIKEL }}</span>
+    
+                        <div class="d-flex flex-column gap-2 px-3 py-2">
+                            <div>
+                                <div class="h5">{{ map.subtitle }}</div>
+                                <span class="badge rounded-pill text-bg-primary">{{ map.type.title }}</span>
                             </div>
         
-                            <div v-if="currentMarker.BEZ_1_2.length > 2"
-                                class="py-0 pt-2"
+                            <div v-if="map.description"
+                                class="p-margin-0"
+                                v-html="map.description"
+                            ></div>
+        
+                            <h5 class="pt-2">{{ trans('global.entries') }}</h5>
+                            <ul class="todo-list">
+                                <li v-for="marker in markers"
+                                    class="d-flex align-items-center show-hidden-animate"
+                                    @mouseover="showMarkerPopup(marker)"
+                                    @mouseleave="hideMarkerPopup(marker)"
+                                >
+                                    <i class="fa fa-location-dot pe-2"></i>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link p-0 text-decoration-none"
+                                        @click="setCurrentMarker(marker)"
+                                    >
+                                        {{ marker.title }}
+                                    </button>
+                                    <span v-if="editable"
+                                        class="d-print-none d-flex align-items-center gap-2 ms-auto"
+                                        style="height: 0px;"
+                                    >
+                                        <button
+                                            type="button"
+                                            class="btn btn-icon text-secondary hide-lg"
+                                            @click="edit(marker)"
+                                        >
+                                            <i class="fa fa-pencil-alt"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-icon text-danger hide-lg"
+                                            @click="confirmItemDelete(marker)"
+                                        >
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+    
+                    <div
+                        id="ll-layer"
+                        class="tab-pane fade"
+                        role="tabpanel"
+                        aria-labelledby="layer-nav-tab"
+                        tabindex="0"
+                    >
+                        <div class="tab-header d-flex align-items-center ps-3 bg-primary">
+                            <span class="t-20">Ebenen</span>
+                        </div>
+    
+                        <div class="d-flex flex-column gap-3 px-3 py-2">
+                            <Select2
+                                :id="'mapMarkerType' + component_id"
+                                url="/mapMarkerTypes"
+                                model="mapMarkerType"
+                                :selected="form.type_id"
+                                @selectedValue="id => form.type_id = id[0]"
+                            />
+                            <Select2
+                                :id="'mapMarkerCategory' + component_id"
+                                url="/mapMarkerCategories"
+                                model="mapMarkerCategory"
+                                :selected="form.category_id"
+                                @selectedValue="id => form.category_id = id[0]"
+                            />
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                @click="loader()"
                             >
-                                <strong>Untertitel</strong>
+                                <i class="fa fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <div
+                        id="ll-marker"
+                        class="tab-pane fade"
+                        role="tabpanel"
+                        aria-labelledby="marker-nav-tab"
+                        tabindex="0"
+                    >
+                        <div v-if="currentMarker">
+                            <div v-if="currentMarker.ARTIKEL == undefined">
+                                <MarkerView
+                                    :marker="currentMarker"
+                                    :editable="editable"
+                                />
                             </div>
-        
-                            <div v-if="currentMarker.BEZ_1_2.length > 2"
-                                class="py-0 pre-formatted"
-                                v-html="currentMarker.BEZ_1_2"
-                            ></div>
-        
-                            <div class="py-0 pt-2">
-                                <strong>{{ trans('global.description') }}</strong>
-                            </div>
-        
-                            <div
-                                class="py-0 pre-formatted text-justify"
-                                v-html="currentMarker.BEMERKUNG"
-                            ></div>
-        
-                            <div class="py-0 pt-2"><strong>Termine</strong></div>
-        
-                            <div class="py-0 pre-formatted">
-                                <div v-for="termin in currentMarker.termine">
-                                    {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
-                                    <br/>
-                                    {{ termin.VO_ORT }}
+                            <div v-else>
+                                <div class="tab-header d-flex align-items-center ps-3 bg-primary">
+                                    <span class="t-20">{{ currentMarker.ARTIKEL }}</span>
+                                </div>
+            
+                                <div v-if="currentMarker.BEZ_1_2.length > 2"
+                                    class="py-0 pt-2"
+                                >
+                                    <strong>Untertitel</strong>
+                                </div>
+            
+                                <div v-if="currentMarker.BEZ_1_2.length > 2"
+                                    class="py-0 pre-formatted"
+                                    v-html="currentMarker.BEZ_1_2"
+                                ></div>
+            
+                                <div class="py-0 pt-2">
+                                    <strong>{{ trans('global.description') }}</strong>
+                                </div>
+            
+                                <div
+                                    class="py-0 pre-formatted text-justify"
+                                    v-html="currentMarker.BEMERKUNG"
+                                ></div>
+            
+                                <div class="py-0 pt-2"><strong>Termine</strong></div>
+            
+                                <div class="py-0 pre-formatted">
+                                    <div v-for="termin in currentMarker.termine">
+                                        {{ dateforHumans(termin.DATUM) }}, {{ termin.BEGINN }} - {{ termin.ENDE }}
+                                        <br/>
+                                        {{ termin.VO_ORT }}
+                                    </div>
+                                </div>
+            
+                                <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
+            
+                                <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
+            
+                                <div class="py-0 pt-2">
+                                    <a
+                                        :href="currentMarker.LINK_DETAIL"
+                                        class="btn btn-default"
+                                        target="_blank"
+                                    >
+                                        <i class="fa fa-info"></i> Details/Anmeldung
+                                    </a>
+            
+                                    <a
+                                        :href="currentMarker.LINK_DETAIL + '&print=1'"
+                                        class="btn btn-default"
+                                        target="_blank"
+                                        @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
+                                    >
+                                        <i class="fa fa-print"></i> Drucken
+                                    </a>
                                 </div>
                             </div>
-        
-                            <div class="py-0 pt-2"><strong>VA-Nummer</strong></div>
-        
-                            <div class="py-0 pre-formatted" v-html="currentMarker.ARTIKEL_NR"></div>
-        
-                            <div class="py-0 pt-2">
-                                <a
-                                    :href="currentMarker.LINK_DETAIL"
-                                    class="btn btn-default"
-                                    target="_blank"
-                                >
-                                    <i class="fa fa-info"></i> Details/Anmeldung
-                                </a>
-        
-                                <a
-                                    :href="currentMarker.LINK_DETAIL + '&print=1'"
-                                    class="btn btn-default"
-                                    target="_blank"
-                                    @click="window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
-                                >
-                                    <i class="fa fa-print"></i> Drucken
-                                </a>
-                            </div>
                         </div>
                     </div>
+    
+                    <!-- <div class="tab-pane fade" id="ll-search">
+                        <div class="tab-header d-flex align-items-center ps-3 bg-primary">{{ currentMarker?.title }}</div>
+    
+                        <div
+                            class="form-group"
+                            :class="form.errors.search ? 'has-error' : ''"
+                        >
+                            <label for="ll-search">{{ trans('global.search') }}</label>
+                            <input
+                                id="ll-search"
+                                type="text"
+                                name="ll-search"
+                                class="form-control"
+                                v-model="search"
+                                placeholder="Suchbegriff..."
+                                @keyup.enter="markerSearch"
+                            />
+                            <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
+                        </div>
+                    </div> -->
                 </div>
-
-                <!-- <div class="tab-pane fade" id="ll-search">
-                    <div class="tab-header d-flex align-items-center ps-3 bg-primary">{{ currentMarker?.title }}</div>
-
-                    <div
-                        class="form-group"
-                        :class="form.errors.search ? 'has-error' : ''"
-                    >
-                        <label for="ll-search">{{ trans('global.search') }}</label>
-                        <input
-                            id="ll-search"
-                            type="text"
-                            name="ll-search"
-                            class="form-control"
-                            v-model="search"
-                            placeholder="Suchbegriff..."
-                            @keyup.enter="markerSearch"
-                        />
-                        <p class="help-block" v-if="form.errors.search" v-text="form.errors.search[0]"></p>
-                    </div>
-                </div> -->
             </div>
         </div>
 
@@ -301,6 +312,7 @@
         <Teleport to="body">
             <MapModal/>
             <MediumModal/>
+            <SubscribeModal/>
             <MarkerModal
                 :map="map"
                 :clickedCoordinates="clickedCoordinates"
@@ -327,6 +339,7 @@ import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import MarkerModal from "./MarkerModal.vue";
 import MapModal from "./MapModal.vue";
+import SubscribeModal from '../subscription/SubscribeModal.vue';
 import Select2 from "../forms/Select2.vue";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
@@ -340,6 +353,7 @@ export default {
         MarkerView,
         ConfirmModal,
         MediumModal,
+        SubscribeModal,
     },
     props: {
         map: {
@@ -356,7 +370,8 @@ export default {
             component_id: this.$.uid,
             mapCanvas: {}, // actual rendered map
             events: {},
-            sidebar: {},
+            activeTab: 'home',
+            tabCollapsed: false,
             search: 'digiWerkzeug',
             // searchCircle: null,
             // searchDistance: 20000,
@@ -406,7 +421,6 @@ export default {
                         marker,
                         marker.title,
                         marker.teaser_text ?? '',
-                        'll-marker',
                         marker.type.css_icon,
                         marker.type.color,
                         marker.category.shape,
@@ -416,17 +430,17 @@ export default {
             });
 
             // show list of all clustered markers on hover
-            this.clusterGroup.on('clustermouseover', (e) => {
+            this.clusterGroup.on('clustermouseover', e => {
                 let titles = e.layer.getAllChildMarkers().map(m => m.options.title).sort().join('<hr class="my-2"/>');
-                e.layer.bindPopup(titles).openPopup();
+                e.layer.bindPopup(titles, { offset: L.point(0, -10) }).openPopup();
             });
-            this.clusterGroup.on('clustermouseout', (e) => {
+            this.clusterGroup.on('clustermouseout', e => {
                 e.layer.closePopup();
             });
 
             this.mapCanvas.addLayer(this.clusterGroup); // add clustergroup to the map
         },
-        generateMarker(lat, lon, entry, title, teaser_text, sidebar_target, icon, markerColor, shape = 'circle', prefix = 'fa') {
+        generateMarker(lat, lon, entry, title, teaser_text, icon, markerColor, shape = 'circle', prefix = 'fa') {
             let svgMarker = L.ExtraMarkers.icon({
                 icon,
                 markerColor,
@@ -443,7 +457,7 @@ export default {
                 .bindPopup('<b>' + title + '</b><br/>' + (teaser_text ?? ''))
                 .on('click', () => {
                     this.currentMarker = entry;
-                    this.sidebar.open(sidebar_target);
+                    document.getElementById('marker-nav-tab').click();
                 });
             
             this.leafletMarkers.push(leafletMarker);
@@ -478,7 +492,10 @@ export default {
             // check if marker is clustered
             if (leafletMarker._map == undefined) {
                 this.clusterGroup.getVisibleParent(leafletMarker)
-                    .bindPopup('<b>' + marker.title + '</b><br/>' + (marker.teaser_text ?? ''))
+                    .bindPopup(
+                        '<b>' + marker.title + '</b><br/>' + (marker.teaser_text ?? ''),
+                        { offset: L.point(0, -8) }
+                    )
                     .openPopup();
             } else {
                 leafletMarker.openPopup();
@@ -506,14 +523,14 @@ export default {
                 closeOnClick: false,
             });
             // update coordinates in toast-notification
-            this.mapCanvas.on('mousemove', (e) => {
+            this.mapCanvas.on('mousemove', e => {
                 this.toast.update(toast, {
                     content: message + '\nLatitude: ' + e.latlng.lat.toFixed(5) + '\nLongitude: ' + e.latlng.lng.toFixed(5),
                 });
             })
 
             // click to set position
-            this.mapCanvas.on('click', (e) => {
+            this.mapCanvas.on('click', e => {
                 this.clickedCoordinates = e.latlng;
                 // show markers again
                 markerElements.forEach((element) => element.classList.remove('d-none'));
@@ -559,7 +576,6 @@ export default {
                                 data,
                                 data.ARTIKEL,
                                 data.KATEGORIE,
-                                'll-marker',
                                 'fa-circle',
                                 '#2471A3',
                                 'circle',
@@ -579,8 +595,21 @@ export default {
         },
         setCurrentMarker(marker) {
             this.currentMarker = marker;
-            this.sidebar.open('ll-marker');
+            document.getElementById('marker-nav-tab').click();
             this.leafletMarkers.find(m => m.options.id === marker.id).openPopup();
+        },
+        handleTab(event, tab) {
+            // prevent the tab from being closed if the click was triggered programmatically
+            if (!this.tabCollapsed && !event.isTrusted) return;
+
+            const tabContent = document.getElementById('tab-content-wrapper');
+
+            if (this.activeTab === tab || this.tabCollapsed) {
+                new bootstrap.Collapse(tabContent);
+                this.tabCollapsed = !this.tabCollapsed;
+            }
+
+            this.activeTab = tab;
         },
         confirmItemDelete(marker) {
             this.currentMarker = marker;
@@ -623,8 +652,6 @@ export default {
             });
         },
         processClick(lat,lon) {
-            console.log("You clicked the map at LAT: " + lat + " and LONG: " + lon );
-
             //Clear existing marker, circle, and selected points if selecting new points
             if (this.searchCircle != null) {
                 this.mapCanvas.removeLayer(this.searchCircle);
@@ -724,7 +751,7 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.on('marker-added', (marker) => {
+        this.$eventHub.on('marker-added', marker => {
             this.markers.push(marker);
             this.clusterGroup.addLayer(
                 this.generateMarker(
@@ -733,7 +760,6 @@ export default {
                     marker,
                     marker.title,
                     marker.teaser_text,
-                    'll-marker',
                     marker.type.css_icon,
                     marker.type.color,
                     marker.category.shape,
@@ -742,19 +768,17 @@ export default {
             );
         });
 
-        this.$eventHub.on('marker-updated', (updatedMarker) => {
+        this.$eventHub.on('marker-updated', updatedMarker => {
             let marker = this.markers.find(m => m.id === updatedMarker.id);
             Object.assign(marker, updatedMarker);
         });
 
-        this.$eventHub.on('map-updated', (map) => {
+        this.$eventHub.on('map-updated', map => {
             window.location.reload();
         });
 
         // remove the placeholder-element for the title
         document.querySelector('section.p-3')?.remove();
-
-        this.enableTooltips();
 
         this.form.type_id = this.map.type_id;
         this.form.category_id = this.map.category_id;
@@ -802,10 +826,14 @@ export default {
 @import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 @import "leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css";
 
+/* z-index overrides */
+.leaflet-pane { z-index: 0 !important; }
+.leaflet-bottom { z-index: 1 !important; }
+
 #sidebar {
     top: 1rem;
     left: 1rem;
-    z-index: 1000;
+    z-index: 2;
 
     & > ul {
         & button { border-radius: 0; }

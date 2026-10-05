@@ -1,252 +1,182 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ method == 'post' ? trans('global.marker.create') : trans('global.marker.edit') }}
-                    </span>
+    <Modal
+        model="marker"
+        modalName="map-marker-modal"
+        url="/mapMarkers"
+        :form="form"
+        :require-title="true"
+        :disable-save-button="!form.latitude || !form.longitude"
+    >
+        <template #general-extended>
+            <input
+                id="marker-teaser-text"
+                type="text"
+                class="form-control mt-3"
+                maxlength="191"
+                v-model.trim="form.teaser_text"
+                :placeholder="trans('global.marker.fields.teaser_text')"
+            />
+
+            <div class="mt-3">
+                <Editor
+                    id="marker-description"
+                    licenseKey="gpl"
+                    :init="tinyMCE"
+                    v-model="form.description"
+                />
+            </div>
+
+            <div v-if="checkPermission('is_admin')" class="mt-3">
+                <label for="marker-map-id" class="form-label">Map ID</label>
+                <input
+                    id="marker-map-id"
+                    type="number"
+                    min="1"
+                    class="form-control"
+                    v-model="form.map_id"
+                    placeholder="Map ID"
+                />
+            </div>
+
+            <Select2
+                id="marker-type"
+                css="mt-3"
+                url="/mapMarkerTypes"
+                model="mapMarkerType"
+                :selected="form.type_id"
+                @selectedValue="id => form.type_id = id[0]"
+            />
+
+            <Select2
+                id="marker-category"
+                css="mt-3"
+                url="/mapMarkerCategories"
+                model="mapMarkerCategory"
+                :selected="form.category_id"
+                @selectedValue="id => form.category_id = id[0]"
+            />
+
+            <div class="mt-3">
+                <label class="form-label">{{ trans('global.marker.fields.coordinates') }}</label>
+                <div class="d-flex gap-2 align-items-center">
                     <button
                         type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
+                        class="btn btn-default text-nowrap"
+                        @click="triggerEvent()"
                     >
-                        <i class="fa fa-times"></i>
+                        <i class="fa fa-location"></i>
+                        {{ trans('global.select') }}
                     </button>
-                </div>
 
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <input
-                                    id="title"
-                                    name="title"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <input
-                                    id="teaser_text"
-                                    name="teaser_text"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.teaser_text"
-                                    :placeholder="trans('global.marker.fields.teaser_text')"
-                                    required
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <Editor
-                                    id="description"
-                                    name="description"
-                                    class="form-control"
-                                    licenseKey="gpl"
-                                    :init="tinyMCE"
-                                    v-model="form.description"
-                                />
-                            </div>
-
-                            <div v-if="checkPermission('is_admin')" class="form-group">
-                                <label for="map_id">Map ID</label>
-                                <input
-                                    id="map_id"
-                                    name="map_id"
-                                    type="number"
-                                    min="1"
-                                    class="form-control"
-                                    v-model="form.map_id"
-                                    placeholder="Map ID"
-                                />
-                            </div>
-
-                            <Select2
-                                id="map_marker_type"
-                                name="map_marker_type"
-                                url="/mapMarkerTypes"
-                                model="mapMarkerType"
-                                :selected="form.type_id"
-                                @selectedValue="(id) => this.form.type_id = id[0]"
-                            />
-
-                            <Select2
-                                id="map_marker_category"
-                                name="map_marker_category"
-                                url="/mapMarkerCategories"
-                                model="mapMarkerCategory"
-                                :selected="form.category_id"
-                                @selectedValue="(id) => this.form.category_id = id[0]"
-                            />
-
-                            <div class="form-group">
-                                <label>{{ trans('global.marker.fields.coordinates') }}</label>
-                                <div
-                                    class="d-flex align-items-center"
-                                    style="gap: 0.5rem;"
-                                >
-                                    <button
-                                        class="btn btn-default text-nowrap"
-                                        @click="triggerEvent()"
-                                    >
-                                        <i class="fa fa-location"></i>
-                                        {{ trans('global.select') }}
-                                    </button>
-
-                                    <span class="input-group">
-                                        <input
-                                            id="latitude"
-                                            name="latitude"
-                                            type="number"
-                                            class="form-control"
-                                            v-model.trim="form.latitude"
-                                            placeholder="Latitude"
-                                            required
-                                        />
-                                        <input
-                                            id="longitude"
-                                            name="longitude"
-                                            type="number"
-                                            class="form-control"
-                                            v-model.trim="form.longitude"
-                                            placeholder="Longitude"
-                                            required
-                                        />
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div v-if="checkPermission('is_admin')" class="form-group">
-                                <label for="tags">{{ trans('global.tag.title') }}</label>
-                                <input
-                                    id="tags"
-                                    name="tags"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.tags"
-                                    :placeholder="trans('global.tag.title')"
-                                    required
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="author">{{ trans('global.marker.fields.author') }}</label>
-                                <input
-                                    id="author"
-                                    name="author"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.author"
-                                    :placeholder="trans('global.marker.fields.author')"
-                                    required
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="address">{{ trans('global.address') }}</label>
-                                <input
-                                    id="address"
-                                    name="address"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.address"
-                                    :placeholder="trans('global.address')"
-                                    required
-                                />
-                            </div>
-        
-                            <div class="form-group">
-                                <label for="url">{{ trans('global.url') }}</label>
-                                <input
-                                    id="url"
-                                    name="url"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.url"
-                                    :placeholder="trans('global.url')"
-                                />
-                            </div>
-
-                            <div>
-                                <label for="url_title">{{ trans('global.url_title') }}</label>
-                                <input
-                                    id="url_title"
-                                    name="url_title"
-                                    type="text"
-                                    class="form-control"
-                                    v-model.trim="form.url_title"
-                                    :placeholder="trans('global.url_title')"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="marker-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="marker-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="!form.title || !form.latitude || !form.longitude || !form.type_id || !form.category_id"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
+                    <span class="input-group">
+                        <input
+                            id="marker-latitude"
+                            type="number"
+                            class="form-control"
+                            v-model.trim="form.latitude"
+                            placeholder="Latitude"
+                            required
+                        />
+                        <input
+                            id="marker-longitude"
+                            type="number"
+                            class="form-control"
+                            v-model.trim="form.longitude"
+                            placeholder="Longitude"
+                            required
+                        />
                     </span>
                 </div>
             </div>
-        </div>
-    </Transition>
+
+            <div v-if="checkPermission('is_admin')" class="mt-3">
+                <label for="marker-tags" class="form-label">{{ trans('global.tag.title') }}</label>
+                <input
+                    id="marker-tags"
+                    type="text"
+                    class="form-control"
+                    maxlength="191"
+                    v-model.trim="form.tags"
+                    :placeholder="trans('global.tag.title')"
+                />
+            </div>
+
+            <div class="mt-3">
+                <label for="marker-author" class="form-label">{{ trans('global.marker.fields.author') }}</label>
+                <input
+                    id="marker-author"
+                    type="text"
+                    class="form-control"
+                    maxlength="191"
+                    v-model.trim="form.author"
+                    :placeholder="trans('global.marker.fields.author')"
+                />
+            </div>
+
+            <div class="mt-3">
+                <label for="marker-address" class="form-label">{{ trans('global.address') }}</label>
+                <input
+                    id="marker-address"
+                    type="text"
+                    class="form-control"
+                    maxlength="191"
+                    v-model.trim="form.address"
+                    :placeholder="trans('global.address')"
+                />
+            </div>
+
+            <div class="mt-3">
+                <label for="marker-url" class="form-label">{{ trans('global.url') }}</label>
+                <input
+                    id="marker-url"
+                    type="text"
+                    class="form-control"
+                    maxlength="191"
+                    v-model.trim="form.url"
+                    :placeholder="trans('global.url')"
+                />
+            </div>
+
+            <div class="mt-3">
+                <label for="marker-url-title" class="form-label">{{ trans('global.url_title') }}</label>
+                <input
+                    id="marker-url-title"
+                    type="text"
+                    class="form-control"
+                    maxlength="191"
+                    v-model.trim="form.url_title"
+                    placeholder="Link"
+                />
+            </div>
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'map-marker-modal',
     components: {
+        Modal,
         Editor,
-        Select2
+        Select2,
     },
     props: {
         map: {
-            type: Object
+            type: Object,
+            default: null,
         },
         clickedCoordinates: {
             type: Object,
             default: null,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
             form: new Form({
                 id: null,
                 title: '',
@@ -255,7 +185,7 @@ export default {
                 author: '',
                 type_id: 1,
                 category_id: 1,
-                tags: '',
+                tags: null,
                 latitude: null,
                 longitude: null,
                 address: '',
@@ -277,33 +207,6 @@ export default {
         }
     },
     methods: {
-        submit() {
-            if (this.method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post('/mapMarkers', this.form)
-                .then(r => {
-                    this.$eventHub.emit('marker-added', r.data);
-                    this.globalStore?.closeModal(this.$options.name)
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-        },
-        update() {
-            axios.patch('/mapMarkers/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('marker-updated', r.data);
-                    this.globalStore?.closeModal(this.$options.name)
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-        },
         triggerEvent() {
             this.$emit('setCoordinates');
             // trigger closing-animation
@@ -311,23 +214,6 @@ export default {
             // actually hide the modal-layer, so the map underneath can be clicked
             setTimeout(() => this.$el.classList.add('d-none'), 300);
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params;
-                this.form.reset();
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    if (this.form.id) {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
-                }
-            }
-        });
     },
     watch: {
         clickedCoordinates(newValue) {

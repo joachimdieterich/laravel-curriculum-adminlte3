@@ -5,6 +5,7 @@ export const useGlobalStore = defineStore('global', {
         global: [],
         modals: {},
         media: [],
+        search: null, // used to set searchString outside of the searchbar component
         showSearchbar: false,
         searchTagModelContext: null,
         mediumModalParams: {

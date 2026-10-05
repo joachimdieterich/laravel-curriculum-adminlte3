@@ -66,17 +66,9 @@
 </template>
 <script>
 import SearchbarDropDownModal from "./SearchbarDropDownModal.vue";
-import {useGlobalStore} from "../../store/global.js";
 
 export default {
     components: { SearchbarDropDownModal },
-    setup () {
-        const globalStore = useGlobalStore();
-
-        return {
-            globalStore,
-        };
-    },
     data() {
         return {
             filter: {
@@ -145,6 +137,10 @@ export default {
         this.searchTagModelContext = this.globalStore['searchTagModelContext'];
     },
     watch: {
+        'globalStore.search': function (newValue) {
+            this.filter.searchString = newValue;
+            this.prepareEvent(true);
+        },
         'globalStore.showSearchbar': function (newValue) {
             this.showSearchbar = newValue;
         },

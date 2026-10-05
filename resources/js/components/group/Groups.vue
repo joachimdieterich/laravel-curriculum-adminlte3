@@ -135,7 +135,7 @@ export default {
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
-                { title: 'organization', data: 'organization', searchable: true },
+                { title: 'organization', data: 'organization.title', searchable: true },
             ],
             options : this.$dtOptions,
             dt: null,

@@ -29,30 +29,11 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_access'), 403);
 
-        $groups = Group::select('id', 'title', 'common_name', 'grade_id', 'period_id', 'organization_id');
+        $groups = Group::select('groups.id', 'groups.title', 'groups.common_name', 'grade_id', 'period_id', 'organization_id')
+            ->whereIn('organization_id', auth()->user()->organizations()->pluck('organizations.id'))
+            ->with('organization:id,title');
 
-        switch (auth()->user()->role()->id) {
-            case 1: // admin
-                break;
-            case 2: // creator
-            case 4: // schooladmin
-            case 5: // teacher
-                $groups->where('organization_id', auth()->user()->current_organization_id);
-                break;
-            default: // student
-                $groups->whereHas('users', function ($query) {
-                    $query->where('user_id', auth()->user()->id);
-                });
-                break;
-        }
-
-        $groups->with('organization:id,title');
-
-        return DataTables::of($groups)
-            ->addColumn('organization', function ($groups) {
-                return $groups->organization->title;
-            })
-            ->make(true);
+        return DataTables::of($groups)->make(true);
     }
 
 

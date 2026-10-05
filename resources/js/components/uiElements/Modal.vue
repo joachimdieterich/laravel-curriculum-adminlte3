@@ -323,6 +323,9 @@ export default {
         this.globalStore.registerModal(this.modalName);
         this.globalStore.$subscribe((mutation, state) => {
             if (state.modals[this.modalName].show && !state.modals[this.modalName].lock) {
+                // remove any lingering popper-tooltip from button-icon
+                bootstrap.Tooltip.getInstance(document.querySelector('[aria-describedby^=tooltip]'))?.hide();
+
                 // locking the modal means that it won't accept further state-changes
                 // caused by opening another modal, while this one is still open
                 this.globalStore.lockModal(this.modalName);

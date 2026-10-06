@@ -41,7 +41,7 @@
                         <div class="tab-pane active show">
                             <div class="row">
                                 <div v-for="permission in currentPermissions"
-                                    class="col-6 col-sm-4 col-md-3 col-lg-2 py-2"
+                                     class="col-6 col-sm-4 col-md-3 col-lg-2 py-2"
                                 >
                                     <button
                                         type="button"
@@ -106,7 +106,7 @@ export default {
         let checkedPermissions = [];
         // mark permissions as checked if they are set for the current role
         for (let permission of this.allPermissions) {
-            if (this.currentRole.permissions[counter].id === permission.id) {
+            if (this.currentRole.permissions[counter]?.id === permission.id) {
                 permission.checked = true;
                 counter++;
             }

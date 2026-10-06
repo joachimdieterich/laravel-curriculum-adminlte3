@@ -3,7 +3,6 @@
         model="plan"
         modalName="plan-modal"
         :form="form"
-        :show-general-header="true"
         :show-display-section="true"
         :show-permission-section="true"
         :disable-save-button="!form.title"

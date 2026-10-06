@@ -13,7 +13,7 @@
                     role="tab"
                     @click="setFilter('all')"
                 >
-                    <i class="fas fa-map-location-dot pe-2"></i>
+                    <i class="fa fa-map-location-dot pe-2"></i>
                     {{ trans('global.all') }} {{ trans('global.map.title') }}
                 </a>
             </li>
@@ -26,7 +26,7 @@
                     role="tab"
                     @click="setFilter('by_organization')"
                 >
-                    <i class="fas fa-university pe-2"></i>
+                    <i class="fa fa-university pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                 </a>
             </li>

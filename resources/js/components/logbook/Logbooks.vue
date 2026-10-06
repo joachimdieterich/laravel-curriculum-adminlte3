@@ -125,10 +125,10 @@
                             {{ trans('global.logbook.expel') }}
                         </button>
                     </div>
-                    <div v-else
+                    <div v-else-if="ownerOrAdmin(logbook)"
                         class="dropdown-menu dropdown-menu-end"
                     >
-                        <button v-if="ownerOrAdmin(logbook)"
+                        <button
                             type="button"
                             class="dropdown-item"
                             @click="editLogbook(logbook)"
@@ -136,7 +136,7 @@
                             <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.logbook.edit') }}
                         </button>
-                        <button v-if="ownerOrAdmin(logbook)"
+                        <button
                             type="button"
                             class="dropdown-item"
                             @click="shareLogbook(logbook)"
@@ -145,9 +145,9 @@
                             {{ trans('global.logbook.share') }}
                         </button>
 
-                        <hr v-if="ownerOrAdmin(logbook)" class="my-1">
+                        <hr class="my-1">
 
-                        <button v-if="ownerOrAdmin(logbook)"
+                        <button
                             v-permission="'logbook_delete'"
                             type="submit"
                             class="dropdown-item text-danger"

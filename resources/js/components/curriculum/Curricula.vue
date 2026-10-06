@@ -274,7 +274,7 @@ export default {
                     shareWithGroups: true,
                     shareWithOrganizations: true,
                     shareWithToken: true,
-                    canEditCheckbox: false,
+                    canEditCheckbox: true,
                 }
             );
         },

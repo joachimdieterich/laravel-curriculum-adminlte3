@@ -24,7 +24,7 @@
 
                 <slot name="modal-body">
                     <div
-                        class="modal-body accordion"
+                        class="modal-body hide-scrollbars accordion"
                         :class="allowOverflow && 'overflow-y-visible'"
                     >
                         <div class="accordion-item">
@@ -88,7 +88,7 @@
                                     class="accordion-button"
                                     data-bs-toggle="collapse"
                                     :data-bs-target="'#' + model + '-display'"
-                                    aria-expanded="false"
+                                    aria-expanded="true"
                                     :aria-controls="model + '-display'"
                                 >
                                     {{ trans('global.display') }}
@@ -133,7 +133,7 @@
                                     class="accordion-button"
                                     data-bs-toggle="collapse"
                                     :data-bs-target="'#' + model + '-permissions'"
-                                    aria-expanded="false"
+                                    aria-expanded="true"
                                     :aria-controls="model + '-permissions'"
                                 >
                                     {{ trans('global.permissions') }}

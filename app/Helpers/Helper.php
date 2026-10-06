@@ -164,7 +164,7 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative')) {
 
         $offset = ($page - 1) * $resultCount;
 
-        $term       = strtolower($input['term']); // str_contains is case sensitive
+        $term       = strtolower($input['term']); // str_contains is case-sensitive
         $allEntries = $collection->filter(function ($obj) use ($field, $term) {
             // if any match is true, return the entry
             return array_any(

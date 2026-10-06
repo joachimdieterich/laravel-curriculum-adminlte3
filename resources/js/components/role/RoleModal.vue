@@ -1,210 +1,52 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <span v-if="method === 'post'">
-                            {{ trans('global.role.create') }}
-                        </span>
-                        <span v-if="method === 'patch'">
-                            {{ trans('global.role.edit') }}
-                        </span>
-                    </h3>
-                    <div class="card-tools">
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div
-                    class="modal-body"
-                >
-                    <div class="card">
-                        <div class="card-body">
-                            <div
-                                class="form-group"
-                                :class="form.errors.title ? 'has-error' : ''"
-                            >
-                                <input
-                                    id="title"
-                                    name="title"
-                                    type="text"
-                                    class="form-control"
-                                    v-model="form.title"
-                                    :readonly="this.method == 'patch'"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                                <p class="help-block" v-if="form.errors.title" v-text="form.errors.title[0]"></p>
-                            </div>
-                            <tag-multiselect
-                                type="App\Role"
-                                :model-id="form.id"
-                                :selectedTags="selectedTags"
-                                @selectedValue="(data) => {
-                                    this.form.tags = data;
-                                }"
-                                @cleared="() => {
-                                    this.form.tags = [];
-                                }"
-                                @tag-attached="(tag) => {
-                                    this.updateSelectedTags(tag.id);
-                                }"
-                            ></tag-multiselect>
-                            <Select2
-                                id="permissions"
-                                name="permissions"
-                                url="/permissions"
-                                model="permission"
-                                :multiple="true"
-                                :selected="selectedPermissions"
-                                @selectedValue="(permissions) => {
-                                    this.form.permissions = permissions;
-                                }"
-                                @cleared="() => {
-                                    this.form.permissions = [];
-                                }"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="role-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="role-save"
-                            class="btn btn-primary ms-3"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+    <Modal
+        model="role"
+        modalName="role-modal"
+        :form="form"
+        :allow-overflow="true"
+        :require-title="true"
+        @opened="params => preProcessing(params)"
+    >
+        <template #general-extended>
+            <Select2
+                id="role-permissions"
+                css="mt-3"
+                url="/permissions"
+                model="permission"
+                :multiple="true"
+                :selected="selectedPermissions"
+                @selectedValue="permissions => form.permissions = permissions"
+                @cleared="form.permissions = []"
+            />
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
-import TagMultiselect from "../tag/TagMultiselect.vue";
 
 export default {
     name: 'role-modal',
     components: {
-        TagMultiselect,
+        Modal,
         Select2,
-    },
-    setup() { //use database store
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
             form: new Form({
-                id:'',
+                id: null,
                 title: '',
-                permissions: '',
-                tags: [],
+                permissions: [],
             }),
-            params: {},
-            selectedTags: [],
             selectedPermissions: []
         }
     },
     methods: {
-        submit() {
-            if (this.method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-
-            this.globalStore.closeModal(this.$options.name);
+        preProcessing(params) {
+            this.selectedPermissions = params.permissions?.map(p => p.id);
         },
-        add() {
-            axios.post('/roles', this.form)
-                .then(r => {
-                    this.$eventHub.emit('role-added', r.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
-        },
-        update() {
-            axios.patch('/roles/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('role-updated', r.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
-        },
-        getSelectedPermissions(permissions) {
-            if (permissions[0]?.title){
-                return permissions.map(p => p.id);
-            }
-
-            return permissions;
-        },
-        getSelectedTags(tags) {
-            if (tags[0]?.name){
-                return tags.map(p => p.id);
-            }
-
-            return tags;
-        },
-        updateSelectedTags(newTag) {
-            if (newTag !== undefined) {
-                this.form.tags.push(newTag)
-            }
-
-            this.selectedTags = this.getSelectedTags(this.form.tags);
-        }
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params;
-                this.form.reset();
-                this.params = params;
-                if (typeof (params) !== 'undefined') {
-                    params.permissions = this.getSelectedPermissions(params.permissions);
-                    this.selectedPermissions = params.permissions
-                    params.tags = this.getSelectedTags(params.tags);
-                    this.form.populate(params);
-                    this.updateSelectedTags();
-                    if (this.form.id !== '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
-                }
-            }
-        });
     },
 }
 </script>

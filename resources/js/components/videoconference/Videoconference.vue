@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex flex-column px-3">
-        <div class="px-3 py-2 bg-white rounded-2 shadow-layout">
+        <div class="px-3 py-2 bg-white rounded-3 shadow-layout">
             <div class="d-flex align-items-center gap-2">
                 <span class="fs-4">{{ videoconference.meetingName }}</span>
                 <span v-if="ownerOrAdmin"

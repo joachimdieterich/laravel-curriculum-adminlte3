@@ -3,8 +3,8 @@
     {{ trans('global.role.title_singular') }}
 @endsection
 @section('content')
-    <role
+    <Role
         :role="{{ $role }}"
         :all-permissions="{{ $allPermissions }}"
-    ></role>
+    />
 @endsection

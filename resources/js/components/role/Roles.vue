@@ -19,35 +19,32 @@
                 url="/roles"
             >
                 <template #icon>
-                    <i class="fas fa-user-tag"></i>
+                    <i class="fa fa-user-tag"></i>
                 </template>
 
                 <template #dropdown
                     v-permission="'role_edit, role_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'role_edit'"
-                            :name="'edit-role-' + role.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editRole(role)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editRole(role)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.role.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'role_delete'"
-                            :id="'delete-role-' + role.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
+                            class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(role)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.role.delete') }}
                         </button>
                     </div>

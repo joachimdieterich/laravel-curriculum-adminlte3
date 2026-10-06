@@ -1,59 +1,40 @@
 <template>
-    <div class="d-flex flex-column">
-        <div class="col-lg-4 col-sm-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="m-0">
-                            <i class="fas fa-user-tag me-1"></i>
-                            {{ this.currentPermission.title }}
-                        </h5>
-                    </div>
-                    <div
-                        v-permission="'is_admin'"
-                        class="card-tools pe-2"
-                    >
-                        <a @click="editPermission()">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
-                </div>
+    <div class="px-3">
+        <div class="col-lg-4 col-sm-12 rounded-3 shadow-layout">
+            <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
+                <h5 class="m-0">
+                    <i class="fa fa-user-tag me-1"></i>{{ currentPermission.title }}
+                </h5>
 
-                <div class="card-body"></div>
-
-                <div class="card-footer">
-                    <small class="float-right">
-                        {{ this.currentPermission.updated_at }}
-                    </small>
-                </div>
+                <button v-if="checkPermission('is_admin')"
+                    type="button"
+                    class="btn btn-icon-alt"
+                    @click="editPermission()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+            </div>
+            <div class="p-2 bg-white rounded-bottom-3">
+                <small>{{ currentPermission.updated_at }}</small>
             </div>
         </div>
 
         <Teleport to="body">
-            <PermissionModal></PermissionModal>
+            <PermissionModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import PermissionModal from "../permission/PermissionModal.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "permission",
-    components:{
-        PermissionModal
-    },
+    components:{ PermissionModal },
     props: {
         permission: {
-            default: null
+            type: Object,
+            default: null,
         },
-    },
-    setup () {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
@@ -63,16 +44,14 @@ export default {
     },
     mounted() {
         this.currentPermission = this.permission;
-        this.$eventHub.on('permission-updated', (permission) => {
+        this.$eventHub.on('permission-updated', permission => {
             this.currentPermission = permission;
-            this.globalStore?.closeModal('permission-modal');
         });
-
     },
     methods: {
-        editPermission(){
-            this.globalStore?.showModal('permission-modal', this.currentPermission);
+        editPermission() {
+            this.globalStore.showModal('permission-modal', this.currentPermission);
         },
-    }
+    },
 }
 </script>

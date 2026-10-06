@@ -20,35 +20,32 @@
                 url="/permissions"
             >
                 <template #icon>
-                    <i class="fas fa-unlock-alt"></i>
+                    <i class="fa fa-unlock-alt"></i>
                 </template>
 
                 <template #dropdown
                     v-permission="'permission_edit, permission_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'permission_edit'"
-                            :name="'edit-permission-' + permission.id"
-                            class="dropdown-item text-secondary"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="editPermission(permission)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.permission.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'permission_delete'"
-                            :id="'delete-permission-' + permission.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(permission)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(permission)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.permission.delete') }}
                         </button>
                     </div>
@@ -115,12 +112,10 @@ export default {
         this.dt = this.$refs.datatable.dt;
 
         this.$eventHub.on('permission-added', permission => {
-            this.globalStore.closeModal('permission-modal');
             this.permissions.push(permission);
         });
 
         this.$eventHub.on('permission-updated', permission => {
-            this.globalStore.closeModal('permission-modal');
             this.update(permission);
         });
 

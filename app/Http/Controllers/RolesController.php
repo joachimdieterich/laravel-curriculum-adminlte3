@@ -60,15 +60,11 @@ class RolesController extends Controller
 
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
-        $role->tags()->sync($request->input('tags'));
 
-        Cache::forget('roles'); //cache should update next time
+        Cache::forget('roles'); // cache should update next time
 
-        if (request()->wantsJson()) {
-            return $role;
-        }
+        return $role;
     }
-
 
     public function update(UpdateRoleRequest $request, Role $role)
     {
@@ -76,13 +72,10 @@ class RolesController extends Controller
 
         $role->update($request->all());
         $role->permissions()->sync($request->input('permissions', []));
-        $role->tags()->sync($request->input('tags'));
 
-        Cache::forget('roles'); //cache should update next time
+        Cache::forget('roles'); // cache should update next time
 
-        if (request()->wantsJson()) {
-            return $role->load(['tags', 'permissions']);
-        }
+        return $role->load(['permissions']);
     }
 
     public function show(Role $role)
@@ -90,7 +83,6 @@ class RolesController extends Controller
         abort_unless(Gate::allows('role_show'), 403);
 
         $role->load('permissions:id,title');
-        $role->load('tags');
 
         $allPermissions = \App\Permission::select('id', 'title')->orderBy('title')->get();
 

@@ -3,5 +3,5 @@
     {{ trans('global.permission.title') }}
 @endsection
 @section('content')
-    <permissions></permissions>
+    <Permissions/>
 @endsection

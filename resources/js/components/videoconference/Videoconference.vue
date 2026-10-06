@@ -1,104 +1,102 @@
-<template >
+<template>
     <div class="d-flex flex-column px-3">
-        <div class="card card-primary">
-            <div class="card-body">
-                <h5>
-                    {{ videoconference.meetingName }}
-                    <span v-if="videoconference.owner_id == $userId || checkPermission('is_admin')"
-                        class="pointer"
-                    >
-                        <a class="text-secondary p-1">
-                            <i
-                                class="fa fa-share-alt"
-                                @click="share()"
-                            ></i>
-                        </a>
-                        <a
-                            class="text-secondary pull-right"
-                            @click="editVideoconference(videoconference)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                        </a>
-                    </span>
-                </h5>
-                <hr class="bg-gray mt-0">
-                <div v-if="loading"
-                    class="text-center"
+        <div class="px-3 py-2 bg-white rounded-2 shadow-layout">
+            <div class="d-flex align-items-center gap-2">
+                <span class="fs-4">{{ videoconference.meetingName }}</span>
+                <span v-if="ownerOrAdmin"
+                    class="d-contents"
                 >
-                    <i class="fas fa-2x fa-spinner fa-spin"></i>
-                    <p> {{ loadingMessage }} {{ timerCount }}</p>
                     <button
-                        class="btn btn-primary pt-2"
-                        @click="toggleTimer()"
+                        type="button"
+                        class="btn btn-icon text-secondary"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.videoconference.edit')"
+                        @click="editVideoconference()"
                     >
-                        {{ trans('global.cancel') }}
+                        <i class="fa fa-pencil-alt"></i>
                     </button>
-                </div>
-                <div v-else
-                    class="d-flex flex-column"
-                >
-                    <div class="d-flex">
-                        <div class="w-50">
-                            {{ videoconference.owner.firstname }} {{ videoconference.owner.lastname }} (Initiator)
-                        </div>
-                        <div class="input-group w-50">
-                            <input
-                                type="text"
-                                id="userName"
-                                name="userName"
-                                class="form-control"
-                                v-model.trim="form.userName"
-                                :disabled="lockUserName"
-                                :placeholder="trans('global.videoconference.enter_name')"
-                            />
-                            <span v-if="form.userName"
-                                class="input-group-append"
-                                @click="startVideoconference()"
-                            >
-                                <button v-if="isRunning"
-                                    type="button"
-                                    class="btn btn-info"
-                                >
-                                    {{ trans('global.videoconference.join') }}
-                                </button>
-                                <button v-else
-                                    type="button"
-                                    class="btn btn-primary"
-                                >
-                                    {{ trans('global.videoconference.start') }}
-                                </button>
-                            </span>
-                        </div> <!-- guestName -->
-                    </div>
-
-                    <div v-if="videoconference.owner_id == $userId
-                        || videoconference.moderatorPW == urlParamModeratorPW
-                        || checkPermission('is_admin')
-                        "
-                        class="d-flex pt-3"
+                    <button
+                        type="button"
+                        class="btn btn-icon text-secondary"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.videoconference.share')"
+                        @click="share()"
                     >
-                        <a
-                            class="btn btn-light pt-2 ms-auto me-3"
-                            @click="copyToClipboard('attendee')"
+                        <i class="fa fa-share-alt"></i>
+                    </button>
+                </span>
+            </div>
+
+            <hr class="mt-1">
+
+            <div v-if="loading"
+                class="text-center"
+            >
+                <i class="fas fa-2x fa-spinner fa-spin"></i>
+                <p> {{ loadingMessage }} {{ timerCount }}</p>
+                <button
+                    type="button"
+                    class="btn btn-primary pt-2"
+                    @click="toggleTimer()"
+                >
+                    {{ trans('global.cancel') }}
+                </button>
+            </div>
+            <div v-else
+                class="d-flex flex-column gap-3"
+            >
+                <div class="d-flex flex-column flex-md-row">
+                    <div class="col mb-2 mb-md-0">{{ videoconference.owner.firstname }} {{ videoconference.owner.lastname }} (Initiator)</div>
+                    <div class="col input-group">
+                        <input
+                            type="text"
+                            id="videoconference-username"
+                            class="form-control"
+                            maxlength="191"
+                            v-model.trim="form.userName"
+                            :disabled="lockUserName"
+                            :placeholder="trans('global.videoconference.enter_name')"
+                            @keyup.enter="form.userName && startVideoconference()"
+                        />
+                        <button v-if="form.userName"
+                            type="button"
+                            class="btn"
+                            :class="isRunning ? 'btn-info' : 'btn-primary'"
+                            @click="startVideoconference()"
                         >
-                            <i class="fa fa-copy"></i>
-                            {{ trans('global.videoconference.participant_link') }}
-                        </a>
-                        <a
-                            class="btn btn-light pt-2"
-                            @click="copyToClipboard('moderator')"
-                        >
-                            <i class="fa fa-copy"></i>
-                            {{ trans('global.videoconference.moderator_link') }}
-                        </a>
+                            {{ (isRunning ? trans('global.videoconference.join') : trans('global.videoconference.start')) }}
+                        </button>
                     </div>
+                </div>
+
+                <div v-if="ownerOrAdmin
+                        || videoconference.moderatorPW == urlParamModeratorPW
+                    "
+                    class="d-flex flex-column flex-sm-row justify-content-center justify-content-md-end gap-3"
+                >
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        @click="copyToClipboard('attendee')"
+                    >
+                        <i class="fa fa-copy"></i>
+                        {{ trans('global.videoconference.participant_link') }}
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        @click="copyToClipboard('moderator')"
+                    >
+                        <i class="fa fa-copy"></i>
+                        {{ trans('global.videoconference.moderator_link') }}
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div v-if="videoconference.owner_id == $userId && checkPermission('is_admin')">
+        <div v-if="ownerOrAdmin">
             <h5 class="pt-4">{{ trans('global.videoconference.presentations') }}</h5>
-            <hr class="bg-gray mt-0">
+            <hr>
             <Media
                 ref="videoconferenceMedia"
                 :subscribable_id="videoconference.id"
@@ -117,11 +115,9 @@
 <script>
 import Form from "form-backend-validation";
 import VideoconferenceModal from "../videoconference/VideoconferenceModal.vue";
-import {useToast} from "vue-toastification";
 import Media from "../media/Media.vue";
 import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     props: {
@@ -138,19 +134,9 @@ export default {
             default: false,
         },
     },
-    setup() {
-        const toast = useToast();
-        const globalStore = useGlobalStore();
-        return {
-            toast,
-            globalStore,
-        }
-    },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            url: '/videoconferences',
             form: new Form({
                 userName: '',
             }),
@@ -162,20 +148,21 @@ export default {
             timerCount: 10,
             urlParamModeratorPW: '',
             urlParamAttendeePW: '',
-            currentVideoconference: {},
-            servers: {},
         }
     },
     mounted() {
+        this.enableTooltips();
+
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         this.urlParamModeratorPW = urlParams.get('moderatorPW')
         this.urlParamAttendeePW = urlParams.get('attendeePW')
 
+        // logged in users shouldn't be able to change their username (owner and admins excluded)
         if (this.user != null && this.user.firstname != 'Guest') {
             this.form.userName = this.user.firstname + ' ' + this.user.lastname;
-            // lock name field for non-owners/non-admins
-            if (this.videoconference.owner_id !== this.$userId || this.checkPermission('is_admin') === false) {
+
+            if (!this.ownerOrAdmin) {
                 this.form.setInitialValues({
                     userName: this.user.firstname + ' ' + this.user.lastname,
                 });
@@ -183,7 +170,7 @@ export default {
             }
         }
 
-        axios.get(this.url + '/' + this.videoconference.id + '/getStatus')
+        axios.get('/videoconferences/' + this.videoconference.id + '/getStatus')
             .then(response => {
                 if (response.data.videoconference == false) {
                     this.isRunning = false;
@@ -195,48 +182,27 @@ export default {
                 console.log(e);
             });
 
-        this.$eventHub.on('videoconference-updated', (videoconference) => {
-            this.globalStore?.closeModal('videoconference-modal');
+        this.$eventHub.on('videoconference-updated', videoconference => {
             window.location.reload();
         });
     },
     methods: {
         copyToClipboard(role) {
-            if (role === 'moderator') {
-                navigator.clipboard.writeText(window.location.origin + this.url + '/' + this.videoconference.id + '/startWithPw?moderatorPW=' + this.videoconference.moderatorPW);
-            } else if (role === 'attendee') {
-                navigator.clipboard.writeText(window.location.origin + this.url + '/' + this.videoconference.id + '/startWithPw?attendeePW=' + this.videoconference.attendeePW);
-            }
-            this.successNotification(window.trans.global.token_copied);
+            navigator.clipboard.writeText(window.location.origin + '/videoconferences/' + this.videoconference.id + '/startWithPw?' + role + 'PW=' + this.videoconference[role + 'PW']);
+            this.toast.success(window.trans.global.token_copied, { timeout: 3000 })
         },
-        successNotification(message) {
-            this.toast.success(message, {
-                position: "top-right",
-                timeout: 3000,
-                closeOnClick: true,
-                pauseOnFocusLoss: true,
-                pauseOnHover: true,
-                draggable: true,
-                draggablePercent: 0.6,
-                showCloseButtonOnHover: false,
-                hideProgressBar: true,
-                closeButton: "button",
-                icon: true,
-                rtl: false
-            });
-        },
-        editVideoconference(videoconference) {
-            this.globalStore?.showModal('videoconference-modal', videoconference);
+        editVideoconference() {
+            this.globalStore.showModal('videoconference-modal', this.videoconference);
         },
         share() {
-            this.globalStore?.showModal('subscribe-modal', {
-                'modelId': this.videoconference.id,
-                'modelUrl': 'videoconference',
-                'shareWithUsers': true,
-                'shareWithGroups': true,
-                'shareWithOrganizations': true,
-                'shareWithToken': true,
-                'canEditCheckbox': true
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: this.videoconference.id,
+                modelUrl: 'videoconference',
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true
             });
         },
         toggleTimer() {
@@ -246,7 +212,7 @@ export default {
         },
         startVideoconference() {
             this.loading = !this.loading;
-            this.timerCount= 10;
+            this.timerCount = 10;
             this.timerEnabled = true;
 
             const userName = this.lockUserName
@@ -283,6 +249,11 @@ export default {
                         console.log(e);
                     });
             }
+        },
+    },
+    computed: {
+        ownerOrAdmin() {
+            return this.videoconference.owner_id == this.$userId || this.checkPermission('is_admin');
         },
     },
     watch: {

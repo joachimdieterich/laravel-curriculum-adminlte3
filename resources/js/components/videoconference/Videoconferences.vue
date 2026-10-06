@@ -16,7 +16,7 @@
                     role="tab"
                     @click="setFilter('all')"
                 >
-                    <i class="fas fa-video pe-2"></i>
+                    <i class="fa fa-video pe-2"></i>
                     {{ trans('global.all') }} {{ trans('global.videoconference.title') }}
                 </a>
             </li>
@@ -29,7 +29,7 @@
                     role="tab"
                     @click="setFilter('by_organization')"
                 >
-                    <i class="fas fa-university pe-2"></i>
+                    <i class="fa fa-university pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                 </a>
             </li>
@@ -74,7 +74,7 @@
                     role="tab"
                     @click="setFilter('shared_by_me')"
                 >
-                    <i class="fa fa-share-nodes  pe-2"></i>{{ trans('global.shared_by_me') }}
+                    <i class="fa fa-share-nodes pe-2"></i>{{ trans('global.shared_by_me') }}
                 </a>
             </li>
         </ul>
@@ -118,52 +118,46 @@
                 >
                     <div v-if="subscribable"
                         class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
                     >
                         <button
                             v-permission="'videoconference_delete'"
-                            :id="'delete-videoconference-' + videoconference.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(videoconference)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(videoconference)"
                         >
-                            <i class="fa fa-link me-2"></i>
+                            <i class="fa fa-link"></i>
                             {{ trans('global.videoconference.expel') }}
                         </button>
                     </div>
-                    <div v-else
+                    <div v-else-if="ownerOrAdmin(videoconference)"
                         class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
                     >
                         <button
-                            v-permission="'videoconference_edit'"
-                            :name="'edit-videoconference-' + videoconference.id"
-                            class="dropdown-item text-secondary"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="editVideoconference(videoconference)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.videoconference.edit') }}
                         </button>
-                        <button v-if="$userId == videoconference.owner_id"
-                            v-permission="'videoconference_create'"
-                            :name="'edit-videoconference-' + videoconference.id"
-                            class="dropdown-item text-secondary"
+                        <button
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="share(videoconference)"
                         >
-                            <i class="fa fa-share-alt me-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.videoconference.share') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'videoconference_delete'"
-                            :id="'delete-videoconference-' + videoconference.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(videoconference)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(videoconference)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.videoconference.delete') }}
                         </button>
                     </div>
@@ -208,7 +202,6 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import SubscribeVideoconferenceModal from "./SubscribeVideoconferenceModal.vue";
-import { json } from "d3";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -323,8 +316,14 @@ export default {
                 canEditCheckbox: true,
             });
         },
+        ownerOrAdmin(videoconference) {
+            return videoconference.owner_id == this.$userId || this.isAdmin;
+        },
     },
     computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
         createLabel() {
             return this.subscribable ? 'enrol' : 'create';
         },

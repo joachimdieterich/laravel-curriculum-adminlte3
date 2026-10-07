@@ -56,39 +56,34 @@
                     :showSubscribable="subscribable"
                 >
                     <template #icon>
-                        <i class="fas fa-user"></i>
+                        <i class="fa fa-user"></i>
                     </template>
 
                     <template #dropdown>
-                        <div
-                            class="dropdown-menu dropdown-menu-end"
-                            style="z-index: 1050;"
-                            x-placement="left-start"
-                        >
+                        <div class="dropdown-menu dropdown-menu-end">
                             <div v-if="!subscribable"
                                 v-permission="'user_edit, user_delete'"
                             >
                                 <button
                                     v-permission="'user_edit'"
-                                    :name="'edit-user-' + user.id"
-                                    class="dropdown-item text-secondary"
-                                    @click.prevent="editUser(user)"
+                                    type="button"
+                                    class="dropdown-item"
+                                    @click="editUser(user)"
                                 >
-                                    <i class="fa fa-pencil-alt me-2"></i>
+                                    <i class="fa fa-pencil-alt"></i>
                                     {{ trans('global.user.edit') }}
                                 </button>
+
                                 <hr class="my-1"/>
+
                                 <button
                                     v-permission="'user_delete'"
-                                    :id="'delete-user-' + user.id"
                                     type="submit"
-                                    class="dropdown-item py-1 text-red"
-                                    @click.prevent="confirmItemDelete(user)"
+                                    class="dropdown-item text-danger"
+                                    @click="confirmItemDelete(user)"
                                 >
-                                    <span>
-                                        <i class="fa fa-trash me-2"></i>
-                                        {{ trans('global.user.delete') }}
-                                    </span>
+                                    <i class="fa fa-trash"></i>
+                                    {{ trans('global.user.delete') }}
                                 </button>
                             </div>
 
@@ -96,15 +91,12 @@
                                 v-permission="'group_enrolment'"
                             >
                                 <button
-                                    :id="'delete-user-' + user.id"
                                     type="submit"
-                                    class="dropdown-item py-1 text-red"
-                                    @click.prevent="confirmItemDelete(user)"
+                                    class="dropdown-item text-danger"
+                                    @click="confirmItemDelete(user)"
                                 >
-                                    <span>
-                                        <i class="fa fa-unlink me-2"></i>
-                                        {{ trans('global.user.expel') }}
-                                    </span>
+                                    <i class="fa fa-unlink"></i>
+                                    {{ trans('global.user.expel') }}
                                 </button>
                             </div>
                         </div>

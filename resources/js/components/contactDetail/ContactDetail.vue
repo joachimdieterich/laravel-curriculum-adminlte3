@@ -1,86 +1,78 @@
 <template>
     <div>
-        <div v-if="user.contact_detail"
-            class="card"
-        >
-            <div class="card-header">
-                <div class="card-title">
-                    <h5 class="m-0">
-                        <i class="far fa-id-card me-1"></i>
-                        {{ contactDetail.owner.firstname }} {{ contactDetail.owner.lastname }}
-                    </h5>
-                </div>
-                <div v-if="$userId == contactDetail.owner_id"
-                    v-permission="'contactdetail_delete'"
-                    class="card-tools no-print"
+        <div v-if="user.contact_detail">
+            <div class="d-flex align-items-center gap-2">
+                <h5 class="m-0">
+                    <i class="far fa-id-card me-1"></i>
+                    {{ contactDetail.owner.firstname }} {{ contactDetail.owner.lastname }}
+                </h5>
+
+                <div v-if="$userId == contactDetail.owner_id || checkPermission('is_admin')"
+                    class="d-print-none d-contents"
                 >
-                    <a
-                        href="#"
-                        class="link-muted"
-                        @click="destroy()"
-                    >
-                        <i class="fas fa-trash text-danger"></i>
-                    </a>
-                </div>
-                <div v-if="$userId == contactDetail.owner_id"
-                    v-permission="'contactdetail_edit'"
-                    class="card-tools me-3 no-print"
-                >
-                    <a
-                        href="#"
-                        class="link-muted"
+                    <button
+                        v-permission="'contactdetail_edit'"
+                        type="button"
+                        class="btn btn-icon text-secondary"
                         @click="edit()"
                     >
-                        <i class="fas fa-pencil-alt"></i>
-                    </a>
+                        <i class="fa fa-pencil-alt"></i>
+                    </button>
+                    <button
+                        v-permission="'contactdetail_delete'"
+                        type="button"
+                        class="btn btn-icon text-danger"
+                        @click="destroy()"
+                    >
+                        <i class="fa fa-trash"></i>
+                    </button>
                 </div>
             </div>
 
-            <div class="card-body">
-                <strong>
-                    <i class="fas fa-envelope me-1"></i>
-                    {{ trans('global.contactDetail.fields.email')}}
-                </strong>
-                <p class="text-muted">{{ contactDetail.email }}</p>
+            <strong>
+                <i class="fa fa-envelope me-1"></i>
+                {{ trans('global.contactDetail.fields.email')}}
+            </strong>
+            <p class="text-muted">{{ contactDetail.email }}</p>
 
-                <hr>
+            <hr>
 
-                <strong>
-                    <i class="fas fa-phone me-1"></i>
-                    {{ trans('global.contactDetail.fields.phone')}}
-                </strong>
-                <p class="text-muted">{{ contactDetail.phone }}</p>
+            <strong>
+                <i class="fa fa-phone me-1"></i>
+                {{ trans('global.contactDetail.fields.phone')}}
+            </strong>
+            <p class="text-muted">{{ contactDetail.phone }}</p>
 
-                <hr>
+            <hr>
 
-                <strong><i class="fa fa-mobile me-1"></i>
-                    {{ trans('global.contactDetail.fields.mobile')}}
-                </strong>
-                <p class="text-muted">{{ contactDetail.mobile }}</p>
-                <hr>
-                <strong>
-                    <i class="fa fa-clipboard me-1"></i>
-                    {{ trans('global.contactDetail.fields.notes')}}
-                </strong>
-                <p
-                    class="text-muted"
-                    v-html="contactDetail.notes"
-                ></p>
-            </div>
+            <strong>
+                <i class="fa fa-mobile me-1"></i>
+                {{ trans('global.contactDetail.fields.mobile')}}
+            </strong>
+            <p class="text-muted">{{ contactDetail.mobile }}</p>
+            <hr>
+            <strong>
+                <i class="fa fa-clipboard me-1"></i>
+                {{ trans('global.contactDetail.fields.notes')}}
+            </strong>
+            <p
+                class="text-muted"
+                v-html="contactDetail.notes"
+            ></p>
         </div>
         <div v-else>
             <button v-if="$userId == user.id"
                 v-permission="'contactdetail_create'"
-                id="contactDetail-create"
+                type="button"
                 class="btn btn-primary"
                 @click="create()"
             >
-                {{ trans('global.contactdetail.create') }}
+                {{ trans('global.contactDetail.create') }}
             </button>
         </div>
 
         <div v-if="organization"
-            class="card-footer mt-2"
+            class="pt-2"
         >
             <h5>{{ organization.title }}</h5>
 
@@ -95,48 +87,43 @@
                 {{ organization.postcode }} {{ organization.city }}<br>
                 {{ organization.state?.lang_de }}, {{ organization.country?.lang_de }}
             </p>
+
             <hr>
 
             <strong>
                 <i class="fa fa-phone me-1"></i>
                 {{ trans('global.contactDetail.title_singular') }}
             </strong>
-            <p class="text-muted">
+            <p class="text-muted mb-0">
                 {{ trans('global.organization.fields.phone') }}: {{ organization.phone }}<br>
                 {{ trans('global.organization.fields.email') }}: {{ organization.email }}
             </p>
         </div>
+
         <Teleport to="body">
-            <ContactModal></ContactModal>
+            <ContactModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import ContactModal from "./ContactModal.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "ContactDetail",
-    components: {
-        ContactModal
-    },
+    components: { ContactModal },
     props: {
         user: {
+            type: Object,
             default: null,
         },
         contactDetail: {
+            type: Object,
             default: null,
         },
         organization: {
-            default:null,
+            type: Object,
+            default: null,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
@@ -146,21 +133,20 @@ export default {
     },
     mounted() {
         this.currentContactDetail = this.contactDetail;
-        this.$eventHub.on('contactDetail-added', (contact) => {
-            this.globalStore?.closeModal('contact-modal');
+
+        this.$eventHub.on('contactDetail-added', contact => {
             window.location.reload();
         });
-        this.$eventHub.on('contactDetail-updated', (contact) => {
-            this.globalStore?.closeModal('contact-modal');
+        this.$eventHub.on('contactDetail-updated', contact => {
             window.location.reload();
         });
     },
     methods: {
         create() {
-            this.globalStore?.showModal('contact-modal', {});
+            this.globalStore.showModal('contact-modal', {});
         },
         edit() {
-            this.globalStore?.showModal('contact-modal', this.currentContactDetail);
+            this.globalStore.showModal('contact-modal', this.currentContactDetail);
         },
         destroy() {
             axios.delete('/contactDetails/' + this.currentContactDetail.id)

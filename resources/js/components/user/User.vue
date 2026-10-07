@@ -1,47 +1,38 @@
 <template>
-    <div class="d-flex flex-wrap">
-        <div class="col-lg-4 col-sm-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="m-0">
-                            <i class="fa fa-user me-1"></i>
-                            {{ user.firstname }} {{ user.lastname }}
-                        </h5>
-                    </div>
-                    <div
-                        v-permission="'user_edit'"
-                        class="card-tools pe-2"
+    <div class="d-flex flex-wrap px-3 mb-lg-3">
+        <div class="col-lg-4 col-12 mb-3 mb-lg-0">
+            <div class="bg-white rounded-3 shadow-layout">
+                <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
+                    <h5 class="m-0">
+                        <i class="fa fa-user mx-1"></i>{{ user.firstname }} {{ user.lastname }}
+                    </h5>
+    
+                    <button v-if="checkPermission('user_edit')"
+                        type="button"
+                        class="btn btn-icon-alt"
+                        @click="editUser(user)"
                     >
-                        <a @click="editUser(user)">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
+                        <i class="fa fa-pencil-alt"></i>
+                    </button>
                 </div>
-
-                <div class="card-body box-profile">
-                    <div class="text-center">
-                        <avatar
+    
+                <div class="d-flex flex-column gap-2 p-3">
+                    <div class="d-flex flex-column align-items-center">
+                        <Avatar
                             :medium="user.avatar"
-                            :css="'clearfix'"
                             :show-popup-details="false"
                         />
+    
+                        <span class="fs-4">{{ user.firstname }} {{ user.lastname }}</span>
+    
+                        <span class="text-muted">{{ user.username }}</span>
                     </div>
-
-                    <h3 class="profile-username text-center">
-                        {{ user.firstname }} {{ user.lastname }}
-                    </h3>
-
-                    <p class="text-muted text-center">
-                        {{ user.username }}
-                    </p>
-                </div>
-
-                <div class="card-body">
-                    <div v-if="user.organizations.length > 1">
+    
+                    <div v-if="user.organizations.length > 1"
+                        class="d-contents"    
+                    >
                         <Select2
-                            id="select-organization"
-                            name="select-organization"
+                            id="user-select-organization"
                             url="/organizations"
                             model="organization"
                             :label="trans('global.organization.set')"
@@ -49,62 +40,67 @@
                             :list="user.organizations.map(org => { return { id: org.id, title: org.title } })"
                             @selectedValue="(id) => setCurrentOrganization(id[0])"
                         />
-                        <hr>
+                        <hr class="m-0">
                     </div>
-                    <strong>
-                        <i class="fa fa-university me-1"></i>
-                        {{ trans('global.organization.title_singular') }}
-                    </strong>
-                    <ul class="ps-4">
-                        <li v-for="organization in user.organizations"
-                           class="small"
-                        >
-                            {{ organization.title }} @ {{ getRoleInOrganization(organization)[0]?.title }}
-                        </li>
-                    </ul>
-                    <hr>
-
-                    <strong>
-                        <i class="fa fa-users me-1"></i>
-                        {{ trans('global.group.title_singular') }}
-                    </strong>
-                    <ul class="ps-4">
-                        <li v-for="group in user.groups"
-                            class="small"
-                        >
-                            {{ group.title }} @ {{ getOrganizationOfGroup(group)[0]?.title }}
-                        </li>
-                    </ul>
-                    <hr>
-
-                    <strong>
-                        <i class="fas fa-user-tag me-1"></i>
-                        {{ trans('global.role.title') }}
-                    </strong>
-                    <ul class="ps-4">
-                        <li v-for="role in user.roles"
-                            class="small"
-                        >
-                            {{ role.title }} @ {{ getOrganizationForRole(role)[0]?.title }}
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="card-footer">
-                    <small class="float-right">{{ user.updated_at }}</small>
+    
+                    <div>
+                        <strong>
+                            <i class="fa fa-university me-1"></i>
+                            {{ trans('global.organization.title_singular') }}
+                        </strong>
+                        <ul>
+                            <li v-for="organization in user.organizations"
+                                class="small"
+                            >
+                                {{ organization.title }} @ {{ getRoleInOrganization(organization)[0]?.title }}
+                            </li>
+                        </ul>
+                        <hr class="m-0">
+                    </div>
+    
+                    <div>
+                        <strong>
+                            <i class="fa fa-users me-1"></i>
+                            {{ trans('global.group.title_singular') }}
+                        </strong>
+                        <ul>
+                            <li v-for="group in user.groups"
+                                class="small"
+                            >
+                                {{ group.title }} @ {{ getOrganizationOfGroup(group)[0]?.title }}
+                            </li>
+                        </ul>
+                        <hr class="m-0">
+                    </div>
+    
+                    <div>
+                        <strong>
+                            <i class="fa fa-user-tag me-1"></i>
+                            {{ trans('global.role.title') }}
+                        </strong>
+                        <ul class="ps-4">
+                            <li v-for="role in user.roles"
+                                class="small"
+                            >
+                                {{ role.title }} @ {{ getOrganizationForRole(role)[0]?.title }}
+                            </li>
+                        </ul>
+                    </div>
+    
+                    <small>{{ user.updated_at }}</small>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-8 col-sm-12">
-            <div class="card">
-                <div class="card-header p-2">
+        <div class="col-lg-8 col-12 ps-lg-3 mb-3 mb-lg-0">
+            <div class="bg-white rounded-3 shadow-layout">
+                <div class="p-2 border-bottom border-dark-subtle">
                     <ul class="nav nav-pills">
                         <li class="nav-item">
                             <a
                                 class="nav-link active show"
                                 href="#contact"
-                                data-toggle="tab"
+                                data-bs-toggle="tab"
                             >
                                 {{ trans('global.contactDetail.title_singular') }}
                             </a>
@@ -113,42 +109,41 @@
                             <a
                                 class="nav-link show"
                                 href="#notes"
-                                data-toggle="tab"
+                                data-bs-toggle="tab"
                             >
                                 {{ trans('global.note.title') }}
                             </a>
                         </li>
                     </ul>
                 </div>
-                <div class="card-body">
-                    <div class="tab-content">
-                        <div
-                            id="contact"
-                            class="tab-pane active show"
-                        >
-                            <ContactDetail
-                                :user="user"
-                                :contactDetail="user.contact_detail"
-                                :organization="getCurrentOrganization()"
-                            />
-                        </div>
-                        <div
-                            id="notes"
-                            class="tab-pane show"
-                        >
-                            <Notes
-                                notable_type="App\User"
-                                :notable_id="user.id"
-                                :show_tabs=false
-                            />
-                        </div>
+
+                <div class="tab-content p-3">
+                    <div
+                        id="contact"
+                        class="tab-pane fade active show"
+                    >
+                        <ContactDetail
+                            :user="user"
+                            :contactDetail="user.contact_detail"
+                            :organization="getCurrentOrganization()"
+                        />
+                    </div>
+                    <div
+                        id="notes"
+                        class="tab-pane fade"
+                    >
+                        <Notes
+                            notable_type="App\User"
+                            :notable_id="user.id"
+                            :show_tabs=false
+                        />
                     </div>
                 </div>
             </div>
         </div>
 
         <Teleport to="body">
-            <UserModal ></UserModal>
+            <UserModal/>
         </Teleport>
     </div>
 </template>
@@ -158,7 +153,6 @@ import Avatar from "../uiElements/Avatar.vue";
 import Notes from "../note/Notes.vue";
 import Select2 from "../forms/Select2.vue";
 import ContactDetail from "../contactDetail/ContactDetail.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "User",
@@ -175,26 +169,19 @@ export default {
             default: null,
         },
     },
-    setup () {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore
-        }
-    },
     data() {
         return {
             componentId: this.$.uid,
         }
     },
     mounted() {
-        this.$eventHub.on('user-updated', (user) => {
-            this.globalStore?.closeModal('user-modal');
+        this.$eventHub.on('user-updated', user => {
             window.location.reload();
         });
     },
     methods: {
         editUser(user) {
-            this.globalStore?.showModal('user-modal', user);
+            this.globalStore.showModal('user-modal', user);
         },
         setCurrentOrganization(id) {
             axios.patch('/users/setCurrentOrganization', { current_organization_id: id })

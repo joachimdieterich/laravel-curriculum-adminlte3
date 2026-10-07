@@ -56,7 +56,8 @@
             ref="datatable"
             id="role-datatable"
             :columns="columns"
-            :options="dtOptions('/roles/list')"
+            :options="$dtOptions"
+            ajax="/roles/list"
             class="d-none"
             @xhr="(e, settings, json) => roles = json.data"
         />
@@ -82,7 +83,6 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 DataTable.use(DataTablesCore);
 
 export default {
@@ -91,11 +91,6 @@ export default {
         DataTable,
         RoleModal,
         IndexWidget,
-    },
-    setup() {
-        const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
-
-        return { selectedTags, selectedNegativeTags, dtOptions }
     },
     data() {
         return {
@@ -111,7 +106,6 @@ export default {
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
-        this.globalStore['searchTagModelContext'] = 'App\\Role';
 
         this.dt = this.$refs.datatable.dt;
 
@@ -124,8 +118,6 @@ export default {
         });
 
         this.$eventHub.on('filter', filter => {
-            this.selectedTags = filter.tags;
-            this.selectedNegativeTags = filter.negativeTags;
             this.dt.search(filter.searchString).draw();
         });
     },

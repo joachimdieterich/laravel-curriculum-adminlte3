@@ -130,13 +130,13 @@
             ref="datatable"
             id="user-datatable"
             :columns="columns"
-            :options="options"
+            :options="$dtOptions"
             :ajax="subscribable ? '/users/list?group_id=' + subscribable_id : '/users/list'"
             class="d-none"
             @xhr="(e, settings, json) => users = json.data"
         />
 
-        <UserOptions v-if="!subscribable"/>
+        <UserOptions v-if="!subscribable" class="mt-3"/>
 
         <Teleport to="body">
             <UserModal v-if="!subscribable"/>
@@ -205,12 +205,11 @@ export default {
             columns: [
                 { title: 'ID', data: 'id', searchable: false },
                 { title: 'common_name', data: 'common_name', searchable: true },
-                { title: 'username', name: 'username', data: 'username', searchable: true },
-                { title: 'firstname', name: 'firstname', data: 'firstname', searchable: true },
-                { title: 'lastname', name: 'lastname', data: 'lastname', searchable: true },
+                { title: 'username', data: 'username', searchable: true },
+                { title: 'firstname', data: 'firstname', searchable: true },
+                { title: 'lastname', data: 'lastname', searchable: true },
                 { title: 'E-Mail', data: 'email', searchable: true },
             ],
-            options: this.$dtOptions,
             dt: null,
         }
     },

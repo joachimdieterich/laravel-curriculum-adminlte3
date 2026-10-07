@@ -165,7 +165,7 @@
             ref="datatable"
             id="logbook-datatable"
             :columns="columns"
-            :options="options"
+            :options="$dtOptions"
             :ajax="subscribable ? '/logbooks/list?group_id=' + subscribable_id : '/logbooks/list'"
             class="d-none"
             @xhr="(e, settings, json) => logbooks = json.data"
@@ -237,7 +237,6 @@ export default {
                 { title: 'title', data: 'title', searchable: true},
                 { title: 'description', data: 'description', searchable: true},
             ],
-            options : this.$dtOptions,
             filter: 'all',
             dt: null,
         }

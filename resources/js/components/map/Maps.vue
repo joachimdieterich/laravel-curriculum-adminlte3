@@ -140,7 +140,7 @@
             ref="datatable"
             id="map-datatable"
             :columns="columns"
-            :options="options"
+            :options="$dtOptions"
             ajax="/maps/list"
             class="d-none"
             @xhr="(e, settings, json) => maps = json.data"
@@ -193,7 +193,6 @@ export default {
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
             ],
-            options : this.$dtOptions,
             filter: 'all',
             dt: null,
         }

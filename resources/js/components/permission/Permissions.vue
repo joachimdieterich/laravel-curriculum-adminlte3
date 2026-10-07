@@ -57,7 +57,7 @@
             ref="datatable"
             id="permission-datatable"
             :columns="columns"
-            :options="options"
+            :options="$dtOptions"
             ajax="permissions/list"
             class="d-none"
             @xhr="(e, settings, json) => permissions = json.data"
@@ -103,7 +103,6 @@ export default {
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
         }
     },
     mounted() {

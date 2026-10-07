@@ -169,7 +169,7 @@
             ref="datatable"
             id="videoconference-datatable"
             :columns="columns"
-            :options="options"
+            :options="$dtOptions"
             :ajax="subscribable ? '/videoconferences/list?group_id=' + subscribable_id : '/videoconferences/list'"
             class="d-none"
             @xhr="(e, settings, json) => videoconferences = json.data"
@@ -240,7 +240,6 @@ export default {
                 { title: 'meetingName', data: 'meetingName', searchable: true },
                 { title: 'welcomeMessage', data: 'welcomeMessage', searchable: true },
             ],
-            options : this.$dtOptions,
             filter: 'all',
             dt: null,
         }

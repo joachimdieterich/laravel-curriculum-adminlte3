@@ -7,7 +7,7 @@
                 ref="datatable"
                 id="curriculum-user-datatable"
                 :columns="columns"
-                :options="options"
+                :options="$dtOptions"
                 :ajax="'/courses/list?course_id=' + course.id"
                 class="w-100"
                 @select="updateAchievements"
@@ -327,7 +327,6 @@ export default {
                 { title: window.trans.global.role.title_singular, data: 'role' },
                 { title: window.trans.global.progress.title_singular, data: 'progress' },
             ],
-            options : this.$dtOptions,
             dt: null,
             currentContributors: {},
         }

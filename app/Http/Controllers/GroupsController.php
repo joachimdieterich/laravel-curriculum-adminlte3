@@ -43,17 +43,14 @@ class GroupsController extends Controller
         $new_group = $this->validateRequest();
 
         $group = Group::firstOrCreate([
-            'title' => $new_group['title'],
-            'common_name' => $new_group['common_name'] ?? null,
-            'grade_id' => format_select_input($new_group['grade_id']),
-            'period_id' => format_select_input($new_group['period_id']),
-            'organization_id' => format_select_input($new_group['organization_id']),
+            'title'             => $new_group['title'],
+            'common_name'       => $new_group['common_name'] ?? null,
+            'grade_id'          => $new_group['grade_id'],
+            'period_id'         => $new_group['period_id'],
+            'organization_id'   => $new_group['organization_id'],
         ]);
 
-        if (request()->wantsJson()) {
-            return $group;
-        }
-
+        return $group;
     }
 
     /**
@@ -84,11 +81,11 @@ class GroupsController extends Controller
         abort_unless((\Gate::allows('group_edit') and $group->isAccessible()), 403);
 
         $group->update([
-            'title' => $request['title'],
-            'common_name' => $request['common_name'] ?? $group->common_name,
-            'grade_id' => format_select_input($request['grade_id']),
-            'period_id' => format_select_input($request['period_id']),
-            'organization_id' => format_select_input($request['organization_id']),
+            'title'             => $request['title'],
+            'common_name'       => $request['common_name'] ?? $group->common_name,
+            'grade_id'          => $request['grade_id'],
+            'period_id'         => $request['period_id'],
+            'organization_id'   => $request['organization_id'],
         ]);
 
         return $group;
@@ -139,60 +136,48 @@ class GroupsController extends Controller
     {
         abort_unless(\Gate::allows('group_enrolment'), 403, "No permission to enrol users into groups");
 
-        foreach ((request()->enrollment_list) as $enrolment) {
-            abort_unless((
-                is_admin()
-                or auth()->user()->groups->contains($enrolment['group_id']) // user is enrolled in group
-                or Group::find($enrolment['group_id'])->organization_id == auth()->user()->current_organization_id // current set organization is group's organization
-            ), 403, "Need to be enroled in group or have its organization be set as current organization");
+        $group_id = request()->group_id;
+        $user_id = request()->user_id;
 
-            foreach ((array) $enrolment['user_id'] as $user_id) // iterate over user_ids
-            {
-                $user = User::findOrFail(format_select_input($user_id));
-                foreach ((array) $enrolment['group_id'] as $group_id) // iterate over group_ids
-                {
-                    $group = Group::findOrFail($group_id);
-                    // if user isn't enrolled to organization, enrol with student role
-                    OrganizationRoleUser::firstOrCreate([
-                            'user_id' => $user->id,
-                            'organization_id' => $group->first()->organization_id,
-                        ],
-                        [
-                            'role_id' => 6
-                        ]
-                    );
+        abort_unless((
+            is_admin()
+            or auth()->user()->groups->contains($group_id) // user is enrolled in group
+            or Group::select('organization_id')->find($group_id)->organization_id == auth()->user()->current_organization_id // current set organization is group's organization
+        ), 403, "Need to be enroled in group or have its organization be set as current organization");
 
-                    $user->groups()->syncWithoutDetaching($group->id);
-                }
-            }
-        }
+        $user = User::select('id', 'firstname', 'lastname')->findOrFail(format_select_input($user_id));
+        $group = Group::select('id', 'organization_id')->findOrFail($group_id);
 
-        if (request()->wantsJson()) {
-            return $user ?? false;
-        }
+        // if user isn't enrolled to organization, enrol with student role
+        OrganizationRoleUser::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'organization_id' => $group->organization_id,
+            ],
+            [
+                'role_id' => 6
+            ]
+        );
+
+        $user->groups()->syncWithoutDetaching($group->id);
+
+        return $user;
     }
 
     public function expel()
     {
         abort_unless(\Gate::allows('group_enrolment'), 403, "No permission to remove users from groups");
 
-        foreach ((request()->expel_list) as $expel) {
-            abort_unless((
-                is_admin()
-                or auth()->user()->groups->contains($expel['group_id']) // user is enrolled in group
-                or Group::find($expel['group_id'])->organization_id == auth()->user()->current_organization_id // current set organization is group's organization
-            ), 403, "Need to be enroled in group or have its organization be set as current organization");
+        $group_id = request()->group_id;
+        $user_id = request()->user_id;
 
-            foreach ((array) $expel['user_id'] as $user_id)
-            {
-                $user = User::find($user_id);
-                $return[] = $user->groups()->detach($expel['group_id']);
-            }
-        }
+        abort_unless((
+            is_admin()
+            or auth()->user()->groups->contains($group_id) // user is enrolled in group
+            or Group::findOrFail($group_id)->organization_id == auth()->user()->current_organization_id // current set organization is group's organization
+        ), 403, "Need to be enroled in group or have its organization be set as current organization");
 
-        if (request()->wantsJson()) {
-            return $user ?? false; // todo: return multiple users if array is given
-        }
+        User::select('id')->find($user_id)->groups()->detach($group_id);
     }
 
     protected function select2RequestWithOptGroup($collection, $field = 'title' )

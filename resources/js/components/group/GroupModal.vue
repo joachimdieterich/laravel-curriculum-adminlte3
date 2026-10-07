@@ -4,6 +4,7 @@
         modalName="group-modal"
         :form="form"
         :allow-overflow="true"
+        :disable-save-button="!form.title || !form.grade_id || !form.period_id || !form.organization_id"
     >
         <template #general>
             <div v-if="checkPermission('is_admin')"
@@ -39,7 +40,7 @@
                 css="mb-3"
                 :label="trans('global.grade.title_singular') + ' *'"
                 :selected="form.grade_id"
-                @selectedValue="id => form.grade_id = id"
+                @selectedValue="id => form.grade_id = id[0]"
             />
 
             <Select2
@@ -49,7 +50,7 @@
                 css="mb-3"
                 :label="trans('global.period.title_singular') + ' *'"
                 :selected="form.period_id"
-                @selectedValue="id => form.period_id = id"
+                @selectedValue="id => form.period_id = id[0]"
             />
 
             <Select2
@@ -59,7 +60,7 @@
                 css="mb-0"
                 :label="trans('global.organization.title_singular') + ' *'"
                 :selected="form.organization_id"
-                @selectedValue="id => form.organization_id = id"
+                @selectedValue="id => form.organization_id = id[0]"
             />
         </template>
     </Modal>
@@ -82,9 +83,9 @@ export default {
                 id: null,
                 title: '',
                 common_name: null,
-                grade_id: '',
-                period_id: '',
-                organization_id: '',
+                grade_id: null,
+                period_id: null,
+                organization_id: null,
             }),
         }
     },

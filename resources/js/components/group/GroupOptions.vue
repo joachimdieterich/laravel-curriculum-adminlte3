@@ -8,7 +8,11 @@
                         id="nav_tab_group"
                         class="nav-item"
                     >
-                        <a href="#tab_group" class="nav-link active" data-toggle="tab">
+                        <a
+                            href="#tab_group"
+                            class="nav-link active"
+                            data-bs-toggle="tab"
+                        >
                             {{ trans('global.curriculum.title') }}
                         </a>
                     </li>
@@ -17,8 +21,12 @@
                         id="nav_tab_delete"
                         class="nav-item"
                     >
-                        <a href="#tab_delete" class="nav-link" data-toggle="tab">
-                            <span class="text">löschen</span>
+                        <a
+                            href="#tab_delete"
+                            class="nav-link"
+                            data-bs-toggle="tab"
+                        >
+                            <span class="text">{{ trans('global.delete') }}</span>
                         </a>
                     </li>
                 </ul>
@@ -28,46 +36,35 @@
                     <div
                         v-permission="'group_enrolment'"
                         id="tab_group"
-                        class="tab-pane active row"
+                        class="tab-pane row fade active show"
                     >
                         <div class="form-horizontal col-xs-12 px-4">
-                            <div
-                                id="form_group"
-                                class="form-group"
-                            >
-                                <label>
-                                    Markierte Benutzer in Lerngruppe ein bzw. ausschreiben.
-                                    Benutzer muss an der entsprechenden Institution eingeschrieben sein, damit  die Lerngruppe angezeigt wird.
-                                </label>
+                            <div class="form-group">
+                                <label>Markierte Gruppen in Lehrplan ein- bzw. ausschreiben.</label>
                             </div>
                             <div class="form-group pt-2">
                                 <Select2
-                                    id="group_curricula"
-                                    name="group_curricula"
+                                    id="group-curricula"
                                     url="/curricula"
                                     model="curriculum"
                                     :multiple="true"
                                     :selected="form.group_curricula_ids"
-                                    @selectedValue="(id) => {
-                                        this.form.group_curricula_ids = id;
-                                    }"
+                                    @selectedValue="id => form.group_curricula_ids = id"
                                 />
                             </div>
                             <button
-                                id="enrolToCurricula"
+                                id="group-enrol-to-curricula"
                                 type="button"
-                                name="enrolToCurricula"
-                                class="btn btn-default pull-right mt-3"
+                                class="btn btn-default float-end mt-3"
                                 @click="enrolToCurricula()"
                             >
                                 <i class="fa fa-plus me-2"></i>
                                 {{ trans('global.group.enrol') }}
                             </button>
                             <button
-                                id="expelFromCurricula"
+                                id="group-expel-from-curricula"
                                 type="button"
-                                name="expelFromCurricula"
-                                class="btn btn-default pull-right mt-3"
+                                class="btn btn-default float-end mt-3"
                                 @click="expelFromCurricula()"
                             >
                                 <i class="fa fa-minus me-2"></i>
@@ -78,7 +75,7 @@
                     <div
                         v-permission="'user_delete'"
                         id="tab_delete"
-                        class="tab-pane row"
+                        class="tab-pane row fade"
                     >
                         <div class="form-horizontal col-xs-12 px-4">
                             {{ trans('global.forceDelete') }}
@@ -86,7 +83,7 @@
                                 id="deleteUser"
                                 type="button"
                                 name="deleteUser"
-                                class="btn btn-danger pull-right mt-3"
+                                class="btn btn-danger float-end mt-3"
                                 @click="deleteUser()"
                             >
                                 <i class="fa fa-trash me-2"></i>
@@ -102,17 +99,12 @@
 <script>
 import { useDatatableStore } from "../../store/datatables";
 import Form from "form-backend-validation";
-import { useToast } from "vue-toastification";
 import Select2 from "../forms/Select2.vue";
 
 export default {
+    components: { Select2 },
     setup() {
-        const store = useDatatableStore();
-        const toast = useToast();
-        return {
-            store,
-            toast
-        }
+        return { store: useDatatableStore() }
     },
     data() {
         return {
@@ -124,9 +116,7 @@ export default {
     },
     methods: {
         enrolToCurricula() {
-            axios.post('/curricula/enrol', {
-                    enrollment_list: this.generateGroupProcessList(),
-                })
+            axios.post('/curricula/enrol', { enrollment_list: this.generateGroupProcessList() })
                 .then(r => { this.feedbackSuccess(r); })
                 .catch(e => { this.feedbackError(e); });
         },
@@ -168,7 +158,7 @@ export default {
             axios.delete('/groups/massDestroy',
                 {
                     data: {
-                        'ids': this.store.getDatatable('groups')?.selectedItems.map(x => x.id),
+                        ids: this.store.getDatatable('groups')?.selectedItems.map(x => x.id),
                     }
                 })
                 .then(r => {
@@ -186,9 +176,6 @@ export default {
         errorNotification(message) {
             this.toast.error(message);
         },
-    },
-    components: {
-        Select2,
     },
 }
 </script>

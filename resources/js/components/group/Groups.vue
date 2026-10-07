@@ -46,7 +46,7 @@
                                 class="dropdown-item"
                                 @click="editGroup(group)"
                             >
-                                <i class="fa fa-pencil-alt me-2"></i>
+                                <i class="fa fa-pencil-alt"></i>
                                 {{ trans('global.group.edit') }}
                             </button>
 
@@ -58,7 +58,7 @@
                                 class="dropdown-item text-danger"
                                 @click="confirmItemDelete(group)"
                             >
-                                <i class="fa fa-trash me-2"></i>
+                                <i class="fa fa-trash"></i>
                                 {{ trans('global.group.delete') }}
                             </button>
                         </div>

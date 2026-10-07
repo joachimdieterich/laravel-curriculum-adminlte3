@@ -32,10 +32,10 @@
             >
                 <template #icon>
                     <i v-if="curriculum.type_id === 1"
-                       class="fas fa-globe"
+                       class="fa fa-globe"
                     ></i>
                     <i v-else-if="curriculum.type_id === 2"
-                       class="fas fa-university"
+                       class="fa fa-university"
                     ></i>
                     <i v-else-if="curriculum.type_id === 3"
                        class="fa fa-users"

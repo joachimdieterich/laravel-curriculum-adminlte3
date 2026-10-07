@@ -284,22 +284,11 @@ class CurriculumController extends Controller
     {
         abort_unless(Gate::allows('course_create'), 403);
 
-        foreach ((request()->enrollment_list) as $enrolment)
-        {
-            if(is_array($enrolment['curriculum_id']))
-            {
-                foreach ($enrolment['curriculum_id'] as $curriculum_id)
-                {
-                    $this->subscribe(format_select_input($curriculum_id), $enrolment['group_id']);
-                }
-            } else {
-                $this->subscribe(format_select_input($enrolment['curriculum_id']), $enrolment['group_id']);
-            }
-        }
+        $this->subscribe(request()->curriculum_id, request()->group_id);
 
         return Curriculum::select('curricula.id as curriculum_id', 'curriculum_subscriptions.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
             ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
-            ->where('subscribable_id', request()->enrollment_list[0]['group_id'])
+            ->where('subscribable_id', request()->group_id)
             ->where('subscribable_type', "App\Group")
             ->get();
     }
@@ -307,9 +296,9 @@ class CurriculumController extends Controller
     private function subscribe($curriculum_id, $group_id, $model = "App\Group", $editable = false)
     {
         $subscribe = CurriculumSubscription::updateOrCreate([
-            'curriculum_id' => $curriculum_id,
+            'curriculum_id'     => $curriculum_id,
             'subscribable_type' => $model,
-            'subscribable_id' => $group_id,
+            'subscribable_id'   => $group_id,
         ], [
             'editable' => $editable,
             'owner_id' => auth()->user()->id,

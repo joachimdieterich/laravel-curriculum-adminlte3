@@ -31,7 +31,7 @@
                     :subscribable_id="subscribable_id"
                     :label="trans('global.user.' + createLabel)"
                 />
-                <IndexWidget v-else="subscribable"
+                <IndexWidget v-else
                     v-permission="'group_enrolment'"
                     key="userSubscribe"
                     modelName="User"
@@ -132,7 +132,7 @@
 
         <Teleport to="body">
             <UserModal v-if="!subscribable"/>
-            <SubscribeUserModal v-if="subscribable"/>
+            <SubscribeUserModal v-if="subscribable" :group_id="subscribable_id"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.user.' + deleteLabel)"
@@ -261,17 +261,11 @@ export default {
         destroy() {
             if (this.subscribable) {
                 axios.delete('/groups/expel', {
-                    data: {
-                        expel_list: {
-                            0: {
-                                group_id: this.subscribable_id,
-                                user_id: {
-                                    // ID is normally the group_user_id, but if the user has been added with no reload, it is the user_id
-                                    0: this.currentUser.user_id ?? this.currentUser.id,
-                                },
-                            },
-                        },
-                    },
+                    data: { // delete-request-parameters need to be wrapped in data-attribute
+                        group_id: this.subscribable_id,
+                        // ID is normally the group_user_id, but if the user has been added with no reload, it is the user_id
+                        user_id: this.currentUser.user_id ?? this.currentUser.id,
+                    }
                 })
                     .then(res => {
                         let index = this.users.indexOf(this.currentUser);
@@ -279,6 +273,7 @@ export default {
                     })
                     .catch(e => {
                         console.log(e);
+                        this.toast.error(this.errorMessage(e));
                     });
             } else {
                 axios.delete('/users/' + this.currentUser.id)

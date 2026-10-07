@@ -89,15 +89,6 @@
                         <button v-if="ownerOrAdmin(curriculum)"
                             type="button"
                             class="dropdown-item"
-                            @click="setOwner(curriculum)"
-                        >
-                            <i class="fa fa-user"></i>
-                            {{ trans('global.curriculum.edit_owner') }}
-                        </button>
-
-                        <button v-if="ownerOrAdmin(curriculum)"
-                            type="button"
-                            class="dropdown-item"
                             @click="shareCurriculum(curriculum)"
                         >
                             <i class="fa fa-share-alt"></i>
@@ -162,7 +153,6 @@ import DataTablesCore from 'datatables.net-bs5';
 import MediumModal from "../media/MediumModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import CurriculumModal from "./CurriculumModal.vue";
-import OwnerModal from "../user/OwnerModal.vue";
 import Favourite from "../tag/Favourite.vue";
 import Hide from "../tag/Hide.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
@@ -176,7 +166,6 @@ export default {
         TabList,
         Hide,
         Favourite,
-        OwnerModal,
         IndexWidget,
         MediumModal,
         DataTable,
@@ -216,14 +205,6 @@ export default {
         editCurriculum(curriculum) {
             curriculum.tags = curriculum.tags.map(tag => tag.id ?? tag);
             this.globalStore.showModal('curriculum-modal', curriculum);
-        },
-        setOwner(curriculum) {
-            this.globalStore.showModal('owner-modal', {
-                model_id: curriculum.id,
-                model: 'curriculum',
-                model_url: 'curricula',
-                owner_id: curriculum.owner_id,
-            });
         },
         shareCurriculum(curriculum) {
             this.globalStore.showModal('subscribe-modal', {
@@ -293,11 +274,6 @@ export default {
             this.selectedNegativeTags = filter.negativeTags;
 
             this.dt.search(filter.searchString).draw();
-        });
-
-        this.$eventHub.on('owner-updated', (owner) => {
-            this.globalStore.closeModal('owner-modal');
-            this.loaderEvent();
         });
     },
 }

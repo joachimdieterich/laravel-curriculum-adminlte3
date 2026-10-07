@@ -93,7 +93,7 @@
                                             v-model="form.description"
                                         />
                                     </div>
-                                    <Select2 v-if="checkPermission('is_admin')"
+                                    <Select2 v-if="form.owner_id == $userId || checkPermission('is_admin')"
                                         id="user_id"
                                         css="mb-3"
                                         :label="trans('global.change_owner')"
@@ -349,7 +349,7 @@ export default {
                 state_id: 'DE-RP',
                 country_id: 'DE',
                 medium_id: null,
-                owner_id: '',
+                owner_id: null,
                 type_id: 4,
                 archived: false,
                 tags: [],

@@ -238,37 +238,6 @@ class CurriculumController extends Controller
     }
 
     /**
-     * Show edit_owner
-     *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
-     */
-    public function editOwner(Curriculum $curriculum)
-    {
-        abort(403);
-    }
-
-    /**
-     * Store edit_owner
-     *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
-     */
-    public function storeOwner(Request $request, Curriculum $curriculum)
-    {
-        abort_unless(Gate::allows('curriculum_edit'), 403, "No permission to change owner");
-        $input = $this->validateRequest();
-
-        $curriculum->update([
-            'owner_id' => format_select_input($input['owner_id']),
-        ]);
-
-        if (request()->wantsJson()) {
-            return $curriculum;
-        }
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -301,8 +270,8 @@ class CurriculumController extends Controller
                                         $input['variant_default_title'] ?? NULL,
                                         $input['variant_default_description'] ?? NULL
                                        ),
-            'archived'              =>  $input['archived'] ?? false,
-            'owner_id'              => is_admin() ? $input['owner_id'] : auth()->user()->id,
+            'archived'              => $input['archived'] ?? false,
+            'owner_id'              => $input['owner_id'] ?? auth()->user()->id,
         ]);
         $curriculum->tags()->sync($request->input('tags'));
 

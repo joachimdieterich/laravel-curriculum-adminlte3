@@ -372,14 +372,11 @@ app.config.globalProperties.$initTinyMCE = function(
     customToolbar1 = null,
     customToolbar2 = null,
     extended_valid_elements = null,
-    height = 200,
 ) {
-
     const defaultPlugins = [
-        "advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "hr", "anchor", "pagebreak",
+        "advlist", "autolink", "lists", "link", "image", "charmap", "preview", "anchor", "pagebreak",
         "searchreplace", "wordcount", "visualblocks", "visualchars", "code", "fullscreen",
-        "insertdatetime", "media", "nonbreaking", "save", "table", "directionality",
-        "emoticons", "template", "paste", "textpattern", "autoresize",
+        "insertdatetime", "media", "nonbreaking", "save", "table", "directionality", "emoticons", "autoresize",
     ];
 
     return {
@@ -401,7 +398,6 @@ app.config.globalProperties.$initTinyMCE = function(
         relative_urls: false,
         entity_encoding: "raw",
         language: window.navigator.language.substring(0, 2), // use browser language (only 'de'/'en' available, default => 'en')
-        height: height,
         table_default_attributes: {
             border: '1',
         },

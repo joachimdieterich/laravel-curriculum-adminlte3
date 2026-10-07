@@ -102,11 +102,10 @@
 <script>
 import Favourite from "../tag/Favourite.vue";
 import {storeToRefs} from 'pinia';
-import {useGlobalStore} from "../../store/global";
 import {useDatatableStore} from "../../store/datatables";
-import {useToast} from "vue-toastification";
 
 export default {
+    components: { Favourite },
     props: {
         model: {
             type: Object,
@@ -169,20 +168,11 @@ export default {
             default: false,
         },
     },
-    components: {
-        Favourite,
-    },
     setup() { //use database store
         const store = useDatatableStore();
-        const globalStore = useGlobalStore();
         const { getDatatable } = storeToRefs(store);
         const { isSelected } = storeToRefs(store);
-        const toast = useToast();
-        return {
-            store,
-            globalStore,
-            toast,
-        }
+        return { store }
     },
     data() {
         return {
@@ -205,14 +195,14 @@ export default {
             document.activeElement.click();
         },
         isSelected() {
-            return (this.store.isSelected(this.storeTitle, this.model));
+            return this.store.isSelected(this.storeTitle, this.model);
         },
         openModal() {
             let modal = this.subscribe
                 ? 'subscribe-' + this.modelName.toLowerCase() + '-modal'
                 : this.modelName.toLowerCase() + '-modal';
 
-            this.globalStore?.showModal(modal, {
+            this.globalStore.showModal(modal, {
                 // only gets used in subscribe-modals
                 subscribable_id: this.subscribable_id,
                 subscribable_type: this.subscribable_type,

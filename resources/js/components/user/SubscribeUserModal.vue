@@ -3,6 +3,7 @@
         model="user"
         modalName="subscribe-user-modal"
         title="global.user.enrol"
+        :form="form"
         :allow-overflow="true"
         :disable-save-button="!form.user_id"
         :intercept-save="true"

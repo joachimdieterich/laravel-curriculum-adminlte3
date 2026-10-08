@@ -175,16 +175,13 @@
             <LogbookModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
-            <SubscribeLogbookModal v-if="subscribable"/>
+            <SubscribeLogbookModal v-if="subscribable" :group_id="subscribable_id"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.logbook.' + deleteLabel)"
                 :description="trans('global.logbook.' + deleteLabel + '_helper')"
                 @close="showConfirm = false"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -247,15 +244,15 @@ export default {
         this.dt = this.$refs.datatable.dt;
 
         if (this.subscribable) {
-            this.$eventHub.on('logbook-subscription-added', (logbookSubscription) => {
+            this.$eventHub.on('logbook-subscription-added', logbookSubscription => {
                 this.logbooks.push(logbookSubscription.logbook);
             });
         } else {
-            this.$eventHub.on('logbook-added', (logbook) => {
+            this.$eventHub.on('logbook-added', logbook => {
                 this.logbooks.push(logbook);
             });
 
-            this.$eventHub.on('logbook-updated', (updatedLogbook) => {
+            this.$eventHub.on('logbook-updated', updatedLogbook => {
                 let logbook = this.logbooks.find(l => l.id === updatedLogbook.id);
                 Object.assign(logbook, updatedLogbook);
             });
@@ -291,26 +288,31 @@ export default {
         destroy() {
             if (this.subscribable) {
                 axios.post('/logbookSubscriptions/expel', {
-                    model_id : this.currentLogbook.id,
-                    subscribable_type : this.subscribable_type,
-                    subscribable_id : this.subscribable_id,
+                    logbook_id: this.currentLogbook.id,
+                    subscribable_type: this.subscribable_type,
+                    subscribable_id: this.subscribable_id,
                 })
-                    .then(response => {
+                    .then(() => {
+                        this.showConfirm = false;
                         let index = this.logbooks.indexOf(this.currentLogbook);
                         this.logbooks.splice(index, 1);
-                        this.toast.success(response.data);
                     })
                     .catch(e => {
+                        console.log(e);
+                        this.showConfirm = false;
                         this.toast.error(trans('global.expel_error'));
                     });
             } else {
                 axios.delete('/logbooks/' + this.currentLogbook.id)
                     .then(() => {
+                        this.showConfirm = false;
                         let index = this.logbooks.indexOf(this.currentLogbook);
                         this.logbooks.splice(index, 1);
                     })
                     .catch ((e) => {
                         console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(this.errorMessage(e));
                     });
             }
         },

@@ -3,6 +3,7 @@
         model="course"
         modalName="subscribe-course-modal"
         title="global.course.enrol"
+        :form="form"
         :allow-overflow="true"
         :disable-save-button="!form.curriculum_id"
         :intercept-save="true"

@@ -136,7 +136,7 @@
             <KanbanModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
-            <SubscribeKanbanModal v-if="subscribable"/>
+            <SubscribeKanbanModal v-if="subscribable" :group_id="subscribable_id"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.kanban.' + deleteLabel)"
@@ -222,25 +222,25 @@ export default {
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
-        this.globalStore['searchTagModelContext'] =  'App\\Kanban';
+        this.globalStore['searchTagModelContext'] = 'App\\Kanban';
 
         this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('kanban-subscription-added', (kanbanSubscription) => {
+        this.$eventHub.on('kanban-subscription-added', kanbanSubscription => {
             this.kanbans.push(kanbanSubscription.kanban);
         });
 
-        this.$eventHub.on('kanban-added', (kanban) => {
+        this.$eventHub.on('kanban-added', kanban => {
             this.kanbans.push(kanban);
         });
 
-        this.$eventHub.on('kanban-updated', (updatedKanban) => {
+        this.$eventHub.on('kanban-updated', updatedKanban => {
             let kanban = this.kanbans.find(k => k.id === updatedKanban.id);
 
             Object.assign(kanban, updatedKanban);
         });
 
-        this.$eventHub.on('filter', (filter) => {
+        this.$eventHub.on('filter', filter => {
             this.selectedTags = filter.tags;
             this.selectedNegativeTags = filter.negativeTags;
 
@@ -272,7 +272,7 @@ export default {
         },
         xhrEvent(e, settings, json) {
             // if user doesn't have any favourited objects, default to 'all'-tab
-            if (json.draw === 1 && json.data.length === 0) {
+            if (!this.subscribable && json.draw === 1 && json.data.length === 0) {
                 this.setFilter('all');
                 return;
             }
@@ -304,15 +304,14 @@ export default {
         destroy() {
             if (this.subscribable) {
                 axios.post('/kanbanSubscriptions/expel', {
-                    model_id : this.currentKanban.id,
-                    subscribable_type : this.subscribable_type,
-                    subscribable_id : this.subscribable_id,
+                    kanban_id: this.currentKanban.id,
+                    subscribable_type: this.subscribable_type,
+                    subscribable_id: this.subscribable_id,
                 })
-                    .then(response => {
+                    .then(() => {
                         this.showConfirm = false;
                         let index = this.kanbans.indexOf(this.currentKanban);
                         this.kanbans.splice(index, 1);
-                        this.toast.success(response.data);
                     })
                     .catch(e => {
                         console.log(e);

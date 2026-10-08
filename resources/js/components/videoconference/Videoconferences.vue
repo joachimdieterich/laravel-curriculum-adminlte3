@@ -179,16 +179,13 @@
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
             <VideoconferenceModal v-if="!subscribable"/>
-            <SubscribeVideoconferenceModal v-if="subscribable"/>
+            <SubscribeVideoconferenceModal v-if="subscribable" :group_id="subscribable_id"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.videoconference.' + deleteLabel)"
                 :description="trans('global.videoconference.' + deleteLabel + '_helper')"
                 @close="showConfirm = false;"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -282,25 +279,31 @@ export default {
         destroy() {
             if (this.subscribable) {
                 axios.post('/videoconferenceSubscriptions/expel', {
-                    model_id : this.currentVideoconference.id,
-                    subscribable_id : this.subscribable_id,
-                    subscribable_type : this.subscribable_type,
+                    videoconference_id: this.currentVideoconference.id,
+                    subscribable_id: this.subscribable_id,
+                    subscribable_type: this.subscribable_type,
                 })
                     .then(response => {
+                        this.showConfirm = false;
                         let index = this.videoconferences.indexOf(this.currentVideoconference);
                         this.videoconferences.splice(index, 1);
                     })
                     .catch(e => {
                         console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(this.errorMessage(e));
                     });
             } else {
                 axios.delete('/videoconferences/' + this.currentVideoconference.id)
                     .then(response => {
+                        this.showConfirm = false;
                         let index = this.videoconferences.indexOf(this.currentVideoconference);
                         this.videoconferences.splice(index, 1);
                     })
                     .catch(e => {
                         console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(this.errorMessage(e));
                     });
             }
         },

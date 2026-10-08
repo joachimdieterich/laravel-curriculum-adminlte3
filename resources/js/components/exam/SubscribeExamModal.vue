@@ -1,108 +1,64 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @click.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">{{ trans('global.exam.enrol') }}</span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
-                >
-                    <div class="card">
-                        <div class="card-body">
-                            <Select2 v-if="!subscribable_id"
-                                id="exam-group"
-                                name="exam-group"
-                                css="mb-3"
-                                model="group"
-                                url="/groups"
-                                :selected="form.group_id"
-                                @selectedValue="(id) => form.group_id = id[0]"
-                            />
-                            <Select2
-                                id="exams_subscription"
-                                name="exams_subscription"
-                                css="mb-0"
-                                :list="options"
-                                model="exam"
-                                option_label="name"
-                                :selected="form.exam_id"
-                                @selectedValue="(id) => {
-                                    this.form.exam_id = id[0];
-                                }"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="exam-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="exam-save"
-                            class="btn btn-primary ms-3"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+    <Modal
+        model="exam"
+        modalName="subscribe-exam-modal"
+        title="global.exam.enrol"
+        :form="form"
+        :allow-overflow="true"
+        :disable-save-button="!form.exam_id"
+        :intercept-save="true"
+        @save="submit()"
+    >
+        <template #general>
+            <Select2 v-if="!group_id"
+                id="exam-group"
+                css="mb-3"
+                model="group"
+                url="/groups"
+                @selectedValue="id => form.group_id = id[0]"
+            />
+            <Select2
+                id="exams-subscription"
+                :list="options"
+                model="exam"
+                option_label="name"
+                @selectedValue="id => form.exam_id = id[0]"
+            />
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'subscribe-exam-modal',
     components: {
+        Modal,
         Select2,
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    props: {
+        group_id: {
+            type: Number,
+            default: null,
+        },
     },
     data() {
         return {
             component_id: this.$.uid,
             form: new Form({
-                id: '',
-                exam_id: '',
+                exam_id: null,
                 group_id: null,
             }),
-            subscribable_type: '',
-            subscribable_id: '',
             options: [],
         }
     },
     methods: {
         submit() {
-            let test = this.options.filter((t) => t.id == this.form.exam_id);
+            let test = this.options.find(t => t.id == this.form.exam_id);
 
-            this.sendCreateExamRequest(test[0].tool, test[0].id, test[0].nameLong, this.subscribable_id ?? this.form.group_id);
+            this.sendCreateExamRequest(test.tool, test.id, test.nameLong, this.form.group_id);
         },
         async sendCreateExamRequest(tool, test_id, test_name, group_id) {
             await axios.post('/exams', {'tool': tool, 'test_id': test_id, 'test_name': test_name, 'group_id': group_id})
@@ -110,26 +66,15 @@ export default {
                     this.$eventHub.emit('exam-added', response.data);
                     this.globalStore.closeModal(this.$options.name);
                 })
-                .catch(errors => {
-                    this.$emit('failedNotification', errors)
+                .catch(e => {
+                    console.log(e);
+                    this.toast.error(this.errorMessage(e));
+                    this.$emit('failedNotification', e)
                 });
         }
     },
     mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-
-            if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params.reference;
-                this.subscribable_type = state.modals[this.$options.name].params.subscribable_type;
-                this.subscribable_id = state.modals[this.$options.name].params.subscribable_id;
-                this.form.reset();
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    this.method = 'post';
-                }
-            }
-        });
+        this.form.group_id = this.group_id;
 
         axios.get('/tests')
             .then(response => {

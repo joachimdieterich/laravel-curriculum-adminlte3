@@ -180,16 +180,13 @@
             <PlanModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
-            <SubscribePlanModal v-if="subscribable"/>
+            <SubscribePlanModal v-if="subscribable" :group_id="subscribable_id"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.plan.' + deleteLabel)"
                 :description="trans('global.plan.' + deleteLabel +'_helper')"
                 @close="showConfirm = false"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
             <ConfirmModal v-if="!subscribable"
                 :showConfirm="showCopy"
@@ -312,26 +309,31 @@ export default {
         destroy() {
             if (this.subscribable) {
                 axios.post('/planSubscriptions/expel', {
-                    model_id : this.currentPlan.id,
+                    plan_id : this.currentPlan.id,
                     subscribable_type : this.subscribable_type,
                     subscribable_id : this.subscribable_id,
                 })
                     .then(response => {
-                        let index = this.plans.indexOf(this.currentPlan);
-                        this.plans.splice(index, 1);
-                        this.toast.success(response.data);
-                    })
-                    .catch(e => {
-                        this.toast.error(trans('global.expel_error'));
-                    });
-            } else {
-                axios.delete('/plans/' + this.currentPlan.id)
-                    .then(response => {
+                        this.showConfirm = false;
                         let index = this.plans.indexOf(this.currentPlan);
                         this.plans.splice(index, 1);
                     })
                     .catch(e => {
                         console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(trans('global.expel_error'));
+                    });
+            } else {
+                axios.delete('/plans/' + this.currentPlan.id)
+                    .then(response => {
+                        this.showConfirm = false;
+                        let index = this.plans.indexOf(this.currentPlan);
+                        this.plans.splice(index, 1);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(this.errorMessage(e));
                     });
             }
         },

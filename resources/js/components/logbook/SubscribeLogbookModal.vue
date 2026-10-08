@@ -1,122 +1,65 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">{{ trans('global.logbook.enrol') }}</span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
-                >
-                    <div class="card">
-                        <div class="card-body">
-                            <Select2
-                                id="logbooks_subscription"
-                                name="logbooks_subscription"
-                                url="/logbooks"
-                                model="logbook"
-                                :selected="this.form.logbook_id"
-                                @selectedValue="(id) => {
-                                    this.form.logbook_id = id;
-                                }"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="logbook-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="logbook-save"
-                            class="btn btn-primary ms-3"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+    <Modal
+        model="logbook"
+        modalName="subscribe-logbook-modal"
+        title="global.logbook.enrol"
+        :form="form"
+        :allow-overflow="true"
+        :disable-save-button="!form.logbook_id"
+        :intercept-save="true"
+        @save="submit()"
+    >
+        <template #general>
+            <Select2
+                id="logbook-subscription"
+                url="/logbooks"
+                model="logbook"
+                @selectedValue="id => form.logbook_id = id[0]"
+            />
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'subscribe-logbook-modal',
     components: {
+        Modal,
         Select2,
     },
-    props: {},
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    props: {
+        group_id: {
+            type: Number,
+            default: null,
+        },
     },
     data() {
         return {
             component_id: this.$.uid,
             form: new Form({
-                id: '',
-                logbook_id: '',
+                logbook_id: null,
             }),
-            subscribable_type: '',
-            subscribable_id: '',
         }
     },
     methods: {
         submit() {
             axios.post('/logbookSubscriptions', {
-                model_id: this.form.logbook_id,
-                subscribable_type: this.subscribable_type,
-                subscribable_id: this.subscribable_id,
+                logbook_id: this.form.logbook_id,
+                subscribable_type: 'App\\Group',
+                subscribable_id: this.group_id,
             })
             .then(response => {
                 this.$eventHub.emit('logbook-subscription-added', response.data);
                 this.globalStore.closeModal(this.$options.name);
             })
-            .catch(err => {
-                console.log(err.response);
+            .catch(e => {
+                console.log(e);
+                this.toast.error(this.errorMessage(e));
             });
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params.reference;
-                this.subscribable_type = state.modals[this.$options.name].params.subscribable_type;
-                this.subscribable_id = state.modals[this.$options.name].params.subscribable_id;
-                this.form.reset();
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                }
-            }
-        });
     },
 }
 </script>

@@ -314,11 +314,9 @@
             >
                 <Exams
                     ref="Exams"
-                    delete_label_field="expel"
                     subscribable_type="App\Group"
                     :subscribable_id="group.id"
                     :subscribable="true"
-                    create_label_field="enrol"
                 />
             </div>
             <!-- 8 Videoconferences -->

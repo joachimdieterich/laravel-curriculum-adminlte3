@@ -1,7 +1,7 @@
 @extends('layouts.master')
 @section('content')
-    <navigator
+    <Navigator
         :navigator="{{ $navigator }}"
         :view="{{ $view ?? null }}"
-    ></navigator>
+    />
 @endsection

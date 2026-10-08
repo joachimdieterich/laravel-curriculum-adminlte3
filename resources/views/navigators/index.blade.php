@@ -3,5 +3,5 @@
     {{ trans('global.navigator.title') }}
 @endsection
 @section('content')
-    <navigators></navigators>
+    <Navigators/>
 @endsection

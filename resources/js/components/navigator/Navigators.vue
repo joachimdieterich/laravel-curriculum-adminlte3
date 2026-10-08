@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="d-flex flex-column">
         <div
             id="navigator-content"
@@ -19,71 +19,56 @@
                 :urlOnly=true
                 :url="navigator.url"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-history"></i>
                 </template>
 
-                <template
+                <template #dropdown
                     v-permission="'navigator_edit, navigator_delete'"
-                    v-slot:dropdown
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
-                            v-permission="'navigator_edit'"
-                            :name="'edit-navigator-' + navigator.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editNavigator(navigator)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editNavigator(navigator)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.navigator.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
-                            v-permission="'navigator_delete'"
-                            :id="'delete-navigator-' + navigator.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(navigator)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(navigator)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.navigator.delete') }}
                         </button>
                     </div>
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="navigator-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="navigator-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display:none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="navigator-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/navigators/list"
+            class="d-none"
+            @xhr="(e, settings, json) => navigators = json.data"
+        />
 
         <Teleport to="body">
             <NavigatorModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.navigator.delete')"
                 :description="trans('global.navigator.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -94,68 +79,51 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup () {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        NavigatorModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             navigators: null,
-            search: '',
             showConfirm: false,
-            url: '/navigators/list',
-            errors: {},
             currentNavigator: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true},
                 { title: 'organization_id', data: 'organization'},
                 { title: 'organization', data: 'organization', searchable: true},
             ],
-            options : this.$dtOptions,
-            modalMode: 'edit',
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('navigator-added', (navigator) => {
-            this.globalStore?.closeModal('navigator-modal');
+        this.$eventHub.on('navigator-added', navigator => {
             this.navigators.push(navigator);
         });
 
-        this.$eventHub.on('navigator-updated', (navigator) => {
-            this.globalStore?.closeModal('navigator-modal');
-            this.update(navigator);
+        this.$eventHub.on('navigator-updated', updatedNavigator => {
+            let navigator = this.navigators.find(n => n.id === updatedNavigator.id);
+
+            Object.assign(navigator, updatedNavigator);
         });
-        this.$eventHub.on('createNavigator', () => {
-            this.globalStore?.showModal('navigator-modal', {});
+
+        this.$eventHub.on('filter', filter => {
+            dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editNavigator(navigator) {
-            this.globalStore?.showModal('navigator-modal', navigator);
-        },
-        loaderEvent() {
-            const dt = $('#navigator-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.navigators = dt.rows({page: 'current'}).data().toArray();
-
-                $('#navigator-content').insertBefore('#navigator-datatable-wrapper');
-            });
-            this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
-            });
+            this.globalStore.showModal('navigator-modal', navigator);
         },
         confirmItemDelete(navigator) {
             this.currentNavigator = navigator;
@@ -164,28 +132,16 @@ export default {
         destroy() {
             axios.delete('/navigators/' + this.currentNavigator.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.navigators.indexOf(this.currentNavigator);
                     this.navigators.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
-        update(navigator) {
-            const index = this.navigators.findIndex(
-                vc => vc.id === navigator.id
-            );
-
-            for (const [key, value] of Object.entries(navigator)) {
-                this.navigators[index][key] = value;
-            }
-        },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        NavigatorModal,
-        IndexWidget,
     },
 }
 </script>

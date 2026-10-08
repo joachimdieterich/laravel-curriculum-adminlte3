@@ -226,7 +226,9 @@ app.config.globalProperties.errorMessage = (error, fallback = 'global.error.defa
             case 403:
             case 404:
             case 419:
+            case 422:
             case 500:
+            case 503:
                 translation_key = 'global.error.' + error.status;
                 break;
             default:

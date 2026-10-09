@@ -3,7 +3,7 @@
         <div class="col-lg-4 col-12 rounded-3 shadow-layout">
             <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
                 <h5 class="m-0">
-                    <i class="fa fa-user-tag mx-1"></i>{{ currentPermission.title }}
+                    <i class="fa fa-user-tag mx-1"></i>{{ permission.title }}
                 </h5>
 
                 <button v-if="checkPermission('is_admin')"
@@ -15,7 +15,7 @@
                 </button>
             </div>
             <div class="p-2 bg-white rounded-bottom-3">
-                <small>{{ currentPermission.updated_at }}</small>
+                <small>{{ permission.updated_at }}</small>
             </div>
         </div>
 
@@ -28,7 +28,7 @@
 import PermissionModal from "../permission/PermissionModal.vue";
 
 export default {
-    name: "permission",
+    name: "Permission",
     components:{ PermissionModal },
     props: {
         permission: {
@@ -39,18 +39,14 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            currentPermission: {},
         }
     },
     mounted() {
-        this.currentPermission = this.permission;
-        this.$eventHub.on('permission-updated', permission => {
-            this.currentPermission = permission;
-        });
+        this.$eventHub.on('permission-updated', () => window.location.reload());
     },
     methods: {
         editPermission() {
-            this.globalStore.showModal('permission-modal', this.currentPermission);
+            this.globalStore.showModal('permission-modal', this.permission);
         },
     },
 }

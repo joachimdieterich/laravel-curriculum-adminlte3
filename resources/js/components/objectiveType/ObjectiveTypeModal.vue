@@ -1,133 +1,26 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <span v-if="method === 'post'">
-                            {{ trans('global.objectiveType.create') }}
-                        </span>
-                        <span v-if="method === 'patch'">
-                            {{ trans('global.objectiveType.edit') }}
-                        </span>
-                    </h3>
-                    <div class="card-tools">
-                        <button
-                            type="button"
-                            class="btn btn-tool"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div>
-                                <input
-                                    id="title"
-                                    type="text"
-                                    name="title"
-                                    class="form-control"
-                                    v-model="form.title"
-                                    :placeholder="trans('global.title') + ' *'"
-                                    required
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="objective-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="objective-save"
-                            class="btn btn-primary ms-3"
-                            :disabled="!form.title"
-                            @click="submit(method)"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+    <Modal
+        model="objectiveType"
+        modalName="objectivetype-modal"
+        :form="form"
+        :require-title="true"
+    />
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'objectivetype-modal',
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
+    components: { Modal },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
             form: new Form({
-                id: '',
+                id: null,
                 title: '',
             }),
         }
-    },
-    methods: {
-        submit(method) {
-            if (method === 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-
-            this.globalStore.closeModal(this.$options.name);
-        },
-        add() {
-            axios.post('/objectiveTypes', this.form)
-                .then(response => {
-                    this.$eventHub.emit('objectiveType-added', response.data);
-                });
-        },
-        update() {
-            axios.patch('/objectiveTypes/' + this.form.id, this.form)
-                .then(response => {
-                    this.$eventHub.emit('objectiveType-updated', response.data);
-                });
-        },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params;
-                this.form.reset();
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    if (this.form.id !== '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
-                }
-            }
-        });
     },
 }
 </script>

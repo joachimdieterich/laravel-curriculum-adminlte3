@@ -25,29 +25,26 @@
                 <template #dropdown
                     v-permission="'subject_edit, subject_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'subject_edit'"
-                            :name="'edit-subject-' + subject.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editSubject(subject)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editSubject(subject)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.subject.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'subject_delete'"
-                            :id="'delete-subject-' + subject.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(subject)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(subject)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.subject.delete') }}
                         </button>
                     </div>
@@ -72,10 +69,7 @@
                 :title="trans('global.subject.delete')"
                 :description="trans('global.subject.delete_helper')"
                 @close="showConfirm = false"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -137,11 +131,14 @@ export default {
         destroy() {
             axios.delete('/subjects/' + this.currentRole.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.subjects.indexOf(this.currentRole);
                     this.subjects.splice(index, 1);
                 })
                 .catch(e => {
                     console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },

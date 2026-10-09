@@ -1,46 +1,33 @@
 <template>
-    <div class="d-flex flex-column">
-        <div class="col-lg-4 col-sm-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="m-0">
-                            <i class="fas fa-layer-group me-1"></i>
-                            {{ this.currentGrade.title }}
-                        </h5>
-                    </div>
-                    <div
-                        v-permission="'organization_edit'"
-                        class="card-tools pe-2"
-                    >
-                        <a @click="editGrade()">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
-                </div>
+    <div class="px-3">
+        <div class="col-lg-4 col-12 mb-3 rounded-3 shadow-layout">
+            <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
+                <h5 class="m-0">
+                    <i class="fa fa-layer-group mx-1"></i>{{ grade.title }}
+                </h5>
 
-                <div class="card-body">
-                    <p class="text-muted">
-                        {{ trans('global.grade.fields.external_begin') }}: {{ this.currentGrade.external_begin }}<br>
-                        {{ trans('global.grade.fields.external_end') }}: {{ this.currentGrade.external_end }}
-                    </p>
-                    <hr>
+                <button v-if="checkPermission('grade_edit')"
+                    type="button"
+                    class="btn btn-icon-alt"
+                    @click="editGrade()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+            </div>
 
-                    <strong>
-                        <i class="fas fa-city me-1"></i>
-                        {{ trans('global.organizationType.title_singular') }}
-                    </strong>
-                    <p class="text-muted">
-                        {{ this.currentGrade.organization_type?.title }}
-                    </p>
-                    <hr>
-                </div>
+            <div class="px-3 py-2 bg-white rounded-bottom-3">
+                <span class="text-muted">
+                    {{ trans('global.grade.fields.external_begin') }}: {{ grade.external_begin }}<br/>
+                    {{ trans('global.grade.fields.external_end') }}: {{ grade.external_end }}
+                </span>
 
-                <div class="card-footer">
-                    <small class="float-right">
-                        {{ this.currentGrade.updated_at }}
-                    </small>
-                </div>
+                <hr>
+
+                <strong>
+                    <i class="fa fa-city me-1"></i>
+                    {{ trans('global.organizationType.title_singular') }}
+                </strong>
+                <div class="text-muted">{{ grade.organization_type?.title }}</div>
             </div>
         </div>
 
@@ -50,7 +37,6 @@
     </div>
 </template>
 <script>
-import {useGlobalStore} from "../../store/global";
 import GradeModal from "../grade/GradeModal.vue";
 
 export default {
@@ -58,32 +44,21 @@ export default {
     components: { GradeModal },
     props: {
         grade: {
+            type: Object,
             default: null,
         },
-    },
-    setup () {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
             componentId: this.$.uid,
-            currentGrade: {},
         }
     },
     mounted() {
-        this.currentGrade = this.grade;
-        this.$eventHub.on('grade-updated', (grade) => {
-            this.currentGrade = grade;
-            this.globalStore?.closeModal('grade-modal');
-        });
-
+        this.$eventHub.on('grade-updated', () => window.location.reload());
     },
     methods: {
-        editGrade(){
-            this.globalStore?.showModal('grade-modal', this.currentGrade);
+        editGrade() {
+            this.globalStore.showModal('grade-modal', this.grade);
         },
     },
 }

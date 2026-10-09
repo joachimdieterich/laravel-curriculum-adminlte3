@@ -71,19 +71,9 @@ class OrganizationsController extends Controller
         abort_unless(\Gate::allows('organization_create'), 403);
 
         $new_organization = $this->validateRequest();
-        $organization = Organization::firstOrCreate(
-            array_merge($this->validateRequest(),
-                [
-                    'organization_type_id' => format_select_input($new_organization['organization_type_id']),
-                    'state_id' => format_select_input($new_organization['state_id']),
-                    'country_id' => format_select_input($new_organization['country_id']),
-                ]
-            )
-        );
+        $organization = Organization::firstOrCreate($new_organization);
 
-        if (request()->wantsJson()) {
-            return $organization;
-        }
+        return $organization;
     }
 
     /**
@@ -95,15 +85,11 @@ class OrganizationsController extends Controller
     public function show(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_show'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) || is_admin()), 403);
 
-        if (request()->wantsJson()) {
-            return [
-                'message' => $organization,
-            ];
-        }
         $status_definitions = StatusDefinition::all();
         $organization = $organization->load('type', 'state', 'country');
+
         return view('organizations.show')
                 ->with(compact('organization'))
                 ->with(compact('status_definitions'));
@@ -122,19 +108,10 @@ class OrganizationsController extends Controller
         abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403, "Need to be registered in this organization");
 
         $clean_data = $this->validateRequest();
-        $clean_data['state_id'] = format_select_input($clean_data['state_id']);
-        $clean_data['country_id'] = format_select_input($clean_data['country_id']);
-        $clean_data['organization_type_id'] = format_select_input($clean_data['organization_type_id']);
-
-        if (isset(request()->status_id[0])) {
-            $clean_data['status_id'] = request()->status_id[0];  //hack to prevent array to string conversion
-        }
 
         $organization->update($clean_data);
 
-        if (request()->wantsJson()) {
-            return $organization->with(['country', 'state', 'type'])->find($organization->id);
-        }
+        return $organization->with(['country', 'state', 'type'])->find($organization->id);
     }
 
     /**

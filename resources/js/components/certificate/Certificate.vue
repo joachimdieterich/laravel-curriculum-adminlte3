@@ -1,66 +1,48 @@
 <template>
-    <div class="d-flex flex-wrap">
-        <div class="col-lg-4 col-sm-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="m-0">
-                            <i class="fa fa-university me-1"></i>
-                            {{ this.certificate.title }}
-                        </h5>
-                    </div>
-                    <div
-                        v-permission="'certificate_edit'"
-                        class="card-tools pe-2"
-                    >
-                        <a  @click="editCertificate(certificate)">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
-                </div>
+    <div class="d-flex flex-wrap px-3 mb-lg-3">
+        <div class="col-lg-4 col-12 mb-3 mb-lg-0 rounded-3 shadow-layout">
+            <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
+                <h5 class="m-0">
+                    <i class="fa fa-university mx-1"></i>
+                    {{ this.certificate.title }}
+                </h5>
 
-                <div class="card-body">
-                    <strong>
-                        <i class="fa fa-file-alt me-1"></i>
-                        {{ trans('global.certificate.fields.description') }}
-                    </strong>
-                    <p
-                        class="text-muted"
-                       v-html="certificate.description"
-                    ></p>
-                    <hr>
+                <button v-if="checkPermission('certificate_edit')"
+                    type="button"
+                    class="btn btn-icon-alt"
+                    @click="editCertificate()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+            </div>
 
-                    <strong>
-                        <i class="fas fa-layer-group me-1"></i>
-                        {{ trans('global.certificate.type') }}
-                    </strong>
-                    <p class="text-muted">{{ certificate.type }}</p>
-                </div>
+            <div class="px-3 py-2 bg-white rounded-bottom-3">
+                <strong>
+                    <i class="fa fa-file-alt me-1"></i>
+                    {{ trans('global.certificate.fields.description') }}
+                </strong>
+                <p class="text-muted">{{ certificate.description }}</p>
 
-                <div class="card-footer">
-                    <small class="float-right">
-                        {{ certificate.updated_at }}
-                    </small>
-                </div>
+                <hr>
+
+                <strong>
+                    <i class="fas fa-layer-group me-1"></i>
+                    {{ trans('global.certificate.type') }}
+                </strong>
+                <p class="text-muted">{{ certificate.type }}</p>
+
+                <small class="text-muted">{{ certificate.updated_at }}</small>
             </div>
         </div>
 
-        <div class="col-lg-8 col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title px-1">
-                        {{ trans('global.preview') }}
-                    </div>
+        <div class="col-lg-8 col-12 ps-lg-3 mb-3 mb-lg-0">
+            <div class="bg-white rounded-3 shadow-layout">
+                <div class="fs-5 p-2 border-bottom border-dark-subtle">
+                    {{ trans('global.preview') }}
                 </div>
-                <div class="card-body">
-                    <div class="tab-content">
-                        <div
-                            id="example"
-                            class="tab-pane active show"
-                        >
-                            <div v-html="certificate.body"></div>
-                        </div>
-                    </div>
+
+                <div class="p-3">
+                    <div class="p-margin-0" v-html="certificate.body"></div>
                 </div>
             </div>
         </div>
@@ -72,7 +54,6 @@
 </template>
 <script>
 import CertificateModal from "../certificate/CertificateModal.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "Certificate",
@@ -82,25 +63,13 @@ export default {
             type: Object,
             default: null,
         },
-        status_definitions: {
-            default: null,
-        },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     mounted() {
-        this.$eventHub.on('certificate-updated', (certificate) => {
-            this.globalStore?.closeModal('certificate-modal');
-            window.location.reload();
-        });
+        this.$eventHub.on('certificate-updated', () => window.location.reload());
     },
     methods: {
         editCertificate(certificate) {
-            this.globalStore?.showModal('certificate-modal', certificate);
+            this.globalStore.showModal('certificate-modal', certificate);
         },
     },
 }

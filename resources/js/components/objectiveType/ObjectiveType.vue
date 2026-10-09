@@ -1,73 +1,54 @@
 <template>
-    <div class="row">
-        <div class="col-lg-4 col-sm-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="m-0">
-                            <i class="fa fa-university me-1"></i>
-                            {{ objectiveType.title }}
-                        </h5>
-                    </div>
-                    <div
-                        v-permission="'objectivetype_edit'"
-                        class="card-tools pe-2">
-                        <a  @click="editObjectiveType(objectiveType)">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
-                </div>
+    <div class="px-3">
+        <div class="col-lg-4 col-12 mb-3 rounded-3 shadow-layout">
+            <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
+                <h5 class="m-0">
+                    <i class="fa fa-university mx-1"></i>{{ objectiveType.title }}
+                </h5>
 
-                <div class="card-body"></div>
+                <button v-if="checkPermission('objectivetype_edit')"
+                    type="button"
+                    class="btn btn-icon-alt"
+                    @click="editObjectiveType()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+            </div>
 
-                <div class="card-footer">
-                    <small class="float-right">
-                        {{ objectiveType.updated_at }}
-                    </small>
-                </div>
+            <div class="px-3 py-2 bg-white rounded-bottom-3">
+                <small class="text-muted">{{ objectiveType.updated_at }}</small>
             </div>
         </div>
 
         <Teleport to="body">
-            <ObjectiveTypeModal></ObjectiveTypeModal>
+            <ObjectiveTypeModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
 import ObjectiveTypeModal from "../objectiveType/ObjectiveTypeModal.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: "ObjectiveType",
-    components:{
-        ObjectiveTypeModal
-    },
+    components: { ObjectiveTypeModal },
     props: {
         objectiveType: {
-            default: null
+            type: Object,
+            default: null,
         },
-    },
-    setup () {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
             componentId: this.$.uid,
-            currentObjectiveType: {},
         }
     },
-    mounted() {},
+    mounted() {
+        this.$eventHub.on('objectiveType-updated', () => window.location.reload());
+    },
     methods: {
-        editObjectiveType(objectiveType){
-            this.currentObjectiveType = objectiveType;
-            this.globalStore?.showModal('objective-type-modal', this.currentObjectiveType);
-
+        editObjectiveType(){
+            this.globalStore.showModal('objectivetype-modal', this.objectiveType);
         },
-    }
-
+    },
 }
 </script>

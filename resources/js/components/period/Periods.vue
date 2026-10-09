@@ -18,70 +18,58 @@
                 modelName="Period"
                 url="/periods"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-history"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'period_edit, period_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'period_edit'"
-                            :name="'edit-period-' + period.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editPeriod(period)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editPeriod(period)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.period.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'period_delete'"
-                            :id="'delete-period-' + period.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(period)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(period)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.period.delete') }}
                         </button>
                     </div>
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="period-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="period-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="'/periods/list'"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="period-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/periods/list"
+            class="d-none"
+            @xhr="(e, settings, json) => periods = json.data"
+        />
 
         <Teleport to="body">
             <PeriodModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.period.delete')"
                 :description="trans('global.period.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -92,62 +80,50 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global.js";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        PeriodModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             periods: null,
-            search: '',
-            showPeriodModal: false,
             showConfirm: false,
             currentPeriod: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             dt: null,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('period-added', (period) => {
+        this.$eventHub.on('period-added', period => {
             this.periods.push(period);
         });
 
-        this.$eventHub.on('period-updated', (updatedPeriod) => {
+        this.$eventHub.on('period-updated', updatedPeriod => {
             let period = this.periods.find(p => p.id === updatedPeriod.id);
 
             Object.assign(period, updatedPeriod);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editPeriod(period) {
-            this.globalStore?.showModal('period-modal', period);
-        },
-        loaderEvent() {
-            this.dt = $('#period-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.periods = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#period-content').insertBefore('#period-datatable-wrapper');
-            });
+            this.globalStore.showModal('period-modal', period);
         },
         confirmItemDelete(period) {
             this.currentPeriod = period;
@@ -156,19 +132,16 @@ export default {
         destroy() {
             axios.delete('/periods/' + this.currentPeriod.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.periods.indexOf(this.currentPeriod);
                     this.periods.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        PeriodModal,
-        IndexWidget,
     },
 }
 </script>

@@ -1,8 +1,8 @@
-<template >
-    <div class="row">
+<template>
+    <div class="d-flex flex-column">
         <div
             id="objective-type-content"
-            class="col-md-12 m-0"
+            class="px-3"
         >
             <IndexWidget
                 v-permission="'objectivetype_create'"
@@ -18,36 +18,33 @@
                 modelName="ObjectiveType"
                 url="/objectiveTypes"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-university"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'objectivetype_edit, objectivetype_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'objectivetype_edit'"
-                            :name="'edit-objective-type-' + objectiveType.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editObjectiveType(objectiveType)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editObjectiveType(objectiveType)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.objectiveType.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'objectivetype_delete'"
-                            :id="'delete-objective-type-' + objectiveType.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(objectiveType)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(objectiveType)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.objectiveType.delete') }}
                         </button>
                     </div>
@@ -55,20 +52,15 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="objective-type-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
-        >
-            <DataTable
-                id="objective-type-datatable"
-                :columns="columns"
-                :options="options"
-                ajax="/objectiveTypes/list"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            id="objective-type-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/objectiveTypes/list"
+            class="d-none"
+            @xhr="(e, settings, json) => objectiveTypes = json.data"
+        />
 
         <Teleport to="body">
             <ObjectiveTypeModal/>
@@ -76,13 +68,8 @@
                 :showConfirm="showConfirm"
                 :title="trans('global.objectiveType.delete')"
                 :description="trans('global.objectiveType.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -93,83 +80,68 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        ObjectiveTypeModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             objectiveTypes: null,
             showConfirm: false,
-            search: '',
             currentObjectiveType: {},
             columns: [
-                { title: 'check', data: 'check' },
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
+                { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             dt: null,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('objectiveType-added', (objectiveType) => {
+        this.$eventHub.on('objectiveType-added', objectiveType => {
             this.objectiveTypes.push(objectiveType);
         });
 
-        this.$eventHub.on('objectiveType-updated', (updatedObjectiveType) => {
+        this.$eventHub.on('objectiveType-updated', updatedObjectiveType => {
             let objectiveType = this.objectiveTypes.find(type => type.id === updatedObjectiveType.id);
 
             Object.assign(objectiveType, updatedObjectiveType);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editObjectiveType(objectiveType) {
-            this.globalStore?.showModal('objectivetype-modal', objectiveType);
+            this.globalStore.showModal('objectivetype-modal', objectiveType);
         },
         confirmItemDelete(objectiveType) {
             this.currentObjectiveType = objectiveType;
             this.showConfirm = true;
         },
-        loaderEvent() {
-            this.dt = $('#objective-type-datatable').DataTable();
-            this.dt.on('draw.dt', () => {
-                this.objectiveTypes = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#objective-type-content').insertBefore('#objective-type-datatable-wrapper');
-            });
-        },
         destroy() {
             axios.delete('/objectiveTypes/' + this.currentObjectiveType.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.objectiveTypes.indexOf(this.currentObjectiveType);
                     this.objectiveTypes.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err);
+                .catch(e => {
+                    console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        ObjectiveTypeModal,
-        IndexWidget,
     },
 }
 </script>

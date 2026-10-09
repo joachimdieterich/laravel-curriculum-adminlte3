@@ -19,35 +19,32 @@
                 url="/grades"
             >
                 <template #icon>
-                    <i class="fas fa-layer-group"></i>
+                    <i class="fa fa-layer-group"></i>
                 </template>
 
                 <template #dropdown
                     v-permission="'grade_edit, grade_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'grade_edit'"
-                            :name="'edit-grade-' + grade.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editGrade(grade)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editGrade(grade)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.grade.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'grade_delete'"
-                            :id="'delete-grade-' + grade.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(grade)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(grade)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.grade.delete') }}
                         </button>
                     </div>
@@ -68,14 +65,11 @@
         <Teleport to="body">
             <GradeModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.grade.delete')"
                 :description="trans('global.grade.delete_helper')"
                 @close="showConfirm = false"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -103,7 +97,7 @@ export default {
             currentGrade: {},
             columns: [
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
+                { title: 'title', data: 'title', searchable: true },
             ],
             dt: null,
         }
@@ -137,11 +131,14 @@ export default {
         destroy() {
             axios.delete('/grades/' + this.currentGrade.id)
                 .then(r => {
+                    this.showConfirm = false;
                     let index = this.grades.indexOf(this.currentGrade);
                     this.grades.splice(index, 1);
                 })
                 .catch(e => {
                     console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },

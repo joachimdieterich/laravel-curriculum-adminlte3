@@ -3,7 +3,7 @@
         <div class="col-lg-4 col-12 mb-3 rounded-3 shadow-layout">
             <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
                 <h5 class="m-0">
-                    <i class="fa fa-user-tag mx-1"></i>{{ currentRole.title }}
+                    <i class="fa fa-user-tag mx-1"></i>{{ role.title }}
                 </h5>
 
                 <button v-if="checkPermission('is_admin')"
@@ -16,7 +16,7 @@
             </div>
 
             <div class="p-2 bg-white rounded-bottom-3">
-                <small>{{ currentRole.updated_at }}</small>
+                <small>{{ role.updated_at }}</small>
             </div>
         </div>
 
@@ -63,18 +63,15 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            currentRole: {},
             currentPermissions: [],
         }
     },
     mounted() {
-        this.currentRole = this.role;
-
         let counter = 0;
         let checkedPermissions = [];
         // mark permissions as checked if they are set for the current role
         for (let permission of this.allPermissions) {
-            if (this.currentRole.permissions[counter].id === permission.id) {
+            if (counter < this.role.permissions.length && this.role.permissions[counter].id === permission.id) {
                 permission.checked = true;
                 counter++;
             }
@@ -83,17 +80,14 @@ export default {
 
         this.currentPermissions = checkedPermissions;
 
-        this.$eventHub.on('role-updated', role => {
-            this.currentRole = role;
-            window.location.reload(); // reload to get permissions
-        });
+        this.$eventHub.on('role-updated', () => window.location.reload());
     },
     methods: {
         editRole() {
-            this.globalStore.showModal('role-modal', this.currentRole);
+            this.globalStore.showModal('role-modal', this.role);
         },
         togglePermission(permission) {
-            axios.post('/roles/' + this.currentRole.id + '/togglePermission/' + permission.id)
+            axios.post('/roles/' + this.role.id + '/togglePermission/' + permission.id)
                 .then(response => permission.checked = !permission.checked)
                 .catch(e => console.error(e));
         },

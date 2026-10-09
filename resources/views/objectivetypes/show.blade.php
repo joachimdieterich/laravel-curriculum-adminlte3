@@ -3,5 +3,5 @@
     {{ trans('global.objectiveType.title_singular') }}
 @endsection
 @section('content')
-    <objective-type :objective-type="{{ $objectiveType }}"></objective-type>
+    <Objective-Type :objective-type="{{ $objectiveType }}"/>
 @endsection

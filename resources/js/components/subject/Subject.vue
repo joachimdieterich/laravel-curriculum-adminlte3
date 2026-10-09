@@ -1,46 +1,30 @@
 <template>
-    <div class="d-flex flex-column">
-        <div class="col-lg-4 col-sm-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="m-0">
-                            <i class="fa fa-swatchbook me-1"></i>
-                            {{ this.currentSubject.title }}
-                        </h5>
-                    </div>
-                    <div
-                        v-permission="'organization_edit'"
-                        class="card-tools pe-2">
-                        <a  @click="editSubject()">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
-                </div>
+    <div class="px-3">
+        <div class="col-lg-4 col-12 mb-3 rounded-3 shadow-layout">
+            <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
+                <h5 class="m-0">
+                    <i class="fa fa-swatchbook me-1"></i>{{ subject.title }}
+                </h5>
 
-                <div class="card-body">
-                    <strong>
-                    {{ trans('global.subject.title_singular') }}
-                    </strong>
+                <button v-if="checkPermission('subject_edit')"
+                    type="button"
+                    class="btn btn-icon-alt"
+                    @click="editSubject()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+            </div>
 
-                    <p class="text-muted">
-                        {{ subject.title }}
-                    </p>
+            <div class="px-3 py-2 bg-white rounded-bottom-3">
+                <strong>{{ trans('global.subject.title_singular') }}</strong>
+                <p class="text-muted">{{ subject.title }}</p>
 
-                    <hr>
-                    <strong>
-                        {{ trans('global.subject.fields.title_short') }}
-                    </strong>
-                    <p class="text-muted">
-                        {{ subject.title_short }}
-                    </p>
-                </div>
+                <hr>
 
-                <div class="card-footer">
-                    <small class="float-right">
-                        {{ this.currentSubject.updated_at }}
-                    </small>
-                </div>
+                <strong>{{ trans('global.subject.fields.title_short') }}</strong>
+                <p class="text-muted">{{ subject.title_short }}</p>
+
+                <div class="text-muted">{{ subject.updated_at }}</div>
             </div>
         </div>
 
@@ -51,38 +35,27 @@
 </template>
 <script>
 import SubjectModal from "../subject/SubjectModal.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
-    name: "subject",
+    name: "Subject",
     components: { SubjectModal },
     props: {
         subject: {
+            type: Object,
             default: null,
         },
-    },
-    setup () {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
             componentId: this.$.uid,
-            currentSubject: {},
         }
     },
     mounted() {
-        this.currentSubject = this.subject;
-        this.$eventHub.on('subject-updated', (subject) => {
-            this.globalStore?.closeModal('subject-modal');
-            this.currentSubject = subject;
-        });
+        this.$eventHub.on('subject-updated', () => window.location.reload());
     },
     methods: {
         editSubject(){
-            this.globalStore?.showModal('subject-modal', this.currentSubject);
+            this.globalStore.showModal('subject-modal', this.subject);
         },
     },
 }

@@ -8,7 +8,6 @@ use App\Medium;
 use App\Organization;
 use App\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -39,12 +38,7 @@ class CertificateController extends Controller
         }
 
         return DataTables::of($certificates)
-            ->addColumn('organization', function ($certificates) {
-                return $certificates->organization->title;
-            })
-            ->addColumn('curriculum', function ($certificates) {
-                return $certificates->curriculum->title;
-            })
+            ->rawColumns(['body'])
             ->make(true);
     }
 
@@ -68,20 +62,18 @@ class CertificateController extends Controller
     {
         abort_unless(\Gate::allows('certificate_create'), 403);
         $input = $this->validateRequest();
-        //dd($input);
+
         $certificate = Certificate::firstOrCreate([
             'title'           => $input['title'],
             'description'     => $input['description'],
             'body'            => $input['body'],
-            'curriculum_id'   => format_select_input($input['curriculum_id']),
-            'organization_id' => format_select_input($input['organization_id']),
+            'curriculum_id'   => $input['curriculum_id'],
+            'organization_id' => $input['organization_id'],
             'owner_id'        => auth()->user()->id,
             'global'          => isset($input['global']) ? 1 : '0',
         ]);
 
-        if (request()->wantsJson()) {
-            return $certificate;
-        }
+        return $certificate;
     }
 
     /**
@@ -121,17 +113,15 @@ class CertificateController extends Controller
         $input = $this->validateRequest();
 
         $certificate->update([
-            'title' => $input['title'],
-            'description' => $input['description'],
-            'body' => $input['body'],
-            'curriculum_id' => format_select_input($input['curriculum_id']) ?? $certificate->curriculum_id,
-            'organization_id' => format_select_input($input['organization_id']) ?? $certificate->organization_id,
-            'global' => isset($input['global']) ? 1 : '0',
+            'title'             => $input['title'],
+            'description'       => $input['description'],
+            'body'              => $input['body'],
+            'curriculum_id'     => $input['curriculum_id'] ?? $certificate->curriculum_id,
+            'organization_id'   => $input['organization_id'] ?? $certificate->organization_id,
+            'global'            => isset($input['global']) ? 1 : '0',
         ]);
 
-        if (request()->wantsJson()) {
-            return $certificate;
-        }
+        return $certificate;
     }
 
     /**

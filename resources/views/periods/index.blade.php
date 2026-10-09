@@ -3,5 +3,5 @@
     {{ trans('global.period.title') }}
 @endsection
 @section('content')
-    <periods></periods>
+    <Periods/>
 @endsection

@@ -25,29 +25,26 @@
                 <template #dropdown
                     v-permission="'certificate_edit, certificate_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'certificate_edit'"
-                            :name="'edit-certificate-' + certificate.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editCertificate(certificate)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editCertificate(certificate)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.certificate.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'certificate_delete'"
-                            :id="'delete-certificate-' + certificate.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(certificate)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(certificate)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.certificate.delete') }}
                         </button>
                     </div>
@@ -72,10 +69,7 @@
                 :title="trans('global.certificate.delete')"
                 :description="trans('global.certificate.delete_helper')"
                 @close="showConfirm = false"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -136,11 +130,14 @@ export default {
         destroy() {
             axios.delete('/certificates/' + this.currentCertificate.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.certificates.indexOf(this.currentCertificate);
                     this.certificates.splice(index, 1);
                 })
                 .catch(e => {
                     console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },

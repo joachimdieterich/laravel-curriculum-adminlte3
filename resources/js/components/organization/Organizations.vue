@@ -24,29 +24,26 @@
                 <template #dropdown
                     v-permission="'organization_edit, organization_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'organization_edit'"
-                            :name="'edit-organization-' + organization.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editOrganization(organization)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editOrganization(organization)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.organization.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'organization_delete'"
-                            :id="'delete-organization-' + organization.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(organization)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(organization)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.organization.delete') }}
                         </button>
                     </div>
@@ -71,10 +68,7 @@
                 :title="trans('global.organization.delete')"
                 :description="trans('global.organization.delete_helper')"
                 @close="showConfirm = false"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -136,11 +130,14 @@ export default {
         destroy() {
             axios.delete('/organizations/' + this.currentOrganization.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.organizations.indexOf(this.currentOrganization);
                     this.organizations.splice(index, 1);
                 })
                 .catch(e => {
                     console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },

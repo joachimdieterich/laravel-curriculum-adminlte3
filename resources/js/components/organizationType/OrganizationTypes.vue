@@ -25,29 +25,26 @@
                 <template #dropdown
                     v-permission="'organization_type_edit, organization_type_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'organization_type_edit'"
-                            :name="'edit-organization-type-' + organizationType.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editOrganizationType(organizationType)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editOrganizationType(organizationType)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.organization.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'organization_type_delete'"
-                            :id="'delete-organization-type-' + organizationType.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(organizationType)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(organizationType)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.organizationType.delete') }}
                         </button>
                     </div>
@@ -72,10 +69,7 @@
                 :title="trans('global.organizationType.delete')"
                 :description="trans('global.organizationType.delete_helper')"
                 @close="showConfirm = false"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -113,11 +107,11 @@ export default {
 
         this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('organization-type-added', organizationType => {
+        this.$eventHub.on('organizationType-added', organizationType => {
             this.organizationTypes.push(organizationType);
         });
 
-        this.$eventHub.on('organization-type-updated', updatedType => {
+        this.$eventHub.on('organizationType-updated', updatedType => {
             let type = this.organizationTypes.find(t => t.id === updatedType.id);
             Object.assign(type, updatedType);
         });
@@ -137,11 +131,14 @@ export default {
         destroy() {
             axios.delete('/organizationTypes/' + this.currentOrganizationType.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.organizationTypes.indexOf(this.currentOrganizationType);
                     this.organizationTypes.splice(index, 1);
                 })
                 .catch(e => {
                     console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
     },

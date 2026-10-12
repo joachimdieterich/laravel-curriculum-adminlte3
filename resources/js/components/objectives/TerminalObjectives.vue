@@ -42,7 +42,7 @@
                             {{ objective_types[type_index].title }}
                         </a>
                     </li>
-               </template>
+                </template>
             </draggable>
             <li v-if="curriculum.type_id === 1"
                 class="form-group py-2 mb-0 ml-auto"
@@ -61,19 +61,20 @@
         <hr class="mt-0">
         <div class="tab-content">
             <div v-for="type in objective_types"
-                :id="'Type-' + type.id"
-                class="tab-pane fade"
-                role="tabpanel"
-                :aria-labelledby="type.id + '-tab'"
+                 :id="'Type-' + type.id"
+                 class="tab-pane fade"
+                 role="tabpanel"
+                 :aria-labelledby="type.id + '-tab'"
             >
                 <div
                     class="d-flex flex-column"
                     style="gap: 10px;"
                 >
                     <div v-for="terminal in type.terminal_objectives"
-                        :id="'terminalObjective_' + terminal.id"
-                        class="objectives"
+                         :id="'terminalObjective_' + terminal.id"
+                         class="objectives"
                     >
+
                         <ObjectiveBox
                             type="terminal"
                             :objective="terminal"
@@ -94,9 +95,9 @@
             </div>
 
             <div v-if="settings.edit"
-                v-permission="'curriculum_edit'"
-                class="objectives"
-                style="margin: 10px 0px;"
+                 v-permission="'curriculum_edit'"
+                 class="objectives"
+                 style="margin: 10px 0px;"
             >
                 <ObjectiveBox
                     type="createterminal"
@@ -196,11 +197,11 @@ export default {
                     console.log(e);
                 });
         },
-        externalEvent: function(ids) {
+        externalEvent: function (ids) {
             this.reloadEnablingObjectives(ids);
         },
         reloadEnablingObjectives(ids) {
-            axios.post('/curricula/' + this.curriculum.id + '/achievements', { 'user_ids' : ids })
+            axios.post('/curricula/' + this.curriculum.id + '/achievements', {'user_ids': ids})
                 .then(response => {
                     Object.assign(this.objective_types, response.data);
                 })
@@ -339,7 +340,7 @@ export default {
 
         this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
             let type = this.objective_types.find(
-                function(type){
+                function (type) {
                     return type.id === updatedTerminal.objective_type_id;
                 }
             );
@@ -471,8 +472,12 @@ export default {
         /////////////////////////////////////////////////////
         ///////////////////////// curriculum ////////////////
         /////////////////////////////////////////////////////
-        this.$eventHub.on('curriculum-updated', () => {
-            this.loaderEvent();
+        this.$eventHub.on('curriculum-updated', async () => {
+            await this.loaderEvent();
+            this.max_ids = this.objective_types.reduce((acc, type) => {
+                acc[type.id] = type.terminal_objectives[type.terminal_objectives.length - 1].id;
+                return acc;
+            }, {});
         });
     },
     computed: {

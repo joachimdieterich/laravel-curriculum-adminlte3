@@ -1,25 +1,25 @@
 <template>
     <ObjectiveBox v-for="objective in objectives"
-        type="enabling"
-        :objective="objective"
-        :objective_type_id="terminalobjective.objective_type_id"
-        :referenceable_id="referenceable_id"
-        :referenceable_type="referenceable_type"
-        :color="terminalobjective.color"
-        :settings="settings"
-        :editable="editable"
-        :max_id="objectives[objectives.length - 1]?.id"
+                  type="enabling"
+                  :objective="objective"
+                  :objective_type_id="terminalobjective.objective_type_id"
+                  :referenceable_id="referenceable_id"
+                  :referenceable_type="referenceable_type"
+                  :color="terminalobjective.color"
+                  :settings="settings"
+                  :editable="editable"
+                  :max_id="objectives[objectives.length - 1]?.id"
     />
 
     <ObjectiveBox v-if="settings.edit === true"
-        v-permission="'curriculum_edit'"
-        type="createenabling"
-        :objective="{
-            curriculum_id: terminalobjective.curriculum_id,
-            terminal_objective_id: terminalobjective.id
-        }"
-        :settings="settings"
-        :max_id="objectives[objectives.length - 1]?.id"
+                  v-permission="'curriculum_edit'"
+                  type="createenabling"
+                  :objective="{
+                      curriculum_id: terminalobjective.curriculum_id,
+                      terminal_objective_id: terminalobjective.id
+                  }"
+                  :settings="settings"
+                  :max_id="objectives[objectives.length - 1]?.id"
     />
 </template>
 <script>

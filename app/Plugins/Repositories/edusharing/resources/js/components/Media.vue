@@ -45,11 +45,11 @@
         <div class="px-2">
             <!-- Add Media -->
             <div v-if="model.curriculum.type_id !== 1"
-                v-permission="'external_medium_create, is_teacher'"
-                :id="'media-add'"
-                class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important; border-color: #F2F4F5; border-style: solid !important;"
-                @click="addMedia()"
+                 v-permission="'external_medium_create, is_teacher'"
+                 :id="'media-add'"
+                 class="box box-objective nav-item-box-image pointer my-1 pull-left"
+                 style="min-width: 200px !important; border-color: #F2F4F5; border-style: solid !important;"
+                 @click="addMedia()"
             >
                 <a>
                     <div class="d-flex align-items-center justify-content-center">
@@ -62,12 +62,12 @@
                     </span>
                 </a>
             </div>
-    
+
             <!-- Media uploaded from Curriculum -->
             <div v-for="subscription in filteredMedia"
-                class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important;"
-                :style="{ 'border-color': borderColor(subscription) }"
+                 class="box box-objective nav-item-box-image pointer my-1 pull-left"
+                 style="min-width: 200px !important;"
+                 :style="{ 'border-color': borderColor(subscription) }"
             >
                 <a class="text-decoration-none">
                     <div>
@@ -81,10 +81,10 @@
                     </span>
 
                     <div v-if="subscription.owner_id == $userId"
-                        class="btn btn-flat position-absolute pull-right"
-                        style="top: 0; right: 0; background-color: transparent;"
-                        data-toggle="dropdown"
-                        aria-expanded="false"
+                         class="btn btn-flat position-absolute pull-right"
+                         style="top: 0; right: 0; background-color: transparent;"
+                         data-toggle="dropdown"
+                         aria-expanded="false"
                     >
                         <i
                             class="fa fa-ellipsis-v"
@@ -124,13 +124,13 @@
                     </div>
                 </a>
             </div>
-    
+
             <!-- Media linked from Edusharing -->
             <div v-for="medium in filteredExternalMedia"
-                :id="medium.node_id"
-                class="box box-objective nav-item-box-image pointer my-1 pull-left"
-                style="min-width: 200px !important; border-color: #F2F4F5;"
-                @click="show(medium)"
+                 :id="medium.node_id"
+                 class="box box-objective nav-item-box-image pointer my-1 pull-left"
+                 style="min-width: 200px !important; border-color: #F2F4F5;"
+                 @click="show(medium)"
             >
                 <a class="text-decoration-none">
                     <div>
@@ -144,7 +144,7 @@
                             :style="{ 'background': 'white url(' + iconUrl(medium) + ') no-repeat center', 'background-size': '24px' }"
                         ></div>
                     </div>
-        
+
                     <span>
                         <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
                             <h6 class="pt-1 hyphens" v-html="medium.title"></h6>
@@ -159,9 +159,9 @@
                     </span>
                 </a>
             </div>
-    
+
             <div v-if="media !== null"
-                class="row w-100 pt-1"
+                 class="row w-100 pt-1"
             >
                 <span v-if="[0].length > maxItems">
                     <span class="col-6">
@@ -174,7 +174,7 @@
                             <i class="fa fa-arrow-left"></i>
                         </button>
                     </span>
-    
+
                     <span class="col-6">
                         <button
                             type="button"
@@ -277,7 +277,7 @@ export default {
                         },
                     })).data[0];
                 }
-            } catch(error) {
+            } catch (error) {
                 $("#loading").hide();
             }
 
@@ -292,7 +292,7 @@ export default {
             axios.delete('/media/' + mediumSubscription.medium_id, {
                 data: {
                     subscribable_type: mediumSubscription.subscribable_type,
-                    subscribable_id:   mediumSubscription.subscribable_id,
+                    subscribable_id: mediumSubscription.subscribable_id,
                 },
             })
                 .then(res => {
@@ -334,7 +334,7 @@ export default {
             this.page = this.page + 1;
             this.loader();
         },
-        setCurrentTab(id){
+        setCurrentTab(id) {
             this.currentTab = id;
         },
         addMedia() {
@@ -361,12 +361,12 @@ export default {
         });
     },
     computed: {
-        filteredMedia: function() {
+        filteredMedia: function () {
             return this.currentTab === 1
                 ? this.media
                 : this.media.filter(subscription => subscription.owner_id == this.$userId);
         },
-        filteredExternalMedia: function() {
+        filteredExternalMedia: function () {
             return this.currentTab === 1
                 ? this.externalMedia
                 : this.externalMyMedia;
@@ -384,9 +384,14 @@ export default {
 </script>
 <style scoped>
 @media (max-width: 990px) {
-    .box { border-right: 10px solid; }
+    .box {
+        border-right: 10px solid;
+    }
 }
+
 @media (min-width: 991px) {
-    .box { border-bottom: 10px solid; }
+    .box {
+        border-bottom: 10px solid;
+    }
 }
 </style>

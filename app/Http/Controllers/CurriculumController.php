@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use App\Certificate;
 use App\Curriculum;
 use App\CurriculumSubscription;
-use App\CurriculumType;
 use App\Http\Requests\Tags\FavouriteModelRequest;
 use App\Http\Requests\Tags\HideModelRequest;
 use App\Level;
 use App\Medium;
+use App\ObjectiveType;
 use App\VariantDefinition;
 use Carbon\Carbon;
 use Gate;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use JsonException;
 
@@ -23,7 +25,6 @@ class CurriculumController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      */
     public function index()
     {
@@ -35,41 +36,19 @@ class CurriculumController extends Controller
             }
         }
 
-        abort_unless(Gate::allows('curriculum_access'), 403); //check here, cause json-requests should work for all users
+        abort_unless(Gate::allows('curriculum_access'), 403); // check here, cause json-requests should work for all users
 
         return view('curricula.index');
     }
 
-    public function getTerminalObjectives(Curriculum $curriculum){
+    public function getTerminalObjectives(Curriculum $curriculum)
+    {
         if (request()->wantsJson()) {
             return getEntriesForSelect2ByCollectionAlternative($curriculum->terminalObjectives);
         }
     }
 
-    public function types()
-    {
-        if (request()->wantsJson()) {
-
-            if (Gate::allows('curriculum_create_global'))
-            {
-                return CurriculumType::all();
-            }
-            else if (Gate::allows('curriculum_create_for_organization'))
-            {
-                return CurriculumType::where('id', ">", 1)->get();
-            }
-            else if (Gate::allows('curriculum_create_for_group'))
-            {
-                return CurriculumType::where('id', ">", 2)->get();
-            }
-            else if (Gate::allows('curriculum_create_for_user'))
-            {
-                return CurriculumType::where('id', ">",  3)->get();
-            }
-        }
-    }
-
-    public function list(Request $request): \Illuminate\Http\JsonResponse
+    public function list(Request $request): JsonResponse
     {
         abort_unless(Gate::allows('curriculum_access'), 403);
 
@@ -81,7 +60,7 @@ class CurriculumController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -91,8 +70,7 @@ class CurriculumController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -102,47 +80,47 @@ class CurriculumController extends Controller
         $this->checkPermissions($input['type_id']);
 
         $curriculum = Curriculum::firstOrCreate([
-            'title'                 => $input['title'],
-            'description'           => $input['description'],
-            'author'                => $input['author'],
-            'publisher'             => $input['publisher'],
-            'city'                  => $input['city'],
-            'date'                  => $input['date'],
-            'color'                 => $input['color'],
-            'grade_id'              => format_select_input($input['grade_id']),
-            'subject_id'            => format_select_input($input['subject_id']),
-            'organization_type_id'  => format_select_input($input['organization_type_id']),
-            'type_id'               => format_select_input($input['type_id']),
-            'state_id'              => format_select_input($input['state_id']),
-            'country_id'            => format_select_input($input['country_id']),
-            'medium_id'             => $input['medium_id'],
-            'variants'              => $this->formatVariantsField(
-                                            $input['variants'] ?? NULL,
-                                            $input['variant_default_title'] ?? NULL,
-                                            $input['variant_default_description'] ?? NULL
-                                        ),
-            'archived'              =>  $input['archived'] ?? false,
-            'owner_id'              => auth()->user()->id,
+            'title'                => $input['title'],
+            'description'          => $input['description'],
+            'author'               => $input['author'],
+            'publisher'            => $input['publisher'],
+            'city'                 => $input['city'],
+            'date'                 => $input['date'],
+            'color'                => $input['color'],
+            'grade_id'             => format_select_input($input['grade_id']),
+            'subject_id'           => format_select_input($input['subject_id']),
+            'organization_type_id' => format_select_input($input['organization_type_id']),
+            'type_id'              => format_select_input($input['type_id']),
+            'state_id'             => format_select_input($input['state_id']),
+            'country_id'           => format_select_input($input['country_id']),
+            'medium_id'            => $input['medium_id'],
+            'variants'             => $this->formatVariantsField(
+                $input['variants'] ?? null,
+                $input['variant_default_title'] ?? null,
+                $input['variant_default_description'] ?? null
+            ),
+            'archived' => $input['archived'] ?? false,
+            'owner_id' => auth()->user()->id,
         ]);
         $curriculum->tags()->sync($request->input('tags'));
 
         switch ($curriculum->type_id) {
             case 2: // organization
                 CurriculumSubscription::updateOrCreate([
-                    'curriculum_id' => $curriculum->id,
+                    'curriculum_id'     => $curriculum->id,
                     'subscribable_type' => 'App\Organization',
-                    'subscribable_id' => auth()->user()->current_organization_id,
+                    'subscribable_id'   => auth()->user()->current_organization_id,
                 ], [
                     'editable' => true,
                     'owner_id' => auth()->user()->id,
                 ]);
                 break;
             case 3: // group
-                //Todo: if type_id == 3 there should be an option to add group_id
+                // Todo: if type_id == 3 there should be an option to add group_id
                 break;
         }
 
-        LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this) . '@' . __FUNCTION__);
 
         if (request()->wantsJson()) {
             return $curriculum->with('owner')->find($curriculum->id);
@@ -152,23 +130,21 @@ class CurriculumController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Curriculum $curriculum
-     * @param null       $token
-     *
+     * @param  null  $token
      * @return array|Factory|View|\Illuminate\View\View
+     *
      * @throws JsonException
      */
     public function show(Curriculum $curriculum, $token = null)
     {
         abort_unless((Gate::allows('curriculum_show') and $curriculum->isAccessible()), 403);
-        LogController::set(get_class($this).'@'.__FUNCTION__, $curriculum->id);
+        LogController::set(get_class($this) . '@' . __FUNCTION__, $curriculum->id);
 
         $levels = Level::all();
 
         $curriculumWithRelation = Curriculum::with([
             'glossar.contents',
-        ])
-        ->find($curriculum->id);
+        ])->find($curriculum->id);
 
         $may_edit = $token === null ? $curriculumWithRelation->isEditable() : $curriculumWithRelation->isEditable(auth()->user()->id, $token);
 
@@ -199,12 +175,11 @@ class CurriculumController extends Controller
     /**
      * Get achievements
      *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function getAchievements(Curriculum $curriculum)
     {
-        abort_unless(Gate::allows('curriculum_show') and $curriculum->isAccessible(), 403, "No access to this curriculum");
+        abort_unless(Gate::allows('curriculum_show') and $curriculum->isAccessible(), 403, 'No access to this curriculum');
 
         if (request()->wantsJson()) {
             return $this->getObjectivesByType($curriculum, request()->user_ids);
@@ -217,7 +192,7 @@ class CurriculumController extends Controller
             $user_ids = [auth()->user()->id];
         }
 
-        return \App\ObjectiveType::select('id', 'title', 'uuid')
+        return ObjectiveType::select('id', 'title', 'uuid')
             ->whereHas('terminalObjectives', function ($query) use ($curriculum) {
                 $query->where('curriculum_id', $curriculum->id);
             })
@@ -225,9 +200,9 @@ class CurriculumController extends Controller
                 $query->select('id', 'title', 'description', 'color', 'time_approach', 'objective_type_id', 'curriculum_id', 'order_id', 'uuid', 'visibility')
                     ->where('curriculum_id', $curriculum->id)
                     ->with([
-                        'enablingObjectives' => function($query) use ($user_ids) {
+                        'enablingObjectives' => function ($query) use ($user_ids) {
                             $query->without('terminalObjective')
-                                ->with(['achievements' => function($query) use ($user_ids) {
+                                ->with(['achievements' => function ($query) use ($user_ids) {
                                     $query->select('id', 'status', 'referenceable_id', 'referenceable_type', 'updated_at')
                                         ->whereIn('user_id', $user_ids);
                                 }])
@@ -242,8 +217,7 @@ class CurriculumController extends Controller
     /**
      * Show curriculum in edit mode
      *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit(Curriculum $curriculum)
     {
@@ -253,8 +227,7 @@ class CurriculumController extends Controller
     /**
      * Show edit_owner
      *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function editOwner(Curriculum $curriculum)
     {
@@ -264,12 +237,11 @@ class CurriculumController extends Controller
     /**
      * Store edit_owner
      *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function storeOwner(Request $request, Curriculum $curriculum)
     {
-        abort_unless(Gate::allows('curriculum_edit'), 403, "No permission to change owner");
+        abort_unless(Gate::allows('curriculum_edit'), 403, 'No permission to change owner');
         $input = $this->validateRequest();
 
         $curriculum->update([
@@ -284,9 +256,7 @@ class CurriculumController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, Curriculum $curriculum)
     {
@@ -295,27 +265,27 @@ class CurriculumController extends Controller
         $input = $this->validateRequest();
 
         $curriculum->update([
-            'title'                 => $input['title'],
-            'description'           => $input['description'],
-            'author'                => $input['author'],
-            'publisher'             => $input['publisher'],
-            'city'                  => $input['city'],
-            'date'                  => $input['date'],
-            'color'                 => $input['color'],
-            'grade_id'              => format_select_input($input['grade_id']),
-            'subject_id'            => format_select_input($input['subject_id']),
-            'organization_type_id'  => format_select_input($input['organization_type_id']),
-            'type_id'               => format_select_input($input['type_id']),
-            'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
-            'country_id'            => format_select_input($input['country_id']),
-            'medium_id'             => $input['medium_id'],
-            'variants'              => $this->formatVariantsField(
-                                        $input['variants'] ?? NULL,
-                                        $input['variant_default_title'] ?? NULL,
-                                        $input['variant_default_description'] ?? NULL
-                                       ),
-            'archived'              =>  $input['archived'] ?? false,
-            'owner_id'              => is_admin() ? $input['owner_id'] : auth()->user()->id,
+            'title'                => $input['title'],
+            'description'          => $input['description'],
+            'author'               => $input['author'],
+            'publisher'            => $input['publisher'],
+            'city'                 => $input['city'],
+            'date'                 => $input['date'],
+            'color'                => $input['color'],
+            'grade_id'             => format_select_input($input['grade_id']),
+            'subject_id'           => format_select_input($input['subject_id']),
+            'organization_type_id' => format_select_input($input['organization_type_id']),
+            'type_id'              => format_select_input($input['type_id']),
+            'state_id'             => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
+            'country_id'           => format_select_input($input['country_id']),
+            'medium_id'            => $input['medium_id'],
+            'variants'             => $this->formatVariantsField(
+                $input['variants'] ?? null,
+                $input['variant_default_title'] ?? null,
+                $input['variant_default_description'] ?? null
+            ),
+            'archived' => $input['archived'] ?? false,
+            'owner_id' => is_admin() ? $input['owner_id'] : auth()->user()->id,
         ]);
         $curriculum->tags()->sync($request->input('tags'));
 
@@ -328,12 +298,9 @@ class CurriculumController extends Controller
     {
         abort_unless(Gate::allows('course_create'), 403);
 
-        foreach ((request()->enrollment_list) as $enrolment)
-        {
-            if(is_array($enrolment['curriculum_id']))
-            {
-                foreach ($enrolment['curriculum_id'] as $curriculum_id)
-                {
+        foreach ((request()->enrollment_list) as $enrolment) {
+            if (is_array($enrolment['curriculum_id'])) {
+                foreach ($enrolment['curriculum_id'] as $curriculum_id) {
                     $this->subscribe(format_select_input($curriculum_id), $enrolment['group_id']);
                 }
             } else {
@@ -351,9 +318,9 @@ class CurriculumController extends Controller
     private function subscribe($curriculum_id, $group_id, $model = "App\Group", $editable = false)
     {
         $subscribe = CurriculumSubscription::updateOrCreate([
-            'curriculum_id' => $curriculum_id,
+            'curriculum_id'     => $curriculum_id,
             'subscribable_type' => $model,
-            'subscribable_id' => $group_id,
+            'subscribable_id'   => $group_id,
         ], [
             'editable' => $editable,
             'owner_id' => auth()->user()->id,
@@ -372,12 +339,9 @@ class CurriculumController extends Controller
     {
         abort_unless(Gate::allows('course_create'), 403);
 
-        foreach ((request()->expel_list) as $expel)
-        {
-            if(is_array($expel['curriculum_id']))
-            {
-                foreach ($expel['curriculum_id'] as $curriculum_id)
-                {
+        foreach ((request()->expel_list) as $expel) {
+            if (is_array($expel['curriculum_id'])) {
+                foreach ($expel['curriculum_id'] as $curriculum_id) {
                     $this->unsubscribe($curriculum_id, $expel['group_id']);
                 }
             } else {
@@ -386,27 +350,26 @@ class CurriculumController extends Controller
         }
 
         return CurriculumSubscription::where('subscribable_type', "App\Group")
-        ->where('subscribable_id', $expel['group_id'])->get();;
+            ->where('subscribable_id', $expel['group_id'])->get();
     }
 
     private function unsubscribe($curriculum_id, $group_id, $model = "App\Group", $editable = false)
     {
         CurriculumSubscription::where([
-            'curriculum_id' => $curriculum_id,
+            'curriculum_id'     => $curriculum_id,
             'subscribable_type' => "App\Group",
-            'subscribable_id' => $group_id,
+            'subscribable_id'   => $group_id,
         ])->delete();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Curriculum  $curriculum
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Curriculum $curriculum)
     {
-        //todo: delete media attached to content, descriptions...
+        // todo: delete media attached to content, descriptions...
         abort_unless(Gate::allows('curriculum_delete'), 403);
 
         // delete mediaSubscriptions -> media will not be deleted
@@ -420,12 +383,12 @@ class CurriculumController extends Controller
         $curriculum->syncTags([]);
         $return = $curriculum->delete();
 
-        //delete unused media
+        // delete unused media
         foreach ($media as $medium) {
             Medium::where('id', $medium->id)->delete();
         }
 
-        //todo check/delete unrelated references(in references table)
+        // todo check/delete unrelated references(in references table)
         if (request()->wantsJson()) {
             return $return;
         }
@@ -452,7 +415,6 @@ class CurriculumController extends Controller
             $curriculum->detachTag(trans('global.tag.hidden.singular'));
         }
 
-
         return response($curriculum);
     }
 
@@ -463,12 +425,14 @@ class CurriculumController extends Controller
     {
         // get terminal-objectives with default ordering (by ID => created_at)
         $terminalObjectives = $curriculum->terminalObjectives()->select('id', 'objective_type_id')->reorder()->get();
-        $type_order = []; // associative array [type_id => terminal_order_id]
+        $type_order         = []; // associative array [type_id => terminal_order_id]
 
         foreach ($terminalObjectives as $terminal) {
             $type_id = $terminal->objective_type_id;
 
-            if (!isset($type_order[$type_id])) $type_order[$type_id] = 0;
+            if (! isset($type_order[$type_id])) {
+                $type_order[$type_id] = 0;
+            }
 
             $terminal->update(['order_id' => $type_order[$type_id]]);
             $type_order[$type_id]++;
@@ -486,12 +450,12 @@ class CurriculumController extends Controller
 
     public function print(Curriculum $curriculum)
     {
-        LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this) . '@' . __FUNCTION__);
         $html = view('print.curriculum')
             ->with(compact('curriculum'))
             ->render();
         if (request()->wantsJson()) {
-            return ['path' => (app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save'))];
+            return ['path' => (app('App\Http\Controllers\PrintController')->print($html, $curriculum->title . '.pdf', 'save'))];
         }
         // return app('App\Http\Controllers\PrintController')->print($html, $curriculum->title.'.pdf', 'save');
     }
@@ -500,13 +464,13 @@ class CurriculumController extends Controller
     {
         abort_unless((
             auth()->user()->id === $curriculum->owner_id
-            OR is_admin()
-        ), 403, "Only the owner has permission to change the order of objective types");
+            or is_admin()
+        ), 403, 'Only the owner has permission to change the order of objective types');
 
         $input = $this->validateRequest();
 
         $curriculum->update([
-            'objective_type_order' => $input['objective_type_order']
+            'objective_type_order' => $input['objective_type_order'],
         ]);
 
         return $curriculum->objective_type_order;
@@ -514,32 +478,26 @@ class CurriculumController extends Controller
 
     public function getVariantDefinitions(Curriculum $curriculum)
     {
-        $definition = array();
-        if (isset($curriculum->variants['order']))
-        {
-            foreach($curriculum->variants['order'] AS $variant_definitition)
-            {
+        $definition = [];
+        if (isset($curriculum->variants['order'])) {
+            foreach ($curriculum->variants['order'] as $variant_definitition) {
 
-                if ($variant_definitition == 0)
-                {
-                    $definition[] = array(
-                        'id'            => 0,
-                        'title'         => $curriculum->variants['title'] ?? '',
-                        'description'   => $curriculum->variants['description'] ?? '',
-                        'color'         => $curriculum->variants['color'] ?? $curriculum->color,
-                        'css_icon'      => $curriculum->variants['css_icon'] ?? '',
-                        'owner_id'      => $curriculum->variants['owner_id'] ?? $curriculum->owner_id,
-                        'created_at'    => $curriculum->variants['created_at'] ?? $curriculum->created_at,
-                        'updated_at'    => $curriculum->variants['updated_at'] ?? $curriculum->updated_at,
-                    );
-                }
-                else
-                {
+                if ($variant_definitition == 0) {
+                    $definition[] = [
+                        'id'          => 0,
+                        'title'       => $curriculum->variants['title'] ?? '',
+                        'description' => $curriculum->variants['description'] ?? '',
+                        'color'       => $curriculum->variants['color'] ?? $curriculum->color,
+                        'css_icon'    => $curriculum->variants['css_icon'] ?? '',
+                        'owner_id'    => $curriculum->variants['owner_id'] ?? $curriculum->owner_id,
+                        'created_at'  => $curriculum->variants['created_at'] ?? $curriculum->created_at,
+                        'updated_at'  => $curriculum->variants['updated_at'] ?? $curriculum->updated_at,
+                    ];
+                } else {
                     $definition[] = VariantDefinition::find($variant_definitition);
                 }
             }
         }
-
 
         if (request()->wantsJson()) {
             return ['definitions' => $definition];
@@ -562,18 +520,18 @@ class CurriculumController extends Controller
                     ['curriculum_id', '=', $curriculum->id],
                     ['organization_id', '=', auth()->user()->current_organization_id],
                 ])
-                ->orWhere(function ($query) use ($curriculum) {
-                    $query->where([
-                        ['curriculum_id', '=', $curriculum->id],
-                        ['global', '=', 1],
-                    ]);
-                })
-                ->orWhere(function ($query) {
-                    $query->where([
-                        ['type', '=', 'group'],
-                        ['global', '=', 1],
-                    ]);
-                })
+                    ->orWhere(function ($query) use ($curriculum) {
+                        $query->where([
+                            ['curriculum_id', '=', $curriculum->id],
+                            ['global', '=', 1],
+                        ]);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where([
+                            ['type', '=', 'group'],
+                            ['global', '=', 1],
+                        ]);
+                    })
             );
         }
     }
@@ -582,10 +540,12 @@ class CurriculumController extends Controller
     {
         $input = $this->validateRequest();
 
-        $subscription = CurriculumSubscription::where('sharing_token',$input['sharing_token'] )->get()->first();
-        if (!$subscription?->due_date) abort(403, 'global.token_deleted');
+        $subscription = CurriculumSubscription::where('sharing_token', $input['sharing_token'])->get()->first();
+        if (! $subscription?->due_date) {
+            abort(403, 'global.token_deleted');
+        }
 
-        $now = Carbon::now();
+        $now      = Carbon::now();
         $due_date = Carbon::parse($subscription->due_date);
         if ($due_date < $now) {
             abort(410, 'global.token_expired');
@@ -598,38 +558,35 @@ class CurriculumController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'title'                 => 'sometimes',
-            'description'           => 'sometimes',
-            'author'                => 'sometimes',
-            'publisher'             => 'sometimes',
-            'city'                  => 'sometimes',
-            'date'                  => 'sometimes',
-            'color'                 => 'sometimes',
-            'grade_id'              => 'sometimes',
-            'subject_id'            => 'sometimes',
-            'organization_type_id'  => 'sometimes',
-            'type_id'               => 'sometimes',
-            'state_id'              => 'sometimes',
-            'country_id'            => 'sometimes',
-            'medium_id'             => 'sometimes',
-            'owner_id'              => 'sometimes',
-            'objective_type_order'  => 'sometimes',
-            'variants'  => 'sometimes',
-            'variant_default_title'  => 'sometimes',
-            'variant_default_description'  => 'sometimes',
-            'archived' => 'sometimes',
-            'sharing_token' => 'sometimes'
+            'title'                       => 'sometimes',
+            'description'                 => 'sometimes',
+            'author'                      => 'sometimes',
+            'publisher'                   => 'sometimes',
+            'city'                        => 'sometimes',
+            'date'                        => 'sometimes',
+            'color'                       => 'sometimes',
+            'grade_id'                    => 'sometimes',
+            'subject_id'                  => 'sometimes',
+            'organization_type_id'        => 'sometimes',
+            'type_id'                     => 'sometimes',
+            'state_id'                    => 'sometimes',
+            'country_id'                  => 'sometimes',
+            'medium_id'                   => 'sometimes',
+            'owner_id'                    => 'sometimes',
+            'objective_type_order'        => 'sometimes',
+            'variants'                    => 'sometimes',
+            'variant_default_title'       => 'sometimes',
+            'variant_default_description' => 'sometimes',
+            'archived'                    => 'sometimes',
+            'sharing_token'               => 'sometimes',
         ]);
     }
 
-    /**
-     * @param $type_id
-     */
     private function checkPermissions($type_id): void
     {
         $id = format_select_input($type_id);
 
-        if ($id == 4) { //user
+        if ($id == 4) { // user
             abort_unless(
                 (
                     Gate::allows('curriculum_create_for_user') or
@@ -637,62 +594,34 @@ class CurriculumController extends Controller
                     Gate::allows('curriculum_create_for_organization') or
                     Gate::allows('curriculum_create_global')
                 ), 403);
-        } elseif ($id == 3) { //group
+        } elseif ($id == 3) { // group
             abort_unless(
                 (
                     Gate::allows('curriculum_create_for_group') or
                     Gate::allows('curriculum_create_for_organization') or
                     Gate::allows('curriculum_create_global')
                 ), 403);
-        } elseif ($id == 2) { //organization
+        } elseif ($id == 2) { // organization
             abort_unless(
                 (
                     Gate::allows('curriculum_create_for_organization') or
                     Gate::allows('curriculum_create_global')
                 ), 403);
-        } elseif ($id == 1) { //group
+        } elseif ($id == 1) { // group
             abort_unless(Gate::allows('curriculum_create_global'), 403);
         }
     }
 
-    /**
-     * @return CurriculumType[]|array|\Illuminate\Database\Eloquent\Collection
-     */
-    private function getCurriculumTypesByPermission()
+    private function getEntriesForSelect2(): JsonResponse
     {
-        if (Gate::allows('curriculum_create_global')) {
-            $curriculum_types = CurriculumType::all();
-        } elseif (Gate::allows('curriculum_create_for_organization')) {
-            $curriculum_types = CurriculumType::where('id', '>', 1)->get();
-        } elseif (Gate::allows('curriculum_create_for_group')) {
-            $curriculum_types = CurriculumType::where('id', '>', 2)->get();
-        } elseif (Gate::allows('curriculum_create_for_user')) {
-            $curriculum_types = CurriculumType::where('id', '>', 3)->get();
-        } else {
-            $curriculum_types = [];
-        }
-
-        return $curriculum_types;
-    }
-
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    private function getEntriesForSelect2(): \Illuminate\Http\JsonResponse
-    {
-        if (is_admin())
-        {
+        if (is_admin()) {
             return getEntriesForSelect2ByModel("App\Curriculum");
-        }
-        else if (is_creator() || is_schooladmin() || is_teacher())
-        {
+        } elseif (is_creator() || is_schooladmin() || is_teacher()) {
             $curriculum = getSubscribedModels(Curriculum::class)
                 ->orWhere('type_id', 1); // global curricula
-                
+
             return getEntriesForSelect2ByCollection($curriculum, 'curricula.');
-        }
-        else
-        {
+        } else {
             return getEntriesForSelect2ByCollectionAlternative(
                 Curriculum::select('curricula.id', 'curricula.title')
                     ->distinct()
@@ -700,25 +629,24 @@ class CurriculumController extends Controller
                     ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_subscriptions.subscribable_id')
                     ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
                     ->where('group_user.user_id', auth()->user()->id)
-                    ->orWhere('curricula.owner_id', auth()->user()->id) //user should also see curricula which he/she owns
+                    ->orWhere('curricula.owner_id', auth()->user()->id) // user should also see curricula which he/she owns
                     ->get()
             );
         }
     }
 
-    private function formatVariantsField($variant_definition_ids, $variant_default_title, $variant_default_description ){
+    private function formatVariantsField($variant_definition_ids, $variant_default_title, $variant_default_description)
+    {
 
-        if (isset ($variant_definition_ids))
-        {
+        if (isset($variant_definition_ids)) {
             array_unshift($variant_definition_ids, 0); // add default
+
             return [
-                "order" => $variant_definition_ids,
-                "title" => $variant_default_title,
-                "description" => $variant_default_description,
+                'order'       => $variant_definition_ids,
+                'title'       => $variant_default_title,
+                'description' => $variant_default_description,
             ];
-        }
-        else
-        {
+        } else {
             return null;
         }
 

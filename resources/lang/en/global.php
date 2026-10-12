@@ -666,6 +666,10 @@ return [
     'curriculumType' => [
         'title'          => 'Typ',
         'title_singular' => 'Typ',
+        'global'         => 'Global',
+        'organization'   => 'Organization',
+        'group'          => 'Group',
+        'user'           => 'User',
     ],
     'terminalObjective' => [
         'title'              => 'Terminal objectives',

@@ -5,9 +5,9 @@
             id="objective-media-external"
         >
             <Repository v-if="repository"
-                :repository="repository"
-                ref="repositoryPlugin"
-                :model="objective"
+                        :repository="repository"
+                        ref="repositoryPlugin"
+                        :model="objective"
             />
         </div>
     </div>
@@ -31,7 +31,7 @@ export default {
         },
     },
     mounted() {
-        this.$refs.repositoryPlugin.loader();
+        this.$refs.repositoryPlugin && this.$refs.repositoryPlugin.loader();
     },
 }
 </script>

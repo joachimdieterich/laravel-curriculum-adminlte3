@@ -1,8 +1,8 @@
 <template>
     <Transition name="modal">
         <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
+             class="modal-mask"
+             @mouseup.self="globalStore.closeModal($options.name)"
         >
             <div class="modal-container">
                 <div class="modal-header">
@@ -21,7 +21,7 @@
 
                 <div class="modal-body">
                     <div v-if="method === 'post'"
-                        class="card border-bottom"
+                         class="card border-bottom"
                     >
                         <div class="card-body">
                             <ul class="nav nav-pills justify-content-center">
@@ -89,13 +89,13 @@
                                     </div>
                                     <div class="form-group">
                                         <Select2 v-if="checkPermission('is_admin')"
-                                            id="user_id"
-                                            css="mb-0 mt-3"
-                                            :label="trans('global.change_owner')"
-                                            model="User"
-                                            url="/users"
-                                            :selected="form.owner_id"
-                                            @selectedValue="(id) => this.form.owner_id = id[0]"
+                                                 id="user_id"
+                                                 css="mb-0 mt-3"
+                                                 :label="trans('global.change_owner')"
+                                                 model="User"
+                                                 url="/users"
+                                                 :selected="form.owner_id"
+                                                 @selectedValue="(id) => this.form.owner_id = id[0]"
                                         />
                                     </div>
                                     <tag-multiselect
@@ -204,14 +204,14 @@
                                         />
                                     </div>
                                     <div v-if="checkPermission('is_admin')"
-                                        class="form-group"
+                                         class="form-group"
                                     >
                                         <Select2
                                             id="type_id"
                                             name="type_id"
                                             url="/curriculumTypes"
-                                            model="curriculumtype"
-                                            :label="trans('global.curriculumtype.title_singular') + ' *'"
+                                            model="curriculumType"
+                                            :label="trans('global.curriculumType.title_singular') + ' *'"
                                             option_id="id"
                                             option_label="title"
                                             :selected="form.type_id"
@@ -269,12 +269,12 @@
                                         />
 
                                         <MediumForm v-if="form.id"
-                                            :id="'medium_form' + component_id"
-                                            :medium_id="form.medium_id"
-                                            accept="image/*"
-                                            :subscribable_id="form.id"
-                                            subscribable_type="App\Curriculum"
-                                            @selectedValue="(id) => {
+                                                    :id="'medium_form' + component_id"
+                                                    :medium_id="form.medium_id"
+                                                    accept="image/*"
+                                                    :subscribable_id="form.id"
+                                                    subscribable_type="App\Curriculum"
+                                                    @selectedValue="(id) => {
                                                 // on removal of medium, directly update the resource
                                                 if (this.form.medium_id !== null && id === null) {
                                                     this.$eventHub.emit('curriculum-updated', {
@@ -402,7 +402,7 @@ export default {
             method: 'post',
             files: null,
             form: new Form({
-                id:'',
+                id: '',
                 title: '',
                 description: '',
                 author: '',
@@ -435,7 +435,7 @@ export default {
         }
     },
     computed: {
-        textColor: function() {
+        textColor: function () {
             return this.$textcolor(this.form.color, '#333333');
         }
     },
@@ -481,7 +481,7 @@ export default {
                 });
         },
         getSelectedTags(tags) {
-            if (tags && tags[0] && tags[0]?.name){
+            if (tags && tags[0] && tags[0]?.name) {
                 return tags.map(p => p.id);
             }
 

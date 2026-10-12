@@ -224,10 +224,10 @@
                         aria-labelledby="description-tab"
                     >
                         <Variants v-if="objective.curriculum.variants?.length > 0"
-                            :model="currentObjective"
-                            :referenceable_type="model"
-                            :referenceable_id="objective.id"
-                            :variant_order="variant_order"
+                                  :model="currentObjective"
+                                  :referenceable_type="model"
+                                  :referenceable_id="objective.id"
+                                  :variant_order="variant_order"
                         />
                         <div v-else style="margin-top: -10px;">
                             <div class="d-flex justify-content-between pb-1">
@@ -249,13 +249,13 @@
                     >
                         <div class="objectives">
                             <ObjectiveBox v-if="type === 'enabling'"
-                                type="terminal"
-                                :objective="objective.terminal_objective"
+                                          type="terminal"
+                                          :objective="objective.terminal_objective"
                             />
                             <ObjectiveBox v-for="enablingObjective in enablingObjectives"
-                                type="enabling"
-                                :objective="enablingObjective"
-                                :color="objective.color ?? objective.terminal_objective.color"
+                                          type="enabling"
+                                          :objective="enablingObjective"
+                                          :color="objective.color ?? objective.terminal_objective.color"
                             />
                         </div>
                     </div>
@@ -268,14 +268,14 @@
                     >
                         <span>
                             <Contents v-if="type === 'enabling'"
-                                ref="Contents"
-                                subscribable_type="App\EnablingObjective"
-                                :subscribable_id="objective.id"
+                                      ref="Contents"
+                                      subscribable_type="App\EnablingObjective"
+                                      :subscribable_id="objective.id"
                             />
                             <Contents v-else-if="type === 'terminal'"
-                                ref="Contents"
-                                subscribable_type="App\TerminalObjective"
-                                :subscribable_id="objective.id"
+                                      ref="Contents"
+                                      subscribable_type="App\TerminalObjective"
+                                      :subscribable_id="objective.id"
                             />
                         </span>
                     </div>
@@ -337,10 +337,10 @@
                         aria-labelledby="achievements-tab"
                     >
                         <Achievements v-if="type === 'enabling'"
-                            ref="Achievements"
-                            :objective="objective"
-                            :type="type"
-                            :settings="setting"
+                                      ref="Achievements"
+                                      :objective="objective"
+                                      :type="type"
+                                      :settings="setting"
                         />
                     </div>
                     <!-- 7 Prerequisites -->
@@ -395,7 +395,7 @@
                     </div>
                 </div>
             </div>
-        </div>            
+        </div>
 
         <Teleport to="body">
             <ContentModal/>
@@ -422,8 +422,8 @@
         <Teleport to="#customTitle">
             <small>{{ trans('global.details') }}</small>
             <a v-if="editable"
-                class="btn btn-flat text-secondary px-2 mx-1"
-                @click="editObjective()"
+               class="btn btn-flat text-secondary px-2 mx-1"
+               @click="editObjective()"
             >
                 <i class="fa fa-pencil-alt"></i>
             </a>
@@ -451,7 +451,7 @@ import MediumModal from "../media/MediumModal.vue";
 import ReferenceObjectiveModal from "../reference/ReferenceObjectiveModal.vue";
 import PrerequisiteObjectiveModal from "../prerequisites/PrerequisiteObjectiveModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
-import { nextTick } from "vue";
+import {nextTick} from "vue";
 
 export default {
     name: "objective",
@@ -531,7 +531,7 @@ export default {
             elem.addEventListener('click', (e) => {
                 e.preventDefault(); // default would scroll reference to top (hiding it behind the header)
                 const target = document.querySelector(elem.attributes.href.value);
-                target.scrollIntoView({ block: 'center' });
+                target.scrollIntoView({block: 'center'});
                 target.classList.add('target'); // classname to trigger highlight-animation
                 // remove class after animation finishes, so the highlight-animation can be triggered again
                 setTimeout(() => target.classList.remove('target'), 1500);
@@ -577,14 +577,16 @@ export default {
         },
         editObjective() {
             switch (this.type) {
-                case "enabling":    this.globalStore?.showModal('enabling-objective-modal', this.objective);
+                case "enabling":
+                    this.globalStore?.showModal('enabling-objective-modal', this.objective);
                     break;
-                case "terminal":    this.globalStore?.showModal('terminal-objective-modal', this.objective);
+                case "terminal":
+                    this.globalStore?.showModal('terminal-objective-modal', this.objective);
                     break;
             }
         },
         //Loader
-        loaderContents: function() {
+        loaderContents: function () {
             this.$refs.Contents.loaderEvent();
         },
         loadReferences() {

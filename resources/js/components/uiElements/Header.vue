@@ -5,7 +5,7 @@
         style="min-height: 50px; top: 0;"
     >
         <div id="brand-menu"
-            class="d-flex position-relative mr-2"
+             class="d-flex position-relative mr-2"
         >
             <button
                 id="brand-menu-dropdown-button"
@@ -45,16 +45,16 @@
                             />
                         </g>
                     </svg>
-                    <span class="d-none d-sm-inline">{{ trans(brandMenuText) }}</span>
+                    <span class="d-none d-sm-inline" id="brand-menu-text">{{ trans(brandMenuText) }}</span>
                     <i v-if="notLocalEnv"
-                        class="fa fa-chevron-down"
-                        style="font-size: 0.75rem;"
+                       class="fa fa-chevron-down"
+                       style="font-size: 0.75rem;"
                     ></i>
                 </span>
             </button>
             <div v-if="notLocalEnv"
-                id="brand-menu-dropdown"
-                class="d-none bg-lime w-100 mr-2"
+                 id="brand-menu-dropdown"
+                 class="d-none bg-lime w-100 mr-2"
             >
                 <div v-for="entry in menuEntries">
                     <a :href="entry.link">
@@ -79,12 +79,12 @@
 
         <div class="d-flex align-items-center">
             <button v-if="role.id === 1"
-                type="button"
-                class="btn btn-icon text-dark"
-                data-toggle="collapse"
-                data-target=".nav-collapse"
-                aria-expanded="false"
-                aria-controls="navigationbar background-mask"
+                    type="button"
+                    class="btn btn-icon text-dark"
+                    data-toggle="collapse"
+                    data-target=".nav-collapse"
+                    aria-expanded="false"
+                    aria-controls="navigationbar background-mask"
             >
                 <i class="fa fa-bars px-1"></i>
             </button>
@@ -115,7 +115,7 @@
                     <strong class="py-1 ml-2">{{ trans('global.login') }}</strong>
                 </span>
                 <span v-else
-                    class="d-flex align-items-center pointer"
+                      class="d-flex align-items-center pointer"
                 >
                     <Avatar
                         :username="user.username"
@@ -132,9 +132,9 @@
                 </span>
             </button>
             <div v-if="!isGuestUser"
-                id="user-menu-dropdown"
-                class="d-none bg-lime"
-                style="right: 0.5rem; width: 250px;"
+                 id="user-menu-dropdown"
+                 class="d-none bg-lime"
+                 style="right: 0.5rem; width: 250px;"
             >
                 <div
                     class="d-flex justify-content-center py-2"

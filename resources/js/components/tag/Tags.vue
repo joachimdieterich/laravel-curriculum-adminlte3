@@ -18,36 +18,33 @@
                 url="/tags"
                 title-field="translation"
             >
-                <template #:icon>
-                    <i class="fas fa-tag"></i>
+                <template #icon>
+                    <i class="fa fa-tag"></i>
                 </template>
 
-                <template #:dropdown
-                          v-permission="'tag_edit, tag_delete'"
+                <template #dropdown
+                    v-permission="'tag_edit, tag_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-end"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'tag_edit'"
-                            :name="'edit-tag-' + tag.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editTag(tag)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editTag(tag)"
                         >
-                            <i class="fa fa-pencil-alt me-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.tag.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'tag_delete'"
-                            :id="'delete-tag-' + tag.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(tag)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(tag)"
                         >
-                            <i class="fa fa-trash me-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.tag.delete') }}
                         </button>
                     </div>
@@ -72,10 +69,7 @@
                 :title="trans('global.tag.delete')"
                 :description="trans('global.tag.delete_helper')"
                 @close="showConfirm = false"
-                @confirm="() => {
-                    showConfirm = false;
-                    destroy();
-                }"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -138,11 +132,13 @@ export default {
         destroy() {
             axios.delete('/tags/' + this.currentTag.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.tags.indexOf(this.currentTag);
                     this.tags.splice(index, 1);
                 })
                 .catch(e => {
                     console.log(e);
+                    this.showConfirm = false;
                     this.toast.error(this.errorMessage(e));
                 });
         },

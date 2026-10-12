@@ -3,5 +3,5 @@
     {{ trans('global.metadataset.title') }}
 @endsection
 @section('content')
-    <metadatasets></metadatasets>
+    <Metadatasets/>
 @endsection

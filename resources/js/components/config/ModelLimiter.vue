@@ -1,40 +1,42 @@
 <template>
-    <div>
+    <div class="px-3">
         <h5>{{ trans('global.config.model_limiter_title') }}</h5>
         <p>{{ trans('global.config.model_limiter_description') }}</p>
 
         <h6>{{ trans('global.' + model + '.title') }}</h6>
         <table class="table table-striped">
             <thead>
-            <tr class="text-bold">
-                <td>{{ trans('global.role.title_singular') }}</td>
-                <td>{{ trans('global.config.fields.value') }}</td>
-                <td></td>
-            </tr>
+                <tr class="text-bold">
+                    <td>{{ trans('global.role.title_singular') }}</td>
+                    <td>{{ trans('global.config.fields.value') }}</td>
+                    <td></td>
+                </tr>
             </thead>
 
             <tr v-for="role in roles">
                 <td>{{ role.title }}</td>
                 <td>
-                    <span v-if="!edit || edit_entry != role.id">
-                        {{ getValue(role.id) }}
-                    </span>
+                    <span v-if="!edit || edit_entry != role.id">{{ getValue(role.id) }}</span>
                     <span v-if="edit && edit_entry == role.id">
-                        <input :id="key_value+'_role_'+ role.id"
-                               :value=" getValue(role.id) "/>
-                        <i class="fa fa-save pointer"
-                           @click="submit(role.id)"></i>
+                        <input
+                            :id="key_value+'_role_'+ role.id"
+                            :value=" getValue(role.id)"
+                        />
+                        <i
+                            class="fa fa-save pointer"
+                            @click="submit(role.id)"
+                        ></i>
                     </span>
                 </td>
                 <td>
                     <span v-if="!edit || edit_entry != role.id"
-                          class="pointer"
-                          @click="toggleEdit(role.id)">
-                        <i class="fa fa-pencil-alt float-right pe-2"></i>
+                        class="float-end pointer"
+                        @click="toggleEdit(role.id)"
+                    >
+                        <i class="fa fa-pencil-alt pe-2"></i>
                     </span>
                 </td>
             </tr>
-
         </table>
     </div>
 </template>
@@ -72,12 +74,12 @@ export default {
             edit_entry: -1,
             configs: [],
             form: new Form({
-                'id': null,
-                'key': this.key_value,
-                'value': -1,
-                'referenceable_type': this.referenceable_type,
-                'referenceable_id': '',
-                'data_type': 'integer',
+                id: null,
+                key: this.key_value,
+                value: -1,
+                referenceable_type: this.referenceable_type,
+                referenceable_id: '',
+                data_type: 'integer',
             }),
         }
     },
@@ -112,7 +114,7 @@ export default {
         submit(role_id) {
             let currentPath = '';
 
-            if (this.filterConfig(role_id).id > 0) {                            // if config exists
+            if (this.filterConfig(role_id).id > 0) { // if config exists
                 this.form.id = this.filterConfig(role_id).id;
                 currentPath = '/' + this.form.id;
                 this.method = 'patch'

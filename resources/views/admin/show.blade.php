@@ -3,47 +3,36 @@
     Administration
 @endsection
 @section('content')
-    <div class="row">
-        <admin-view></admin-view>
-        <div class="col-12">
-            <div class="card">
-                <div class="w-full flex-1 p-2">
-                    {{ trans('global.exam.title') }}
-                </div>
-                <div class="card-footer bg-light p-0"
-                     style="max-height:225px; overflow-y: auto">
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item">
-                        <span  class="nav-link">
-                                {{ trans('global.exam.title') }}
-                            <span class="float-right">
-                            {{  $exam['all'] }}</span>
-                        </span>
-                        </li>
-                        <li class="nav-item">
-                        <span  class="nav-link">
-                                {{ trans('global.exam.status_options.started') }}
-                            <span class="float-right">
-                            {{  $exam['started'] }}</span>
-                        </span>
-                        </li>
-                        <li class="nav-item">
-                        <span  class="nav-link">
-                            {{ trans('global.exam.status_options.completed') }}
-                            <span class="float-right">
-                            {{  $exam['completed'] }}</span>
-                        </span>
-                        </li>
-                        <li class="nav-item">
-                        <span  class="nav-link">
-                            {{ trans('global.organization.title') }}
-                            <span class="float-right">
-                            {{  $exam['organizations'] }}</span>
-                        </span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+    <Admin-View></Admin-View>
+    <div class="card px-3">
+        <div class="p-2">{{ trans('global.exam.title') }}</div>
+        <div class="card-footer bg-light p-0">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item">
+                    <span class="nav-link">
+                        {{ trans('global.exam.title') }}
+                        <span class="float-end">{{ $exam['all'] }}</span>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link">
+                        {{ trans('global.exam.status_options.started') }}
+                        <span class="float-end">{{ $exam['started'] }}</span>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link">
+                        {{ trans('global.exam.status_options.completed') }}
+                        <span class="float-end">{{ $exam['completed'] }}</span>
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link">
+                        {{ trans('global.organization.title') }}
+                        <span class="float-end">{{ $exam['organizations'] }}</span>
+                    </span>
+                </li>
+            </ul>
         </div>
     </div>
 @endsection

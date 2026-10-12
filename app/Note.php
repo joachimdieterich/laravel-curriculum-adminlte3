@@ -21,10 +21,10 @@ class Note extends Model
     ];
     
     protected $casts = [
-        'id' => 'integer',
-        'content' => CleanHtml::class,
-        'notable_id' => 'integer',
-        'user_id' => 'integer',
+        'content'       => CleanHtml::class,
+        'notable_id'    => 'integer',
+        'created_at'    => 'datetime:d.m.Y H:i',
+        'updated_at'    => 'datetime:d.m.Y H:i',
     ];
 
     public function notable()

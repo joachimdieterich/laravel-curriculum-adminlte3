@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Collection;
 
 class Tag extends \Spatie\Tags\Tag
 {
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime:d.m.Y H:i',
+    ];
+
     protected static function booted(): void
     {
         static::created(function (Tag $tag) {

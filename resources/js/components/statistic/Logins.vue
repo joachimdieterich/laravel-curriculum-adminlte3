@@ -1,4 +1,4 @@
-<template :id="this.id">
+<template>
     <div v-if="show"
         class="card"
     >
@@ -68,6 +68,7 @@ ChartJS.register(
 
 export default {
     name: 'LoginCharts',
+    components: { Line },
     props: {
         date_begin: {
             type: String,
@@ -76,10 +77,6 @@ export default {
         date_end: {
             type: String,
             required: true,
-        },
-        chartId: {
-            type: String,
-            default: 'line-chart',
         },
         datasetIdKey: {
             type: String,
@@ -195,9 +192,6 @@ export default {
     },
     mounted() {
         this.loadAll();
-    },
-    components: {
-        Line,
     },
 };
 </script>

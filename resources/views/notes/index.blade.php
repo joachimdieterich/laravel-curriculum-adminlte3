@@ -3,5 +3,5 @@
     {{ trans('global.note.title') }}
 @endsection
 @section('content')
-    <notes></notes>
+    <Notes/>
 @endsection

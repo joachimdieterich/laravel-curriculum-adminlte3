@@ -7,6 +7,21 @@
             >
                 <div class="row">
                     <div class="col-md-12 m-0 pb-2">
+                        <span class="custom-control custom-switch custom-switch-on-green">
+                            <input
+                                id="toggle-view"
+                                class="custom-control-input pt-1"
+                                type="checkbox"
+                                v-model="allGroupsView"
+                                @click="toggleAllGroupsView"
+                            />
+                            <label
+                                class="custom-control-label text-muted"
+                                for="toggle-view"
+                            >
+                                {{ trans('global.group.allGroups') }}
+                            </label>
+                        </span>
                         <button
                             class="pull-right btn"
                             :class="classObject"
@@ -25,18 +40,18 @@
                     :label="trans('global.group.create')"
                 />
                 <IndexWidget v-for="group in groups"
-                    :key="'groupIndex'+group.id"
-                    :model="group"
-                    modelName="Group"
-                    storeTitle="groups"
-                    url="/groups"
+                             :key="'groupIndex'+group.id"
+                             :model="group"
+                             modelName="Group"
+                             storeTitle="groups"
+                             url="/groups"
                 >
                     <template v-slot:icon>
                         <i class="fa fa-layer-group"></i>
                     </template>
 
                     <template v-slot:dropdown
-                        v-permission="'group_edit, group_delete'"
+                              v-permission="'group_edit, group_delete'"
                     >
                         <div
                             class="dropdown-menu dropdown-menu-right"
@@ -87,7 +102,7 @@
                     id="group-datatable"
                     :columns="columns"
                     :options="options"
-                    ajax="/groups/list"
+                    :ajax="dtAjaxOptions"
                     :search="search"
                     width="100%"
                     style="display: none;"
@@ -111,7 +126,7 @@
             </Teleport>
         </div>
         <div v-if="checkPermission('is_schooladmin')"
-            class="mt-4"
+             class="mt-4"
         >
             <GroupOptions/>
         </div>
@@ -126,6 +141,7 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
+
 DataTable.use(DataTablesCore);
 
 export default {
@@ -137,12 +153,13 @@ export default {
             showConfirm: false,
             currentGroup: {},
             columns: [
-                { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true },
-                { title: 'organization', data: 'organization', searchable: true },
+                {title: 'id', data: 'id'},
+                {title: 'title', data: 'title', searchable: true},
+                {title: 'organization', data: 'organization', searchable: true},
             ],
-            options : this.$dtOptions,
+            options: this.$dtOptions,
             dt: null,
+            allGroupsView: false
         }
     },
     setup() {
@@ -176,7 +193,7 @@ export default {
         setMode() {
             this.store.addToDatatables({
                 datatable: 'groups',
-                select: (this.store.getDatatable('groups')?.select) ? false : true,
+                select: !this.store.getDatatable('groups')?.select,
                 selectedItems: [],
             });
         },
@@ -205,6 +222,10 @@ export default {
                     console.log(err.response);
                 });
         },
+        toggleAllGroupsView() {
+            this.allGroupsView = !this.allGroupsView;
+            this.dt.ajax.reload();
+        },
     },
     computed: {
         classObject() {
@@ -214,6 +235,16 @@ export default {
                 return 'btn-light'
             }
         },
+        dtAjaxOptions() {
+            return {
+                url: '/groups/list',
+                data: (d) => {
+                    d.allGroups = this.allGroupsView;
+
+                    return d;
+                },
+            };
+        }
     },
     components: {
         ConfirmModal,

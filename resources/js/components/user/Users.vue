@@ -1,4 +1,4 @@
-<template >
+<template>
     <div>
         <div class="d-flex flex-column">
             <div
@@ -6,11 +6,11 @@
                 class="px-3"
             >
                 <div v-if="create_label_field != 'enrol'"
-                    class="row"
+                     class="row"
                 >
                     <div class="col d-flex pb-2">
                         <span v-if="adminTools"
-                            class="custom-control custom-switch custom-switch-on-green"
+                              class="custom-control custom-switch custom-switch-on-green"
                         >
                             <input
                                 id="toggle-view"
@@ -23,13 +23,14 @@
                                 class="custom-control-label text-muted"
                                 for="toggle-view"
                             >
+                                {{ trans('global.tableView') }}
                                 Tabellenansicht
                             </label>
                         </span>
                         <button v-if="!toggleView"
-                            class="btn ml-auto"
-                            :class="classObject"
-                            @click="setMode()"
+                                class="btn ml-auto"
+                                :class="classObject"
+                                @click="setMode()"
                         >
                             {{ trans('global.select') }}
                         </button>
@@ -38,38 +39,38 @@
 
                 <div :class="toggleView ? 'd-none' : ''">
                     <IndexWidget v-if="!subscribable"
-                        v-permission="'user_create'"
-                        key="userCreate"
-                        modelName="User"
-                        url="/users"
-                        :create="true"
-                        :subscribe="false"
-                        :subscribable_id="subscribable_id"
-                        :label="trans('global.user.' + create_label_field)"
+                                 v-permission="'user_create'"
+                                 key="userCreate"
+                                 modelName="User"
+                                 url="/users"
+                                 :create="true"
+                                 :subscribe="false"
+                                 :subscribable_id="subscribable_id"
+                                 :label="trans('global.user.' + create_label_field)"
                     />
                     <IndexWidget v-else="subscribable"
-                        v-permission="'group_enrolment'"
-                        key="userSubscribe"
-                        modelName="User"
-                        url="/users"
-                        :create="false"
-                        :subscribe="true"
-                        :subscribable_id="subscribable_id"
-                        :label="trans('global.user.' + create_label_field)"
+                                 v-permission="'group_enrolment'"
+                                 key="userSubscribe"
+                                 modelName="User"
+                                 url="/users"
+                                 :create="false"
+                                 :subscribe="true"
+                                 :subscribable_id="subscribable_id"
+                                 :label="trans('global.user.' + create_label_field)"
                     >
                         <template v-slot:itemIcon>
                             <i v-if="create_label_field == 'enrol'"
-                                class="fa fa-2x fa-link text-muted"
+                               class="fa fa-2x fa-link text-muted"
                             ></i>
                         </template>
                     </IndexWidget>
                     <IndexWidget v-for="user in users"
-                        :key="'userIndex' + user.id"
-                        :model="user"
-                        modelName="User"
-                        storeTitle="users"
-                        url="/users"
-                        :showSubscribable="subscribable"
+                                 :key="'userIndex' + user.id"
+                                 :model="user"
+                                 modelName="User"
+                                 storeTitle="users"
+                                 url="/users"
+                                 :showSubscribable="subscribable"
                     >
                         <template v-slot:icon>
                             <i class="fas fa-user"></i>
@@ -82,7 +83,7 @@
                                 x-placement="left-start"
                             >
                                 <div v-if="!subscribable"
-                                    v-permission="'user_edit, user_delete'"
+                                     v-permission="'user_edit, user_delete'"
                                 >
                                     <button
                                         v-permission="'user_edit'"
@@ -109,7 +110,7 @@
                                 </div>
 
                                 <div v-else
-                                    v-permission="'group_enrolment'"
+                                     v-permission="'group_enrolment'"
                                 >
                                     <button
                                         :id="'delete-user-' + user.id"
@@ -132,8 +133,8 @@
                                     {{ user.firstname }} {{ user.lastname }}
                                 </h1>
                                 <p v-if="adminTools" class="text-muted small">
-                                    {{ user.username }} </br>
-                                    {{ user.email }} </br>
+                                    {{ user.username }} <br>
+                                    {{ user.email }} <br>
                                     {{ user.common_name }}
                                 </p>
                             </span>
@@ -185,9 +186,10 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import { useDatatableStore } from "../../store/datatables";
+import {useDatatableStore} from "../../store/datatables";
 import UserOptions from "./UserOptions.vue";
 import {useGlobalStore} from "../../store/global";
+
 DataTable.use(DataTablesCore);
 
 export default {
@@ -236,12 +238,12 @@ export default {
             toggleView: false,
             currentUser: {},
             columns: [
-                { title: 'ID', data: 'id', searchable: false },
-                { title: 'common_name', data: 'common_name', searchable: false },
-                { title: 'username', name: 'username', data: 'username', searchable: true },
-                { title: 'firstname', name: 'firstname', data: 'firstname', searchable: true },
-                { title: 'lastname', name: 'lastname', data: 'lastname', searchable: true },
-                { title: 'E-Mail', data: 'email', searchable: false },
+                {title: 'ID', data: 'id', searchable: false},
+                {title: 'common_name', data: 'common_name', searchable: false},
+                {title: 'username', name: 'username', data: 'username', searchable: true},
+                {title: 'firstname', name: 'firstname', data: 'firstname', searchable: true},
+                {title: 'lastname', name: 'lastname', data: 'lastname', searchable: true},
+                {title: 'E-Mail', data: 'email', searchable: false},
             ],
             options: this.$dtOptions,
             dt: null,
@@ -290,8 +292,8 @@ export default {
         loaderEvent() {
             this.dt = $('#user-datatable').DataTable();
             this.dt.order([ // name-attribute needs to be the same as in the columns-array
-                { name: 'lastname', dir: 'asc' },
-                { name: 'firstname', dir: 'asc' },
+                {name: 'lastname', dir: 'asc'},
+                {name: 'firstname', dir: 'asc'},
             ]);
 
             this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data

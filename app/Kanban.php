@@ -83,7 +83,7 @@ class Kanban extends Model implements Broadcastable
                     'comments.user:id,username,firstname,lastname',
                     'comments.likes',
                     'likes',
-                    'mediaSubscriptions.medium:id,title,medium_name,mime_type',
+                    'mediaSubscriptions.medium:id,title,owner_id,medium_name,mime_type',
                     'owner:id,username,firstname,lastname',
                 ])->orderBy('order_id');
             },

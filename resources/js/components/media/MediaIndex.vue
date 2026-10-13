@@ -55,42 +55,31 @@
                 Aktualisieren
             </button>
         </div>
-        <div
-            id="media-datatable-wrapper"
-            class="w-100 dataTablesWrapper"
-        >
-            <DataTable
-                id="media-datatable"
-                :columns="columns"
-                :ajax="{
-                    url: '/media/adminSearch',
-                    data: function(d) {
-                        d.showLocal = showLocal;
-                        d.showExternal = showExternal;
-                        d.onlyShowUnsubscribed = onlyShowUnsubscribed;
-                    },
-                }"
-                :options="dtOptions"
-                width="100%"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="media-datatable"
+            :columns="columns"
+            :ajax="{
+                url: '/media/adminSearch',
+                data: function(d) {
+                    d.showLocal = showLocal;
+                    d.showExternal = showExternal;
+                    d.onlyShowUnsubscribed = onlyShowUnsubscribed;
+                },
+            }"
+            :options="$dtOptions"
+        />
     </div>
 </template>
 <script>
-import {globalValues} from "../../globalValues.js";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5'
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const dtOptions = globalValues.dtOptions;
-
-        return {
-            dtOptions,
-        }
-    },
+    components: { DataTable },
     data() {
         return {
             component_id: this.$.uid,
@@ -109,22 +98,18 @@ export default {
                 { title: 'size', data: 'size' },
                 { title: 'subscriptions_count', data: 'subscriptions_count' },
             ],
-            options : this.$dtOptions,
             showLocal: true,
             showExternal: true,
             onlyShowUnsubscribed: false,
         }
     },
     mounted() {
-        this.dt = $('#media-datatable').DataTable();
+        this.dt = this.$refs.datatable.dt;
     },
     methods: {
         reload() {
             this.dt.ajax.reload();
         }
-    },
-    components: {
-        DataTable,
     },
 }
 </script>

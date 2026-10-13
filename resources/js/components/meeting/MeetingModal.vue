@@ -338,7 +338,7 @@ export default {
                 });
         },
         loadImportData() {
-            $("#loading-event_import").show();
+            document.getElementById('loading-event_import').style.display = '';
             axios.get('/meetings/getImportDataByUid?uid=' + this.form.uid)
                 .then(response => {
                     this.form.populate(response.data);
@@ -349,7 +349,7 @@ export default {
 
                     this.method = 'patch';
                     this.activetab = 'create_meeting';
-                    $("#loading-event_import").hide();
+                    document.getElementById('loading-event_import').style.display = 'none';
                 })
                 .catch(e => {
                     console.log(e);

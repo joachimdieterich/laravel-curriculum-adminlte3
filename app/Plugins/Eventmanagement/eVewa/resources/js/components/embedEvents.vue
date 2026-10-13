@@ -223,14 +223,14 @@ export default {
                 id = this.currentSearch;
             }
 
-            $("#loading-events").show();
+            document.getElementById('loading-events').style.display = 'none';
             try {
                 this.entries = (await axios.post('/eventSubscriptions/getEvents', {
                     search: id,
                     page: this.page,
                     plugin: 'evewa'
                 })).data.events.data;
-                $("#loading-events").hide();
+                document.getElementById('loading-events').style.display = '';
             } catch(error) {
                 console.log(error);
             }

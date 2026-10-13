@@ -123,7 +123,7 @@ export default {
                 this.configs.splice(index, 1);
             }
 
-            this.form.value = $('#' + this.key_value + '_role_' + role_id).val();
+            this.form.value = document.querySelector('#' + this.key_value + '_role_' + role_id).val();
             this.form.referenceable_id = role_id;
             this.form.submit(this.method, this.requestUrl + currentPath)
                 .then(response => this.configs.push(response.config))

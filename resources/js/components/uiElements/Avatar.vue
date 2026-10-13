@@ -139,10 +139,10 @@ export default {
                     canvasCssHeight = canvasHeight;
 
                 if (window.devicePixelRatio) {
-                    $(canvas).attr("width", canvasWidth * window.devicePixelRatio);
-                    $(canvas).attr("height", canvasHeight * window.devicePixelRatio);
-                    $(canvas).css("width", canvasCssWidth);
-                    $(canvas).css("height", canvasCssHeight);
+                    canvas.setAttribute("width", canvasWidth * window.devicePixelRatio);
+                    canvas.setAttribute("height", canvasHeight * window.devicePixelRatio);
+                    canvas.style.width = canvasCssWidth + 'px';
+                    canvas.style.height = canvasCssHeight + 'px';
                     context.scale(window.devicePixelRatio, window.devicePixelRatio);
                 }
 

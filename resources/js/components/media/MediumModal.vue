@@ -10,7 +10,7 @@
         <template #modal-body>
             <div class="modal-body d-md-flex">
                 <!-- left side of menu (only visible to admins) -->
-                <div v-if="checkPermission('is_admin')"
+                <div v-if="isAdmin"
                     style="border-right: 1px solid lightgrey"
                 >
                     <ul class="nav flex-column">
@@ -52,7 +52,7 @@
 
                 <div class="p-1 flex-fill">
                     <div class="tab-content">
-                        <div v-if="checkPermission('is_admin')"
+                        <div v-if="isAdmin"
                             id="upload"
                             class="tab-pane"
                         >
@@ -103,7 +103,7 @@
                             </div>
                         </div>
 
-                        <div v-if="checkPermission('is_admin')"
+                        <div v-if="isAdmin"
                             id="local-media"
                             class="tab-pane m-2"
                         >
@@ -127,11 +127,11 @@
                                     class="w-100 dataTablesWrapper"
                                 >
                                     <DataTable
+                                        ref="datatable"
                                         id="media-datatable"
                                         :columns="columns"
-                                        :options="options"
+                                        :options="$dtOptions"
                                         ajax="/media/list"
-                                        :search="search"
                                     />
                                 </div>
                             </div>
@@ -202,7 +202,9 @@ export default {
             accept: '',
             callback: 'medium-added',
             callbackId: null,
+            dt: null,
             search: '',
+            searchTimeoutId: null,
             message: '',
             columns: [
                 {
@@ -216,22 +218,7 @@ export default {
                 { title: 'size', data: 'size' },
                 { title: 'created_at', data: 'created_at' },
             ],
-            options : this.$dtOptions,
             postProcess: false,
-        }
-    },
-    computed: {
-        isInitial() {
-            return this.currentStatus === STATUS_INITIAL;
-        },
-        isSaving() {
-            return this.currentStatus === STATUS_SAVING;
-        },
-        isSuccess() {
-            return this.currentStatus === STATUS_SUCCESS;
-        },
-        isFailed() {
-            return this.currentStatus === STATUS_FAILED;
         }
     },
     methods: {
@@ -311,19 +298,6 @@ export default {
         },
         setTab(tab) {
             this.tab = tab;
-
-            if (tab === 'media') {
-                const datatable = $('#media-datatable').DataTable();
-
-                $('#media_search_datatable').on('keyup', function () {
-                    datatable.search(this.search).draw();
-                }.bind(this));
-
-                datatable.on('select deselect', (e, dt) => {
-                    let selection = datatable.rows({page: 'current'}).data()[dt[0][0]];
-                    this.globalStore.addSelectedMedia(selection);
-                });
-            }
         },
         externalAdd(form) {
             this.postProcess = true;
@@ -356,12 +330,46 @@ export default {
                 this.currentStatus = STATUS_INITIAL;
 
                 this.form.populate(params);
+
+                if (this.isAdmin) {
+                    this.$nextTick(() => {
+                        this.dt = this.$refs.datatable.dt;
+                        this.dt.on('select deselect', (e, dt) => {
+                            let selection = this.dt.rows({page: 'current'}).data()[dt[0][0]];
+                            this.globalStore.addSelectedMedia(selection);
+                        });
+                    });
+                }
             }
         });
 
-        this.$eventHub.on('external_add', (form) => {
-            this.externalAdd(form);
-        });
+        this.$eventHub.on('external_add', form => this.externalAdd(form));
+    },
+    watch: {
+        search: function(newValue) {
+            const localTimeoutId = setTimeout(() => {
+                if (this.searchTimeoutId === localTimeoutId) this.dt.search(newValue).draw();
+            }, 300);
+
+            this.searchTimeoutId = localTimeoutId;
+        },
+    },
+    computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
+        isInitial() {
+            return this.currentStatus === STATUS_INITIAL;
+        },
+        isSaving() {
+            return this.currentStatus === STATUS_SAVING;
+        },
+        isSuccess() {
+            return this.currentStatus === STATUS_SUCCESS;
+        },
+        isFailed() {
+            return this.currentStatus === STATUS_FAILED;
+        }
     },
 }
 </script>

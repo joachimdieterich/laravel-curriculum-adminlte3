@@ -1,37 +1,28 @@
 <template>
     <div class="d-flex flex-column">
         <div class="p-3">
-            <div
-                id="exam-enrolled-user-datatable-wrapper"
-                class="w-100 dataTablesWrapper"
-            >
+            <div>
                 <h5>{{ trans('global.exam.add_remove_users.students_exam_title') }} {{ exam.test_name }}</h5>
                 <DataTable
+                    ref="enrolled-datatable"
                     id="exam-enrolled-user-datatable"
-                    class="p-0"
                     :columns="columns"
-                    :options="options"
+                    :options="$dtOptions"
                     :ajax="'/exams/' + exam.exam_id + '/list'"
-                    :search="search"
-                    width="100%"
                 />
             </div>
 
             <button
-                id="expelFromCurricula"
                 type="button"
-                name="expelFromCurricula"
-                class="btn btn-primary pull-right mt-3"
+                class="btn btn-primary float-end mt-3"
                 @click="expelFromExam()"
             >
                 <i class="fa fa-minus me-2"></i>
                 {{ trans('global.exam.expel_user') }}
             </button>
             <button v-if="exam.status !== 0"
-                :id="'edit-exam-' + exam.id"
                 type="button"
-                :name="'edit-exam-' + exam.id"
-                class="btn btn-primary pull-left mt-3 me-2"
+                class="btn btn-primary float-start mt-3 me-2"
                 @click="getReport()"
             >
                 <i class="fa fa-download me-2"></i>
@@ -39,76 +30,40 @@
             </button>
         </div>
 
-        <hr class="px-3 w-100">
+        <hr/>
 
         <div class="py-3">
-            <div
-                id="exam-expelled-user-datatable-wrapper"
-                class="w-100 dataTablesWrapper"
-            >
+            <div>
                 <h5>{{ trans('global.exam.add_remove_users.users_group_title')}}</h5>
                 <DataTable
+                    ref="expelled-datatable"
                     id="exam-expelled-user-datatable"
-                    class="p-0"
                     :columns="columns2"
-                    :options="options"
+                    :options="$dtOptions"
                     :ajax="'/exams/' + exam.exam_id + '/users/list'"
-                    :search="search"
-                    width="100%"
                 />
             </div>
             <button
-                id="expelFromCurricula"
                 type="button"
-                name="expelFromCurricula"
-                class="btn btn-primary pull-right mt-3 me-3"
+                class="btn btn-primary float-end mt-3 me-3"
                 @click="enrolIntoExam()"
             >
                 <i class="fa fa-plus me-2"></i>
                 {{ trans('global.exam.enrol_user') }}
             </button>
         </div>
-
-        <Teleport to="body">
-            <ExamModal
-                :show="showExamModal"
-                :params="currentExam"
-                @close="this.showExamModal = false"
-            />
-            <ConfirmModal
-                :showConfirm="showConfirm"
-                :title="confirmTitle"
-                :description="confirmDescription"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.confirmFunction;
-                }"
-            />
-        </Teleport>
     </div>
 </template>
 <script>
-import ExamModal from "../exam/ExamModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
 import {useDatatableStore} from "../../store/datatables.js";
-import {useGlobalStore} from "../../store/global.js";
-import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useToast} from "vue-toastification";
-import axios from "axios";
 DataTable.use(DataTablesCore);
 
 export default {
-    name: "exam",
-    components: {
-        ConfirmModal,
-        ExamModal,
-        DataTable,
-    },
+    name: "Exam",
+    components: { DataTable },
     props: {
         exam: {
             type: Object,
@@ -118,9 +73,6 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
-            showExamModal: false,
-            currentExam: {},
-            search: '',
             columns: [
                 { title: window.trans.global.firstname, name: 'firstname', data: 'firstname' },
                 { title: window.trans.global.lastname, name: 'lastname', data: 'lastname' },
@@ -158,24 +110,12 @@ export default {
                 { title: window.trans.global.lastname, name: 'lastname', data: 'lastname' },
                 { title: window.trans.global.user.fields.email, data: 'email' },
             ],
-            options : this.$dtOptions,
-            dt: null,
-            dt2: null,
-            showConfirm: false,
-            confirmTitle: '',
-            confirmDescription: '',
-            confirmFunction: null,
+            dtEnrolled: null,
+            dtExpelled: null,
         }
     },
     setup() {
-        const store = useDatatableStore();
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            store,
-            globalStore,
-            toast
-        }
+        return { store: useDatatableStore() }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
@@ -183,13 +123,11 @@ export default {
         this.resetExamEnrolledUserDatatable();
         this.resetExamExpelledUserDatatable();
 
-        this.loaderEvent();
+        this.dtEnrolled = this.$refs['enrolled-datatable'].dt;
+        this.dtExpelled = this.$refs['expelled-datatable'].dt;
+        this.dtEvents();
 
-        this.currentExam = this.exam;
-        this.$eventHub.on('exam-updated', (exam) => {
-            this.currentExam = exam;
-            this.showExamModal = false;
-        });
+        this.$eventHub.on('filter', filter => this.dtExpelled.search(filter.searchString).draw());
     },
     methods: {
         resetExamEnrolledUserDatatable() {
@@ -210,15 +148,14 @@ export default {
                 }
             );
         },
-        loaderEvent() {
-            this.dt = $('#exam-enrolled-user-datatable').DataTable();
-            this.dt.order([ // name-attribute needs to be the same as in the columns-array
+        dtEvents() {
+            this.dtEnrolled.order([ // name-attribute needs to be the same as in the columns-array
                 { name: 'lastname', dir: 'asc' },
                 { name: 'firstname', dir: 'asc' },
             ]);
 
-            this.dt.on('select', (e, dt, type, indexes) => {
-                let selection = this.dt.rows('.selected').data().toArray()
+            this.dtEnrolled.on('select', (e, dt, type, indexes) => {
+                let selection = this.dtEnrolled.rows('.selected').data().toArray()
 
                 selection.forEach(function (user) {
                     if (user.pivot.exam_started) {
@@ -228,33 +165,20 @@ export default {
                     }
                 }.bind(this))
 
-                selection = this.dt.rows('.selected').data().toArray()
+                selection = this.dtEnrolled.rows('.selected').data().toArray()
                 this.store.setSelectedIds('exam-enrolled-user-datatable', selection);
             });
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.exams = this.dt.rows({page: 'current'}).data().toArray();
-            });
 
-            this.dt2 = $('#exam-expelled-user-datatable').DataTable();
-            this.dt2.order([ // name-attribute needs to be the same as in the columns-array
+            this.dtExpelled.order([ // name-attribute needs to be the same as in the columns-array
                 { name: 'lastname', dir: 'asc' },
                 { name: 'firstname', dir: 'asc' },
             ]);
 
-            this.dt2.on('select', () => {
-                let selection = this.dt2.rows('.selected').data().toArray()
+            this.dtExpelled.on('select', () => {
+                let selection = this.dtExpelled.rows('.selected').data().toArray()
 
                 this.store.setSelectedIds('exam-expelled-user-datatable', selection);
             });
-            this.dt2.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.exams = this.dt2.rows({page: 'current'}).data().toArray();
-            });
-            this.$eventHub.on('filter', (filter) => {
-                this.dt2.search(filter).draw();
-            });
-        },
-        editExam() {
-            this.showExamModal = true;
         },
         enrolIntoExam() {
             let ids = this.store.getSelectedValuesByField('exam-expelled-user-datatable', 'user_id');

@@ -71,12 +71,11 @@
         </a>
     </div>
 </template>
-
 <script>
 import MediaRenderer from './MediaRenderer.vue';
-import {useGlobalStore} from "../../store/global";
 
 export default {
+    components: { MediaRenderer },
     props: {
         subscriptions: {
             type: Array,
@@ -86,12 +85,6 @@ export default {
             type: Number,
             default: null,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
@@ -118,7 +111,7 @@ export default {
             }
         },
         unlinkMedium(item) { //id of external reference and value in db
-            $('#loading_' + this.component_id).show();
+            document.getElementById('loading_' + this.component_id).style.display = '';
             axios.post('/mediumSubscriptions/destroy', {
                 medium_id: item.medium_id,
                 subscribable_id: item.subscribable_id,
@@ -126,20 +119,17 @@ export default {
                 additional_data: true, // hack to skip setting medium_id of model to null
             })
             .then(res => {
-                $('#loading_' + this.component_id).hide();
+                document.getElementById('loading_' + this.component_id).style.display = 'none';
                 this.subscriptions.splice(this.currentSlide, 1);
                 if (this.subscriptions.length === 0) return;
-                $('#' + this.component_id).carousel(0);
+                new bootstrap.Carousel(document.getElementById(this.component_id)).to(0);
                 this.currentSlide = 0;
             })
             .catch(err => {
-                $('#loading_' + this.component_id).hide();
+                document.getElementById('loading_' + this.component_id).style.display = 'none';
                 console.log(err.response);
             });
         },
-    },
-    components: {
-        MediaRenderer,
     },
 }
 </script>

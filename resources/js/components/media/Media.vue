@@ -180,12 +180,12 @@ export default {
             window.open('/media/' + mediumObject.id + '?content=true', '_blank');
         },
         addMedia() {
-            this.globalStore?.showModal('medium-modal', {
-                'subscribeSelected': true,
-                'subscribable_type': this.subscribable_type,
-                'subscribable_id': this.subscribable_id,
-                'public': this.public ? 1 : 0,
-                'callbackId': this.component_id
+            this.globalStore.showModal('medium-modal', {
+                subscribeSelected: true,
+                subscribable_type: this.subscribable_type,
+                subscribable_id: this.subscribable_id,
+                public: this.public ? 1 : 0,
+                callbackId: this.component_id
             });
         },
         async unlinkMedium(subscription) { //id of external reference and value in db
@@ -194,7 +194,8 @@ export default {
             } catch (e) {
                 console.log(e)
             }
-            $("#medium_" + this.medium.id).hide();
+            const index = this.subscriptions.indexOf(subscription);
+            this.subscriptions.splice(index, 1);
         },
         iconCss(mimeType) {
             switch (true) {

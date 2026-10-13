@@ -6,6 +6,7 @@ use App\Curriculum;
 use App\Domains\Exams\Models\Exam;
 use App\Tag;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -21,26 +22,15 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function impressum()
-    {
-        return view('impressum');
-    }
-
     /**
      * Returns the courses of the user
      */
     public function courses(): Collection
     {
-        $user = auth()->user();
+        $user    = auth()->user();
         $org_ids = $user->organizations()->pluck('organizations.id');
 
-        // similar to user()->currentCurriculaEnrollments, but with all enroled organizations
-        return Curriculum::select(
-            'curricula.id', 'curricula.title', 'groups.title AS group_title',
-            'curriculum_subscriptions.id AS course_id',
-            'curriculum_subscriptions.subscribable_id AS group_id'
-        )
-            ->leftjoin('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
+        $query = Curriculum::leftjoin('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
             ->leftjoin('group_user', 'group_user.group_id', '=', 'curriculum_subscriptions.subscribable_id')
             ->join('groups', 'groups.id', '=', 'group_user.group_id')
             ->where('curriculum_subscriptions.subscribable_type', 'App\Group')
@@ -53,8 +43,16 @@ class HomeController extends Controller
                     ->whereNot('status', '00');
             }])
             ->withCount('enablingObjectives')
-            ->without('owner')
-            ->get();
+            ->without('owner');
+
+        $hasFavourited = $this->addTagsToQuery($query);
+
+        return $query->select(
+            'curricula.id', 'curricula.title', 'groups.title AS group_title',
+            'curriculum_subscriptions.id AS course_id',
+            'curriculum_subscriptions.subscribable_id AS group_id',
+            DB::raw(($hasFavourited ? 1 : 0) . ' AS is_favourited')
+        )->get();
     }
 
     /**
@@ -74,7 +72,7 @@ class HomeController extends Controller
     public function achievements(): Collection
     {
         return auth()->user()->achievements()
-            ->orderBy('achievements.updated_at', 'desc')
+            ->orderByDesc('achievements.updated_at')
             ->where('status', '!=', '00')
             ->limit(10)
             ->with([
@@ -98,28 +96,14 @@ class HomeController extends Controller
     }
 
     /**
-     * Returns favoured kanbans if exists, else all accessible to user
+     * Returns favored kanbans if exists, else all accessible to user
      */
     public function kanbans(): Collection
     {
-        $query = auth()->user()->kanbans()->orderBy('kanbans.title');
-        // add withTags so it doesn't fire a query for every single entry
-        $query->with(['tags' => function ($query) {
-            $query->select('id', 'name', 'slug')
-                ->where('user_id', auth()->user()->id);
-        }]);
+        $query         = auth()->user()->kanbans()->orderBy('kanbans.title');
+        $hasFavourited = $this->addTagsToQuery($query);
 
-        $favouriteTag = Tag::findFromString(trans('global.tag.favourite.singular')) ?? 0;
-        $favCount     = (clone $query)->withAllTags($favouriteTag)->count();
-
-        if ($favCount !== 0) {
-            $query->withAllTags($favouriteTag);
-        } else {
-            $negativeTag = Tag::findFromString(trans('global.tag.hidden.singular')) ?? 0;
-            $query->withoutTags($negativeTag);
-        }
-
-        return $query->select('kanbans.id', 'kanbans.title', 'kanbans.owner_id', DB::raw($favCount . ' AS is_favourited'))->get();
+        return $query->select('kanbans.id', 'kanbans.title', 'kanbans.owner_id', DB::raw(($hasFavourited ? 1 : 0) . ' AS is_favourited'))->get();
     }
 
     /**
@@ -137,8 +121,6 @@ class HomeController extends Controller
      */
     public function exams(): Collection
     {
-        $exams = null;
-
         if (is_student()) {
             $exams = auth()->user()->exams()
                 ->with('group:id,title')
@@ -153,5 +135,26 @@ class HomeController extends Controller
         }
 
         return $exams;
+    }
+
+    private function addTagsToQuery(Builder $query): int
+    {
+        // add withTags so it doesn't fire a query for every single entry
+        $query->with(['tags' => function ($query) {
+            $query->select('id', 'name', 'slug')
+                ->where('user_id', auth()->user()->id);
+        }]);
+
+        $favouriteTag = Tag::findFromString(trans('global.tag.favourite.singular')) ?? 0;
+        $favCount     = (clone $query)->withAllTags($favouriteTag)->count();
+
+        if ($favCount !== 0) {
+            $query->withAllTags($favouriteTag);
+        } else {
+            $negativeTag = Tag::findFromString(trans('global.tag.hidden.singular')) ?? 0;
+            $query->withoutTags($negativeTag);
+        }
+
+        return $favCount;
     }
 }

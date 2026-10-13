@@ -18,6 +18,12 @@
                 @error="handleError"
             >
                 <template #entry="{ entry }">
+                    <i v-if="!entry.grade"
+                       class="fa text-secondary mr-2"
+                       :class="entry.is_favourited
+                                ? 'fa-heart'
+                                : entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
+                    ></i>
                     <a :href="'/courses/' + entry.course_id">
                         <span class="font-weight-bold">{{ entry.title }}</span>
                         <span v-if="isVisible.progress"

@@ -1,15 +1,15 @@
 @extends('layouts.app')
 @section('content')
-<body class="hold-transition login-page">
+    <body class="hold-transition login-page">
 
-<div class="login-box">
-    <div class="login-logo m-1 ">
-         <svg class="mt-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
-              width="30.000000pt" viewBox="0 0 400.000000 460.000000"
-              preserveAspectRatio="xMidYMid meet">
-             <g transform="translate(0.000000,460.000000) scale(0.100000,-0.100000)"
-                fill="#fff" stroke="none">
-                 <path d="M2231 4531 c-8 -5 -48 -74 -90 -153 l-76 -143 -60 -13 c-153 -32
+        <div class="login-box">
+            <div class="login-logo m-1 ">
+                <svg class="mt-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
+                     width="30.000000pt" viewBox="0 0 400.000000 460.000000"
+                     preserveAspectRatio="xMidYMid meet">
+                    <g transform="translate(0.000000,460.000000) scale(0.100000,-0.100000)"
+                       fill="#fff" stroke="none">
+                        <path d="M2231 4531 c-8 -5 -48 -74 -90 -153 l-76 -143 -60 -13 c-153 -32
                        -325 -76 -380 -96 l-60 -21 -135 87 c-156 102 -173 105 -259 57 -201 -114
                        -482 -343 -498 -407 -3 -14 11 -78 36 -161 23 -75 43 -146 43 -157 1 -11 -28
                        -65 -64 -119 -36 -55 -94 -152 -128 -215 -34 -63 -65 -119 -70 -123 -4 -5 -70
@@ -28,99 +28,95 @@
                        59 84 116 177 247 402 264 435 240 471 -4 6 -55 37 -114 68 -59 32 -109 65
                        -112 74 -3 9 -19 78 -34 152 -16 75 -34 146 -41 157 -20 39 -182 79 -436 108
                        -145 17 -283 19 -304 6z"/>
-             </g>
-        </svg>
+                    </g>
+                </svg>
 
-        <h3 class="font-weight-light text-white"><strong>curriculum</strong>online</h3>
-    </div>
-    <div class="card">
-        <div class="card-body login-card-body">
-<!--            <p class="login-box-msg">{{ trans('global.login_text') }}</p>-->
-            @if(\Session::has('message'))
-                <p class="alert alert-info">
-                    {{ \Session::get('message') }}
-                </p>
-            @endif
-            <form action="{{ route('login') }}" method="POST">
-                {{ csrf_field() }}
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="{{ trans('global.login_email') }} / {{ trans('global.user_name') }}" name="email">
-                           <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-envelope"></span>
+                <h3 class="font-weight-light text-white"><strong>curriculum</strong>online</h3>
+            </div>
+            <div class="card">
+                <div class="card-body login-card-body">
+                    @if(\Session::has('message'))
+                        <p class="alert alert-info">
+                            {{ \Session::get('message') }}
+                        </p>
+                    @endif
+                    <form action="{{ route('login') }}" method="POST">
+                        {{ csrf_field() }}
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control"
+                                   placeholder="{{ trans('global.login_email') }} / {{ trans('global.user_name') }}"
+                                   name="email">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-envelope"></span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="input-group mb-3">
-                    <input type="password" class="form-control" placeholder="{{ trans('global.login_password') }}" name="password">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
+                        <div class="input-group mb-3">
+                            <input type="password" class="form-control"
+                                   placeholder="{{ trans('global.login_password') }}" name="password">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-6">
-                        @if (config('app.guest_user_id') !== null)
-                        <a href="/guest" name="login" class="btn btn-primary btn-block btn-flat">{{ trans('global.login_guest') }}</a>
-                        @endif
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-6">
-                        <button type="submit" name="login" class="btn btn-primary btn-block btn-flat">{{ trans('global.login') }}</button>
-                    </div>
-                    <!-- /.col -->
+                        <div class="row">
+                            <div class="col-6">
+                                @if (config('app.guest_user_id') !== null)
+                                    <a href="/guest" name="login"
+                                       class="btn btn-primary btn-block btn-flat">{{ trans('global.login_guest') }}</a>
+                                @endif
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-6">
+                                <button type="submit" name="login"
+                                        class="btn btn-primary btn-block btn-flat">{{ trans('global.login') }}</button>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                    </form>
+                    @if (config('app.oidc_host') !== null)
+                        <div class="social-auth-links text-center mb-3">
+                            <p>- {{ trans('auth.or') }} -</p>
+                            <a href="{{ route('home') }}" class="btn btn-block btn-primary">
+                                <i class="mr-2"></i> {{ trans('global.login_SSO') }}
+                            </a>
+                        </div>
+                    @endif
+                    @if (config('app.allow_password_reset') === true)
+                        <p class="mb-1">
+                            <a class="" href="{{ route('password.request') }}">
+                                {{ trans('global.forgot_password') }}
+                            </a>
+                        </p>
+                    @endif
                 </div>
-            </form>
-            @if (config('app.oidc_host') !== null)
-                <div class="social-auth-links text-center mb-3">
-                    <p>- {{ trans('auth.or') }} -</p>
-                    <a href="{{ route('home') }}" class="btn btn-block btn-primary">
-                        <i class="mr-2"></i> {{ trans('global.login_SSO') }}
-                    </a>
-                </div>
-            @endif
-            @if (config('app.allow_password_reset') === true)
-                <p class="mb-1">
-                    <a class="" href="{{ route('password.request') }}">
-                        {{ trans('global.forgot_password') }}
-                    </a>
-                </p>
-            @endif
-            <p class="mb-0">
-                @if (config('app.show_impressum') === true)
-                    <a class="" href="{{ route('impressum') }}">Impressum</a>
-                @endif
-            </p>
-            <p class="mb-1">
-
-            </p>
+                <!-- /.login-card-body -->
+            </div>
         </div>
-        <!-- /.login-card-body -->
-    </div>
-</div>
-</body>
+    </body>
 @endsection
 @section('styles')
-<style>
-    body{
-        background-color: #597dff !important;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1200 800'%3E%3Cdefs%3E%3CradialGradient id='a' cx='0' cy='800' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%234295ff'/%3E%3Cstop offset='1' stop-color='%234295ff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='b' cx='1200' cy='800' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23527aff'/%3E%3Cstop offset='1' stop-color='%23527aff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='c' cx='600' cy='0' r='600' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%233b94ff'/%3E%3Cstop offset='1' stop-color='%233b94ff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='d' cx='600' cy='800' r='600' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23597dff'/%3E%3Cstop offset='1' stop-color='%23597dff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='e' cx='0' cy='0' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%232bb8ff'/%3E%3Cstop offset='1' stop-color='%232bb8ff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='f' cx='1200' cy='0' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%234a77ff'/%3E%3Cstop offset='1' stop-color='%234a77ff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='1200' height='800'/%3E%3Crect fill='url(%23b)' width='1200' height='800'/%3E%3Crect fill='url(%23c)' width='1200' height='800'/%3E%3Crect fill='url(%23d)' width='1200' height='800'/%3E%3Crect fill='url(%23e)' width='1200' height='800'/%3E%3Crect fill='url(%23f)' width='1200' height='800'/%3E%3C/svg%3E") !important;
-        background-attachment: fixed !important;
-        background-size: cover !important;
-    }
+    <style>
+        body {
+            background-color: #597dff !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1200 800'%3E%3Cdefs%3E%3CradialGradient id='a' cx='0' cy='800' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%234295ff'/%3E%3Cstop offset='1' stop-color='%234295ff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='b' cx='1200' cy='800' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23527aff'/%3E%3Cstop offset='1' stop-color='%23527aff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='c' cx='600' cy='0' r='600' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%233b94ff'/%3E%3Cstop offset='1' stop-color='%233b94ff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='d' cx='600' cy='800' r='600' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23597dff'/%3E%3Cstop offset='1' stop-color='%23597dff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='e' cx='0' cy='0' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%232bb8ff'/%3E%3Cstop offset='1' stop-color='%232bb8ff' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='f' cx='1200' cy='0' r='800' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%234a77ff'/%3E%3Cstop offset='1' stop-color='%234a77ff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect fill='url(%23a)' width='1200' height='800'/%3E%3Crect fill='url(%23b)' width='1200' height='800'/%3E%3Crect fill='url(%23c)' width='1200' height='800'/%3E%3Crect fill='url(%23d)' width='1200' height='800'/%3E%3Crect fill='url(%23e)' width='1200' height='800'/%3E%3Crect fill='url(%23f)' width='1200' height='800'/%3E%3C/svg%3E") !important;
+            background-attachment: fixed !important;
+            background-size: cover !important;
+        }
 
-    .center-icon{
-        display:inline-block;
-        font-size: 40px;
-        line-height: 50px;
-        color:white;
-        width: 50px;
-        height: 50px;
-        text-align: center;
-        vertical-align: bottom;
-    }
-</style>
+        .center-icon {
+            display: inline-block;
+            font-size: 40px;
+            line-height: 50px;
+            color: white;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            vertical-align: bottom;
+        }
+    </style>
 
 @endsection

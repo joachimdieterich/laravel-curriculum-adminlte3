@@ -12,7 +12,6 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -348,7 +347,7 @@ class User extends Authenticatable
     /**
      * current role, based on current_organization_id organization_role_users
      */
-    public function role(): ?Model
+    public function role(): Role
     {
         return once(function () {
             return $this->belongsToMany(Role::class, 'organization_role_users')

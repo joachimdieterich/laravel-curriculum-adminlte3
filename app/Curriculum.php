@@ -14,6 +14,7 @@ use Mews\Purifier\Casts\CleanHtml;
 /**
  *   @OA\Schema(
  *      required={"id", "title", "description", "author", "publisher", "city", "date", "color", "grade_id", "subject_id", "organisation_type_id", "state_id", "country_id", "medium_id", "owner_id", "created_at", "updated_at"},
+ *
  *      @OA\Xml(name="Curriculum"),
  *
  *      @OA\Property( property="id", type="integer"),
@@ -41,30 +42,30 @@ class Curriculum extends Model implements Broadcastable
     protected $guarded = [];
 
     protected $casts = [
-        'description' => CleanHtml::class,
+        'description'          => CleanHtml::class,
         'objective_type_order' => 'array',
-        'variants' => 'array',
-        'date'  => 'datetime',
-        'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
-        'archived' => 'boolean',
+        'variants'             => 'array',
+        'date'                 => 'datetime',
+        'updated_at'           => 'datetime',
+        'created_at'           => 'datetime',
+        'archived'             => 'boolean',
     ];
 
     protected $attributes = [
-        'state_id' => 'DE-RP',
-        'country_id' => 'DE',
-        'color' => '#27AE60',
-        'grade_id' => 1,
-        'subject_id' => 51, //Math
+        'state_id'             => 'DE-RP',
+        'country_id'           => 'DE',
+        'color'                => '#27AE60',
+        'grade_id'             => 1,
+        'subject_id'           => 51, // Math
         'organization_type_id' => 1,
-        'type_id' => 4,  //= user
+        'type_id'              => 4,  // = user
     ];
 
     protected $appends = ['is_favourited', 'is_hidden'];
 
     protected $with = ['owner:id,firstname,lastname'];
 
-    public function withRelations(): self|null
+    public function withRelations(): ?self
     {
         return $this->with([
             'glossar.contents',
@@ -75,7 +76,6 @@ class Curriculum extends Model implements Broadcastable
     /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param  \DateTimeInterface  $date
      * @return string
      */
     protected function serializeDate(DateTimeInterface $date)
@@ -101,9 +101,9 @@ class Curriculum extends Model implements Broadcastable
     public function state()
     {
         return $this->hasOne('App\State', 'code', 'state_id')
-                    ->withDefault(function () {
-                        return new State();
-                    });
+            ->withDefault(function () {
+                return new State;
+            });
     }
 
     public function country()
@@ -123,7 +123,7 @@ class Curriculum extends Model implements Broadcastable
 
     public function subject()
     {
-        //return $this->hasOne('App\Subject', 'external_id', 'subject_id');
+        // return $this->hasOne('App\Subject', 'external_id', 'subject_id');
         return $this->hasOne('App\Subject', 'id', 'subject_id');
     }
 
@@ -273,10 +273,10 @@ class Curriculum extends Model implements Broadcastable
         }
 
         if ($token == null) {
-            $userSubscription         = optional($this->userSubscriptions()
+            $userSubscription = optional($this->userSubscriptions()
                 ->where('subscribable_id', $user_id)
                 ->first());
-            $groupSubscription        = optional($this->groupSubscriptions()
+            $groupSubscription = optional($this->groupSubscriptions()
                 ->whereIn('subscribable_id', auth()->user()->groups->pluck('id'))
                 ->where('editable', 1)
                 ->first());
@@ -286,10 +286,11 @@ class Curriculum extends Model implements Broadcastable
                 ->first());
         } else {
             $userSubscription = optional($this->userSubscriptions()
-                /*->where('subscribable_id', $user_id)*/ // fix 500 error on authenticated users
+                /* ->where('subscribable_id', $user_id) */ // fix 500 error on authenticated users
                 ->where('sharing_token', $token)
                 ->first());
         }
+
         if (($this->owner_id == $user_id || is_admin()) // owner or admin
             || ($this->type_id !== 1 // non-global
                 && ($userSubscription?->editable // user enrolled
@@ -304,8 +305,9 @@ class Curriculum extends Model implements Broadcastable
         return false;
     }
 
-    public static function booted() {
-        static::deleting(function(Curriculum $curriculum) { // before delete() method call this
+    public static function booted()
+    {
+        static::deleting(function (Curriculum $curriculum) { // before delete() method call this
             $curriculum->subscriptions()->delete();
             $curriculum->certificates()->delete();
             $curriculum->glossar()->delete();

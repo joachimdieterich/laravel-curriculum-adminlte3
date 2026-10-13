@@ -124,11 +124,11 @@ return [
     'remove_like'                    => 'Gefällt mir entfernen',
     'view_file'                      => 'Datei anzeigen',
     'verifyYourBenutzer'             => 'Um Ihre Registrierung abzuschließen werden sie aufgefordert die E-Mail Adresse zu verifizieren',
-    'clickHereToVerify'              => 'Zum bestätigen hier klickem',
+    'clickHereToVerify'              => 'Zum bestätigen hier klicken',
     'thankYouForUsingOurApplication' => 'Vielen Dank für die Nutzung unserer Website',
     'verifyYourEmail'                => 'Bitte verifizieren Sie Ihre E-Mail',
     'emailVerificationSuccess'       => 'Benutzer-E-Mail erfolgreich verifiziert',
-    'yourAccountNeedsAdminApproval'  => 'Ihre Benutzerkont benötigen eine Freigabe durch einen Administrator, bevor sie sich anmelden können',
+    'yourAccountNeedsAdminApproval'  => 'Ihre Benutzerkonto benötigen eine Freigabe durch einen Administrator, bevor sie sich anmelden können',
     'timeFrom'                       => 'von',
     'timeTo'                         => 'bis',
     'filterDate'                     => 'Nach Datum filtern',
@@ -211,7 +211,7 @@ return [
         'edit'           => 'Metadatenset bearbeiten',
         'delete'         => 'Metadatenset löschen',
         'delete_success' => 'Metadatenset gelöscht.',
-        'delete_error'   => 'Metadatensetlöschung fehlgeschlagen.',
+        'delete_error'   => 'Metadatenset-Löschung fehlgeschlagen.',
         'delete_helper'  => 'Soll das Metadatenset gelöscht werden?',
         'fields'         => [
             'version'        => 'Version',
@@ -689,9 +689,13 @@ return [
             'variant_default_description_helper' => '',
         ],
     ],
-    'curriculumtype' => [
+    'curriculumType' => [
         'title'          => 'Typ',
         'title_singular' => 'Typ',
+        'global'         => 'Bereichsübergreifend',
+        'organization'   => 'Organisation',
+        'group'          => 'Gruppe',
+        'user'           => 'Benutzer',
     ],
     'terminalObjective' => [
         'title'              => 'Bereiche',
@@ -746,7 +750,7 @@ return [
         'create'                     => 'Medium erstellen',
         'edit'                       => 'Medium bearbeiten',
         'upload'                     => 'Medien/Medium hochladen',
-        'upload_helper'              => 'Zum Hochladen Datei(en) hierher ziehen<br> oder klicken um Datei(en) auszuwählen',
+        'upload_helper'              => 'Zum Hochladen Datei(en) hierherziehen<br> oder klicken um Datei(en) auszuwählen',
         'upload_cloud'               => 'Medien (in die Cloud) hochladen',
         'connect_cloud'              => 'Medien aus der Cloud verknüpfen',
         'delete'                     => 'Medium löschen',
@@ -759,7 +763,7 @@ return [
         'fields'                     => [
             'path'               => 'PFad',
             'path_helper'        => '',
-            'medium_name'        => 'Mediumname',
+            'medium_name'        => 'Medium-name',
             'medium_name_helper' => '',
             'author'             => 'Autor',
             'author_helper'      => '',
@@ -970,7 +974,7 @@ return [
     'eventSubscription' => [
         'title'          => 'Veranstaltungen',
         'title_alt'      => 'Fortbildungen',
-        'title_singular' => 'Veranstaltunge',
+        'title_singular' => 'Veranstaltung',
         'create'         => 'Veranstaltungen verknüpfen',
         'search'         => '(Fortbildungs-)Veranstaltungen suchen',
         'search_subject' => '... nach Fach',
@@ -1107,7 +1111,7 @@ return [
         'edit'                  => 'Pinnwand bearbeiten',
         'copy'                  => 'Pinnwand kopieren',
         'copy_helper'           => 'Wollen Sie die Pinnwand kopieren?',
-        'copy_note'             => 'Hinweis: Mit der Kopie der Pinnwand werden keine Inhalte bzw. Dateien (z.B. Bilder oder PDFs) mitkopiert, sondern nur die Zugriffsrechte darauf. Die Dateien bleiben weiter in der alleinigen Verfügung der jeweiligen Eigentümer:innen.',
+        'copy_note'             => 'Hinweis: Mit der Kopie der Pinnwand werden keine Inhalte bzw. Dateien (z.B. Bilder oder PDFs) mit kopiert, sondern nur die Zugriffsrechte darauf. Die Dateien bleiben weiter in der alleinigen Verfügung der jeweiligen Eigentümer:innen.',
         'enrol'                 => 'Pinnwand verknüpfen',
         'expel_helper'          => 'Gruppe aus Pinnwand ausschreiben',
         'only_edit_owned_items' => 'Nutzende können nur selbst erstellte Spalten/Karten bearbeiten',
@@ -1391,7 +1395,7 @@ return [
         'title_singular' => 'Marker-Kategorie',
     ],
     'global' => [
-        'title_singular' => 'global verfügbar',
+        'title_singular' => 'Bereichsübergreifend verfügbar',
     ],
     'statusdefinition' => [
         'title_singular' => 'Status',

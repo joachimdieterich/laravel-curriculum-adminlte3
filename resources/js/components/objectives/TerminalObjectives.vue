@@ -41,7 +41,7 @@
                             {{ objective_types[type_index].title }}
                         </button>
                     </li>
-               </template>
+                </template>
             </draggable>
             <Select2 v-if="curriculum.type_id === 1"
                 id="references"
@@ -66,9 +66,10 @@
             >
                 <div class="d-flex flex-column gap-2">
                     <div v-for="terminal in type.terminal_objectives"
-                        :id="'terminalObjective_' + terminal.id"
-                        class="objectives"
+                         :id="'terminalObjective_' + terminal.id"
+                         class="objectives"
                     >
+
                         <ObjectiveBox
                             type="terminal"
                             :objective="terminal"
@@ -178,11 +179,11 @@ export default {
                     console.log(e);
                 });
         },
-        externalEvent: function(ids) {
+        externalEvent: function (ids) {
             this.reloadEnablingObjectives(ids);
         },
         reloadEnablingObjectives(ids) {
-            axios.post('/curricula/' + this.curriculum.id + '/achievements', { 'user_ids' : ids })
+            axios.post('/curricula/' + this.curriculum.id + '/achievements', {'user_ids': ids})
                 .then(response => {
                     Object.assign(this.objective_types, response.data);
                 })
@@ -442,8 +443,12 @@ export default {
         /////////////////////////////////////////////////////
         ///////////////////////// curriculum ////////////////
         /////////////////////////////////////////////////////
-        this.$eventHub.on('curriculum-updated', () => {
-            this.loaderEvent();
+        this.$eventHub.on('curriculum-updated', async () => {
+            await this.loaderEvent();
+            this.max_ids = this.objective_types.reduce((acc, type) => {
+                acc[type.id] = type.terminal_objectives[type.terminal_objectives.length - 1].id;
+                return acc;
+            }, {});
         });
     },
     computed: {

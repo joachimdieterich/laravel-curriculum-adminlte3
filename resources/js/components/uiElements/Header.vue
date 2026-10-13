@@ -45,10 +45,10 @@
                             />
                         </g>
                     </svg>
-                    <span class="d-none d-sm-inline">{{ trans(brandMenuText) }}</span>
+                    <span class="d-none d-sm-inline" id="brand-menu-text">{{ trans(brandMenuText) }}</span>
                     <i v-if="notLocalEnv"
-                        class="fa fa-chevron-down"
-                        style="font-size: 0.75rem;"
+                       class="fa fa-chevron-down"
+                       style="font-size: 0.75rem;"
                     ></i>
                 </span>
             </button>
@@ -124,7 +124,7 @@
                     <strong class="py-1 ms-2">{{ trans('global.login') }}</strong>
                 </span>
                 <span v-else
-                    class="d-flex align-items-center pointer"
+                      class="d-flex align-items-center pointer"
                 >
                     <Avatar
                         :username="user.username"
@@ -141,9 +141,9 @@
                 </span>
             </button>
             <div v-if="!isGuestUser"
-                id="user-menu-dropdown"
-                class="d-none bg-lime"
-                style="right: 0.5rem; width: 250px;"
+                 id="user-menu-dropdown"
+                 class="d-none bg-lime"
+                 style="right: 0.5rem; width: 250px;"
             >
                 <div
                     class="d-flex justify-content-center py-2"

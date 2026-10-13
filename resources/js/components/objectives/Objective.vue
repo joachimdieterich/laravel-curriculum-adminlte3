@@ -216,10 +216,10 @@
                         aria-labelledby="description-nav-tab"
                     >
                         <Variants v-if="objective.curriculum.variants?.length > 0"
-                            :model="currentObjective"
-                            :referenceable_type="model"
-                            :referenceable_id="objective.id"
-                            :variant_order="variant_order"
+                                  :model="currentObjective"
+                                  :referenceable_type="model"
+                                  :referenceable_id="objective.id"
+                                  :variant_order="variant_order"
                         />
                         <div v-else style="margin-top: -10px;">
                             <div class="d-flex flex-column flex-sm-row justify-content-between pb-1">
@@ -241,13 +241,13 @@
                     >
                         <div class="objectives">
                             <ObjectiveBox v-if="type === 'enabling'"
-                                type="terminal"
-                                :objective="objective.terminal_objective"
+                                          type="terminal"
+                                          :objective="objective.terminal_objective"
                             />
                             <ObjectiveBox v-for="enablingObjective in enablingObjectives"
-                                type="enabling"
-                                :objective="enablingObjective"
-                                :color="objective.color ?? objective.terminal_objective.color"
+                                          type="enabling"
+                                          :objective="enablingObjective"
+                                          :color="objective.color ?? objective.terminal_objective.color"
                             />
                         </div>
                     </div>
@@ -260,14 +260,14 @@
                     >
                         <span>
                             <Contents v-if="type === 'enabling'"
-                                ref="Contents"
-                                subscribable_type="App\EnablingObjective"
-                                :subscribable_id="objective.id"
+                                      ref="Contents"
+                                      subscribable_type="App\EnablingObjective"
+                                      :subscribable_id="objective.id"
                             />
                             <Contents v-else-if="type === 'terminal'"
-                                ref="Contents"
-                                subscribable_type="App\TerminalObjective"
-                                :subscribable_id="objective.id"
+                                      ref="Contents"
+                                      subscribable_type="App\TerminalObjective"
+                                      :subscribable_id="objective.id"
                             />
                         </span>
                     </div>
@@ -376,7 +376,7 @@
                     </div>
                 </div>
             </div>
-        </div>            
+        </div>
 
         <Teleport to="body">
             <ContentModal/>
@@ -531,7 +531,7 @@ export default {
             this.globalStore.showModal(this.type + '-objective-modal', this.objective);
         },
         //Loader
-        loaderContents: function() {
+        loaderContents: function () {
             this.$refs.Contents.loaderEvent();
         },
         loadReferences() {

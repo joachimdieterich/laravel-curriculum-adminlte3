@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Config;
 use App\Curriculum;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 use App\QuoteSubscription;
 use App\ReferenceSubscription;
 use App\TerminalObjective;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class TerminalObjectiveController extends Controller
 {
-    public function getEnablingObjectives(TerminalObjective $terminalObjective) {
+    public function getEnablingObjectives(TerminalObjective $terminalObjective)
+    {
         if (request()->wantsJson()) {
             return getEntriesForSelect2ByCollectionAlternative($terminalObjective->enablingObjectives, '', 'title', 'order_id');
         }
@@ -23,9 +24,6 @@ class TerminalObjectiveController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response|TerminalObjective
      */
     public function store(Request $request): TerminalObjective
     {
@@ -36,7 +34,7 @@ class TerminalObjectiveController extends Controller
 
         $terminalObjective = TerminalObjective::create(array_merge($request->all(), ['order_id' => $order_id]));
 
-        LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this) . '@' . __FUNCTION__);
 
         return TerminalObjective::with(['enablingObjectives', 'type'])->find($terminalObjective->id);
     }
@@ -44,7 +42,6 @@ class TerminalObjectiveController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param TerminalObjective $terminalObjective
      * @return View
      */
     public function show(TerminalObjective $terminalObjective)
@@ -75,8 +72,6 @@ class TerminalObjectiveController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param TerminalObjective         $terminalObjective
      * @return Response
      */
     public function update(Request $request, TerminalObjective $terminalObjective)
@@ -118,8 +113,7 @@ class TerminalObjectiveController extends Controller
     /**
      * do calculations when objective is moved to another curriculum
      *
-     * @param TerminalObjective $objective
-     * @param $request
+     * @param  TerminalObjective  $objective
      */
     public function moveToCurriculum($objective, $request)
     {
@@ -134,27 +128,26 @@ class TerminalObjectiveController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param TerminalObjective $terminalObjective
-     * @return Response
+     * @return bool|void|null
      */
     public function destroy(TerminalObjective $terminalObjective)
     {
-        abort_unless((\Gate::allows('objective_delete') and $terminalObjective->isAccessible()), 403);
+        abort_unless((\Gate::allows('objective_delete') && $terminalObjective->isAccessible()), 403);
 
-        //set temp vars
-        $curriculum_id = $terminalObjective->curriculum_id;
+        // set temp vars
+        $curriculum_id     = $terminalObjective->curriculum_id;
         $objective_type_id = $terminalObjective->objective_type_id;
-        $order_id = $terminalObjective->order_id;
+        $order_id          = $terminalObjective->order_id;
 
         // delete contents
         foreach ($terminalObjective->contents as $content) {
             (new ContentController)->destroy($content, 'App\TerminalObjective', $terminalObjective->id); // delete or unsubscribe if content is still subscribed elsewhere
         }
 
-        //delete objective
+        // delete objective
         $return = $terminalObjective->delete();
 
-        //reset order_ids
+        // reset order_ids
         $this->resetOrderIds($curriculum_id, $objective_type_id, $order_id);
 
         if (request()->wantsJson()) {
@@ -172,15 +165,15 @@ class TerminalObjectiveController extends Controller
             $collection = ReferenceSubscription::where('reference_id', '=', $referenceSubscription->reference_id)
                 ->where(function ($query) use ($referenceSubscription, $terminalObjective) {
                     return $query->where('reference_id', '=', $referenceSubscription->reference_id)
-                                                     ->where('referenceable_id', '!=', $terminalObjective->id);
+                        ->where('referenceable_id', '!=', $terminalObjective->id);
                 })
-                                ->with(['referenceable.curriculum.organizationType'])
-                                ->with(['reference'])
-                     ->get();
+                ->with(['referenceable.curriculum.organizationType'])
+                ->with(['reference'])
+                ->get();
             $siblings = $siblings->merge($collection);
         }
 
-        if (count($siblings) == 0) { //end early
+        if (count($siblings) == 0) { // end early
             return ['message' => 'no subscriptions'];
         }
 
@@ -200,18 +193,15 @@ class TerminalObjectiveController extends Controller
             ->with(['quote.content.subscriptions.subscribable'])
             ->get();
 
-        if (count($collection) == 0) { //end early
+        if (count($collection) == 0) { // end early
             return ['message' => 'no subscriptions'];
         }
 
-        foreach ($collection as $quote_subscriptions)
-        {
-            //$arr[$quote_subscriptions->quote_id] = ! is_null($quote_subscriptions->quote);
+        foreach ($collection as $quote_subscriptions) {
+            // $arr[$quote_subscriptions->quote_id] = ! is_null($quote_subscriptions->quote);
 
-            if (! is_null($quote_subscriptions->quote))
-            {
-                if (! is_null($quote_subscriptions->quote->content))
-                {
+            if (! is_null($quote_subscriptions->quote)) {
+                if (! is_null($quote_subscriptions->quote->content)) {
                     $curricula_list[$quote_subscriptions->quote->content?->subscriptions[0]->subscribable->id] = $quote_subscriptions->quote->content?->subscriptions[0]->subscribable;
                 }
                 $quotes_subscriptions[] = $quote_subscriptions;
@@ -227,9 +217,9 @@ class TerminalObjectiveController extends Controller
 
         // decrease order_id of the objective with the next highest order_id
         TerminalObjective::where([
-            'curriculum_id' => $terminalObjective->curriculum_id,
+            'curriculum_id'     => $terminalObjective->curriculum_id,
             'objective_type_id' => $terminalObjective->objective_type_id,
-            'order_id' => $terminalObjective->order_id + 1,
+            'order_id'          => $terminalObjective->order_id + 1,
         ])->decrement('order_id', 1);
 
         $terminalObjective->order_id++;
@@ -244,9 +234,9 @@ class TerminalObjectiveController extends Controller
 
         // increase order_id of the objective with the next lowest order_id
         TerminalObjective::where([
-            'curriculum_id' => $terminalObjective->curriculum_id,
+            'curriculum_id'     => $terminalObjective->curriculum_id,
             'objective_type_id' => $terminalObjective->objective_type_id,
-            'order_id' => $terminalObjective->order_id - 1,
+            'order_id'          => $terminalObjective->order_id - 1,
         ])->increment('order_id', 1);
 
         $terminalObjective->order_id--;
@@ -275,30 +265,27 @@ class TerminalObjectiveController extends Controller
             ->where('objective_type_id', $objective_type_id)
             ->where('order_id', '>', $order_id)
             ->update([
-                'order_id' => DB::raw('order_id'.(($direction === 'down') ? '-1' : '+1')),
+                'order_id' => DB::raw('order_id' . (($direction === 'down') ? '-1' : '+1')),
             ]);
     }
 
     /**
-     * @param  int  $curriculum_id
-     * @param  int  $objective_type_id
-     * @param  int  $order_id
      * @param  int  $new_order_id
-     * @return type
+     * @return string
      */
     protected function toggleOrderId($old_objective, $new_order_id)
     {
         // toggle order_ids of terminal objectives
         $responseA = (new TerminalObjective)->where('curriculum_id', $old_objective->curriculum_id)
-                            ->where('objective_type_id', $old_objective->objective_type_id)
-                            ->where('order_id', '=', $new_order_id)
-                            ->update(['order_id' => $old_objective->order_id]);
+            ->where('objective_type_id', $old_objective->objective_type_id)
+            ->where('order_id', '=', $new_order_id)
+            ->update(['order_id' => $old_objective->order_id]);
 
         $responseB = (new TerminalObjective)->where('id', $old_objective->id)
-                                ->update(['order_id' => $new_order_id]);
+            ->update(['order_id' => $new_order_id]);
 
-        if (($responseA == true) and ($responseB == true)) {
-            return '/curricula/'.$old_objective->curriculum_id;
+        if (($responseA == true) && ($responseB == true)) {
+            return '/curricula/' . $old_objective->curriculum_id;
         }
     }
 }

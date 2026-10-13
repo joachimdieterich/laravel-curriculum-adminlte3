@@ -57,7 +57,7 @@
                     </span>
                 </a>
             </div>
-    
+
             <!-- Media uploaded from Curriculum -->
             <div v-for="subscription in filteredMedia"
                 class="box box-objective nav-item-box-image pointer m-0"
@@ -107,7 +107,7 @@
                     </button>
                 </a>
             </div>
-    
+
             <!-- Media linked from Edusharing -->
             <div v-for="medium in filteredExternalMedia"
                 :id="medium.node_id"
@@ -127,7 +127,7 @@
                             :style="{ 'background': 'white url(' + medium.iconURL + ') no-repeat center', 'background-size': '24px' }"
                         ></div>
                     </div>
-        
+
                     <span>
                         <span class="nav-item-box bg-gray-light text-center overflow-auto p-1">
                             <h6 class="pt-1 hyphens" v-html="medium.title"></h6>
@@ -157,7 +157,7 @@
                             <i class="fa fa-arrow-left"></i>
                         </button>
                     </span>
-    
+
                     <span class="col-6">
                         <button
                             type="button"
@@ -258,7 +258,7 @@ export default {
                         },
                     })).data[0];
                 }
-            } catch(error) {
+            } catch (error) {
                 this.loading = false;
             }
 
@@ -274,7 +274,7 @@ export default {
             axios.delete('/media/' + mediumSubscription.medium_id, {
                 data: {
                     subscribable_type: mediumSubscription.subscribable_type,
-                    subscribable_id:   mediumSubscription.subscribable_id,
+                    subscribable_id: mediumSubscription.subscribable_id,
                 },
             })
                 .then(res => this.loader())
@@ -339,12 +339,12 @@ export default {
         });
     },
     computed: {
-        filteredMedia: function() {
+        filteredMedia: function () {
             return this.currentTab === 1
                 ? this.media
                 : this.media.filter(subscription => subscription.owner_id == this.$userId);
         },
-        filteredExternalMedia: function() {
+        filteredExternalMedia: function () {
             return this.currentTab === 1
                 ? this.externalMedia
                 : this.externalMyMedia;
@@ -354,9 +354,14 @@ export default {
 </script>
 <style scoped>
 @media (max-width: 990px) {
-    .box { border-right: 10px solid; }
+    .box {
+        border-right: 10px solid;
+    }
 }
+
 @media (min-width: 991px) {
-    .box { border-bottom: 10px solid; }
+    .box {
+        border-bottom: 10px solid;
+    }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="Object.keys(course).length"
-            v-permission="'achievement_access'"
+             v-permission="'achievement_access'"
         >
             <DataTable
                 ref="datatable"
@@ -279,6 +279,7 @@ import MediumModal from "../media/MediumModal.vue";
 import MediumExportModal from "../media/MediumExportModal.vue";
 import ContributorsList from "../uiElements/ContributorsList.vue";
 import {useDatatableStore} from "../../store/datatables";
+
 DataTable.use(DataTablesCore);
 
 export default {
@@ -388,12 +389,12 @@ export default {
                 shareWithGroups: true,
                 shareWithOrganizations: true,
                 shareWithToken: true,
-                canEditCheckbox: false,
+                canEditCheckbox: true,
             });
         },
         resetOrderIds() {
             axios.patch('/curricula/' + this.curriculum.id + '/resetOrderIds')
-            .then(r => window.location.reload());
+                .then(r => window.location.reload());
         },
         updateAchievements() {
             let selection = this.dt.rows('.selected').data().toArray();
@@ -404,14 +405,11 @@ export default {
         startWebsocket() {
             if (this.settings.websocket === true) {
                 this.$echo
-                    .join('App.Curriculum.' + this.curriculum.id)
+                    .join('App.Curriculum.Room.' + this.curriculum.id)
                     .here((users) => {
-                        for(let user of users) {
+                        for (let user of users) {
                             this.currentContributors[user.id] = user;
                         }
-                    })
-                    .listen('.CurriculumUpdated', (payload) => {
-                        this.$eventHub.emit('curriculum-updated', payload.model);
                     })
                     .joining((user) => {
                         this.currentContributors[user.id] = user;
@@ -421,11 +419,17 @@ export default {
                         delete this.currentContributors[user.id];
                         this.toast.info(this.trans('global.websockets.contributor_left') + ': ' + user.firstname + ' ' + user.lastname);
                     });
+                this.$echo
+                    .channel('App.Curriculum.' + this.curriculum.id)
+                    .listen('.CurriculumUpdated', (payload) => {
+                        this.$eventHub.emit('curriculum-updated', payload.model);
+                    })
             }
         },
         stopWebsocket() {
             if (this.settings.websocket === true) {
-                this.$echo.leave('App.Kanban.' + this.kanban.id);
+                this.$echo.leave('App.Curriculum.Room' + this.curriculum.id);
+                this.$echo.leave('App.Curriculum.' + this.curriculum.id);
             }
         },
     }

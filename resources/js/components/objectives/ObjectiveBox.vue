@@ -4,8 +4,8 @@
         :style="{ 'background-color': backgroundcolor, 'border-color': bordercolor }"
     >
         <div v-if="type === 'createterminal'"
-            class="add-objective user-select-none pointer h-100"
-            @click.prevent="openTerminalModal()"
+             class="add-objective user-select-none pointer h-100"
+             @click.prevent="openTerminalModal()"
         >
             <span>{{ trans("global.terminalObjective.title_singular") }}</span>
             <div class="d-flex align-items-center justify-content-center h-100">
@@ -14,8 +14,8 @@
         </div>
 
         <div v-else-if="type === 'createenabling'"
-            class="add-objective user-select-none pointer h-100"
-            @click.prevent="openEnablingModal()"
+             class="add-objective user-select-none pointer h-100"
+             @click.prevent="openEnablingModal()"
         >
             <span>{{ trans("global.enablingObjective.title_singular") }}</span>
             <div class="d-flex align-items-center justify-content-center h-100">
@@ -32,7 +32,7 @@
                 :max_id="max_id"
                 :textcolor="textcolor"
             />
-    
+
             <div
                 class="flex-fill overflow-hidden pointer"
                 @click.prevent="showDetails()"
@@ -47,7 +47,7 @@
                     <div
                         class="small p-margin-0"
                         :style="{ 'color': textcolor }"
-                        v-html="objective.title"    
+                        v-html="objective.title"
                     ></div>
                 </div>
             </div>
@@ -110,7 +110,7 @@ export default {
         }
     },
     methods: {
-        openTerminalModal() { 
+        openTerminalModal() {
             this.globalStore?.showModal('terminal-objective-modal', {
                 curriculum_id: this.objective.curriculum_id,
                 objective_type_id: this.objective_type_id,
@@ -124,7 +124,7 @@ export default {
         },
         showDetails() {
             if (this.settings?.achievements === undefined || !this.editable) {
-                location.href= '/' + this.type + 'Objectives/' + this.objective.id;
+                location.href = '/' + this.type + 'Objectives/' + this.objective.id;
             } else {
                 this.globalStore?.showModal('set-achievements-modal', {
                     objective: this.objective,
@@ -148,7 +148,7 @@ export default {
                 ? this.objective.color + (this.objective.visibility ? 'FF' : '40')
                 : this.color + (this.objective.visibility ? 'FF' : '40');
         },
-        textcolor: function() {
+        textcolor: function () {
             if (this.type === 'terminal') {
                 return this.$textcolor(this.objective.color);
             } else {
@@ -164,14 +164,13 @@ export default {
         },
     },
     watch: {
-        cross_reference: function() {
+        cross_reference: function () {
             if ((this.settings.cross_reference_curriculum_id !== false) || (this.settings.cross_reference_curriculum_id === "")) { // reset view with x button
                 this.visibility = 40;
 
-                if (typeof this.objective.referencing_curriculum_id !== "undefined" ) {
+                if (typeof this.objective.referencing_curriculum_id !== "undefined") {
                     if (this.objective.referencing_curriculum_id !== null) {
-                        if (this.objective.referencing_curriculum_id.includes(parseInt(this.settings.cross_reference_curriculum_id)))
-                        {
+                        if (this.objective.referencing_curriculum_id.includes(parseInt(this.settings.cross_reference_curriculum_id))) {
                             this.visibility = 100;
                         }
                     }

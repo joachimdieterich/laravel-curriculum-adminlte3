@@ -1,14 +1,14 @@
 <template>
     <ObjectiveBox v-for="objective in objectives"
-        type="enabling"
-        :objective="objective"
-        :objective_type_id="terminalobjective.objective_type_id"
-        :referenceable_id="referenceable_id"
-        :referenceable_type="referenceable_type"
-        :color="terminalobjective.color"
-        :settings="settings"
-        :editable="editable"
-        :max_id="objectives[objectives.length - 1]?.id"
+                  type="enabling"
+                  :objective="objective"
+                  :objective_type_id="terminalobjective.objective_type_id"
+                  :referenceable_id="referenceable_id"
+                  :referenceable_type="referenceable_type"
+                  :color="terminalobjective.color"
+                  :settings="settings"
+                  :editable="editable"
+                  :max_id="objectives[objectives.length - 1]?.id"
     />
 
     <ObjectiveBox v-if="settings.edit && checkPermission('curriculum_edit')"

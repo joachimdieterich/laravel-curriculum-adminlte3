@@ -26,6 +26,7 @@
                 locale="de"
                 :range="{ partialRange: false }"
                 time-picker-inline
+                :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
                 :placeholder="trans('global.selectDateRange')"
                 :select-text="trans('global.ok')"
                 :cancel-text="trans('global.close')"
@@ -76,7 +77,10 @@ export default {
     methods: {
         preProcessing() {
             if (this.form.begin && this.form.end) {
-                this.form.date = [new Date(this.form.begin), new Date(this.form.end)];
+                this.form.date = [
+                    new Date(this.reformatDate(this.form.begin)),
+                    new Date(this.reformatDate(this.form.end))
+                ];
             }
         },
         postProcessing() {
@@ -90,6 +94,18 @@ export default {
 
             if (this.form.id) this.$refs.modal.update();
             else this.$refs.modal.add();
+        },
+        /**
+         * change date-format from 'Mo., DD.MM.YYYY HH:mm' to 'MM.DD.YYYY'
+         * 
+         * @param date
+         */
+        reformatDate(date) {
+            let basicDate = date.split(', ')[1];
+            const day = basicDate.slice(0, 3);
+            const month = basicDate.slice(4, 6);
+
+            return month + day + basicDate.slice(7);
         },
     },
 }

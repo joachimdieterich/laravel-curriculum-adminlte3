@@ -1,161 +1,118 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ trans('global.plan.estimate_students') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body pt-2">
-                            <table
-                                v-permission="'achievement_access'"
-                                id="achievements-table"
-                                class="table m-0 border-top-0"
-                            >
-                                <thead class="border-top-0">
-                                    <tr class="border-0">
-                                        <th class="border-0" style="width: 0px;"></th>
-                                        <th
-                                            id="firstname"
-                                            class="border-0 pointer pe-3"
-                                            @click="sortBy(1)"
-                                        >
-                                            {{ trans('global.firstname') }}
-                                            <i class="fa fa-sort-down ms-1"></i>
-                                        </th>
-                                        <th
-                                            class="border-0 pointer pe-3"
-                                            @click="sortBy(2)"
-                                        >
-                                            {{ trans('global.lastname') }}
-                                            <i class="fa fa-sort text-gray ms-1"></i>
-                                        </th>
-                                        <!-- <th class="border-top-0">{{trans('global.notes')}}</th> -->
-                                        <th class="border-0">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style="border-width: 3px 0px; border-style: solid; border-color: #dee2e6;">
-                                        <td>
-                                            <input
-                                                type="checkbox"
-                                                v-model="checkAll"
-                                                @change="toggleUsers()"
-                                            />
-                                        </td>
-                                        <td colspan="2">
-                                            {{ selectedUsers.length  + ' ' + trans('global.users_selected')}}
-                                        </td>
-                                        <td>
-                                            <AchievementIndicator
-                                                v-permission="'achievement_create'"
-                                                class="me-3"
-                                                :objective="objective.default"
-                                                :type="'enabling'"
-                                                :users="selectedUsers"
-                                                :settings="{
-                                                    achievements : false,
-                                                    edit: false,
-                                                    referenceable_id: referenceable_id,
-                                                    referenceable_type: referenceable_type,
-                                                }"
-                                                :disabled="selectedUsers.length === 0"
-                                            />
-                                        </td>
-                                    </tr>
-                                    <tr v-for="user in users">
-                                        <td>
-                                            <input
-                                                type="checkbox"
-                                                :value="user.id"
-                                                v-model="selectedUsers"
-                                            />
-                                        </td>
-                                        <td class="pe-3">{{ user.firstname }}</td>
-                                        <td class="pe-3">{{ user.lastname }}</td>
-                                        <!-- <td v-if="currentUser(user.id).achievements[0]">
-                                            <i style="font-size:18px;"
-                                                class="far fa-sticky-note text-muted pointer"
-                                                @click.prevent="$modal.show('note-modal', {'method': 'post', 'notable_type': 'App\\Achievement', 'notable_id': currentUser(user.id).achievements[0].id,'show_tabs': false}) ">
-                                            </i>
-                                        </td>
-                                        <td v-else></td> -->
-                                        <td>
-                                            <AchievementIndicator
-                                                v-permission="'achievement_create'"
-                                                :objective="objective[user.id] ?? objective.default"
-                                                :type="'enabling'"
-                                                :users="[user.id]"
-                                                :settings="{
-                                                    achievements : false,
-                                                    edit: false,
-                                                    referenceable_id: referenceable_id,
-                                                    referenceable_type: referenceable_type,
-                                                }"
-                                            />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="certificate-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
+    <Modal
+        model="achievement"
+        modalName="set-achievements-modal"
+        title="global.plan.estimate_students"
+    >
+        <template #general>
+            <table
+                v-permission="'achievement_access'"
+                id="achievements-table"
+                class="table m-0 border-top-0"
+            >
+                <thead class="border-top-0">
+                    <tr class="border-0">
+                        <th class="border-0" style="width: 0px;"></th>
+                        <th
+                            id="firstname"
+                            class="border-0 pointer pe-3"
+                            @click="sortBy(1)"
                         >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="certificate-save"
-                            class="btn btn-primary ms-3"
-                            @click="globalStore?.closeModal($options.name)"
+                            {{ trans('global.firstname') }}
+                            <i class="fa fa-sort-down ms-1"></i>
+                        </th>
+                        <th
+                            class="border-0 pointer pe-3"
+                            @click="sortBy(2)"
                         >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+                            {{ trans('global.lastname') }}
+                            <i class="fa fa-sort text-gray ms-1"></i>
+                        </th>
+                        <!-- <th class="border-top-0">{{trans('global.notes')}}</th> -->
+                        <th class="border-0">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-width: 3px 0px; border-style: solid; border-color: #dee2e6;">
+                        <td>
+                            <input
+                                type="checkbox"
+                                v-model="checkAll"
+                                @change="toggleUsers()"
+                            />
+                        </td>
+                        <td colspan="2">
+                            {{ selectedUsers.length  + ' ' + trans('global.users_selected') }}
+                        </td>
+                        <td>
+                            <AchievementIndicator
+                                v-permission="'achievement_create'"
+                                class="me-3"
+                                :objective="objective.default"
+                                :type="'enabling'"
+                                :users="selectedUsers"
+                                :settings="{
+                                    achievements : false,
+                                    edit: false,
+                                    referenceable_id: referenceable_id,
+                                    referenceable_type: referenceable_type,
+                                }"
+                                :disabled="selectedUsers.length === 0"
+                            />
+                        </td>
+                    </tr>
+                    <tr v-for="user in users">
+                        <td>
+                            <input
+                                type="checkbox"
+                                :value="user.id"
+                                v-model="selectedUsers"
+                            />
+                        </td>
+                        <td class="pe-3">{{ user.firstname }}</td>
+                        <td class="pe-3">{{ user.lastname }}</td>
+                        <!-- <td v-if="currentUser(user.id).achievements[0]">
+                            <i style="font-size:18px;"
+                                class="far fa-sticky-note text-muted pointer"
+                                @click.prevent="$modal.show('note-modal', {'method': 'post', 'notable_type': 'App\\Achievement', 'notable_id': currentUser(user.id).achievements[0].id,'show_tabs': false}) ">
+                            </i>
+                        </td>
+                        <td v-else></td> -->
+                        <td>
+                            <AchievementIndicator
+                                v-permission="'achievement_create'"
+                                :objective="objective[user.id] ?? objective.default"
+                                :type="'enabling'"
+                                :users="[user.id]"
+                                :settings="{
+                                    achievements : false,
+                                    edit: false,
+                                    referenceable_id: referenceable_id,
+                                    referenceable_type: referenceable_type,
+                                }"
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import AchievementIndicator from './../objectives/AchievementIndicator.vue';
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'set-achievements-modal',
     components: {
+        Modal,
         AchievementIndicator,
     },
     props: {
-        users: {},
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+        users: {
+            type: Object,
+            default: {},
+        },
     },
     data() {
         return {
@@ -163,7 +120,6 @@ export default {
             objective: {},
             referenceable_id: null,
             referenceable_type: null,
-            search: '',
             checkAll: false,
             selectedUsers: [],
             sortByAsc: true, // on default sorts by firstname A-Z

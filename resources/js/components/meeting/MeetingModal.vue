@@ -185,17 +185,6 @@
                                     show-fallback
                                     fallback-input-type="color"
                                 />
-
-                                <MediumForm
-                                    :id="'medium_form' + component_id"
-                                    :medium_id="form.medium_id"
-                                    :subscribable_id="form.id"
-                                    subscribable_type="App\Meeting"
-                                    accept="image/*"
-                                    @selectedValue="(id) => {
-                                        this.form.medium_id = id;
-                                    }"
-                                />
                             </div>
                         </div>
 
@@ -271,18 +260,14 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumForm from "../media/MediumForm.vue";
-import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'meeting-modal',
     components: {
         Editor,
         Select2,
-        MediumForm
     },
     props: {},
     setup() {

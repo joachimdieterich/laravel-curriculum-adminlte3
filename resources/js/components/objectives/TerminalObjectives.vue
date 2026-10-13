@@ -12,7 +12,7 @@
         <ul
             id="terminalObjectivesTopNav"
             class="nav bg-gray-light position-sticky"
-            style="top: 56px; z-index: 100"
+            style="top: 56px; z-index: 50;"
         >
             <draggable
                 class="nav nav-pills"

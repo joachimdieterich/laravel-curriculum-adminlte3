@@ -3,6 +3,7 @@
         ref="modal"
         model="task"
         modalName="task-modal"
+        :form="form"
         :require-title="true"
         @save="submit(form)"
     >
@@ -63,8 +64,6 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            processing: false,
             form: new Form({
                 id: null,
                 title: '',
@@ -84,60 +83,6 @@ export default {
                 }
             ),
         }
-    },
-    methods: {
-        submit(formData) {
-            this.processing = true;
-            this.form.populate(formData);
-
-            if (this.method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post('/tasks', this.form)
-                .then(r => {
-                    this.$eventHub.emit('task-added', r.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    console.log(e);
-                    this.processing = false;
-                    this.toast.error(this.errorMessage(e));
-                });
-        },
-        update() {
-            axios.patch('/tasks/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('task-updated', r.data);
-                    this.globalStore.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    console.log(e);
-                    this.processing = false;
-                    this.toast.error(this.errorMessage(e));
-                });
-        },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show && !state.modals[this.$options.name].lock) {
-                this.globalStore.lockModal(this.$options.name);
-                this.processing = false;
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    this.method = this.form.id ? 'patch' : 'post';
-                }
-
-                this.$refs.modal.resetForm(this.form);
-            }
-        });
     },
 }
 </script>

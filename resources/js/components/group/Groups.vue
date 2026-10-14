@@ -12,7 +12,7 @@
                         id="group-toggle-all"
                         label="global.group.allGroups"
                         v-model="allGroupsView"
-                        @update="toggleAllGroupsView()"
+                        @change="toggleAllGroupsView()"
                     />
                     <button v-if="checkPermission('is_schooladmin')"
                         type="button"

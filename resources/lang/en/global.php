@@ -65,7 +65,7 @@ return [
         '404'               => 'The requested resource could not be found.',
         '419'               => 'The session has expired - please reload the page.',
         '422'               => "The request couldn't be processed.",
-        '500'               => 'Server error. Please notify the administrators if this error keeps occuring.',
+        '500'               => 'Server error. Please notify the administrators if this error keeps occurring.',
         '503'               => 'Curriculum is temporarily unavailable. Please notify the administrators if no maintenance window was announced.',
     ],
     'save'                           => 'Save',
@@ -197,7 +197,7 @@ return [
     ],
     'metadataset' => [
         'title'          => 'Metadatasets',
-        'title_singular' => 'Metadatenset',
+        'title_singular' => 'Metadataset',
         'create'         => 'Create metadaten',
         'edit'           => 'Edit metadaten',
         'fields'         => [
@@ -305,7 +305,7 @@ return [
         'import'             => 'Import users',
         'import_helper'      => 'The CSV file must have the following format:
                 <ul>
-                    <li>The first line must contain the key values (e.g.:username, password, firstname, lastname, email, role_id, confirmed, postalcode, city, state, country).</li>
+                    <li>The first line must contain the key values (e.g.:username, password, firstname, lastname, email, role_id, confirmed, postal code, city, state, country).</li>
                     <li>The key values <strong>username, password, firstname, lastname, email</strong> and <strong>organization_id</strong> must be set.</li>
                     <li>In addition, the field <strong>group_id</strong> and <strong>role_id</strong> can be defined. </li><li>Possible ID values for organization_id, group_id and role_id can be found in the tables. If a new learning group is entered, curriculum creates it during import.</li>
                 </ul>',
@@ -516,7 +516,7 @@ return [
         'title_singular'      => 'Group',
         'create'              => 'Create group',
         'edit'                => 'Edit group',
-        'delete'              => 'Delete goup',
+        'delete'              => 'Delete group',
         'delete_helper'       => 'Should this group and all its corresponding data be deleted?',
         'enrol'               => 'Enrol group',
         'expel'               => 'Expel group',
@@ -524,6 +524,7 @@ return [
         'enrol_success_error' => 'Group(s) enrolment failed!',
         'expel_success'       => 'Group(s) expulsion successful.',
         'expel_success_error' => 'Group(s) expulsion failed!',
+        'allGroups'           => 'All groups',
     ],
     'grade' => [
         'title'          => 'Grades',
@@ -1047,7 +1048,7 @@ return [
         'title_singular' => 'Exercise',
         'create'         => 'Create exercise',
         'search'         => 'Search exercise',
-        'edit'           => 'Edit exerciese',
+        'edit'           => 'Edit exercise',
         'delete'         => 'Delete exercise',
         'delete_helper'  => 'Should this exercise be deleted?',
         'fields'         => [
@@ -1374,4 +1375,5 @@ return [
     'cselect' => [
         'no_results' => 'No results found',
     ],
+    'tableView' => 'Table view',
 ];

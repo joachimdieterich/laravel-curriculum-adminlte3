@@ -7,7 +7,7 @@
             <div v-if="adminTools" class="d-flex">
                 <Switch
                     id="user-toggle-view"
-                    label="Tabellenansicht"
+                    label="global.tableView"
                     v-model="toggleView"
                 />
                 <button v-if="!toggleView"
@@ -108,8 +108,8 @@
                                 {{ user.firstname }} {{ user.lastname }}
                             </h1>
                             <p v-if="adminTools" class="text-muted small">
-                                {{ user.username }} </br>
-                                {{ user.email }} </br>
+                                {{ user.username }} <br>
+                                {{ user.email }} <br>
                                 {{ user.common_name }}
                             </p>
                         </span>
@@ -154,9 +154,10 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import { useDatatableStore } from "../../store/datatables";
+import {useDatatableStore} from "../../store/datatables";
 import UserOptions from "./UserOptions.vue";
 import Switch from "../forms/Switch.vue";
+
 DataTable.use(DataTablesCore);
 
 export default {

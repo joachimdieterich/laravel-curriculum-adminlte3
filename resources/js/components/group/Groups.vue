@@ -5,10 +5,16 @@
                 id="group-content"
                 class="px-3"
             >
-                <div v-if="checkPermission('is_schooladmin')"
-                    class="d-flex justify-content-end"
+                <div
+                    class="d-flex justify-content-between"
                 >
-                    <button
+                    <Switch
+                        id="group-toggle-all"
+                        label="global.group.allGroups"
+                        v-model="allGroupsView"
+                        @update="toggleAllGroupsView()"
+                    />
+                    <button v-if="checkPermission('is_schooladmin')"
                         type="button"
                         class="btn"
                         :class="btnClass"
@@ -26,11 +32,11 @@
                     :label="trans('global.group.create')"
                 />
                 <IndexWidget v-for="group in groups"
-                    :key="'groupIndex'+group.id"
-                    :model="group"
-                    modelName="Group"
-                    storeTitle="groups"
-                    url="/groups"
+                             :key="'groupIndex'+group.id"
+                             :model="group"
+                             modelName="Group"
+                             storeTitle="groups"
+                             url="/groups"
                 >
                     <template #icon>
                         <i class="fa fa-layer-group"></i>
@@ -82,8 +88,8 @@
             <DataTable
                 ref="datatable"
                 :columns="columns"
-                :options="options"
-                ajax="/groups/list"
+                :options="$dtOptions"
+                :ajax="dtAjaxOptions"
                 class="d-none"
                 @xhr="(e, settings, json) => groups = json.data"
             />
@@ -111,15 +117,18 @@
 <script>
 import GroupModal from "../group/GroupModal.vue";
 import GroupOptions from "../group/GroupOptions.vue";
+import Switch from "../forms/Switch.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useDatatableStore} from "../../store/datatables";
+
 DataTable.use(DataTablesCore);
 
 export default {
     components: {
+        Switch,
         ConfirmModal,
         DataTable,
         GroupModal,
@@ -137,8 +146,8 @@ export default {
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'organization', data: 'organization.title', searchable: true },
             ],
-            options : this.$dtOptions,
             dt: null,
+            allGroupsView: false
         }
     },
     setup() {
@@ -167,7 +176,7 @@ export default {
         setMode() {
             this.store.addToDatatables({
                 datatable: 'groups',
-                select: (this.store.getDatatable('groups')?.select) ? false : true,
+                select: !this.store.getDatatable('groups')?.select,
                 selectedItems: [],
             });
         },
@@ -191,12 +200,25 @@ export default {
         filterByOrg(title) {
             this.globalStore['search'] = title;
         },
+        toggleAllGroupsView() {
+            this.dt.ajax.reload();
+        },
     },
     computed: {
         btnClass() {
             return this.store.getDatatable('groups')?.select === true
                 ? 'btn-dark'
                 : 'btn-outline-dark';
+        },
+        dtAjaxOptions() {
+            return {
+                url: '/groups/list',
+                data: (d) => {
+                    d.allGroups = this.allGroupsView;
+
+                    return d;
+                },
+            };
         },
     },
 }

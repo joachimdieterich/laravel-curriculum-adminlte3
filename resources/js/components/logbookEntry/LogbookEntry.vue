@@ -69,141 +69,18 @@
         >
             <hr class="m-1">
 
-            <ul class="nav nav-pills align-items-center mx-2">
-                <li
-                    class="nav-item small"
-                    role="presentation"
-                >
-                    <button
-                        :id="'logbook-description-tab-' + entry.id"
-                        class="nav-link active"
-                        data-bs-toggle="tab"
-                        :data-bs-target="'#logbook-description-' + entry.id"
-                        type="button"
-                        role="tab"
-                        aria-controls="'logbook-description-' + entry.id"
-                        aria-selected="true"
-                    >
-                        <i class="fa fa-info"></i>
-                        <span v-if="help" class="ps-2">{{ trans('global.logbook.fields.description') }}</span>
-                    </button>
-                </li>
-
-                <li v-if="checkPermission('content_access')"
-                    class="nav-item small"
-                    role="presentation"
-                >
-                    <button
-                        :id="'logbook-contents-tab-' + entry.id"
-                        :href="'#logbook-contents-' + entry.id"
-                        class="nav-link"
-                        data-bs-toggle="tab"
-                        type="button"
-                        role="tab"
-                        @click="loaderEvent()"
-                    >
-                        <i class="fa fa-align-justify"></i>
-                        <span v-if="help" class="ps-2">{{ trans('global.content.title') }}</span>
-                    </button>
-                </li>
-
-                <li v-if="checkPermission('task_access')"
-                    class="nav-item small"
-                    role="presentation"
-                >
-                    <button
-                        :href="'#logbook-tasks-' + entry.id"
-                        class="nav-link"
-                        data-bs-toggle="tab"
-                        type="button"
-                        role="tab"
-                    >
-                        <i class="fa fa-tasks"></i>
-                        <span v-if="help" class="ps-2">{{ trans('global.task.title') }}</span>
-                    </button>
-                </li>
-
-                <li v-if="checkPermission('medium_access')"
-                    class="nav-item small"
-                    role="presentation"
-                >
-                    <button
-                        :href="'#logbook-media-' + entry.id"
-                        class="nav-link"
-                        data-bs-toggle="tab"
-                        type="button"
-                        role="tab"
-                    >
-                        <i class="fa fa-photo-video"></i>
-                        <span v-if="help" class="ps-2">{{ trans('global.medium.title') }}</span>
-                    </button>
-                </li>
-
-                <li v-if="checkPermission('achievement_create_self_assessment')"
-                    class="nav-item small"
-                    role="presentation"
-                >
-                    <button
-                        :href="'#logbook-objectives-' + entry.id"
-                        class="nav-link"
-                        data-bs-toggle="tab"
-                        type="button"
-                        role="tab"
-                    >
-                        <i class="fa fa-sitemap"></i>
-                        <span v-if="help" class="ps-2">
-                            {{ trans('global.terminalObjective.title') }}/{{ trans('global.enablingObjective.title') }}
-                        </span>
-                    </button>
-                </li>
-
-                <li v-if="displayAbsences()"
-                    class="nav-item small"
-                    role="presentation"
-                >
-                    <button
-                        :id="'logbook-absence-tab-' + entry.id"
-                        class="nav-link"
-                        data-bs-toggle="tab"
-                        :data-bs-target="'#logbook-absence-' + entry.id"
-                        type="button"
-                        role="tab"
-                        @click="loaderAbsences()"
-                    >
-                        <i class="fa fa-users-slash"></i>
-                        <span v-if="help" class="ps-2">{{ trans('global.absences.title') }}</span>
-                    </button>
-                </li>
-
-                <li v-if="checkPermission('lms_access')"
-                    class="nav-item"
-                    role="presentation"
-                >
-                    <button
-                        :href="'#lms-' + entry.id"
-                        class="nav-link small link-muted"
-                        data-bs-toggle="tab"
-                        type="button"
-                        role="tab"
-                        @click="loadLmsPlugin()"
-                    >
-                        <i class="fa fa-graduation-cap"></i>
-                        <span v-if="help" class="ps-2">{{ trans('global.lms.title_singular') }}</span>
-                    </button>
-                </li>
-
-                <button
-                    type="button"
-                    class="d-print-none btn btn-icon text-secondary ms-auto"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="trans('global.toggle_navigation')"
-                    @click="help = !help"
-                >
-                    <i class="fa fa-question"></i>
-                </button>
-            </ul>
-
-            <hr class="m-1">
+            <NavList
+                :navs="[
+                    { icon: 'fa-info', target: 'logbook-description-' + entry.id, label: 'global.description' },
+                    { icon: 'fa-align-justify', target: 'logbook-contents-' + entry.id, label: 'global.content.title', permission: 'content_access' },
+                    { icon: 'fa-tasks', target: 'logbook-tasks-' + entry.id, label: 'global.task.title', permission: 'task_access' },
+                    { icon: 'fa-photo-video', target: 'logbook-media-' + entry.id, label: 'global.medium.title' },
+                    { icon: 'fa-sitemap', target: 'logbook-objectives-' + entry.id, label: 'global.objective_tab' },
+                    { icon: 'fa-graduation-cap', target: 'logbook-lms-' + entry.id, label: 'global.lms.title_singular' },
+                ]"
+                class="px-2"
+                style="max-width: calc(100vw - 2rem);"
+            />
 
             <div class="px-1">
                 <div class="tab-content mb-1">
@@ -211,7 +88,7 @@
                         :id="'logbook-description-' + entry.id"
                         class="tab-pane fade show active p-2 p-margin-0"
                         role="tabpanel"
-                        :aria-labelledby="'logbook-description-tab-' + entry.id"
+                        :aria-labelledby="'logbook-description-' + entry.id + '-tab'"
                         tabindex="0"
                     >
                         <span v-html="entry.description?.length > 0 ? entry.description : trans('global.no_description')"></span>
@@ -221,7 +98,7 @@
                         :id="'logbook-contents-' + entry.id"
                         class="tab-pane fade"
                         role="tabpanel"
-                        :aria-labelledby="'logbook-content-tab-' + entry.id"
+                        :aria-labelledby="'logbook-content-' + entry.id + '-tab'"
                         tabindex="0"
                     >
                         <Contents
@@ -235,7 +112,7 @@
                         :id="'logbook-tasks-' + entry.id"
                         class="tab-pane fade"
                         role="tabpanel"
-                        :aria-labelledby="'logbook-task-tab-' + entry.id"
+                        :aria-labelledby="'logbook-task-' + entry.id + '-tab'"
                         tabindex="0"
                     >
                         <Tasks
@@ -247,6 +124,9 @@
                     <div v-if="checkPermission('medium_access')"
                         :id="'logbook-media-' + entry.id"
                         class="tab-pane fade"
+                        role="tabpanel"
+                        :aria-labelledby="'logbook-media-' + entry.id + '-tab'"
+                        tabindex="0"
                     >
                         <media
                             :subscribable_id="entry.id"
@@ -258,6 +138,9 @@
                     <div v-if="checkPermission('achievement_create_self_assessment')"
                         :id="'logbook-objectives-' + entry.id"
                         class="tab-pane fade"
+                        role="tabpanel"
+                        :aria-labelledby="'logbook-objectives-' + entry.id + '-tab'"
+                        tabindex="0"
                     >
                         <Objectives
                             :referenceable_id="entry.id"
@@ -267,26 +150,11 @@
                         />
                     </div>
 
-                    <div v-if="displayAbsences()"
-                        :id="'logbook-absence-' + entry.id"
-                        class="tab-pane fade"
-                        role="tabpanel"
-                        :aria-labelledby="'logbook-absence-tab-' + entry.id"
-                        tabindex="0"
-                    >
-                        <absences
-                            ref="Absences"
-                            :subscribable_id="entry.id"
-                            :subscribable_type="'App\\LogbookEntry'"
-                            :entry="entry"
-                            :logbook="logbook"
-                        />
-                    </div>
                     <div v-if="checkPermission('lms_access')"
-                        :id="'lms-' + entry.id"
+                        :id="'logbook-lms-' + entry.id"
                         class="tab-pane fade"
                         role="tabpanel"
-                        :aria-labelledby="'lms-tab-' + entry.id"
+                        :aria-labelledby="'logbook-lms-' + entry.id + '-tab'"
                         tabindex="0"
                     >
                         <Lms
@@ -299,6 +167,7 @@
                 </div>
             </div>
         </div>
+
         <Teleport to="body">
             <ConfirmModal
                 :showConfirm="showConfirm"
@@ -314,8 +183,8 @@
     </div>
 </template>
 <script>
+import NavList from "../uiElements/NavList.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import Absences from '../absence/Absences.vue';
 import Contents from '../content/Contents.vue';
 import Tasks from '../task/Tasks.vue';
 import Media from '../media/Media.vue';
@@ -324,6 +193,16 @@ import Objectives from "../objectives/Objectives.vue";
 import Avatar from "../uiElements/Avatar.vue";
 
 export default {
+    components: {
+        NavList,
+        ConfirmModal,
+        Objectives,
+        Avatar,
+        Media,
+        Contents,
+        Tasks,
+        Lms,
+    },
     props: {
         logbook: {
             type: Object,
@@ -417,15 +296,6 @@ export default {
 
             return (exists !== -1);
         },
-        displayAbsences() {
-            if (!this.checkPermission('absence_access')) return false;
-            // Only Show absences on group and course subscriptions
-            const exists = this.logbook.subscriptions.findIndex(
-                subscription => subscription.subscribable_type === "App\\Course" || subscription.subscribable_type === "App\\Group"
-            );
-
-            return (exists !== -1);
-        },
         loaderEvent: function () {
             this.$refs.Contents.loaderEvent();
         },
@@ -453,11 +323,11 @@ export default {
             this.$refs.LmsPlugin.loaderEvent();
         });
 
-        this.$eventHub.on('filter', (filter) => {
+        this.$eventHub.on('filter', filter => {
             // always case insensitive
             const content = (
-                this.$el.querySelector('.username').innerText + ' '
-                + this.$el.querySelector('[id^="logbook_description"]').innerText
+                this.$el.firstChild.innerText + ' '
+                + this.$el.querySelector('[id^="logbook-description"]').innerText
             ).toLowerCase();
             const search = filter.searchString.toLowerCase();
 
@@ -479,16 +349,6 @@ export default {
         'entry.begin': function() { this.postDate(); },
         'entry.end': function() { this.postDate(); },
     },
-    components: {
-        ConfirmModal,
-        Objectives,
-        Absences,
-        Avatar,
-        Media,
-        Contents,
-        Tasks,
-        Lms,
-    }
 }
 </script>
 <style scoped>

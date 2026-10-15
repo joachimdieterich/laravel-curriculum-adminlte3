@@ -20,6 +20,7 @@
                 class="tab-pane fade show active"
                 role="tabpanel"
                 aria-labelledby="curriculum-tab"
+                tabindex=0
             >
                 <Courses
                     ref="Courses"
@@ -32,6 +33,7 @@
                 class="tab-pane fade"
                 role="tabpanel"
                 aria-labelledby="users-tab"
+                tabindex=0
             >
                 <Users
                     ref="Users"
@@ -46,6 +48,7 @@
                 class="tab-pane fade"
                 role="tabpanel"
                 aria-labelledby="logbooks-tab"
+                tabindex=0
             >
                 <Logbooks
                     ref="Logbooks"
@@ -60,6 +63,7 @@
                 class="tab-pane fade"
                 role="tabpanel"
                 aria-labelledby="kanbans-tab"
+                tabindex=0
             >
                 <Kanbans
                     ref="Kanbans"
@@ -88,6 +92,7 @@
                 class="tab-pane fade"
                 role="tabpanel"
                 aria-labelledby="plans-tab"
+                tabindex=0
             >
                 <Plans
                     ref="Plans"
@@ -102,6 +107,7 @@
                 class="tab-pane fade"
                 role="tabpanel"
                 aria-labelledby="exams-tab"
+                tabindex=0
             >
                 <Exams
                     ref="Exams"
@@ -116,6 +122,7 @@
                 class="tab-pane fade"
                 role="tabpanel"
                 aria-labelledby="videoconferences-tab"
+                tabindex=0
             >
                 <Videoconferences
                     ref="Videoconference"

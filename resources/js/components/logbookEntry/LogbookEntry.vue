@@ -6,10 +6,9 @@
     >
         <div
             class="d-flex p-2"
-            :class="!first && 'collapsed'"
             data-bs-toggle="collapse"
             :data-bs-target="'#logbook-entry-body-' + entry.id"
-            :aria-expanded="first"
+            aria-expanded="true"
         >
             <div class="d-flex flex-column flex-fill">
                 <span class="d-flex flex-wrap align-items-center">
@@ -66,8 +65,7 @@
 
         <div
             :id="'logbook-entry-body-' + entry.id"
-            class="collapse"
-            :class="first && 'show'"
+            class="collapse show"
         >
             <hr class="m-1">
 
@@ -327,10 +325,18 @@ import Avatar from "../uiElements/Avatar.vue";
 
 export default {
     props: {
-        logbook: Object,
-        entry: Object,
-        first: false,
-        editable: false,
+        logbook: {
+            type: Object,
+            default: null,
+        },
+        entry: {
+            type: Object,
+            default: null,
+        },
+        editable: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {

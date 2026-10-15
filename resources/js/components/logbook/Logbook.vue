@@ -30,10 +30,7 @@
         </div>
 
         <LogbookEntry v-for="(entry, index) in entries"
-            :key="entry.id"
-            :first="index === 0"
             :entry="entry"
-            :search="search"
             :logbook="logbook"
         />
 

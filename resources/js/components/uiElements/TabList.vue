@@ -42,11 +42,10 @@
                         :data-bs-target="model == 'subscribe' && ('#' + tab + '_subscription')"
                         :tabindex="index === 0 ? '0' : '-1'"
                         :aria-selected="activeTab === tab"
-                        @click="(e) => $emit('change-tab', tab, e)"
+                        @click="$emit('change-tab', tab)"
                         @keydown.enter.space="$emit('change-tab', tab)"
-                        @keydown.left.right.prevent="moveFocus($event)"
                     >
-                        <i class="fas pe-2" :class="tabIcon(tab)"></i>
+                        <i class="fa pe-2" :class="tabIcon(tab)"></i>
                         {{ tabText(tab) }}
                     </button>
                 </span>
@@ -203,17 +202,6 @@ export default {
             // if the total width of the tabs exceeds the available width, show the navigator-arrows
             this.showNavigators = tabListElement.scrollWidth > tabListElement.offsetWidth;
         },
-        moveFocus(e) {
-            const currentTab = e.target;
-
-            if (e.key === 'ArrowRight') {
-                const nextTab = currentTab.parentElement.nextElementSibling ?? currentTab.parentElement.parentElement.firstElementChild;
-                if (nextTab) nextTab.firstElementChild.focus();
-            } else {
-                const previousTab = currentTab.parentElement.previousElementSibling ?? currentTab.parentElement.parentElement.lastElementChild;
-                if (previousTab) previousTab.firstElementChild.focus();
-            }
-        },
     },
     watch: {
         activeTab: function(newTab) {
@@ -222,13 +210,9 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style>
 .tablist-background {
-    background-color: #007bff;
+    background-color: var(--bs-primary);
     transition: width 0.3s ease, left 0.3s ease;
-}
-.btn {
-    border-radius: 10rem;
-    border-color: transparent;
 }
 </style>

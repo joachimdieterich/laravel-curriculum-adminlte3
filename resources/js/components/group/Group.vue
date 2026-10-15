@@ -1,226 +1,17 @@
 <template>
     <div class="d-flex flex-column">
-        <ul
-            class="nav nav-tabs align-items-center mx-3"
-            role="tablist"
-        >
-            <!-- 1 Curricula -->
-            <li
-                class="nav-item"
-                role="presentation"
-            >
-                <button
-                    id="curricula-tab"
-                    class="nav-link link-muted active"
-                    data-bs-toggle="tab"
-                    data-bs-target="#curricula"
-                    type="button"
-                    role="tab"
-                    aria-controls="curricula"
-                    aria-selected="true"
-                >
-                    <i class="fa fa-th"></i>
-                    <span v-if="help" class="ps-2">{{ trans('global.curriculum.title') }}</span>
-                </button>
-            </li>
-            <!-- 2 Users -->
-            <li
-                v-permission="'group_enrolment'"
-                class="nav-item"
-                role="presentation"
-            >
-                <button
-                    id="users-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#users"
-                    type="button"
-                    role="tab"
-                    aria-controls="users"
-                    aria-selected="false"
-                >
-                    <i class="fa fa-users"></i>
-                    <span v-if="help" class="ps-2">{{ trans('global.user.title') }}</span>
-                </button>
-            </li>
-            <!-- 3 Logbooks -->
-            <li
-                v-permission="'logbook_access'"
-                class="nav-item"
-                role="presentation"
-            >
-                <button
-                    id="logbooks-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#logbooks"
-                    type="button"
-                    role="tab"
-                    aria-controls="logbooks"
-                    aria-selected="false"
-                >
-                    <i class="fa fa-book"></i>
-                    <span v-if="help" class="ps-2">{{ trans('global.logbook.title') }}</span>
-                </button>
-            </li>
-            <!-- 4 Kanbans -->
-            <li
-                v-permission="'kanban_access'"
-                class="nav-item"
-                role="presentation"
-            >
-                <button
-                    id="kanbans-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#kanbans"
-                    type="button"
-                    role="tab"
-                    aria-controls="kanbans"
-                    aria-selected="false"
-                >
-                    <i class="fa fa-columns"></i>
-                    <span v-if="help" class="ps-2">{{ trans('global.kanban.title') }}</span>
-                </button>
-            </li>
-            <!-- 5 Tasks -->
-            <!-- <li
-                v-permission="'task_access'"
-                class="nav-item"
-                role="presentation"
-            >
-                <button
-                    id="tasks-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#tasks"
-                    type="button"
-                    role="tab"
-                    aria-controls="tasks"
-                    aria-selected="false"
-                >
-                    <i class="fa fa-tasks"></i>
-                    <span v-if="help" class="ps-2">{{ trans('global.task.title') }}</span>
-                </button>
-            </li> -->
-            <!-- 6 Plans -->
-            <li
-                v-permission="'plan_access'"
-                class="nav-item"
-                role="presentation"
-            >
-                <button
-                    id="plans-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#plans"
-                    type="button"
-                    role="tab"
-                    aria-controls="plans"
-                    aria-selected="false"
-                >
-                    <i class="fa fa-clipboard-list"></i>
-                    <span v-if="help" class="ps-2">{{ trans('global.plan.title') }}</span>
-                </button>
-            </li>
-            <!-- 7 Exams -->
-            <li
-                v-permission="'exam_access'"
-                class="nav-item"
-                role="presentation"
-            >
-                <button
-                    id="exams-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#exams"
-                    type="button"
-                    role="tab"
-                    aria-controls="exams"
-                    aria-selected="false"
-                >
-                    <i class="fa-solid fa-ranking-star"></i>
-                    <span v-if="help" class="ps-2">{{ trans('global.exam.title') }}</span>
-                </button>
-            </li>
-            <!-- 8 Videoconferences -->
-            <li
-                v-permission="'videoconference_access'"
-                class="nav-item"
-                role="presentation"
-            >
-                <a
-                    id="videoconferences-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#videoconferences"
-                    type="button"
-                    role="tab"
-                    aria-controls="videoconferences"
-                    aria-selected="false"
-                >
-                    <i class="fa-solid fa-video"></i>
-                    <span v-if="help" class="ps-2">{{ trans('global.videoconference.title') }}</span>
-                </a>
-            </li>
-            <!-- 9 Glossar -->
-            <!-- <li
-                class="nav-item"
-                role="presentation"
-            >
-                <button v-if="group.glossar != null"
-                    id="glossar-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#glossar"
-                    type="button"
-                    role="tab"
-                    aria-controls="glossar"
-                    aria-selected="false"
-                >
-                    <i class="fa fa-book-open pe-2"></i>
-                    <span v-if="help">{{ trans('global.glossar.title_singular') }}</span>
-                </button>
-                <button v-else
-                    v-permission="'glossar_create'"
-                    class="nav-link link-muted"
-                    id="create-glossar"
-                    :href="'/glossar/create?subscribable_type=App\\Group&subscribable_id=' + group.id"
-                >
-                    <i class="fa fa-book-open pe-2"></i>
-                    {{ trans('global.glossar.create') }}
-                </button>
-            </li> -->
-            <!-- 10 Media -->
-            <!-- <li
-                class="nav-item"
-                role="presentation"
-            >
-                <button
-                    id="media-tab"
-                    class="nav-link link-muted"
-                    data-bs-toggle="tab"
-                    data-bs-target="#media"
-                    type="button"
-                    role="tab"
-                    aria-controls="media"
-                    aria-selected="false"
-                >
-                    <i class="fa fa-folder-open pe-2"></i>
-                    {{ trans('global.medium.title') }}
-                </button>
-            </li> -->
-            <!-- Help -->
-            <button
-                type="button"
-                class="d-print-none btn btn-icon text-secondary ms-auto"
-                data-bs-toggle="tooltip"
-                :data-bs-title="trans('global.toggle_navigation')"
-                @click="help = !help"
-            >
-                <i class="fa fa-question"></i>
-            </button>
-        </ul>
+        <NavList
+            class="px-3"
+            :navs="[
+                { icon: 'fa-th', target: 'curricula', label: 'global.curriculum.title' },
+                { icon: 'fa-users', target: 'users', label: 'global.user.title', permission: 'group_enrolment' },
+                { icon: 'fa-book', target: 'logbooks', label: 'global.logbook.title' },
+                { icon: 'fa-columns', target: 'kanbans', label: 'global.kanban.title' },
+                { icon: 'fa-clipboard-list', target: 'plans', label: 'global.plan.title' },
+                { icon: 'fa-ranking-star', target: 'exams', label: 'global.exam.title' },
+                { icon: 'fa-video', target: 'videoconferences', label: 'global.videoconference.title' },
+            ]"
+        />
 
         <div class="tab-content">
             <!-- 1 Curricula -->
@@ -250,7 +41,7 @@
                 />
             </div>
             <!-- 3 Logbooks -->
-            <div v-if="checkPermission('logbook_access')"
+            <div
                 id="logbooks"
                 class="tab-pane fade"
                 role="tabpanel"
@@ -264,7 +55,7 @@
                 />
             </div>
             <!-- 4 Kanbans -->
-            <div v-if="checkPermission('kanban_access')"
+            <div
                 id="kanbans"
                 class="tab-pane fade"
                 role="tabpanel"
@@ -292,7 +83,7 @@
                 />
             </div> -->
             <!-- 6 Plans -->
-            <div v-if="checkPermission('plan_access')"
+            <div
                 id="plans"
                 class="tab-pane fade"
                 role="tabpanel"
@@ -306,7 +97,7 @@
                 />
             </div>
             <!-- 7 Exams -->
-            <div v-if="checkPermission('exam_access')"
+            <div
                 id="exams"
                 class="tab-pane fade"
                 role="tabpanel"
@@ -320,7 +111,7 @@
                 />
             </div>
             <!-- 8 Videoconferences -->
-            <div v-if="checkPermission('videoconference_access')"
+            <div
                 id="videoconferences"
                 class="tab-pane fade"
                 role="tabpanel"
@@ -333,28 +124,6 @@
                     :subscribable="true"
                 />
             </div>
-            <!-- 9 Glossar -->
-            <!-- <div v-if="group.glossar !== null"
-                id="glossar"
-                class="tab-pane fade"
-                role="tabpanel"
-                aria-labelledby="glossar-tab"
-            >
-                <Glossars :glossar="group.glossar"/>
-            </div> -->
-            <!-- 10 Media -->
-            <!-- <div
-                id="media"
-                class="tab-pane fade"
-                role="tabpanel"
-                aria-labelledby="media-tab"
-            >
-                <Media
-                    subscribable_type="App\Group"
-                    :subscribable_id="group.id"
-                    format="list"
-                />
-            </div> -->
         </div>
 
         <Teleport to="body">
@@ -378,36 +147,33 @@
     </div>
 </template>
 <script>
+import NavList from "../uiElements/NavList.vue";
 import GroupModal from "../group/GroupModal.vue";
 import Videoconferences from "../videoconference/Videoconferences.vue";
 import Courses from "../course/Courses.vue";
-//import Glossars from "../glossar/Glossars.vue";
-import Media from "../media/Media.vue";
 import Users from "../user/Users.vue";
 import Logbooks from "../logbook/Logbooks.vue";
 import Kanbans from "../kanban/Kanbans.vue";
 //import Tasks from "../task/Tasks.vue";
 import Plans from "../plan/Plans.vue";
 import Exams from "../exam/Exams.vue";
-//import Tests from "../tests/Tests_Exams_View.vue";
 
 export default {
     components: {
+        NavList,
         GroupModal,
         Videoconferences,
         Users,
         Courses,
-        Media,
-        //Glossars,
         Logbooks,
         Kanbans,
         //Tasks,
         Plans,
         Exams,
-        //Tests,
     },
     props: {
         group: {
+            type: Object,
             default: null,
         },
         courses: Array,
@@ -416,7 +182,6 @@ export default {
         return {
             componentId: this.$.uid,
             currentGroup: {},
-            help: true,
         }
     },
     mounted() {

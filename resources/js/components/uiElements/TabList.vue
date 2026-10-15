@@ -12,11 +12,12 @@
                 tabindex="-1"
                 @click="slide(false)"
             >
-                <i class="fas fa-angle-left"></i>
+                <i class="fa fa-angle-left"></i>
             </button>
         </span>
 
         <div
+            ref="tablist"
             :id="model + '-filter'"
             class="position-relative d-flex flex-nowrap overflow-auto hide-scrollbars my-2"
             role="tablist"
@@ -61,7 +62,7 @@
                 tabindex="-1"
                 @click="slide(true)"
             >
-                <i class="fas fa-angle-right"></i>
+                <i class="fa fa-angle-right"></i>
             </button>
         </span>
     </div>
@@ -174,22 +175,21 @@ export default {
             backgroundElem.style.width = width + 'px';
         },
         slide(right) {
-            const tabListElement = document.getElementById(this.model + '-filter');
-            const tabListLeftPos = tabListElement.getClientRects()[0].left;
-            const tabChildren = document.getElementById(this.model + '-filter-wrapper').children;
+            const tabListLeftPos = this.$refs.tablist.getBoundingClientRect().left;
+            const tabChildren = this.$el.getElementById(this.model + '-filter-wrapper').children;
             const margin = 25; // min amount of pixels slider has to move
             let childLeftPos;
 
             if (right) {
                 // check entries from left to right
-                for (let i = 0; i < tabChildren.length; i++) {
-                    childLeftPos = tabChildren[i].getClientRects()[0].left;
+                for (const child of tabChildren) {
+                    childLeftPos = child.getBoundingClientRect().left;
                     if (childLeftPos > (tabListLeftPos + margin)) break;
                 }
             } else {
                 // check entries from right to left
-                for (let i = tabChildren.length - 1; i >= 0; i--) {
-                    childLeftPos = tabChildren[i].getClientRects()[0].left;
+                for (const child of [...tabChildren].reverse()) {
+                    childLeftPos = child.getBoundingClientRect().left;
                     if (childLeftPos < (tabListLeftPos - margin)) break;
                 }
             }
@@ -198,9 +198,8 @@ export default {
             tabListElement.scrollBy({ left: distance, behavior: 'smooth' });
         },
         checkTabListWidth() {
-            const tabListElement = document.getElementById(this.model + '-filter');
             // if the total width of the tabs exceeds the available width, show the navigator-arrows
-            this.showNavigators = tabListElement.scrollWidth > tabListElement.offsetWidth;
+            this.showNavigators = this.$refs.tablist.scrollWidth > this.$refs.tablist.offsetWidth;
         },
     },
     watch: {

@@ -1,10 +1,10 @@
 <template>
     <div
-        class="d-flex align-items-center"
+        class="d-flex"
         style="max-width: 100vw;"
     >
         <span v-if="showNavigators"
-            class="d-flex align-items-center pe-2 border-bottom h-100"
+            class="d-flex align-items-center pe-2 border-bottom"
         >
             <button
                 class="btn btn-icon flex-shrink-0 text-secondary"
@@ -52,7 +52,7 @@
         </div>
 
         <span v-if="showNavigators"
-            class="d-flex align-items-center ps-2 border-bottom h-100"
+            class="d-flex align-items-center ps-2 border-bottom"
         >
             <button
                 class="btn btn-icon flex-shrink-0 text-secondary"
@@ -64,7 +64,7 @@
             </button>
         </span>
 
-        <span class="d-print-none d-flex align-items-center border-bottom ms-auto h-100">
+        <span class="d-print-none d-flex align-items-center border-bottom">
             <button
                 type="button"
                 class="btn btn-icon text-secondary"
@@ -156,6 +156,7 @@ export default {
 }
 </script>
 <style>
+button.nav-link:not(.active) { border-bottom: 1px solid var(--bs-border-color); }
 .navlist-label-wrapper {
     overflow: hidden;
     transition: width 0.3s ease;

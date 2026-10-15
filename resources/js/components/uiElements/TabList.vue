@@ -7,7 +7,7 @@
             class="pe-2"
         >
             <button
-                class="btn btn-icon flex-shrink-0"
+                class="btn btn-icon flex-shrink-0 text-secondary"
                 role="button"
                 tabindex="-1"
                 @click="slide(false)"
@@ -56,7 +56,7 @@
             class="ps-2"
         >
             <button
-                class="btn btn-icon flex-shrink-0"
+                class="btn btn-icon flex-shrink-0 text-secondary"
                 role="button"
                 tabindex="-1"
                 @click="slide(true)"
@@ -74,22 +74,22 @@ export default {
         model: {
             type: String,
             required: true,
-            title: "Singular name of the model to filter (e.g. 'kanban')",
+            description: "Singular name of the model to filter (e.g. 'kanban')",
         },
         modelIcon: {
             type: String,
             required: true,
-            title: "FontAwesome icon class used to identify the model",
+            description: "FontAwesome icon class used to identify the model",
         },
         tabs: {
             type: Array,
             default: ['all', 'owned', 'shared_with_me', 'shared_by_me'],
-            title: "Possible String values: 'favourite', 'hidden', 'all', 'owned','shared_with_me', 'shared_by_me', 'user', 'group', 'organization', 'token'",
+            description: "Possible String values: 'favourite', 'hidden', 'all', 'owned','shared_with_me', 'shared_by_me', 'user', 'group', 'organization', 'token'",
         },
         activeTab: {
             type: String,
             required: true,
-            title: "The active tab needs to be changed by the parent component",
+            description: "The active tab needs to be changed by the parent component",
         },
     },
     data() {

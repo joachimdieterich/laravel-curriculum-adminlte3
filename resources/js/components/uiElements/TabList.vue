@@ -18,7 +18,6 @@
 
         <div
             ref="tablist"
-            :id="model + '-filter'"
             class="position-relative d-flex flex-nowrap overflow-auto hide-scrollbars my-2"
             role="tablist"
             tabindex="-1"
@@ -163,12 +162,13 @@ export default {
             }
         },
         changeTab(tab, initial = false) {
-            const tabRects = document.getElementById(this.model + '-filter-' + tab).getClientRects()[0];
-            const leftOffset = document.getElementById(this.model + '-filter-wrapper').getClientRects()[0].left;
-            const backgroundElem = this.$el.getElementsByClassName('tablist-background')[0];
+            const tabRects = this.$el.querySelector('#' + this.model + '-filter-' + tab).getBoundingClientRect();
+            const leftOffset = this.$el.querySelector('#' + this.model + '-filter-wrapper').getBoundingClientRect().left;
+            const backgroundElem = this.$el.querySelector('.tablist-background');
 
             backgroundElem.style.left = (tabRects.left - leftOffset) + 'px';
             let width = tabRects.width;
+            // the modal-opening animation causes each element to be slightly bigger
             if (initial && document.getElementsByClassName('modal-mask')[0]?.contains(this.$el)) {
                 width = width / 1.1;
             }
@@ -176,7 +176,7 @@ export default {
         },
         slide(right) {
             const tabListLeftPos = this.$refs.tablist.getBoundingClientRect().left;
-            const tabChildren = this.$el.getElementById(this.model + '-filter-wrapper').children;
+            const tabChildren = this.$el.querySelector('#' + this.model + '-filter-wrapper').children;
             const margin = 25; // min amount of pixels slider has to move
             let childLeftPos;
 
@@ -195,7 +195,7 @@ export default {
             }
 
             const distance = childLeftPos - tabListLeftPos;
-            tabListElement.scrollBy({ left: distance, behavior: 'smooth' });
+            this.$refs.tablist.scrollBy({ left: distance, behavior: 'smooth' });
         },
         checkTabListWidth() {
             // if the total width of the tabs exceeds the available width, show the navigator-arrows

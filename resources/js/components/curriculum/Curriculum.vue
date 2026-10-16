@@ -16,158 +16,87 @@
         </div>
 
         <div class="d-flex flex-column px-3 pb-3">
-            <ul
-                class="nav nav-tabs align-items-center"
-                role="tablist"
-                aria-label="Curriculum Tabs"
-            >
-                <li
-                    class="nav-item"
-                    role="presentation"
-                >
-                    <button
-                        id="description-nav-tab"
-                        class="nav-link link-muted"
-                        type="button"
-                        role="tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#description-tab"
-                        aria-controls="description-tab"
-                        aria-selected="false"
-                    >
-                        <i class="fa fa-info"></i>
-                        {{ trans('global.description') }}
-                    </button>
-                </li>
+            <div class="d-flex flex-wrap">
+                <NavList
+                    :navs="[
+                        { icon: 'fa-info', target: 'description', label: 'global.description' },
+                        { icon: 'fa-align-justify', target: 'contents', label: 'global.content.index' },
+                        { icon: 'fa-th', target: 'curriculum', label: 'global.objective_tab' },
+                        { icon: 'fa-folder-open', target: 'medium', label: 'global.medium.title' },
+                    ]"
+                    :initial-tab="2"
+                    class="flex-fill"
+                    style="max-width: calc(100vw - 2rem);"
+                />
+    
+                <div class="d-print-none d-flex flex-wrap align-items-center gap-2 ms-auto">
+                    <div class="d-flex flex-wrap flex-fill justify-content-around gap-2">
+                        <button v-if="store.getSelectedIds('curriculum-user-datatable')?.length > 0 && Object.keys(course).length"
+                            v-permission="'certificate_access'"
+                            id="certificate-nav-tab"
+                            class="btn btn-light flex-fill"
+                            type="button"
+                            @click="generateCertificate()"
+                        >
+                            <i class="fa fa-certificate"></i>
+                            {{ trans('global.certificate.generate') }}
+                        </button>
+            
+                        <button v-if="checkPermission('certificate_create')"
+                            id="certificate-nav-tab"
+                            class="btn btn-light flex-fill"
+                            type="button"
+                            @click="createCertificate()"
+                        >
+                            <i class="fa fa-certificate"></i>
+                            {{ trans('global.certificate.create') }}
+                        </button>
+                    </div>
 
-                <li
-                    class="nav-item"
-                    role="presentation"
-                >
-                    <button
-                        id="content-nav-tab"
-                        class="nav-link link-muted"
-                        type="button"
-                        role="tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#content-tab"
-                        aria-controls="content-tab"
-                        aria-selected="false"
-                        @click="loaderEvent()"
-                    >
-                        <i class="fa fa-align-justify pe-2"></i>
-                        {{ trans('global.content.index') }}
-                    </button>
-                </li>
-
-                <li
-                    class="nav-item"
-                    role="presentation"
-                >
-                    <button
-                        id="curriculum-nav-tab"
-                        class="nav-link link-muted active"
-                        type="button"
-                        role="tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#curriculum-tab"
-                        aria-controls="curriculum-tab"
-                        aria-selected="true"
-                    >
-                        <i class="fas fa-th pe-2"></i>
-                        {{ trans('global.objective_tab') }}
-                    </button>
-                </li>
-
-                <li
-                    class="nav-item"
-                    role="presentation"
-                >
-                    <button
-                        id="medium-nav-tab"
-                        class="nav-link link-muted"
-                        type="button"
-                        role="tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#medium-tab"
-                        aria-controls="medium-tab"
-                        aria-selected="false"
-                    >
-                        <i class="fa fa-folder-open pe-2"></i>
-                        {{ trans('global.medium.title') }}
-                    </button>
-                </li>
-
-                <li v-if="(store.getSelectedIds('curriculum-user-datatable')?.length > 0) && Object.keys(course).length"
-                    v-permission="'certificate_access'"
-                    class="nav-item ms-auto"
-                >
-                    <button
-                        id="certificate-nav-tab"
-                        class="nav-link link-muted"
-                        type="button"
-                        @click.prevent="generateCertificate()"
-                    >
-                        <i class="fa fa-certificate pe-2"></i>
-                        {{ trans('global.certificate.generate') }}
-                    </button>
-                </li>
-
-                <li v-if="checkPermission('certificate_create')"
-                    class="nav-item ms-auto"
-                >
-                    <button
-                        id="certificate-nav-tab"
-                        class="nav-link link-muted"
-                        type="button"
-                        @click.prevent="createCertificate()"
-                    >
-                        <i class="fa fa-certificate pe-2"></i>
-                        {{ trans('global.certificate.create') }}
-                    </button>
-                </li>
-
-                <button
-                    id="config-nav-tab"
-                    class="d-print-none btn btn-icon text-secondary mx-2"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="trans('global.curriculum.print')"
-                    @click="printCurriculum()"
-                >
-                    <i class="fa fa-print"></i>
-                </button>
-
-                <button v-if="checkPermission('is_admin') || $userId == curriculum.owner_id"
-                    id="fix-order-nav-tab"
-                    class="d-print-none btn btn-icon text-secondary mx-2"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="trans('global.resetOrder')"
-                    @click="resetOrderIds()"
-                >
-                    <i class="fa fa-wrench"></i>
-                </button>
-
-                <button v-if="checkPermission('curriculum_create')"
-                    id="export-curriculum-nav-tab"
-                    class="d-print-none btn btn-icon text-secondary ms-2"
-                    data-bs-toggle="tooltip"
-                    data-bs-title="Export Curriculum"
-                    @click="exportCurriculum()"
-                >
-                    <i class="fa fa-cloud-download-alt"></i>
-                </button>
-            </ul>
+                    <div class="d-flex gap-2 ms-auto">
+                        <button
+                            id="config-nav-tab"
+                            class="btn btn-icon text-secondary"
+                            data-bs-toggle="tooltip"
+                            :data-bs-title="trans('global.curriculum.print')"
+                            @click="printCurriculum()"
+                        >
+                            <i class="fa fa-print"></i>
+                        </button>
+            
+                        <button v-if="checkPermission('is_admin') || $userId == curriculum.owner_id"
+                            id="fix-order-nav-tab"
+                            class="btn btn-icon text-secondary"
+                            data-bs-toggle="tooltip"
+                            :data-bs-title="trans('global.resetOrder')"
+                            @click="resetOrderIds()"
+                        >
+                            <i class="fa fa-wrench"></i>
+                        </button>
+            
+                        <button v-if="checkPermission('curriculum_create')"
+                            id="export-curriculum-nav-tab"
+                            class="btn btn-icon text-secondary"
+                            data-bs-toggle="tooltip"
+                            data-bs-title="Export Curriculum"
+                            @click="exportCurriculum()"
+                        >
+                            <i class="fa fa-cloud-download-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <div
                 id="custom-content-below-tabContent"
                 class="tab-content"
             >
                 <div
-                    id="description-tab"
+                    id="description"
                     class="tab-pane fade bg-white border border-top-0 rounded-bottom-2"
                     role="tabpanel"
                     tabindex="0"
-                    aria-labelledby="description-nav-tab"
+                    aria-labelledby="description-tab"
                 >
                     <div
                         class="p-3"
@@ -176,11 +105,11 @@
                 </div>
 
                 <div
-                    id="content-tab"
+                    id="contents"
                     class="tab-pane fade"
                     role="tabpanel"
                     tabindex="0"
-                    aria-labelledby="content-nav-tab"
+                    aria-labelledby="content-tab"
                 >
                     <Contents
                         ref="Contents"
@@ -190,11 +119,11 @@
                 </div>
 
                 <div
-                    id="curriculum-tab"
+                    id="curriculum"
                     class="tab-pane fade show active"
                     role="tabpanel"
                     tabindex="0"
-                    aria-labelledby="curriculm-nav-tab"
+                    aria-labelledby="curriculm-tab"
                 >
                     <TerminalObjectives
                         ref="terminalObjectives"
@@ -204,11 +133,11 @@
                 </div>
 
                 <div
-                    id="medium-tab"
+                    id="medium"
                     class="tab-pane fade"
                     role="tabpanel"
                     tabindex="0"
-                    aria-labelledby="medium-nav-tab"
+                    aria-labelledby="medium-tab"
                 >
                     <Media
                         subscribable_type="App\Curriculum"
@@ -255,6 +184,7 @@
                 </button>
             </div>
         </Teleport>
+
         <Teleport to="#contributors">
             <contributors-list v-if="Object.values(currentContributors).length > 1"
                 :contributors="currentContributors"
@@ -264,6 +194,7 @@
     </div>
 </template>
 <script>
+import NavList from "../uiElements/NavList.vue";
 import CurriculumModal from "../curriculum/CurriculumModal.vue";
 import Media from "../media/Media.vue";
 import TerminalObjectives from '../objectives/TerminalObjectives.vue'
@@ -285,6 +216,7 @@ DataTable.use(DataTablesCore);
 export default {
     name: "Curriculum",
     components: {
+        NavList,
         ContributorsList,
         MediumModal,
         MediumExportModal,
@@ -334,6 +266,7 @@ export default {
     },
     mounted() {
         this.currentCurriculum = this.curriculum;
+        this.$refs.Contents.loaderEvent()
 
         this.enableTooltips();
 
@@ -363,9 +296,6 @@ export default {
         edit() {
             this.curriculum.tags = this.curriculum.tags.map(tag => tag.id ?? tag);
             this.globalStore.showModal('curriculum-modal', this.curriculum);
-        },
-        loaderEvent() {
-            this.$refs.Contents.loaderEvent();
         },
         generateCertificate() {
             this.globalStore.showModal('generate-certificate-modal', {'curriculum_id': this.curriculum.id});

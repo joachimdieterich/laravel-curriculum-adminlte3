@@ -19,7 +19,7 @@
             >
                 <template #entry="{ entry }">
                     <i v-if="!entry.grade"
-                       class="fa text-secondary mr-2"
+                       class="fa text-secondary me-2"
                        :class="entry.is_favourited
                                 ? 'fa-heart'
                                 : entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"

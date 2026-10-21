@@ -6,7 +6,11 @@ use App\Organization;
 use App\OrganizationRoleUser;
 use App\StatusDefinition;
 use App\User;
+use Exception;
+use Gate;
 use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
+use Throwable;
 use Yajra\DataTables\DataTables;
 
 class OrganizationsController extends Controller
@@ -14,7 +18,7 @@ class OrganizationsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse|View
      */
     public function index()
     {
@@ -23,21 +27,23 @@ class OrganizationsController extends Controller
                 return getEntriesForSelect2ByModel(
                     "App\Organization"
                 );
-            } else {
-                return getEntriesForSelect2ByCollection(
-                    auth()->user()->organizations(),
-                    'organizations.'
-                );
             }
+
+            return getEntriesForSelect2ByCollection(
+                auth()->user()->organizations(),
+                'organizations.'
+            );
         }
 
-        if (!\Gate::allows('organization_access')) {
+        if (! Gate::allows('organization_access')) {
             $validOrg = auth()->user()->organizationRolesUsers()->where('role_id', 4)->pluck('organization_id')->first();
-            if ($validOrg == null) abort(403);
+            if ($validOrg == null) {
+                abort(403);
+            }
 
             try {
                 auth()->user()->update(['current_organization_id' => $validOrg]);
-            } catch (\Throwable) {
+            } catch (Throwable) {
                 abort(403);
             }
         }
@@ -45,38 +51,40 @@ class OrganizationsController extends Controller
         return view('organizations.index');
     }
 
+    /**
+     * @throws Exception
+     */
     public function list(): JsonResponse
     {
-        abort_unless(\Gate::allows('organization_access'), 403);
+        abort_unless(Gate::allows('organization_access'), 403);
 
         $organizations = Organization::query();
 
-        if (!is_admin()) {
+        if (! is_admin()) {
             $organizations->whereHas('users', function ($query) {
                 $query->where('user_id', auth()->user()->id);
             });
         }
 
-        return DataTables::of($organizations)->make(true);
+        return DataTables::of($organizations)->make();
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Organization|void
      */
     public function store()
     {
-        abort_unless(\Gate::allows('organization_create'), 403);
+        abort_unless(Gate::allows('organization_create'), 403);
 
         $new_organization = $this->validateRequest();
-        $organization = Organization::firstOrCreate(
+        $organization     = Organization::firstOrCreate(
             array_merge($this->validateRequest(),
                 [
                     'organization_type_id' => format_select_input($new_organization['organization_type_id']),
-                    'state_id' => format_select_input($new_organization['state_id']),
-                    'country_id' => format_select_input($new_organization['country_id']),
+                    'state_id'             => format_select_input($new_organization['state_id']),
+                    'country_id'           => format_select_input($new_organization['country_id']),
                 ]
             )
         );
@@ -89,13 +97,12 @@ class OrganizationsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return array|View
      */
     public function show(Organization $organization)
     {
-        abort_unless(\Gate::allows('organization_show'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
+        abort_unless(Gate::allows('organization_show'), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) || is_admin()), 403);
 
         if (request()->wantsJson()) {
             return [
@@ -103,31 +110,30 @@ class OrganizationsController extends Controller
             ];
         }
         $status_definitions = StatusDefinition::all();
-        $organization = $organization->load('type', 'state', 'country');
+        $organization       = $organization->load('type', 'state', 'country');
+
         return view('organizations.show')
-                ->with(compact('organization'))
-                ->with(compact('status_definitions'));
+            ->with(compact('organization'))
+            ->with(compact('status_definitions'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Organization|void
      */
     public function update(Organization $organization)
     {
-        abort_unless(\Gate::allows('organization_edit'), 403, "No permission to edit organization information");
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403, "Need to be registered in this organization");
+        abort_unless(Gate::allows('organization_edit'), 403, 'No permission to edit organization information');
+        abort_unless((auth()->user()->organizations->contains($organization) || is_admin()), 403, 'Need to be registered in this organization');
 
-        $clean_data = $this->validateRequest();
-        $clean_data['state_id'] = format_select_input($clean_data['state_id']);
-        $clean_data['country_id'] = format_select_input($clean_data['country_id']);
+        $clean_data                         = $this->validateRequest();
+        $clean_data['state_id']             = format_select_input($clean_data['state_id']);
+        $clean_data['country_id']           = format_select_input($clean_data['country_id']);
         $clean_data['organization_type_id'] = format_select_input($clean_data['organization_type_id']);
 
         if (isset(request()->status_id[0])) {
-            $clean_data['status_id'] = request()->status_id[0];  //hack to prevent array to string conversion
+            $clean_data['status_id'] = request()->status_id[0];  // hack to prevent array to string conversion
         }
 
         $organization->update($clean_data);
@@ -140,55 +146,64 @@ class OrganizationsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return bool
      */
     public function destroy(Organization $organization)
     {
-        abort_unless(\Gate::allows('organization_delete'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
+        abort_unless(Gate::allows('organization_delete'), 403);
+        abort_unless((auth()->user()->organizations->contains($organization) || is_admin()), 403);
 
         return $organization->delete();
     }
 
+    /**
+     * @return array|void|null
+     */
     public function enrol()
     {
-        abort_unless(\Gate::allows('organization_enrolment'), 403);
+        abort_unless(Gate::allows('organization_enrolment'), 403);
 
+        $user = auth()->user();
         foreach ((request()->enrollment_list) as $enrolment) {
-            if (auth()->user()->id == $enrolment['user_id']
-                and auth()->user()->role()->id == 1
-                and auth()->user()->current_organization_id == $enrolment['organization_id']) {
-                // do nothing -> admin should not degrade itself
-            } else {
-                //current admin should not be edited
-                if (auth()->user()->role()->id <= $enrolment['role_id']) {  //only allow roles below or equal
-                    abort_unless((auth()->user()->organizations->contains($enrolment['organization_id']) or is_admin()), 403);
-                    $return[] = OrganizationRoleUser::updateOrCreate(
-                        [
-                            'user_id' => $enrolment['user_id'],
-                            'organization_id' => $enrolment['organization_id'],
-                        ],
-                        [
-                            'role_id' => $enrolment['role_id'],
-                        ]
-                    );
-                }
+            $isAdmin = $user->id == $enrolment['user_id']
+                 && $user->current_organization_id == $enrolment['organization_id']
+                 && $user->role()->id == 1;
+
+            // if admin -> do nothing -> admin should not degrade itself
+            if (! $isAdmin && $user->role()->id <= $enrolment['role_id']) {
+                // current admin should not be edited  // only allow roles below or equal
+                abort_unless(($user->organizations->contains($enrolment['organization_id']) || is_admin()), 403);
+                $return[] = OrganizationRoleUser::updateOrCreate(
+                    [
+                        'user_id'         => $enrolment['user_id'],
+                        'organization_id' => $enrolment['organization_id'],
+                    ],
+                    [
+                        'role_id' => $enrolment['role_id'],
+                    ]
+                );
             }
         }
+
         if (request()->wantsJson()) {
             return $return ?? null;
         }
     }
 
+    /**
+     * @return ?array|void
+     */
     public function expel()
     {
-        abort_unless(\Gate::allows('organization_enrolment'), 403);
+        abort_unless(Gate::allows('organization_enrolment'), 403);
+        $user    = auth()->user();
+        $isAdmin = is_admin();
 
         foreach ((request()->expel_list) as $expel) {
-            abort_unless((auth()->user()->organizations->contains($expel['organization_id']) or is_admin()), 403);
+            abort_unless(($user->organizations->contains($expel['organization_id']) || $isAdmin), 403);
+
             $return[] = OrganizationRoleUser::where([
-                'user_id' => $expel['user_id'],
+                'user_id'         => $expel['user_id'],
                 'organization_id' => $expel['organization_id'],
             ])->delete();
 
@@ -209,19 +224,19 @@ class OrganizationsController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'common_name' => 'sometimes',
-            'title' => 'sometimes|required',
-            'description' => 'sometimes',
-            'street' => 'sometimes',
-            'postcode' => 'sometimes',
-            'city' => 'sometimes',
-            'state_id' => 'sometimes',
-            'country_id' => 'sometimes',
+            'common_name'          => 'sometimes',
+            'title'                => 'sometimes|required',
+            'description'          => 'sometimes',
+            'street'               => 'sometimes',
+            'postcode'             => 'sometimes',
+            'city'                 => 'sometimes',
+            'state_id'             => 'sometimes',
+            'country_id'           => 'sometimes',
             'organization_type_id' => 'sometimes',
-            'phone' => 'sometimes',
-            'email' => 'sometimes',
-            'status_id' => 'sometimes',
-            'lms_url' => 'sometimes',
+            'phone'                => 'sometimes',
+            'email'                => 'sometimes',
+            'status_id'            => 'sometimes',
+            'lms_url'              => 'sometimes',
         ]);
     }
 }

@@ -17,7 +17,7 @@
                 >
                     <i class="fa" :class="icon"></i>
                 </button>
-                <span class="flex-fill h3 mx-2 mb-0">
+                <span class="flex-fill h3 mx-2 mb-0 text-break">
                     <div v-if="disableLink" class="px-2">{{ text }}</div>
                     <a v-else
                         :href="href || '/' + model"

@@ -63,6 +63,10 @@ class GroupsController extends Controller
             });
         }
 
+        if (request()->exists('organizationFilter')) {
+            $groups->whereIn('organization_id', request()->array('organizationFilter'));
+        }
+
         return DataTables::of($groups)
             ->addColumn('organization', function ($groups) {
                 return $groups->organization->title;

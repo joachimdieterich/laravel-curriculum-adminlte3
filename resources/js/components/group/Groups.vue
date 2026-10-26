@@ -1,113 +1,103 @@
 <template>
-    <div>
-        <div class="d-flex flex-column">
+    <div class="d-flex flex-column">
+        <div
+            id="group-content"
+            class="px-3"
+        >
             <div
-                id="group-content"
-                class="px-3"
+                class="d-flex justify-content-between"
             >
-                <div
-                    class="d-flex justify-content-between"
-                >
-                    <Switch
-                        id="group-toggle-all"
-                        label="global.group.allGroups"
-                        v-model="allGroupsView"
-                        @change="toggleAllGroupsView()"
-                    />
-                    <button v-if="checkPermission('is_schooladmin')"
-                        type="button"
-                        class="btn"
-                        :class="btnClass"
-                        @click="setMode()"
-                    >
-                        {{ trans('global.select') }}
-                    </button>
-                </div>
-
-                <IndexWidget v-if="checkPermission('group_create')"
-                    key="groupCreate"
-                    modelName="Group"
-                    url="/groups"
-                    :create=true
-                    :label="trans('global.group.create')"
+                <Switch
+                    id="group-toggle-all"
+                    label="global.group.allGroups"
+                    v-model="allGroupsView"
+                    @change="toggleAllGroupsView()"
                 />
-                <IndexWidget v-for="group in groups"
-                             :key="'groupIndex'+group.id"
-                             :model="group"
-                             modelName="Group"
-                             storeTitle="groups"
-                             url="/groups"
-                >
-                    <template #icon>
-                        <i class="fa fa-layer-group"></i>
-                    </template>
-
-                    <template #dropdown
-                        v-permission="'group_edit, group_delete'"
-                    >
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <button
-                                v-permission="'group_edit'"
-                                type="button"
-                                class="dropdown-item"
-                                @click="editGroup(group)"
-                            >
-                                <i class="fa fa-pencil-alt"></i>
-                                {{ trans('global.group.edit') }}
-                            </button>
-
-                            <hr class="my-1">
-
-                            <button
-                                v-permission="'group_delete'"
-                                type="submit"
-                                class="dropdown-item text-danger"
-                                @click="confirmItemDelete(group)"
-                            >
-                                <i class="fa fa-trash"></i>
-                                {{ trans('global.group.delete') }}
-                            </button>
-                        </div>
-                    </template>
-
-                    <template #badges>
-                        <button
-                            type="button"
-                            class="btn btn-info btn-xs position-absolute"
-                            style="bottom: 5px; right: 5px;"
-                            tabindex="-1"
-                            @click.stop="filterByOrg(group.organization.title)"
-                        >
-                            <i class="fa fa-university"></i>
-                            {{ group.organization.title }}
-                        </button>
-                    </template>
-                </IndexWidget>
             </div>
 
-            <DataTable
-                ref="datatable"
-                :columns="columns"
-                :options="$dtOptions"
-                :ajax="dtAjaxOptions"
-                class="d-none"
-                @xhr="(e, settings, json) => groups = json.data"
+            <IndexWidget v-if="checkPermission('group_create')"
+                key="groupCreate"
+                modelName="Group"
+                url="/groups"
+                :create=true
+                :label="trans('global.group.create')"
             />
+            <IndexWidget v-for="group in groups"
+                :key="'groupIndex' + group.id"
+                :model="group"
+                modelName="Group"
+                storeTitle="groups"
+                url="/groups"
+            >
+                <template #icon>
+                    <i class="fa fa-layer-group"></i>
+                </template>
 
-            <Teleport to="body">
-                <GroupModal/>
-                <ConfirmModal
-                    :showConfirm="showConfirm"
-                    :title="trans('global.group.delete')"
-                    :description="trans('global.group.delete_helper')"
-                    @close="showConfirm = false"
-                    @confirm="() => {
-                        showConfirm = false;
-                        destroy();
-                    }"
-                />
-            </Teleport>
+                <template #dropdown
+                    v-permission="'group_edit, group_delete'"
+                >
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <button
+                            v-permission="'group_edit'"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editGroup(group)"
+                        >
+                            <i class="fa fa-pencil-alt"></i>
+                            {{ trans('global.group.edit') }}
+                        </button>
+
+                        <hr class="my-1">
+
+                        <button
+                            v-permission="'group_delete'"
+                            type="submit"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(group)"
+                        >
+                            <i class="fa fa-trash"></i>
+                            {{ trans('global.group.delete') }}
+                        </button>
+                    </div>
+                </template>
+
+                <template #badges>
+                    <button
+                        type="button"
+                        class="btn btn-info btn-xs position-absolute"
+                        style="bottom: 5px; right: 5px;"
+                        tabindex="-1"
+                        @click.stop="filterByOrg(group.organization.title)"
+                    >
+                        <i class="fa fa-university"></i>
+                        {{ group.organization.title }}
+                    </button>
+                </template>
+            </IndexWidget>
         </div>
+
+        <DataTable
+            ref="datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            :ajax="dtAjaxOptions"
+            class="d-none"
+            @xhr="(e, settings, json) => groups = json.data"
+        />
+
+        <Teleport to="body">
+            <GroupModal/>
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.group.delete')"
+                :description="trans('global.group.delete_helper')"
+                @close="showConfirm = false"
+                @confirm="() => {
+                    showConfirm = false;
+                    destroy();
+                }"
+            />
+        </Teleport>
     </div>
 </template>
 <script>

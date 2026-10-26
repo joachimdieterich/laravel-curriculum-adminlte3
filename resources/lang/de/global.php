@@ -539,7 +539,7 @@ return [
         'enrol_success_error' => 'Gruppe(n)einschreibung fehlgeschlagen!',
         'expel_success'       => 'Gruppe(n) erfolgreich ausgeschrieben.',
         'expel_success_error' => 'Gruppe(n)ausschreibung fehlgeschlagen!',
-        'allGroups'           => 'Alle Gruppen',
+        'allGroups'           => 'Gruppen aus früheren Lernzeiträumen anzeigen',
     ],
     'grade' => [
         'title'          => 'Klassen-/Lernstufen',

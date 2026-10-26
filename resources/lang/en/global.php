@@ -524,7 +524,7 @@ return [
         'enrol_success_error' => 'Group(s) enrolment failed!',
         'expel_success'       => 'Group(s) expulsion successful.',
         'expel_success_error' => 'Group(s) expulsion failed!',
-        'allGroups'           => 'All groups',
+        'allGroups'           => 'Show groups from previous periods',
     ],
     'grade' => [
         'title'          => 'Grades',

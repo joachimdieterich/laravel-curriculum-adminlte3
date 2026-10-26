@@ -58,15 +58,7 @@ class OrganizationsController extends Controller
     {
         abort_unless(Gate::allows('organization_access'), 403);
 
-        $organizations = Organization::query();
-
-        if (! is_admin()) {
-            $organizations->whereHas('users', function ($query) {
-                $query->where('user_id', auth()->user()->id);
-            });
-        }
-
-        return DataTables::of($organizations)->make();
+        return DataTables::of(Organization::viewable(is_admin()))->make();
     }
 
     /**

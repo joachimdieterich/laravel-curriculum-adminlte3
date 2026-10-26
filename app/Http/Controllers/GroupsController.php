@@ -28,7 +28,15 @@ class GroupsController extends Controller
         // select2 should return entries for students
         abort_unless(Gate::allows('group_access'), 403);
 
-        return view('groups.index', ['organizations' => Organization::viewable(is_admin())->get()->toJson()]);
+        return view(
+            'groups.index',
+            [
+                'organizations' => Organization::viewable(is_admin())
+                    ->whereIn('id', Group::select('organization_id'))
+                    ->get()
+                    ->toJson(),
+            ]
+        );
     }
 
     /**

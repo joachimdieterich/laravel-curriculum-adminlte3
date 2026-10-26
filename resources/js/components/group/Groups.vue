@@ -94,10 +94,6 @@
                 @xhr="(e, settings, json) => groups = json.data"
             />
 
-            <GroupOptions v-if="checkPermission('is_schooladmin')"
-                class="mt-4"
-            />
-
             <Teleport to="body">
                 <GroupModal/>
                 <ConfirmModal
@@ -116,7 +112,6 @@
 </template>
 <script>
 import GroupModal from "../group/GroupModal.vue";
-import GroupOptions from "../group/GroupOptions.vue";
 import Switch from "../forms/Switch.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
@@ -132,7 +127,6 @@ export default {
         ConfirmModal,
         DataTable,
         GroupModal,
-        GroupOptions,
         IndexWidget,
     },
     data() {

@@ -94,6 +94,34 @@
                     </template>
                 </IndexWidget>
             </div>
+            <div v-if="organizationFilter !== null"
+                 id="organization-filter"
+                 class="position-relative d-flex flex-nowrap overflow-auto my-2 px-3"
+                 tabindex="-1"
+                 aria-label="Filter"
+            >
+                <span id="organization-filter-wrapper"
+                      class="d-flex mb-2"
+                >
+                    <span v-for="(organization, index) in organizationFilter"
+                          :key="organization"
+                          class="flex-shrink-0"
+                    >
+                        <button :id="'organization-filter-' + organization.id"
+                                class="btn btn-tab rounded-pill"
+                                :class="{'active': organization.filter}"
+                                type="button"
+                                @click="organizationFilterClick(organization)"
+                                @keydown.enter.space="organizationFilterClick(organization)"
+                                @keydown.left.right.prevent="moveFocus($event)"
+                        >
+
+                            <i class="fas pr-2 fa-city"></i>
+                            {{ organization.title }}
+                        </button>
+                    </span>
+                </span>
+            </div>
             <div
                 id="group-datatable-wrapper"
                 class="dataTablesWrapper"
@@ -141,14 +169,19 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
+import {globalValues} from "../../globalValues.js";
 
 DataTable.use(DataTablesCore);
 
 export default {
+    props: {
+        organizations: null
+    },
     data() {
         return {
             component_id: this.$.uid,
             groups: null,
+            organizationFilter: null,
             search: '',
             showConfirm: false,
             currentGroup: {},
@@ -207,6 +240,14 @@ export default {
 
                 $('#group-content').insertBefore('#group-datatable-wrapper');
             });
+
+            this.setupOrganizationFilter();
+        },
+        setupOrganizationFilter() {
+            this.organizations.forEach(organization => {
+                organization.filter = false;
+            });
+            this.organizationFilter = this.organizations;
         },
         confirmItemDelete(group) {
             this.currentGroup = group;
@@ -226,6 +267,26 @@ export default {
             this.allGroupsView = !this.allGroupsView;
             this.dt.ajax.reload();
         },
+        moveFocus(e) {
+            const currentOrganizationFilter = e.target;
+
+            if (e.key === 'ArrowRight') {
+                const nextOrganizationFilter = currentOrganizationFilter.parentElement.nextElementSibling ?? currentOrganizationFilter.parentElement.parentElement.firstElementChild;
+                if (nextOrganizationFilter) {
+                    nextOrganizationFilter.firstElementChild.focus();
+                }
+            } else {
+                const previousOrganizationFilter = currentOrganizationFilter.parentElement.previousElementSibling ?? currentOrganizationFilter.parentElement.parentElement.lastElementChild;
+                if (previousOrganizationFilter) {
+                    previousOrganizationFilter.firstElementChild.focus();
+                }
+            }
+        },
+        organizationFilterClick(organization) {
+            organization.filter = !organization.filter;
+
+            this.dt.ajax.reload();
+        }
     },
     computed: {
         classObject() {
@@ -240,10 +301,16 @@ export default {
                 url: '/groups/list',
                 data: (d) => {
                     d.allGroups = this.allGroupsView;
+                    d.organizationFilter = this.activeOrganizationFilter;
 
                     return d;
                 },
             };
+        },
+        activeOrganizationFilter() {
+            return Object.values(this.organizationFilter)
+                .filter(organization => organization.filter === true)
+                .map(organization => organization.id);
         }
     },
     components: {
@@ -255,3 +322,8 @@ export default {
     },
 }
 </script>
+<style>
+#organization-filter-wrapper {
+    gap: 0.3rem;
+}
+</style>

@@ -10,5 +10,5 @@
     ></breadcrumbs>
 @endsection
 @section('content')
-   <groups></groups>
+    <groups :organizations="{{ $organizations }}"></groups>
 @endsection

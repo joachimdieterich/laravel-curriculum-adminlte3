@@ -53,7 +53,7 @@ class OrganizationsController extends Controller
 
         if (!is_admin()) {
             $organizations->whereHas('users', function ($query) {
-                $query->where('user_id', auth()->user()->id);
+                $query->where('role_id', 4); // 4 => schooladmin
             });
         }
 
@@ -85,7 +85,7 @@ class OrganizationsController extends Controller
     public function show(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_show'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) || is_admin()), 403);
+        abort_unless(auth()->user()->organizations->contains($organization) || is_admin(), 403);
 
         $status_definitions = StatusDefinition::all();
         $organization = $organization->load('type', 'state', 'country');
@@ -105,7 +105,7 @@ class OrganizationsController extends Controller
     public function update(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_edit'), 403, "No permission to edit organization information");
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403, "Need to be registered in this organization");
+        abort_unless(auth()->user()->organizations->contains($organization) || is_admin(), 403, "Need to be registered in this organization");
 
         $clean_data = $this->validateRequest();
 
@@ -123,7 +123,7 @@ class OrganizationsController extends Controller
     public function destroy(Organization $organization)
     {
         abort_unless(\Gate::allows('organization_delete'), 403);
-        abort_unless((auth()->user()->organizations->contains($organization) or is_admin()), 403);
+        abort_unless(auth()->user()->organizations->contains($organization) || is_admin(), 403);
 
         return $organization->delete();
     }

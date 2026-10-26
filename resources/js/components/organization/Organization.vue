@@ -1,6 +1,6 @@
 <template>
     <div class="px-3">
-        <div class="col-lg-4 col-sm-12">
+        <div class="col-lg-4 col-sm-12 rounded-3 shadow-layout">
             <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
                 <h5 class="m-0">
                     <i class="fa fa-university mx-1"></i>{{ organization.title }}

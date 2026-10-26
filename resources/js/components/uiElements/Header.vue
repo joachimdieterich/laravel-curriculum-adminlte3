@@ -115,7 +115,7 @@
         >
             <button
                 id="user-menu-dropdown-button"
-                class="btn border-0"
+                class="btn border-0 shadow-none"
                 type="button"
                 @click.stop="toggleUserMenu()"
             >

@@ -153,23 +153,16 @@
                 />
             </Teleport>
         </div>
-        <div v-if="checkPermission('is_schooladmin')"
-             class="mt-4"
-        >
-            <GroupOptions/>
-        </div>
     </div>
 </template>
 <script>
 import GroupModal from "../group/GroupModal.vue";
-import GroupOptions from "../group/GroupOptions.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useDatatableStore} from "../../store/datatables";
 import {useGlobalStore} from "../../store/global";
-import {globalValues} from "../../globalValues.js";
 
 DataTable.use(DataTablesCore);
 
@@ -317,7 +310,6 @@ export default {
         ConfirmModal,
         DataTable,
         GroupModal,
-        GroupOptions,
         IndexWidget,
     },
 }

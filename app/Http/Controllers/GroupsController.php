@@ -42,9 +42,12 @@ class GroupsController extends Controller
             ->with('organization:id,title');
 
         if (! request()->boolean('allGroups')) {
-            $groups->whereHas('period', function ($query) {
-                $query->where('begin', '<=', now());
-                $query->where('end', '>=', now());
+            $groups->where(function ($query) {
+                $query->where('period_id', 1) // default (unset begin/end)
+                    ->orWhereHas('period', function ($query) {
+                        $query->where('begin', '<=', now());
+                        $query->where('end', '>=', now());
+                    });
             });
         }
 

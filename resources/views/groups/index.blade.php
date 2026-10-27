@@ -3,5 +3,5 @@
     {{ trans('global.group.title') }}
 @endsection
 @section('content')
-   <Groups/>
+    <Groups :organizations="{{ $organizations }}"/>
 @endsection

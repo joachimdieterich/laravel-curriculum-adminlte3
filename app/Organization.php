@@ -3,12 +3,14 @@
 namespace App;
 
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  *   @OA\Schema(
  *      required={"id", "title", "state_id", "country_id", "organization_type_id", "status_id"},
+ *
  *      @OA\Xml(name="Organization"),
  *
  *      @OA\Property( property="id", type="integer"),
@@ -18,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
  *      @OA\Property( property="state_id", type="string"),
  *      @OA\Property( property="country_id", type="string"),
  *      @OA\Property( property="status_id", type="integer"),
- *
  *      @OA\Property( property="description", type="string"),
  *      @OA\Property( property="street", type="string"),
  *      @OA\Property( property="city", type="string"),
@@ -37,20 +38,19 @@ class Organization extends Model
 
     protected $casts = [
         'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
+        'created_at' => 'datetime',
     ];
 
     protected $attributes = [
-        'state_id' => 'DE-RP',
-        'country_id' => 'DE',
+        'state_id'             => 'DE-RP',
+        'country_id'           => 'DE',
         'organization_type_id' => 1,
-        'status_id' => 1,
+        'status_id'            => 1,
     ];
 
     /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param  \DateTimeInterface  $date
      * @return string
      */
     protected function serializeDate(DateTimeInterface $date)
@@ -63,17 +63,30 @@ class Organization extends Model
         return "/organizations/{$this->id}";
     }
 
+    public static function viewable(bool $isAdmin): Builder
+    {
+        $organizations = self::query();
+
+        if (! $isAdmin) {
+            $organizations->whereHas('users', function ($query) {
+                $query->where('role_id', 4); // 4 => schooladmin
+            });
+        }
+
+        return $organizations;
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'organization_role_users')
-                ->withPivot(['user_id', 'role_id', 'organization_id']);
+            ->withPivot(['user_id', 'role_id', 'organization_id']);
     }
 
     // and for all 3 Organization, User, Role this relation:
     public function organizationRolesUsers()
     {
         return $this->hasMany(OrganizationRoleUser::class)
-              ->role('Admin');
+            ->role('Admin');
     }
 
     public function users()

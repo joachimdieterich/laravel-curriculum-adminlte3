@@ -6,6 +6,7 @@ use App\CurriculumSubscription;
 use App\Group;
 use App\Http\Requests\MassDestroyGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
+use App\Organization;
 use App\OrganizationRoleUser;
 use App\User;
 use Exception;
@@ -27,7 +28,15 @@ class GroupsController extends Controller
         // select2 should return entries for students
         abort_unless(Gate::allows('group_access'), 403);
 
-        return view('groups.index');
+        return view(
+            'groups.index',
+            [
+                'organizations' => Organization::viewable(is_admin())
+                    ->whereIn('id', Group::select('organization_id'))
+                    ->get()
+                    ->toJson(),
+            ]
+        );
     }
 
     /**
@@ -51,7 +60,11 @@ class GroupsController extends Controller
             });
         }
 
-        return DataTables::of($groups)->make(true);
+        if (request()->exists('organizationFilter')) {
+            $groups->whereIn('organization_id', request()->array('organizationFilter'));
+        }
+
+        return DataTables::of($groups)->make();
     }
 
     /**

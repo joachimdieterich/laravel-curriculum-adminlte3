@@ -2,11 +2,16 @@
     <div class="d-flex flex-column">
         <TabList
             class="px-3"
-            :model="'curriculum'"
-            modelIcon="fa-th"
-            :tabs="['favourite', 'all', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"
-            :activeTab="filter"
-            @change-tab="setFilter"
+            model="curriculum"
+            :tabs="[
+                { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
+                { icon: 'fa-th', label: ['global.all', 'global.curriculum.title'], filter: 'all' },
+                { icon: 'fa-user', label: ['global.my', 'global.curriculum.title'], filter: 'owner', permission: 'curriculum_create' },
+                { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'curriculum_create' },
+                { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
+                { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
+            ]"
+            @change-tab="setFilter($event.filter)"
         />
 
         <div
@@ -131,7 +136,6 @@
             <CurriculumModal/>
             <SubscribeModal/>
             <MediumModal/>
-            <OwnerModal/>
             <ConfirmModal
                 :showConfirm="showConfirm"
                 :title="trans('global.curriculum.delete')"

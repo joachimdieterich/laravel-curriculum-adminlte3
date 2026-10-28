@@ -10,11 +10,8 @@
         <template #general>
             <TabList
                 class="justify-content-center"
-                :model="'subscribe'"
-                modelIcon="fa-share"
+                model="subscribe"
                 :tabs="tabs"
-                :activeTab="filter"
-                @change-tab="newFilter => filter = newFilter"
             />
 
             <div class="tab-content pt-2">
@@ -176,7 +173,6 @@ export default {
             shareWithOrganizations: true,
             shareWithToken:  false,
             tabs: [],
-            filter: 'user',
             nameToken: '',
             canEditLabel: window.trans.global.can_edit,
         };
@@ -248,12 +244,11 @@ export default {
                 }
 
                 this.tabs = [
-                    this.shareWithUsers && 'user',
-                    this.shareWithGroups && 'group',
-                    this.shareWithOrganizations && 'organization',
-                    this.shareWithToken && 'token',
+                    this.shareWithUsers && { icon: 'fa-user', label: 'global.user.title', filter: 'user' },
+                    this.shareWithGroups && { icon: 'fa-users', label: 'global.group.title', filter: 'group' },
+                    this.shareWithOrganizations && { icon: 'fa-university', label: 'global.organization.title', filter: 'organization' },
+                    this.shareWithToken && { icon: 'fa-key', label: 'global.token', filter: 'token' },
                 ].filter(tab => tab);
-                this.filter = this.tabs[0];
             }
         });
 

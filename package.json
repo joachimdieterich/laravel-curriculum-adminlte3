@@ -48,7 +48,7 @@
         "leaflet.markercluster": "^1.5.3",
         "mathjax": "^3.2.2",
         "mitt": "^3.0.1",
-        "moment": "^2.29.4",
+        "moment": "^2.31.0",
         "pinia": "^2.1.7",
         "pusher-js": "^8.4.0",
         "select2": "4.0.13",

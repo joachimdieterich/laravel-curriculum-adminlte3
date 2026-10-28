@@ -24,7 +24,7 @@
         "postcss": "^8.4.31",
         "rollup-plugin-copy": "^3.5.0",
         "sass-embedded": "^1.93.2",
-        "vite": "^8.0.16",
+        "vite": "^8.3.5",
         "vuedraggable": "^4.1.0"
     },
     "dependencies": {

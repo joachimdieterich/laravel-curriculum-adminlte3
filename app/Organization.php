@@ -63,12 +63,13 @@ class Organization extends Model
         return "/organizations/{$this->id}";
     }
 
-    public static function viewable(bool $isAdmin): Builder
+    public static function viewable(bool $isAdmin, int $userId): Builder
     {
         $organizations = self::query();
 
         if (! $isAdmin) {
-            $organizations->whereHas('users', function ($query) {
+            $organizations->whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
                 $query->where('role_id', 4); // 4 => schooladmin
             });
         }

@@ -58,7 +58,7 @@ class OrganizationsController extends Controller
     {
         abort_unless(Gate::allows('organization_access'), 403);
 
-        return DataTables::of(Organization::viewable(is_admin()))->make();
+        return DataTables::of(Organization::viewable(is_admin(), auth()->user()->id))->make();
     }
 
     /**
@@ -71,9 +71,8 @@ class OrganizationsController extends Controller
         abort_unless(Gate::allows('organization_create'), 403);
 
         $new_organization = $this->validateRequest();
-        $organization = Organization::firstOrCreate($new_organization);
 
-        return $organization;
+        return Organization::firstOrCreate($new_organization);
     }
 
     /**

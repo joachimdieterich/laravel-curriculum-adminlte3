@@ -184,7 +184,10 @@ export default {
             this.globalStore.showModal('user-modal', user);
         },
         setCurrentOrganization(id) {
-            axios.patch('/users/setCurrentOrganization', { current_organization_id: id })
+            axios.patch('/users/setCurrentOrganization', {
+                current_organization_id: id,
+                user_id: this.user.id, // only relevant for admin-role
+            })
                 .then(() => window.location.reload());
         },
         getRoleInOrganization(organization) {

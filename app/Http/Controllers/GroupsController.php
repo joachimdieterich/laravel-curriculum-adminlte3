@@ -166,16 +166,18 @@ class GroupsController extends Controller
     {
         abort_unless(Gate::allows('group_enrolment'), 403, 'No permission to enrol users into groups');
 
-        $group_id   = request()->group_id;
-        $user_id    = request()->user_id;
+        $group_id = request()->group_id;
+        $user_id  = request()->user_id;
 
-        abort_unless((
+        abort_unless(
             is_admin()
-            || auth()->user()->groups->contains($group_id) // user is enrolled in group
-            || Group::select('organization_id')->find($group_id)->organization_id == auth()->user()->current_organization_id // current set organization is group's organization
-        ), 403, 'Need to be enrolled in group or have its organization be set as current organization');
+            || (
+                is_teacher() // teachers/schooladmins should be able to enrol users if the group is part of one their organizations
+                && auth()->user()->organizations()->pluck('id')->contains(Group::select('organization_id')->find($group_id)->organization_id)
+            )
+        , 403, "Need to be enrolled in the group's associated organization");
 
-        $user = User::select('id', 'firstname', 'lastname')->findOrFail(format_select_input($user_id));
+        $user  = User::select('id', 'firstname', 'lastname')->findOrFail($user_id);
         $group = Group::select('id', 'organization_id')->findOrFail($group_id);
 
         // if user isn't enrolled to organization, enrol with student role
@@ -189,7 +191,8 @@ class GroupsController extends Controller
             ]
         );
 
-        $user->groups()->syncWithoutDetaching($group->id);
+        $user->groups()->syncWithoutDetaching([$group->id => ['evaluator' => true]]);
+        $user->evaluator = true; // add attribute manually
 
         return $user;
     }
@@ -198,14 +201,16 @@ class GroupsController extends Controller
     {
         abort_unless(Gate::allows('group_enrolment'), 403, 'No permission to remove users from groups');
 
-        $group_id   = request()->group_id;
-        $user_id    = request()->user_id;
+        $group_id = request()->group_id;
+        $user_id  = request()->user_id;
 
-        abort_unless((
+        abort_unless(
             is_admin()
-            || auth()->user()->groups->contains($group_id) // user is enrolled in group
-            || Group::findOrFail($group_id)->organization_id == auth()->user()->current_organization_id // current set organization is group's organization
-        ), 403, 'Need to be enrolled in group or have its organization be set as current organization');
+            || (
+                is_teacher()
+                && auth()->user()->organizations()->pluck('id')->contains(Group::select('organization_id')->find($group_id)->organization_id)
+            )
+        , 403, "Need to be enrolled in the group's associated organization");
 
         User::select('id')->find($user_id)->groups()->detach($group_id);
     }

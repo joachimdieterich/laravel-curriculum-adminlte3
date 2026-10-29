@@ -76,13 +76,18 @@ class UsersController extends Controller
             $request = request()->validate(
                 [
                     'group_id' => 'required',
+                    'filter'   => 'sometimes|string',
                 ]
             );
-            $users = Group::where('id',$request['group_id'])->first()->users();
+            $users = Group::where('id', $request['group_id'])->first()->users();
+
+            if (isset($request['filter']) && $request['filter'] === 'evaluator') {
+                $users->where('evaluator', true);
+            }
         }
         else
         {
-            $users = (auth()->user()->role()->id == 1)
+            $users = is_admin()
                 ? User::query()
                 : Organization::find(auth()->user()->current_organization_id)->users();
             $users->select('users.id', 'username', 'firstname', 'lastname', 'common_name', 'email');

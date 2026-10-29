@@ -20,6 +20,18 @@
                 </button>
             </div>
 
+            <div v-if="subscribable">
+                <TabList
+                    model="user"
+                    :tabs="[
+                        { icon: 'fa-user', label: ['global.all', 'global.user.title'], filter: 'all' },
+                        { icon: 'fa-user-check', label: 'global.evaluator', filter: 'evaluator' },
+                    ]"
+                    :initial-tab="-1"
+                    @change-tab="setFilter($event.filter)"
+                />
+            </div>
+
             <div :class="toggleView && 'd-none'">
                 <IndexWidget v-if="!subscribable"
                     v-permission="'user_create'"
@@ -56,7 +68,7 @@
                     :showSubscribable="subscribable"
                 >
                     <template #icon>
-                        <i class="fa fa-user"></i>
+                        <i class="fa" :class="user.evaluator ? 'fa-user-check' : 'fa-user'"></i>
                     </template>
 
                     <template #dropdown>
@@ -113,6 +125,15 @@
                                 {{ user.common_name }}
                             </p>
                         </span>
+
+                        <button v-if="user.evaluator"
+                            type="button"
+                            class="btn btn-info btn-xs position-absolute"
+                            style="bottom: 5px; right: 5px;"
+                            tabindex="-1"
+                        >
+                            {{ trans('global.evaluator') }}
+                        </button>
                     </template>
                 </IndexWidget>
             </div>
@@ -155,6 +176,7 @@ import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useDatatableStore} from "../../store/datatables";
+import TabList from "../uiElements/TabList.vue";
 import UserOptions from "./UserOptions.vue";
 import Switch from "../forms/Switch.vue";
 
@@ -168,6 +190,7 @@ export default {
         UserModal,
         IndexWidget,
         SubscribeUserModal,
+        TabList,
         Switch,
     },
     props: {
@@ -203,6 +226,7 @@ export default {
                 { title: 'lastname', data: 'lastname', searchable: true },
                 { title: 'E-Mail', data: 'email', searchable: true },
             ],
+            filter: 'all',
             dt: null,
         }
     },
@@ -241,6 +265,12 @@ export default {
         });
     },
     methods: {
+        setFilter(filter) {
+            if (this.filter === filter) return;
+
+            this.filter = filter;
+            this.dt.ajax.url('/users/list?group_id=' + this.subscribable_id + '&filter=' + filter).load();
+        },
         setMode() {
             this.dt.rows('.selected').deselect();
 
@@ -295,7 +325,7 @@ export default {
                 : 'btn-outline-dark';
         },
         createLabel() {
-            return this.subscribable ? 'enrol' : 'create';
+            return this.subscribable ? 'add_evaluator' : 'create';
         },
         deleteLabel() {
             return this.subscribable ? 'expel' : 'delete';

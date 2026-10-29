@@ -314,6 +314,7 @@ return [
         'expel_helper'       => 'Soll der Benutzer aus der Gruppe ausgeschrieben werden?',
         'expel_success'      => 'Benutzer erfolgreich ausgeschrieben',
         'expel_error'        => 'Benutzerausschreibung fehlgeschlagen',
+        'add_evaluator'      => 'Benutzer als Bewerter einschreiben',
         'no_selection'       => 'Es wurden keine Benutzer ausgewählt',
         'import'             => 'Benutzer importieren',
         'import_helper'      => 'Die CSV-Datei muss folgendes Format haben:
@@ -340,6 +341,7 @@ return [
             'remember_token_helper'    => '',
         ],
     ],
+    'evaluator'                          => 'Bewerterrolle',
     'teacher'                            => 'Lehrkraft/Dozent',
     'remember_token'                     => 'Remember token',
     'general'                            => 'Allgemein',

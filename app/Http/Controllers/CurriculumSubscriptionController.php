@@ -72,7 +72,7 @@ class CurriculumSubscriptionController extends Controller
     {
         $input      = $this->validateRequest();
         $curriculum = Curriculum::find($input['model_id']);
-        abort_unless(($curriculum->isEditable()), 403);
+        abort_unless($curriculum->isEditable(), 403);
 
         $subscribe = CurriculumSubscription::updateOrCreate([
             'curriculum_id'     => $input['model_id'],
@@ -84,15 +84,17 @@ class CurriculumSubscriptionController extends Controller
         ]);
         $subscribe->save();
 
-        if (request()->wantsJson()) {
-            return CurriculumSubscription::with('subscribable')
-                ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                    if ($type == 'App\\User') {
-                        $q->whereNot('id', config('app.guest_user_id'));
-                    }
-                })
-                ->find($subscribe->id);
+        if ($input['subscribable_type'] === 'App\\Group') {
+            auth()->user()->groups()->syncWithoutDetaching([$input['subscribable_id'] => ['evaluator' => true]]);
         }
+
+        return CurriculumSubscription::with('subscribable')
+            ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                if ($type == 'App\\User') {
+                    $q->whereNot('id', config('app.guest_user_id'));
+                }
+            })
+            ->find($subscribe->id);
     }
 
     /**

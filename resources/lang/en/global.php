@@ -301,6 +301,7 @@ return [
         'expel_helper'       => 'Should this user be expelled from the group?',
         'expel_success'      => 'Expulsion of user successful',
         'expel_error'        => 'Expulsion of user failed!',
+        'add_evaluator'      => 'Enrol user as evaluator',
         'no_selection'       => 'No user has been selected',
         'import'             => 'Import users',
         'import_helper'      => 'The CSV file must have the following format:
@@ -329,6 +330,7 @@ return [
             'remember_token_helper'    => '',
         ],
     ],
+    'evaluator'                          => 'Evaluator',
     'teacher'                            => 'Teacher',
     'remember_token'                     => 'Remember token',
     'general'                            => 'General',

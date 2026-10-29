@@ -411,18 +411,15 @@ class User extends Authenticatable
         return ($this->medium_id !== null) ? '/media/' . $this->medium_id : Avatar::create($this->fullName())->toBase64();
     }
 
-    public function mayAccessUser(User $user, $context = 'organization'): bool
+    public function mayAccessUser(User $user): bool
     {
         if (is_admin()) {
             return true;
         }
 
-        switch ($context) {
-            case 'organization':
-                return $user->organizations()->pluck('organizations.id')->contains($this->current_organization_id);
-                // Todo: check for groups
-            default: return false;
-        }
+        return $this->organizations()->pluck('organizations.id')
+            ->intersect($user->organizations()->pluck('organizations.id'))
+            ->count() > 0;
     }
 
     public function exams(): BelongsToMany

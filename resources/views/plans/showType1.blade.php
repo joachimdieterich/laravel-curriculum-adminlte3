@@ -6,14 +6,14 @@
         <div class="card-header">
         <div class="card-title">
             <h5 class="m-0">
-                <i class="fa fa-clipboard-list mr-1"></i>
+                <i class="fa fa-clipboard-list me-1"></i>
                 {{ $plan->title }}
             </h5>
             <small>{{ $plan->type->title}} </small>
         </div>
 @can('plan_edit')
-        <div class="card-tools pr-2 no-print">
-            <a onclick="window.print();" class="link-muted pr-4">
+        <div class="card-tools pe-2 no-print">
+            <a onclick="window.print();" class="link-muted pe-4">
                 <i class="fa fa-print text-muted"></i>
             </a>
              <a href="{{route('plans.edit', $plan->id) }}" class="link-muted">
@@ -33,7 +33,7 @@
                 <span class="row text-muted">
                     @if($plan->owner->contactdetail != null)
                     <span class="col-12 pb-3">
-                        <a class="pr-2 text-decoration-none link-muted"
+                        <a class="pe-2 text-decoration-none link-muted"
                            href="{{ $plan->owner->contactdetail->path() }}">
                             <i class="fa fa-graduation-cap "></i>
                             {{ trans('global.contactDetail.title_singular') }}: {{ $plan->owner->fullname() }}
@@ -41,15 +41,15 @@
                     </span>
                     @endif
                      <span  class="col-12 pb-1">
-                        <i class="fa fa-calendar pr-1"></i>
+                        <i class="fa fa-calendar pe-1"></i>
                         {{ $plan->begin }}
                     </span>
                     <span class="col-12 pb-1">
-                        <i class="fa fa-calendar-check pr-1"></i>
+                        <i class="fa fa-calendar-check pe-1"></i>
                         {{ $plan->end }}
                     </span>
                     <span class="col-12 pb-1">
-                        <i class="fa fa-stopwatch pr-1"></i>
+                        <i class="fa fa-stopwatch pe-1"></i>
                         {{ $plan->duration }} {{trans('global.minutes')}}
                     </span>
 
@@ -74,7 +74,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
         @endif
         <div class="card {{ $class }}">
             <div class="card-header">
-                <i class="fas fa-calendar-day mr-1"></i>
+                <i class="fas fa-calendar-day me-1"></i>
                 {{ $day->locale('de')->dayName }}, {{ $day->isoFormat('LL') }}
             </div>
             <div class="card-body py-2">
@@ -94,7 +94,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
     @else
         <div class="card bg-transparent">
             <div class="card-header">
-                <i class="fa fa-hiking mr-1"></i>
+                <i class="fa fa-hiking me-1"></i>
                 {{ $day->locale('de')->dayName }}, {{ $day->isoFormat('LL') }}
             </div>
         </div>

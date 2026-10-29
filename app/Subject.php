@@ -23,12 +23,17 @@ class Subject extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
+    ];
+
     public function path()
     {
         return route('subjects.show', $this->id);
     }
 
-    public function entries() 
+    public function entries()
     {
         return $this->hasMany(LogbookEntry::class);
     }

@@ -18,36 +18,33 @@
                 modelName="Role"
                 url="/roles"
             >
-                <template v-slot:icon>
-                    <i class="fas fa-user-tag"></i>
+                <template #icon>
+                    <i class="fa fa-user-tag"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'role_edit, role_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'role_edit'"
-                            :name="'edit-role-' + role.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editRole(role)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editRole(role)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.role.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'role_delete'"
-                            :id="'delete-role-' + role.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
+                            class="dropdown-item text-danger"
                             @click.prevent="confirmItemDelete(role)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.role.delete') }}
                         </button>
                     </div>
@@ -55,32 +52,26 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="role-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="role-datatable"
-                :columns="columns"
-                :options="dtOptions('/roles/list')"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            id="role-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/roles/list"
+            class="d-none"
+            @xhr="(e, settings, json) => roles = json.data"
+        />
 
         <Teleport to="body">
             <RoleModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.role.delete')"
                 :description="trans('global.role.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -92,28 +83,20 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
-import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
-        const globalStore = useGlobalStore();
-        globalStore['searchTagModelContext'] = 'App\\Role';
-
-        return {
-            selectedTags, selectedNegativeTags, dtOptions,
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        RoleModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             roles: null,
-            search: '',
             showConfirm: false,
-            url: '/roles/list',
             currentRole: {},
             columns: [
                 { title: 'id', data: 'id' },
@@ -124,32 +107,23 @@ export default {
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('role-added', (role) => {
+        this.$eventHub.on('role-added', role => {
             this.roles.push(role);
         });
 
-        this.$eventHub.on('role-updated', (role) => {
+        this.$eventHub.on('role-updated', role => {
             this.update(role);
+        });
+
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editRole(role) {
-            this.globalStore?.showModal('role-modal', role);
-        },
-        loaderEvent() {
-            const dt = $('#role-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.roles = dt.rows({page: 'current'}).data().toArray();
-
-                $('#role-content').insertBefore('#role-datatable-wrapper');
-            });
-            this.$eventHub.on('filter', (filter) => {
-                this.selectedTags = filter.tags;
-                this.selectedNegativeTags = filter.negativeTags;
-                dt.search(filter.searchString).draw();
-            });
+            this.globalStore.showModal('role-modal', role);
         },
         confirmItemDelete(role) {
             this.currentRole = role;
@@ -170,12 +144,6 @@ export default {
 
             Object.assign(role, updatedRole);
         }
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        RoleModal,
-        IndexWidget,
     },
 }
 </script>

@@ -2,25 +2,26 @@
     <div>
         <div
             :id="id + '_form_group'"
-            class="form-group"
+            class="position-relative"
             :class="[(typeof css != 'undefined') ? css : '' ]"
             :style="id == 'permissions' ? { 'margin-bottom': '200px' } : ''"
         >
             <label v-if="showLabel"
                 :for="id"
-                :class="[(typeof classLeft != 'undefined') ? classLeft : 'p-0 col-sm-12' ]"
+                class="form-label"
+                :class="{'full-line': buttonNewLine}"
             >
-                <span v-if="label != ''" :class="{'full-line': buttonNewLine}">{{ label }}</span>
-                <span v-else>
-                    {{ trans('global.' + model + '.title_singular') }}
-                </span>
-                <span v-if="multiple">
-                    <slot name="buttons"></slot>
-                    <span class="btn btn-info deselect-all pull-right" :class="buttonSizeClass" @click="deselectAll">
-                        {{ trans("global.deselect_all") }}
-                    </span>
-                </span>
+                <span v-if="label != ''">{{ label }}</span>
+                <span v-else>{{ trans('global.' + model + '.title_singular') }}</span>
             </label>
+            <div v-if="multiple"
+                :class="buttonNewLine ? 'd-flex' : 'float-end'"
+            >
+                <slot name="buttons"></slot>
+                <span class="btn btn-info deselect-all ms-auto" :class="buttonSizeClass" @click="deselectAll">
+                    {{ trans("global.deselect_all") }}
+                </span>
+            </div>
 
             <slot name="pre-dropdown"></slot>
 
@@ -86,10 +87,6 @@ export default {
         showLabel: {
             type: Boolean,
             default: true,
-        },
-        classLeft: {
-            type: String,
-            default: 'p-0 col-sm-12',
         },
         classRight: {
             type: String,

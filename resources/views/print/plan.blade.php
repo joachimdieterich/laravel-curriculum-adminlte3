@@ -17,15 +17,15 @@
 <hr>
 <div class="row">
     <span class="col-md-4 col-sm-12">
-        <i class="fa fa-calendar pr-1"></i>
+        <i class="fa fa-calendar pe-1"></i>
         {{ $plan->begin }}
     </span>
     <span class="col-md-4 col-sm-12">
-        <i class="fa fa-calendar-check pr-1"></i>
+        <i class="fa fa-calendar-check pe-1"></i>
         {{ $plan->end }}
     </span>
     <span class="col-md-4 col-sm-12">
-        <i class="fa fa-stopwatch pr-1"></i>
+        <i class="fa fa-stopwatch pe-1"></i>
         {{ $plan->duration }} {{trans('global.minutes')}}
     </span>
 </div>
@@ -44,7 +44,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
         @endif
         <div class="card {{ $class }}">
             <div class="card-header">
-                <i class="fas fa-calendar-day mr-1"></i>
+                <i class="fas fa-calendar-day me-1"></i>
                 {{ $day->locale('de')->dayName }}, {{ $day->isoFormat('LL') }}
             </div>
             <div class="card-body py-2">
@@ -58,7 +58,7 @@ $today = Carbon\Carbon::today()->format('yy-m-d')
     @else
         <div class="card bg-transparent">
             <div class="card-header">
-                <i class="fa fa-hiking mr-1"></i>
+                <i class="fa fa-hiking me-1"></i>
                 {{ $day->locale('de')->dayName }}, {{ $day->isoFormat('LL') }}
             </div>
 

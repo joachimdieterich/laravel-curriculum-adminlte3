@@ -16,7 +16,7 @@
                     role="tab"
                     @click="setFilter('all')"
                 >
-                    <i class="fas fa-video pr-2"></i>
+                    <i class="fa fa-video pe-2"></i>
                     {{ trans('global.all') }} {{ trans('global.videoconference.title') }}
                 </a>
             </li>
@@ -29,7 +29,7 @@
                     role="tab"
                     @click="setFilter('by_organization')"
                 >
-                    <i class="fas fa-university pr-2"></i>
+                    <i class="fa fa-university pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                 </a>
             </li>
@@ -45,7 +45,7 @@
                     role="tab"
                     @click="setFilter('owner')"
                 >
-                    <i class="fa fa-user pr-2"></i>
+                    <i class="fa fa-user pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.videoconference.title') }}
                 </a>
             </li>
@@ -58,7 +58,7 @@
                     role="tab"
                     @click="setFilter('shared_with_me')"
                 >
-                    <i class="fa fa-paper-plane pr-2"></i>
+                    <i class="fa fa-paper-plane pe-2"></i>
                     {{ trans('global.shared_with_me') }}
                 </a>
             </li>
@@ -74,7 +74,7 @@
                     role="tab"
                     @click="setFilter('shared_by_me')"
                 >
-                    <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
+                    <i class="fa fa-share-nodes pe-2"></i>{{ trans('global.shared_by_me') }}
                 </a>
             </li>
         </ul>
@@ -92,10 +92,10 @@
                 :subscribe="subscribable"
                 :subscribable_id="subscribable_id"
                 :subscribable_type="subscribable_type"
-                :label="trans('global.videoconference.' + create_label_field)"
+                :label="trans('global.videoconference.' + createLabel)"
             >
-                <template v-slot:itemIcon>
-                    <i v-if="create_label_field == 'enrol'"
+                <template #itemIcon>
+                    <i v-if="subscribable"
                         class="fa fa-2x fa-link text-muted"
                     ></i>
                 </template>
@@ -109,61 +109,55 @@
                 url="/videoconferences"
                 :showSubscribable="subscribable"
             >
-                <template v-slot:itemIcon>
+                <template #itemIcon>
                     <i class="fa fa-2x fa-video"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'videoconference_edit, videoconference_delete'"
                 >
                     <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
+                        class="dropdown-menu dropdown-menu-end"
                     >
                         <button
                             v-permission="'videoconference_delete'"
-                            :id="'delete-videoconference-' + videoconference.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(videoconference)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(videoconference)"
                         >
-                            <i class="fa fa-link mr-2"></i>
+                            <i class="fa fa-link"></i>
                             {{ trans('global.videoconference.expel') }}
                         </button>
                     </div>
-                    <div v-else
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
+                    <div v-else-if="ownerOrAdmin(videoconference)"
+                        class="dropdown-menu dropdown-menu-end"
                     >
                         <button
-                            v-permission="'videoconference_edit'"
-                            :name="'edit-videoconference-' + videoconference.id"
-                            class="dropdown-item text-secondary"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="editVideoconference(videoconference)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.videoconference.edit') }}
                         </button>
-                        <button v-if="$userId == videoconference.owner_id"
-                            v-permission="'videoconference_create'"
-                            :name="'edit-videoconference-' + videoconference.id"
-                            class="dropdown-item text-secondary"
+                        <button
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="share(videoconference)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.videoconference.share') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'videoconference_delete'"
-                            :id="'delete-videoconference-' + videoconference.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(videoconference)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(videoconference)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.videoconference.delete') }}
                         </button>
                     </div>
@@ -171,35 +165,27 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="videoconference-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="videoconference-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            id="videoconference-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            :ajax="subscribable ? '/videoconferences/list?group_id=' + subscribable_id : '/videoconferences/list'"
+            class="d-none"
+            @xhr="(e, settings, json) => videoconferences = json.data"
+        />
 
         <Teleport to="body">
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
             <VideoconferenceModal v-if="!subscribable"/>
-            <SubscribeVideoconferenceModal v-if="subscribable"/>
+            <SubscribeVideoconferenceModal v-if="subscribable" :group_id="subscribable_id"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
-                :title="trans('global.videoconference.' + delete_label_field)"
-                :description="trans('global.videoconference.' + delete_label_field + '_helper')"
-                @close="this.showConfirm = false;"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                :title="trans('global.videoconference.' + deleteLabel)"
+                :description="trans('global.videoconference.' + deleteLabel + '_helper')"
+                @close="showConfirm = false;"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -212,41 +198,38 @@ import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
-import {useGlobalStore} from "../../store/global";
 import SubscribeVideoconferenceModal from "./SubscribeVideoconferenceModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        SubscribeVideoconferenceModal,
+        ConfirmModal,
+        MediumModal,
+        DataTable,
+        VideoconferenceModal,
+        IndexWidget,
+        SubscribeModal,
+    },
     props: {
         subscribable: {
             type: Boolean,
             default: false,
         },
-        create_label_field: {
+        subscribable_type: {
             type: String,
-            default: 'create',
+            default: null,
         },
-        delete_label_field: {
-            type: String,
-            default: 'delete',
+        subscribable_id: {
+            type: Number,
+            default: null,
         },
-        subscribable_type: '',
-        subscribable_id: '',
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
             component_id: this.$.uid,
             videoconferences: null,
-            search: '',
             showConfirm: false,
-            url: (this.subscribable_id) ? '/videoconferences/list?group_id=' + this.subscribable_id : '/videoconferences/list',
-            errors: {},
             currentVideoconference: {},
             columns: [
                 { title: 'id', data: 'id' },
@@ -254,7 +237,6 @@ export default {
                 { title: 'meetingName', data: 'meetingName', searchable: true },
                 { title: 'welcomeMessage', data: 'welcomeMessage', searchable: true },
             ],
-            options : this.$dtOptions,
             filter: 'all',
             dt: null,
         }
@@ -262,43 +244,33 @@ export default {
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('videoconference-added', (videoconference) => {
+        this.$eventHub.on('videoconference-added', videoconference => {
             this.videoconferences.push(videoconference);
         });
 
-        this.$eventHub.on('videoconference-updated', (updatedVideoconference) => {
+        this.$eventHub.on('videoconference-updated', updatedVideoconference => {
             let videoconference = this.videoconferences.find(vc => vc.id === updatedVideoconference.id);
 
             Object.assign(videoconference, updatedVideoconference);
         });
 
-        this.$eventHub.on('videoconference-subscription-added', (vcSubscription) => {
+        this.$eventHub.on('videoconference-subscription-added', vcSubscription => {
             this.videoconferences.push(vcSubscription.videoconference);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            this.url = '/videoconferences/list?filter=' + this.filter;
-            this.dt.ajax.url(this.url).load();
+            this.dt.ajax.url('/videoconferences/list?filter=' + this.filter).load();
         },
         editVideoconference(videoconference) {
-            this.globalStore?.showModal('videoconference-modal', videoconference);
-        },
-        loaderEvent() {
-            this.dt = $('#videoconference-datatable').DataTable();
-
-            this.dt.on('draw.dt', () => {
-                this.videoconferences = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#videoconference-content').insertBefore('#videoconference-datatable-wrapper');
-            });
+            this.globalStore.showModal('videoconference-modal', videoconference);
         },
         confirmItemDelete(videoconference) {
             this.currentVideoconference = videoconference;
@@ -307,30 +279,36 @@ export default {
         destroy() {
             if (this.subscribable) {
                 axios.post('/videoconferenceSubscriptions/expel', {
-                    model_id : this.currentVideoconference.id,
-                    subscribable_id : this.subscribable_id,
-                    subscribable_type : this.subscribable_type,
+                    videoconference_id: this.currentVideoconference.id,
+                    subscribable_id: this.subscribable_id,
+                    subscribable_type: this.subscribable_type,
                 })
                     .then(response => {
+                        this.showConfirm = false;
                         let index = this.videoconferences.indexOf(this.currentVideoconference);
                         this.videoconferences.splice(index, 1);
                     })
-                    .catch(err => {
-                        console.log(err.response);
+                    .catch(e => {
+                        console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(this.errorMessage(e));
                     });
             } else {
                 axios.delete('/videoconferences/' + this.currentVideoconference.id)
                     .then(response => {
+                        this.showConfirm = false;
                         let index = this.videoconferences.indexOf(this.currentVideoconference);
                         this.videoconferences.splice(index, 1);
                     })
-                    .catch(err => {
-                        console.log(err.response);
+                    .catch(e => {
+                        console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(this.errorMessage(e));
                     });
             }
         },
         share(videoconference) {
-            this.globalStore?.showModal('subscribe-modal', {
+            this.globalStore.showModal('subscribe-modal', {
                 modelId: videoconference.id,
                 modelUrl: 'videoconference',
                 shareWithUsers: true,
@@ -340,15 +318,20 @@ export default {
                 canEditCheckbox: true,
             });
         },
+        ownerOrAdmin(videoconference) {
+            return videoconference.owner_id == this.$userId || this.isAdmin;
+        },
     },
-    components: {
-        SubscribeVideoconferenceModal,
-        ConfirmModal,
-        MediumModal,
-        DataTable,
-        VideoconferenceModal,
-        IndexWidget,
-        SubscribeModal,
+    computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
+        createLabel() {
+            return this.subscribable ? 'enrol' : 'create';
+        },
+        deleteLabel() {
+            return this.subscribable ? 'expel' : 'delete';
+        },
     },
 }
 </script>

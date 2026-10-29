@@ -9,23 +9,28 @@
              :src="'/media/' + kanban.medium_id + '?preview=true&maxWidth=null&maxHeight=null'"
              :alt="kanban.medium.title ?? kanban.medium.medium_name ?? 'background image'"
         />
-        <div v-if="!embeded"
-             class="d-print-none position-absolute pointer"
-             style="top: 10px; left: 10px; line-height: 1; z-index: 10;"
-             :style="{ color: textColor }"
-             @click="toggleFullscreen"
+        <button v-if="!embeded"
+            class="btn d-print-none position-absolute"
+            :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+            style="top: 0.25rem; left: 0.25rem; z-index: 10;"
+            type="button"
+            data-bs-toggle="tooltip"
+            :data-bs-title="trans('global.fullscreen')"
+            @click="toggleFullscreen"
         >
             <i class="fa fa-expand"></i>
-        </div>
-        <div
-            class="d-print-none position-absolute pointer"
-            :class="kanban.collapse_items && 'collapsed'"
-            style="top: 10px; right: 10px; line-height: 1; z-index: 10;"
-            :style="{ color: textColor }"
+        </button>
+        <button
+            class="btn d-print-none position-absolute"
+            :class="[kanban.collapse_items && 'collapsed', textColor === '#000' ? 'btn-icon' : 'btn-icon-alt']"
+            style="top: 0.25rem; right: 0.25rem; z-index: 10;"
+            type="button"
+            data-bs-toggle="tooltip"
+            :data-bs-title="trans('global.kanban.toggle_items')"
             @click="toggleCollapseAll"
         >
             <i class="fa fa-angle-up"></i>
-        </div>
+        </button>
 
         <div
             id="kanban-wrapper"
@@ -44,18 +49,16 @@
                 @end="syncStatusMoved"
             >
                 <template #item="{ element: status, index }">
-                    <span v-if="status.visibility || $userId == kanban.owner_id || $userId == status.owner_id"
-                          :id="'status-' + status.id"
-                          :key="'drag_status_' + status.id"
-                          class="flex-column mh-100 collapse show"
-                          :class="status.visible ?? true ? 'd-flex' : 'd-none'"
-                          :style="{
-                            width:  (itemWidth + 16) + 'px',
-                            opacity: !status.visibility ? '0.7' : '1'
-                        }"
-                          tabindex="-1"
+                    <span v-if="status.visibility || ownerOrAdmin || status.owner_id == $userId"
+                        :id="'status-' + status.id"
+                        :key="'drag_status_' + status.id"
+                        class="flex-column mh-100 collapse collapse-horizontal show"
+                        :class="(!status.visible ?? false) && 'd-none'"
+                        :style="{ opacity: !status.visibility ? '0.7' : '1' }"
+                        tabindex="-1"
                     >
                         <KanbanStatus
+                            :style="'width:' + itemWidth + 'px;'"
                             :status="status"
                             :editable="editable"
                             :allow_copy="kanban.allow_copy"
@@ -64,17 +67,20 @@
                             :key="status.id"
                             :websocket="websocket && kanban.auto_refresh"
                             filter=".ignore"
-                            @show-with-search="(data) => {status.visible = data.show;}"
+                            @show-with-search="data => status.visible = data.show"
                         />
                         <div v-if="editable"
-                             :id="'kanbanItemCreateButton_' + index"
-                             class="my-1 w-100 text-center"
+                            :id="'kanbanItemCreateButton_' + index"
+                            class="d-flex justify-content-center m-2"
+                            :style="'width:' + itemWidth + 'px;'"
                         >
                             <button
-                                class="btn btn-flat p-1"
+                                type="button"
+                                class="d-print-none btn btn-icon bg-transparent"
+                                :title="trans('global.kanbanItem.create')"
                                 @click="openItemModal(status.id)"
                             >
-                                <i class="d-print-none text-white fa fa-2x fa-plus-circle"></i>
+                                <i class="text-white fa fa-2x fa-plus-circle"></i>
                             </button>
                         </div>
                         <div v-else class="py-2"></div>
@@ -91,22 +97,23 @@
                             <template #item="{ element: item }">
                                 <span :key="'drag_item_' + item.id">
                                     <KanbanItem v-if="(item.visibility && visibleFromTo(item.visible_from, item.visible_until))
-                                            || ($userId == item.owner_id)
-                                            || ($userId == kanban.owner_id)"
-                                                :key="item.id"
-                                                :editable="editable"
-                                                :favourable="favourable"
-                                                :commentable="kanban.commentable"
-                                                :only_edit_owned_items="kanban.only_edit_owned_items"
-                                                :collapse_items="kanban.collapse_items"
-                                                :allow_copy="kanban.allow_copy"
-                                                :ref="'kanbanItemId' + item.id"
-                                                :index="status.id + '_' + item.id"
-                                                :item="item"
-                                                :width="itemWidth"
-                                                :kanban_owner_id="kanban.owner_id"
-                                                :websocket="websocket && kanban.auto_refresh"
-                                                filter=".ignore"
+                                            || item.owner_id == $userId
+                                            || ownerOrAdmin"
+                                        :key="item.id"
+                                        :editable="editable"
+                                        :favourable="favourable"
+                                        :commentable="kanban.commentable"
+                                        :only_edit_owned_items="kanban.only_edit_owned_items"
+                                        :collapse_items="kanban.collapse_items"
+                                        :allow_copy="kanban.allow_copy"
+                                        :ref="'kanbanItemId' + item.id"
+                                        :index="status.id + '_' + item.id"
+                                        :item="item"
+                                        :width="itemWidth"
+                                        :style="'width:' + itemWidth + 'px;'"
+                                        :kanban_owner_id="kanban.owner_id"
+                                        :websocket="websocket && kanban.auto_refresh"
+                                        filter=".ignore"
                                     />
                                 </span>
                             </template>
@@ -115,10 +122,10 @@
                 </template>
                 <template #footer>
                     <div v-if="editable"
-                         class="d-print-none"
-                         :style="'width:' + itemWidth + 'px;'"
+                        class="d-print-none"
+                        :style="'width:' + itemWidth + 'px;'"
                     >
-                        <KanbanStatus :newStatus="true"/>
+                        <KanbanStatus/>
                     </div>
                 </template>
             </draggable>
@@ -137,8 +144,8 @@
                 css="primary"
                 @close="show_item_copy = false"
                 @confirm="() => {
-                    this.show_item_copy = false;
-                    this.copyItem();
+                    show_item_copy = false;
+                    copyItem();
                 }"
             />
             <ConfirmModal
@@ -155,8 +162,8 @@
                 css="primary"
                 @close="show_status_copy = false"
                 @confirm="() => {
-                    this.show_status_copy = false;
-                    this.copyStatus();
+                    show_status_copy = false;
+                    copyStatus();
                 }"
             />
             <ConfirmModal
@@ -168,36 +175,48 @@
             />
         </Teleport>
         <Teleport to="#customTitle">
-            <small v-text="kanban.title"></small>
-            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+            <div class="d-flex align-items-center">
+                <small v-text="kanban.title"></small>
+                <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                     type="button"
-                    class="btn text-secondary px-2 mx-1"
-                    @click="editKanban(kanban)"
-            >
-                <i class="fa fa-pencil-alt"></i>
-            </button>
-
-            <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.kanban.edit')"
+                    @click="editKanban()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+    
+                <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
                     type="button"
-                    class="btn text-secondary px-2 mx-1"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.share')"
                     @click="share()"
-            >
-                <i class="fa fa-share-alt"></i>
-            </button>
-
-            <a
-                :href="'/export_csv/' + kanban.id"
-                class="btn text-secondary px-1 ml-2"
-            >
-                <i class="fa fa-file-csv"></i>
-            </a>
-
-            <a
-                :href="'/export_pdf/' + kanban.id"
-                class="btn text-secondary px-1 ml-1"
-            >
-                <i class="fa fa-file-pdf"></i>
-            </a>
+                >
+                    <i class="fa fa-share-alt"></i>
+                </button>
+    
+                <a
+                    :href="'/export_csv/' + kanban.id"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.csv_export')"
+                    download
+                >
+                    <i class="fa fa-file-csv"></i>
+                </a>
+    
+                <a
+                    :href="'/export_pdf/' + kanban.id"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.pdf_export')"
+                    download
+                >
+                    <i class="fa fa-file-pdf"></i>
+                </a>
+            </div>
 
             <p class="h6">{{ trans('global.owner') }}: {{ initialKanban.owner.firstname + ' ' + initialKanban.owner.lastname }}</p>
         </Teleport>
@@ -217,9 +236,7 @@ import SubscribeModal from "../subscription/SubscribeModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import ToastNotification from "../uiElements/ToastNotification.vue";
-import {useGlobalStore} from "../../store/global";
 import ContributorsList from "../uiElements/ContributorsList.vue";
-import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -240,22 +257,11 @@ export default {
             default: false,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
-    },
     data() {
         return {
             kanban: {},
             currentContributors: {},
-            newItem: 0, // track the ID of the status we want to add to
-            newStatus: 0,
             itemWidth: 320,
-            item: null,
             copy_id: null,
             embeded: false,
             delete_id: null,
@@ -267,8 +273,9 @@ export default {
         };
     },
     methods: {
-        editKanban(kanban) {
-            this.globalStore?.showModal('kanban-modal', kanban);
+        editKanban() {
+            this.kanban.tags = this.kanban.tags.map(tag => tag.id ?? tag);
+            this.globalStore.showModal('kanban-modal', this.kanban);
         },
         toggleFullscreen() {
             if (document.fullscreenElement) {
@@ -278,8 +285,11 @@ export default {
             }
         },
         toggleCollapseAll(e) {
-            const collapse = e.target.parentElement.classList.toggle('collapsed') ? 'hide' : 'show';
-            $('#kanban-wrapper .kanban-item-body').collapse(collapse);
+            const collapsed = e.target.parentElement.classList.toggle('collapsed');
+            [...this.$el.querySelectorAll('.kanban-item-body')].forEach(elem => {
+                // check collapse-value, so every element will end up having the same state
+                if (elem.classList.contains('show') === collapsed) new bootstrap.Collapse(elem)
+            });
         },
         setEmbededView() {
             // INFO: section.p-3 also removes 'contributors'
@@ -287,7 +297,7 @@ export default {
             document.querySelectorAll('#header, section.p-3, footer').forEach(el => el.remove());
         },
         share() {
-            this.globalStore?.showModal('subscribe-modal', {
+            this.globalStore.showModal('subscribe-modal', {
                 modelId: this.kanban.id,
                 modelUrl: 'kanban',
                 shareWithUsers: true,
@@ -379,13 +389,10 @@ export default {
                 });
         },
         openItemModal(status_id) {
-            this.globalStore?.showModal('kanban-item-modal', {
-                item: {
-                    kanban_id: this.kanban.id,
-                    kanban_status_id: status_id,
-                    color: this.kanban.statuses.find(s => s.id === status_id).color,
-                },
-                method: 'post',
+            this.globalStore.showModal('kanban-item-modal', {
+                kanban_id: this.kanban.id,
+                kanban_status_id: status_id,
+                color: this.kanban.statuses.find(s => s.id === status_id).color,
             });
         },
         copyStatus() {
@@ -396,9 +403,8 @@ export default {
             this.show_status_delete = false;
 
             const status_id = this.delete_id;
-            const elem = $('#status-' + status_id);
-            elem.collapse('hide');
-            elem[0].classList.remove('d-flex');
+            const elem = document.querySelector('#status-' + status_id);
+            new bootstrap.Collapse(elem);
 
             const notification = {
                 component: ToastNotification,
@@ -426,9 +432,9 @@ export default {
         },
         undoStatusDeletion(status_id) {
             this.stopDeletion = true;
-            const elem = $('#status-' + status_id);
-            elem.collapse('show');
-            elem[0].classList.add('d-flex');
+            const elem = document.querySelector('#status-' + status_id);
+            new bootstrap.Collapse(elem);
+            elem.classList.add('d-flex');
         },
         copyItem() {
             axios.get('/kanbanItems/' + this.copy_id + '/copy')
@@ -439,7 +445,7 @@ export default {
 
             const item_id = this.delete_id[0];
             const status_id = this.delete_id[1];
-            $('#item-' + item_id).collapse('hide');
+            new bootstrap.Collapse(document.querySelector('#item-' + item_id));
 
             const notification = {
                 component: ToastNotification,
@@ -467,7 +473,7 @@ export default {
         },
         undoDeletion(item_id) {
             this.stopDeletion = true;
-            $('#item-' + item_id).collapse('show');
+            new bootstrap.Collapse(document.querySelector('#item-' + item_id));
         },
         handleStatusAdded(newStatus) {
             // if the status already exists do nothing
@@ -541,21 +547,23 @@ export default {
 
         this.kanban = this.initialKanban;
 
+        this.enableTooltips();
+
         this.startWebsocket();
 
         // KANBAN Events
-        this.$eventHub.on('kanban-updated', (updatedKanban) => {
+        this.$eventHub.on('kanban-updated', updatedKanban => {
             this.kanban = updatedKanban;
         });
 
         // STATUS Events
-        this.$eventHub.on('kanban-status-created', (status) => {
+        this.$eventHub.on('kanbanStatus-added', status => {
             this.handleStatusAdded(status);
         });
-        this.$eventHub.on('kanban-status-updated', (status) => {
+        this.$eventHub.on('kanbanStatus-updated', status => {
             this.handleStatusUpdated(status);
         });
-        this.$eventHub.on('kanban-status-deleted', (status_id) => {
+        this.$eventHub.on('kanban-status-deleted', status_id => {
             this.handleStatusDeleted(status_id);
         });
 
@@ -581,9 +589,12 @@ export default {
         this.stopWebsocket();
     },
     computed: {
+        ownerOrAdmin() {
+            return this.kanban.owner_id == this.$userId || this.checkPermission('is_admin');
+        },
         textColor: function () {
             if (this.kanban.color == "" || this.kanban.color == null) return;
-            return this.$textcolor(this.kanban.color, '#333333');
+            return this.$textcolor(this.kanban.color);
         },
         columnDragOptions() {
             return {
@@ -641,6 +652,8 @@ export default {
 .kanban-items-container {
     height: 0px !important;
     scroll-behavior: smooth;
+
+    & > :not(:first-child) .kanban-item { margin-top: 1rem; }
 }
 
 .kanban-item {
@@ -664,6 +677,7 @@ export default {
     }
 
     & > .kanban-item-tools {
+        gap: 0.25rem;
         top: 0.5rem;
         right: 0.5rem;
     }
@@ -696,11 +710,8 @@ export default {
         }
     }
 }
-
-.kanban-item, .kanban-status {
-    box-shadow: var(--shadow-default);
-}
-
+.kanban-item, .kanban-status { box-shadow: var(--shadow-layout); }
+[id^="status"] { display: flex; }
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
 

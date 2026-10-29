@@ -1,7 +1,6 @@
-<template >
-
+<template>
     <div
-        v-bind:id="'medium_'+medium.id"
+        :id="'medium_' + medium.id"
         class="box box-objective pointer my-1"
         style="height: 300px !important; min-width: 200px !important; padding: 0; background-size: 100%,50%;"
         :style="{'background-image':'url('+href+')'}"
@@ -69,7 +68,7 @@ export default {
             } catch(error) {
                 console.log(error.response.data.errors);
             }
-            $("#medium_" + this.medium.id).hide();
+            this.$el.classList.add('d-none');
         },
     },
     computed: {

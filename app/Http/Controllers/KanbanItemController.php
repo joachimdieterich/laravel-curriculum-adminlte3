@@ -53,17 +53,15 @@ class KanbanItemController extends Controller
         LogController::set(get_class($this) . '@' . __FUNCTION__);
         Kanban::find($input['kanban_id'])->touch('updated_at');
 
-        if (request()->wantsJson()) {
-            return KanbanItem::with([
-                'comments',
-                'comments.user',
-                'comments.likes',
-                'likes',
-                'mediaSubscriptions.medium',
-                'owner',
-            ])
-                ->find($kanbanItem->id);
-        }
+        return KanbanItem::with([
+            'comments',
+            'comments.user',
+            'comments.likes',
+            'likes',
+            'mediaSubscriptions.medium',
+            'owner:id,firstname,lastname',
+        ])
+            ->find($kanbanItem->id);
     }
 
     public function sync(Request $request)

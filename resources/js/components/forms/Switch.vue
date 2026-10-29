@@ -1,32 +1,42 @@
 <template>
-    <div :id="id + '_form_group'">
-        <span class="custom-control custom-switch custom-switch-on-green">
-            <input
-                :id="id"
-                :name="id"
-                :checked="checked"
-                @change="$emit('update:checked', !checked)"
-                type="checkbox"
-                class="custom-control-input pt-1"
-            />
-            <label class="custom-control-label" :for="id">{{ label }}</label>
-        </span>
-    </div>
+    <span class="form-check form-switch">
+        <input
+            :id="id"
+            class="form-check-input"
+            type="checkbox"
+            role="switch"
+            :disabled="disabled"
+            :checked="modelValue"
+            @change="$emit('update:modelValue', $event.target.checked)"
+            switch
+        >
+        <label
+            class="form-check-label"
+            :for="id"
+        >
+            {{ trans(label) }}
+        </label>
+    </span>
 </template>
 <script>
 export default {
     name: "Switch",
+    emits: ['update:modelValue'],
     props: {
         id: {
             type: String,
-            default: 'switch',
             required: true,
         },
         label: {
             type: String,
-            default: '',
+            required: true,
+            description: 'translation-key to describe the switch'
         },
-        checked: {
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+        modelValue: {
             type: Boolean,
             default: false,
         },

@@ -61,22 +61,20 @@ class KanbanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $kanban = Kanban::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
+        $kanban = Kanban::select('id')->find($input['kanban_id']);
+        abort_unless(\Gate::allows('kanban_create') && $kanban->isAccessible(), 403);
 
         $subscribe = KanbanSubscription::updateOrCreate([
-            'kanban_id' => $kanban->id,
+            'kanban_id'         => $kanban->id,
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_id'   => $input['subscribable_id'],
         ], [
             'editable' => isset($input['editable']) ? $input['editable'] : false,
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
 
-        if (request()->wantsJson()) {
-            return $subscribe->with('subscribable')->find($subscribe->id);
-        }
+        return $subscribe->with('kanban')->find($subscribe->id);
     }
 
     /**
@@ -128,23 +126,18 @@ class KanbanSubscriptionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function expel(Request $request)
     {
         $input = $this->validateRequest();
-        $kanban = Kanban::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('kanban_create') and $kanban->isAccessible()), 403);
+        $kanban = Kanban::select('id')->find($input['kanban_id']);
+        abort_unless(\Gate::allows('kanban_create') && $kanban->isAccessible(), 403);
 
-        $subscription = KanbanSubscription::where([
-            'kanban_id' => $kanban->id,
+        KanbanSubscription::where([
+            'kanban_id'         => $kanban->id,
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
-        ]);
-
-        if ($subscription->delete()) {
-            return trans('global.expel_success');
-        }
+            'subscribable_id'   => $input['subscribable_id'],
+        ])->delete();
     }
 
     protected function validateRequest()
@@ -152,7 +145,7 @@ class KanbanSubscriptionController extends Controller
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes',
+            'kanban_id'         => 'sometimes|integer',
             'editable'          => 'sometimes',
         ]);
     }

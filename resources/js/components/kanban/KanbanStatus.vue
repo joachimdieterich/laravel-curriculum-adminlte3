@@ -1,96 +1,89 @@
 <template>
     <div
         class="kanban-status mx-2"
+        :class="status === null && 'p-0'"
         :style="{ backgroundColor: status?.color }"
     >
-        <div v-if="newStatus"
-             id="kanbanStatusCreate"
-             class="d-flex align-items-center pointer"
-             @click="edit()"
+        <button v-if="status === null"
+            id="kanbanStatusCreate"
+            class="btn btn-default d-flex align-items-center w-100 p-3 border-0 rounded-3"
+            type="button"
+            @click="openModal()"
         >
-            <span class="text-secondary btn px-1 py-0">
-                <i class="fa fa-plus"></i>
-                {{ trans('global.kanbanStatus.create') }}
-            </span>
-        </div>
-        <div v-else
-             v-show="showWithSearch"
-             class="d-flex align-items-center"
-             :style="'color:' + $textcolor(status.color)"
+            <i class="fa fa-plus me-1"></i>
+            <span>{{ trans('global.kanbanStatus.create') }}</span>
+        </button>
+        <div v-else-if="showWithSearch"
+            class="d-flex align-items-center justify-content-between"
+            :style="'color: ' + textColor"
         >
-            <div v-if="edit_rights || copy_rights || delete_rights"
-                 :id="'kanbanStatusDropdown_' + status.id"
-                 class="d-print-none btn btn-flat py-0 pl-0 pull-left"
-                 data-toggle="dropdown"
-                 aria-expanded="false"
-            >
-                <i
-                    class="fas fa-bars"
-                    :style="'color:' + $textcolor(status.color)"
-                ></i>
-                <div
-                    class="dropdown-menu"
-                    x-placement="top-start"
-                >
-                    <div>
-                        <div v-if="edit_rights">
-                            <button
-                                name="kanbanStatusEdit"
-                                class="dropdown-item text-secondary py-1"
-                                @click="edit()"
-                            >
-                                <i class="fa fa-pencil-alt mr-2"></i>
-                                {{ trans('global.kanbanStatus.edit') }}
-                            </button>
-                        </div>
-
-                        <div v-if="copy_rights">
-                            <button
-                                name="kanbanStatusCopy"
-                                class="dropdown-item text-secondary py-1"
-                                @click="confirmCopy()"
-                            >
-                                <i class="fa fa-copy mr-2"></i>
-                                {{ trans('global.kanbanStatus.copy') }}
-                            </button>
-                        </div>
-
-                        <div v-if="delete_rights">
-                            <hr class="my-1">
-                            <button
-                                v-permission="'kanban_delete'"
-                                name="kanbanStatusDelete"
-                                class="dropdown-item py-1 text-red"
-                                @click="confirmDeletion()"
-                            >
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.kanbanStatus.delete') }}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <strong>{{ status.title }}</strong>
-            <div v-if="$userId == kanban_owner_id
-                    || (!status.locked || $userId == status.owner_id)"
-                 class="handle d-print-none ml-auto pointer"
-            >
-                <span class="position-relative">
+            <div class="d-flex gap-1">
+                <button v-if="$userId == kanban_owner_id
+                        || (!status.locked || $userId == status.owner_id)"
+                    class="btn handle d-print-none"
+                    :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                    type="button"
+                    tabindex="-1"
+                >
                     <i v-if="editable"
                        class="fa fa-arrows-up-down-left-right"
                     ></i>
                     <i v-if="status.locked"
-                       class="fa fa-lock text-muted position-absolute"
-                       style="left: 8px; top: 10px; cursor: not-allowed;"
+                        class="fa fa-lock text-muted position-absolute"
+                        style="right: 2px; bottom: 2px; cursor: not-allowed;"
                     ></i>
-                </span>
+                </button>
+                <div v-if="edit_rights || copy_rights || delete_rights"
+                    class="dropdown d-print-none"
+                >
+                    <button
+                        class="btn"
+                        :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        :title="trans('global.kanbanStatus.dropdown')"
+                        :aria-label="trans('global.kanbanStatus.dropdown')"
+                    >
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <button v-if="edit_rights"
+                            type="button"
+                            class="dropdown-item"
+                            @click="openModal()"
+                        >
+                            <i class="fa fa-pencil-alt"></i>
+                            {{ trans('global.kanbanStatus.edit') }}
+                        </button>
+                        <button v-if="copy_rights"
+                            type="button"
+                            class="dropdown-item"
+                            @click="confirmCopy()"
+                        >
+                            <i class="fa fa-copy"></i>
+                            {{ trans('global.kanbanStatus.copy') }}
+                        </button>
+
+                        <hr v-if="delete_rights" class="my-1">
+
+                        <button v-if="delete_rights"
+                            v-permission="'kanban_delete'"
+                            type="button"
+                            class="dropdown-item text-danger"
+                            @click="confirmDeletion()"
+                        >
+                            <i class="fa fa-trash"></i>
+                            {{ trans('global.kanbanStatus.delete') }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import {useGlobalStore} from "../../store/global";
-
 export default {
     name: 'KanbanStatus',
     emits: [
@@ -121,27 +114,16 @@ export default {
             type: Boolean,
             default: true,
         },
-        newStatus: {
-            type: Boolean,
-            default: false,
-        },
         websocket: {
             type: Boolean,
             default: false,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
             component_id: this.$.uid,
             url: '',
             method: 'patch',
-            event: '',
             edit_rights: false,
             copy_rights: false,
             delete_rights: false,
@@ -150,11 +132,8 @@ export default {
         }
     },
     methods: {
-        edit() {
-            this.globalStore?.showModal('kanban-status-modal', {
-                status: this.status ?? {},
-                method: this.method,
-            });
+        openModal() {
+            this.globalStore?.showModal('kanban-status-modal', this.status ?? {});
         },
         confirmCopy() {
             this.$eventHub.emit('kanban-show-copy', {
@@ -169,11 +148,14 @@ export default {
             });
         },
         handleItemAdded(newItem) {
+            if (this.status.id !== newItem.status_id) return;
             // Add newly created item to our column
             this.status.items.push(newItem);
         },
         handleItemUpdated(updatedItem) {
-            let item = this.status.items.find(s => s.id === updatedItem.id);
+            let item = this.status.items.find(item => item.id === updatedItem.id);
+
+            if (item === undefined) return;
 
             Object.assign(item, updatedItem);
 
@@ -230,6 +212,10 @@ export default {
         }
     },
     computed: {
+        textColor: function() {
+            if (this.status === null || !this.status.color) return '#000';
+            return this.$textcolor(this.status.color);
+        },
         showWithSearch: function () {
             if (typeof this.searchFilter !== 'string') {
                 return true;
@@ -248,13 +234,11 @@ export default {
     mounted() {
         this.startWebsocket();
 
-        this.$eventHub.on('filter', (filter) => {
+        this.$eventHub.on('filter', filter => {
             this.searchFilter = filter.searchString.toLowerCase();
         });
 
-        if (this.newStatus) {
-            this.method = 'post';
-        } else {
+        if (this.status !== null) {
             this.edit_rights =
                 this.$userId == this.kanban_owner_id
                 || this.checkPermission('is_admin')
@@ -267,17 +251,15 @@ export default {
                 this.$userId == this.kanban_owner_id
                 || this.checkPermission('is_admin')
                 || this.$userId == this.status.owner_id;
-        }
 
-        // ITEM Events
-        if (this.status !== null) {
+            // ITEM Events
             this.$eventHub.on('kanban-status-force-show-' + this.status.id, (forceShow) => {
                 this.forceShow[forceShow.kanbanItemId] = forceShow.show;
             });
-            this.$eventHub.on('kanban-item-added-' + this.status.id, (item) => {
+            this.$eventHub.on('kanbanItem-added', item => {
                 this.handleItemAdded(item);
             });
-            this.$eventHub.on('kanban-item-updated-' + this.status.id, (item) => {
+            this.$eventHub.on('kanbanItem-updated', item => {
                 this.handleItemUpdated(item);
             });
             this.$eventHub.on('kanban-item-deleted-' + this.status.id, (id) => {

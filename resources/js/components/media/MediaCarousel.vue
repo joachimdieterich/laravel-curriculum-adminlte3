@@ -1,18 +1,19 @@
 <template>
     <div
         :id="component_id"
-        class="carousel slide ignore"
-        data-interval="false"
+        class="carousel slide"
+        data-bs-interval="false"
     >
         <div v-if="subscriptions.length > 1"
             class="carousel-indicators"
         >
-            <li v-for="(item, index) in subscriptions"
+            <button v-for="(item, index) in subscriptions"
                 :class="{ 'active': index === 0 }"
-                :data-target="'#' + component_id"
-                :data-slide-to="index"
-                @click="setSlide(index)">
-            </li>
+                type="button"
+                :data-bs-target="'#' + component_id"
+                :data-bs-slide-to="index"
+                @click="setSlide(index)"
+            ></button>
         </div>
         <div class="carousel-inner pointer">
             <div
@@ -49,7 +50,7 @@
             class="d-print-none carousel-control-prev"
             style="z-index: 20;"
             role="button"
-            data-slide="prev"
+            data-bs-slide="prev"
             :aria-label="trans('pagination.previous')"
             @click="prev()"
         >
@@ -61,7 +62,7 @@
             class="d-print-none carousel-control-next"
             style="z-index: 20;"
             role="button"
-            data-slide="next"
+            data-bs-slide="next"
             :aria-label="trans('pagination.next')"
             @click="next()"
         >
@@ -70,12 +71,11 @@
         </a>
     </div>
 </template>
-
 <script>
 import MediaRenderer from './MediaRenderer.vue';
-import {useGlobalStore} from "../../store/global";
 
 export default {
+    components: { MediaRenderer },
     props: {
         subscriptions: {
             type: Array,
@@ -85,12 +85,6 @@ export default {
             type: Number,
             default: null,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
@@ -117,7 +111,7 @@ export default {
             }
         },
         unlinkMedium(item) { //id of external reference and value in db
-            $('#loading_' + this.component_id).show();
+            document.getElementById('loading_' + this.component_id).style.display = '';
             axios.post('/mediumSubscriptions/destroy', {
                 medium_id: item.medium_id,
                 subscribable_id: item.subscribable_id,
@@ -125,20 +119,17 @@ export default {
                 additional_data: true, // hack to skip setting medium_id of model to null
             })
             .then(res => {
-                $('#loading_' + this.component_id).hide();
+                document.getElementById('loading_' + this.component_id).style.display = 'none';
                 this.subscriptions.splice(this.currentSlide, 1);
                 if (this.subscriptions.length === 0) return;
-                $('#' + this.component_id).carousel(0);
+                new bootstrap.Carousel(document.getElementById(this.component_id)).to(0);
                 this.currentSlide = 0;
             })
             .catch(err => {
-                $('#loading_' + this.component_id).hide();
+                document.getElementById('loading_' + this.component_id).style.display = 'none';
                 console.log(err.response);
             });
         },
-    },
-    components: {
-        MediaRenderer,
     },
 }
 </script>

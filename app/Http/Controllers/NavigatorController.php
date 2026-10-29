@@ -24,21 +24,15 @@ class NavigatorController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('navigator_show'), 403);
-        $navigators = Navigator::select([
-            'id',
-            'title',
-            'organization_id',
-        ]);
+        $navigators = Navigator::select('id', 'title', 'organization_id');
 
         return DataTables::of($navigators)
             ->addColumn('organization', function ($navigators) {
                 return $navigators->organization()->first()->title;
             })
             ->addColumn('url', function ($navigators)  {
-                return '/navigatorViews/' . $navigators->views()->first()?->id ;
+                return '/navigatorViews/' . $navigators->views()->first()?->id;
             })
-            ->addColumn('check', '')
-            ->setRowId('id')
             ->make(true);
     }
 
@@ -54,20 +48,18 @@ class NavigatorController extends Controller
         $new_navigator = $this->validateRequest();
 
         $navigator = Navigator::firstOrCreate([
-            'title' => $new_navigator['title'],
-            'organization_id' => format_select_input($new_navigator['organization_id']),
+            'title'             => $new_navigator['title'],
+            'organization_id'   => $new_navigator['organization_id'],
         ]);
-        $navigator_view =  NavigatorView::firstOrCreate([
-            'title' => $new_navigator['title'],
-            'description' => 'Home',
-            'navigator_id' => $navigator->id,
+        $navigator_view = NavigatorView::firstOrCreate([
+            'title'         => $new_navigator['title'],
+            'description'   => 'Home',
+            'navigator_id'  => $navigator->id,
         ]);
 
         $navigator->url = '/navigatorViews/' . $navigator_view->id;
 
-        if (request()->wantsJson()) {
-            return $navigator;
-        }
+        return $navigator;
     }
 
     /**
@@ -79,12 +71,9 @@ class NavigatorController extends Controller
     public function show(Navigator $navigator)
     {
         abort_unless(\Gate::allows('navigator_show'), 403);
-        $model = 'navigator'; //strtolower(class_basename( $navigator ));
+        $model = 'navigator';
 
-
-        $view = NavigatorView::where('navigator_id', $navigator->id)
-                                    /*->with(['items'])*/
-                                    ->get()->first();
+        $view = NavigatorView::where('navigator_id', $navigator->id)->first();
         $breadcrumbs = $this->breadcrumbs($view);
 
         LogController::set(get_class($this).'@'.__FUNCTION__, $navigator->id);
@@ -99,20 +88,12 @@ class NavigatorController extends Controller
     public function listViews(Navigator $navigator)
     {
         abort_unless(\Gate::allows('navigator_access'), 403);
+
         $navigatorViews = NavigatorView::where('navigator_id', $navigator->id)
-            ->select([
-                'id',
-                'title',
-                'description',
-                'navigator_id',
-            ]);
+            ->select('id', 'title', 'description', 'navigator_id');
 
-        return DataTables::of($navigatorViews)
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->make(true);
+        return DataTables::of($navigatorViews)->make(true);
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -126,8 +107,8 @@ class NavigatorController extends Controller
         abort_unless(\Gate::allows('navigator_edit'), 403);
 
         $navigator->update([
-            'title' => $request['title'],
-            'organization_id' => format_select_input($request['organization_id']),
+            'title'             => $request['title'],
+            'organization_id'   => $request['organization_id'],
         ]);
 
         return $navigator;
@@ -142,8 +123,6 @@ class NavigatorController extends Controller
     public function destroy(Navigator $navigator)
     {
         abort_unless(\Gate::allows('navigator_delete'), 403);
-
-        $navigator->views()->delete(); //delete views
 
         return $navigator->delete();
     }

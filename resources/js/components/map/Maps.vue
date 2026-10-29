@@ -13,7 +13,7 @@
                     role="tab"
                     @click="setFilter('all')"
                 >
-                    <i class="fas fa-map-location-dot pr-2"></i>
+                    <i class="fa fa-map-location-dot pe-2"></i>
                     {{ trans('global.all') }} {{ trans('global.map.title') }}
                 </a>
             </li>
@@ -26,7 +26,7 @@
                     role="tab"
                     @click="setFilter('by_organization')"
                 >
-                    <i class="fas fa-university pr-2"></i>
+                    <i class="fa fa-university pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                 </a>
             </li>
@@ -42,7 +42,7 @@
                     role="tab"
                     @click="setFilter('owner')"
                 >
-                    <i class="fa fa-user pr-2"></i>
+                    <i class="fa fa-user pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.map.title') }}
                 </a>
             </li>
@@ -55,7 +55,7 @@
                     role="tab"
                     @click="setFilter('shared_with_me')"
                 >
-                    <i class="fa fa-paper-plane pr-2"></i>
+                    <i class="fa fa-paper-plane pe-2"></i>
                     {{ trans('global.shared_with_me') }}
                 </a>
             </li>
@@ -71,7 +71,7 @@
                     role="tab"
                     @click="setFilter('shared_by_me')"
                 >
-                    <i class="fa fa-share-nodes  pr-2"></i>
+                    <i class="fa fa-share-nodes  pe-2"></i>
                     {{ trans('global.shared_by_me') }}
                 </a>
             </li>
@@ -95,46 +95,40 @@
                 modelName="Map"
                 url="/maps"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-map-location-dot"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template v-if="ownerOrAdmin(map)" #dropdown
                     v-permission="'map_edit, map_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
-                            v-permission="'map_edit'"
-                            :name="'edit-map-' + map.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editMap(map)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editMap(map)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.map.edit') }}
                         </button>
 
                         <button
-                            :name="'map-share_' + map.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="shareMap(map)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="shareMap(map)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.map.share') }}
                         </button>
 
                         <hr class="my-1">
+
                         <button
-                            v-permission="'map_delete'"
-                            :id="'delete-map-' + map.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(map)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(map)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.map.delete') }}
                         </button>
                     </div>
@@ -142,20 +136,15 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="map-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="map-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            id="map-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/maps/list"
+            class="d-none"
+            @xhr="(e, settings, json) => maps = json.data"
+        />
 
         <Teleport to="body">
             <MapModal/>
@@ -165,12 +154,10 @@
                 :showConfirm="showConfirm"
                 :title="trans('global.map.delete')"
                 :description="trans('global.map.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
             />
         </Teleport>
@@ -184,32 +171,28 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    props: {},
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        SubscribeModal,
+        DataTable,
+        MapModal,
+        IndexWidget,
+        MediumModal,
     },
     data() {
         return {
             component_id: this.$.uid,
             maps: null,
-            search: '',
             showConfirm: false,
-            url: '/maps/list',
-            errors: {},
             currentMap: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
                 { title: 'description', data: 'description', searchable: true },
             ],
-            options : this.$dtOptions,
             filter: 'all',
             dt: null,
         }
@@ -217,51 +200,39 @@ export default {
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('map-added', (map) => {
+        this.$eventHub.on('map-added', map => {
             this.maps.push(map);
         });
 
-        this.$eventHub.on('map-updated', (updatedMap) => {
+        this.$eventHub.on('map-updated', updatedMap => {
             let map = this.maps.find(m => m.id === updatedMap.id);
 
             Object.assign(map, updatedMap);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            this.url = '/maps/list?filter=' + this.filter
-            this.dt.ajax.url(this.url).load();
+            this.dt.ajax.url('/maps/list?filter=' + this.filter).load();
         },
         editMap(map) {
-            this.globalStore?.showModal('map-modal', map);
+            this.globalStore.showModal('map-modal', map);
         },
         shareMap(map) {
-            this.globalStore?.showModal(
-                'subscribe-modal',
-                {
-                    modelId: map.id,
-                    modelUrl: 'map' ,
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: true,
-                    canEditCheckbox: true,
-                });
-        },
-        loaderEvent() {
-            this.dt = $('#map-datatable').DataTable();
-
-            this.dt.on('draw.dt', () => {
-                this.maps = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#map-content').insertBefore('#map-datatable-wrapper');
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: map.id,
+                modelUrl: 'map' ,
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
             });
         },
         confirmItemDelete(map) {
@@ -274,18 +245,18 @@ export default {
                     let index = this.maps.indexOf(this.currentMap);
                     this.maps.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
                 });
         },
+        ownerOrAdmin(map) {
+            return map.owner_id == this.$userId || this.isAdmin;
+        },
     },
-    components: {
-        ConfirmModal,
-        SubscribeModal,
-        DataTable,
-        MapModal,
-        IndexWidget,
-        MediumModal,
+    computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
     },
 }
 </script>

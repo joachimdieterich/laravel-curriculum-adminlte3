@@ -1,12 +1,20 @@
 <template>
-    <div class="d-flex flex-column">
+    <div
+        class="d-flex flex-column"
+        :style="{ marginTop: subscribable ? null : '-1.5rem' }"
+    >
         <TabList v-if="!subscribable"
             class="px-3"
-            :model="'kanban'"
-            modelIcon="fa-columns"
-            :tabs="['favourite', 'all', 'owner', 'shared_with_me', 'shared_by_me', 'hidden']"
-            :activeTab="filter"
-            @change-tab="setFilter"
+            model="kanban"
+            :tabs="[
+                { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
+                { icon: 'fa-columns', label: ['global.all', 'global.kanban.title'], filter: 'all' },
+                { icon: 'fa-user', label: ['global.my', 'global.kanban.title'], filter: 'owner', permission: 'kanban_create' },
+                { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'kanban_create' },
+                { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
+                { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
+            ]"
+            @change-tab="setFilter($event.filter)"
         />
 
         <div
@@ -22,12 +30,10 @@
                 :subscribe="subscribable"
                 :subscribable_id="subscribable_id"
                 :subscribable_type="subscribable_type"
-                :label="trans('global.kanban.' + create_label_field)"
+                :label="trans('global.kanban.' + createLabel)"
             >
-                <template v-slot:itemIcon>
-                    <i v-if="create_label_field == 'enrol'"
-                       class="fa fa-2x fa-link text-muted"
-                    ></i>
+                <template #itemIcon>
+                    <i v-if="subscribable" class="fa fa-2x fa-link text-muted"></i>
                 </template>
             </IndexWidget>
 
@@ -39,136 +45,107 @@
                 :showSubscribable="subscribable"
                 :hidable="true"
             >
-                <template v-slot:itemIcon>
+                <template #itemIcon>
                     <i class="fa fa-2x fa-columns"></i>
                 </template>
 
-                <template v-slot:additional-button>
-                    <favourite
-                        url="/kanbans/[id]/favour"
-                        :model="kanban"
-                        :is-favourited="kanban.is_favourited"
-                        @mark-status-changed="(newKanban) => {
-                            kanbans[index] = newKanban;
-                        }"
-                    />
-                </template>
-
-                <template v-slot:dropdown>
+                <template #dropdown>
                     <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
+                        class="dropdown-menu dropdown-menu-end"
                     >
                         <button
                             v-permission="'kanban_delete'"
-                            :id="'delete-kanban-' + kanban.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(kanban)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(kanban)"
                         >
-                            <span>
-                                <i class="fa fa-unlink mr-2"></i>
-                                {{ trans('global.kanban.expel') }}
-                            </span>
+                            <i class="fa fa-unlink"></i>
+                            {{ trans('global.kanban.expel') }}
                         </button>
                     </div>
                     <div v-else
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
+                        class="dropdown-menu dropdown-menu-end"
                     >
                         <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_edit'"
-                            :name="'edit-kanban-' + kanban.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editKanban(kanban)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editKanban(kanban)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.kanban.edit') }}
                         </button>
 
                         <button
                             v-permission="'tag_access'"
-                            :name="'manage-tags-' + kanban.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="manageTags(kanban)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="manageTags(kanban)"
                         >
-                            <i class="fa fa-tag mr-2"></i>
+                            <i class="fa fa-tag"></i>
                             {{ trans('global.tag.title') }}
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban)"
-                            :name="'kanban-share_' + kanban.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="shareKanban(kanban)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="shareKanban(kanban)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.kanban.share') }}
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban) || kanban.allow_copy"
-                            :name="'copy-kanban-' + kanban.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="confirmKanbanCopy(kanban)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="confirmKanbanCopy(kanban)"
                         >
-                            <i class="fa fa-copy mr-2"></i>
+                            <i class="fa fa-copy"></i>
                             {{ trans('global.kanban.copy') }}
                         </button>
 
-                        <hide
-                            v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                        <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
                             url="/kanbans/[id]/hide"
                             :model="kanban"
                             :is-hidden="kanban.is_hidden"
-                            @mark-status-changed="() => {
-                                kanbans.splice(index, 1)
-                            }"
+                            @mark-status-changed="kanbans.splice(index, 1)"
                         />
 
                         <hr v-if="ownerOrAdmin(kanban)" class="my-1"/>
 
                         <button v-if="ownerOrAdmin(kanban)"
                             v-permission="'kanban_delete'"
-                            :id="'delete-kanban-' + kanban.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(kanban)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(kanban)"
                         >
-                            <span>
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.kanban.delete') }}
-                            </span>
+                            <i class="fa fa-trash"></i>
+                            {{ trans('global.kanban.delete') }}
                         </button>
-
                     </div>
                 </template>
             </IndexWidget>
         </div>
 
-        <div
-            id="kanban-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="kanban-datatable"
-                :columns="columns"
-                :options="dtOptions(this.subscribable ? '/kanbans/list?group_id=' + this.subscribable_id : '/kanbans/list')"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            id="kanban-datatable"
+            :columns="columns"
+            :options="dtOptions(subscribable ? '/kanbans/list?group_id=' + subscribable_id : '/kanbans/list')"
+            class="d-none"
+            @xhr="xhrEvent"
+        />
 
         <Teleport to="body">
             <TagComponentModal v-if="!subscribable" event-prefix="kanban" model-namespace="\App\Kanban"/>
             <KanbanModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
-            <SubscribeKanbanModal v-if="subscribable"/>
+            <SubscribeKanbanModal v-if="subscribable" :group_id="subscribable_id"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
-                :title="trans('global.kanban.' + delete_label_field)"
-                :description="trans('global.kanban.' + delete_label_field +'_helper')"
+                :title="trans('global.kanban.' + deleteLabel)"
+                :description="trans('global.kanban.' + deleteLabel +'_helper')"
                 @close="showConfirm = false"
                 @confirm="destroy()"
             />
@@ -193,8 +170,6 @@ import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 import Hide from "../tag/Hide.vue";
 import Favourite from "../tag/Favourite.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
@@ -202,22 +177,27 @@ import TagComponentModal from "../tag/TagComponentModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        TagComponentModal,
+        Hide,
+        Favourite,
+        SubscribeModal,
+        SubscribeKanbanModal,
+        MediumModal,
+        ConfirmModal,
+        DataTable,
+        KanbanModal,
+        IndexWidget,
+        TabList,
+    },
     props: {
         subscribable: {
             type: Boolean,
             default: false,
         },
-        create_label_field: {
-            type: String,
-            default: 'create',
-        },
-        delete_label_field: {
-            type: String,
-            default: 'delete',
-        },
         subscribable_type: {
             type: String,
-            default: '',
+            default: null,
         },
         subscribable_id: {
             type: Number,
@@ -226,14 +206,8 @@ export default {
     },
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
-        const toast = useToast();
-        const globalStore = useGlobalStore();
 
-        return {
-            selectedTags, selectedNegativeTags, dtOptions,
-            globalStore,
-            toast,
-        }
+        return { selectedTags, selectedNegativeTags, dtOptions }
     },
     data() {
         return {
@@ -241,7 +215,6 @@ export default {
             kanbans: null,
             showConfirm: false,
             showCopy: false,
-            errors: {},
             currentKanban: {},
             columns: [
                 { title: 'id', data: 'id' },
@@ -254,22 +227,29 @@ export default {
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
-        this.globalStore['searchTagModelContext'] =  'App\\Kanban';
+        this.globalStore['searchTagModelContext'] = 'App\\Kanban';
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('kanban-subscription-added', (kanbanSubscription) => {
+        this.$eventHub.on('kanban-subscription-added', kanbanSubscription => {
             this.kanbans.push(kanbanSubscription.kanban);
         });
 
-        this.$eventHub.on('kanban-added', (kanban) => {
+        this.$eventHub.on('kanban-added', kanban => {
             this.kanbans.push(kanban);
         });
 
-        this.$eventHub.on('kanban-updated', (updatedKanban) => {
+        this.$eventHub.on('kanban-updated', updatedKanban => {
             let kanban = this.kanbans.find(k => k.id === updatedKanban.id);
 
             Object.assign(kanban, updatedKanban);
+        });
+
+        this.$eventHub.on('filter', filter => {
+            this.selectedTags = filter.tags;
+            this.selectedNegativeTags = filter.negativeTags;
+
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
@@ -278,49 +258,33 @@ export default {
             this.dt.ajax.url('/kanbans/list?filter=' + this.filter).load();
         },
         manageTags(kanban) {
-            this.globalStore?.showModal('tag-component-modal', kanban);
+            this.globalStore.showModal('tag-component-modal', kanban);
         },
         editKanban(kanban) {
-            this.globalStore?.showModal('kanban-modal', kanban);
+            kanban.tags = kanban.tags.map(tag => tag.id ?? tag);
+            this.globalStore.showModal('kanban-modal', kanban);
         },
         shareKanban(kanban) {
-            this.globalStore?.showModal(
-                'subscribe-modal',
-                {
-                    modelId: kanban.id,
-                    modelUrl: 'kanban' ,
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: true,
-                    canEditCheckbox: true,
-                });
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: kanban.id,
+                modelUrl: 'kanban' ,
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: true,
+                canEditCheckbox: true,
+            });
         },
-        loaderEvent() {
-            this.dt = $('#kanban-datatable').DataTable();
-
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the kanban-data
-                let initialLoad = this.dt.rows().data().context[0].iDraw === 1;
-                let data = this.dt.rows({ page: 'current' }).data().toArray();
-                // if user doesn't have any favourited objects, default to 'all'-tab
-                if (initialLoad && data.length === 0) {
-                    this.setFilter('all');
-                    return;
-                }
-
-                this.kanbans = data;
-                $('#kanban-content').insertBefore('#kanban-datatable-wrapper');
-            });
-
-            this.$eventHub.on('filter', (filter) => {
-                this.selectedTags = filter.tags;
-                this.selectedNegativeTags = filter.negativeTags;
-
-                this.dt.search(filter.searchString).draw();
-            });
+        xhrEvent(e, settings, json) {
+            // if user doesn't have any favourited objects, default to 'all'-tab
+            if (!this.subscribable && json.draw === 1 && json.data.length === 0) {
+                this.setFilter('all');
+                return;
+            }
+            this.kanbans = json.data;
         },
         ownerOrAdmin(kanban) {
-            return kanban.owner_id == this.$userId || this.checkPermission('is_admin');
+            return kanban.owner_id == this.$userId || this.isAdmin;
         },
         confirmItemDelete(kanban) {
             this.currentKanban = kanban;
@@ -345,15 +309,14 @@ export default {
         destroy() {
             if (this.subscribable) {
                 axios.post('/kanbanSubscriptions/expel', {
-                    model_id : this.currentKanban.id,
-                    subscribable_type : this.subscribable_type,
-                    subscribable_id : this.subscribable_id,
+                    kanban_id: this.currentKanban.id,
+                    subscribable_type: this.subscribable_type,
+                    subscribable_id: this.subscribable_id,
                 })
-                    .then(response => {
+                    .then(() => {
                         this.showConfirm = false;
                         let index = this.kanbans.indexOf(this.currentKanban);
                         this.kanbans.splice(index, 1);
-                        this.toast.success(response.data);
                     })
                     .catch(e => {
                         console.log(e);
@@ -375,18 +338,16 @@ export default {
             }
         },
     },
-    components: {
-        TagComponentModal,
-        Hide,
-        Favourite,
-        SubscribeModal,
-        SubscribeKanbanModal,
-        MediumModal,
-        ConfirmModal,
-        DataTable,
-        KanbanModal,
-        IndexWidget,
-        TabList,
+    computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
+        createLabel() {
+            return this.subscribable ? 'enrol' : 'create';
+        },
+        deleteLabel() {
+            return this.subscribable ? 'expel' : 'delete';
+        },
     },
 }
 </script>

@@ -1,21 +1,18 @@
 <template>
     <div class="position-relative">
         <div
-            id="objective-tabs-overlay"
-            class="overlay flex-column justify-content-center align-items-center"
-            style="background-color: #fff8 !important; display: flex; z-index: 150;"
-            @click.stop
+            ref="overlay"
+            class="overlay flex-column"
         >
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             {{ trans('global.loading') }}
         </div>
-        <ul
-            id="terminalObjectivesTopNav"
-            class="nav bg-gray-light position-sticky"
-            style="top: 56px; z-index: 50;"
+        <div
+            class="d-flex align-items-center position-sticky bg-gray-light p-2 z-1"
+            style="top: 52px;"
         >
             <draggable
-                class="nav nav-pills"
+                class="nav nav-pills gap-2"
                 v-model="type_order"
                 v-bind="dragOptions"
                 tag="ul"
@@ -26,50 +23,48 @@
             >
                 <template #item="{ element: type_index }">
                     <li
-                        class="nav-item pl-0 pr-2 pb-2 pt-2"
+                        class="nav-item"
                         role="presentation"
                     >
-                        <a
-                            :id="objective_types[type_index].id + '-tab'"
-                            :href="'#Type-' + objective_types[type_index].id"
+                        <button
+                            :id="'tab-' + objective_types[type_index].id"
                             class="nav-link"
+                            :class="type_index === type_order[0] && 'active'"
                             type="button"
                             role="tab"
-                            data-toggle="tab"
-                            aria-selected="false"
+                            data-bs-toggle="tab"
+                            :data-bs-target="'#Type-' + objective_types[type_index].id"
+                            :aria-controls="'Type-' + objective_types[type_index].id"
+                            :aria-selected="type_index === type_order[0]"
                             @click="setActiveTab(type_index)"
                         >
                             {{ objective_types[type_index].title }}
-                        </a>
+                        </button>
                     </li>
                 </template>
             </draggable>
-            <li v-if="curriculum.type_id === 1"
-                class="form-group py-2 mb-0 ml-auto"
-            >
-                <Select2
-                    id="references"
-                    name="references"
-                    css="mb-0"
-                    url="/curricula/references"
-                    model="curriculum"
-                    :showLabel="false"
-                    :placeholder="trans('global.curricula_cross_references')"
-                />
-            </li>
-        </ul>
+            <Select2 v-if="curriculum.type_id === 1"
+                id="references"
+                name="references"
+                class="ms-auto"
+                url="/curricula/references"
+                model="curriculum"
+                :showLabel="false"
+                :placeholder="trans('global.curricula_cross_references')"
+            />
+        </div>
+
         <hr class="mt-0">
+
         <div class="tab-content">
-            <div v-for="type in objective_types"
-                 :id="'Type-' + type.id"
-                 class="tab-pane fade"
-                 role="tabpanel"
-                 :aria-labelledby="type.id + '-tab'"
+            <div v-for="(type, index) in objective_types"
+                :id="'Type-' + type.id"
+                class="tab-pane fade"
+                :class="index === type_order[0] && 'show active'"
+                role="tabpanel"
+                :aria-labelledby="'tab-' + type.id"
             >
-                <div
-                    class="d-flex flex-column"
-                    style="gap: 10px;"
-                >
+                <div class="d-flex flex-column gap-2">
                     <div v-for="terminal in type.terminal_objectives"
                          :id="'terminalObjective_' + terminal.id"
                          class="objectives"
@@ -80,9 +75,6 @@
                             :objective="terminal"
                             :settings="settings"
                             :max_id="max_ids[type.id]"
-                            @update="(objective) => {
-                                this.globalStore?.closeModal('terminal-objective-modal');
-                            }"
                         />
 
                         <EnablingObjectives
@@ -95,9 +87,8 @@
             </div>
 
             <div v-if="settings.edit"
-                 v-permission="'curriculum_edit'"
-                 class="objectives"
-                 style="margin: 10px 0px;"
+                v-permission="'curriculum_edit'"
+                class="objectives mt-2"
             >
                 <ObjectiveBox
                     type="createterminal"
@@ -115,12 +106,10 @@
                 :showConfirm="showConfirm"
                 :title="delete_title"
                 :description="delete_description"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.delete();
+                    showConfirm = false;
+                    deleteObjective();
                 }"
             />
         </Teleport>
@@ -135,8 +124,6 @@ import EnablingObjectiveModal from "./EnablingObjectiveModal.vue";
 import MoveTerminalObjectiveModal from './MoveTerminalObjectiveModal.vue';
 import Select2 from '../forms/Select2.vue';
 import draggable from "vuedraggable";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
     props: {
@@ -144,18 +131,13 @@ export default {
             type: Object,
             default: null,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
+        settings: {
+            type: Object,
+            default: null,
+        },
     },
     data() {
         return {
-            settings: {},
             showConfirm: false,
             delete_objective: null,
             delete_title: null,
@@ -187,7 +169,7 @@ export default {
                     console.log(e);
                 });
         },
-        delete() {
+        deleteObjective() {
             axios.delete('/' + (this.delete_objective.terminal_objective_id === undefined ? 'terminal' : 'enabling') + 'Objectives/' + this.delete_objective.id)
                 .then(response => {
                     this.removeObjective(this.delete_objective);
@@ -212,8 +194,7 @@ export default {
         },
         handleTypeMoved() {
             // active-state needs to be reset, since it changes to a new index
-            this.$el.querySelector('.nav-link.active').classList.remove('active');
-            document.getElementById(this.activeTypeId + '-tab').classList.add('active');
+            this.$el.querySelector('#tab-' + this.activeTypeId).click();
             // send new order to the server
             axios.put("/curricula/" + this.curriculum.id + "/syncObjectiveTypesOrder", {
                 objective_type_order: this.type_order.map(index => this.objective_types[index].id),
@@ -228,7 +209,7 @@ export default {
             this.type_order.push(this.type_order.length); // index-based
             this.activeTypeId = type.id;
             this.$nextTick(() => { // wait for DOM to be updated
-                $('#' + type.id + '-tab')[0].click(); // switch to new tab
+                this.$el.querySelector('#tab-' + type.id).click();
                 this.handleTypeMoved(); // send new order to the server
             });
         },
@@ -236,7 +217,7 @@ export default {
             // switch tab first, if the current tab is the one to be removed
             if (changeTab && this.activeTypeId === type.id) {
                 this.activeTypeId = this.objective_types[this.type_order[0]].id;
-                $('#' + this.activeTypeId + '-tab')[0].click();
+                this.$el.querySelector('#tab-' + this.activeTypeId).click();
             }
 
             let index = this.objective_types.findIndex(t => t.id === type.id);
@@ -298,7 +279,6 @@ export default {
         },
     },
     async mounted() {
-        this.settings = this.$attrs.settings;
         await this.loaderEvent();
 
         // wait until data is loaded to show the first tab
@@ -313,20 +293,14 @@ export default {
                 this.curriculum.objective_type_order
                 ?? [this.objective_types[0].id] // type-order unset => only one type exists, so get its ID
             )[0];
-
-            let firstTab = this.objective_types[this.type_order[0]].id;
-            // the 'active'-state does only need to be set programmatically for the initial tab
-            // the rest will be handled by the default nav-tabs behaviour
-            $('#' + firstTab + '-tab')[0].classList.add('active');
-            $('#Type-' + firstTab).tab('show'); // doing a click() would also work, but the transition seems to be smoother this way
         }
 
-        $('#objective-tabs-overlay').hide();
+        this.$refs.overlay.style.display = 'none';
 
         /////////////////////////////////////////////////////
         //////////////// terminal objectives ////////////////
         /////////////////////////////////////////////////////
-        this.$eventHub.on('terminal-objective-added', (terminal) => {
+        this.$eventHub.on('terminalObjective-added', (terminal) => {
             const type = terminal.type;
             let obj_type = this.objective_types.find(t => t.id === type.id);
             if (obj_type === undefined) {
@@ -338,11 +312,9 @@ export default {
             }
         });
 
-        this.$eventHub.on('terminal-objective-updated', (updatedTerminal) => {
+        this.$eventHub.on('terminalObjective-updated', (updatedTerminal) => {
             let type = this.objective_types.find(
-                function (type) {
-                    return type.id === updatedTerminal.objective_type_id;
-                }
+                type => type.id === updatedTerminal.objective_type_id
             );
             // objective-type was changed and the new type was not in use before
             if (type === undefined) {
@@ -390,7 +362,7 @@ export default {
                     this.removeType(old_type, false);
                     this.activeTypeId = type.id;
                     this.$nextTick(() => {
-                        $('#' + this.activeTypeId + '-tab')[0].click();
+                        this.$el.querySelector('#tab-' + this.activeTypeId).click();
                     });
                 }
             } else {
@@ -426,7 +398,7 @@ export default {
         /////////////////////////////////////////////////////
         //////////////// enabling objectives ////////////////
         /////////////////////////////////////////////////////
-        this.$eventHub.on('enabling-objective-added', (enabling) => {
+        this.$eventHub.on('enablingObjective-added', (enabling) => {
             let terminal;
             for (const type of this.objective_types) {
                 terminal = type.terminal_objectives.find(terminal => terminal.id === enabling.terminal_objective_id);
@@ -436,7 +408,7 @@ export default {
             terminal.enabling_objectives.push(enabling);
         });
 
-        this.$eventHub.on('enabling-objective-updated', (updatedEnabling) => {
+        this.$eventHub.on('enablingObjective-updated', (updatedEnabling) => {
             let terminal;
             for (const type of this.objective_types) {
                 terminal = type.terminal_objectives.find(terminal => terminal.id === updatedEnabling.terminal_objective_id);
@@ -467,7 +439,6 @@ export default {
         this.$eventHub.on('objective-deleted', (deletedObjective) => {
             this.removeObjective(deletedObjective);
         });
-
 
         /////////////////////////////////////////////////////
         ///////////////////////// curriculum ////////////////

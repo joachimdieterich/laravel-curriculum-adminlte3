@@ -13,10 +13,6 @@
     .btn-link,
     a:not(.dropdown-item):not(.btn-app):not(.nav-link):not(.brand-link):not(.page-link) {
       color: $link-color;
-
-      @include hover {
-        color: $link-hover-color;
-      }
     }
 
     .dropdown-item {
@@ -70,10 +66,6 @@
       .sidebar {
         a:not(.dropdown-item):not(.btn-app):not(.nav-link):not(.brand-link) {
           color: $sidebar-dark-color;
-      
-          @include hover {
-            color: $sidebar-dark-hover-color;
-          }
         }
       }
     }
@@ -82,10 +74,6 @@
       .sidebar {
         a:not(.dropdown-item):not(.btn-app):not(.nav-link):not(.brand-link) {
           color: $sidebar-light-color;
-
-          @include hover {
-            color: $sidebar-light-hover-color;
-          }
         }
       }
     }

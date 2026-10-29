@@ -27,4 +27,12 @@ class NavigatorView extends Model
     {
         return $this->morphOne('App\NavigatorItem', 'referenceable');
     }
+
+    protected static function booted()
+    {
+        static::deleting(function($navigatorView) {
+            $navigatorView->items()->delete();
+            // $navigator->views->each->delete();
+        });
+    }
 }

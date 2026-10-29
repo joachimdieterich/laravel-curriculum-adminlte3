@@ -28,37 +28,9 @@ class ObjectiveTypeController extends Controller
     public function list()
     {
         abort_unless(\Gate::allows('objectivetype_access'), 403);
-        $objectivetype = ObjectiveType::select([
-            'id',
-            'title',
-        ])->get();
+        $objectivetype = ObjectiveType::get(['id', 'title']);
 
-        $edit_gate = \Gate::allows('objectivetype_edit');
-        $delete_gate = \Gate::allows('objectivetype_delete');
-
-        return DataTables::of($objectivetype)
-            ->addColumn('action', function ($objectivetype) use ($edit_gate, $delete_gate) {
-                $actions = '';
-                if ($edit_gate) {
-                    $actions .= '<a href="'.route('objectiveTypes.edit', $objectivetype->id).'" '
-                        .'id="edit-objectivetype-'.$objectivetype->id.'" '
-                        .'class="btn">'
-                        .'<i class="fa fa-pencil-alt"></i>'
-                        .'</a>';
-                }
-                if ($delete_gate) {
-                    $actions .= '<button type="button" '
-                        .'class="btn text-danger" '
-                        .'onclick="destroyDataTableEntry(\'objectiveTypes\','.$objectivetype->id.')">'
-                        .'<i class="fa fa-trash"></i></button>';
-                }
-
-                return $actions;
-            })
-
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->make(true);
+        return DataTables::of($objectivetype)->make(true);
     }
 
     /**
@@ -99,7 +71,7 @@ class ObjectiveTypeController extends Controller
     {
         abort_unless(\Gate::allows('objectivetype_show'), 403);
 
-        return view('objectiveTypes.show', compact('objectiveType'));
+        return view('objectivetypes.show', compact('objectiveType'));
     }
 
     /**

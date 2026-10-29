@@ -18,70 +18,58 @@
                 modelName="Subject"
                 url="/subjects"
             >
-                <template v-slot:icon>
+                <template #icon>
                     <i class="fa fa-swatchbook"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'subject_edit, subject_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'subject_edit'"
-                            :name="'edit-subject-' + subject.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editSubject(subject)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editSubject(subject)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.subject.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'subject_delete'"
-                            :id="'delete-subject-' + subject.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(subject)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(subject)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.subject.delete') }}
                         </button>
                     </div>
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="subject-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="subject-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="subject-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/subjects/list"
+            class="d-none"
+            @xhr="(e, settings, json) => subjects = json.data"
+        />
 
         <Teleport to="body">
             <SubjectModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.subject.delete')"
                 :description="trans('global.subject.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -92,62 +80,49 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        SubjectModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             subjects: null,
-            search: '',
             showConfirm: false,
-            url: '/subjects/list',
             currentRole: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             dt: null,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('subject-added', (subject) => {
+        this.$eventHub.on('subject-added', subject => {
             this.subjects.push(subject);
         });
 
-        this.$eventHub.on('subject-updated', (updatedSubject) => {
+        this.$eventHub.on('subject-updated', updatedSubject => {
             let subject = this.subjects.find(s => s.id === updatedSubject.id);
-
             Object.assign(subject, updatedSubject);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editSubject(subject) {
-            this.globalStore?.showModal('subject-modal', subject);
-        },
-        loaderEvent() {
-            this.dt = $('#subject-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.subjects = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#subject-content').insertBefore('#subject-datatable-wrapper');
-            });
+            this.globalStore.showModal('subject-modal', subject);
         },
         confirmItemDelete(subject) {
             this.currentRole = subject;
@@ -156,19 +131,16 @@ export default {
         destroy() {
             axios.delete('/subjects/' + this.currentRole.id)
                 .then(res => {
+                    this.showConfirm = false;
                     let index = this.subjects.indexOf(this.currentRole);
                     this.subjects.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        SubjectModal,
-        IndexWidget,
     },
 }
 </script>

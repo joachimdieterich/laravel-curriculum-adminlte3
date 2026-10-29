@@ -1,7 +1,7 @@
 <template>
     <div
         id="navigationbar"
-        class="position-absolute bg-white collapse nav-collapse width h-100"
+        class="position-absolute bg-white collapse-horizontal collapse h-100"
     >
         <div id="nav-wrapper">
             <Select2
@@ -14,7 +14,7 @@
                 @selectedValue="(id) => setCurrentOrganization(id[0])"
             />
             <div v-for="tab in tabs"
-                 class="nav-group d-flex flex-column py-2"
+                class="nav-group d-flex flex-column gap-1 py-2"
             >
                 <div v-if="tab.title"
                      class="nav-group-title"
@@ -26,7 +26,7 @@
                 >
                     <a
                         :href="entry.href"
-                        class="d-flex align-items-center px-3 py-2 text-dark text-decoration-none"
+                        class="d-flex gap-1 align-items-center px-3 py-2 text-dark text-decoration-none"
                         :class="{ 'active': entry.href == activeEntry }"
                     >
                         <i class="fa text-center" :class="entry.icon"></i>
@@ -190,8 +190,8 @@ export default {
 </script>
 <style>
 #navigationbar {
-    z-index: 110;
-
+    z-index: 90;
+    
     & > #nav-wrapper {
         width: 300px;
         height: 100%;
@@ -199,17 +199,11 @@ export default {
         overflow-y: auto;
         background-color: white;
     }
-
-    & .nav-group {
-        gap: 5px;
-    }
-
     & .nav-entry {
         font-size: 1.125rem;
         white-space: nowrap;
 
         & a {
-            gap: 5px;
             border-radius: 10px;
             transition: background-color 0.2s ease;
 
@@ -233,18 +227,13 @@ export default {
 
 /* element is placed in master.blade */
 #background-mask {
-    display: block;
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0 !important;
     background-color: transparent;
-    z-index: 105;
+    z-index: 80;
     transition: background-color 0.3s ease;
 
     &.collapsing, &.show {
-        height: 100% !important;
+        height: 100%;
     }
 
     &.show {

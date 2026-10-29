@@ -1,51 +1,38 @@
 <template>
-    <div class="d-flex flex-column">
+    <div class="d-flex flex-column px-3">
         <div
             v-permission="'logbook_entry_create'"
-            class="px-3 pt-0 pb-3"
+            class="d-print-none pb-3"
         >
             <button
                 id="add-logbook-entry"
                 class="btn btn-success"
-                @click.prevent="openEntryModal()"
+                type="button"
+                @click="openEntryModal()"
             >
                 {{ trans('global.logbookEntry.create') }}
             </button>
             <button
                 id="print-logbook"
                 type="button"
-                class="pull-right btn btn-tool pt-3"
-                @click.p.prevent="togglePrintOptions();"
+                class="btn btn-icon text-secondary float-end"
+                @click="togglePrintOptions()"
             >
                 <i class="fa fa-print"></i>
-            </button> <!--<button
-                id="print-logbook"
-                type="button"
-                class="pull-right btn btn-tool pt-3"
-                @click="this.$eventHub.emit('setMediumModalParams', this.$mediumModalParams)"
-            >
-                <i class="fa fa-usert"></i>d
-            </button>-->
+            </button>
         </div>
 
-        <div v-if="showPrintOptions"
-            class="px-3"
-        >
+        <div v-if="showPrintOptions">
             <LogbookPrintOptions
                 :logbook="logbook"
                 :period="period"
             />
         </div>
 
-        <div class="px-3">
-            <LogbookEntry v-for="(entry, index) in entries"
-                v-bind:key="entry.id"
-                :first="index === 0"
-                :entry="entry"
-                :search="search"
-                :logbook="logbook"
-            />
-        </div>
+        <LogbookEntry v-for="(entry, index) in entries"
+            :entry="entry"
+            :logbook="logbook"
+        />
 
         <Teleport to="body">
             <AbsenceModal/>
@@ -61,19 +48,27 @@
             <SubscribeModal/>
         </Teleport>
         <teleport to="#customTitle">
-            <small>{{ logbook.title }}</small>
-            <a v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2 mx-1"
-                @click="editLogbook(logbook)"
-            >
-                <i class="fa fa-pencil-alt"></i>
-            </a>
-            <a v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
-                class="btn btn-flat text-secondary px-2"
-                @click="share()"
-            >
-                <i class="fa fa-share-alt"></i>
-            </a>
+            <div class="d-flex align-items-center">
+                <small v-text="logbook.title"></small>
+                <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.logbook.edit')"
+                    @click="editLogbook(logbook)"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+                <button v-if="logbook.owner_id == $userId || checkPermission('is_admin')"
+                    type="button"
+                    class="d-print-none btn btn-icon text-secondary mx-1"
+                    data-bs-toggle="tooltip"
+                    :data-bs-title="trans('global.share')"
+                    @click="share()"
+                >
+                    <i class="fa fa-share-alt"></i>
+                </button>
+            </div>
         </teleport>
     </div>
 </template>
@@ -86,7 +81,6 @@ import TaskModal from "../task/TaskModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import LmsModal from "../lms/LmsModal.vue";
 import ContentModal from "../content/ContentModal.vue";
-import {useGlobalStore} from "../../store/global";
 import SubscribeObjectiveModal from "../objectives/SubscribeObjectiveModal.vue";
 // import SetAchievementsModal from "../plan/SetAchievementsModal.vue";
 import AbsenceModal from "../absence/AbsenceModal.vue";
@@ -118,12 +112,6 @@ export default {
             default: null,
         },
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
-    },
     data() {
         return {
             componentId: this.$.uid,
@@ -140,31 +128,34 @@ export default {
         this.currentLogbook = this.logbook;
 
         // entry events
-        this.$eventHub.on('logbook-entry-added', (entry) => {
+        this.$eventHub.on('logbookEntry-added', entry => {
             this.entries.push(entry);
         });
 
-        this.$eventHub.on('logbook-entry-updated', (updated) => {
+        this.$eventHub.on('logbookEntry-updated', updated => {
             const index = this.entries.findIndex(entry => entry.id === updated.id);
 
             Object.assign(this.entries[index], updated);
         });
 
-        this.$eventHub.on('logbook-entry-deleted', (deletedEntry) => {
+        this.$eventHub.on('logbook-entry-deleted', deletedEntry => {
             let index = this.entries.indexOf(deletedEntry);
             this.entries.splice(index, 1);
         });
 
-        this.$eventHub.on('update-subject-badge', (data) => {
+        this.$eventHub.on('update-subject-badge', data => {
             let entry = this.entries.find(e => e.id === data.entry_id);
 
             entry.subject = data.subject;
         });
 
         // logbook events
-        this.$eventHub.on('logbook-updated', (logbook) => {
+        this.$eventHub.on('logbook-updated', logbook => {
             Object.assign(this.currentLogbook, logbook);
         });
+
+        // build popper-tooltips after nextTick to also enable them in child-components
+        this.$nextTick(() => this.enableTooltips());
     },
     methods: {
         openEntryModal() {

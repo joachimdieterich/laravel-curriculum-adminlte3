@@ -9,7 +9,6 @@ use App\Providers\TelescopeServiceProvider;
 use Barryvdh\Snappy\Facades\SnappyImage;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Barryvdh\Snappy\ServiceProvider;
-use Cmgmyr\Messenger\MessengerServiceProvider;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Illuminate\Broadcasting\BroadcastServiceProvider;
@@ -68,8 +67,6 @@ use Illuminate\Validation\ValidationServiceProvider;
 use Illuminate\View\ViewServiceProvider;
 use Intervention\Image\Laravel\Facades\Image;
 use JamesDordoy\LaravelVueDatatable\Providers\LaravelVueDatatableServiceProvider;
-use Maatwebsite\Excel\ExcelServiceProvider;
-use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTablesServiceProvider;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -277,14 +274,6 @@ return [
          */
         ServiceProvider::class,
         /*
-         * Messaging
-         */
-        MessengerServiceProvider::class,
-        /*
-         *  Laravel Excel
-         */
-        ExcelServiceProvider::class,
-        /*
          * Image Intervention
          */
         Intervention\Image\Laravel\ServiceProvider::class,
@@ -320,7 +309,6 @@ return [
         'Datatables'   => DataTables::class,
         'Eloquent'     => Model::class,
         'Event'        => Event::class,
-        'Excel'        => Excel::class,
         'File'         => File::class,
         'Gate'         => Gate::class,
         'Hash'         => Hash::class,

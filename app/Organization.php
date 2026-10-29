@@ -69,7 +69,7 @@ class Organization extends Model
 
         if (! $isAdmin) {
             $organizations->whereHas('users', function ($query) {
-                $query->where('user_id', auth()->user()->id);
+                $query->where('role_id', 4); // 4 => schooladmin
             });
         }
 

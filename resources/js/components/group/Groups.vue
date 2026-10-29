@@ -1,111 +1,32 @@
 <template>
-    <div>
-        <div class="d-flex flex-column">
+    <div class="d-flex flex-column">
+        <div
+            id="group-content"
+            class="px-3"
+        >
             <div
-                id="group-content"
-                class="px-3"
+                class="d-flex justify-content-between"
             >
-                <div class="row">
-                    <div class="col-md-12 m-0 pb-2">
-                        <span class="custom-control custom-switch custom-switch-on-green">
-                            <input
-                                id="toggle-view"
-                                class="custom-control-input pt-1"
-                                type="checkbox"
-                                v-model="allGroupsView"
-                                @click="toggleAllGroupsView"
-                            />
-                            <label
-                                class="custom-control-label text-muted"
-                                for="toggle-view"
-                            >
-                                {{ trans('global.group.allGroups') }}
-                            </label>
-                        </span>
-                        <button
-                            class="pull-right btn"
-                            :class="classObject"
-                            @click="setMode()"
-                        >
-                            {{ trans('global.select') }}
-                        </button>
-                    </div>
-                </div>
-                <IndexWidget
-                    v-permission="'group_create'"
-                    key="groupCreate"
-                    modelName="Group"
-                    url="/groups"
-                    :create=true
-                    :label="trans('global.group.create')"
+                <Switch
+                    id="group-toggle-all"
+                    label="global.group.allGroups"
+                    v-model="allGroupsView"
+                    @change="toggleAllGroupsView()"
                 />
-                <IndexWidget v-for="group in groups"
-                             :key="'groupIndex'+group.id"
-                             :model="group"
-                             modelName="Group"
-                             storeTitle="groups"
-                             url="/groups"
-                >
-                    <template v-slot:icon>
-                        <i class="fa fa-layer-group"></i>
-                    </template>
-
-                    <template v-slot:dropdown
-                              v-permission="'group_edit, group_delete'"
-                    >
-                        <div
-                            class="dropdown-menu dropdown-menu-right"
-                            style="z-index: 1050;"
-                            x-placement="left-start"
-                        >
-                            <button
-                                v-permission="'group_edit'"
-                                :name="'edit-group-' + group.id"
-                                class="dropdown-item text-secondary"
-                                @click.prevent="editGroup(group)"
-                            >
-                                <i class="fa fa-pencil-alt mr-2"></i>
-                                {{ trans('global.group.edit') }}
-                            </button>
-                            <hr class="my-1">
-                            <button
-                                v-permission="'group_delete'"
-                                :id="'delete-group-' + group.id"
-                                type="submit"
-                                class="dropdown-item py-1 text-red"
-                                @click.prevent="confirmItemDelete(group)"
-                            >
-                                <i class="fa fa-trash mr-2"></i>
-                                {{ trans('global.group.delete') }}
-                            </button>
-                        </div>
-                    </template>
-
-                    <template v-slot:badges>
-                        <p>
-                            <span
-                                class="btn btn-info btn-xs position-absolute mr-1"
-                                style="bottom: 0; margin: 5px 40px 8px 0; width: max-content; right: 5px;"
-                            >
-                                <i class="fa fa-university"></i>
-                                {{ group.organization }}
-                            </span>
-                        </p>
-                    </template>
-                </IndexWidget>
             </div>
+
             <div v-if="organizationFilter !== null"
-                 id="organization-filter"
-                 class="position-relative d-flex flex-nowrap overflow-auto my-2 px-3"
-                 tabindex="-1"
-                 aria-label="Filter"
+                id="organization-filter"
+                class="position-relative d-flex flex-nowrap overflow-auto my-2"
+                tabindex="-1"
+                aria-label="Filter"
             >
                 <span id="organization-filter-wrapper"
-                      class="d-flex mb-2"
+                    class="d-flex"
                 >
-                    <span v-for="(organization, index) in organizationFilter"
-                          :key="organization"
-                          class="flex-shrink-0"
+                    <span v-for="organization in organizationFilter"
+                        :key="organization"
+                        class="flex-shrink-0"
                     >
                         <button :id="'organization-filter-' + organization.id"
                                 class="btn btn-tab rounded-pill"
@@ -115,58 +36,117 @@
                                 @keydown.enter.space="organizationFilterClick(organization)"
                                 @keydown.left.right.prevent="moveFocus($event)"
                         >
-
                             <i class="fas pr-2 fa-city"></i>
                             {{ organization.title }}
                         </button>
                     </span>
                 </span>
             </div>
-            <div
-                id="group-datatable-wrapper"
-                class="dataTablesWrapper"
-            >
-                <DataTable
-                    id="group-datatable"
-                    :columns="columns"
-                    :options="options"
-                    :ajax="dtAjaxOptions"
-                    :search="search"
-                    width="100%"
-                    style="display: none;"
-                />
-            </div>
 
-            <Teleport to="body">
-                <GroupModal/>
-                <ConfirmModal
-                    :showConfirm="this.showConfirm"
-                    :title="trans('global.group.delete')"
-                    :description="trans('global.group.delete_helper')"
-                    @close="() => {
-                        this.showConfirm = false;
-                    }"
-                    @confirm="() => {
-                        this.showConfirm = false;
-                        this.destroy();
-                    }"
-                />
-            </Teleport>
+            <IndexWidget v-if="checkPermission('group_create')"
+                key="groupCreate"
+                modelName="Group"
+                url="/groups"
+                :create=true
+                :label="trans('global.group.create')"
+            />
+            <IndexWidget v-for="group in groups"
+                :key="'groupIndex' + group.id"
+                :model="group"
+                modelName="Group"
+                storeTitle="groups"
+                url="/groups"
+            >
+                <template #icon>
+                    <i class="fa fa-layer-group"></i>
+                </template>
+
+                <template #dropdown
+                    v-permission="'group_edit, group_delete'"
+                >
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <button
+                            v-permission="'group_edit'"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editGroup(group)"
+                        >
+                            <i class="fa fa-pencil-alt"></i>
+                            {{ trans('global.group.edit') }}
+                        </button>
+
+                        <hr class="my-1">
+
+                        <button
+                            v-permission="'group_delete'"
+                            type="submit"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(group)"
+                        >
+                            <i class="fa fa-trash"></i>
+                            {{ trans('global.group.delete') }}
+                        </button>
+                    </div>
+                </template>
+
+                <template #badges>
+                    <button
+                        type="button"
+                        class="btn btn-info btn-xs position-absolute"
+                        style="bottom: 5px; right: 5px;"
+                        tabindex="-1"
+                        @click.stop="filterByOrg(group.organization.title)"
+                    >
+                        <i class="fa fa-university"></i>
+                        {{ group.organization.title }}
+                    </button>
+                </template>
+            </IndexWidget>
         </div>
+
+        <DataTable
+            ref="datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            :ajax="dtAjaxOptions"
+            class="d-none"
+            @xhr="(e, settings, json) => groups = json.data"
+        />
+
+        <Teleport to="body">
+            <GroupModal/>
+            <ConfirmModal
+                :showConfirm="showConfirm"
+                :title="trans('global.group.delete')"
+                :description="trans('global.group.delete_helper')"
+                @close="showConfirm = false"
+                @confirm="() => {
+                    showConfirm = false;
+                    destroy();
+                }"
+            />
+        </Teleport>
     </div>
 </template>
 <script>
 import GroupModal from "../group/GroupModal.vue";
+import Switch from "../forms/Switch.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import {useDatatableStore} from "../../store/datatables";
-import {useGlobalStore} from "../../store/global";
 
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        Switch,
+        ConfirmModal,
+        DataTable,
+        GroupModal,
+        IndexWidget,
+    },
     props: {
         organizations: null
     },
@@ -175,44 +155,39 @@ export default {
             component_id: this.$.uid,
             groups: null,
             organizationFilter: null,
-            search: '',
             showConfirm: false,
             currentGroup: {},
             columns: [
-                {title: 'id', data: 'id'},
-                {title: 'title', data: 'title', searchable: true},
-                {title: 'organization', data: 'organization', searchable: true},
+                { title: 'id', data: 'id' },
+                { title: 'title', data: 'title', searchable: true },
+                { title: 'organization', data: 'organization.title', searchable: true },
             ],
-            options: this.$dtOptions,
             dt: null,
             allGroupsView: false
         }
     },
     setup() {
-        const globalStore = useGlobalStore();
-        const store = useDatatableStore();
-        return {
-            store,
-            globalStore,
-        }
+        return { store: useDatatableStore() }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('group-added', (group) => {
+        this.setupOrganizationFilter();
+
+        this.$eventHub.on('group-added', group => {
             this.groups.push(group);
         });
 
-        this.$eventHub.on('group-updated', (updatedGroup) => {
+        this.$eventHub.on('group-updated', updatedGroup => {
             let group = this.groups.find(g => g.id === updatedGroup.id);
 
             Object.assign(group, updatedGroup);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
@@ -224,17 +199,7 @@ export default {
             });
         },
         editGroup(group) {
-            this.globalStore?.showModal('group-modal', group);
-        },
-        loaderEvent() {
-            this.dt = $('#group-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.groups = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#group-content').insertBefore('#group-datatable-wrapper');
-            });
-
-            this.setupOrganizationFilter();
+            this.globalStore.showModal('group-modal', group);
         },
         setupOrganizationFilter() {
             this.organizations.forEach(organization => {
@@ -252,12 +217,14 @@ export default {
                     let index = this.groups.indexOf(this.currentGroup);
                     this.groups.splice(index, 1);
                 })
-                .catch(err => {
-                    console.log(err.response);
+                .catch(e => {
+                    console.log(e);
                 });
         },
+        filterByOrg(title) {
+            this.globalStore['search'] = title;
+        },
         toggleAllGroupsView() {
-            this.allGroupsView = !this.allGroupsView;
             this.dt.ajax.reload();
         },
         moveFocus(e) {
@@ -282,12 +249,10 @@ export default {
         }
     },
     computed: {
-        classObject() {
-            if (this.store.getDatatable('groups')?.select === true) {
-                return 'btn-dark'
-            } else {
-                return 'btn-light'
-            }
+        btnClass() {
+            return this.store.getDatatable('groups')?.select === true
+                ? 'btn-dark'
+                : 'btn-outline-dark';
         },
         dtAjaxOptions() {
             return {
@@ -304,13 +269,7 @@ export default {
             return Object.values(this.organizationFilter)
                 .filter(organization => organization.filter === true)
                 .map(organization => organization.id);
-        }
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        GroupModal,
-        IndexWidget,
+        },
     },
 }
 </script>

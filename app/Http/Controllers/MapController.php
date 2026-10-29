@@ -57,9 +57,14 @@ class MapController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
 
-        if (request()->wantsJson()) {
-            return $map;
+        if (isset($input['medium_id'])) {
+            app(MediumSubscriptionController::class)
+                ->updateTempSubscriptions($input['medium_id'], $map->id, 'App\\Map');
         }
+
+        LogController::set(get_class($this) . '@' . __FUNCTION__);
+
+        return $map;
     }
 
     /**

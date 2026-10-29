@@ -13,14 +13,9 @@ class Navigator extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'updated_at' => 'datetime',
-        'created_at'  => 'datetime',
+        'updated_at'    => 'datetime',
+        'created_at'    => 'datetime',
     ];
-
-    /* protected $dates = [  --> change v.10
-         'updated_at',
-         'created_at',
-     ];*/
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -46,5 +41,12 @@ class Navigator extends Model
     public function organization()
     {
         return $this->belongsTo('App\Organization');
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function($navigator) {
+            $navigator->views->each->delete();
+        });
     }
 }

@@ -5,7 +5,7 @@
     >
         <div
             id="home-left"
-            class="col-12 col-md-6 flex-shrink-1"
+            class="col-12 col-md-6 flex-shrink-1 px-3"
         >
             <InfoBox
                 model="courses"
@@ -19,7 +19,7 @@
             >
                 <template #entry="{ entry }">
                     <i v-if="!entry.grade"
-                       class="fa text-secondary mr-2"
+                       class="fa text-secondary me-2"
                        :class="entry.is_favourited
                                 ? 'fa-heart'
                                 : entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
@@ -27,7 +27,7 @@
                     <a :href="'/courses/' + entry.course_id">
                         <span class="font-weight-bold">{{ entry.title }}</span>
                         <span v-if="isVisible.progress"
-                              class="pull-right w-50"
+                            class="float-end w-50"
                         >
                             <ProgressBar
                                 :achievements="entry.achievements"
@@ -64,29 +64,29 @@
                         style="gap: 0.5rem;"
                     >
                         <span v-if="entry.history.length > 0"
-                              class="d-flex align-items-center"
+                            class="position-relative d-flex align-items-center"
                         >
                             <i
-                                class="text-green t-20 mr-1"
+                                class="text-green t-20 me-1"
                                 :class="iconClass(entry.history[0].status, 1)"
                             ></i>
                             <i
-                                class="text-orange t-20 mr-1"
+                                class="text-orange t-20 me-1"
                                 :class="iconClass(entry.history[0].status, 2)"
                             ></i>
                             <i
-                                class="text-red t-20 mr-1"
+                                class="text-red t-20 me-1"
                                 :class="iconClass(entry.history[0].status, 3)"
                             ></i>
-                            <i class="fa-solid fa-arrow-right-long ml-1"></i>
+                            <i class="fa-solid fa-arrow-right-long ms-1"></i>
                         </span>
                         <span class="d-flex">
                             <i
-                                class="text-green t-20 mr-1"
+                                class="text-green t-20 me-1"
                                 :class="iconClass(entry.status, 1)"
                             ></i>
                             <i
-                                class="text-orange t-20 mr-1"
+                                class="text-orange t-20 me-1"
                                 :class="iconClass(entry.status, 2)"
                             ></i>
                             <i
@@ -105,7 +105,7 @@
 
         <div
             id="home-right"
-            class="col-12 col-md-6 flex-shrink-1"
+            class="col-12 col-md-6 flex-shrink-1 px-3"
         >
             <InfoBox
                 model="logbooks"
@@ -186,20 +186,10 @@ import KanbanModal from '../kanban/KanbanModal.vue';
 import PlanModal from '../plan/PlanModal.vue';
 import SubscribeExamModal from '../exam/SubscribeExamModal.vue';
 import MediumModal from '../media/MediumModal.vue';
-import {useGlobalStore} from '../../store/global';
-import {useToast} from 'vue-toastification';
 import CurriculumModal from "../curriculum/CurriculumModal.vue";
 
 export default {
     name: 'Home',
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        };
-    },
     mounted() {
         this.$eventHub.on('curriculum-added', (curriculum) => {
             window.location.href = '/curricula/' + curriculum.id;

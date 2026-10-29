@@ -1,14 +1,15 @@
 @extends('layouts.app')
 @section('content')
     <body class="hold-transition login-page">
-
         <div class="login-box">
-            <div class="login-logo m-1 ">
+            <div class="login-logo m-1">
                 <svg class="mt-1" version="1.0" xmlns="http://www.w3.org/2000/svg"
                      width="30.000000pt" viewBox="0 0 400.000000 460.000000"
-                     preserveAspectRatio="xMidYMid meet">
+                     preserveAspectRatio="xMidYMid meet"
+                >
                     <g transform="translate(0.000000,460.000000) scale(0.100000,-0.100000)"
-                       fill="#fff" stroke="none">
+                       fill="#fff" stroke="none"
+                    >
                         <path d="M2231 4531 c-8 -5 -48 -74 -90 -153 l-76 -143 -60 -13 c-153 -32
                        -325 -76 -380 -96 l-60 -21 -135 87 c-156 102 -173 105 -259 57 -201 -114
                        -482 -343 -498 -407 -3 -14 11 -78 36 -161 23 -75 43 -146 43 -157 1 -11 -28
@@ -43,53 +44,74 @@
                     <form action="{{ route('login') }}" method="POST">
                         {{ csrf_field() }}
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control"
-                                   placeholder="{{ trans('global.login_email') }} / {{ trans('global.user_name') }}"
-                                   name="email">
+                            <input
+                                type="text"
+                                name="email"
+                                class="form-control"
+                                placeholder="{{ trans('global.login_email') }} / {{ trans('global.user_name') }}"
+                            />
                             <div class="input-group-append">
-                                <div class="input-group-text">
+                                <div class="input-group-text h-100 rounded-start-0 rounded-end">
                                     <span class="fas fa-envelope"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="input-group mb-3">
-                            <input type="password" class="form-control"
-                                   placeholder="{{ trans('global.login_password') }}" name="password">
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="{{ trans('global.login_password') }}"
+                            />
                             <div class="input-group-append">
-                                <div class="input-group-text">
+                                <div class="input-group-text h-100 rounded-start-0 rounded-end">
                                     <span class="fas fa-lock"></span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-6">
+                        <div class="d-flex justify-content-between">
+                            <div>
                                 @if (config('app.guest_user_id') !== null)
-                                    <a href="/guest" name="login"
-                                       class="btn btn-primary btn-block btn-flat">{{ trans('global.login_guest') }}</a>
+                                <a
+                                    href="/guest"
+                                    name="login"
+                                    type="button"
+                                    class="btn btn-primary btn-block btn-flat"
+                                >
+                                    {{ trans('global.login_guest') }}
+                                </a>
                                 @endif
                             </div>
-                            <!-- /.col -->
-                            <div class="col-6">
-                                <button type="submit" name="login"
-                                        class="btn btn-primary btn-block btn-flat">{{ trans('global.login') }}</button>
+                            <div>
+                                <button
+                                    type="submit"
+                                    name="login"
+                                    class="btn btn-primary btn-block btn-flat"
+                                >
+                                    {{ trans('global.login') }}
+                                </button>
                             </div>
-                            <!-- /.col -->
                         </div>
                     </form>
-                    @if (config('app.oidc_host') !== null)
-                        <div class="social-auth-links text-center mb-3">
-                            <p>- {{ trans('auth.or') }} -</p>
-                            <a href="{{ route('home') }}" class="btn btn-block btn-primary">
-                                <i class="mr-2"></i> {{ trans('global.login_SSO') }}
-                            </a>
-                        </div>
+                @if (config('app.oidc_host') !== null)
+                    <div class="social-auth-links text-center mb-3">
+                        <p>- {{ trans('auth.or') }} -</p>
+                        <a href="{{ route('home') }}" class="btn btn-block btn-primary">
+                            <i class="me-2"></i> {{ trans('global.login_SSO') }}
+                        </a>
+                    </div>
                     @endif
                     @if (config('app.allow_password_reset') === true)
                         <p class="mb-1">
                             <a class="" href="{{ route('password.request') }}">
                                 {{ trans('global.forgot_password') }}
                             </a>
+                        </p>
+                    @endif
+                    @if (config('app.show_impressum') === true)
+                        <p class="mb-0">
+                            <a href="{{ route('impressum') }}">Impressum</a>
                         </p>
                     @endif
                 </div>
@@ -118,5 +140,4 @@
             vertical-align: bottom;
         }
     </style>
-
 @endsection

@@ -79,52 +79,39 @@ class CurriculumController extends Controller
 
         $this->checkPermissions($input['type_id']);
 
-        $curriculum = Curriculum::firstOrCreate([
-            'title'                => $input['title'],
-            'description'          => $input['description'],
-            'author'               => $input['author'],
-            'publisher'            => $input['publisher'],
-            'city'                 => $input['city'],
-            'date'                 => $input['date'],
-            'color'                => $input['color'],
-            'grade_id'             => format_select_input($input['grade_id']),
-            'subject_id'           => format_select_input($input['subject_id']),
-            'organization_type_id' => format_select_input($input['organization_type_id']),
-            'type_id'              => format_select_input($input['type_id']),
-            'state_id'             => format_select_input($input['state_id']),
-            'country_id'           => format_select_input($input['country_id']),
-            'medium_id'            => $input['medium_id'],
-            'variants'             => $this->formatVariantsField(
-                $input['variants'] ?? null,
-                $input['variant_default_title'] ?? null,
-                $input['variant_default_description'] ?? null
-            ),
-            'archived' => $input['archived'] ?? false,
-            'owner_id' => auth()->user()->id,
+        $curriculum = Curriculum::create([
+            'title'                 => $input['title'],
+            'description'           => $input['description'],
+            'author'                => $input['author'],
+            'publisher'             => $input['publisher'],
+            'city'                  => $input['city'],
+            'date'                  => $input['date'],
+            'color'                 => $input['color'],
+            'grade_id'              => format_select_input($input['grade_id']),
+            'subject_id'            => format_select_input($input['subject_id']),
+            'organization_type_id'  => format_select_input($input['organization_type_id']),
+            'type_id'               => format_select_input($input['type_id']),
+            'state_id'              => format_select_input($input['state_id']),
+            'country_id'            => format_select_input($input['country_id']),
+            'medium_id'             => $input['medium_id'] ?? null,
+            'variants'              => $this->formatVariantsField(
+                                            $input['variants'] ?? NULL,
+                                            $input['variant_default_title'] ?? NULL,
+                                            $input['variant_default_description'] ?? NULL
+                                        ),
+            'archived'              => $input['archived'] ?? false,
+            'owner_id'              => auth()->user()->id,
         ]);
         $curriculum->tags()->sync($request->input('tags'));
 
-        switch ($curriculum->type_id) {
-            case 2: // organization
-                CurriculumSubscription::updateOrCreate([
-                    'curriculum_id'     => $curriculum->id,
-                    'subscribable_type' => 'App\Organization',
-                    'subscribable_id'   => auth()->user()->current_organization_id,
-                ], [
-                    'editable' => true,
-                    'owner_id' => auth()->user()->id,
-                ]);
-                break;
-            case 3: // group
-                // Todo: if type_id == 3 there should be an option to add group_id
-                break;
+        if (isset($input['medium_id'])) {
+            app(MediumSubscriptionController::class)
+                ->updateTempSubscriptions($input['medium_id'], $curriculum->id, 'App\\Curriculum');
         }
 
         LogController::set(get_class($this) . '@' . __FUNCTION__);
 
-        if (request()->wantsJson()) {
-            return $curriculum->with('owner')->find($curriculum->id);
-        }
+        return $curriculum->with('owner:id,firstname,lastname')->find($curriculum->id);
     }
 
     /**
@@ -225,35 +212,6 @@ class CurriculumController extends Controller
     }
 
     /**
-     * Show edit_owner
-     *
-     * @return Response
-     */
-    public function editOwner(Curriculum $curriculum)
-    {
-        abort(403);
-    }
-
-    /**
-     * Store edit_owner
-     *
-     * @return Response
-     */
-    public function storeOwner(Request $request, Curriculum $curriculum)
-    {
-        abort_unless(Gate::allows('curriculum_edit'), 403, 'No permission to change owner');
-        $input = $this->validateRequest();
-
-        $curriculum->update([
-            'owner_id' => format_select_input($input['owner_id']),
-        ]);
-
-        if (request()->wantsJson()) {
-            return $curriculum;
-        }
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @return Response
@@ -265,27 +223,27 @@ class CurriculumController extends Controller
         $input = $this->validateRequest();
 
         $curriculum->update([
-            'title'                => $input['title'],
-            'description'          => $input['description'],
-            'author'               => $input['author'],
-            'publisher'            => $input['publisher'],
-            'city'                 => $input['city'],
-            'date'                 => $input['date'],
-            'color'                => $input['color'],
-            'grade_id'             => format_select_input($input['grade_id']),
-            'subject_id'           => format_select_input($input['subject_id']),
-            'organization_type_id' => format_select_input($input['organization_type_id']),
-            'type_id'              => format_select_input($input['type_id']),
-            'state_id'             => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
-            'country_id'           => format_select_input($input['country_id']),
-            'medium_id'            => $input['medium_id'],
-            'variants'             => $this->formatVariantsField(
-                $input['variants'] ?? null,
-                $input['variant_default_title'] ?? null,
-                $input['variant_default_description'] ?? null
-            ),
-            'archived' => $input['archived'] ?? false,
-            'owner_id' => is_admin() ? $input['owner_id'] : auth()->user()->id,
+            'title'                 => $input['title'],
+            'description'           => $input['description'],
+            'author'                => $input['author'],
+            'publisher'             => $input['publisher'],
+            'city'                  => $input['city'],
+            'date'                  => $input['date'],
+            'color'                 => $input['color'],
+            'grade_id'              => format_select_input($input['grade_id']),
+            'subject_id'            => format_select_input($input['subject_id']),
+            'organization_type_id'  => format_select_input($input['organization_type_id']),
+            'type_id'               => format_select_input($input['type_id']),
+            'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
+            'country_id'            => format_select_input($input['country_id']),
+            'medium_id'             => $input['medium_id'],
+            'variants'              => $this->formatVariantsField(
+                                        $input['variants'] ?? null,
+                                        $input['variant_default_title'] ?? null,
+                                        $input['variant_default_description'] ?? null
+                                       ),
+            'archived'              => $input['archived'] ?? false,
+            'owner_id'              => $input['owner_id'] ?? auth()->user()->id,
         ]);
         $curriculum->tags()->sync($request->input('tags'));
 
@@ -298,19 +256,11 @@ class CurriculumController extends Controller
     {
         abort_unless(Gate::allows('course_create'), 403);
 
-        foreach ((request()->enrollment_list) as $enrolment) {
-            if (is_array($enrolment['curriculum_id'])) {
-                foreach ($enrolment['curriculum_id'] as $curriculum_id) {
-                    $this->subscribe(format_select_input($curriculum_id), $enrolment['group_id']);
-                }
-            } else {
-                $this->subscribe(format_select_input($enrolment['curriculum_id']), $enrolment['group_id']);
-            }
-        }
+        $this->subscribe(request()->curriculum_id, request()->group_id);
 
         return Curriculum::select('curricula.id as curriculum_id', 'curriculum_subscriptions.id', 'curricula.title', 'curricula.description', 'curricula.color', 'curricula.medium_id', 'curricula.type_id', 'curricula.archived')
             ->join('curriculum_subscriptions', 'curricula.id', '=', 'curriculum_subscriptions.curriculum_id')
-            ->where('subscribable_id', request()->enrollment_list[0]['group_id'])
+            ->where('subscribable_id', request()->group_id)
             ->where('subscribable_type', "App\Group")
             ->get();
     }

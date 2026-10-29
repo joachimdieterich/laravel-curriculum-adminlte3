@@ -11,15 +11,14 @@
                   :max_id="objectives[objectives.length - 1]?.id"
     />
 
-    <ObjectiveBox v-if="settings.edit === true"
-                  v-permission="'curriculum_edit'"
-                  type="createenabling"
-                  :objective="{
-                      curriculum_id: terminalobjective.curriculum_id,
-                      terminal_objective_id: terminalobjective.id
-                  }"
-                  :settings="settings"
-                  :max_id="objectives[objectives.length - 1]?.id"
+    <ObjectiveBox v-if="settings.edit && checkPermission('curriculum_edit')"
+        type="createenabling"
+        :objective="{
+            curriculum_id: terminalobjective.curriculum_id,
+            terminal_objective_id: terminalobjective.id
+        }"
+        :settings="settings"
+        :max_id="objectives[objectives.length - 1]?.id"
     />
 </template>
 <script>
@@ -52,8 +51,6 @@ export default {
             default: false,
         },
     },
-    components: {
-        ObjectiveBox,
-    },
+    components: { ObjectiveBox },
 }
 </script>

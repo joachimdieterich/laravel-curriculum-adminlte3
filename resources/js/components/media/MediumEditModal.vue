@@ -37,7 +37,7 @@
                                 <input
                                     id="medium-title"
                                     type="text"
-                                    class="form-control ml-3"
+                                    class="form-control ms-3"
                                     :placeholder="trans('global.medium.title_singular') + ' ' + trans('global.title')"
                                     v-model.trim="form.title"
                                 />
@@ -69,7 +69,7 @@
                         </button>
                         <button
                             id="medium-edit-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}

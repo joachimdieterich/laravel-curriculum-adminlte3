@@ -42,7 +42,6 @@ class HomeController extends Controller
                     ->where('user_id', $user->id)
                     ->whereNot('status', '00');
             }])
-            ->withCount('enablingObjectives')
             ->without('owner');
 
         $hasFavourited = $this->addTagsToQuery($query);
@@ -52,7 +51,7 @@ class HomeController extends Controller
             'curriculum_subscriptions.id AS course_id',
             'curriculum_subscriptions.subscribable_id AS group_id',
             DB::raw(($hasFavourited ? 1 : 0) . ' AS is_favourited')
-        )->get();
+        )->withCount('enablingObjectives')->get();
     }
 
     /**

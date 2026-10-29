@@ -5,13 +5,13 @@
                 <div class="card-header">
                     <div class="card-title">
                         <h5 class="m-0">
-                            <i class="fa fa-university mr-1"></i>
+                            <i class="fa fa-university me-1"></i>
                             {{ variantDefinition.title }}
                         </h5>
                     </div>
                     <div
                         v-permission="'organization_type_edit'"
-                        class="card-tools pr-2">
+                        class="card-tools pe-2">
                         <a  @click="editVariantDefinition(variantDefinition)">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
@@ -20,7 +20,7 @@
 
                 <div class="card-body">
                     <strong>
-                        <i class="fas fa-link mr-1"></i>
+                        <i class="fas fa-link me-1"></i>
                         {{ trans('global.variantDefinition.fields.color') }}
                     </strong>
                     <p class="text-muted">
@@ -28,7 +28,7 @@
                     </p>
                     <hr>
                     <strong>
-                        <i :class="variantDefinition.css_icon + 'mr-1'"></i>
+                        <i :class="variantDefinition.css_icon + 'me-1'"></i>
                         {{ trans('global.variantDefinition.fields.css_icon') }}
                     </strong>
                 </div>

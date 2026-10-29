@@ -5,7 +5,6 @@
  */
 require('./bootstrap');
 
-//vue
 import { createApp } from 'vue';
 
 /**
@@ -36,6 +35,7 @@ import { createPinia } from "pinia";
 const pinia = createPinia();
 app.use(pinia);
 const globalStore = useGlobalStore();
+app.config.globalProperties.globalStore = globalStore;
 
 window.moment = require('moment/src/moment');
 import 'moment/src/locale/de'; // import german locale for moment.js
@@ -44,24 +44,33 @@ import 'moment/src/locale/de'; // import german locale for moment.js
 import echo from './echo.js';
 app.config.globalProperties.$echo = echo;
 
-// use trans function like in blade
-import _ from 'lodash'; //needed to get
-
 /**
  * search for key in language file
  * @param {String} key
- * @param {Object} replacements
+ * @param {Object|null} replacements
  * @returns translated String or key if not found
  */
-app.config.globalProperties.trans = (key, replacements) => {
-    let translatedString = _.get(window.trans, key, _.get(window.trans, 'global.' + key.split(".").splice(-1), key));
-    if (replacements !== undefined && replacements.length === 0) {
-        return translatedString;
+app.config.globalProperties.trans = (key, replacements = null) => {
+    let translatedString = window.trans;
+
+    key.split('.').forEach(k => {
+        if (translatedString === undefined) return;
+        translatedString = translatedString[k];
+    });
+
+    // if full key doesn't exist
+    if (translatedString === undefined) {
+        // fallback to 'global.' + last key
+        translatedString = window.trans['global'][key.split('.').splice(-1)];
+        // if fallback doesn't exist return the key
+        if (translatedString === undefined) translatedString = key;
     }
 
-    $.each(replacements, function (key, replacementString) {
-        translatedString = translatedString.replace(':' + key, replacementString);
-    });
+    if (replacements !== null) {
+        replacements.forEach(
+            (key, replacement) => translatedString = translatedString.replace(':' + key, replacement)
+        );
+    }
 
     return translatedString;
 }
@@ -121,20 +130,13 @@ app.config.globalProperties.getGlobalStorage = (key, value, class_string = "acti
     }
 };
 
-//-> use v-permission in vue3 templates, use checkPermission in scripts
 app.config.globalProperties.checkPermission = (permission) => {
     return window.Laravel.permissions.indexOf(permission) !== -1;
 };
 
-/**
- * removes HTML-tags of given String via parsing it through a <textarea>
- * @param {String} text
- * @returns raw text without HTML-tags
- */
-app.config.globalProperties.$decodeHTMLEntities = (text) => {
-    return $("<textarea/>")
-        .html(text)
-        .text();
+app.config.globalProperties.enableTooltips = () => {
+    if (/Mobi/i.test(window.navigator.userAgent)) return; // disable tooltips on mobile devices
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(elem => new bootstrap.Tooltip(elem));
 };
 
 /**
@@ -197,7 +199,7 @@ if (document.querySelector("meta[name='user-id']")){
     app.config.globalProperties.$userId = document.querySelector("meta[name='user-id']").getAttribute('content');
 }
 
-import Toast from 'vue-toastification';
+import Toast, { useToast } from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
 app.use(Toast, {
@@ -205,6 +207,8 @@ app.use(Toast, {
     maxToasts: 20,
     newestOnTop: true,
 });
+
+app.config.globalProperties.toast = useToast();
 
 /**
  * checks which error message is appropriate for the given error
@@ -222,7 +226,9 @@ app.config.globalProperties.errorMessage = (error, fallback = 'global.error.defa
             case 403:
             case 404:
             case 419:
+            case 422:
             case 500:
+            case 503:
                 translation_key = 'global.error.' + error.status;
                 break;
             default:
@@ -238,15 +244,6 @@ app.config.globalProperties.errorMessage = (error, fallback = 'global.error.defa
     return msg;
 };
 
-// Custom filter
-app.config.globalProperties.formatDate = (value) => {
-    if (value) {
-        return window.moment(String(value)).format('DD.MM.YYYY [um] hh:mm')
-    }
-
-    return value;
-};
-
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -258,7 +255,6 @@ import { defineAsyncComponent } from 'vue';  //use asyncComponents to reduce pay
 
 app.component('absence-modal',  defineAsyncComponent(() => import('./components/absence/AbsenceModal.vue')));
 app.component('admin-view',  defineAsyncComponent(() => import('./components/admin/AdminView.vue')));
-app.component('breadcrumbs',  defineAsyncComponent(() => import('./components/uiElements/Breadcrumbs.vue')));
 
 app.component('certificates', defineAsyncComponent(() => import('./components/certificate/Certificates.vue')));
 app.component('certificate', defineAsyncComponent(() => import('./components/certificate/Certificate.vue')));
@@ -369,14 +365,11 @@ app.config.globalProperties.$initTinyMCE = function(
     customToolbar1 = null,
     customToolbar2 = null,
     extended_valid_elements = null,
-    height = 200,
 ) {
-
     const defaultPlugins = [
-        "advlist", "autolink", "lists", "link", "image", "charmap", "print", "preview", "hr", "anchor", "pagebreak",
+        "advlist", "autolink", "lists", "link", "image", "charmap", "preview", "anchor", "pagebreak",
         "searchreplace", "wordcount", "visualblocks", "visualchars", "code", "fullscreen",
-        "insertdatetime", "media", "nonbreaking", "save", "table", "directionality",
-        "emoticons", "template", "paste", "textpattern", "autoresize",
+        "insertdatetime", "media", "nonbreaking", "save", "table", "directionality", "emoticons", "autoresize",
     ];
 
     return {
@@ -398,7 +391,6 @@ app.config.globalProperties.$initTinyMCE = function(
         relative_urls: false,
         entity_encoding: "raw",
         language: window.navigator.language.substring(0, 2), // use browser language (only 'de'/'en' available, default => 'en')
-        height: height,
         table_default_attributes: {
             border: '1',
         },
@@ -448,17 +440,6 @@ app.config.globalProperties.$initTinyMCE = function(
                     editor.insertContent('<span id="date" style="background-color: lightgray;">'+ window.trans.global.date + '</span>&nbsp;');
                 }
             });
-            editor.ui.registry.addButton('usersProgress', {
-                text: window.trans.global.progress.title_singular,
-                onAction: function (_) {
-                    document.querySelector("#app").__vue__.$modal.show('objective-progress-subscription-modal');
-                    $('#progress_reference').on('change', function() {
-                        const progress_reference = JSON.parse(document.getElementById('progress_reference').value);
-                        editor.selection.setContent('<span reference_type="' + progress_reference.referenceable_type + '" reference_id="'+ ( Array.isArray(progress_reference.referenceable_id) ? progress_reference.referenceable_id.join() : progress_reference.referenceable_id) +'" min_value="'+ progress_reference.percentage +'"/>'   +  tinymce.activeEditor.selection.getContent() + '</span>', {format: 'raw'});
-                    });
-                }
-            });
-
             editor.ui.registry.addButton('curriculummedia',  {
                 text: window.trans.global.medium.title,
                 icon: 'image',
@@ -493,12 +474,6 @@ app.config.globalProperties.$initTinyMCE = function(
 import {globalValues} from "./globalValues.js";
 app.config.globalProperties.$dtOptions  = globalValues.dtOptions;
 app.config.globalProperties.$swatches   = globalValues.swatches;
-
-app.directive('hide-if-permission', function (el, binding) {
-    if (window.Laravel.permissions.indexOf(binding.value) !== -1) {
-        el.style.display = 'none';
-    }
-});
 
 /**
  * Custom Vue directive "permission" to check against permissions.
@@ -535,17 +510,5 @@ app.directive('permission', function (el, binding, vnode) {
         }
 });
 
-app.directive("inline", (element) => {
-    element.replaceWith(...element.children);
-});
-
 //mount vue
 app.mount('#app');
-
-$(document).ready(function () {
-    window._token = $('meta[name="csrf-token"]').attr('content');
-
-    moment.updateLocale('en', {
-        week: {dow: 1} // Monday is the first day of the week
-    });
-});

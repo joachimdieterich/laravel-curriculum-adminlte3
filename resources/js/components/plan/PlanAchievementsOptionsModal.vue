@@ -1,142 +1,73 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">{{ trans('global.options') }}</span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
+    <Modal
+        model="planAchievement"
+        modalName="plan-achievements-options-modal"
+        title="global.options"
+        :allow-overflow="true"
+        :show-cancel-button="false"
+        :intercept-save="true"
+        @save="globalStore.closeModal($options.name)"
+    >
+        <template #general>
+            <div class="d-flex flex-column gap-2">
+                <div>
+                    <label for="achievements-timespan">{{ trans('global.plan.options.timespan') }}</label>
+                    <VueDatePicker
+                        id="achievements-timespan"
+                        format="dd.MM.yyyy"
+                        :range="{ partialRange: false }"
+                        :enable-time-picker="false"
+                        :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
+                        locale="de"
+                        v-model="options.timespan"
+                        :placeholder="trans('global.selectDateRange')"
+                        :select-text="trans('global.ok')"
+                        :cancel-text="trans('global.close')"
+                        @update:model-value="setTimespan()"
+                        @cleared="options.hideUnset = false"
+                    />
                 </div>
-
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
-                >
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="timespan">{{ trans('global.plan.options.timespan') }}</label>
-                                <VueDatePicker
-                                    id="timespan"
-                                    name="timespan"
-                                    format="dd.MM.yyyy"
-                                    :range="{ partialRange: false }"
-                                    :enable-time-picker="false"
-                                    :start-time="[{ hours: 0, minutes: 0 }, { hours: 23, minutes: 59 }]"
-                                    locale="de"
-                                    v-model="options.timespan"
-                                    :placeholder="trans('global.selectDateRange')"
-                                    :select-text="trans('global.ok')"
-                                    :cancel-text="trans('global.close')"
-                                    @update:model-value="setTimespan()"
-                                    @cleared="options.hideUnset = false"
-                                />
-                            </div>
-
-                            <div class="custom-switch custom-switch-on-green mb-2">
-                                <input
-                                    id="teacher_toggle"
-                                    class="custom-control-input"
-                                    type="checkbox"
-                                    v-model="options.showTeacher"
-                                    disabled
-                                >
-                                <label
-                                    for="teacher_toggle"
-                                    class="custom-control-label"
-                                    style="cursor: not-allowed"
-                                >
-                                    {{ trans('global.plan.options.toggle_teacher') }}
-                                </label>
-                            </div>
-
-                            <div class="custom-switch custom-switch-on-green mb-2">
-                                <input
-                                    type="checkbox"
-                                    id="student_toggle"
-                                    class="custom-control-input"
-                                    v-model="options.showStudent"
-                                    disabled
-                                >
-                                <label
-                                    for="student_toggle"
-                                    class="custom-control-label"
-                                    style="cursor: not-allowed"
-                                >
-                                    {{ trans('global.plan.options.toggle_student') }}
-                                </label>
-                            </div>
-
-                            <div class="custom-switch custom-switch-on-green mb-2">
-                                <input
-                                    type="checkbox"
-                                    id="unset_toggle"
-                                    class="custom-control-input"
-                                    v-model="options.hideUnset"
-                                >
-                                <label
-                                    for="unset_toggle"
-                                    class="custom-control-label"
-                                    @click="toggleUnset()"
-                                >
-                                    {{ trans('global.plan.options.toggle_unset') }}
-                                </label>
-                            </div>
-
-                            <div class="custom-switch custom-switch-on-green">
-                                <input
-                                    type="checkbox"
-                                    id="objectives_toggle"
-                                    class="custom-control-input"
-                                    v-model="options.collapseObjectives"
-                                >
-                                <label
-                                    for="objectives_toggle"
-                                    class="custom-control-label"
-                                    @click="toggleObjectives()"
-                                >
-                                    {{ trans('global.plan.options.toggle_objectives') }}
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="d-flex justify-content-between pull-right">
-                        <button
-                            class="btn btn-primary"
-                            @click="globalStore.closeModal($options.name)"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
-                </div>
+    
+                <Switch
+                    id="achievements-show-teacher"
+                    label="global.plan.options.toggle_teacher"
+                    v-model="options.showTeacher"
+                    :disabled="true"
+                />
+                <Switch
+                    id="achievements-show-student"
+                    label="global.plan.options.toggle_student"
+                    v-model="options.showStudent"
+                    :disabled="true"
+                />
+                <Switch
+                    id="achievements-hide-unset"
+                    label="global.plan.options.toggle_unset"
+                    v-model="options.hideUnset"
+                    @update:model-value="toggleUnset()"
+                />
+                <Switch
+                    id="achievements-collapse-objectives"
+                    label="global.plan.options.toggle_objectives"
+                    v-model="options.collapseObjectives"
+                    @update:model-value="toggleObjectives()"
+                />
             </div>
-        </div>
-    </Transition>
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from "../uiElements/Modal.vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
-import {useGlobalStore} from "../../store/global";
+import Switch from "../forms/Switch.vue";
 
 export default {
     name: 'plan-achievements-options-modal',
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        Modal,
+        VueDatePicker,
+        Switch,
     },
     data() {
         return {
@@ -155,12 +86,13 @@ export default {
             // if timespan got set, wait for the calendar-overlay to disappear and turn-on the 'hide-unset-achievements' toggle
             if (this.options.timespan !== null) {
                 setTimeout(() => {
-                    this.options.hideUnset = true; // don't call the toggleUnset() function
+                    // don't call the toggleUnset() function, since unset achievements will automatically be hidden
+                    this.options.hideUnset = true;
                 }, 200);
             }
         },
         toggleUnset() {
-            // setTimeout is needed because of race condition
+            // setTimeout is needed because of a race condition
             setTimeout(() => {
                 this.$parent.toggleUnset(this.options.hideUnset);
             }, 50);
@@ -170,12 +102,6 @@ export default {
                 this.$parent.toggleObjectives(this.options.collapseObjectives);
             }, 50);
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-    },
-    components: {
-        VueDatePicker,
     },
 }
 </script>

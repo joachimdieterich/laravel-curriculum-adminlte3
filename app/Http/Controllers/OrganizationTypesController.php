@@ -35,40 +35,37 @@ class OrganizationTypesController extends Controller
         abort_unless(\Gate::allows('organization_type_create'), 403);
 
         $input = $this->validateRequest();
-        $input_state = State::where('code', format_select_input($input['state_id']))->get()->first();
+        $input_state = State::where('code', $input['state_id'])->first();
 
         $organization_types = OrganizationType::create([
             'title'         => $input['title'],
             'external_id'   => $input['external_id'],
             'state_id'      => $input_state->code,
-            'country_id'    =>  $input_state->country,
+            'country_id'    => $input_state->country,
         ]);
 
-        if (request()->wantsJson()) {
-            return $organization_types;
-        }
+        return $organization_types;
     }
 
     public function update(OrganizationType $organizationType)
     {
         abort_unless(\Gate::allows('organization_type_edit'), 403);
+
         $input = $this->validateRequest();
-        $input_state = State::where('code', format_select_input($input['state_id']))->get()->first();
+        $input_state = State::where('code', $input['state_id'])->first();
+
         $organizationType->update([
-            'title' => $input['title'],
-            'external_id' => $input['external_id'],
-            'state_id' => $input_state->code,
-            'country_id' => $input_state->country,
+            'title'         => $input['title'],
+            'external_id'   => $input['external_id'],
+            'state_id'      => $input_state->code,
+            'country_id'    => $input_state->country,
         ]);
 
-        if (request()->wantsJson()) {
-            return $organizationType;
-        }
+        return $organizationType;
     }
 
     public function show(OrganizationType $organizationType)
     {
-
         abort_unless(\Gate::allows('organization_type_show'), 403);
 
         $organizationType = $organizationType->load( 'country', 'state');

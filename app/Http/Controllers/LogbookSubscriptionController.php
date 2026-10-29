@@ -41,22 +41,20 @@ class LogbookSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $logbook = Logbook::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('logbook_create') and $logbook->isAccessible()), 403);
+        $logbook = Logbook::select('id')->find($input['logbook_id']);
+        abort_unless(\Gate::allows('logbook_create') && $logbook->isAccessible(), 403);
 
         $subscribe = LogbookSubscription::updateOrCreate([
-            'logbook_id' => $logbook->id,
+            'logbook_id'        => $logbook->id,
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_id'   => $input['subscribable_id'],
         ], [
             'editable' => isset($input['editable']) ? $input['editable'] : false,
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
 
-        if (request()->wantsJson()) {
-            return $subscribe->with(['subscribable', 'logbook'])->find($subscribe->id);
-        }
+        return $subscribe->with('logbook')->find($subscribe->id);
     }
 
     /**
@@ -101,32 +99,27 @@ class LogbookSubscriptionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function expel(Request $request)
     {
         $input = $this->validateRequest();
-        $logbook = Logbook::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('logbook_create') and $logbook->isAccessible()), 403);
+        $logbook = Logbook::select('id')->find($input['logbook_id']);
+        abort_unless(\Gate::allows('logbook_create') && $logbook->isAccessible(), 403);
 
-        $subscription = LogbookSubscription::where([
-            'logbook_id' => $logbook->id,
+        LogbookSubscription::where([
+            'logbook_id'        => $logbook->id,
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
-        ]);
-
-        if ($subscription->delete()) {
-            return trans('global.expel_success');
-        }
+            'subscribable_id'   => $input['subscribable_id'],
+        ])->delete();
     }
 
     protected function validateRequest()
     {
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
-            'subscribable_id' => 'sometimes|integer',
-            'model_id' => 'sometimes', //array or int
-            'editable' => 'sometimes',
+            'subscribable_id'   => 'sometimes|integer',
+            'logbook_id'        => 'sometimes|integer',
+            'editable'          => 'sometimes',
         ]);
     }
 }

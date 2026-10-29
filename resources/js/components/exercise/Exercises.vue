@@ -1,4 +1,4 @@
-<template >
+<template>
     <div class="d-flex flex-column">
         <div class="card">
             <div class="card-header d-flex justify-content-start">
@@ -10,50 +10,54 @@
                 <div v-if="search.length < 3
                         || exercise?.title.toLowerCase().indexOf(search.toLowerCase()) !== -1"
                     :id="exercise?.id"
-                    style="clear: right;"
-                    :value="exercise.id"
                 >
                     <div class="card-footer d-flex justify-content-start">
-                        <div style="width: 30%;">
-                            <span v-if="exercise.description"
-                                @click="toggle(exercise.id)"
-                            >
-                                <i v-if="toggle_id != exercise.id"
-                                    class="fa fa-caret-right pr-2"
-                                ></i>
-                                <i v-else
-                                    class="fa fa-caret-down pr-2"
-                                ></i>
+                        <div
+                            class="d-flex align-items-center gap-2"
+                            style="width: 30%;"
+                        >
+                            <span class="d-flex align-items-center">
+                                <button v-if="exercise.description"
+                                    type="button"
+                                    class="btn btn-icon"
+                                    @click="toggle(exercise.id)"
+                                >
+                                    <i
+                                        class="fa"
+                                        :class="toggle_id == exercise.id ? 'fa-caret-down' : 'fa-caret-right'"
+                                    ></i>
+                                </button>
+                                {{ exercise.title }}
                             </span>
-                            {{ exercise.title }}
-                            <span v-if="$userId == training.owner_id">
-                                <a
-                                    class="text-secondary pointer mx-1"
+                            <span v-if="ownerOrAdmin" class="d-contents">
+                                <button
+                                    type="button"
+                                    class="btn btn-icon text-secondary"
                                     @click="openModal(exercise)"
                                 >
-                                    <i class="fa fa-pencil-alt px-1"></i>
-                                </a>
-                                <a
-                                    class="text-danger pointer mx-1"
+                                    <i class="fa fa-pencil-alt"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-icon text-danger"
                                     @click="confirmItemDelete(exercise)"
                                 >
-                                <i class="fa fa-trash px-1"></i>
-                                </a>
+                                    <i class="fa fa-trash"></i>
+                                </button>
                             </span>
                         </div>
 
-                        <exerciseDones :exercise="exercise"/>
+                        <ExerciseDones :exercise="exercise"/>
                     </div>
 
                     <div v-if="toggle_id == exercise.id"
-                        :id="'exercise_' + exercise.id"
                         class="card-body"
                         v-html="exercise.description"
                     ></div>
                 </div>
             </span>
 
-            <div v-if="$userId == training.owner_id"
+            <div v-if="ownerOrAdmin"
                 class="card-footer"
                 role="button"
                 @click="openModal()"
@@ -68,14 +72,9 @@
                 :showConfirm="showConfirm"
                 :title="trans('global.exercise.delete')"
                 :description="trans('global.exercise.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
-            ></ConfirmModal>
+                @close="showConfirm = false"
+                @confirm="destroy()"
+            />
         </Teleport>
     </div>
 </template>
@@ -83,19 +82,18 @@
 import ExerciseDones from "./ExerciseDones.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import ExerciseModal from "./ExerciseModal.vue";
-import {useGlobalStore} from "../../store/global.js";
 
 export default {
+    components: {
+        ExerciseModal,
+        ConfirmModal,
+        ExerciseDones,
+    },
     props: {
         training: {
+            type: Object,
             default: null,
         },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
@@ -112,16 +110,16 @@ export default {
 
         this.loaderEvent();
 
-        this.$eventHub.on('exercise-added', (exercise) => {
+        this.$eventHub.on('exercise-added', exercise => {
             exercise.dones = [];
             this.exercises.push(exercise);
         });
-        this.$eventHub.on('exercise-updated', (updatedExercise) => {
+        this.$eventHub.on('exercise-updated', updatedExercise => {
             Object.assign(this.exercises.find(e => e.id === updatedExercise.id), updatedExercise);
         });
-        this.$eventHub.on('exercise_dones_added', (e) => {
-            this.loaderEvent();
-        });
+        this.$eventHub.on('exercise_dones_added', () => this.loaderEvent());
+
+        this.$eventHub.on('filter', filter => this.search = filter.searchString);
     },
     methods: {
         loaderEvent() {
@@ -134,7 +132,7 @@ export default {
                 });
         },
         openModal(exercise = { training_id: this.training.id }) {
-            this.globalStore?.showModal('exercise-modal', exercise);
+            this.globalStore.showModal('exercise-modal', exercise);
         },
         confirmItemDelete(exercise) {
             this.currentExercise = exercise;
@@ -143,10 +141,15 @@ export default {
         destroy() {
             axios.delete('/exercises/' + this.currentExercise.id)
                 .then(response => {
-                    if (response.data) this.exercises.splice(this.exercises.indexOf(this.currentExercise), 1);
+                    if (response.data) {
+                        this.showConfirm = false;
+                        this.exercises.splice(this.exercises.indexOf(this.currentExercise), 1);
+                    }
                 })
                 .catch(e => {
                     console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         toggle(id) {
@@ -157,10 +160,10 @@ export default {
             }
         },
     },
-    components: {
-        ExerciseModal,
-        ConfirmModal,
-        ExerciseDones,
+    computed: {
+        ownerOrAdmin() {
+            return this.training.owner_id == this.$userId || this.checkPermission('is_admin');
+        },
     },
 }
 </script>

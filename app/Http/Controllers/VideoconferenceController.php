@@ -153,24 +153,15 @@ class VideoconferenceController extends Controller
             'server' => $input['server'] ?? 'server1',
         ]);
 
+        if (isset($input['medium_id'])) {
+            app(MediumSubscriptionController::class)
+                ->updateTempSubscriptions($input['medium_id'], $videoconference->id, 'App\\Videoconference');
+        }
+
         $createMeeting = Bigbluebutton::server( $videoconference->server)->initCreateMeeting($videoconference->toArray());
         $conf = Bigbluebutton::server($videoconference->server)->create($createMeeting);
 
-        if (isset($input['subscribable_type']) AND isset($input['subscribable_id']))
-        {
-            $subscribe = VideoconferenceSubscription::create([
-                'videoconference_id' => $videoconference->id,
-                'subscribable_type' => $input['subscribable_type'],
-                'subscribable_id' => $input['subscribable_id'],
-                'editable' => $input['editable'] ?? false,
-                'owner_id' => auth()->user()->id,
-            ]);
-            $subscribe->save();
-        }
-
-        if (request()->wantsJson()) {
-            return $videoconference;
-        }
+        return $videoconference;
     }
 
     /**

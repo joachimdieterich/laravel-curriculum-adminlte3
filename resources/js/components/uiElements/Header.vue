@@ -5,11 +5,11 @@
         style="min-height: 50px; top: 0;"
     >
         <div id="brand-menu"
-             class="d-flex position-relative mr-2"
+            class="d-flex position-relative me-2"
         >
             <button
                 id="brand-menu-dropdown-button"
-                class="btn"
+                class="btn border-0"
                 type="button"
                 @click.stop="toggleBrandMenu()"
             >
@@ -53,13 +53,13 @@
                 </span>
             </button>
             <div v-if="notLocalEnv"
-                 id="brand-menu-dropdown"
-                 class="d-none bg-lime w-100 mr-2"
+                id="brand-menu-dropdown"
+                class="d-none bg-lime w-100 me-2"
             >
                 <div v-for="entry in menuEntries">
                     <a :href="entry.link">
                         <i class="fa text-white text-center" :class="entry.icon"></i>
-                        <span class="ml-2 my-1">
+                        <span class="ms-2 my-1">
                             {{ entry.title }}
                         </span>
                     </a>
@@ -79,40 +79,49 @@
 
         <div class="d-flex align-items-center">
             <button v-if="role.id === 1"
-                    type="button"
-                    class="btn btn-icon text-dark"
-                    data-toggle="collapse"
-                    data-target=".nav-collapse"
-                    aria-expanded="false"
-                    aria-controls="navigationbar background-mask"
+                type="button"
+                class="btn btn-icon text-dark"
+                data-bs-toggle="collapse"
+                data-bs-target="#navigationbar, #background-mask"
+                aria-expanded="false"
+                aria-controls="navigationbar background-mask"
             >
                 <i class="fa fa-bars px-1"></i>
             </button>
             <a
+                id="home-link"
                 class="text-dark text-decoration-none p-md-2 mx-2"
                 href="/"
             >
-                <button class="d-md-none btn btn-icon bg-lime-accent">
+                <span
+                    class="d-md-none btn btn-icon bg-lime-accent"
+                    :aria-label="trans('global.home')"
+                >
                     <i class="fa fa-home"></i>
-                </button>
-                <strong class="d-none d-md-inline">{{ trans('global.home') }}</strong>
+                </span>
+                <strong
+                    id="home-link-text"
+                    class="d-none d-md-inline position-relative"
+                >
+                    {{ trans('global.home') }}
+                </strong>
             </a>
             <Searchbar/>
         </div>
 
         <div
             id="user-menu"
-            class="d-flex align-items-center ml-auto"
+            class="d-flex align-items-center ms-auto"
         >
             <button
                 id="user-menu-dropdown-button"
-                class="btn"
+                class="btn border-0 shadow-none"
                 type="button"
                 @click.stop="toggleUserMenu()"
             >
                 <span v-if="isGuestUser">
                     <i class="fa fa-right-to-bracket"></i>
-                    <strong class="py-1 ml-2">{{ trans('global.login') }}</strong>
+                    <strong class="py-1 ms-2">{{ trans('global.login') }}</strong>
                 </span>
                 <span v-else
                       class="d-flex align-items-center pointer"
@@ -126,7 +135,7 @@
                         :show-popup-details="false"
                     />
                     <span
-                        class="d-none d-md-inline ml-1"
+                        class="d-none d-md-inline ms-1"
                         style="font-weight: 900;"
                     >{{ user.firstname }} {{ user.lastname }}</span>
                 </span>
@@ -144,32 +153,32 @@
                 </div>
 
                 <div>
-                    <a :href="'/users/' + user.id">
-                        <i class="fa fa-id-card fa-fw mr-2 text-white"></i>
+                    <a :href="'/users/' + user.id" class="link-muted">
+                        <i class="fa fa-id-card me-2 fa-fw text-white"></i>
                         {{ trans('global.myProfile') }}
                     </a>
                 </div>
                 <div v-if="schooladminRoles || role.id === 1">
                     <a :href="organizationURL">
-                        <i class="fa fa-university fa-fw mr-2 text-white"></i>
+                        <i class="fa fa-university fa-fw me-2 text-white"></i>
                         {{ trans('global.organization_management') }}
                     </a>
                 </div>
                 <div v-if="checkPermission('note_access')">
                     <a href="/notes">
-                        <i class="fa fa-sticky-note fa-fw mr-2 text-white"></i>
+                        <i class="fa fa-sticky-note fa-fw me-2 text-white"></i>
                         {{ trans('global.note.title') }}
                     </a>
                 </div>
                 <div v-if="role.id === 1">
                     <a href="/admin">
-                        <i class="fa fa-cogs fa-fw mr-2 text-white"></i>
+                        <i class="fa fa-cogs fa-fw me-2 text-white"></i>
                         {{ trans('global.config.title') }}
                     </a>
                 </div>
                 <div>
                     <a href="#" @click.prevent="logout()">
-                        <i class="fa fa-power-off fa-fw mr-2 text-white"></i>
+                        <i class="fa fa-power-off fa-fw me-2 text-white"></i>
                         {{ trans('global.logout') }}
                     </a>
                 </div>
@@ -301,3 +310,20 @@ export default {
     },
 }
 </script>
+<style>
+#home-link {
+    & #home-link-text::after {
+        content: '';
+        position: absolute;
+        bottom: -0.25rem;
+        left: 0;
+        right: 0;
+        height: 2px;
+        width: 0px;
+        margin-inline: auto;
+        background-color: var(--bs-dark);
+        transition: width 0.2s ease-out;
+    }
+    &:hover #home-link-text::after { width: 100%; }
+}
+</style>

@@ -48,8 +48,6 @@ Route::withoutMiddleware('auth')->group(function () {
     Route::get('curricula/references', 'CurriculumController@references');
     Route::post('curricula/{curriculum}/achievements', 'CurriculumController@getAchievements')->name('curricula.getAchievements');
     Route::get('curricula/{curriculum}/certificates', 'CurriculumController@getCertificates')->name('curricula.getCertificates');
-    Route::get('curricula/{curriculum}/editOwner', 'CurriculumController@editOwner')->name('curricula.editOwner');
-    Route::patch('curricula/{curriculum}/editOwner', 'CurriculumController@storeOwner')->name('curricula.storeOwner');
     Route::get('curricula/{curriculum}/objectives', 'CurriculumController@getObjectives')->name('curricula.getObjectives');
     Route::get('curricula/{curriculum}/print', 'CurriculumController@print')->name('curricula.print');
     Route::patch('curricula/{curriculum}/resetOrderIds', 'CurriculumController@resetOrderIds')->name('curricula.resetOrderIds');
@@ -345,13 +343,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('metadatasets/list', 'MetadatasetController@list');
     Route::resource('metadatasets', 'MetadatasetController');
 
-    /* Messages */
-    Route::get('messages', 'MessagesController@index')->name('messages');
-    Route::get('messages/create', 'MessagesController@create')->name('messages.create');
-    Route::post('messages', 'MessagesController@store')->name('messages.store');
-    Route::get('messages/{id}', 'MessagesController@show')->name('messages.show');
-    Route::put('messages/{id}', 'MessagesController@update')->name('messages.update');
-
     /* Navigators */
     Route::get('navigators', 'NavigatorController@index')->name('navigators.index');
     Route::get('navigators/{navigator}', 'NavigatorController@show');
@@ -423,8 +414,6 @@ Route::group(['middleware' => 'auth'], function () {
     /* User */
     Route::delete('users/massDestroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::patch('users/massUpdate', 'UsersController@massUpdate')->name('users.massUpdate');
-    Route::get('users/import', 'UsersController@createImport')->name('users.createImport');
-    Route::post('users/import', 'UsersController@storeImport')->name('users.storeImport');
     Route::delete('users/{user}/forceDestroy', 'UsersController@forceDestroy')->name('users.forceDestroy');
     Route::get('users', 'UsersController@index')->name('users.index');
     Route::get('users/{user}', 'UsersController@show')->name('users.show');

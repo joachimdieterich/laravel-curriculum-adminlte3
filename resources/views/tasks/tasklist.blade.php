@@ -9,7 +9,7 @@
                     <i class="fas fa-ellipsis-v"></i>
                 </span>-->
         <!-- checkbox -->
-        <div class="icheck-primary d-inline ml-2">
+        <div class="icheck-primary d-inline ms-2">
             <input
                 type="checkbox"
                 value=""

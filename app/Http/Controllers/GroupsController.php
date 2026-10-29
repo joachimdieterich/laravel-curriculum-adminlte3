@@ -50,8 +50,11 @@ class GroupsController extends Controller
         abort_unless(Gate::allows('group_access'), 403);
 
         $groups = Group::select('groups.id', 'groups.title', 'groups.common_name', 'grade_id', 'period_id', 'organization_id')
-            ->whereIn('organization_id', auth()->user()->organizations()->pluck('organizations.id'))
             ->with('organization:id,title');
+
+        if (! is_admin()) {
+            $groups->whereIn('organization_id', auth()->user()->organizations()->pluck('organizations.id'));
+        }
 
         if (! request()->boolean('allGroups')) {
             $groups->where(function ($query) {

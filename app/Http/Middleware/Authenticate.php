@@ -16,7 +16,7 @@ class Authenticate extends Middleware
         $user_id = auth()->user()?->id;
         $path    = explode('/', $request->getRequestUri());
 
-        if (($user_id === null || $user_id == config('app.guest_user_id'))/* && config('app.env') != 'local' */) {
+        if (($user_id === null || $user_id == config('app.guest_user_id')) && config('app.env') != 'local') {
             $allow_guest = $request->has('sharing_token')
                 || str_starts_with($path[1], 'navigator') // '/navigators' or '/navigatorViews' page
                 || $path[1] === 'eventSubscriptions'

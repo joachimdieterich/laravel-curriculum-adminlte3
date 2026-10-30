@@ -39,6 +39,10 @@ class CurriculaApiController extends Controller
         }
         $timestamp = date('Y-m-d H:i:s', $timestamp);
 
+        // TODO: maybe give those curricula a certain flag, instead of hardcoding the ID's here
+        // list of Curriculum-specific curricula in PROD, which shouldn't be included in this export
+        $blacklist = [189, 190, 191, 428, 429, 451, 452, 453, 454, 455, 456];
+
         LogController::set(get_class($this).'@'.__FUNCTION__);
         // might need to be broken down in chunks, since there's a lot of data
         $curricula = Curriculum::select(
@@ -52,6 +56,7 @@ class CurriculaApiController extends Controller
             ->join('organization_types', 'organization_types.id', '=', 'curricula.organization_type_id')
             ->join('terminal_objectives', 'terminal_objectives.curriculum_id', '=', 'curricula.id')
             ->join('enabling_objectives', 'enabling_objectives.terminal_objective_id', '=', 'terminal_objectives.id')
+            ->whereNotIn('curricula.id', $blacklist)
             ->where('type_id', 1)
             ->where(function($query) use ($timestamp) {
                 $query->whereDate('curricula.updated_at', '>=', $timestamp)

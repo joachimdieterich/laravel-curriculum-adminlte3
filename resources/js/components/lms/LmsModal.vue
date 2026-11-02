@@ -109,7 +109,6 @@ export default {
         preProcessing() {
             if (this.courses.length === 0) {
                 this.loader();
-                this.loadCourses();
             }
         },
         loader() {
@@ -120,8 +119,10 @@ export default {
 
             axios.get('/lmsUserTokens')
                 .then(response => {
-                    this.token      = response.data.token;
-                    this.lms_url    = response.data.lms_url;
+                    this.token   = response.data.token;
+                    this.lms_url = response.data.lms_url;
+
+                    if (this.token) this.loadCourses();
                 }).catch(e => {
                     console.log(e);
                     this.toast.error(this.errorMessage(e));

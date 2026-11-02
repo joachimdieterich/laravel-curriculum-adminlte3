@@ -18,13 +18,17 @@ class LmsReferenceController extends Controller
     {
         $input = $this->validateRequest();
         $lms = new LmsPlugin();
+        $organization = Organization::select('title', 'lms_url')->find(auth()->user()->current_organization_id);
+        $lms_url = $organization->lms_url;
 
-        if (request()->wantsJson()) {
-            return [
-                'entries' => $lms->plugins[config('app.lms_plugin')]->{$input['ws_function']}($input),
-                'lms_url' => Organization::find(auth()->user()->current_organization_id)->lms_url
-            ];
+        if ($lms_url === null) {
+            return abort(404, 'global.error.no_lms_url', ['abort-info' => $organization->title]);
         }
+
+        return [
+            'entries' => $lms->plugins[config('app.lms_plugin')]->{$input['ws_function']}($input),
+            'lms_url' => $lms_url
+        ];
     }
 
     /**

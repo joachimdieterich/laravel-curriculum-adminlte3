@@ -58,6 +58,7 @@ return [
         'default'           => 'An error occurred',
         'too_long'          => 'The given text is too long',
         'no_token_support'  => 'This resource does not support sharing-tokens.',
+        'no_lms_url'        => 'No LMS URL configured for this organization.',
         'no_access_to_user' => 'You do not have permission to access this user.',
         'oidc'              => 'The authentication service is currently unavailable. Please try again later.',
         'too_many_results'  => 'Too many results where found. Please limit the search more.',

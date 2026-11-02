@@ -7,6 +7,7 @@
         :allow-overflow="true"
         :disable-save-button="!form.exam_id"
         :intercept-save="true"
+        @opened="getTests()"
         @save="submit()"
     >
         <template #general>
@@ -55,6 +56,15 @@ export default {
         }
     },
     methods: {
+        getTests() {
+            axios.get('/tests')
+                .then(response => {
+                    this.options = response.data
+                })
+                .catch(error => {
+                    console.warn(error.response);
+                });
+        },
         submit() {
             let test = this.options.find(t => t.id == this.form.exam_id);
 
@@ -75,14 +85,6 @@ export default {
     },
     mounted() {
         this.form.group_id = this.group_id;
-
-        axios.get('/tests')
-            .then(response => {
-                this.options = response.data
-            })
-            .catch(error => {
-                console.warn(error.response);
-            });
     },
 }
 </script>

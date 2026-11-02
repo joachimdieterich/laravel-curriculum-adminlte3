@@ -144,6 +144,10 @@ export default {
                     console.log(e);
                     this.loading = false;
                     this.toast.error(this.errorMessage(e));
+                    // if the token is invalid, it will be deleted in the backend and a 400 error will be returned
+                    if (e.response.status === 400) {
+                        this.token = false;
+                    }
                 });
         },
         loadCourseContents(course_id) {

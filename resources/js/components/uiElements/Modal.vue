@@ -157,7 +157,7 @@
                     class="modal-footer"
                 >
                     <slot name="footer-left"></slot>
-                    <span class="pull-right">
+                    <span>
                         <button v-if="showCancelButton"
                             :id="model + '-cancel'"
                             type="button"

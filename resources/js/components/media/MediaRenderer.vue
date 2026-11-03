@@ -10,22 +10,10 @@
             class="d-block mw-100 m-auto"
         />
     
-        <RenderUsage v-else-if="mime === 'edusharing'"
+        <RenderUsage v-else
             :medium="medium"
             :isCarousel="true"
         />
-    
-        <span v-else
-            style="height: 500px"
-            :mime="medium.mime_type"
-        >
-            <iframe
-                :src="'/media/' + medium.id"
-                :height="height"
-                :width="width"
-                frameborder="0"
-            ></iframe>
-        </span>
     </div>
 </template>
 <script>

@@ -1170,6 +1170,8 @@ return [
         'title'          => 'LMS',
         'title_singular' => 'LMS',
         'add'            => 'Add LMS-Object',
+        'token'          => 'Token (security key)',
+        'token_helper'   => 'Please enter the token (security key) for the selected organization.',
     ],
     'meeting' => [
         'title'          => 'Meetings',

@@ -1197,6 +1197,8 @@ return [
         'title'          => 'Lernplattformen',
         'title_singular' => 'Lernplattform',
         'add'            => 'Lernplattform-Baustein hinzufügen',
+        'token'          => 'Token (Sicherheitsschlüssel)',
+        'token_helper'   => 'Bitte Token (Sicherheitsschlüssel) für die ausgewälte Organisation eingeben.',
     ],
     'meeting' => [
         'title'          => 'Veranstaltungen',

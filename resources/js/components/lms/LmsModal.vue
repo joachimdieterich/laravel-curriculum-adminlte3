@@ -7,6 +7,7 @@
         :form="form"
         :allow-overflow="true"
         :disable-save-button="!form.course_id"
+        :show-save-button="token || loading"
         @opened="preProcessing()"
     >
         <template #general>
@@ -14,12 +15,23 @@
                 @newToken="onNewToken"
             />
             <div v-else>
-                <Select2 v-if="courses.length"
-                    id="course_select"
-                    :list="courses"
+                <Select2 v-if="organizations.length > 1"
+                    id="organization-select"
+                    :list="organizations"
                     css="mb-3"
+                    model="organization"
+                    :selected="null"
+                    @selectedValue="id => {
+                        organization_id = id[0];
+                        lms_url = organizations.find(o => o.id == id[0]).lms_url;
+                        loadCourses();
+                    }"
+                
+                />
+                <Select2 v-if="courses.length"
+                    id="course-select"
+                    :list="courses"
                     model="course"
-                    option_id="id"
                     option_label="fullname"
                     :selected="null"
                     @selectedValue="id => {
@@ -29,12 +41,11 @@
                 />
 
                 <Select2 v-if="form.course_id && course_contents.length"
-                    id="course_contents"
+                    id="course-contents"
                     :list="course_contents"
-                    css="mb-3"
+                    css="mt-3"
                     :label="trans('global.course.content')"
                     model="course"
-                    option_id="id"
                     option_label="name"
                     :selected="null"
                     @selectedValue="id => {
@@ -44,11 +55,11 @@
                 />
 
                 <Select2 v-if="form.course_content_id && course_content_items.length"
-                    id="course_items"
+                    id="course-items"
                     :list="course_content_items"
+                    css="mt-3"
                     :label="trans('global.course.content_item')"
                     model="course"
-                    option_id="id"
                     option_label="name"
                     :selected="null"
                     @selectedValue="id => setItems(parseInt(id[0]))"
@@ -61,6 +72,17 @@
                     <span>{{ trans('global.loading') }}</span>
                 </div>
             </div>
+        </template>
+
+        <template #footer-left>
+            <button v-if="organizations.length !== 0"
+                type="button"
+                class="btn btn-icon me-auto"
+                :title="trans('global.lms.token')"
+                @click="token = !token"
+            >
+                <i class="fa fa-user-lock"></i>
+            </button>
         </template>
     </Modal>
 </template>
@@ -96,6 +118,8 @@ export default {
                 course_item: null,
                 sharing_level: 2,
             }),
+            organizations: [],
+            organization_id: null,
             token: true, // don't actually store the token itself, only if it can be fetched
             lms_url: '',
             courses: [],
@@ -112,29 +136,35 @@ export default {
             }
         },
         loader() {
-            this.course_contents = [];
+            this.course_contents      = [];
             this.course_content_items = [];
-            this.course_content_id = null;
-            this.course_item = null;
+            this.course_content_id    = null;
+            this.course_item          = null;
 
             axios.get('/lmsUserTokens')
                 .then(response => {
-                    this.token   = response.data.token;
-                    this.lms_url = response.data.lms_url;
-
-                    if (this.token) this.loadCourses();
+                    this.organizations = response.data;
+                    // if more than one token is found, the user must select the organization first
+                    if (this.organizations.length === 1) {
+                        this.organization_id = this.organizations[0].id;
+                        this.lms_url         = this.organizations[0].lms_url;
+                        this.loadCourses();
+                    } else if (this.organizations.length === 0) {
+                        this.token = false;
+                    }
                 }).catch(e => {
                     console.log(e);
                     this.toast.error(this.errorMessage(e));
                 });
         },
         loadCourses() {
-            this.loading = true;
+            this.loading              = true;
             this.course_content_items = [];
-            this.course_item = null;
+            this.course_item          = null;
 
             axios.post('/lmsReferences/get', {
                 plugin: 'moodle',
+                organization_id: this.organization_id,
                 ws_function: 'core_course_get_courses_by_field',
             })
                 .then(r => {
@@ -195,8 +225,9 @@ export default {
                 url: this.course_content_items[index].url,
             };
         },
-        onNewToken() {
+        onNewToken(token) {
             this.token = true;
+            this.organization_id = token.organization_id;
             this.loadCourses();
         },
     },

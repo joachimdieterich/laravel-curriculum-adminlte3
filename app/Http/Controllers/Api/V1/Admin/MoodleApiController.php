@@ -271,18 +271,18 @@ class MoodleApiController extends Controller
 
     public function enrolUsers(Request $request)
     {
-        $input = $this->validateRequest();
+        $input    = $this->validateRequest();
         $validate = $this->checkEnrolExpelInput($input);
 
         if ($validate instanceof JsonResponse) return $validate;
 
-        [$input, $users] = $validate;
+        [$input, $users, $trainers] = $validate;
 
-        $groups = null;
+        $groups       = null;
         $create_count = 0;
 
         if (!empty($input['groups'])) {
-            $groups = Group::select('id', 'common_name')->whereIn('common_name', $input['groups'])->get();
+            $groups = Group::whereIn('common_name', $input['groups'])->get(['id', 'common_name']);
             // if not every common_name has a corresponding group
             if (count($groups) != count($input['groups'])) {
                 // first check if organization is provided and exists
@@ -299,10 +299,10 @@ class MoodleApiController extends Controller
                 foreach ($missing as $common_name) {
                     // create new group
                     $new_group = Group::create([
-                        'title' => $common_name,
-                        'common_name' => $common_name,
-                        'grade_id' => 999, // default grade
-                        'period_id' => 1, // default period
+                        'title'           => $common_name,
+                        'common_name'     => $common_name,
+                        'grade_id'        => 999, // default grade
+                        'period_id'       => 1, // default period
                         'organization_id' => $organization->id,
                     ]);
 
@@ -314,7 +314,11 @@ class MoodleApiController extends Controller
             foreach ($groups as $group) {
                 $user_ids = $users->pluck('id')->toArray();
                 $group->users()->syncWithoutDetaching($user_ids);
-                $create_count += count($user_ids);
+
+                $trainer_ids = $trainers->pluck('id')->toArray();
+                $group->users()->syncWithPivotValues($trainer_ids, ['evaluator' => true], false);
+
+                $create_count += count($user_ids) + count($trainer_ids);
             }
         }
 
@@ -371,13 +375,13 @@ class MoodleApiController extends Controller
 
     public function expelUsers(Request $request)
     {
-        $input = $this->validateRequest();
+        $input    = $this->validateRequest();
         $validate = $this->checkEnrolExpelInput($input);
 
         if ($validate instanceof JsonResponse) return $validate;
 
         [$input, $users] = $validate;
-        $delete_count = 0;
+        $delete_count    = 0;
 
         if (!empty($input['groups'])) {
             $groups = Group::select('id')->whereIn('common_name', $input['groups'])->get();
@@ -421,8 +425,8 @@ class MoodleApiController extends Controller
 
     protected function checkEnrolExpelInput(array $input): array|JsonResponse
     {
-        // validate that required fields are present
-        if (empty($input['users'])) {
+        // either users or trainers (for enrolment) need to be provided
+        if (empty($input['users']) && empty($input['trainers'])) {
             return response()->json('No users (common_name) provided', 400);
         }
         if (empty($input['kanbans']) and empty($input['curricula']) and empty($input['groups'])) {
@@ -430,19 +434,38 @@ class MoodleApiController extends Controller
         }
 
         // parse fields to arrays if they are strings
-        if (gettype($input['users']) == 'string') $input['users'] = json_decode($input['users'], true);
-        if (!empty($input['groups']) and gettype($input['groups']) == 'string') $input['groups'] = json_decode($input['groups'], true);
-        if (!empty($input['kanbans']) and gettype($input['kanbans']) == 'string') $input['kanbans'] = json_decode($input['kanbans'], true);
-        if (!empty($input['curricula']) and gettype($input['curricula']) == 'string') $input['curricula'] = json_decode($input['curricula'], true);
+        if (!empty($input['users']) && gettype($input['users']) == 'string') {
+            $input['users'] = json_decode($input['users'], true);
+        }
+        // trainers are optional for enrolment, but ignored for expulsion
+        if (!empty($input['trainers']) && gettype($input['trainers']) == 'string') {
+            $input['trainers'] = json_decode($input['trainers'], true);
+        }
+        if (!empty($input['groups']) && gettype($input['groups']) == 'string') {
+            $input['groups'] = json_decode($input['groups'], true);
+        }
+        if (!empty($input['kanbans']) && gettype($input['kanbans']) == 'string') {
+            $input['kanbans'] = json_decode($input['kanbans'], true);
+        }
+        if (!empty($input['curricula']) && gettype($input['curricula']) == 'string') {
+            $input['curricula'] = json_decode($input['curricula'], true);
+        }
 
-        $users = User::select('id', 'common_name')->whereIn('common_name', $input['users'])->get();
+        $users    = User::whereIn('common_name', $input['users']    ?? [])->get(['id', 'common_name']);
+        $trainers = User::whereIn('common_name', $input['trainers'] ?? [])->get(['id', 'common_name']);
         // if not every common_name has a corresponding user, return those
-        if (count($users) != count($input['users'])) {
+        if (!empty($input['users']) && count($users) != count($input['users'])) {
             $missing = array_diff($input['users'], $users->pluck('common_name')->toArray());
             return response()->json('Users with common names ['.implode(', ', $missing).'] not found', 400);
         }
 
-        return [$input, $users];
+        // check trainers separately
+        if (!empty($input['trainers']) && count($trainers) != count($input['trainers'])) {
+            $missing = array_diff($input['trainers'], $trainers->pluck('common_name')->toArray());
+            return response()->json('Trainers with common names ['.implode(', ', $missing).'] not found', 400);
+        }
+
+        return [$input, $users, $trainers];
     }
 
     protected function validateRequest()
@@ -450,6 +473,7 @@ class MoodleApiController extends Controller
         return request()->validate([
             'common_name'   => 'sometimes|string',
             'users'         => is_array(request()->input('users')) ? 'sometimes|array' : 'sometimes|string',
+            'trainers'      => is_array(request()->input('trainers')) ? 'sometimes|array' : 'sometimes|string',
             'groups'        => is_array(request()->input('groups')) ? 'sometimes|array' : 'sometimes|string',
             'organization'  => 'sometimes|string',
             'curricula'     => is_array(request()->input('curricula')) ? 'sometimes|array' : 'sometimes|string',

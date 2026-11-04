@@ -2,6 +2,7 @@
 
 // @php-cs-fixer-ignore statement_indentation
 
+use App\Http\Controllers\CertificateDesignerController;
 use App\Http\Controllers\LogController;
 use App\User;
 use Illuminate\Support\Facades\Route;
@@ -283,6 +284,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('categories', 'CategorieController');
 
     Route::resource('certificates', 'CertificateController');
+    Route::middleware(['can:certificate_access'])->prefix('certificate_designer')->group(function () {
+        Route::get('/', [CertificateDesignerController::class, 'index'])->name('certificate-designer.index');
+        Route::prefix('api')->group(function () {
+            Route::get('templates', [CertificateDesignerController::class, 'templates']);
+            Route::post('templates', [CertificateDesignerController::class, 'store']);
+            Route::get('templates/{id}', [CertificateDesignerController::class, 'show'])->whereNumber('id');
+            Route::put('templates/{id}', [CertificateDesignerController::class, 'update'])->whereNumber('id');
+            Route::delete('templates/{id}', [CertificateDesignerController::class, 'destroy'])->whereNumber('id');
+            Route::get('curricula', [CertificateDesignerController::class, 'curricula']);
+            Route::get('curricula/{curriculum}', [CertificateDesignerController::class, 'curriculum']);
+            Route::get('students', [CertificateDesignerController::class, 'students']);
+            Route::get('curricula/{curriculum}/students/{student}', [CertificateDesignerController::class, 'achievements']);
+        });
+    });
 
     Route::resource('configs', 'ConfigController');
 

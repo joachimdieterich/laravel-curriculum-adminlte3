@@ -28,28 +28,40 @@
                     class="flex-fill"
                     style="max-width: calc(100vw - 2rem);"
                 />
-    
+
                 <div class="d-print-none d-flex flex-wrap align-items-center gap-2 ms-auto">
                     <div class="d-flex flex-wrap flex-fill justify-content-around gap-2">
                         <button v-if="store.getSelectedIds('curriculum-user-datatable')?.length > 0 && Object.keys(course).length"
-                            v-permission="'certificate_access'"
-                            id="certificate-nav-tab"
-                            class="btn btn-light flex-fill"
-                            type="button"
-                            @click="generateCertificate()"
+                                v-permission="'certificate_access'"
+                                id="certificate-nav-tab"
+                                class="btn btn-light flex-fill"
+                                type="button"
+                                @click="generateCertificate()"
                         >
                             <i class="fa fa-certificate"></i>
                             {{ trans('global.certificate.generate') }}
                         </button>
-            
+
                         <button v-if="checkPermission('certificate_create')"
-                            id="certificate-nav-tab"
-                            class="btn btn-light flex-fill"
-                            type="button"
-                            @click="createCertificate()"
+                                id="certificate-nav-tab"
+                                class="btn btn-light flex-fill"
+                                type="button"
+                        >
+                            <a :href="certificateDesignerRoute"
+                               class="text-dark  text-decoration-none"
+                            >
+                                <i class="fa fa-certificate"></i>
+                                Neu: {{ trans('global.certificate.create') }}
+                            </a>
+                        </button>
+                        <button v-if="checkPermission('certificate_create')"
+                                id="certificate-nav-tab"
+                                class="btn btn-light flex-fill"
+                                type="button"
+                                @click="createCertificate()"
                         >
                             <i class="fa fa-certificate"></i>
-                            {{ trans('global.certificate.create') }}
+                            Alt: Zertifikat-Vorlage erstellen
                         </button>
                     </div>
 
@@ -63,23 +75,23 @@
                         >
                             <i class="fa fa-print"></i>
                         </button>
-            
+
                         <button v-if="checkPermission('is_admin') || $userId == curriculum.owner_id"
-                            id="fix-order-nav-tab"
-                            class="btn btn-icon text-secondary"
-                            data-bs-toggle="tooltip"
-                            :data-bs-title="trans('global.resetOrder')"
-                            @click="resetOrderIds()"
+                                id="fix-order-nav-tab"
+                                class="btn btn-icon text-secondary"
+                                data-bs-toggle="tooltip"
+                                :data-bs-title="trans('global.resetOrder')"
+                                @click="resetOrderIds()"
                         >
                             <i class="fa fa-wrench"></i>
                         </button>
-            
+
                         <button v-if="checkPermission('curriculum_create')"
-                            id="export-curriculum-nav-tab"
-                            class="btn btn-icon text-secondary"
-                            data-bs-toggle="tooltip"
-                            data-bs-title="Export Curriculum"
-                            @click="exportCurriculum()"
+                                id="export-curriculum-nav-tab"
+                                class="btn btn-icon text-secondary"
+                                data-bs-toggle="tooltip"
+                                data-bs-title="Export Curriculum"
+                                @click="exportCurriculum()"
                         >
                             <i class="fa fa-cloud-download-alt"></i>
                         </button>
@@ -163,22 +175,22 @@
             <div class="d-flex">
                 <small v-text="currentCurriculum.title"></small>
                 <button v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
-                    v-permission="'curriculum_edit'"
-                    type="button"
-                    class="d-print-none btn btn-icon text-secondary mx-1"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="trans('global.curriculum.edit')"
-                    @click="edit()"
+                        v-permission="'curriculum_edit'"
+                        type="button"
+                        class="d-print-none btn btn-icon text-secondary mx-1"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.curriculum.edit')"
+                        @click="edit()"
                 >
                     <i class="fa fa-pencil-alt"></i>
                 </button>
-    
+
                 <button v-if="curriculum.owner_id == $userId || checkPermission('is_admin')"
-                    type="button"
-                    class="d-print-none btn btn-icon text-secondary mx-1"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="trans('global.share')"
-                    @click="share()"
+                        type="button"
+                        class="d-print-none btn btn-icon text-secondary mx-1"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.share')"
+                        @click="share()"
                 >
                     <i class="fa fa-share-alt"></i>
                 </button>
@@ -187,8 +199,8 @@
 
         <Teleport to="#contributors">
             <contributors-list v-if="Object.values(currentContributors).length > 1"
-                :contributors="currentContributors"
-                :heading="true"
+                               :contributors="currentContributors"
+                               :heading="true"
             />
         </Teleport>
     </div>
@@ -243,6 +255,9 @@ export default {
             type: Object,
             default: null,
         },
+        certificateDesignerRoute: {
+            type: String
+        },
     },
     setup() {
         return {
@@ -254,11 +269,11 @@ export default {
             componentId: this.$.uid,
             currentCurriculum: {},
             columns: [
-                { title: window.trans.global.user.fields.username, data: 'username', searchable: true },
-                { title: window.trans.global.lastname, data: 'lastname', searchable: true },
-                { title: window.trans.global.firstname, data: 'firstname', searchable: true },
-                { title: window.trans.global.role.title_singular, data: 'role' },
-                { title: window.trans.global.progress.title_singular, data: 'progress' },
+                {title: window.trans.global.user.fields.username, data: 'username', searchable: true},
+                {title: window.trans.global.lastname, data: 'lastname', searchable: true},
+                {title: window.trans.global.firstname, data: 'firstname', searchable: true},
+                {title: window.trans.global.role.title_singular, data: 'role'},
+                {title: window.trans.global.progress.title_singular, data: 'progress'},
             ],
             dt: null,
             currentContributors: {},

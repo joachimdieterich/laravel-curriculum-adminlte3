@@ -248,9 +248,9 @@ if (! function_exists('getDataTableWithEntries')) {
      *
      * @param  Builder  $query  the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
      * @param  bool  $hasTags  does the model have tags?
-     * @param  bool  $global  include ressources that are globally available (e.g. for Curricula)
+     * @param  bool  $global  include resources that are globally available (e.g. for Curricula)
      */
-    function getDataTableWithEntries($query, $hasTags = false, $global = false): JsonResponse
+    function getDataTableWithEntries($query, bool $hasTags = false, bool $global = false): JsonResponse
     {
         $withOwned      = false;
         $withSubscribed = false;

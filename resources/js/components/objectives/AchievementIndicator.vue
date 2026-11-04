@@ -1,6 +1,6 @@
 <template>
     <div v-if="type === 'enabling'"
-        class="d-flex align-items-center gap-1"
+         class="d-flex align-items-center gap-1"
     >
         <i
             class="t-18"
@@ -27,14 +27,21 @@
             @click.prevent="achieve('0')"
         ></i>
         <span v-if="objective.achievements?.length === 1"
-            class="text-nowrap lh-1 ml-1"
+              class="text-nowrap lh-1 ml-1"
         >
             {{ objective.achievements[0]?.updated_at.slice(0, 10) }}
         </span>
     </div>
 </template>
 <script>
+import {useDatatableStore} from "../../store/datatables.js";
+
 export default {
+    setup() {
+        return {
+            globalStore: useDatatableStore(),
+        }
+    },
     props: {
         objective: {
             type: Object,
@@ -128,7 +135,7 @@ export default {
         calculate_count(number) {
             let student = 0, teacher = 0;
 
-            if (typeof this.objective.achievements === 'undefined') return 
+            if (typeof this.objective.achievements === 'undefined') return
 
             if (typeof this.objective.achievements[0] === 'object' && this.settings.achievements === true) {
                 for (let i = 0; i < (this.objective.achievements).length; i++) {
@@ -149,39 +156,39 @@ export default {
         },
     },
     computed: {
-        green_css: function() {
+        green_css: function () {
             return this.calculate_css('1');
         },
-        orange_css: function() {
+        orange_css: function () {
             return this.calculate_css('2');
         },
-        red_css: function() {
+        red_css: function () {
             return this.calculate_css('3');
         },
-        white_css: function() {
+        white_css: function () {
             return this.calculate_css('0');
         },
         //counts
-        green_count: function() {
+        green_count: function () {
             return this.calculate_count('1');
         },
-        orange_count: function() {
+        orange_count: function () {
             return this.calculate_count('2');
         },
-        red_count: function() {
+        red_count: function () {
             return this.calculate_count('3');
         },
-        white_count: function() {
+        white_count: function () {
             return this.calculate_count('0');
         },
-        fabadge: function() {
+        fabadge: function () {
             if (window.Laravel.permissions.indexOf('achievement_access') !== -1) {
                 return "fabadge";
             }
         },
     },
     watch: {
-        objective: function(val, oldVal) {
+        objective: function (val, oldVal) {
             // only update the status when in a course
             if (!this.settings.course) return;
 

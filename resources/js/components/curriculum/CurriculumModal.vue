@@ -10,8 +10,8 @@
         <template #modal-body>
             <div class="modal-body accordion">
                 <div v-if="!form.id"
-                    class="nav nav-pills justify-content-center gap-2 border-bottom p-3"
-                    role="tablist"
+                     class="nav nav-pills justify-content-center gap-2 border-bottom p-3"
+                     role="tablist"
                 >
                     <!-- Create -->
                     <li
@@ -94,13 +94,13 @@
                                         />
                                     </div>
                                     <Select2 v-if="form.owner_id == $userId || checkPermission('is_admin')"
-                                        id="user_id"
-                                        css="mb-3"
-                                        :label="trans('global.change_owner')"
-                                        model="User"
-                                        url="/users"
-                                        :selected="form.owner_id"
-                                        @selectedValue="id => form.owner_id = id[0]"
+                                             id="user_id"
+                                             css="mb-3"
+                                             :label="trans('global.change_owner')"
+                                             model="User"
+                                             url="/users"
+                                             :selected="form.owner_id"
+                                             @selectedValue="id => form.owner_id = id[0]"
                                     />
                                     <div class="mb-3">
                                         <TagMultiselect
@@ -182,13 +182,13 @@
                                         @selectedValue="id => form.organization_type_id = id"
                                     />
                                     <Select2 v-if="checkPermission('is_admin')"
-                                        id="type_id"
-                                        css="mb-3"
-                                        model="curriculumtype"
-                                        url="/curriculumTypes"
-                                        :label="trans('global.curriculumtype.title_singular') + ' *'"
-                                        :selected="form.type_id"
-                                        @selectedValue="id => form.type_id = id"
+                                             id="type_id"
+                                             css="mb-3"
+                                             model="curriculumtype"
+                                             url="/curriculumTypes"
+                                             :label="trans('global.curriculumType.title_singular') + ' *'"
+                                             :selected="form.type_id"
+                                             @selectedValue="id => form.type_id = id"
                                     />
                                     <Select2
                                         id="country_id"

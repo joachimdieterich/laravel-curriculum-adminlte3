@@ -2,6 +2,7 @@
     <Modal
         model="certificate"
         modalName="generate-certificate-modal"
+        title="global.certificate.generate"
         :form="form"
         :allow-overflow="true"
         save-label="global.generate"
@@ -13,16 +14,16 @@
     >
         <template #general>
             <Select2 v-if="list"
-                id="certificate-list"
-                :list="list"
-                model="certificate"
-                @selectedValue="id => form.certificate_id = id[0]"
+                     id="certificate-list"
+                     :list="list"
+                     model="certificate"
+                     @selectedValue="id => form.certificate_id = id[0]"
             />
             <Select2 v-else-if="form.curriculum_id"
-                id="certificate-list"
-                :url="'/curricula/' + form.curriculum_id + '/certificates'"
-                model="certificate"
-                @selectedValue="id => form.certificate_id = id"
+                     id="certificate-list"
+                     :url="'/curricula/' + form.curriculum_id + '/certificates'"
+                     model="certificate"
+                     @selectedValue="id => form.certificate_id = id"
             />
             <div class="my-3">
                 <label for="dp-input-generate-certificate-date">{{ trans('global.date') }} *</label>
@@ -43,10 +44,10 @@
                 v-model="form.oneFile"
             />
             <a v-if="download_url"
-                ref="download"
-                :href="download_url"
-                class="btn btn-primary my-2 float-end"
-                download
+               ref="download"
+               :href="download_url"
+               class="btn btn-primary my-2 float-end"
+               download
             >
                 {{ trans('global.downloadFile') }}
             </a>
@@ -71,7 +72,7 @@ export default {
         VueDatePicker,
     },
     setup() {
-        return { store: useDatatableStore() }
+        return {store: useDatatableStore()}
     },
     data() {
         return {

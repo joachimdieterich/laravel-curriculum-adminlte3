@@ -47,15 +47,18 @@
                             >
                                 <div>
                                     <slot name="general">
-                                        <input
-                                            :id="model + '-title'"
-                                            type="text"
-                                            class="form-control"
-                                            maxlength="191"
-                                            v-model.trim="form.title"
-                                            :placeholder="trans('global.title') + ' *'"
-                                            :required="requireTitle"
-                                        />
+                                        <div class="form-floating">
+                                            <input
+                                                :id="model + '-title'"
+                                                type="text"
+                                                class="form-control"
+                                                maxlength="191"
+                                                v-model.trim="form.title"
+                                                placeholder=""
+                                                :required="requireTitle"
+                                            />
+                                            <label :for="model + '-title'">{{ trans('global.title') }} *</label>
+                                        </div>
                                         <textarea v-if="showDescriptionField"
                                             :id="model + '-description'"
                                             :name="model + '-description'"

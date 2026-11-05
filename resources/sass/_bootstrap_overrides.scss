@@ -33,6 +33,42 @@
     }
 }
 
+// custom form-floating styles
+.form-floating {
+    & .form-control {
+        height: auto;
+        min-height: auto;
+        padding: 0.5rem 0.75rem !important;
+
+        &:focus::placeholder { color: var(--bs-secondary); }
+        &:focus ~ label, &:not(:placeholder-shown) ~ label {
+            top: -0.25rem;
+            color: var(--bs-dark-rgb);
+        }
+    }
+    & > label {
+        top: 0.5rem;
+        left: 0.375rem;
+        height: auto;
+        border: 0;
+        padding: 0 0.375rem;
+        background-color: white;
+        transition:
+            opacity   0.1s ease-in-out,
+            transform 0.1s ease-in-out,
+            top       0.2s ease,
+            color     0.1s ease-in-out;
+    }
+}
+
+.form-control, .form-check-input {
+    box-shadow: var(--shadow-subtle);
+
+    &:focus { border-color: var(--bs-primary); }
+}
+
+.form-control:focus { box-shadow: inherit; }
+
 .form-check-input {
     @extend .pointer;
 }

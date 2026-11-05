@@ -2,11 +2,12 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Services\Tag\HasTags;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  *   @OA\Schema(
+ *
  *      @OA\Xml(name="Videoconference"),
  *
  *      @OA\Property( property="id", type="integer"),
@@ -59,7 +60,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Videoconference extends Model
 {
-    use HasFactory;
+    use HasTags;
 
     protected $fillable = [
         'id',
@@ -109,31 +110,31 @@ class Videoconference extends Model
         'medium_id',
         'webcamsOnlyForModerator',
         'anyoneCanStart',
-        'server'
+        'server',
     ];
 
     protected $casts = [
-        'editable' => 'boolean',
-        'record' => 'boolean',
-        'isBreakout' => 'boolean',
-        'autoStartRecording' => 'boolean',
-        'allowStartStopRecording' => 'boolean',
-        'muteOnStart' => 'boolean',
-        'lockSettingsDisableCam' => 'boolean',
-        'lockSettingsDisableMic' => 'boolean',
-        'lockSettingsDisablePrivateChat' => 'boolean',
-        'lockSettingsDisablePublicChat' => 'boolean',
-        'lockSettingsDisableNote' => 'boolean',
-        'lockSettingsLockedLayout' => 'boolean',
-        'lockSettingsLockOnJoin' => 'boolean',
+        'editable'                           => 'boolean',
+        'record'                             => 'boolean',
+        'isBreakout'                         => 'boolean',
+        'autoStartRecording'                 => 'boolean',
+        'allowStartStopRecording'            => 'boolean',
+        'muteOnStart'                        => 'boolean',
+        'lockSettingsDisableCam'             => 'boolean',
+        'lockSettingsDisableMic'             => 'boolean',
+        'lockSettingsDisablePrivateChat'     => 'boolean',
+        'lockSettingsDisablePublicChat'      => 'boolean',
+        'lockSettingsDisableNote'            => 'boolean',
+        'lockSettingsLockedLayout'           => 'boolean',
+        'lockSettingsLockOnJoin'             => 'boolean',
         'lockSettingsLockOnJoinConfigurable' => 'boolean',
-        'meetingKeepEvents' => 'boolean',
-        'endWhenNoModerator' => 'boolean',
-        'allowModsToEjectCameras' => 'boolean',
-        'allowRequestsWithoutSession' => 'boolean',
-        'allJoinAsModerator' => 'boolean',
-        'webcamsOnlyForModerator' => 'boolean',
-        'anyoneCanStart' => 'boolean',
+        'meetingKeepEvents'                  => 'boolean',
+        'endWhenNoModerator'                 => 'boolean',
+        'allowModsToEjectCameras'            => 'boolean',
+        'allowRequestsWithoutSession'        => 'boolean',
+        'allJoinAsModerator'                 => 'boolean',
+        'webcamsOnlyForModerator'            => 'boolean',
+        'anyoneCanStart'                     => 'boolean',
     ];
 
     public function path()
@@ -175,14 +176,8 @@ class Videoconference extends Model
 
     public function isAccessible($token = null)
     {
-        if (
-            auth()->user()->videoconferences()->get()->contains('id', $this->id)
-            or ($token and $this->subscriptions->where('sharing_token', $token)->isNotEmpty()) // or has token
-            or is_admin()
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return auth()->user()->videoconferences()->get()->contains('id', $this->id)
+               || ($token && $this->subscriptions->where('sharing_token', $token)->isNotEmpty()) // or has token
+               || is_admin();
     }
 }

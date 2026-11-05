@@ -3,81 +3,20 @@
         class="d-flex flex-column"
         :style="{ marginTop: subscribable ? null : '-1.5rem' }"
     >
-        <ul v-if="!subscribable"
-            class="nav nav-pills px-3 py-2"
-            role="tablist"
-        >
-            <li class="nav-item pointer">
-                <a
-                    id="custom-filter-all"
-                    class="nav-link "
-                    :class="filter === 'all' ? 'active' : ''"
-                    data-toggle="pill"
-                    role="tab"
-                    @click="setFilter('all')"
-                >
-                    <i class="fa fa-video pe-2"></i>
-                    {{ trans('global.all') }} {{ trans('global.videoconference.title') }}
-                </a>
-            </li>
-            <li class="nav-item pointer">
-                <a
-                    id="custom-filter-by-organization"
-                    class="nav-link"
-                    :class="filter === 'by_organization' ? 'active' : ''"
-                    data-toggle="pill"
-                    role="tab"
-                    @click="setFilter('by_organization')"
-                >
-                    <i class="fa fa-university pe-2"></i>
-                    {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
-                </a>
-            </li>
-            <li
-                v-permission="'videoconference_create'"
-                class="nav-item pointer"
-            >
-                <a
-                    id="custom-filter-owner"
-                    class="nav-link"
-                    :class="filter === 'owner' ? 'active' : ''"
-                    data-toggle="pill"
-                    role="tab"
-                    @click="setFilter('owner')"
-                >
-                    <i class="fa fa-user pe-2"></i>
-                    {{ trans('global.my') }} {{ trans('global.videoconference.title') }}
-                </a>
-            </li>
-            <li class="nav-item pointer">
-                <a
-                    id="custom-filter-shared-with-me"
-                    class="nav-link"
-                    :class="filter === 'shared_with_me' ? 'active' : ''"
-                    data-toggle="pill"
-                    role="tab"
-                    @click="setFilter('shared_with_me')"
-                >
-                    <i class="fa fa-paper-plane pe-2"></i>
-                    {{ trans('global.shared_with_me') }}
-                </a>
-            </li>
-            <li
-                v-permission="'videoconference_create'"
-                class="nav-item pointer"
-            >
-                <a
-                    id="custom-tabs-shared-by-me"
-                    class="nav-link"
-                    :class="filter === 'shared_by_me' ? 'active' : ''"
-                    data-toggle="pill"
-                    role="tab"
-                    @click="setFilter('shared_by_me')"
-                >
-                    <i class="fa fa-share-nodes pe-2"></i>{{ trans('global.shared_by_me') }}
-                </a>
-            </li>
-        </ul>
+        <TabList
+            class="px-3"
+            model="curriculum"
+            :tabs="[
+                { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
+                { icon: 'fa-video', label: ['global.all', 'global.videoconference.title'], filter: 'all' },
+                { icon: 'fa-university', label: ['global.my', 'global.organization.title_singular'], filter: 'by_organization' },
+                { icon: 'fa-user', label: ['global.my', 'global.videoconference.title'], filter: 'owner', permission: 'curriculum_create' },
+                { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'videoconference_create' },
+                { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
+                { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
+            ]"
+            @change-tab="setFilter($event.filter)"
+        />
 
         <div
             id="videoconference-content"
@@ -96,28 +35,28 @@
             >
                 <template #itemIcon>
                     <i v-if="subscribable"
-                        class="fa fa-2x fa-link text-muted"
+                       class="fa fa-2x fa-link text-muted"
                     ></i>
                 </template>
             </IndexWidget>
-            <IndexWidget v-for="videoconference in videoconferences"
-                :key="'videoconferenceIndex' + videoconference.id"
-                :model="videoconference"
-                :color="videoconference.bannerColor"
-                titleField="meetingName"
-                modelName="Videoconference"
-                url="/videoconferences"
-                :showSubscribable="subscribable"
+            <IndexWidget v-for="(videoconference, index) in videoconferences"
+                         :key="'videoconferenceIndex' + videoconference.id"
+                         :model="videoconference"
+                         :color="videoconference.bannerColor"
+                         titleField="meetingName"
+                         modelName="Videoconference"
+                         url="/videoconferences"
+                         :showSubscribable="subscribable"
             >
                 <template #itemIcon>
                     <i class="fa fa-2x fa-video"></i>
                 </template>
 
                 <template #dropdown
-                    v-permission="'videoconference_edit, videoconference_delete'"
+                          v-permission="'videoconference_edit, videoconference_delete'"
                 >
                     <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-end"
+                         class="dropdown-menu dropdown-menu-end"
                     >
                         <button
                             v-permission="'videoconference_delete'"
@@ -130,7 +69,7 @@
                         </button>
                     </div>
                     <div v-else-if="ownerOrAdmin(videoconference)"
-                        class="dropdown-menu dropdown-menu-end"
+                         class="dropdown-menu dropdown-menu-end"
                     >
                         <button
                             type="button"
@@ -148,6 +87,13 @@
                             <i class="fa fa-share-alt"></i>
                             {{ trans('global.videoconference.share') }}
                         </button>
+
+                        <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                              url="/videoconferences/[id]/hide"
+                              :model="videoconference"
+                              :is-hidden="videoconference.is_hidden"
+                              @mark-status-changed="() => videoconference.splice(index, 1)"
+                        />
 
                         <hr class="my-1">
 
@@ -172,7 +118,7 @@
             :options="$dtOptions"
             :ajax="subscribable ? '/videoconferences/list?group_id=' + subscribable_id : '/videoconferences/list'"
             class="d-none"
-            @xhr="(e, settings, json) => videoconferences = json.data"
+            @xhr="xhrEvent"
         />
 
         <Teleport to="body">
@@ -199,10 +145,15 @@ import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import SubscribeVideoconferenceModal from "./SubscribeVideoconferenceModal.vue";
+import TabList from "../uiElements/TabList.vue";
+import Hide from "../tag/Hide.vue";
+
 DataTable.use(DataTablesCore);
 
 export default {
     components: {
+        Hide,
+        TabList,
         SubscribeVideoconferenceModal,
         ConfirmModal,
         MediumModal,
@@ -232,12 +183,12 @@ export default {
             showConfirm: false,
             currentVideoconference: {},
             columns: [
-                { title: 'id', data: 'id' },
-                { title: 'meetingID', data: 'meetingID' },
-                { title: 'meetingName', data: 'meetingName', searchable: true },
-                { title: 'welcomeMessage', data: 'welcomeMessage', searchable: true },
+                {title: 'id', data: 'id'},
+                {title: 'meetingID', data: 'meetingID'},
+                {title: 'meetingName', data: 'meetingName', searchable: true},
+                {title: 'welcomeMessage', data: 'welcomeMessage', searchable: true},
             ],
-            filter: 'all',
+            filter: 'favourite',
             dt: null,
         }
     },
@@ -265,6 +216,14 @@ export default {
         });
     },
     methods: {
+        xhrEvent(_e, _settings, json) {
+            // if user doesn't have any favourited objects, default to 'all'-tab
+            if (!this.subscribable && json.draw === 1 && json.data.length === 0) {
+                this.setFilter('all');
+                return;
+            }
+            this.videoconferences = json.data;
+        },
         setFilter(filter) {
             this.filter = filter;
             this.dt.ajax.url('/videoconferences/list?filter=' + this.filter).load();

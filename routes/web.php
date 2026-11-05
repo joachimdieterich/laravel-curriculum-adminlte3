@@ -257,6 +257,8 @@ Route::withoutMiddleware('auth')->group(function () {
     Route::get('videoconferences/servers', 'VideoconferenceController@servers');
     Route::get('videoconferences/{videoconference}/getStatus', 'VideoconferenceController@getStatus');
     Route::get('videoconferences/{videoconference}/start', 'VideoconferenceController@start');
+    Route::post('videoconferences/{videoconference}/favour', 'VideoconferenceController@favourVideoconference');
+    Route::post('videoconferences/{videoconference}/hide', 'VideoconferenceController@hideVideoconference');
     Route::resource('videoconferences', 'VideoconferenceController');
     Route::post('videoconferenceSubscriptions/expel', 'VideoconferenceSubscriptionController@expel');
     Route::resource('videoconferenceSubscriptions', 'VideoconferenceSubscriptionController');

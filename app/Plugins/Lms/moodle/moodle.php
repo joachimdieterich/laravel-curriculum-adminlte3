@@ -106,7 +106,7 @@ class moodle extends LmsPlugin
                 'wsfunction' => 'core_course_get_courses_by_field',
             ]
         );
-        //dump(json_decode($this->call($params)));
+
         $result = json_decode($this->call($params))->courses;
         return collect($result)->select(['id', 'fullname']);
 

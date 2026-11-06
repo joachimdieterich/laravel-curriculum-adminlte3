@@ -19,15 +19,18 @@
                 @selectedValue="id => form.type_id = id"
             />
 
-            <input
-                id="plan-title"
-                type="text"
-                class="form-control mb-3"
-                maxlength="191"
-                v-model.trim="form.title"
-                :placeholder="trans('global.title') + ' *'"
-                required
-            />
+            <div class="form-floating">
+                <input
+                    id="plan-title"
+                    type="text"
+                    class="form-control mb-3"
+                    maxlength="191"
+                    v-model.trim="form.title"
+                    placeholder=""
+                    required
+                />
+                <label for="plan-title">{{ trans('global.title') }} *</label>
+            </div>
 
             <Editor
                 id="plan-description"

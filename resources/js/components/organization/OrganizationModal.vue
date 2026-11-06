@@ -31,73 +31,74 @@
                 />
             </div>
 
-            <div class="mt-3">
-                <label for="organization-street" class="form-label">{{ trans('global.organization.fields.street') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="organization-street"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.street"
-                    :placeholder="trans('global.organization.fields.street')"
+                    placeholder=""
                 />
+                <label for="organization-street">{{ trans('global.organization.fields.street') }}</label>
             </div>
 
-            <div class="mt-3">
-                <label for="organization-postcode" class="form-label">{{ trans('global.organization.fields.postcode') }}</label>
-                <input
-                    id="organization-postcode"
-                    type="text"
-                    class="form-control"
-                    v-model.trim="form.postcode"
-                    :placeholder="trans('global.organization.fields.postcode')"
-                />
+            <div class="input-group mt-4">
+                <div class="form-floating w-25">
+                    <input
+                        id="organization-postcode"
+                        type="text"
+                        class="form-control"
+                        v-model.trim="form.postcode"
+                        placeholder=""
+                    />
+                    <label for="organization-postcode">{{ trans('global.organization.fields.postcode') }}</label>
+                </div>
+                <div class="form-floating w-75">
+                    <input
+                        id="organization-city"
+                        type="text"
+                        class="form-control"
+                        v-model.trim="form.city"
+                        placeholder=""
+                    />
+                    <label for="organization-city">{{ trans('global.organization.fields.city') }}</label>
+                </div>
             </div>
 
-            <div class="mt-3">
-                <label for="organization-city" class="form-label">{{ trans('global.organization.fields.city') }}</label>
-                <input
-                    id="organization-city"
-                    type="text"
-                    class="form-control"
-                    v-model.trim="form.city"
-                    :placeholder="trans('global.organization.fields.city')"
-                />
-            </div>
-
-            <div class="mt-3">
-                <label for="organization-lms" class="form-label">{{ trans('global.organization.fields.lms_url') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="organization-lms"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.lms_url"
-                    placeholder="https:\\[your_lms_url]"
+                    placeholder="https://[your_lms_url]"
                 />
+                <label for="organization-lms">{{ trans('global.organization.fields.lms_url') }}</label>
             </div>
 
-            <div class="mt-3">
-                <label for="organization-phone" class="form-label">{{ trans('global.organization.fields.phone') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="organization-phone"
                     type="text"
                     class="form-control"
                     v-model.trim="form.phone"
-                    :placeholder="trans('global.organization.fields.phone')"
+                    placeholder=""
                 />
+                <label for="organization-phone">{{ trans('global.organization.fields.phone') }}</label>
             </div>
 
-            <div class="mt-3">
-                <label for="organization-email" class="form-label">{{ trans('global.organization.fields.email') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="organization-email"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.email"
-                    :placeholder="trans('global.organization.fields.email')"
+                    placeholder=""
                 />
+                <label for="organization-email">{{ trans('global.organization.fields.email') }}</label>
             </div>
 
             <Select2

@@ -8,14 +8,17 @@
         :disable-save-button="!form.latitude || !form.longitude"
     >
         <template #general-extended>
-            <input
-                id="marker-teaser-text"
-                type="text"
-                class="form-control mt-3"
-                maxlength="191"
-                v-model.trim="form.teaser_text"
-                :placeholder="trans('global.marker.fields.teaser_text')"
-            />
+            <div class="form-floating mt-3">
+                <input
+                    id="marker-teaser-text"
+                    type="text"
+                    class="form-control mt-3"
+                    maxlength="191"
+                    v-model.trim="form.teaser_text"
+                    placeholder=""
+                />
+                <label for="marker-teaser-text">{{ trans('global.marker.fields.teaser_text') }}</label>
+            </div>
 
             <div class="mt-3">
                 <Editor
@@ -26,16 +29,16 @@
                 />
             </div>
 
-            <div v-if="checkPermission('is_admin')" class="mt-3">
-                <label for="marker-map-id" class="form-label">Map ID</label>
+            <div v-if="checkPermission('is_admin')" class="form-floating mt-3">
                 <input
                     id="marker-map-id"
                     type="number"
                     min="1"
                     class="form-control"
                     v-model="form.map_id"
-                    placeholder="Map ID"
+                    placeholder=""
                 />
+                <label for="marker-map-id">Map ID</label>
             </div>
 
             <Select2
@@ -69,84 +72,90 @@
                     </button>
 
                     <span class="input-group">
-                        <input
-                            id="marker-latitude"
-                            type="number"
-                            class="form-control"
-                            v-model.trim="form.latitude"
-                            placeholder="Latitude"
-                            required
-                        />
-                        <input
-                            id="marker-longitude"
-                            type="number"
-                            class="form-control"
-                            v-model.trim="form.longitude"
-                            placeholder="Longitude"
-                            required
-                        />
+                        <div class="form-floating">
+                            <input
+                                id="marker-latitude"
+                                type="number"
+                                class="form-control"
+                                v-model.trim="form.latitude"
+                                placeholder=""
+                                required
+                            />
+                            <label for="marker-latitude">Latitude</label>
+                        </div>
+                        <div class="form-floating">
+                            <input
+                                id="marker-longitude"
+                                type="number"
+                                class="form-control"
+                                v-model.trim="form.longitude"
+                                placeholder=""
+                                required
+                            />
+                            <label for="marker-longitude">Longitude</label>
+                        </div>
                     </span>
                 </div>
             </div>
 
-            <div v-if="checkPermission('is_admin')" class="mt-3">
-                <label for="marker-tags" class="form-label">{{ trans('global.tag.title') }}</label>
+            <div v-if="checkPermission('is_admin')" class="form-floating mt-4">
                 <input
                     id="marker-tags"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.tags"
-                    :placeholder="trans('global.tag.title')"
+                    placeholder=""
                 />
+                <label for="marker-tags">{{ trans('global.tag.title') }}</label>
             </div>
 
-            <div class="mt-3">
-                <label for="marker-author" class="form-label">{{ trans('global.marker.fields.author') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="marker-author"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.author"
-                    :placeholder="trans('global.marker.fields.author')"
+                    placeholder=""
                 />
+                <label for="marker-author">{{ trans('global.marker.fields.author') }}</label>
             </div>
 
-            <div class="mt-3">
-                <label for="marker-address" class="form-label">{{ trans('global.address') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="marker-address"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.address"
-                    :placeholder="trans('global.address')"
+                    placeholder=""
                 />
+                <label for="marker-address">{{ trans('global.address') }}</label>
             </div>
 
-            <div class="mt-3">
-                <label for="marker-url" class="form-label">{{ trans('global.url') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="marker-url"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.url"
-                    :placeholder="trans('global.url')"
+                    placeholder=""
                 />
+                <label for="marker-url">URL</label>
             </div>
 
-            <div class="mt-3">
-                <label for="marker-url-title" class="form-label">{{ trans('global.url_title') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="marker-url-title"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.url_title"
-                    placeholder="Link"
+                    placeholder=""
                 />
+                <label for="marker-url-title">{{ trans('global.url_title') }}</label>
             </div>
         </template>
     </Modal>

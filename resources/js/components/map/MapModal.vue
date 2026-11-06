@@ -9,15 +9,18 @@
         :show-medium-field="true"
     >
         <template #general-extended>
-            <input
-                id="map-subtitle"
-                type="text"
-                class="form-control mt-3"
-                maxlength="191"
-                v-model.trim="form.subtitle"
-                :placeholder="trans('global.map.fields.subtitle')"
-                required
-            />
+            <div class="form-floating mt-3">
+                <input
+                    id="map-subtitle"
+                    type="text"
+                    class="form-control"
+                    maxlength="191"
+                    v-model.trim="form.subtitle"
+                    placeholder=""
+                    required
+                />
+                <label for="map-subtitle">{{ trans('global.map.fields.subtitle') }}</label>
+            </div>
 
             <div class="mt-3">
                 <Editor
@@ -56,55 +59,57 @@
                 @selectedValue="id => form.category_id = id[0]"
             />
 
-            <div v-if="isAdmin" class="mt-3">
-                <label for="map-border-url" class="form-label">{{ trans('global.map.fields.border_url') }}</label>
-                <input
-                    id="map-border-url"
-                    type="text"
-                    class="form-control"
-                    maxlength="191"
-                    v-model.trim="form.border_url"
-                    :placeholder="trans('global.map.fields.border_url_helper')"
-                    required
-                />
-            </div>
-
-            <div v-if="isAdmin" class="mt-3">
-                <label for="map-latitude" class="form-label">{{ trans('global.map.fields.latitude') }}</label>
-                <input
-                    id="map-latitude"
-                    type="text"
-                    class="form-control"
-                    maxlength="191"
-                    v-model.trim="form.latitude"
-                    :placeholder="trans('global.map.fields.latitude')"
-                />
-            </div>
-
-            <div v-if="isAdmin" class="mt-3">
-                <label for="map-longitude" class="form-label">{{ trans('global.map.fields.longitude') }}</label>
-                <input
-                    id="map-longitude"
-                    type="text"
-                    class="form-control"
-                    maxlength="191"
-                    v-model.trim="form.longitude"
-                    :placeholder="trans('global.map.fields.longitude')"
-                />
-            </div>
-
-            <div v-if="isAdmin" class="mt-3">
-                <label for="map-zoom" class="form-label">{{ trans('global.map.fields.zoom') }}</label>
-                <input
-                    id="map-zoom"
-                    type="number"
-                    class="form-control"
-                    min="0"
-                    max="15"
-                    v-model="form.zoom"
-                    :placeholder="trans('global.map.fields.zoom')"
-                    required
-                />
+            <div v-if="isAdmin" class="d-flex flex-column gap-4 mt-4">
+                <div class="form-floating">
+                    <input
+                        id="map-border-url"
+                        type="text"
+                        class="form-control"
+                        maxlength="191"
+                        v-model.trim="form.border_url"
+                        :placeholder="trans('global.map.fields.border_url_helper')"
+                        required
+                    />
+                    <label for="map-border-url">{{ trans('global.map.fields.border_url') }}</label>
+                </div>
+    
+                <div class="form-floating">
+                    <input
+                        id="map-latitude"
+                        type="text"
+                        class="form-control"
+                        maxlength="191"
+                        v-model.trim="form.latitude"
+                        placeholder=""
+                    />
+                    <label for="map-latitude">{{ trans('global.map.fields.latitude') }}</label>
+                </div>
+    
+                <div class=" form-floating">
+                    <input
+                        id="map-longitude"
+                        type="text"
+                        class="form-control"
+                        maxlength="191"
+                        v-model.trim="form.longitude"
+                        placeholder=""
+                    />
+                    <label for="map-longitude">{{ trans('global.map.fields.longitude') }}</label>
+                </div>
+    
+                <div class="form-floating">
+                    <input
+                        id="map-zoom"
+                        type="number"
+                        class="form-control"
+                        min="0"
+                        max="15"
+                        v-model="form.zoom"
+                        placeholder=""
+                        required
+                    />
+                    <label for="map-zoom">{{ trans('global.map.fields.zoom') }}</label>
+                </div>
             </div>
         </template>
     </Modal>

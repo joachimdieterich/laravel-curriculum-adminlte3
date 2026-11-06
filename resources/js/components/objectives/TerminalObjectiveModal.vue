@@ -33,20 +33,21 @@
                 id="objective_type_id"
                 url="/objectiveTypes"
                 model="objectiveType"
-                css="mb-3"
+                css="mb-4"
                 :label="trans('global.objectiveType.title_singular') + ' *'"
                 :selected="form.objective_type_id"
                 @selectedValue="id => form.objective_type_id = id[0]"
             />
 
-            <div>
-                <label for="time_approach" class="form-label">{{ trans('global.terminalObjective.fields.time_approach') }}</label>
+            <div class="form-floating">
                 <input
                     id="time_approach"
                     type="text"
                     class="form-control"
                     v-model="form.time_approach"
+                    placeholder=""
                 />
+                <label for="time_approach">{{ trans('global.terminalObjective.fields.time_approach') }}</label>
             </div>
         </template>
         <template #permissions>

@@ -6,49 +6,43 @@
         :disable-save-button="!form.email || !form.phone || !form.mobile"
     >
         <template #general>
-            <div class="mb-3">
-                <label for="contact-detail-email" class="form-label">
-                    {{ trans('global.contactDetail.fields.email') }} *
-                </label>
+            <div class="form-floating mb-4">
                 <input
                     type="text"
                     id="contact-detail-email"
                     class="form-control"
                     maxlength="191"
                     v-model="form.email"
-                    :placeholder="trans('global.contactDetail.fields.email')"
+                    placeholder=""
                     required
                 />
+                <label for="contact-detail-email">E-Mail *</label>
             </div>
         
-            <div class="mb-3">
-                <label for="contact-detail-phone" class="form-label">
-                    {{ trans('global.contactDetail.fields.phone') }} *
-                </label>
+            <div class="form-floating mb-4">
                 <input
                     type="text"
                     id="contact-detail-phone"
                     class="form-control"
                     maxlength="191"
                     v-model="form.phone"
-                    :placeholder="trans('global.contactDetail.fields.phone')"
+                    placeholder=""
                     required
                 />
+                <label for="contact-detail-phone">{{ trans('global.contactDetail.fields.phone') }} *</label>
             </div>
 
-            <div class="mb-3">
-                <label for="contact-detail-mobile" class="form-label">
-                    {{ trans('global.contactDetail.fields.mobile') }} *
-                </label>
+            <div class="form-floating mb-3">
                 <input
                     type="text"
                     id="contact-detail-mobile"
                     class="form-control"
                     maxlength="191"
                     v-model="form.mobile"
-                    :placeholder="trans('global.contactDetail.fields.mobile')"
+                    placeholder=""
                     required
                 />
+                <label for="contact-detail-mobile">{{ trans('global.contactDetail.fields.mobile') }} *</label>
             </div>
 
             <div>

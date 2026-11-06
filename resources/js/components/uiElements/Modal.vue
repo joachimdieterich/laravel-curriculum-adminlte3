@@ -59,15 +59,20 @@
                                             />
                                             <label :for="model + '-title'">{{ trans('global.title') }} *</label>
                                         </div>
-                                        <textarea v-if="showDescriptionField"
-                                            :id="model + '-description'"
-                                            :name="model + '-description'"
-                                            class="form-control mt-3"
-                                            style="max-height: 35svh;"
-                                            rows="4"
-                                            :placeholder="trans('global.description')"
-                                            v-model.trim="form.description"
-                                        ></textarea>
+                                        <div v-if="showDescriptionField"
+                                            class="form-floating"
+                                        >
+                                            <textarea
+                                                :id="model + '-description'"
+                                                :name="model + '-description'"
+                                                class="form-control mt-3"
+                                                style="max-height: 35svh;"
+                                                rows="4"
+                                                placeholder=""
+                                                v-model.trim="form.description"
+                                            ></textarea>
+                                            <label :for="model + '-description'">{{ trans('global.description') }}</label>
+                                        </div>
                                         <Select2 v-if="showOwnerField"
                                             :id="model + '-owner'"
                                             css="mt-3"

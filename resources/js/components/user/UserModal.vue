@@ -7,7 +7,7 @@
     >
         <template #general>
             <div v-if="checkPermission('is_admin')"
-                class="mb-3"
+                class="mb-4"
             >
                 <label for="user-common-name" class="form-label">{{ trans('global.common_name') }}</label>
                 <input
@@ -21,71 +21,71 @@
                 />
             </div>
 
-            <div class="mb-3">
-                <label for="username" class="form-label">{{ trans('global.user.fields.username') }} *</label>
+            <div class="form-floating mb-4">
                 <input
                     id="username"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model="form.username"
-                    :placeholder="trans('global.user.fields.username')"
+                    placeholder=""
                     required
                 />
+                <label for="username">{{ trans('global.user.fields.username') }} *</label>
             </div>
 
-            <div class="mb-3">
-                <label for="user-firstname" class="form-label">{{ trans('global.user.fields.firstname') }} *</label>
+            <div class="form-floating mb-4">
                 <input
                     id="user-firstname"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model="form.firstname"
-                    :placeholder="trans('global.user.fields.firstname')"
+                    placeholder=""
                     required
                 />
+                <label for="user-firstname">{{ trans('global.user.fields.firstname') }} *</label>
             </div>
 
-            <div class="mb-3">
-                <label for="user-lastname" class="form-label">{{ trans('global.user.fields.lastname') }} *</label>
+            <div class="form-floating mb-4">
                 <input
                     id="user-lastname"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model="form.lastname"
-                    :placeholder="trans('global.user.fields.lastname')"
+                    placeholder=""
                     required
                 />
+                <label for="user-lastname">{{ trans('global.user.fields.lastname') }} *</label>
             </div>
 
-            <div>
-                <label for="user-email" class="form-label">{{ trans('global.user.fields.email') }} *</label>
+            <div class="form-floating">
                 <input
                     id="user-email"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model="form.email"
-                    :placeholder="trans('global.user.fields.email')"
+                    placeholder=""
                     required
                 />
+                <label for="user-email">{{ trans('global.user.fields.email') }} *</label>
             </div>
 
             <div v-if="!form.id"
-                class="mt-3"
+                class="form-floating mt-4"
             >
-                <label for="user-password" class="form-label">{{ trans('global.user.fields.password') }} *</label>
                 <input
                     id="user-password"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model="form.password"
-                    :placeholder="trans('global.user.fields.password')"
+                    placeholder=""
                     required
                 />
+                <label for="user-password">{{ trans('global.user.fields.password') }} *</label>
             </div>
         </template>
     </Modal>

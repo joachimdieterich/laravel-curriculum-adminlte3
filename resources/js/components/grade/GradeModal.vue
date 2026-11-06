@@ -8,8 +8,7 @@
         :disable-save-button="!form.external_begin || !form.external_end"
     >
         <template #general-extended>
-            <div class="mt-3">
-                <label for="grade-begin" class="form-label">{{ trans('global.grade.fields.external_begin') }} *</label>
+            <div class="form-floating mt-4">
                 <input
                     id="grade-begin"
                     type="number"
@@ -19,10 +18,10 @@
                     placeholder="external_begin"
                     required
                 />
+                <label for="grade-begin">{{ trans('global.grade.fields.external_begin') }} *</label>
             </div>
 
-            <div class="mt-3">
-                <label for="grade-end">{{ trans('global.grade.fields.external_end') }} *</label>
+            <div class="form-floating mt-4">
                 <input
                     id="grade-end"
                     type="number"
@@ -32,6 +31,7 @@
                     placeholder="external_end"
                     required
                 />
+                <label for="grade-end">{{ trans('global.grade.fields.external_end') }} *</label>
             </div>
 
             <Select2

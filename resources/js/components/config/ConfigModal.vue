@@ -6,67 +6,67 @@
         :disable-save-button="!form.key || !form.value || !form.data_type"
     >
         <template #general>
-            <div class="mb-3">
-                <label for="config-key" class="form-label">{{ trans('global.config.fields.key') }} *</label>
+            <div class="form-floating mb-4">
                 <input
                     id="config-key"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.key"
-                    placeholder="Title"
+                    placeholder=""
                     required
                 />
+                <label for="config-key">{{ trans('global.config.fields.key') }} *</label>
             </div>
 
-            <div class="mb-3">
-                <label for="config-value" class="form-label">{{ trans('global.config.fields.value') }} *</label>
+            <div class="form-floating mb-4">
                 <textarea
                     id="config-value"
                     class="form-control"
                     rows="3"
                     v-model.trim="form.value"
+                    placeholder=""
                 ></textarea>
+                <label for="config-value">{{ trans('global.config.fields.value') }} *</label>
             </div>
 
-            <div class="mb-3">
-                <label for="config-referenceable-type" class="form-label">
-                    {{ trans('global.config.fields.referenceable_type') }}
-                </label>
+            <div class="form-floating mb-4">
                 <input
                     id="config-referenceable-type"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.referenceable_type"
+                    placeholder=""
                     required
                 />
+                <label for="config-referenceable-type">{{ trans('global.config.fields.referenceable_type') }}</label>
             </div>
 
-            <div class="mb-3">
-                <label for="config-referenceable-id" class="form-label">
-                    {{ trans('global.config.fields.referenceable_id') }}
-                </label>
+            <div class="form-floating mb-4">
                 <input
                     id="config-referenceable-id"
                     type="number"
                     min="1"
                     class="form-control"
                     v-model="form.referenceable_id"
+                    placeholder=""
                     required
                 />
+                <label for="config-referenceable-id">{{ trans('global.config.fields.referenceable_id') }}</label>
             </div>
 
-            <div>
-                <label for="config-data-type" class="form-label">{{ trans('global.config.fields.data_type') }} *</label>
+            <div class="form-floating">
                 <input
                     id="config-data-type"
                     type="text"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.data_type"
+                    placeholder=""
                     required
                 />
+                <label for="config-data-type">{{ trans('global.config.fields.data_type') }} *</label>
             </div>
         </template>
     </Modal>

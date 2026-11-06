@@ -76,25 +76,28 @@
                                 class="accordion-collapse collapse show"
                             >
                                 <div>
-                                    <input
-                                        id="title"
-                                        type="text"
-                                        class="form-control mb-3"
-                                        maxlength="191"
-                                        v-model.trim="form.title"
-                                        :placeholder="trans('global.title') + ' *'"
-                                        required
-                                    />
+                                    <div class="form-floating">
+                                        <input
+                                            id="curriculum-title"
+                                            type="text"
+                                            class="form-control mb-3"
+                                            maxlength="191"
+                                            v-model.trim="form.title"
+                                            placeholder=""
+                                            required
+                                        />
+                                        <label for="curriculum-title">{{ trans('global.title') }} *</label>
+                                    </div>
                                     <div class="mb-3">
                                         <Editor
-                                            id="description"
+                                            id="curriculum-description"
                                             licenseKey="gpl"
                                             :init="tinyMCE"
                                             v-model="form.description"
                                         />
                                     </div>
                                     <Select2 v-if="form.owner_id == $userId || checkPermission('is_admin')"
-                                        id="user_id"
+                                        id="curriculum-owner"
                                         css="mb-3"
                                         :label="trans('global.change_owner')"
                                         model="User"

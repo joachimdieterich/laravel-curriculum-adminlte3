@@ -27,35 +27,34 @@
                 />
             </div>
 
-            <div class="mb-3">
-                <CSelect
-                    inputId="enabling-level"
-                    :searchable="false"
-                    url="/levels"
-                    label="text"
-                    :selected="form.level_id"
-                    :handle-fetched-selected-fetch-data="data => {
-                        data[0].text = data[0].title;
-                        return data[0];
-                    }"
-                    @selectedValue="level => form.level_id = level?.id ?? null"
-                >
-                    <template #label>
-                        <label for="enabling-level" class="form-label">
-                            {{ trans('global.level.title_singular') }}
-                        </label>
-                    </template>
-                </CSelect>
-            </div>
+            <CSelect
+                inputId="enabling-level"
+                :searchable="false"
+                url="/levels"
+                label="text"
+                :selected="form.level_id"
+                :handle-fetched-selected-fetch-data="data => {
+                    data[0].text = data[0].title;
+                    return data[0];
+                }"
+                @selectedValue="level => form.level_id = level?.id ?? null"
+            >
+                <template #label>
+                    <label for="enabling-level" class="form-label">
+                        {{ trans('global.level.title_singular') }}
+                    </label>
+                </template>
+            </CSelect>
 
-            <div>
-                <label for="time_approach" class="form-label">{{ trans('global.enablingObjective.fields.time_approach') }}</label>
+            <div class="form-floating mt-4">
                 <input
                     id="time_approach"
                     type="text"
                     class="form-control"
                     v-model="form.time_approach"
+                    placeholder=""
                 />
+                <label for="time_approach">{{ trans('global.enablingObjective.fields.time_approach') }}</label>
             </div>
         </template>
         <template #permissions>

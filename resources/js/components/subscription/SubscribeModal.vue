@@ -83,13 +83,15 @@
                     class="tab-pane fade"
                     role="tabpanel"
                 >
-                    <div class="form-group pt-2">
+                    <div class="form-floating my-2">
                         <input
+                            id="token-title"
                             v-model="nameToken"
-                            class="form-control w-100 mb-2"
-                            :placeholder="trans('global.token_title') + ' *'"
+                            class="form-control w-100"
+                            placeholder=""
                             required
                         />
+                        <label for="token-title">{{ trans('global.token_title') }} *</label>
                     </div>
                     <VueDatePicker
                         v-model="endDateToken"

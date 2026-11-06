@@ -8,16 +8,17 @@
         :disable-save-button="!form.organization_type_id"
     >
         <template #general-extended>
-            <div class="mt-3">
+            <div class="form-floating mt-4">
                 <input
                     type="text"
                     id="subject-title-short"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.title_short"
-                    :placeholder="trans('global.subject.fields.title_short')"
+                    placeholder=""
                     required
                 />
+                <label for="subject-title-short">{{ trans('global.subject.fields.title_short') }}</label>
             </div>
 
             <Select2

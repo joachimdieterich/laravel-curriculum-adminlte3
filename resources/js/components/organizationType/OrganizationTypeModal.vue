@@ -8,16 +8,17 @@
         :disable-save-button="!form.external_id"
     >
         <template #general-extended>
-            <div class="mt-3">
+            <div class="form-floating mt-4">
                 <input
                     id="organization-type-external-id"
                     type="number"
                     min="0"
                     class="form-control"
                     v-model="form.external_id"
-                    :placeholder="trans('global.organizationType.fields.external_id') + ' *'"
+                    placeholder=""
                     required
                 />
+                <label for="organization-type-external-id">{{ trans('global.organizationType.fields.external_id') }} *</label>
             </div>
 
             <Select2

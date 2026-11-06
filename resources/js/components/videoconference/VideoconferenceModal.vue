@@ -52,48 +52,51 @@
                 />
             </div>
 
-            <div class="mt-3">
-                <label for="videoconference-max-participants" class="form-label">
-                    {{ trans('global.videoconference.fields.maxParticipants') }}
-                </label>
+            <div class="form-floating mt-4">
                 <input
                     type="number"
                     id="videoconference-max-participants"
                     class="form-control"
                     v-model="form.maxParticipants"
+                    placeholder=""
                 />
+                <label for="videoconference-max-participants" class="form-label">
+                    {{ trans('global.videoconference.fields.maxParticipants') }}
+                </label>
                 <small class="help-block">{{ trans('global.videoconference.fields.maxParticipants_helper') }}</small>
             </div>
 
-            <div class="mt-3">
-                <label for="videoconference-duration" class="form-label">
-                    {{ trans('global.videoconference.fields.duration') }}
-                </label>
+            <div class="form-floating mt-4">
                 <input
                     type="number"
                     id="videoconference-duration"
                     class="form-control"
                     v-model="form.duration"
+                    placeholder=""
                 />
+                <label for="videoconference-duration" class="form-label">
+                    {{ trans('global.videoconference.fields.duration') }}
+                </label>
                 <small class="help-block">{{ trans('global.videoconference.fields.duration_helper') }}</small>
             </div>
 
-            <div class="mt-3">
-                <label for="videoconference-logout-url" class="form-label">
-                    {{ trans('global.videoconference.fields.logoutUrl') }}
-                </label>
+            <div class="form-floating mt-4">
                 <input
                     type="text"
                     id="videoconference-logout-url"
                     class="form-control"
                     maxlength="191"
                     v-model.trim="form.logoutUrl"
+                    placeholder=""
                 />
-                <p class="help-block">{{ trans('global.videoconference.fields.logoutUrl_helper') }}</p>
+                <label for="videoconference-logout-url" class="form-label">
+                    {{ trans('global.videoconference.fields.logoutUrl') }}
+                </label>
             </div>
 
             <Switch
                 id="videoconference-end-when-no-moderator"
+                class="mt-3"
                 label="global.videoconference.fields.endWhenNoModerator"
                 v-model="form.endWhenNoModerator"
             />
@@ -115,18 +118,21 @@
         <template #permissions>
             <Switch
                 id="videoconference-mute-on-start"
+                class="mb-2"
                 label="global.videoconference.fields.muteOnStart"
                 v-model="form.muteOnStart"
             />
 
             <Switch
                 id="videoconference-ask-moderator"
+                class="mb-2"
                 label="global.videoconference.ASK_MODERATOR"
                 v-model="form.askModerator"
             />
 
             <Switch
                 id="videoconference-anyone-can-start"
+                class="mb-2"
                 label="global.videoconference.fields.anyoneCanStart"
                 v-model="form.anyoneCanStart"
             />
@@ -158,12 +164,14 @@
                     <div>
                         <Switch
                             id="videoconference-lock-settings-disable-cam"
+                            class="mb-2"
                             label="global.videoconference.fields.lockSettingsDisableCam"
                             v-model="form.lockSettingsDisableCam"
                         />
     
                         <Switch
                             id="videoconference-lock-settings-disable-mic"
+                            class="mb-2"
                             label="global.videoconference.fields.lockSettingsDisableMic"
                             v-model="form.lockSettingsDisableMic"
                         />
@@ -196,12 +204,14 @@
                     <div>
                         <Switch
                             id="videoconference-lock-settings-disable-private-chat"
+                            class="mb-2"
                             label="global.videoconference.fields.lockSettingsDisablePrivateChat"
                             v-model="form.lockSettingsDisablePrivateChat"
                         />
 
                         <Switch
                             id="videoconference-lock-settings-disable-public-chat"
+                            class="mb-2"
                             label="global.videoconference.fields.lockSettingsDisablePublicChat"
                             v-model="form.lockSettingsDisablePublicChat"
                         />
@@ -244,20 +254,22 @@
 
                         <Switch
                             id="videoconference-lock-settings-locked-layout"
+                            class="mt-2"
                             label="global.videoconference.fields.lockSettingsLockedLayout"
                             v-model="form.lockSettingsLockedLayout"
                         />
     
-                        <div class="mt-3">
-                            <label for="videoconference-banner-text" class="form-label">
-                                {{ trans('global.videoconference.fields.bannerText') }}
-                            </label>
+                        <div class="form-floating mt-4">
                             <input
                                 type="text"
                                 id="videoconference-banner-text"
                                 class="form-control"
                                 v-model.trim="form.bannerText"
+                                placeholder=""
                             />
+                            <label for="videoconference-banner-text" class="form-label">
+                                {{ trans('global.videoconference.fields.bannerText') }}
+                            </label>
                         </div>
                     </div>
                 </div>

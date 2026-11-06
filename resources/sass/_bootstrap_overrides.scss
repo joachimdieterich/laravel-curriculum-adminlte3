@@ -61,6 +61,12 @@
     }
 }
 
+.input-group {
+    box-shadow: var(--shadow-subtle);
+
+    & .form-control { box-shadow: none; }
+}
+
 .form-control, .form-check-input {
     box-shadow: var(--shadow-subtle);
 

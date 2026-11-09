@@ -37,54 +37,50 @@
                 height="142"
                 class="ml-4"
             />
-            <h4 class="px-3">{{title}}</h4>
+            <h4 class="px-3">{{ title }}</h4>
             <div class="col-12">
                 <button v-for="(value, id) in tags"
-                    type="button"
-                    class="btn btn-default me-3 mb-3"
-                    @click="loader(id, true)"
+                        type="button"
+                        class="btn btn-default me-3 mb-3"
+                        @click="loader(id, true)"
                 >
                     {{ value }}
                 </button>
             </div>
         </div>
-        <div class="col-12 p-0">
+        <div class="col-12 p-0 accordion accordion-flush">
             <div v-for="event in entries"
-                class="border-bottom card collapsed-card mb-0"
+                 class="border-bottom mb-0 accordion-item"
             >
-                <div class="card-header pointer">
-                    <span
-                        :data-target="'navigator-item-content-' + event.ARTIKEL_NR"
-                        data-card-widget="collapse"
-                    >
+                <div class="pointer accordion-header"
+                     :data-bs-target="'#navigator-item-content-' + event.ARTIKEL_NR"
+                     data-bs-toggle="collapse"
+                     aria-expanded="false"
+                     :aria-controls="'navigator-item-content-' + event.ARTIKEL_NR">
+                    <span>
                         {{ event.ARTIKEL }}
                     </span>
-                    <div class="card-tools pull-right">
+                    <div class="accordion-tools pull-right">
                         {{ dateforHumans(event.B_DAT, event.E_DAT) }}
-                        <button
-                            :id="'navigator-item-content-' + event.ARTIKEL_NR"
-                            class="btn btn-tool"
-                            :data-target="'#navigator-item-content-' + event.ARTIKEL_NR"
-                            data-card-widget="collapse"
-                        >
+                        <button class="btn btn-tool">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
                 </div>
                 <div
                     :id="'navigator-item-content-' + event.ARTIKEL_NR"
-                    class="card-body collapse bg-gray-light"
+                    class="accordion-body accordion-collapse collapse bg-gray-light"
                 >
                     <div class="row">
                         <div v-if="event.BEZ_1_2.length > 2"
-                            class="col-2"
+                             class="col-2"
                         >
                             <strong>Untertitel</strong>
                         </div>
 
                         <div v-if="event.BEZ_1_2.length > 2"
-                            class="col-10 pre-formatted"
-                            v-html="event.BEZ_1_2"
+                             class="col-10 pre-formatted"
+                             v-html="event.BEZ_1_2"
                         ></div>
 
                         <div class="col-2">
@@ -95,7 +91,7 @@
                         <div class="col-2"><strong>Termine</strong></div>
                         <div class="col-10">
                             <div v-for="termin in event.termine"
-                                class="row m--padding-bottom-5"
+                                 class="row m--padding-bottom-5"
                             >
                                 <div class="col-2 m-badge m-badge--info m-badge--wide m-badge--rounded">
                                     {{ dateforHumans(termin.DATUM) }}
@@ -129,11 +125,11 @@
                                 <i class="fa fa-print"></i> Drucken
                             </a>
 
-    <!--                        <a :href="event.LINK_ANMELDUNG"
-                               class="btn btn-secondary"
-                               target="_blank">
-                                <i class="fa fa-sign-in"></i> Anmelden
-                            </a>-->
+                            <!--                        <a :href="event.LINK_ANMELDUNG"
+                                                       class="btn btn-secondary"
+                                                       target="_blank">
+                                                        <i class="fa fa-sign-in"></i> Anmelden
+                                                    </a>-->
                         </div>
                     </div>
                 </div>
@@ -153,22 +149,22 @@
             style="background-color: #EDEDED"
         >
             <div v-if="Object.keys(entries).length > 0"
-                class="row me-1 pt-3"
+                 class="row me-1 pt-3"
             >
                 <span class="col-8"></span>
                 <span v-if="Object.keys(entries).length > 0"
-                    class="col-2 pe-0"
+                      class="col-2 pe-0"
                 >
                     <button v-if="page > 1"
-                        type="button"
-                        class="btn btn-block btn-secondary"
-                        @click="lastPage()"
+                            type="button"
+                            class="btn btn-block btn-secondary"
+                            @click="lastPage()"
                     >
                         <i class="fa fa-arrow-left"></i>
                     </button>
                 </span>
                 <span v-if="Object.keys(entries).length > 9"
-                    class="col-2"
+                      class="col-2"
                 >
                     <button
                         type="button"
@@ -223,20 +219,21 @@ export default {
                 id = this.currentSearch;
             }
 
-            document.getElementById('loading-events').style.display = 'none';
+            document.getElementById('loading-events').style.display = '';
             try {
                 this.entries = (await axios.post('/eventSubscriptions/getEvents', {
                     search: id,
                     page: this.page,
                     plugin: 'evewa'
                 })).data.events.data;
-                document.getElementById('loading-events').style.display = '';
-            } catch(error) {
+                document.getElementById('loading-events').style.display = 'none';
+            } catch (error) {
                 console.log(error);
             }
             this.tags = JSON.parse(this.eventsearchtag);
             this.currentSearch = id;
-            this.search = ''; //empty search field
+            console.log(this.search);
+            // this.search = ''; //empty search field
         },
         lastPage() {
             this.page = this.page - 1

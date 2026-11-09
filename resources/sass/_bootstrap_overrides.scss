@@ -1,19 +1,36 @@
 .accordion-item {
     border-radius: 0 !important;
 
-    &:last-child { border-bottom: 0; }
+    &:last-child {
+        border-bottom: 0;
+    }
+
     > .accordion-header {
         &:hover {
             cursor: pointer;
             background-color: #e9ecef;
         }
+
         > .accordion-button {
             color: inherit;
             background-color: inherit;
             font-size: 1.125rem;
         }
     }
-    > .accordion-collapse > div { padding: 1.25rem; }
+
+    > .accordion-collapse > div {
+        padding: 1.25rem;
+    }
+}
+
+.accordion-header {
+    padding: 1rem 1rem;
+    position: relative;
+}
+
+.accordion-header > .accordion-tools {
+    float: right;
+    margin-right: -0.5rem;
 }
 
 .dropdown-menu {
@@ -42,4 +59,6 @@
     font-weight: 600;
 }
 
-.datatable { @extend .px-3, .pt-2; }
+.datatable {
+    @extend .px-3, .pt-2;
+}

@@ -769,13 +769,13 @@ return [
         'create'         => 'Create navigator',
         'edit'           => 'Edit navigator',
     ],
-    'navigator_view' => [
+    'navigatorView' => [
         'title'          => 'Navigator views',
         'title_singular' => 'Navigator view',
         'create'         => 'Create navigator view',
         'edit'           => 'Edit navigator view',
     ],
-    'navigator_item' => [
+    'navigatorItem' => [
         'title'          => 'Navigator items',
         'title_singular' => 'Navigator item',
         'create'         => 'Create navigator block',
@@ -1115,10 +1115,10 @@ return [
         ],
     ],
     'comment' => [
-        'title' => 'Comments',
+        'title'          => 'Comments',
         'title_singular' => 'comment',
-        'delete' => 'Delete comment',
-        'typing' => "Someone's typing",
+        'delete'         => 'Delete comment',
+        'typing'         => "Someone's typing",
     ],
     'kanbanStatus' => [
         'title'          => 'Columns',

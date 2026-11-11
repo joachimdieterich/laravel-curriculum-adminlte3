@@ -6,43 +6,38 @@ use App\Helpers\QRCodeHelper;
 use App\Kanban;
 use App\KanbanSubscription;
 use App\User;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
+use Gate;
 
 class KanbanSubscriptionController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return array|void
      */
     public function index()
     {
         $tokens = null;
-        if (request()->wantsJson())
-        {
-            $tokenscodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
-                ->where('sharing_token', "!=", null)
+        if (request()->wantsJson()) {
+            $tokenCodes = KanbanSubscription::where('kanban_id', request('kanban_id'))
+                ->where('sharing_token', '!=', null)
                 ->get();
 
-            foreach ($tokenscodes as $token)
-            {
+            foreach ($tokenCodes as $token) {
                 $tokens[] = [
-                    "token" => $token,
-                    "qr"    => (new QRCodeHelper())
+                    'token' => $token,
+                    'qr'    => (new QRCodeHelper)
                         ->generateQRCodeByString(
-                            config('app.url') . "/kanbans/" . request('kanban_id') ."/token?sharing_token=" .$token->sharing_token
-                        )
+                            config('app.url') . '/kanbans/' . request('kanban_id') . '/token?sharing_token=' . $token->sharing_token
+                        ),
                 ];
             }
 
             return [
-                'tokens' => $tokens ?? [],
-                'subscriptions' => optional(
-                        optional(
-                            Kanban::find(request('kanban_id'))
-                        )->subscriptions()
-                    )->with('subscribable')
+                'tokens'        => $tokens ?? [],
+                'subscriptions' => Kanban::find(request('kanban_id'))
+                    ?->subscriptions()
+                    ?->with('subscribable')
                     ->whereHasMorph('subscribable', '*', function ($q, $type) {
                         if ($type == 'App\\User') {
                             $q->whereNot('id', config('app.guest_user_id'));
@@ -55,21 +50,20 @@ class KanbanSubscriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return KanbanSubscription
      */
-    public function store(Request $request)
+    public function store()
     {
-        $input = $this->validateRequest();
-        $kanban = Kanban::select('id')->find($input['kanban_id']);
-        abort_unless(\Gate::allows('kanban_create') && $kanban->isAccessible(), 403);
+        $input  = $this->validateRequest();
+        $kanban = Kanban::select('id')->find($input['model_id']);
+        abort_unless(Gate::allows('kanban_create') && $kanban->isAccessible(), 403);
 
         $subscribe = KanbanSubscription::updateOrCreate([
             'kanban_id'         => $kanban->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id'   => $input['subscribable_id'],
         ], [
-            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'editable' => $input['editable'] ?? false,
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
@@ -80,17 +74,15 @@ class KanbanSubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\KanbanSubscription  $kanbanSubscription
-     * @return \Illuminate\Http\Response
+     * @return array|void
      */
-    public function update(Request $request, KanbanSubscription $kanbanSubscription)
+    public function update(KanbanSubscription $kanbanSubscription)
     {
-        abort_unless((\Gate::allows('kanban_edit') and $kanbanSubscription->isAccessible()), 403);
+        abort_unless((Gate::allows('kanban_edit') and $kanbanSubscription->isAccessible()), 403);
         $input = $this->validateRequest();
 
         $kanbanSubscription->update([
-            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'editable' => $input['editable'] ?? false,
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -102,16 +94,15 @@ class KanbanSubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\KanbanSubscription  $kanbanSubscription
-     * @return \Illuminate\Http\Response
+     * @return array|void
      */
     public function destroy(KanbanSubscription $kanbanSubscription)
     {
-        abort_unless((\Gate::allows('kanban_delete') and $kanbanSubscription->isAccessible()), 403);
+        abort_unless((Gate::allows('kanban_delete') and $kanbanSubscription->isAccessible()), 403);
 
         /** @var User $subscriber */
         $subscriber = $kanbanSubscription->subscribable;
-        $is_user = get_class($subscriber) == User::class;
+        $is_user    = get_class($subscriber) == User::class;
         if ($is_user && $subscriber->sharing_token != null) {
             $subscriber->delete();
         }
@@ -124,14 +115,12 @@ class KanbanSubscriptionController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
      */
-    public function expel(Request $request)
+    public function expel()
     {
-        $input = $this->validateRequest();
+        $input  = $this->validateRequest();
         $kanban = Kanban::select('id')->find($input['kanban_id']);
-        abort_unless(\Gate::allows('kanban_create') && $kanban->isAccessible(), 403);
+        abort_unless(Gate::allows('kanban_create') && $kanban->isAccessible(), 403);
 
         KanbanSubscription::where([
             'kanban_id'         => $kanban->id,

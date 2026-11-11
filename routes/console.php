@@ -1,6 +1,8 @@
 <?php
 
+use App\Console\Commands\DeleteStaleSubscriptions;
 use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Schedule;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,5 @@ use Illuminate\Foundation\Inspiring;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
+
+Schedule::command(DeleteStaleSubscriptions::class)->dailyAt('00:01');

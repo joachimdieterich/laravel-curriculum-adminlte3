@@ -2,14 +2,16 @@
 
 namespace App;
 
+use App\Services\Subscription;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MapMarkerSubscription extends Model
 {
-    use HasFactory;
+    use HasFactory, Subscription;
 
     public mixed $editable;
+
     protected $fillable = [
         'subscribable_type',
         'subscribable_id',
@@ -18,7 +20,7 @@ class MapMarkerSubscription extends Model
         'due_date',
         'title',
         'sharing_token',
-        'owner_id'
+        'owner_id',
     ];
 
     protected $casts = [

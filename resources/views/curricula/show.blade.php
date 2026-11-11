@@ -14,7 +14,6 @@
         :curriculum="{{ $curriculum }}"
         :course="{{ $course ?? json_encode((object)[]) }}"
         :settings="{{ $settings }}"
-        :certificate-designer-route="'{{ route('certificate-designer.index') }}'"
     />
     <div id="content_top_placeholder"></div>
 @endsection

@@ -46,22 +46,10 @@
                                 id="certificate-nav-tab"
                                 class="btn btn-light flex-fill"
                                 type="button"
-                        >
-                            <a :href="certificateDesignerRoute"
-                               class="text-dark  text-decoration-none"
-                            >
-                                <i class="fa fa-certificate"></i>
-                                Neu: {{ trans('global.certificate.create') }}
-                            </a>
-                        </button>
-                        <button v-if="checkPermission('certificate_create')"
-                                id="certificate-nav-tab"
-                                class="btn btn-light flex-fill"
-                                type="button"
                                 @click="createCertificate()"
                         >
                             <i class="fa fa-certificate"></i>
-                            Alt: Zertifikat-Vorlage erstellen
+                            Zertifikat-Vorlage erstellen
                         </button>
                     </div>
 
@@ -254,9 +242,6 @@ export default {
         settings: {
             type: Object,
             default: null,
-        },
-        certificateDesignerRoute: {
-            type: String
         },
     },
     setup() {

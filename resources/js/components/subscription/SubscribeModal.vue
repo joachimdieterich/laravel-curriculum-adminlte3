@@ -17,71 +17,104 @@
             <div class="tab-content pt-2">
                 <!-- User Tab -->
                 <div v-if="shareWithUsers"
-                    id="user_subscription"
-                    class="tab-pane fade active show"
-                    role="tabpanel"
+                     id="user_subscription"
+                     class="tab-pane fade active show"
+                     role="tabpanel"
                 >
                     <SubscribeUserSelect
+                        class="mb-2"
                         @selectedValue="option => subscribe('App\\User', option.value.user.id)"
                     />
+                    <VueDatePicker
+                        v-model="endDateToken"
+                        format="dd.MM.yyy HH:mm"
+                        :teleport="true"
+                        locale="de"
+                        :select-text="trans('global.ok')"
+                        :cancel-text="trans('global.close')"
+                        :placeholder="trans('global.valid_to')"
+                    />
+
                     <Subscribers v-if="subscribers.subscriptions != undefined"
-                        :modelUrl="modelUrl"
-                        :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\User')"
-                        :subscribing_model="'App\\User'"
-                        :canEditLabel="canEditLabel"
-                        :canEditCheckbox="canEditCheckbox"
+                                 :modelUrl="modelUrl"
+                                 :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\User')"
+                                 :subscribing_model="'App\\User'"
+                                 :canEditLabel="canEditLabel"
+                                 :canEditCheckbox="canEditCheckbox"
                     />
                 </div>
 
                 <!-- Group Tab -->
                 <div v-if="shareWithGroups"
-                    id="group_subscription"
-                    class="tab-pane fade"
-                    role="tabpanel"
+                     id="group_subscription"
+                     class="tab-pane fade"
+                     role="tabpanel"
                 >
                     <Select2
+                        class="mb-2"
                         id="group_subscription_select"
                         name="group_subscription_select"
                         url="/groups"
                         model="group"
                         @selectedValue="id => subscribe('App\\Group', id[0])"
                     />
+                    <VueDatePicker
+                        v-model="endDateToken"
+                        format="dd.MM.yyy HH:mm"
+                        :teleport="true"
+                        locale="de"
+                        :select-text="trans('global.ok')"
+                        :cancel-text="trans('global.close')"
+                        :placeholder="trans('global.valid_to')"
+                    />
+
                     <Subscribers v-if="subscribers.subscriptions != undefined"
-                        :modelUrl="modelUrl"
-                        :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\Group')"
-                        :subscribing_model="'App\\Group'"
-                        :canEditLabel="canEditLabel"
-                        :canEditCheckbox="canEditCheckbox"
+                                 :modelUrl="modelUrl"
+                                 :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\Group')"
+                                 :subscribing_model="'App\\Group'"
+                                 :canEditLabel="canEditLabel"
+                                 :canEditCheckbox="canEditCheckbox"
                     />
                 </div>
 
                 <!-- Organization Tab -->
                 <div v-if="shareWithOrganizations"
-                    id="organization_subscription"
-                    class="tab-pane fade"
-                    role="tabpanel"
+                     id="organization_subscription"
+                     class="tab-pane fade"
+                     role="tabpanel"
                 >
                     <Select2
+                        class="mb-2"
                         id="organization_subscription_select"
                         name="organization_subscription_select"
                         url="/organizations"
                         model="organization"
                         @selectedValue="id => subscribe('App\\Organization', id[0])"
                     />
+                    <VueDatePicker
+                        v-model="endDateToken"
+                        format="dd.MM.yyy HH:mm"
+                        :teleport="true"
+                        locale="de"
+                        :select-text="trans('global.ok')"
+                        :cancel-text="trans('global.close')"
+                        :placeholder="trans('global.valid_to')"
+                    />
+
                     <Subscribers v-if="subscribers.subscriptions != undefined"
-                        :modelUrl="modelUrl"
-                        :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\Organization')"
-                        :subscribing_model="'App\\Organization'"
-                        :canEditLabel="canEditLabel"
-                        :canEditCheckbox="canEditCheckbox"
+                                 :modelUrl="modelUrl"
+                                 :subscriptions="subscribers.subscriptions.filter(s => s.subscribable_type === 'App\\Organization')"
+                                 :subscribing_model="'App\\Organization'"
+                                 :canEditLabel="canEditLabel"
+                                 :canEditCheckbox="canEditCheckbox"
                     />
                 </div>
 
                 <!-- Token Tab -->
                 <div v-if="shareWithToken"
-                    id="token_subscription"
-                    class="tab-pane fade"
-                    role="tabpanel"
+                     id="token_subscription"
+                     class="tab-pane fade"
+                     role="tabpanel"
                 >
                     <div class="form-group pt-2">
                         <input
@@ -115,11 +148,11 @@
                     <hr class="pt-1 clearfix">
 
                     <Tokens v-if="subscribers.tokens != undefined"
-                        :modelUrl="modelUrl"
-                        :canEditLabel="canEditLabel"
-                        :canEditCheckbox="canEditCheckbox"
-                        :subscriptions="subscribers.tokens"
-                        @tokenDeleted="item => {
+                            :modelUrl="modelUrl"
+                            :canEditLabel="canEditLabel"
+                            :canEditCheckbox="canEditCheckbox"
+                            :subscriptions="subscribers.tokens"
+                            @tokenDeleted="item => {
                             let index = subscribers.tokens.indexOf(item);
                             subscribers.tokens.splice(index, 1);
                         }"
@@ -160,7 +193,7 @@ export default {
     },
     data() {
         return {
-            modelUrl:  null,
+            modelUrl: null,
             modelId: null,
             subscribable_id: null,
             subscribable_type: null,
@@ -171,7 +204,7 @@ export default {
             shareWithUsers: true,
             shareWithGroups: true,
             shareWithOrganizations: true,
-            shareWithToken:  false,
+            shareWithToken: false,
             tabs: [],
             nameToken: '',
             canEditLabel: window.trans.global.can_edit,
@@ -199,17 +232,17 @@ export default {
         },
         subscribe(subscribable_type, subscribable_id) {
             axios.post('/' + this.modelUrl + 'Subscriptions', {
-                model_id:  this.modelId,
+                model_id: this.modelId,
                 subscribable_type: subscribable_type,
                 subscribable_id: subscribable_id
             })
-            .then(res => {
-                this.subscribers.subscriptions.push(res.data);
-            })
-            .catch(e => {
-                this.toast.error(this.errorMessage(e));
-                console.log(e);
-            });
+                .then(res => {
+                    this.subscribers.subscriptions.push(res.data);
+                })
+                .catch(e => {
+                    this.toast.error(this.errorMessage(e));
+                    console.log(e);
+                });
         },
         createUserToken() {
             axios.post('/tokens', {
@@ -244,10 +277,10 @@ export default {
                 }
 
                 this.tabs = [
-                    this.shareWithUsers && { icon: 'fa-user', label: 'global.user.title', filter: 'user' },
-                    this.shareWithGroups && { icon: 'fa-users', label: 'global.group.title', filter: 'group' },
-                    this.shareWithOrganizations && { icon: 'fa-university', label: 'global.organization.title', filter: 'organization' },
-                    this.shareWithToken && { icon: 'fa-key', label: 'global.token', filter: 'token' },
+                    this.shareWithUsers && {icon: 'fa-user', label: 'global.user.title', filter: 'user'},
+                    this.shareWithGroups && {icon: 'fa-users', label: 'global.group.title', filter: 'group'},
+                    this.shareWithOrganizations && {icon: 'fa-university', label: 'global.organization.title', filter: 'organization'},
+                    this.shareWithToken && {icon: 'fa-key', label: 'global.token', filter: 'token'},
                 ].filter(tab => tab);
             }
         });

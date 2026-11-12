@@ -52,11 +52,10 @@
                     <i class="fa fa-2x fa-video"></i>
                 </template>
 
-                <template #dropdown
-                          v-permission="'videoconference_edit, videoconference_delete'"
-                >
+                <template #dropdown>
                     <div v-if="subscribable"
                          class="dropdown-menu dropdown-menu-end"
+                         v-permission="'videoconference_edit, videoconference_delete'"
                     >
                         <button
                             v-permission="'videoconference_delete'"
@@ -68,10 +67,12 @@
                             {{ trans('global.videoconference.expel') }}
                         </button>
                     </div>
-                    <div v-else-if="ownerOrAdmin(videoconference)"
+                    <div v-else
                          class="dropdown-menu dropdown-menu-end"
                     >
                         <button
+                            v-if="ownerOrAdmin(videoconference)"
+                            v-permission="'videoconference_edit, videoconference_delete'"
                             type="button"
                             class="dropdown-item"
                             @click.prevent="editVideoconference(videoconference)"
@@ -80,6 +81,8 @@
                             {{ trans('global.videoconference.edit') }}
                         </button>
                         <button
+                            v-if="ownerOrAdmin(videoconference)"
+                            v-permission="'videoconference_edit, videoconference_delete'"
                             type="button"
                             class="dropdown-item"
                             @click.prevent="share(videoconference)"
@@ -95,9 +98,10 @@
                               @mark-status-changed="() => videoconference.splice(index, 1)"
                         />
 
-                        <hr class="my-1">
+                        <hr v-if="ownerOrAdmin(videoconference)" v-permission="'videoconference_edit, videoconference_delete'" class="my-1">
 
                         <button
+                            v-if="ownerOrAdmin(videoconference)"
                             v-permission="'videoconference_delete'"
                             type="submit"
                             class="dropdown-item text-danger"

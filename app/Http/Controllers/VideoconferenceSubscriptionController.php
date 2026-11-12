@@ -5,41 +5,38 @@ namespace App\Http\Controllers;
 use App\Helpers\QRCodeHelper;
 use App\Videoconference;
 use App\VideoconferenceSubscription;
-use Illuminate\Http\Request;
+use Gate;
 
 class VideoconferenceSubscriptionController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return array|void
      */
     public function index()
     {
         $tokens = null;
-        if (request()->wantsJson())
-        {
-            $tokenscodes = VideoconferenceSubscription::where('videoconference_id', request('videoconference_id'))
-                ->where('sharing_token', "!=", null)
+        if (request()->wantsJson()) {
+            $tokenCodes = VideoconferenceSubscription::where('videoconference_id', request('videoconference_id'))
+                ->where('sharing_token', '!=', null)
                 ->get();
 
-            foreach ($tokenscodes as $token)
-            {
+            foreach ($tokenCodes as $token) {
                 $tokens[] = [
-                    "token" => $token,
-                    "qr"    => (new QRCodeHelper())
+                    'token' => $token,
+                    'qr'    => new QRCodeHelper()
                         ->generateQRCodeByString(
-                            config('app.url'). "/videoconferences/" . request('videoconference_id') ."/token?sharing_token=" .$token->sharing_token
-                        )
+                            config('app.url') . '/videoconferences/' . request('videoconference_id') . '/token?sharing_token=' . $token->sharing_token
+                        ),
                 ];
             }
+
             return [
-                'tokens' => $tokens ?? [],
-                'subscriptions' => optional(
-                        optional(
-                            Videoconference::find(request('videoconference_id'))
-                        )->subscriptions()
-                    )->with('subscribable')
+                'tokens'        => $tokens ?? [],
+                'subscriptions' => Videoconference::find(request('videoconference_id'))
+                    ?->subscriptions()
+                    ?->with('subscribable')
                     ->whereHasMorph('subscribable', '*', function ($q, $type) {
                         if ($type == 'App\\User') {
                             $q->whereNot('id', config('app.guest_user_id'));
@@ -52,21 +49,20 @@ class VideoconferenceSubscriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return VideoconferenceSubscription
      */
-    public function store(Request $request)
+    public function store()
     {
-        $input = $this->validateRequest();
+        $input           = $this->validateRequest();
         $videoconference = Videoconference::select('id')->find($input['videoconference_id']);
-        abort_unless(\Gate::allows('videoconference_create') && $videoconference->isAccessible(), 403);
+        abort_unless(Gate::allows('videoconference_create') && $videoconference->isAccessible(), 403);
 
         $subscribe = VideoconferenceSubscription::updateOrCreate([
-            'videoconference_id'=> $videoconference->id,
-            'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id'   => $input['subscribable_id'],
+            'videoconference_id' => $videoconference->id,
+            'subscribable_type'  => $input['subscribable_type'],
+            'subscribable_id'    => $input['subscribable_id'],
         ], [
-            'editable' => isset($input['editable']) ? $input['editable'] : false,
+            'editable' => $input['editable'] ?? false,
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
@@ -77,18 +73,16 @@ class VideoconferenceSubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\VideoconferenceSubscription  $videoconferenceSubscription
-     * @return \Illuminate\Http\Response
+     * @return array|void
      */
-    public function update(Request $request, VideoconferenceSubscription $videoconferenceSubscription)
+    public function update(VideoconferenceSubscription $videoconferenceSubscription)
     {
-        abort_unless((\Gate::allows('videoconference_edit') and $videoconferenceSubscription->isAccessible()), 403);
+        abort_unless((Gate::allows('videoconference_edit') and $videoconferenceSubscription->isAccessible()), 403);
         $input = $this->validateRequest();
 
         $videoconferenceSubscription->update([
-            'editable'=> isset($input['editable']) ? $input['editable'] : false,
-            'owner_id'=> auth()->user()->id,
+            'editable' => $input['editable'] ?? false,
+            'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
@@ -99,37 +93,37 @@ class VideoconferenceSubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\VideoconferenceSubscription  $videoconferenceSubscription
-     * @return \Illuminate\Http\Response
+     * @return array|void
      */
     public function destroy(VideoconferenceSubscription $videoconferenceSubscription)
     {
-        abort_unless((\Gate::allows('videoconference_delete') and $videoconferenceSubscription->isAccessible()), 403);
+        abort_unless((Gate::allows('videoconference_delete') and $videoconferenceSubscription->isAccessible()), 403);
 
         if (request()->wantsJson()) {
             return ['message' => $videoconferenceSubscription->delete()];
         }
     }
 
-    public function expel(Request $request) {
+    public function expel()
+    {
         $input = $this->validateRequest();
-        $vc = Videoconference::select('id')->find($input['videoconference_id']);
-        abort_unless(\Gate::allows('videoconference_delete') && $vc->isAccessible(), 403);
+        $vc    = Videoconference::select('id')->find($input['videoconference_id']);
+        abort_unless(Gate::allows('videoconference_delete') && $vc->isAccessible(), 403);
 
         VideoconferenceSubscription::where([
-            'videoconference_id'=> $vc->id,
-            'subscribable_id'   => $input['subscribable_id'],
-            'subscribable_type' => $input['subscribable_type'],
+            'videoconference_id' => $vc->id,
+            'subscribable_id'    => $input['subscribable_id'],
+            'subscribable_type'  => $input['subscribable_type'],
         ])->delete();
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'subscribable_type' => 'sometimes|string',
-            'subscribable_id'   => 'sometimes|integer',
-            'editable'          => 'sometimes',
-            'videoconference_id'=> 'sometimes|integer',
+            'subscribable_type'  => 'sometimes|string',
+            'subscribable_id'    => 'sometimes|integer',
+            'editable'           => 'sometimes',
+            'videoconference_id' => 'sometimes|integer',
         ]);
     }
 }

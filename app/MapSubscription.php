@@ -2,12 +2,13 @@
 
 namespace App;
 
+use App\Services\Subscription;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MapSubscription extends Model
 {
-    use HasFactory;
+    use HasFactory, Subscription;
 
     protected $fillable = [
         'subscribable_type',
@@ -17,7 +18,7 @@ class MapSubscription extends Model
         'due_date',
         'title',
         'sharing_token',
-        'owner_id'
+        'owner_id',
     ];
 
     protected $casts = [

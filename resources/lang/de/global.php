@@ -350,7 +350,7 @@ return [
     'valid_from_to'                      => 'Gültig von/bis',
     'valid_from'                         => 'Gültig ab',
     'valid_to'                           => 'Gültig bis',
-    'valid'                              => 'unbefristet',
+    'valid'                              => 'Unbefristet',
     'code'                               => 'Code',
     'start_time'                         => 'Start-Zeit',
     'end_time'                           => 'End-Zeit',

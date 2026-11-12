@@ -36,11 +36,14 @@
                 {{ trans('global.loading') }}
             </li>
         </slot>
-        <slot name="no-options">
-            <div v-show="!hasNextPage">
-                {{ trans('global.cselect.no_results') }}
-            </div>
-        </slot>
+
+        <template #no-options>
+            <slot name="no-options">
+                <div v-show="!hasNextPage">
+                    {{ trans('global.cselect.no_results') }}
+                </div>
+            </slot>
+        </template>
     </v-select>
 </template>
 <script>
@@ -69,7 +72,7 @@ export default {
         },
 
         // frontend
-        inputId: { type: String },
+        inputId: {type: String},
         label: {
             type: String,
             default: 'label',
@@ -183,7 +186,7 @@ export default {
                 })
                 .catch(this.handleFetchError);
         },
-        setFetchOptions (search) {
+        setFetchOptions(search) {
             this.search = search;
 
             // Only trigger GET-Request if search wasn't triggered again in the last 300ms
@@ -206,7 +209,7 @@ export default {
         onClose() {
             this.observer.disconnect();
         },
-        async infiniteScroll([{ isIntersecting, target }]) {
+        async infiniteScroll([{isIntersecting, target}]) {
             if (isIntersecting) {
                 const ul = target.offsetParent;
                 const scrollTop = target.offsetParent.scrollTop;

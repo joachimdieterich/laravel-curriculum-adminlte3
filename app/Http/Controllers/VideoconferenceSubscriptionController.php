@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\QRCodeHelper;
 use App\Videoconference;
 use App\VideoconferenceSubscription;
+use Carbon\Carbon;
 use Gate;
 
 class VideoconferenceSubscriptionController extends Controller
@@ -54,13 +55,14 @@ class VideoconferenceSubscriptionController extends Controller
     public function store()
     {
         $input           = $this->validateRequest();
-        $videoconference = Videoconference::select('id')->find($input['videoconference_id']);
+        $videoconference = Videoconference::select('id')->find($input['model_id']);
         abort_unless(Gate::allows('videoconference_create') && $videoconference->isAccessible(), 403);
 
         $subscribe = VideoconferenceSubscription::updateOrCreate([
             'videoconference_id' => $videoconference->id,
             'subscribable_type'  => $input['subscribable_type'],
             'subscribable_id'    => $input['subscribable_id'],
+            'due_date'           => is_null($input['expire_date']) ? $input['expire_date'] : Carbon::createFromDate($input['expire_date'])->toDateString(),
         ], [
             'editable' => $input['editable'] ?? false,
             'owner_id' => auth()->user()->id,
@@ -124,6 +126,8 @@ class VideoconferenceSubscriptionController extends Controller
             'subscribable_id'    => 'sometimes|integer',
             'editable'           => 'sometimes',
             'videoconference_id' => 'sometimes|integer',
+            'model_id'           => 'sometimes',
+            'expire_date'        => 'sometimes|nullable|date',
         ]);
     }
 }

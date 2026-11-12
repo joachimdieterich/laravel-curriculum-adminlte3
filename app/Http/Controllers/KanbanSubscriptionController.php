@@ -6,6 +6,7 @@ use App\Helpers\QRCodeHelper;
 use App\Kanban;
 use App\KanbanSubscription;
 use App\User;
+use Carbon\Carbon;
 use Gate;
 
 class KanbanSubscriptionController extends Controller
@@ -62,13 +63,14 @@ class KanbanSubscriptionController extends Controller
             'kanban_id'         => $kanban->id,
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id'   => $input['subscribable_id'],
+            'due_date'          => is_null($input['expire_date']) ? $input['expire_date'] : Carbon::createFromDate($input['expire_date'])->toDateString(),
         ], [
             'editable' => $input['editable'] ?? false,
             'owner_id' => auth()->user()->id,
         ]);
         $subscribe->save();
 
-        return $subscribe->with('kanban')->find($subscribe->id);
+        return $subscribe->with('kanban')->with('subscribable')->find($subscribe->id);
     }
 
     /**
@@ -135,7 +137,9 @@ class KanbanSubscriptionController extends Controller
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
             'kanban_id'         => 'sometimes|integer',
+            'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
+            'expire_date'       => 'sometimes|nullable|date',
         ]);
     }
 }

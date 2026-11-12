@@ -21,6 +21,7 @@
                     <span v-else>
                         {{ subscription.subscribable.title }}
                     </span>
+                    | <small>{{ diffForHumans(subscription.due_date) }}</small>
                 </div>
 
                 <button
@@ -31,7 +32,7 @@
                 </button>
 
                 <span v-if="canEditCheckbox"
-                    class="form-check form-switch mb-0"
+                      class="form-check form-switch mb-0"
                 >
                     <input
                         :id="'subscription_input' + subscription.id"
@@ -57,7 +58,7 @@ export default {
         },
         subscriptions: {
             type: Object,
-            deafult: null,
+            default: null,
         },
         subscribing_model: {
             type: String,
@@ -75,19 +76,25 @@ export default {
     methods: {
         async unsubscribe(subscription) { // id of external reference and value in db
             try {
-                await axios.delete('/' + this.modelUrl + 'Subscriptions/' + subscription.id  ).data;
-            } catch(error) {
+                await axios.delete('/' + this.modelUrl + 'Subscriptions/' + subscription.id).data;
+            } catch (error) {
                 console.log(error);
             }
             this.$eventHub.emit('unsubscribe', subscription);
         },
         async setPermission(id, status) { // id of external reference and value in db
             try {
-                status = (await axios.patch('/' + this.modelUrl + 'Subscriptions/' + id, {'editable': !status } )).data.editable;
-            } catch(error) {
+                status = (await axios.patch('/' + this.modelUrl + 'Subscriptions/' + id, {'editable': !status})).data.editable;
+            } catch (error) {
                 console.log(error);
             }
         },
+        diffForHumans: function (date) {
+            if (date == null) {
+                return window.trans.global.valid;
+            }
+            return window.trans.global.valid_to + ' ' + moment(date).locale(window.navigator.language).fromNow();
+        }
     },
 }
 </script>
@@ -96,8 +103,14 @@ li.item .fa-trash {
     opacity: 0%;
     transition: opacity 0.15s ease-in-out;
 }
-li.item:hover .fa-trash { opacity: 100%; }
+
+li.item:hover .fa-trash {
+    opacity: 100%;
+}
+
 @media (max-width: 991px) {
-    li.item .fa-trash { opacity: 100%; }
+    li.item .fa-trash {
+        opacity: 100%;
+    }
 }
 </style>

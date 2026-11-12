@@ -26,7 +26,7 @@
                         @selectedValue="option => subscribe('App\\User', option.value.user.id)"
                     />
                     <VueDatePicker
-                        v-model="endDateToken"
+                        v-model="endDate"
                         format="dd.MM.yyy HH:mm"
                         :teleport="true"
                         locale="de"
@@ -59,7 +59,7 @@
                         @selectedValue="id => subscribe('App\\Group', id[0])"
                     />
                     <VueDatePicker
-                        v-model="endDateToken"
+                        v-model="endDate"
                         format="dd.MM.yyy HH:mm"
                         :teleport="true"
                         locale="de"
@@ -92,7 +92,7 @@
                         @selectedValue="id => subscribe('App\\Organization', id[0])"
                     />
                     <VueDatePicker
-                        v-model="endDateToken"
+                        v-model="endDate"
                         format="dd.MM.yyy HH:mm"
                         :teleport="true"
                         locale="de"
@@ -125,7 +125,7 @@
                         />
                     </div>
                     <VueDatePicker
-                        v-model="endDateToken"
+                        v-model="endDate"
                         format="dd.MM.yyy HH:mm"
                         :teleport="true"
                         locale="de"
@@ -197,7 +197,7 @@ export default {
             modelId: null,
             subscribable_id: null,
             subscribable_type: null,
-            endDateToken: null, //new Date().setFullYear(new Date().getFullYear() + 1),
+            endDate: null, //new Date().setFullYear(new Date().getFullYear() + 1),
             subscribers: Object,
             canEditToken: false,
             canEditCheckbox: true,
@@ -233,6 +233,7 @@ export default {
         subscribe(subscribable_type, subscribable_id) {
             axios.post('/' + this.modelUrl + 'Subscriptions', {
                 model_id: this.modelId,
+                expire_date: this.endDate,
                 subscribable_type: subscribable_type,
                 subscribable_id: subscribable_id
             })
@@ -248,7 +249,7 @@ export default {
             axios.post('/tokens', {
                 model_id: this.modelId,
                 title: this.nameToken,
-                date: this.endDateToken,
+                date: this.endDate,
                 editable: this.canEditToken,
                 model_url: this.modelUrl,
             }).then(response => {

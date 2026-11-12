@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Curriculum;
 use App\CurriculumSubscription;
 use App\Helpers\QRCodeHelper;
+use Carbon\Carbon;
 use Exception;
 use Gate;
 use Illuminate\Http\Response;
@@ -78,6 +79,7 @@ class CurriculumSubscriptionController extends Controller
             'curriculum_id'     => $input['model_id'],
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id'   => $input['subscribable_id'],
+            'due_date'          => is_null($input['expire_date']) ? $input['expire_date'] : Carbon::createFromDate($input['expire_date'])->toDateString(),
         ], [
             'editable' => $input['editable'] ?? false,
             'owner_id' => auth()->user()->id,
@@ -137,6 +139,7 @@ class CurriculumSubscriptionController extends Controller
             'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
             'curriculum_id'     => 'sometimes',
+            'expire_date'       => 'sometimes|nullable|date',
         ]);
     }
 }

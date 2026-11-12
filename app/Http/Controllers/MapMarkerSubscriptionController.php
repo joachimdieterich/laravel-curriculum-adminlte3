@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\QRCodeHelper;
 use App\MapMarker;
 use App\MapMarkerSubscription;
+use Carbon\Carbon;
 use Exception;
 use Gate;
 use Yajra\DataTables\DataTables;
@@ -79,6 +80,7 @@ class MapMarkerSubscriptionController extends Controller
             'map_marker_id'     => $input['model_id'],
             'subscribable_type' => $input['subscribable_type'],
             'subscribable_id'   => $input['subscribable_id'],
+            'due_date'          => is_null($input['expire_date']) ? $input['expire_date'] : Carbon::createFromDate($input['expire_date'])->toDateString(),
         ], [
             'editable' => $input['editable'] ?? false,
             'owner_id' => auth()->user()->id,
@@ -132,6 +134,7 @@ class MapMarkerSubscriptionController extends Controller
             'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
             'map_marker_id'     => 'sometimes',
+            'expire_date'       => 'sometimes|nullable|date',
         ]);
     }
 }

@@ -2,23 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\QRCodeHelper;
 use App\MapMarker;
 use App\MapMarkerSubscription;
+use Exception;
 use Gate;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use App\Helpers\QRCodeHelper;
 
 class MapMarkerSubscriptionController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * @throws \Exception
+     *
+     * @return array|string|void
+     *
+     * @throws Exception
      */
     public function index()
     {
         $input = $this->validateRequest();
-        if (isset($input['subscribable_type']) and isset($input['subscribable_id'])) {
+        if (isset($input['subscribable_type'], $input['subscribable_id'])) {
             $model = $input['subscribable_type']::find($input['subscribable_id']);
             abort_unless((Gate::allows('map_access') and $model->isAccessible()), 403);
 
@@ -26,67 +29,56 @@ class MapMarkerSubscriptionController extends Controller
 
             return empty($mapMarker) ? '' : DataTables::of($mapMarker)
                 ->setRowId('id')
-                ->make(true);
+                ->make();
         }
-        else
-        {
-            if (request()->wantsJson())
-            {
 
-                $tokenCodes = MapMarkerSubscription::where('map_marker_id', request('map_marker_id'))
-                    ->where('sharing_token', "!=", null)
-                    ->get();
+        if (request()->wantsJson()) {
 
-                foreach ($tokenCodes as $token)
-                {
-                    $tokens[] = [
-                        "token" => $token,
-                        "qr"    => (new QRCodeHelper())
-                            ->generateQRCodeByString(
-                                config('app.url') . "/mapMarkers/" . request('map_marker_id') ."/token?sharing_token=" .$token->sharing_token
-                            )
-                    ];
-                }
-                return [
-                    'subscribers' => [
-                        'tokens' => $tokens ?? [],
-                        'subscriptions' => optional(
-                            optional(
-                                MapMarker::find(request('map_marker_id'))
-                            )->subscriptions()
-                        )->with('subscribable')
-                            ->whereHasMorph('subscribable', '*', function ($q, $type) {
-                                if ($type == 'App\\User') {
-                                    $q->whereNot('id', config('app.guest_user_id'));
-                                }
-                            })->get(),
-                    ],
+            $tokenCodes = MapMarkerSubscription::where('map_marker_id', request('map_marker_id'))
+                ->where('sharing_token', '!=', null)
+                ->get();
+
+            foreach ($tokenCodes as $token) {
+                $tokens[] = [
+                    'token' => $token,
+                    'qr'    => (new QRCodeHelper)
+                        ->generateQRCodeByString(
+                            config('app.url') . '/mapMarkers/' . request('map_marker_id') . '/token?sharing_token=' . $token->sharing_token
+                        ),
                 ];
             }
-        }
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        abort(403);
+            return [
+                'subscribers' => [
+                    'tokens'        => $tokens ?? [],
+                    'subscriptions' => MapMarker::find(request('map_marker_id'))
+                        ?->subscriptions()
+                        ?->with('subscribable')
+                        ->whereHasMorph('subscribable', '*', function ($q, $type) {
+                            if ($type == 'App\\User') {
+                                $q->whereNot('id', config('app.guest_user_id'));
+                            }
+                        })->get(),
+                ],
+            ];
+        }
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @return array|void
      */
-    public function store(Request $request)
+    public function store()
     {
-        $input = $this->validateRequest();
+        $input     = $this->validateRequest();
         $mapMarker = MapMarker::find($input['model_id']);
         abort_unless((Gate::allows('map_create') and $mapMarker->isAccessible()), 403);
 
         $subscribe = MapMarkerSubscription::updateOrCreate([
-            'map_marker_id' => $input['model_id'],
+            'map_marker_id'     => $input['model_id'],
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_id'   => $input['subscribable_id'],
         ], [
             'editable' => $input['editable'] ?? false,
             'owner_id' => auth()->user()->id,
@@ -99,32 +91,18 @@ class MapMarkerSubscriptionController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(MapMarkerSubscription $mapMarkerSubscription)
-    {
-       abort(403);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(MapMarkerSubscription $mapMarkerSubscription)
-    {
-        abort(403);
-    }
-
-    /**
      * Update the specified resource in storage.
+     *
+     * @return array|void
      */
-    public function update(Request $request, MapMarkerSubscription $mapMarkerSubscription)
+    public function update(MapMarkerSubscription $mapMarkerSubscription)
     {
         abort_unless((Gate::allows('map_edit') and $mapMarkerSubscription->isAccessible()), 403);
         $input = $this->validateRequest();
 
         $mapMarkerSubscription->update([
-            'editable'=> $input['editable'] ?? false,
-            'owner_id'=> auth()->user()->id,
+            'editable' => $input['editable'] ?? false,
+            'owner_id' => auth()->user()->id,
         ]);
 
         if (request()->wantsJson()) {
@@ -134,6 +112,8 @@ class MapMarkerSubscriptionController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @return bool|void
      */
     public function destroy(MapMarkerSubscription $mapMarkerSubscription)
     {

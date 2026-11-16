@@ -39,9 +39,8 @@ class CurriculaApiController extends Controller
         }
         $timestamp = date('Y-m-d H:i:s', $timestamp);
 
-        // TODO: maybe give those curricula a certain flag, instead of hardcoding the ID's here
-        // list of Curriculum-specific curricula in PROD, which shouldn't be included in this export
-        $blacklist = [189, 190, 191, 428, 429, 451, 452, 453, 454, 455, 456];
+        // list of curricula that shouldn't be included in this export
+        $blacklist = json_decode(Config::where('key', 'curricula_export_blacklist')->first()?->value ?? '[]');
 
         LogController::set(get_class($this).'@'.__FUNCTION__);
         // might need to be broken down in chunks, since there's a lot of data

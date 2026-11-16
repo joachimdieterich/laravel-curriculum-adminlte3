@@ -35,7 +35,7 @@ class OrganizationsController extends Controller
                 : []; // ignore on non-subscription requests
 
             return getEntriesForSelect2ByCollection(
-                auth()->user()->organizations()->whereNotIn('id', $blacklist),
+                auth()->user()->organizations()->whereNotIn('organizations.id', $blacklist),
                 'organizations.'
             );
         }

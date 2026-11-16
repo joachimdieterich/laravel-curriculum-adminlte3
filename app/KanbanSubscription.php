@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Services\Subscription;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  *   @OA\Schema(
+ *
  *      @OA\Xml(name="KanbanSubscription"),
  *
  *      @OA\Property( property="id", type="integer"),
@@ -23,6 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class KanbanSubscription extends Model
 {
+    use Subscription;
+
     protected $fillable = [
         'subscribable_type',
         'subscribable_id',
@@ -31,16 +35,13 @@ class KanbanSubscription extends Model
         'editable',
         'owner_id',
         'sharing_token',
-        'title'
+        'title',
     ];
 
     protected $casts = [
         'editable' => 'boolean',
     ];
 
-    /**
-     * Get the subscriber model.
-     */
     public function subscribable()
     {
         return $this->morphTo();

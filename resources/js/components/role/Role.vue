@@ -7,9 +7,9 @@
                 </h5>
 
                 <button v-if="checkPermission('is_admin')"
-                    type="button"
-                    class="btn btn-icon-alt"
-                    @click="editRole()"
+                        type="button"
+                        class="btn btn-icon-alt"
+                        @click="editRole()"
                 >
                     <i class="fa fa-pencil-alt"></i>
                 </button>
@@ -25,9 +25,10 @@
 
             <div class="row align-items-center text-break px-3 py-1">
                 <div v-for="permission in currentPermissions"
-                    class="col-6 col-sm-4 col-md-3 col-lg-2 py-2"
+                     class="col-6 col-sm-4 col-md-3 col-lg-2 py-2"
                 >
                     <button
+                        :id="permission.id"
                         type="button"
                         class="btn w-100"
                         :class="permission.checked ? 'btn-success' : 'btn-danger'"
@@ -49,14 +50,14 @@ import RoleModal from "../role/RoleModal.vue";
 
 export default {
     name: "Role",
-    components: { RoleModal },
+    components: {RoleModal},
     props: {
         role: {
             type: Object,
             default: null,
         },
         allPermissions: {
-            type: Array,
+            type: Object,
             default: [],
         },
     },
@@ -67,14 +68,13 @@ export default {
         }
     },
     mounted() {
-        let counter = 0;
         let checkedPermissions = [];
         // mark permissions as checked if they are set for the current role
-        for (let permission of this.allPermissions) {
-            if (counter < this.role.permissions.length && this.role.permissions[counter].id === permission.id) {
+        for (let [, permission] of Object.entries(this.allPermissions)) {
+            if (this.role.permissions[permission.id]) {
                 permission.checked = true;
-                counter++;
             }
+
             checkedPermissions.push(permission);
         }
 
@@ -88,7 +88,7 @@ export default {
         },
         togglePermission(permission) {
             axios.post('/roles/' + this.role.id + '/togglePermission/' + permission.id)
-                .then(response => permission.checked = !permission.checked)
+                .then(() => permission.checked = !permission.checked)
                 .catch(e => console.error(e));
         },
     },

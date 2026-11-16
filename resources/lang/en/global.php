@@ -343,7 +343,7 @@ return [
     'valid_from_to'                      => 'Valid from/to',
     'valid_from'                         => 'Valid from',
     'valid_to'                           => 'Valid to',
-    'valid'                              => 'valid',
+    'valid'                              => 'Unlimited',
     'code'                               => 'Code',
     'start_time'                         => 'Start time',
     'end_time'                           => 'End time',
@@ -352,8 +352,8 @@ return [
     'website'                            => 'Website',
     'contacts'                           => 'Contacts',
     'contact'                            => 'Contact',
-    'first_name'                         => 'First name',
-    'last_name'                          => 'Last name',
+    'firstname'                          => 'First name',
+    'lastname'                           => 'Last name',
     'phone'                              => 'Phone',
     'photo'                              => 'Photo',
     'statuses'                           => 'Statuses',
@@ -773,13 +773,13 @@ return [
         'create'         => 'Create navigator',
         'edit'           => 'Edit navigator',
     ],
-    'navigator_view' => [
+    'navigatorView' => [
         'title'          => 'Navigator views',
         'title_singular' => 'Navigator view',
         'create'         => 'Create navigator view',
         'edit'           => 'Edit navigator view',
     ],
-    'navigator_item' => [
+    'navigatorItem' => [
         'title'          => 'Navigator items',
         'title_singular' => 'Navigator item',
         'create'         => 'Create navigator block',
@@ -1119,10 +1119,10 @@ return [
         ],
     ],
     'comment' => [
-        'title' => 'Comments',
+        'title'          => 'Comments',
         'title_singular' => 'comment',
-        'delete' => 'Delete comment',
-        'typing' => "Someone's typing",
+        'delete'         => 'Delete comment',
+        'typing'         => "Someone's typing",
     ],
     'kanbanStatus' => [
         'title'          => 'Columns',

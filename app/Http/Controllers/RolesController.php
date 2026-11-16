@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Permission;
 use App\Role;
 use App\Tag;
 use Gate;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\DataTables;
 
@@ -30,7 +32,7 @@ class RolesController extends Controller
         return view('roles.index');
     }
 
-    public function list(): \Illuminate\Http\JsonResponse
+    public function list(): JsonResponse
     {
         abort_unless(Gate::allows('role_access'), 403);
 
@@ -83,8 +85,12 @@ class RolesController extends Controller
         abort_unless(Gate::allows('role_show'), 403);
 
         $role->load('permissions:id,title');
+        $role->setRelation(
+            'permissions',
+            $role->permissions->keyBy('id')
+        );
 
-        $allPermissions = \App\Permission::select('id', 'title')->orderBy('title')->get();
+        $allPermissions = Permission::select('id', 'title')->orderBy('title')->get()->keyBy('id');
 
         return view('roles.show')
             ->with(compact('role', 'allPermissions'));
@@ -103,7 +109,7 @@ class RolesController extends Controller
 
     public function togglePermission(Role $role, $permissionId)
     {
-        abort_unless(\Gate::allows('role_edit'), 403);
+        abort_unless(Gate::allows('role_edit'), 403);
 
         if ($role->permissions()->where('id', $permissionId)->exists()) {
             $role->permissions()->detach($permissionId);
@@ -111,6 +117,6 @@ class RolesController extends Controller
             $role->permissions()->attach($permissionId);
         }
 
-        Cache::forget('roles'); //cache should update next time
+        Cache::forget('roles'); // cache should update next time
     }
 }

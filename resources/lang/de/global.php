@@ -354,7 +354,7 @@ return [
     'valid_from_to'                      => 'Gültig von/bis',
     'valid_from'                         => 'Gültig ab',
     'valid_to'                           => 'Gültig bis',
-    'valid'                              => 'unbefristet',
+    'valid'                              => 'Unbefristet',
     'code'                               => 'Code',
     'start_time'                         => 'Start-Zeit',
     'end_time'                           => 'End-Zeit',
@@ -796,13 +796,13 @@ return [
         'edit'           => 'Navigator bearbeiten',
         'delete_helper'  => 'Soll der Navigator entfernt werden?',
     ],
-    'navigator_view' => [
+    'navigatorView' => [
         'title'          => 'Navigator-Views',
         'title_singular' => 'Navigator-View',
         'create'         => 'Navigator-View erstellen',
         'edit'           => 'Navigator-View bearbeiten',
     ],
-    'navigator_item' => [
+    'navigatorItem' => [
         'title'          => 'Navigator-Blöcke',
         'title_singular' => 'Navigator-Block',
         'create'         => 'Navigator-Block erstellen',
@@ -1146,10 +1146,10 @@ return [
         ],
     ],
     'comment' => [
-        'title' => 'Kommentare',
+        'title'          => 'Kommentare',
         'title_singular' => 'Kommentar',
-        'delete' => 'Kommentar löschen',
-        'typing' => 'Jemand schreibt',
+        'delete'         => 'Kommentar löschen',
+        'typing'         => 'Jemand schreibt',
     ],
     'kanbanStatus' => [
         'title'          => 'Spalte',

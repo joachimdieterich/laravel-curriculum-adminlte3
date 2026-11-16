@@ -338,7 +338,7 @@ class User extends Authenticatable
     /**
      * current role, based on current_organization_id organization_role_users
      */
-    public function role(): Role
+    public function role(): ?Role
     {
         return once(function () {
             return $this->belongsToMany(Role::class, 'organization_role_users')

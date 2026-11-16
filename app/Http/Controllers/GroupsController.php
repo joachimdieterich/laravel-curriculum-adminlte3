@@ -31,7 +31,10 @@ class GroupsController extends Controller
         return view(
             'groups.index',
             [
-                'organizations' => Organization::viewable(is_admin())
+                'organizations' => Organization::query()
+                    ->whereHas('users', function ($query) {
+                        $query->where('user_id', auth()->user()->id);
+                    })
                     ->whereIn('id', Group::select('organization_id'))
                     ->get()
                     ->toJson(),
@@ -47,8 +50,11 @@ class GroupsController extends Controller
         abort_unless(Gate::allows('group_access'), 403);
 
         $groups = Group::select('groups.id', 'groups.title', 'groups.common_name', 'grade_id', 'period_id', 'organization_id')
-            ->whereIn('organization_id', auth()->user()->organizations()->pluck('organizations.id'))
             ->with('organization:id,title');
+
+        if (! is_admin()) {
+            $groups->whereIn('organization_id', auth()->user()->organizations()->pluck('organizations.id'));
+        }
 
         if (! request()->boolean('allGroups')) {
             $groups->where(function ($query) {
@@ -76,11 +82,11 @@ class GroupsController extends Controller
         $new_group = $this->validateRequest();
 
         $group = Group::firstOrCreate([
-            'title'             => $new_group['title'],
-            'common_name'       => $new_group['common_name'] ?? null,
-            'grade_id'          => $new_group['grade_id'],
-            'period_id'         => $new_group['period_id'],
-            'organization_id'   => $new_group['organization_id'],
+            'title'           => $new_group['title'],
+            'common_name'     => $new_group['common_name'] ?? null,
+            'grade_id'        => $new_group['grade_id'],
+            'period_id'       => $new_group['period_id'],
+            'organization_id' => $new_group['organization_id'],
         ]);
 
         return $group;
@@ -114,11 +120,11 @@ class GroupsController extends Controller
         abort_unless((Gate::allows('group_edit') && $group->isAccessible()), 403);
 
         $group->update([
-            'title'             => $request['title'],
-            'common_name'       => $request['common_name'] ?? $group->common_name,
-            'grade_id'          => $request['grade_id'],
-            'period_id'         => $request['period_id'],
-            'organization_id'   => $request['organization_id'],
+            'title'           => $request['title'],
+            'common_name'     => $request['common_name'] ?? $group->common_name,
+            'grade_id'        => $request['grade_id'],
+            'period_id'       => $request['period_id'],
+            'organization_id' => $request['organization_id'],
         ]);
 
         return $group;
@@ -183,8 +189,8 @@ class GroupsController extends Controller
         // if user isn't enrolled to organization, enrol with student role
         OrganizationRoleUser::firstOrCreate(
             [
-                'user_id'           => $user->id,
-                'organization_id'   => $group->organization_id,
+                'user_id'         => $user->id,
+                'organization_id' => $group->organization_id,
             ],
             [
                 'role_id' => 6,

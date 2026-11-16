@@ -1,12 +1,11 @@
 <template>
     <div
         class="d-flex flex-column"
-        :style="{ marginTop: subscribable ? null : '-1.5rem' }"
     >
         <TabList v-if="!subscribable"
-            class="px-3"
-            model="kanban"
-            :tabs="[
+                 class="px-3"
+                 model="kanban"
+                 :tabs="[
                 { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
                 { icon: 'fa-columns', label: ['global.all', 'global.kanban.title'], filter: 'all' },
                 { icon: 'fa-user', label: ['global.my', 'global.kanban.title'], filter: 'owner', permission: 'kanban_create' },
@@ -14,7 +13,7 @@
                 { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
                 { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
             ]"
-            @change-tab="setFilter($event.filter)"
+                 @change-tab="setFilter($event.filter)"
         />
 
         <div
@@ -38,12 +37,12 @@
             </IndexWidget>
 
             <IndexWidget v-for="(kanban, index) in kanbans"
-                :key="'kanbanIndex' + kanban.id"
-                :model="kanban"
-                modelName="Kanban"
-                url="/kanbans"
-                :showSubscribable="subscribable"
-                :hidable="true"
+                         :key="'kanbanIndex' + kanban.id"
+                         :model="kanban"
+                         modelName="Kanban"
+                         url="/kanbans"
+                         :showSubscribable="subscribable"
+                         :hidable="true"
             >
                 <template #itemIcon>
                     <i class="fa fa-2x fa-columns"></i>
@@ -51,7 +50,7 @@
 
                 <template #dropdown>
                     <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-end"
+                         class="dropdown-menu dropdown-menu-end"
                     >
                         <button
                             v-permission="'kanban_delete'"
@@ -64,13 +63,13 @@
                         </button>
                     </div>
                     <div v-else
-                        class="dropdown-menu dropdown-menu-end"
+                         class="dropdown-menu dropdown-menu-end"
                     >
                         <button v-if="ownerOrAdmin(kanban)"
-                            v-permission="'kanban_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editKanban(kanban)"
+                                v-permission="'kanban_edit'"
+                                type="button"
+                                class="dropdown-item"
+                                @click="editKanban(kanban)"
                         >
                             <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.kanban.edit') }}
@@ -87,37 +86,37 @@
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban)"
-                            type="button"
-                            class="dropdown-item"
-                            @click="shareKanban(kanban)"
+                                type="button"
+                                class="dropdown-item"
+                                @click="shareKanban(kanban)"
                         >
                             <i class="fa fa-share-alt"></i>
                             {{ trans('global.kanban.share') }}
                         </button>
 
                         <button v-if="ownerOrAdmin(kanban) || kanban.allow_copy"
-                            type="button"
-                            class="dropdown-item"
-                            @click="confirmKanbanCopy(kanban)"
+                                type="button"
+                                class="dropdown-item"
+                                @click="confirmKanbanCopy(kanban)"
                         >
                             <i class="fa fa-copy"></i>
                             {{ trans('global.kanban.copy') }}
                         </button>
 
                         <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
-                            url="/kanbans/[id]/hide"
-                            :model="kanban"
-                            :is-hidden="kanban.is_hidden"
-                            @mark-status-changed="kanbans.splice(index, 1)"
+                              url="/kanbans/[id]/hide"
+                              :model="kanban"
+                              :is-hidden="kanban.is_hidden"
+                              @mark-status-changed="kanbans.splice(index, 1)"
                         />
 
                         <hr v-if="ownerOrAdmin(kanban)" class="my-1"/>
 
                         <button v-if="ownerOrAdmin(kanban)"
-                            v-permission="'kanban_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(kanban)"
+                                v-permission="'kanban_delete'"
+                                type="submit"
+                                class="dropdown-item text-danger"
+                                @click="confirmItemDelete(kanban)"
                         >
                             <i class="fa fa-trash"></i>
                             {{ trans('global.kanban.delete') }}
@@ -150,12 +149,12 @@
                 @confirm="destroy()"
             />
             <ConfirmModal v-if="!subscribable"
-                :showConfirm="showCopy"
-                :title="trans('global.kanban.copy')"
-                :description="trans('global.kanban.copy_helper') + '</br>' + trans('global.kanban.copy_note')"
-                css='primary'
-                @close="showCopy = false"
-                @confirm="copy()"
+                          :showConfirm="showCopy"
+                          :title="trans('global.kanban.copy')"
+                          :description="trans('global.kanban.copy_helper') + '</br>' + trans('global.kanban.copy_note')"
+                          css='primary'
+                          @close="showCopy = false"
+                          @confirm="copy()"
             />
         </Teleport>
     </div>
@@ -174,6 +173,7 @@ import Hide from "../tag/Hide.vue";
 import Favourite from "../tag/Favourite.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 import TagComponentModal from "../tag/TagComponentModal.vue";
+
 DataTable.use(DataTablesCore);
 
 export default {
@@ -207,7 +207,7 @@ export default {
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
 
-        return { selectedTags, selectedNegativeTags, dtOptions }
+        return {selectedTags, selectedNegativeTags, dtOptions}
     },
     data() {
         return {
@@ -217,9 +217,9 @@ export default {
             showCopy: false,
             currentKanban: {},
             columns: [
-                { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true },
-                { title: 'description', data: 'description', searchable: true },
+                {title: 'id', data: 'id'},
+                {title: 'title', data: 'title', searchable: true},
+                {title: 'description', data: 'description', searchable: true},
             ],
             filter: 'favourite',
             dt: null,
@@ -267,7 +267,7 @@ export default {
         shareKanban(kanban) {
             this.globalStore.showModal('subscribe-modal', {
                 modelId: kanban.id,
-                modelUrl: 'kanban' ,
+                modelUrl: 'kanban',
                 shareWithUsers: true,
                 shareWithGroups: true,
                 shareWithOrganizations: true,
@@ -323,7 +323,7 @@ export default {
                         this.showConfirm = false;
                         this.toast.error(trans('global.expel_error'));
                     });
-            }  else {
+            } else {
                 axios.delete('/kanbans/' + this.currentKanban.id)
                     .then(() => {
                         this.showConfirm = false;

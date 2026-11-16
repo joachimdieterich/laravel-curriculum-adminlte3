@@ -15,18 +15,18 @@
                 />
             </div>
 
-            <div v-if="organizationFilter !== null"
-                id="organization-filter"
-                class="position-relative d-flex flex-nowrap overflow-auto my-2"
-                tabindex="-1"
-                aria-label="Filter"
+            <div v-if="organizationFilter !== null && (organizationFilter.length > 1 || checkPermission('is_admin'))"
+                 id="organization-filter"
+                 class="position-relative d-flex flex-nowrap overflow-auto my-2"
+                 tabindex="-1"
+                 aria-label="Filter"
             >
                 <span id="organization-filter-wrapper"
-                    class="d-flex"
+                      class="d-flex"
                 >
                     <span v-for="organization in organizationFilter"
-                        :key="organization"
-                        class="flex-shrink-0"
+                          :key="organization"
+                          class="flex-shrink-0"
                     >
                         <button :id="'organization-filter-' + organization.id"
                                 class="btn btn-tab rounded-pill"
@@ -44,25 +44,25 @@
             </div>
 
             <IndexWidget v-if="checkPermission('group_create')"
-                key="groupCreate"
-                modelName="Group"
-                url="/groups"
-                :create=true
-                :label="trans('global.group.create')"
+                         key="groupCreate"
+                         modelName="Group"
+                         url="/groups"
+                         :create=true
+                         :label="trans('global.group.create')"
             />
             <IndexWidget v-for="group in groups"
-                :key="'groupIndex' + group.id"
-                :model="group"
-                modelName="Group"
-                storeTitle="groups"
-                url="/groups"
+                         :key="'groupIndex' + group.id"
+                         :model="group"
+                         modelName="Group"
+                         storeTitle="groups"
+                         url="/groups"
             >
                 <template #icon>
                     <i class="fa fa-layer-group"></i>
                 </template>
 
                 <template #dropdown
-                    v-permission="'group_edit, group_delete'"
+                          v-permission="'group_edit, group_delete'"
                 >
                     <div class="dropdown-menu dropdown-menu-end">
                         <button
@@ -158,16 +158,16 @@ export default {
             showConfirm: false,
             currentGroup: {},
             columns: [
-                { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true },
-                { title: 'organization', data: 'organization.title', searchable: true },
+                {title: 'id', data: 'id'},
+                {title: 'title', data: 'title', searchable: true},
+                {title: 'organization', data: 'organization.title', searchable: true},
             ],
             dt: null,
             allGroupsView: false
         }
     },
     setup() {
-        return { store: useDatatableStore() }
+        return {store: useDatatableStore()}
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;

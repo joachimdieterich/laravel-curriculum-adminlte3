@@ -90,18 +90,11 @@ class CurriculaApiController extends Controller
                 mb_substitute_character('none'); // remove non UTF-8 chars, instead of replacing them
 
                 foreach ($curricula as $curriculum) {
-                    // since these attributes are casted as 'CleanHTML' they will always be wrapped with a 'p'-tag
-                    $curriculum->mergeCasts(['description' => 'string']);
                     $curriculum->description = trim(strip_tags($curriculum->description));
                     $curriculum->makeHidden('tags', 'is_favourited', 'is_hidden');
 
                     // terminal-objectives
                     foreach ($curriculum->terminalObjectives as $terminal) {
-                        // same casting problem
-                        $terminal->mergeCasts([
-                            'title'       => 'string',
-                            'description' => 'string',
-                        ]);
                         $terminal->title       = trim(strip_tags($terminal->title));
                         $terminal->description = trim(strip_tags($terminal->description));
                         // truncate the description if it's too long and add ellipsis
@@ -112,11 +105,6 @@ class CurriculaApiController extends Controller
 
                         // enabling-objectives
                         foreach ($terminal->enablingObjectives as $enabling) {
-                            // same casting problem
-                            $enabling->mergeCasts([
-                                'title'       => 'string',
-                                'description' => 'string',
-                            ]);
                             $enabling->title       = trim(strip_tags($enabling->title));
                             $enabling->description = trim(strip_tags($enabling->description));
                             if ($max != 0 && strlen($enabling->description) > $max) {

@@ -1,18 +1,15 @@
 <template>
     <tag-marker
         :url="url"
-        :title-active="trans('global.remove_hide')"
-        :title-inactive="trans('global.hide')"
-        :text-active="trans('global.remove_hide')"
-        :text-inactive="trans('global.hide')"
-        fa-icon-active="fa fa-eye"
-        fa-icon-inactive="fa fa-eye-slash"
+        :text-marked="trans('global.remove_hide')"
+        :text-unmarked="trans('global.hide')"
+        faIconMarked="fa fa-eye"
+        faIconUnmarked="fa fa-eye-slash"
         :is-marked="isHidden"
         :model="model"
-        :button-class="{'dropdown-item': true, 'text-secondary': true}"
-        :icon-class="{'mr-2': true}"
-        @mark-status-changed="(newModel) => {
-            this.$emit('hide-status-changed', newModel)
+        :class="classes"
+        @mark-status-changed="(newStatus) => {
+            this.$emit('hide-status-changed', newStatus)
         }"
     />
 </template>
@@ -35,7 +32,11 @@ export default {
         },
         isHidden: {
             type: Boolean,
-            title: "If the model is already hidden"
+            title: "If the model is already hidden",
+        },
+        classes: {
+            type: String,
+            default: 'dropdown-item',
         },
     },
 }

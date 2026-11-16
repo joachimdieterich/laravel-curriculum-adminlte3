@@ -1,5 +1,5 @@
 <template>
-    <div class="col-12">
+    <div class="px-3">
         <ul
             class="nav nav-tabs no-print"
             role="tablist"
@@ -9,13 +9,11 @@
                     id="statistic-nav-tab"
                     href="#statistic-tab"
                     class="nav-link link-muted active"
-                    data-toggle="pill"
                     role="tab"
                     aria-controls="statistic-tab"
-                    aria-selected="false"
-                    @click="loaderEvent('statistics')"
+                    aria-selected="true"
                 >
-                    <i class="fa fa-chart-pie pr-2"></i>{{trans('global.dashboard.statistic')}}
+                    <i class="fa fa-chart-pie pe-2"></i>{{trans('global.dashboard.statistic')}}
                 </a>
             </li>
            <li class="nav-item">
@@ -24,7 +22,7 @@
                     href="/metadatasets"
                     class="nav-link link-muted"
                 >
-                    <i class="fa fa-barcode pr-2"></i>{{trans('global.metadataset.title')}}
+                    <i class="fa fa-barcode pe-2"></i>{{trans('global.metadataset.title')}}
                 </a>
             </li>
             <li class="nav-item">
@@ -33,7 +31,7 @@
                     href="/configs"
                     class="nav-link link-muted"
                 >
-                    <i class="fa fa-cogs pr-2"></i>{{trans('global.config.title')}}
+                    <i class="fa fa-cogs pe-2"></i>{{trans('global.config.title')}}
                 </a>
             </li>
         </ul>
@@ -50,8 +48,9 @@
             >
                 <div class="d-flex flex-wrap align-items-center justify-content-around mt-2">
                     <span class="d-flex align-items-center">
-                        <label class="m-0 mr-2" for="from">{{ trans('global.timeFrom')}}</label>
+                        <label for="dp-input-from" class="m-0 me-2">{{ trans('global.timeFrom') }}</label>
                         <VueDatePicker
+                            uid="from"
                             v-model="date_begin"
                             model-type="yyyy-MM-dd"
                             format="dd.MM.yyyy"
@@ -63,8 +62,9 @@
                         />
                     </span>
                     <span class="d-flex align-items-center">
-                        <label class="m-0 mr-2" for="to">{{ trans('global.timeTo')}}</label>
+                        <label for="dp-input-to" class="m-0 me-2">{{ trans('global.timeTo') }}</label>
                         <VueDatePicker
+                            uid="to"
                             v-model="date_end"
                             model-type="yyyy-MM-dd"
                             format="dd.MM.yyyy"
@@ -78,7 +78,7 @@
                 </div>
 
                 <div class="row">
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="devices_chart"
                             title="Devices"
@@ -87,7 +87,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="browsers_chart"
                             title="Browser"
@@ -96,7 +96,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="organizations_chart"
                             :title="trans('global.active') + ' ' + trans('global.organization.title')"
@@ -105,7 +105,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="groups_chart"
                             :title="trans('global.active') + ' ' + trans('global.group.title')"
@@ -114,7 +114,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="achievements_chart"
                             :title="trans('global.achievement.title')"
@@ -123,7 +123,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="certificates_chart"
                             :title=" trans('global.certificate.title')"
@@ -132,7 +132,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="kanbans_chart"
                             :title=" trans('global.kanban.title')"
@@ -141,7 +141,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="curricula_chart"
                             :title="trans('global.active') + ' ' + trans('global.curriculum.title')"
@@ -150,7 +150,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="courses_chart"
                             :title="trans('global.active')+ ' ' + trans('global.course.title')"
@@ -159,7 +159,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="eventSubscription_chart"
                             :title="trans('global.eventSubscription.title')"
@@ -168,7 +168,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="repositoryPlugin_chart"
                             :title="trans('global.externalRepositorySubscription.title')"
@@ -177,7 +177,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="bbbPlugin_chart"
                             :title="trans('global.videoconference.title')"
@@ -186,7 +186,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="favour_chart"
                             :title=" trans('global.tag.favourite.plural')"
@@ -195,7 +195,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                    <span class="col-6 col-sm-4 col-md-3 mt-1">
+                    <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="hidden_chart"
                             :title=" trans('global.tag.hidden.singular')"
@@ -204,7 +204,7 @@
                             :date_end="date_end"
                         />
                     </span>
-                   <!-- <span class="col-6 col-sm-4 col-md-3 mt-1">
+                   <!-- <span class="col-6 col-sm-4 col-md-3">
                         <PieChart
                             id="bbbPlugin_chart"
                             :title="trans('global.videoconference.title')"
@@ -213,22 +213,16 @@
                             :date_end="date_end"
                         />
                     </span> -->
-                    <span class="col-12 mt-1">
-                        <Logins
-                            id="login_chart"
-                            :date_begin="date_begin"
-                            :date_end="date_end"
-                        />
-                    </span>
-                    <span class="col-12 mt-1">
-                        <Models
-                            id="model_chart"
-                            chart="model"
-                            title="Models"
-                            :date_begin="date_begin"
-                            :date_end="date_end"
-                        />
-                    </span>
+                    <Logins
+                        id="login_chart"
+                        :date_begin="date_begin"
+                        :date_end="date_end"
+                    />
+                    <Models
+                        id="model_chart"
+                        :date_begin="date_begin"
+                        :date_end="date_end"
+                    />
                 </div>
             </div>
         </div>
@@ -242,7 +236,7 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
-    data () {
+    data() {
         return {
             date_begin: new Date().toISOString().slice(0, 10),
             date_end:   new Date().toISOString().slice(0, 10),

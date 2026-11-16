@@ -1,91 +1,67 @@
 <template>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="m-0">
-                            <i class="fa fa-university mr-1"></i>
-                            {{ config.key }}
-                        </h5>
-                    </div>
-                    <div
-                        v-permission="'config_edit'"
-                        class="card-tools pr-2"
-                    >
-                        <a @click="editConfig(config)">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                    </div>
+    <div class="px-3">
+        <div class="col-12 mb-3 rounded-3 shadow-layout">
+            <div class="d-flex align-items-center justify-content-between p-2 text-bg-primary rounded-top-3">
+                <h5 class="m-0">
+                    <i class="fa fa-university mx-1"></i>{{ config.key }}
+                </h5>
 
-                </div>
+                <button v-if="checkPermission('is_admin')"
+                    type="button"
+                    class="btn btn-icon-alt"
+                    @click="editConfig()"
+                >
+                    <i class="fa fa-pencil-alt"></i>
+                </button>
+            </div>
 
-                <div class="card-body">
-                    <strong>
-                        <i class="fa fa-file-alt mr-1"></i>
-                        {{ trans('global.config.fields.value') }}
-                    </strong>
-                    <p
-                        class="text-muted"
-                        v-html="config.value"
-                    ></p>
-                    <hr>
+            <div class="px-3 py-2 bg-white rounded-bottom-3">
+                <strong>
+                    <i class="fa fa-file-alt me-1"></i>{{ trans('global.config.fields.value') }}
+                </strong>
+                <p class="text-muted" v-html="config.value"></p>
 
-                    <strong>
-                        <i class="fas fa-layer-group mr-1"></i>
-                        {{ trans('global.config.fields.referenceable_type') }}
-                    </strong>
-                    <p class="text-muted">
-                        {{ config.referenceable_type }}
-                    </p>
-                    <hr>
-                    <strong>
-                        <i class="fas fa-magnifying-glass mr-1"></i>
-                        {{ trans('global.config.fields.referenceable_id') }}
-                    </strong>
-                    <p class="text-muted">{{ config.referenceable_id }}</p>
-                    <hr>
-                    <strong>
-                        <i class="fas fa-magnifying-glass mr-1"></i>
-                        {{ trans('global.config.fields.data_type') }}
-                    </strong>
-                    <p class="text-muted">{{ config.data_type }}</p>
-                </div>
+                <hr>
 
-                <div class="card-footer">
-                    <small class="float-right">{{ config.updated_at }}</small>
-                </div>
+                <strong>
+                    <i class="fa fa-layer-group me-1"></i>{{ trans('global.config.fields.referenceable_type') }}
+                </strong>
+                <p class="text-muted">{{ config.referenceable_type }}</p>
+
+                <hr>
+
+                <strong>
+                    <i class="fa fa-magnifying-glass me-1"></i>{{ trans('global.config.fields.referenceable_id') }}
+                </strong>
+                <p class="text-muted">{{ config.referenceable_id }}</p>
+
+                <hr>
+
+                <strong>
+                    <i class="fa fa-magnifying-glass me-1"></i>{{ trans('global.config.fields.data_type') }}
+                </strong>
+                <p class="text-muted">{{ config.data_type }}</p>
+
+                <small class="text-muted">{{ config.updated_at }}</small>
             </div>
         </div>
 
         <Teleport to="body">
-            <ConfigModal></ConfigModal>
+            <ConfigModal/>
         </Teleport>
     </div>
 </template>
-
 <script>
-import {useGlobalStore} from "../../store/global";
 import ConfigModal from "../config/ConfigModal.vue";
 
 export default {
     name: "Config",
-    components: {
-        ConfigModal
-    },
+    components: { ConfigModal },
     props: {
         config: {
+            type: Object,
             default: null,
         },
-        status_definitions: {
-            default: null,
-        },
-    },
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
     },
     data() {
         return {
@@ -94,14 +70,11 @@ export default {
         }
     },
     mounted() {
-        this.$eventHub.on('config-updated', (config) => {
-            this.globalStore?.closeModal('config-modal');
-            window.location.reload();
-        });
+        this.$eventHub.on('config-updated', () => window.location.reload());
     },
     methods: {
-        editConfig(config){
-            this.globalStore?.showModal('config-modal',config);
+        editConfig() {
+            this.globalStore.showModal('config-modal', this.config);
         },
     },
 }

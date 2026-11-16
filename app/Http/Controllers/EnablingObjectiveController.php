@@ -3,32 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Config;
-use App\Curriculum;
 use App\EnablingObjective;
 use App\Group;
-use App\Medium;
 use App\QuoteSubscription;
 use App\ReferenceSubscription;
 use App\TerminalObjective;
 use App\User;
 use DB;
-use Illuminate\Http\Request;
+use Gate;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 
 class EnablingObjectiveController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return EnablingObjective|void
      */
-    public function store(Request $request)
+    public function store()
     {
         $input = $this->validateRequest();
         abort_unless(TerminalObjective::find($input['terminal_objective_id'])->isAccessible(), 403);
 
-        $order_id = $this->getMaxOrderId($input['terminal_objective_id']);
+        $order_id          = $this->getMaxOrderId($input['terminal_objective_id']);
         $enablingObjective = EnablingObjective::create([
             'title'                 => $input['title'],
             'description'           => $input['description'],
@@ -37,10 +35,10 @@ class EnablingObjectiveController extends Controller
             'terminal_objective_id' => $input['terminal_objective_id'],
             'level_id'              => format_select_input($input['level_id']),
             'visibility'            => $input['visibility'],
-            'order_id'              => $order_id
+            'order_id'              => $order_id,
         ]);
 
-        LogController::set(get_class($this).'@'.__FUNCTION__);
+        LogController::set(get_class($this) . '@' . __FUNCTION__);
 
         if (request()->wantsJson()) {
             return EnablingObjective::with('achievements')->without('terminalObjective')->find($enablingObjective->id);
@@ -50,8 +48,7 @@ class EnablingObjectiveController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\EnablingObjective  $enablingObjective
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function show(EnablingObjective $enablingObjective)
     {
@@ -72,28 +69,28 @@ class EnablingObjectiveController extends Controller
                 'referenceSubscriptions.siblings.referenceable',
                 'quoteSubscriptions.siblings.quotable',
                 'achievements' => function ($query) {
-                    $query->where('user_id', auth()->user()->id)->with(['owner', 'user']);
+                    $query->where('user_id', auth()->user()->id)->with([
+                        'owner:id,firstname,lastname',
+                        'user:id,firstname,lastname',
+                        'history'
+                    ]);
                 },
             ])
             ->find($enablingObjective->id);
 
-        $repository = Config::where('key', 'repository')->first() ?? 'false';
-        $editable = $objective->curriculum->isEditable();
+        $editable   = $objective->curriculum->isEditable();
 
         return view('objectives.show')
             ->with(compact('objective'))
-            ->with(compact('repository'))
             ->with(compact('editable'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\EnablingObjective  $enablingObjective
-     * @return \Illuminate\Http\Response
+     * @return EnablingObjective|void
      */
-    public function update(Request $request, EnablingObjective $enablingObjective)
+    public function update(EnablingObjective $enablingObjective)
     {
         abort_unless($enablingObjective->isAccessible(), 403);
 
@@ -107,8 +104,9 @@ class EnablingObjectiveController extends Controller
                 'curriculum_id'         => $input['curriculum_id'],
                 'terminal_objective_id' => $input['terminal_objective_id'],
                 'level_id'              => format_select_input($input['level_id']),
-                'visibility'            => $input['visibility']
+                'visibility'            => $input['visibility'],
             ]);
+
             return $enablingObjective->without(['terminalObjective', 'curriculum', 'owner'])->find($enablingObjective->id);
         }
     }
@@ -116,12 +114,11 @@ class EnablingObjectiveController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\EnablingObjective  $enablingObjective
-     * @return \Illuminate\Http\Response
+     * @return bool|void|null
      */
     public function destroy(EnablingObjective $enablingObjective)
     {
-        abort_unless((\Gate::allows('objective_delete') and $enablingObjective->isAccessible()), 403);
+        abort_unless((Gate::allows('objective_delete') and $enablingObjective->isAccessible()), 403);
 
         // delete contents
         foreach ($enablingObjective->contents as $content) {
@@ -131,7 +128,7 @@ class EnablingObjectiveController extends Controller
         // decrease order-id of each objective with a higher order-id by 1
         EnablingObjective::where('terminal_objective_id', $enablingObjective->terminal_objective_id)
             ->where('order_id', '>', $enablingObjective->order_id)
-            ->decrement('order_id', 1);
+            ->decrement('order_id');
 
         // delete objective
         $return = $enablingObjective->delete();
@@ -141,7 +138,7 @@ class EnablingObjectiveController extends Controller
         }
     }
 
-    public function referenceSubscriptionSiblings(EnablingObjective $enablingObjective)
+    public function referenceSubscriptionSiblings(EnablingObjective $enablingObjective): array
     {
         abort_unless($enablingObjective->isAccessible(), 403);
 
@@ -159,21 +156,19 @@ class EnablingObjectiveController extends Controller
             $siblings = $siblings->merge($collection);
         }
 
-        if (count($siblings) == 0) { //end early
-            return ['message'=> 'no subscriptions'];
+        if (count($siblings) == 0) { // end early
+            return ['message' => 'no subscriptions'];
         }
 
+        $curricula_list = [];
         foreach ($siblings as $sibling) {
-
-            //todo: trace error -> "Trying to get property 'curriculum' of non-object": possible sibling entry of deleted curriculum? -> yes.
-            //todo: add artisan command/or frontend cleaner
             $curricula_list[$sibling->referenceable->curriculum->id] = $sibling->referenceable->curriculum;
         }
 
         return ['siblings' => $siblings, 'curricula_list' => $curricula_list];
     }
 
-    public function quoteSubscriptions(EnablingObjective $enablingObjective)
+    public function quoteSubscriptions(EnablingObjective $enablingObjective): array
     {
         abort_unless($enablingObjective->isAccessible(), 403);
 
@@ -182,15 +177,17 @@ class EnablingObjectiveController extends Controller
             ->with(['quote.content.subscriptions.subscribable'])
             ->get();
 
-        if (count($collection) == 0) { //end early
+        if (count($collection) == 0) { // end early
             return ['message' => 'no subscriptions'];
         }
 
-        foreach ($collection as $quote_subscriptions) {
-            $arr[$quote_subscriptions->quote_id] = ! is_null($quote_subscriptions->quote);
+        $quotes_subscriptions = [];
+        $curricula_list       = [];
 
+        foreach ($collection as $quote_subscriptions) {
             if (! is_null($quote_subscriptions->quote)) {
-                $curricula_list[$quote_subscriptions->quote->content->subscriptions[0]->subscribable->id] = optional($quote_subscriptions->quote->content)->subscriptions[0]->subscribable;
+                $id                     = $quote_subscriptions->quote->content->subscriptions[0]->subscribable->id;
+                $curricula_list[$id]    = optional($quote_subscriptions->quote->content)->subscriptions[0]->subscribable;
                 $quotes_subscriptions[] = $quote_subscriptions;
             }
         }
@@ -216,8 +213,8 @@ class EnablingObjectiveController extends Controller
         // decrease order_id of the objective with the next highest order_id
         EnablingObjective::where([
             'terminal_objective_id' => $enablingObjective->terminal_objective_id,
-            'order_id' => $enablingObjective->order_id + 1,
-        ])->decrement('order_id', 1);
+            'order_id'              => $enablingObjective->order_id + 1,
+        ])->decrement('order_id');
 
         $enablingObjective->order_id++;
         $enablingObjective->save();
@@ -232,8 +229,8 @@ class EnablingObjectiveController extends Controller
         // increase order_id of the objective with the next lowest order_id
         EnablingObjective::where([
             'terminal_objective_id' => $enablingObjective->terminal_objective_id,
-            'order_id' => $enablingObjective->order_id - 1,
-        ])->increment('order_id', 1);
+            'order_id'              => $enablingObjective->order_id - 1,
+        ])->increment('order_id');
 
         $enablingObjective->order_id--;
         $enablingObjective->save();
@@ -244,49 +241,42 @@ class EnablingObjectiveController extends Controller
     /**
      * Display the specified resource with achievements.
      *
-     * @param  \App\EnablingObjective  $enablingObjective
+     * @param \App\EnablingObjective $enablingObjective
+     * @param \App\Group|null $group
      * @return array
      */
     public function showAchievements(EnablingObjective $enablingObjective, $group = null)
     {
         abort_unless($enablingObjective->isAccessible(), 403);
 
-        if ($group == 'null') {
-            $user_ids = [auth()->user()->id];
-        } else {
-            if (auth()->user()->groups->contains($group) //check if user is allowed to see group
-                or is_admin()) {
-                $user_ids = Group::find($group)->users()->get()->pluck('id');
-            } else {
-                $user_ids = [auth()->user()->id];
-            }
+        $user_ids = [auth()->user()->id];
+        // check if user is allowed to see group
+        if (is_admin() || auth()->user()->groups->contains($group)) {
+            $user_ids = Group::find($group)->users()->get()->pluck('id');
         }
 
-        $result = ['objective' => EnablingObjective::with(
-                ['achievements' => function ($query) use ($user_ids) {
-                    $query->whereIn('user_id', $user_ids)->with(['owner', 'user']);
+        $result = [
+            'objective' => EnablingObjective::with([
+                'achievements' => function ($query) use ($user_ids) {
+                    $query->whereIn('user_id', $user_ids)->with([
+                        'owner:id,firstname,lastname',
+                        'user:id,firstname,lastname'
+                    ]);
                 },
-                ])->find($enablingObjective->id),
-            'users' => User::select([
-                'users.id',
-                'firstname',
-                'lastname',
-            ])
+            ])->find($enablingObjective->id),
+            'users' => User::select(['users.id', 'firstname', 'lastname'])
                 ->join('group_user', 'users.id', '=', 'group_user.user_id')
                 ->join('organization_role_users', 'organization_role_users.user_id', '=', 'group_user.user_id')
                 ->where('group_user.group_id', '=', $group)
                 ->where('organization_role_users.organization_id', '=', auth()->user()->current_organization_id)
-                ->where('organization_role_users.role_id', '=', 6) //6 == student
+                ->where('organization_role_users.role_id', '=', 6) // 6 == student
                 ->get(),
-            'groups' => auth()->user()->currentGroupEnrolments()->where('curriculum_id', $enablingObjective->curriculum_id)->get(),
         ];
 
-        if (request()->wantsJson()) {
-            return $result;
-        }
+        return $result;
     }
 
-    protected function validateRequest()
+    protected function validateRequest(): array
     {
         return request()->validate([
             'id'                    => 'sometimes',

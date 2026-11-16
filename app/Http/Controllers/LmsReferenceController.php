@@ -16,15 +16,20 @@ class LmsReferenceController extends Controller
      */
     public function get(Request $request)
     {
-        $input = $this->validateRequest();
-        $lms = new LmsPlugin();
+        $input           = $this->validateRequest();
+        $lms             = new LmsPlugin();
+        $organization_id = $input['organization_id'] ?? auth()->user()->current_organization_id;
+        $organization    = Organization::select('title', 'lms_url')->find($organization_id);
+        $lms_url         = $organization->lms_url;
 
-        if (request()->wantsJson()) {
-            return [
-                'entries' => $lms->plugins[config('app.lms_plugin')]->{$input['ws_function']}($input),
-                'lms_url' => Organization::find(auth()->user()->current_organization_id)->lms_url
-            ];
+        if ($lms_url === null) {
+            return abort(404, 'global.error.no_lms_url', ['abort-info' => $organization->title]);
         }
+
+        return [
+            'entries' => $lms->plugins[config('app.lms_plugin')]->{$input['ws_function']}($input),
+            'lms_url' => $lms_url
+        ];
     }
 
     /**
@@ -111,15 +116,16 @@ class LmsReferenceController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'plugin' => 'required',
-            'id' => 'sometimes',
-            'course_id' => 'sometimes',
-            'course_content_id' => 'sometimes',
-            'course_item' => 'sometimes',
-            'ws_function' => 'sometimes',
+            'plugin'             => 'required',
+            'id'                 => 'sometimes',
+            'organization_id'    => 'sometimes',
+            'course_id'          => 'sometimes',
+            'course_content_id'  => 'sometimes',
+            'course_item'        => 'sometimes',
+            'ws_function'        => 'sometimes',
             'referenceable_type' => 'sometimes',
-            'referenceable_id' => 'sometimes',
-            'sharing_level' => 'sometimes',
+            'referenceable_id'   => 'sometimes',
+            'sharing_level'      => 'sometimes',
         ]);
     }
 }

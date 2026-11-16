@@ -18,16 +18,12 @@ class ExerciseController extends Controller
         $model = Training::find(request()->training_id);
         abort_unless((\Gate::allows('plan_access') and $model->isAccessible()), 403);
 
-        $exercises = $model->exercises()
+        return $model->exercises()
             ->select('id', 'training_id', 'title', 'description', 'recommended_iterations')
             ->with(['dones' => function ($query) {
                 $query->select('id', 'exercise_id', 'iterations', 'created_at')
                     ->where('owner_id', auth()->user()->id);
             }])->get();
-
-        if (request()->wantsJson()) {
-            return $exercises;
-        }
     }
 
     /**
@@ -42,19 +38,17 @@ class ExerciseController extends Controller
         $input = $this->validateRequest();
 
         $exercise = Exercise::create([
-            'title' => $input['title'],
-            'description' => $input['description'],
-            'recommended_iterations' => $input['recommended_iterations'] ?? 1,
-            'training_id' => $input['training_id'],
-            'order_id' => $input['order_id'] ?? 0,
-            'owner_id' => auth()->user()->id,
+            'title'                     => $input['title'],
+            'description'               => $input['description'],
+            'recommended_iterations'    => $input['recommended_iterations'] ?? 1,
+            'training_id'               => $input['training_id'],
+            'order_id'                  => $input['order_id'] ?? 0,
+            'owner_id'                  => auth()->user()->id,
         ]);
         // subscribe embedded media
         checkForEmbeddedMedia($exercise, 'description');
 
-        if (request()->wantsJson()) {
-            return $exercise;
-        }
+        return $exercise;
     }
 
     /**
@@ -81,19 +75,17 @@ class ExerciseController extends Controller
         $input = $this->validateRequest();
 
         $exercise->update([
-            'title' => $input['title'],
-            'description' => $input['description'],
-            'recommended_iterations' => $input['recommended_iterations'] ?? 1,
-            'training_id' => $input['training_id'],
-            'order_id' => $input['order_id'] ?? 0,
+            'title'                     => $input['title'],
+            'description'               => $input['description'],
+            'recommended_iterations'    => $input['recommended_iterations'] ?? 1,
+            'training_id'               => $input['training_id'],
+            'order_id'                  => $input['order_id'] ?? 0,
         ]);
 
         // subscribe embedded media
         checkForEmbeddedMedia($exercise, 'description');
 
-        if (request()->wantsJson()) {
-            return $exercise;
-        }
+        return $exercise;
     }
 
     /**
@@ -106,21 +98,17 @@ class ExerciseController extends Controller
     {
         abort_unless(\Gate::allows('plan_delete'), 403);
 
-        $exercise->delete(); // ExerciseDones are deleted via boot method
-
-        if (request()->wantsJson()) {
-            return true;
-        }
+        return $exercise->delete(); // ExerciseDones are deleted via boot method
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'training_id' => 'required|integer',
-            'title' => 'required|string',
-            'description' => 'sometimes|string|nullable',
-            'recommended_iterations' => 'required|integer',
-            'order_id' => 'sometimes|integer',
+            'training_id'               => 'required|integer',
+            'title'                     => 'required|string',
+            'description'               => 'sometimes|string|nullable',
+            'recommended_iterations'    => 'required|integer',
+            'order_id'                  => 'sometimes|integer',
         ]);
     }
 }

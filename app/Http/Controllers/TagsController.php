@@ -66,9 +66,7 @@ class TagsController extends Controller
             $request->input('name'),
         );
 
-        if (request()->wantsJson()) {
-            return $tag;
-        }
+        return $tag;
     }
 
     public function update(UpdateTagRequest $request, Tag $tag)
@@ -92,11 +90,7 @@ class TagsController extends Controller
     {
         abort_unless(\Gate::allows('tag_delete'), 403);
 
-        $return = $tag->delete();
-
-        if (request()->wantsJson()) {
-            return ['message' => $return];
-        }
+        return $tag->delete();
     }
 
     public function attach(AttachTagRequest $request)

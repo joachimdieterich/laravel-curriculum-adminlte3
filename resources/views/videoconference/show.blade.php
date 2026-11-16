@@ -1,7 +1,7 @@
 @extends('layouts.master')
 @section('content')
-    <videoconference
+    <Videoconference
         :videoconference="{{ $videoconference }}"
-        :user="{{auth()->user()}}"
-    ></videoconference>
+        :user="{{ auth()->user() }}"
+    />
 @endsection

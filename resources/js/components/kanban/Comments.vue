@@ -9,34 +9,27 @@
             class="hide-scrollbars overflow-auto pt-3"
         >
             <div v-for="comment in comments"
-                class="direct-chat-msg"
-                :class="{ 'right': comment.user_id == $userId }"
+                class="mb-2"
             >
-                <div class="direct-chat-infos clearfix">
-                    <span
-                        class="direct-chat-name"
-                        :class="{ 'float-left': comment.user_id != $userId, 'float-right': comment.user_id ==  $userId }"
-                    >
-                        {{ comment.user.firstname }} {{ comment.user.lastname }}
-                    </span>
-                    <span
-                        class="direct-chat-timestamp"
-                        :class="{ 'float-left': comment.user_id == $userId,'float-right': comment.user_id !=  $userId }"
-                    >
-                        {{ comment.created_at }}
-                    </span>
+                <div
+                    class="d-flex justify-content-between"
+                    :class="{ 'flex-row-reverse': comment.user_id == $userId }"
+                    style="font-size: 0.875rem;"
+                >
+                    <span style="font-weight: 600;">{{ comment.user.firstname }} {{ comment.user.lastname }}</span>
+                    <span class="text-secondary">{{ comment.created_at }}</span>
                 </div>
                 <div
                     class="d-flex"
-                    :class="comment.user_id == $userId ? 'flex-row-reverse' : 'flex-row'"
+                    :class="{ 'flex-row-reverse': comment.user_id == $userId }"
+                    style="gap: 0.5rem;"
                 >
                     <img v-if="comment.user.medium_id != null"
                         class="direct-chat-img"
                         :src="'/media/' + comment.user.medium_id"
                         alt="User profile picture"
                     />
-                    <avatar v-else
-                        data-toggle="tooltip"
+                    <Avatar v-else
                         :title="comment.user.username"
                         :username="comment.user.username"
                         :firstname="comment.user.firstname"
@@ -44,17 +37,18 @@
                         :size="40"
                     />
                     <div
-                        class="direct-chat-text flex-fill"
+                        class="comment position-relative flex-fill btn-icon-hover bg-dark-subtle px-2 py-1 rounded-3"
                         @mouseover="hover = comment.id"
                         @mouseleave="hover = false"
                     >
-                        <div class="d-flex align-items-center pull-right">
+                        <div class="d-flex align-items-center float-end">
                             <button v-if="($userId == comment.user.id && $userId != 8)
                                     || $userId == model.owner_id
                                     || checkPermission('is_admin')
                                 "
                                 type="button"
-                                class="d-print-none btn btn-icon text-danger px-2 py-1 mr-1 invisible"
+                                class="d-print-none btn btn-icon btn-hide text-danger px-2 py-1 me-1"
+                                :aria-label="trans('global.comment.delete')"
                                 @click="deleteComment(comment)"
                             >
                                 <i class="fa fa-trash"></i>
@@ -62,7 +56,7 @@
                             <Reaction
                                 :model="comment"
                                 :websocket="websocket"
-                                class="pull-right"
+                                class="float-end"
                                 reaction="like"
                                 url="/kanbanItemComments"
                             />
@@ -80,12 +74,12 @@
                     name="message"
                     class="form-control"
                     v-model.trim="form.comment"
-                    :placeholder="trans('global.comment') + '...'"
+                    :placeholder="trans('global.comment.title_singular') + '...'"
                     @keyup.enter="sendComment()"
                 />
                 <span class="input-group-append">
                     <button
-                        class="btn btn-primary"
+                        class="btn btn-primary rounded-start-0"
                         :disabled="!form.comment"
                         @click.prevent="sendComment()"
                     >
@@ -211,9 +205,19 @@ export default {
     }
 }
 </script>
-<style scoped>
-.direct-chat-text:hover .text-danger { visibility: visible !important; }
-@media (max-width: 991px) {
-    .direct-chat-text .text-danger { visibility: visible !important; }
+<style>
+.comment::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: 100%;
+    border: 6px solid #0000;
+    border-right-color: var(--bs-dark-bg-subtle);
+}
+.flex-row-reverse > .comment:before {
+    left: 100%;
+    right: auto;
+    border-left-color: var(--bs-dark-bg-subtle);
+    border-right-color: #0000;
 }
 </style>

@@ -1,17 +1,18 @@
 <template>
-    <div :id="component_id">
+    <div
+        :id="component_id"
+        class="d-flex align-items-center"
+    >
         <button v-if="showBackButton"
             type="button"
-            class="d-inline btn btn-icon btn-icon-big mr-1"
-            :title="trans(backButtonTitle)"
+            class="d-inline btn btn-icon btn-icon-big me-1"
+            data-bs-toggle="tooltip"
+            :data-bs-title="trans(backButtonTitle)"
             @click="goBackTo()"
+            @click.middle="goBackTo(true)"
         >
             <i class="fa fa-arrow-left" style="font-size: 1.5em;"></i>
         </button>
-        <slot name="title"></slot>
-        <slot name="toolbar"
-            id="titleToolbar"
-        ></slot>
         <span id="customTitle"></span>
     </div>
 </template>
@@ -37,11 +38,13 @@ export default {
         }
     },
     methods: {
-        goBackTo() {
+        goBackTo(newTab = false) {
+            const target = newTab ? '_blank' : '_self';
+
             if (this.backButtonUrl) {
-                window.location.href = this.backButtonUrl;
+                window.open(this.backButtonUrl, target)
             } else {
-                window.history.back();
+                window.open(window.history.back(), target);
             }
         },
     },

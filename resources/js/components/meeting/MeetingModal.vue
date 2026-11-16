@@ -185,17 +185,6 @@
                                     show-fallback
                                     fallback-input-type="color"
                                 />
-
-                                <MediumForm
-                                    :id="'medium_form' + component_id"
-                                    :medium_id="form.medium_id"
-                                    :subscribable_id="form.id"
-                                    subscribable_type="App\Meeting"
-                                    accept="image/*"
-                                    @selectedValue="(id) => {
-                                        this.form.medium_id = id;
-                                    }"
-                                />
                             </div>
                         </div>
 
@@ -258,7 +247,7 @@
                         <button
                             v-if="this.activetab == 'create_meeting'"
                             id="meeting-save"
-                            class="btn btn-primary ml-3"
+                            class="btn btn-primary ms-3"
                             @click="submit()"
                         >
                             {{ trans('global.save') }}
@@ -271,18 +260,14 @@
 </template>
 <script>
 import Form from 'form-backend-validation';
-import MediumForm from "../media/MediumForm.vue";
-import axios from "axios";
 import Editor from "@tinymce/tinymce-vue";
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 
 export default {
     name: 'meeting-modal',
     components: {
         Editor,
         Select2,
-        MediumForm
     },
     props: {},
     setup() {
@@ -353,7 +338,7 @@ export default {
                 });
         },
         loadImportData() {
-            $("#loading-event_import").show();
+            document.getElementById('loading-event_import').style.display = '';
             axios.get('/meetings/getImportDataByUid?uid=' + this.form.uid)
                 .then(response => {
                     this.form.populate(response.data);
@@ -364,7 +349,7 @@ export default {
 
                     this.method = 'patch';
                     this.activetab = 'create_meeting';
-                    $("#loading-event_import").hide();
+                    document.getElementById('loading-event_import').style.display = 'none';
                 })
                 .catch(e => {
                     console.log(e);

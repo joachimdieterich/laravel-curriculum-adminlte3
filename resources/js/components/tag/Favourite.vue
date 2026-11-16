@@ -1,18 +1,15 @@
 <template>
     <tag-marker
         :url="url"
-        :title-active="trans('global.remove_favourite')"
-        :title-inactive="trans('global.add_favourite')"
-        text-active=""
-        text-inactive=""
-        fa-icon-active="fa fa-heart"
-        fa-icon-inactive="far fa-heart"
+        :titleMarked="trans('global.tag.add_favourite')"
+        :titleUnmarked="trans('global.tag.remove_favourite')"
+        faIconMarked="fa fa-heart"
+        faIconUnmarked="far fa-heart"
         :is-marked="isFavourited"
         :model="model"
-        :button-class="{'btn': true, 'btn-icon': true, 'px-2': true, 'py-1': true}"
-        :icon-class="{}"
-        @mark-status-changed="(newModel) => {
-            this.$emit('favour-status-changed', newModel)
+        :class="classes"
+        @mark-status-changed="(newStatus) => {
+            this.$emit('favour-status-changed', newStatus)
         }"
     />
 </template>
@@ -35,7 +32,11 @@ export default {
         },
         isFavourited: {
             type: Boolean,
-            title: "If the model is already favourited"
+            title: "If the model is already favourited",
+        },
+        classes: {
+            type: String,
+            default: 'btn btn-icon',
         },
     },
 }

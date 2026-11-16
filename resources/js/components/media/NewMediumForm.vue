@@ -2,11 +2,11 @@
 <template>
     <div v-if="subscribable_id || allow_fallback_on_create"
         v-permission="'external_medium_create'"
-        class="d-flex align-items-center ml-auto"
+        class="d-flex align-items-center"
     >
         <button v-if="previewMedium && media_subscriptions.length < 2"
             type="button"
-            class="btn btn-icon mr-2"
+            class="btn btn-icon me-2"
             :disabled="isProcessing"
             @click="deleteSubscription()"
         >
@@ -49,10 +49,10 @@
             </button>
             <button
                 type="button"
-                class="btn btn-primary d-flex align-items-center pl-0"
+                class="btn btn-primary d-flex align-items-center"
                 @click="openMediumModal()"
             >
-                <i class="fa fa-cloud-upload px-1 mx-2"></i>
+                <i class="fa fa-cloud-upload me-2"></i>
                 <div style="width: min-content;">
                     {{ multiple ? trans('global.medium.add') : trans('global.medium.title_singular') }}
                 </div>

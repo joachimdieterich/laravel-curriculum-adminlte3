@@ -2,7 +2,6 @@
 <html lang="{{ App::getLocale() }}">
 
 @include('layouts.partials.head')
-
     <body>
         <!-- Site wrapper -->
         <div
@@ -18,7 +17,7 @@
                 :guest-id="{{ config('app.guest_user_id') }}"
             ></main-header>
 
-            <!-- Content Wrapper. Contains page content -->
+            <!-- Content Wrapper -->
             <div
                 id="content"
                 class="d-flex flex-fill position-relative bg-gray-light"
@@ -30,24 +29,19 @@
                         ></navigationbar>
                         <div
                             id="background-mask"
-                            class="nav-collapse w-100"
-                            data-toggle="collapse"
-                            data-target=".nav-collapse"
+                            class="w-100"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#navigationbar, #background-mask"
                             aria-expanded="false"
                             aria-controls="navigationbar background-mask"
                         ></div>
                     </div>
                 @endcan
                 <div class="d-flex flex-column flex-fill">
-                    <!-- Content Header (Page header) -->
+                    <!-- Content Header -->
                     <section class="p-3">
                         <div class="d-flex">
-                            <div class="col-12 col-sm-6 px-0">
-                                <h1 class="h3 m-0">@yield('title')</h1>
-                            </div>
-                            <div class="d-none d-sm-flex align-items-center col-sm-6 px-0">
-                                @yield('breadcrumb')
-                            </div>
+                            <h1 class="h3 m-0">@yield('title')</h1>
                         </div>
                         @yield('contributors')
                     </section>
@@ -57,7 +51,6 @@
                         @yield('content')
                         <input id="medium_id" class="d-none"> <!-- DONT REMOVE - used by TINYMCE -->
                     </section>
-                    <!-- /.content -->
                 </div>
             </div>
 

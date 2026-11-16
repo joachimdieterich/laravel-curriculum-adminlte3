@@ -1,18 +1,17 @@
 <template>
     <ObjectiveBox v-for="objective in objectives"
-        type="enabling"
-        :objective="objective"
-        :objective_type_id="terminalobjective.objective_type_id"
-        :referenceable_id="referenceable_id"
-        :referenceable_type="referenceable_type"
-        :color="terminalobjective.color"
-        :settings="settings"
-        :editable="editable"
-        :max_id="objectives[objectives.length - 1]?.id"
+                  type="enabling"
+                  :objective="objective"
+                  :objective_type_id="terminalobjective.objective_type_id"
+                  :referenceable_id="referenceable_id"
+                  :referenceable_type="referenceable_type"
+                  :color="terminalobjective.color"
+                  :settings="settings"
+                  :editable="editable"
+                  :max_id="objectives[objectives.length - 1]?.id"
     />
 
-    <ObjectiveBox v-if="settings.edit === true"
-        v-permission="'curriculum_edit'"
+    <ObjectiveBox v-if="settings.edit && checkPermission('curriculum_edit')"
         type="createenabling"
         :objective="{
             curriculum_id: terminalobjective.curriculum_id,
@@ -52,8 +51,6 @@ export default {
             default: false,
         },
     },
-    components: {
-        ObjectiveBox,
-    },
+    components: { ObjectiveBox },
 }
 </script>

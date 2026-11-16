@@ -2,16 +2,17 @@
     <div
         :id="item.DT_RowId"
         :value="item.DT_RowId"
-        class="box box-objective nav-item-box-image pointer my-1 pull-left"
+        class="box box-objective nav-item-box-image pointer my-1 float-start"
         :class="active === false ? 'not-allowed' : ''"
         style="min-width: 200px !important;"
         :style="{ 'border-color': item.color ?? '#F2F4F5', 'background-color': item.color + ' !important' }"
         @keyup.enter="simulateClick()"
     >
         <a v-if="create || subscribe"
+            tabindex="0"
             @click="openModal()"
         >
-            <div class="d-flex align-items-center justify-content-center" tabindex="0">
+            <div class="d-flex align-items-center justify-content-center">
                 <slot name="itemIcon">
                     <i class="fa fa-2x fa-plus text-muted"></i>
                 </slot>
@@ -25,11 +26,11 @@
         <a v-else
             class="text-decoration-none"
             :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected() ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
+            type="button"
+            tabindex="0"
+            @click="clickEvent(item)"
         >
-            <div v-if="item.medium_id"
-                 @click="clickEvent(item)"
-                 tabindex="0"
-            >
+            <div v-if="item.medium_id">
                 <div
                     class="nav-item-box-image-size h-100 w-100"
                     style="opacity: 75%"
@@ -38,32 +39,25 @@
                 </div>
             </div>
             <div v-else
-                 class="d-flex align-items-center justify-content-center"
-                 @click="clickEvent(item)"
-                 tabindex="0"
+                class="d-flex align-items-center justify-content-center"
             >
                 <slot name="itemIcon"/>
             </div>
-            <span @click="clickEvent(item)">
-                <slot name="content">
-                    <span class="bg-white text-center p-1 overflow-auto nav-item-box">
-                        <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
-                            {{ item[titleField] }}
-                        </h1>
-                        <p class="text-muted small">
-                            {{ htmlToText(item[descriptionField])}}
-                        </p>
-                        <slot name="badges"></slot>
-                    </span>
-                </slot>
-            </span>
+            <slot name="content">
+                <span class="bg-white text-center p-1 overflow-y-auto">
+                    <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
+                        {{ item[titleField] }}
+                    </h1>
+                    <p class="text-muted small">
+                        {{ htmlToText(item[descriptionField])}}
+                    </p>
+                    <slot name="badges"></slot>
+                </span>
+            </slot>
 
             <slot name="owner"></slot>
 
-            <div
-                class="symbol"
-                @click="clickEvent(item)"
-            >
+            <div class="symbol">
                 <slot name="icon">
                     <i
                         class="fa"
@@ -72,37 +66,46 @@
                 </slot>
             </div>
 
-            <div class="position-absolute additional-buttons">
-                <slot name="additional-button"></slot>
-            </div>
-            <div v-if="(item.owner_id == $userId && !showSubscribable)
-                    || (item.allow_copy && (modelName != 'Plan' || checkPermission('is_teacher')))
-                    || (checkPermission('is_teacher') && (showSubscribable || modelName == 'Exam'))
-                    || checkPermission('is_admin')
-                    || hidable
-                 "
-                 :id="modelName + 'Dropdown_' + item.DT_RowId"
-                 class="btn btn-flat position-absolute pull-right"
-                 style="top: 0; right: 0; background-color: transparent;"
-                 data-toggle="dropdown"
-                 aria-expanded="false"
+            <div
+                class="d-flex position-absolute"
+                style="top: 0.25rem; right: 0.25rem;"
             >
-                <i tabindex="0"
-                   class="fa fa-ellipsis-v"
-                   :style="'color:' + (screenWidth > 990 ? $textcolor(item.color) : '#000')"
-                ></i>
-                <slot name="dropdown"></slot>
+                <slot name="additional-button">
+                    <Favourite v-if="!showSubscribable && item.is_favourited !== undefined"
+                        :url="url + '/[id]/favour'"
+                        :model="item"
+                        :is-favourited="item.is_favourited"
+                        :classes="'btn ' + buttonClass(item.color)"
+                        @mark-status-changed="newStatus => item.is_favourited = newStatus"
+                    />
+                </slot>
+                <button v-if="(item.owner_id == $userId && !showSubscribable)
+                        || (item.allow_copy && (modelName != 'Plan' || checkPermission('is_teacher')))
+                        || (checkPermission('is_teacher') && (showSubscribable || modelName == 'Exam'))
+                        || checkPermission('is_admin')
+                        || hidable
+                    "
+                    class="btn"
+                    :class="buttonClass(item.color)"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    @click.stop
+                >
+                    <i class="fa fa-ellipsis-v"></i>
+                    <slot name="dropdown"></slot>
+                </button>
             </div>
         </a>
     </div>
 </template>
 <script>
+import Favourite from "../tag/Favourite.vue";
 import {storeToRefs} from 'pinia';
-import {useGlobalStore} from "../../store/global";
 import {useDatatableStore} from "../../store/datatables";
-import {useToast} from "vue-toastification";
 
 export default {
+    components: { Favourite },
     props: {
         model: {
             type: Object,
@@ -167,15 +170,9 @@ export default {
     },
     setup() { //use database store
         const store = useDatatableStore();
-        const globalStore = useGlobalStore();
         const { getDatatable } = storeToRefs(store);
         const { isSelected } = storeToRefs(store);
-        const toast = useToast();
-        return {
-            store,
-            globalStore,
-            toast,
-        }
+        return { store }
     },
     data() {
         return {
@@ -198,14 +195,14 @@ export default {
             document.activeElement.click();
         },
         isSelected() {
-            return (this.store.isSelected(this.storeTitle, this.model));
+            return this.store.isSelected(this.storeTitle, this.model);
         },
         openModal() {
             let modal = this.subscribe
                 ? 'subscribe-' + this.modelName.toLowerCase() + '-modal'
                 : this.modelName.toLowerCase() + '-modal';
 
-            this.globalStore?.showModal(modal, {
+            this.globalStore.showModal(modal, {
                 // only gets used in subscribe-modals
                 subscribable_id: this.subscribable_id,
                 subscribable_type: this.subscribable_type,
@@ -247,19 +244,17 @@ export default {
                 rtl: false,
             });
         },
-    },
-    computed: {
-        screenWidth() {
-            return window.innerWidth;
+        buttonClass(color) {
+            return window.innerWidth <= 990
+                ? 'btn-icon'
+                : this.$textcolor(color) === '#000'
+                    ? 'btn-icon'
+                    : 'btn-icon-alt';
         },
     },
 }
 </script>
 <style>
-.additional-buttons {
-    top: 1px;
-    right: 20px;
-}
 .not-allowed {
     cursor: not-allowed;
     filter: opacity(50%);

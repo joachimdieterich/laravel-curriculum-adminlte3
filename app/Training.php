@@ -24,9 +24,9 @@ class Training extends Model
     ];
 
     protected $casts = [
-        'description' => CleanHtml::class, // cleans both when getting and setting the value
-        'begin' => 'datetime',
-        'end' => 'datetime',
+        'description'   => CleanHtml::class, // cleans both when getting and setting the value
+        'begin'         => 'datetime',
+        'end'           => 'datetime',
     ];
 
     protected $with = ['subscriptions:id,training_id,order_id,subscribable_type,subscribable_id'];
@@ -35,11 +35,10 @@ class Training extends Model
      * Prepare a date for array / JSON serialization.
      *
      * @param  \DateTimeInterface  $date
-     * @return string
      */
-    protected function serializeDate(DateTimeInterface $date)
+    protected function serializeDate(DateTimeInterface $date): string
     {
-        return $date->format('Y-m-d H:i:s');
+        return $date->translatedFormat('D, d.m.Y H:i');
     }
 
     public function path()

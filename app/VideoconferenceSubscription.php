@@ -2,12 +2,13 @@
 
 namespace App;
 
+use App\Services\Subscription;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class VideoconferenceSubscription extends Model
 {
-    use HasFactory;
+    use HasFactory, Subscription;
 
     protected $fillable = [
         'subscribable_type',
@@ -17,12 +18,12 @@ class VideoconferenceSubscription extends Model
         'due_date',
         'title',
         'sharing_token',
-        'owner_id'
-        ];
+        'owner_id',
+    ];
 
     protected $casts = [
         'editable' => 'boolean',
-        ];
+    ];
 
     /**
      * Get the subscriber model.
@@ -41,5 +42,4 @@ class VideoconferenceSubscription extends Model
     {
         return $this->videoconference->isAccessible();
     }
-
 }

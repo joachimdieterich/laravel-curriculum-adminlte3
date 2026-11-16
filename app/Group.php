@@ -128,7 +128,7 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function videoconferenceSubscription()
+    public function videoconferenceSubscriptions()
     {
         return $this->morphMany('App\VideoconferenceSubscription', 'subscribable');
     }
@@ -145,7 +145,7 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function mapSubscription()
+    public function mapSubscriptions()
     {
         return $this->morphMany('App\MapSubscription', 'subscribable');
     }
@@ -162,7 +162,7 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function lmsReferenceSubscription()
+    public function lmsReferenceSubscriptions()
     {
         return $this->morphMany('App\LmsReferenceSubscription', 'subscribable');
     }
@@ -179,7 +179,7 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function planSubscription()
+    public function planSubscriptions()
     {
         return $this->morphMany('App\PlanSubscription', 'subscribable');
     }
@@ -196,7 +196,7 @@ class Group extends Model
         )->where('subscribable_type', get_class($this));
     }
 
-    public function logbookSubscription()
+    public function logbookSubscriptions()
     {
         return $this->morphMany('App\LogbookSubscription', 'subscribable');
     }
@@ -225,11 +225,11 @@ class Group extends Model
         static::deleting(function (Group $group) {
             $group->kanbanSubscriptions()->delete();
             $group->curriculumSubscriptions()->delete();
-            $group->lmsReferenceSubscription()->delete();
-            $group->mapSubscription()->delete();
-            $group->planSubscription()->delete();
-            $group->logbookSubscription()->delete();
-            $group->videoconferenceSubscription()->delete();
+            $group->lmsReferenceSubscriptions()->delete();
+            $group->mapSubscriptions()->delete();
+            $group->planSubscriptions()->delete();
+            $group->logbookSubscriptions()->delete();
+            $group->videoconferenceSubscriptions()->delete();
             $group->exams->each->delete();
         });
     }

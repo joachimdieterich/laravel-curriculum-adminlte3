@@ -19,36 +19,33 @@
                 modelName="Permission"
                 url="/permissions"
             >
-                <template v-slot:icon>
-                    <i class="fas fa-unlock-alt"></i>
+                <template #icon>
+                    <i class="fa fa-unlock-alt"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'permission_edit, permission_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'permission_edit'"
-                            :name="'edit-permission-' + permission.id"
-                            class="dropdown-item text-secondary"
+                            type="button"
+                            class="dropdown-item"
                             @click.prevent="editPermission(permission)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.permission.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'permission_delete'"
-                            :id="'delete-permission-' + permission.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(permission)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(permission)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.permission.delete') }}
                         </button>
                     </div>
@@ -56,35 +53,28 @@
             </IndexWidget>
         </div>
 
-        <div
-            id="permission-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="permission-datatable"
-                :columns="columns"
-                :options="options"
-                ajax="permissions/list"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+        <DataTable
+            ref="datatable"
+            id="permission-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="permissions/list"
+            class="d-none"
+            @xhr="(e, settings, json) => permissions = json.data"
+        />
 
         <Teleport to="body">
             <PermissionModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.permission.delete')"
                 :description="trans('global.permission.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
+                @close="showConfirm = false"
                 @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
+                    showConfirm = false;
+                    destroy();
                 }"
-            ></ConfirmModal>
+            />
         </Teleport>
     </div>
 </template>
@@ -94,59 +84,47 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        PermissionModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             permissions: null,
-            search: '',
             showConfirm: false,
             currentPermission: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('permission-added', (permission) => {
-            this.globalStore?.closeModal('permission-modal');
+        this.$eventHub.on('permission-added', permission => {
             this.permissions.push(permission);
         });
 
-        this.$eventHub.on('permission-updated', (permission) => {
-            this.globalStore?.closeModal('permission-modal');
+        this.$eventHub.on('permission-updated', permission => {
             this.update(permission);
+        });
+
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editPermission(permission) {
-            this.globalStore?.showModal('permission-modal', permission);
-        },
-        loaderEvent() {
-            const dt = $('#permission-datatable').DataTable();
-            dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.permissions = dt.rows({page: 'current'}).data().toArray();
-
-                $('#permission-content').insertBefore('#permission-datatable-wrapper');
-            });
-            this.$eventHub.on('filter', (filter) => {
-                dt.search(filter).draw();
-            });
+            this.globalStore.showModal('permission-modal', permission);
         },
         confirmItemDelete(permission) {
             this.currentPermission = permission;
@@ -167,12 +145,6 @@ export default {
 
             Object.assign(permission, updatedPermission);
         }
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        PermissionModal,
-        IndexWidget,
     },
 }
 </script>

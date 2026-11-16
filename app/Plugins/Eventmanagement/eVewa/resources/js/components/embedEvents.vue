@@ -17,7 +17,7 @@
             class="m-0"
             style="background-color: #EDEDED"
         >
-            <div class="input-group col-2 mr-0 p-3 float-right">
+            <div class="input-group col-2 me-0 p-3 float-right">
                 <input
                     id="search"
                     type="text"
@@ -41,75 +41,68 @@
             <div class="col-12">
                 <button v-for="(value, id) in tags"
                         type="button"
-                        class="btn btn-default mr-3 mb-3"
+                        class="btn btn-default me-3 mb-3"
                         @click="loader(id, true)"
                 >
                     {{ value }}
                 </button>
             </div>
         </div>
-        <div class="col-12 p-0">
+        <div class="col-12 p-0 accordion accordion-flush">
             <div v-for="event in entries"
-                 class="card mb-0"
+                 class="border-bottom mb-0 accordion-item"
             >
-                <div class="card-header pointer">
-                    <span
-                        :data-target="'#navigator-item-content-' + event.ARTIKEL_NR"
-                        data-toggle="collapse"
-                        aria-controls="collapseExample"
-                        aria-expanded="false"
-                    >
+                <div class="pointer accordion-header"
+                     :data-bs-target="'#navigator-item-content-' + event.ARTIKEL_NR"
+                     data-bs-toggle="collapse"
+                     aria-expanded="false"
+                     :aria-controls="'navigator-item-content-' + event.ARTIKEL_NR">
+                    <span>
                         {{ event.ARTIKEL }}
                     </span>
-                    <div class="card-tools pull-right">
+                    <div class="accordion-tools pull-right">
                         {{ dateforHumans(event.B_DAT, event.E_DAT) }}
-                        <button
-                            class="btn btn-tool"
-                            :data-target="'#navigator-item-content-' + event.ARTIKEL_NR"
-                            data-toggle="collapse"
-                            aria-controls="collapseExample"
-                            aria-expanded="false"
-                        >
+                        <button class="btn btn-tool">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
                 </div>
-                <div :id="'navigator-item-content-' + event.ARTIKEL_NR"
-                     class="collapse"
+                <div
+                    :id="'navigator-item-content-' + event.ARTIKEL_NR"
+                    class="accordion-body accordion-collapse collapse bg-gray-light"
                 >
-                    <div class="card-body bg-gray-light">
-                        <div class="row">
-                            <div v-if="event.BEZ_1_2.length > 2"
-                                 class="col-2"
-                            >
-                                <strong>Untertitel</strong>
-                            </div>
+                    <div class="row">
+                        <div v-if="event.BEZ_1_2.length > 2"
+                             class="col-2"
+                        >
+                            <strong>Untertitel</strong>
+                        </div>
 
-                            <div v-if="event.BEZ_1_2.length > 2"
-                                 class="col-10 pre-formatted"
-                                 v-html="event.BEZ_1_2"
-                            ></div>
+                        <div v-if="event.BEZ_1_2.length > 2"
+                             class="col-10 pre-formatted"
+                             v-html="event.BEZ_1_2"
+                        ></div>
 
                             <div class="col-2">
                                 <strong>Beschreibung</strong>
                             </div>
                             <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
 
-                            <div class="col-2"><strong>Termine</strong></div>
-                            <div class="col-10">
-                                <div v-for="termin in event.termine"
-                                     class="row m--padding-bottom-5"
-                                >
-                                    <div class="col-2 m-badge m-badge--info m-badge--wide m-badge--rounded">
-                                        {{ dateforHumans(termin.DATUM) }}
-                                    </div>
-                                    <div class="col-10 text-left">
-                                        <i class="fa fa-clock-o"></i> {{ termin.BEGINN }} - {{ termin.ENDE }}
-                                        <span v-if="termin.ARTIKEL !== event.ARTIKEL">{{ termin.ARTIKEL }}</span>
-                                        <span class="pull-right">{{ termin.VO_ORT }}</span>
-                                    </div>
+                        <div class="col-2"><strong>Termine</strong></div>
+                        <div class="col-10">
+                            <div v-for="termin in event.termine"
+                                 class="row m--padding-bottom-5"
+                            >
+                                <div class="col-2 m-badge m-badge--info m-badge--wide m-badge--rounded">
+                                    {{ dateforHumans(termin.DATUM) }}
+                                </div>
+                                <div class="col-10 text-left">
+                                    <i class="fa fa-clock-o"></i> {{ termin.BEGINN }} - {{ termin.ENDE }}
+                                    <span v-if="termin.ARTIKEL !== event.ARTIKEL">{{ termin.ARTIKEL }}</span>
+                                    <span class="pull-right">{{ termin.VO_ORT }}</span>
                                 </div>
                             </div>
+                        </div>
 
                             <div class="col-2 pt-2"><strong>VA-Nummer</strong></div>
                             <div class="col-10 pt-2" v-html="event.ARTIKEL_NR"></div>
@@ -132,12 +125,11 @@
                                     <i class="fa fa-print"></i> Drucken
                                 </a>
 
-                                <!--                        <a :href="event.LINK_ANMELDUNG"
-                                                           class="btn btn-secondary"
-                                                           target="_blank">
-                                                            <i class="fa fa-sign-in"></i> Anmelden
-                                                        </a>-->
-                            </div>
+                            <!--                        <a :href="event.LINK_ANMELDUNG"
+                                                       class="btn btn-secondary"
+                                                       target="_blank">
+                                                        <i class="fa fa-sign-in"></i> Anmelden
+                                                    </a>-->
                         </div>
                     </div>
                 </div>
@@ -157,11 +149,11 @@
             style="background-color: #EDEDED"
         >
             <div v-if="Object.keys(entries).length > 0"
-                 class="row mr-1 pt-3"
+                 class="row me-1 pt-3"
             >
                 <span class="col-8"></span>
                 <span v-if="Object.keys(entries).length > 0"
-                      class="col-2 pr-0"
+                      class="col-2 pe-0"
                 >
                     <button v-if="page > 1"
                             type="button"
@@ -227,19 +219,20 @@ export default {
                 id = this.currentSearch;
             }
 
-            $("#loading-events").show();
+            document.getElementById('loading-events').style.display = '';
             try {
                 this.entries = (await axios.post('/eventSubscriptions/getEvents', {
                     search: id,
                     page: this.page,
                     plugin: 'evewa'
                 })).data.events.data;
-                $("#loading-events").hide();
+                document.getElementById('loading-events').style.display = 'none';
             } catch (error) {
                 console.log(error);
             }
             this.tags = JSON.parse(this.eventsearchtag);
             this.currentSearch = id;
+            console.log(this.search);
             // this.search = ''; //empty search field
         },
         lastPage() {

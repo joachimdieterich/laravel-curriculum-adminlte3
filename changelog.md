@@ -1,3 +1,33 @@
+## 2.1.0 (2027-11-16)
+- upgraded to bootstrap 5
+- removed/replaced most occurences of jQuery (only Select2 left)
+- replaced input-labels with floating-labels
+- added blacklist for organization-subscriptions
+- added expiry-date to user-/group-/organization-subscriptions
+- created and scheduled command for deletion of stale subscriptions
+- replaced old MediumForm-component with reworked version
+- added achievement-colors to global css-variables
+- Migration: added 'evaluator'-column to group_user table
+- added NavList-component as alternative to TabList
+- TabList: changed logic to allow dynamic tab-values
+- Videoconferences: added favourite/hide functionality
+- MediaRenderer: changed fallback from iframe to RenderUsage
+- LmsModal: full rework (better error-handling | not dependant on current_organization)
+- User: changed set_current_organization logic to allow admins to change other peoples current_organization
+- Organizations: only list organizations where user has schooladmin-role (does not apply for admin)
+- Groups: hid old groups from being listed by default
+- Groups: added setting to quickly filter by organization (badge/TabList)
+- CurriculaAPI: added blacklist to index-endpoint
+- CurriculaAPI: changed index-endpoint response to streamed-response
+- MoodleAPI: added 'trainers'-parameter to /enrolUsers endpoint
+
+### Fixes:
+- MediaCarousel: fixed delete-icon not showing
+- SubscribeModal: fixed 'firstname lastname' search
+- Kanban: fixed edge-case where medium_id is set, but medium doesn't exist anymore
+- Map: fixed styles messing with SubscribeModal
+- CSelect: fixed 'no option found' text
+
 ## 2.0.2 (2026-10-01)
 - Home: fixed Curriculum-Modal being visible for students
 - fixed deletion of Exams

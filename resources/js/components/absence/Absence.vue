@@ -14,7 +14,7 @@
                 <strong>
                     {{ absence.absent_user.firstname }} {{ absence.absent_user.lastname }}
                 </strong>
-                <div class="pl-4 ml-2">
+                <div class="ps-4 ms-2">
                     {{ absence.reason }}
                     <span v-if="absence.time !== 0"> ({{ absence.time }} {{ trans('global.minutes') }})</span><br>
                     <small>{{ absence.owner.firstname }} {{ absence.owner.lastname }}</small>
@@ -25,10 +25,10 @@
 
                 <div class="tools">
                     <a @click="edit()">
-                        <i class="pl-2 fa fa-pencil-alt text-muted"></i>
+                        <i class="ps-2 fa fa-pencil-alt text-muted"></i>
                     </a>
                     <a @click="destroy()">
-                        <i class="pl-2 fas fa-trash"></i>
+                        <i class="ps-2 fas fa-trash"></i>
                     </a>
                 </div>
                 <br/>

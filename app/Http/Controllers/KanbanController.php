@@ -91,11 +91,8 @@ class KanbanController extends Controller
         }
 
         LogController::set(get_class($this) . '@' . __FUNCTION__);
-        if (request()->wantsJson()) {
-            return $kanban;
-        }
 
-        return redirect($kanban->path());
+        return $kanban;
     }
 
     /**Display the specified resource.
@@ -147,11 +144,10 @@ class KanbanController extends Controller
         abort_unless((Gate::allows('kanban_edit') and $kanban->isAccessible()), 403);
         $input = $this->validateRequest();
         $kanban->update([
-            'title'       => $input['title'] ?? $kanban->title,
-            'description' => $input['description'],
-            'color'       => $input['color'] ?? $kanban->color,
-            'medium_id'   => $input['medium_id'],
-            // ?? $kanban->medium_id, -> to get medium unsubscribe working
+            'title'                 => $input['title'] ?? $kanban->title,
+            'description'           => $input['description'],
+            'color'                 => $input['color'] ?? $kanban->color,
+            'medium_id'             => $input['medium_id'],
             'commentable'           => $input['commentable'],
             'auto_refresh'          => $input['auto_refresh'],
             'only_edit_owned_items' => $input['only_edit_owned_items'],
@@ -238,7 +234,7 @@ class KanbanController extends Controller
             $kanban->detachTag(trans('global.tag.favourite.singular'));
         }
 
-        return response($kanban);
+        return response()->json($request->input('mark'));
     }
 
     public function hideKanban(Kanban $kanban, HideModelRequest $request)
@@ -250,7 +246,7 @@ class KanbanController extends Controller
             $kanban->detachTag(trans('global.tag.hidden.singular'));
         }
 
-        return response($kanban);
+        return response()->json($request->input('mark'));
     }
 
     private function transformHexColorToRgba($color)

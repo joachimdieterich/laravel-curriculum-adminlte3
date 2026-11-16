@@ -28,7 +28,7 @@
 
             <div class="card-body pt-2" style="max-height: 80vh; overflow-y: auto;">
                 <ul class="nav nav-pills pb-2">
-                    <li v-for="typetab in typetabs" class="nav-item pl-0">
+                    <li v-for="typetab in typetabs" class="nav-item ps-0">
                         <a class="nav-link " :href="'#tab_' + typetab.id"
                             :class="(activetab == typetab.id) ? 'active' : ''"
                             @click="setActiveTab(typetab)"

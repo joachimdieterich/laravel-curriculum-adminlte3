@@ -23,10 +23,10 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 }
 
 .vue-swatches__trigger {
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-default);
     transition: box-shadow 0.3s ease;
 
-    &:hover { box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5); }
+    &:hover { box-shadow: var(--shadow-strong); }
 }
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
@@ -37,6 +37,7 @@ $fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 // to update adminLTE copy "~admin-lte/build/scss" to "adminLTE";
 @import "rlp/AdminLTE-raw";
 
+@import '_bootstrap_overrides.scss';
 @import '_variables.scss';
 @import 'boxes.scss';
 @import 'buttons.scss';
@@ -68,12 +69,9 @@ body {
     border-radius: 1rem;
     &:focus { bottom: unset; }
 }
+.d-contents { display: contents !important; }
 .nav-sidebar .nav-link > .right:nth-child(2),
 .nav-sidebar .nav-link > p > .right:nth-child(2),
-.nav-link > i {
-    right:0;
-    padding-right: 10px;
-}
 .nav-pills > .nav-item > .nav-link { border-radius: 10px; }
 .col-centered {
     float: none;
@@ -89,8 +87,8 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
 .inset { inset: 0; }
 .p-margin-0 p { margin-bottom: 0px !important; }
 .pointer { cursor: pointer; }
-.pull-right { float: right !important; }
-.pull-left { float: left !important; }
+.shadow-layout { box-shadow: var(--shadow-layout); }
+.shadow-strong { box-shadow: var(--shadow-strong); }
 // FontAwesome Badges without layers
 .fabadge[data-count] {
     position:relative;
@@ -119,6 +117,10 @@ p[id]:target, p[id].target { animation: yellowfade 1.5s; }
     &::-webkit-scrollbar { width: 0 !important }
 }
 textarea { min-height: 150px; }
+a.link-underline-hover {
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+}
 .select2 {
     max-width: 100%;
     width: 100%;
@@ -168,7 +170,7 @@ textarea { min-height: 150px; }
 .overlay {
     position: absolute;
     inset: 0;
-    z-index: 50;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;

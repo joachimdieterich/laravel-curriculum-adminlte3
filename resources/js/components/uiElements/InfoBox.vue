@@ -2,7 +2,7 @@
     <div v-if="!hideIfEmpty || entries.length > 0"
         class="mb-3"
     >
-        <div class="infobox">
+        <div class="infobox shadow-layout">
             <div
                 class="infobox-header"
                 :class="disableLink && 'infobox-header-muted'"
@@ -17,7 +17,7 @@
                 >
                     <i class="fa" :class="icon"></i>
                 </button>
-                <span class="flex-fill h3 mx-2 mb-0">
+                <span class="flex-fill h3 mx-2 mb-0 text-break">
                     <div v-if="disableLink" class="px-2">{{ text }}</div>
                     <a v-else
                         :href="href || '/' + model"
@@ -46,7 +46,7 @@
                 >
                     <slot name="entry" :entry="entry">
                         <i v-if="!entry.grade"
-                            class="fa text-secondary mr-2"
+                            class="fa text-secondary me-2"
                             :class="entry.is_favourited
                                 ? 'fa-heart'
                                 : entry.owner_id == $userId ? 'fa-user' : 'fa-share-alt'"
@@ -155,7 +155,6 @@ export default {
 .infobox {
     background-color: #fff;
     border-radius: 0.75rem;
-    box-shadow: var(--shadow-default);
 
     & > .infobox-header {
         display: flex;
@@ -178,10 +177,17 @@ export default {
         max-height: 240px;
         border-radius: 0.75rem;
 
-        & > .infobox-entry:not(:last-child) {
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 0.5rem;
+        & > .infobox-entry {
+            & > a {
+                text-decoration: none;
+                &:hover { text-decoration: underline; }
+                & > :first-child { font-weight: bold; }
+            }
+            &:not(:last-child) {
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #dee2e6;
+                margin-bottom: 0.5rem;
+            }
         }
     }
 }

@@ -1,18 +1,17 @@
 <template>
     <div class="card">
-        <div class="w-full flex-1 p-2">
-            {{ title }}
+        <div class="p-2">
+            Models
             <input
                 type="search"
-                class="form-control form-control-sm"
-                style="border:0;"
+                class="form-control border-0"
                 :placeholder="trans('global.search') + '...'"
                 v-model="search"
             >
         </div>
         <div
-            class="card-footer bg-light p-0"
-            style="max-height: 225px; overflow-y: auto"
+            class="card-footer bg-light p-0 overflow-y-auto"
+            style="max-height: 225px;"
         >
             <ul class="nav nav-pills flex-column">
                 <li v-for="item in model_data"
@@ -21,7 +20,7 @@
                 >
                     <span class="nav-link">
                         {{ item.value }}
-                        <span class="float-right">{{item.counter}}</span>
+                        <span class="float-end">{{ item.counter }}</span>
                     </span>
                 </li>
             </ul>
@@ -32,18 +31,6 @@
 export default {
     name: 'Models',
     props: {
-        id: {
-            type: String,
-            required: true,
-        },
-        title: {
-            type: String,
-            required: true,
-        },
-        chart: {
-            type: String,
-            required: true,
-        },
         date_begin: {
             type: String,
             required: true,
@@ -51,22 +38,6 @@ export default {
         date_end: {
             type: String,
             required: true,
-        },
-        width: {
-            type: Number,
-            default: 200,
-        },
-        height: {
-            type: Number,
-            default: 400,
-        },
-        cssClasses: {
-            type: String,
-            default: '',
-        },
-        styles: {
-            type: Object,
-            default: () => {},
         },
     },
     data() {
@@ -117,10 +88,9 @@ export default {
             ];
 
             models.forEach((model_name) => {
-                axios.get('/statistics?chart=' + this.chart + '&model=' + model_name + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
-                    .then(response => {
-                        this.model_data.push(response.data);
-                    }).catch(e => console.log(e));
+                axios.get('/statistics?chart=model&model=' + model_name + '&date_begin=' + this.date_begin + '&date_end=' + this.date_end)
+                    .then(response => this.model_data.push(response.data))
+                    .catch(e => console.log(e));
             });
         },
         isVisible(item) {

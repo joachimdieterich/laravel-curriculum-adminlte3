@@ -84,9 +84,9 @@ class ReferenceSubscriptionController extends Controller
         $model2->referencing_curriculum_id = $curricula_ids;
         $model2->save();
 
-        if (request()->wantsJson()) {
-            return ['message' => 'ok'];
-        }
+        return ReferenceSubscription::where('reference_id', $reference->id)
+            ->with(['referenceable', 'reference'])
+            ->first();
     }
 
     /**

@@ -40,27 +40,25 @@ class GradesController extends Controller
         $new_grade = $this->validateRequest();
 
         $grades = Grade::create([
-            'title' => $new_grade['title'],
-            'external_begin' => $new_grade['external_begin'],
-            'external_end' => $new_grade['external_end'],
-            'organization_type_id' => format_select_input($new_grade['organization_type_id']),
+            'title'                 => $new_grade['title'],
+            'external_begin'        => $new_grade['external_begin'],
+            'external_end'          => $new_grade['external_end'],
+            'organization_type_id'  => $new_grade['organization_type_id'],
         ]);
 
-        if (request()->wantsJson()) {
-            return $grades;
-        }
+        return $grades;
     }
 
     public function update(Grade $grade)
     {
         abort_unless(\Gate::allows('grade_edit'), 403);
-
         $new_grade = $this->validateRequest();
+
         $grade->update([
-            'title' => $new_grade['title'],
-            'external_begin' => $new_grade['external_begin'],
-            'external_end' => $new_grade['external_end'],
-            'organization_type_id' => format_select_input($new_grade['organization_type_id']),
+            'title'                 => $new_grade['title'],
+            'external_begin'        => $new_grade['external_begin'],
+            'external_end'          => $new_grade['external_end'],
+            'organization_type_id'  => $new_grade['organization_type_id'],
         ]);
 
         return $grade;
@@ -78,8 +76,6 @@ class GradesController extends Controller
     public function destroy(Grade $grade)
     {
         abort_unless(\Gate::allows('grade_delete'), 403);
-
-        $grade->delete();
 
         return $grade->delete();
     }

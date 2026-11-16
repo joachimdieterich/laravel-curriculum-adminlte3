@@ -35,13 +35,13 @@ class PlanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $plan = Plan::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('plan_create') and $plan->isAccessible()), 403);   // user owns plan_subscription
+        $plan = Plan::select('id')->find($input['plan_id']);
+        abort_unless(\Gate::allows('plan_create') && $plan->isAccessible(), 403);
 
         $subscribe = PlanSubscription::updateOrCreate([
-            'plan_id' => $plan->id,
+            'plan_id'           => $plan->id,
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_id'   => $input['subscribable_id'],
         ], [
             'editable' => isset($input['editable']) ? $input['editable'] : false,
             'owner_id' => auth()->user()->id,
@@ -67,18 +67,16 @@ class PlanSubscriptionController extends Controller
             // subscribe those Curricula to the group if it isn't already
             foreach ($curriculum_ids as $id) {
                 CurriculumSubscription::firstOrCreate([
-                    'curriculum_id' => $id,
+                    'curriculum_id'     => $id,
                     'subscribable_type' => 'App\\Group',
-                    'subscribable_id' => $input['subscribable_id'],
+                    'subscribable_id'   => $input['subscribable_id'],
                 ], [
                     'owner_id' => auth()->user()->id,
                 ]);
             }
         }
 
-        if (request()->wantsJson()) {
-            return $subscribe->with(['subscribable', 'plan'])->find($subscribe->id);
-        }
+        return $subscribe->with('plan')->find($subscribe->id);
     }
 
     /**
@@ -120,18 +118,14 @@ class PlanSubscriptionController extends Controller
 
     public function expel(Request $request) {
         $input = $this->validateRequest();
-        $plan = Plan::find(format_select_input($input['model_id']));
-        abort_unless((\Gate::allows('plan_delete') and $plan->isAccessible()), 403);
+        $plan = Plan::select('id')->find($input['plan_id']);
+        abort_unless(\Gate::allows('plan_delete') && $plan->isAccessible(), 403);
 
-        $subscription = PlanSubscription::where([
-            'plan_id' => $plan->id,
+        PlanSubscription::where([
+            'plan_id'           => $plan->id,
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
-        ]);
-
-        if ($subscription->delete()) {
-            return trans('global.expel_success');
-        }
+            'subscribable_id'   => $input['subscribable_id'],
+        ])->delete();
     }
 
     protected function validateRequest()
@@ -139,7 +133,7 @@ class PlanSubscriptionController extends Controller
         return request()->validate([
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
-            'model_id'          => 'sometimes',
+            'plan_id'           => 'sometimes|integer',
             'editable'          => 'sometimes',
         ]);
     }

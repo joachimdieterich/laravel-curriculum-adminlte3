@@ -4,20 +4,20 @@
         style="max-width: 100vw;"
     >
         <span v-if="showNavigators"
-            class="pr-2"
+            class="pe-2"
         >
             <button
-                class="btn btn-icon flex-shrink-0"
+                class="btn btn-icon flex-shrink-0 text-secondary"
                 role="button"
                 tabindex="-1"
                 @click="slide(false)"
             >
-                <i class="fas fa-angle-left"></i>
+                <i class="fa fa-angle-left"></i>
             </button>
         </span>
 
         <div
-            :id="model + '-filter'"
+            ref="tablist"
             class="position-relative d-flex flex-nowrap overflow-auto hide-scrollbars my-2"
             role="tablist"
             tabindex="-1"
@@ -25,44 +25,42 @@
         >
             <div class="tablist-background position-absolute rounded-pill h-100"></div>
             <span
-                :id="model + '-filter-wrapper'"
-                style="display: inherit; z-index: 1;"
+                :id="model + '-tablist'"
+                class="d-flex z-1"
             >
                 <span v-for="(tab, index) in tabs"
-                    :key="tab"
                     class="flex-shrink-0"
                 >
-                    <button v-if="(tab !== 'owner' && tab !== 'shared-by-me') || checkPermission(model + '_create')"
-                        :id="model + '-filter-' + tab"
-                        class="btn btn-tab bg-transparent"
-                        :class="{ active: activeTab === tab }"
+                    <button v-if="tab.permission === undefined || checkPermission(tab.permission)"
+                        :id="model + '-tab-' + index"
+                        class="btn btn-tab bg-transparent border-transparent shadow-none"
+                        :class="{ active: initialTab === index }"
                         type="button"
                         role="tab"
-                        data-toggle="pill"
-                        :data-target="model == 'subscribe' && ('#' + tab + '_subscription')"
-                        :tabindex="index === 0 ? '0' : '-1'"
-                        :aria-selected="activeTab === tab"
-                        @click="(e) => $emit('change-tab', tab, e)"
-                        @keydown.enter.space="$emit('change-tab', tab)"
-                        @keydown.left.right.prevent="moveFocus($event)"
+                        data-bs-toggle="pill"
+                        :data-bs-target="model == 'subscribe' && ('#' + tab.filter + '_subscription')"
+                        :tabindex="initialTab === index ? '0' : '-1'"
+                        :aria-selected="initialTab === index"
+                        @click="changeTab(index)"
+                        @keydown.enter.space="changeTab(index)"
                     >
-                        <i class="fas pr-2" :class="tabIcon(tab)"></i>
-                        {{ tabText(tab) }}
+                        <i class="fa pe-2" :class="tab.icon"></i>
+                        {{ getTranslatedText(tab.label) }}
                     </button>
                 </span>
             </span>
         </div>
 
         <span v-if="showNavigators"
-            class="pl-2"
+            class="ps-2"
         >
             <button
-                class="btn btn-icon flex-shrink-0"
+                class="btn btn-icon flex-shrink-0 text-secondary"
                 role="button"
                 tabindex="-1"
                 @click="slide(true)"
             >
-                <i class="fas fa-angle-right"></i>
+                <i class="fa fa-angle-right"></i>
             </button>
         </span>
     </div>
@@ -75,22 +73,17 @@ export default {
         model: {
             type: String,
             required: true,
-            title: "Singular name of the model to filter (e.g. 'kanban')",
-        },
-        modelIcon: {
-            type: String,
-            required: true,
-            title: "FontAwesome icon class used to identify the model",
+            description: "Singular name of the model to filter (e.g. 'kanban')",
         },
         tabs: {
             type: Array,
-            default: ['all', 'owned', 'shared_with_me', 'shared_by_me'],
-            title: "Possible String values: 'favourite', 'hidden', 'all', 'owned','shared_with_me', 'shared_by_me', 'user', 'group', 'organization', 'token'",
-        },
-        activeTab: {
-            type: String,
             required: true,
-            title: "The active tab needs to be changed by the parent component",
+            description: "Array of Objects each containing 'icon', 'label' and optionally 'permission'",
+        },
+        initialTab: {
+            type: Number,
+            default: 0,
+            description: "Set which tab should be initially active (index-based)",
         },
     },
     data() {
@@ -101,130 +94,72 @@ export default {
     mounted() {
         window.addEventListener('resize', this.checkTabListWidth);
         this.checkTabListWidth();
-        this.changeTab(this.tabs[0], true); // initialize active-background position/width
+        this.changeTab(0, true); // initialize active-background position/width
     },
     unmounted() {
         window.removeEventListener('resize', this.checkTabListWidth);
     },
     methods: {
-        tabIcon(tab) {
-            switch (tab) {
-                case 'favourite':
-                    return 'fa-heart';
-                case 'hidden':
-                    return 'fa-eye-slash';
-                case 'by_organization':
-                    return 'fa-university';
-                case 'all':
-                    return this.modelIcon;
-                case 'owner':
-                case 'user':
-                    return 'fa-user';
-                case 'shared_with_me':
-                    return 'fa-paper-plane';
-                case 'shared_by_me':
-                    return 'fa-share-nodes';
-                case 'group':
-                    return 'fa-users';
-                case 'organization':
-                    return 'fa-university';
-                case 'token':
-                    return 'fa-key';
-                default:
-                    return '';
-            }
-        },
-        tabText(tab) {
-            switch (tab) {
-                case 'favourite':
-                    return this.trans('global.tag.favourite.plural');
-                case 'hidden':
-                    return this.trans('global.tag.hidden.singular');
-                case 'by_organization':
-                    return this.trans('global.my') + ' ' + this.trans('global.organization.title_singular');
-                case 'all':
-                    return this.trans('global.all') + ' ' + this.trans('global.' + this.model + '.title');
-                case 'owner':
-                    return this.trans('global.my') + ' ' + this.trans('global.' + this.model + '.title');
-                case 'shared_with_me':
-                    return this.trans('global.shared_with_me');
-                case 'shared_by_me':
-                    return this.trans('global.shared_by_me');
-                case 'user':
-                    return this.trans('global.user.title');
-                case 'group':
-                    return this.trans('global.group.title');
-                case 'organization':
-                    return this.trans('global.organization.title');
-                case 'token':
-                    return this.trans('global.token');
-                default:
-                    return tab;
-            }
-        },
-        changeTab(tab, initial = false) {
-            const tabRects = document.getElementById(this.model + '-filter-' + tab).getClientRects()[0];
-            const leftOffset = document.getElementById(this.model + '-filter-wrapper').getClientRects()[0].left;
-            const backgroundElem = this.$el.getElementsByClassName('tablist-background')[0];
+        changeTab(index, initial = false) {
+            if (!initial) this.$emit('change-tab', this.tabs[index]);
+
+            const tabRects = this.$el.querySelector('#' + this.model + '-tab-' + index).getBoundingClientRect();
+            const leftOffset = this.$el.querySelector('#' + this.model + '-tablist').getBoundingClientRect().left;
+            const backgroundElem = this.$el.querySelector('.tablist-background');
 
             backgroundElem.style.left = (tabRects.left - leftOffset) + 'px';
             let width = tabRects.width;
+            // the modal-opening animation causes each element to be slightly bigger
             if (initial && document.getElementsByClassName('modal-mask')[0]?.contains(this.$el)) {
                 width = width / 1.1;
             }
             backgroundElem.style.width = width + 'px';
         },
         slide(right) {
-            const tabListElement = document.getElementById(this.model + '-filter');
-            const tabListLeftPos = tabListElement.getClientRects()[0].left;
-            const tabChildren = document.getElementById(this.model + '-filter-wrapper').children;
+            const tabListLeftPos = this.$refs.tablist.getBoundingClientRect().left;
+            const tabChildren = this.$el.querySelector('#' + this.model + '-tablist').children;
             const margin = 25; // min amount of pixels slider has to move
             let childLeftPos;
 
             if (right) {
                 // check entries from left to right
-                for (let i = 0; i < tabChildren.length; i++) {
-                    childLeftPos = tabChildren[i].getClientRects()[0].left;
+                for (const child of tabChildren) {
+                    childLeftPos = child.getBoundingClientRect().left;
                     if (childLeftPos > (tabListLeftPos + margin)) break;
                 }
             } else {
                 // check entries from right to left
-                for (let i = tabChildren.length - 1; i >= 0; i--) {
-                    childLeftPos = tabChildren[i].getClientRects()[0].left;
+                for (const child of [...tabChildren].reverse()) {
+                    childLeftPos = child.getBoundingClientRect().left;
                     if (childLeftPos < (tabListLeftPos - margin)) break;
                 }
             }
 
             const distance = childLeftPos - tabListLeftPos;
-            tabListElement.scrollBy({ left: distance, behavior: 'smooth' });
+            this.$refs.tablist.scrollBy({ left: distance, behavior: 'smooth' });
         },
         checkTabListWidth() {
-            const tabListElement = document.getElementById(this.model + '-filter');
             // if the total width of the tabs exceeds the available width, show the navigator-arrows
-            this.showNavigators = tabListElement.scrollWidth > tabListElement.offsetWidth;
+            this.showNavigators = this.$refs.tablist.scrollWidth > this.$refs.tablist.offsetWidth;
         },
-        moveFocus(e) {
-            const currentTab = e.target;
+        getTranslatedText(label) {
+            let trans = '';
 
-            if (e.key === 'ArrowRight') {
-                const nextTab = currentTab.parentElement.nextElementSibling ?? currentTab.parentElement.parentElement.firstElementChild;
-                if (nextTab) nextTab.firstElementChild.focus();
+            // label can be array
+            if (typeof label !== 'string') {
+                label.forEach(l => trans += this.trans(l) + ' ');
             } else {
-                const previousTab = currentTab.parentElement.previousElementSibling ?? currentTab.parentElement.parentElement.lastElementChild;
-                if (previousTab) previousTab.firstElementChild.focus();
+                trans = this.trans(label);
             }
-        },
-    },
-    watch: {
-        activeTab: function(newTab) {
-            this.changeTab(newTab);
+
+            return trans.trim();
         },
     },
 }
 </script>
-<style scoped>
+<style>
 .tablist-background {
-    background-color: #007bff;
+    background-color: var(--bs-primary);
     transition: width 0.3s ease, left 0.3s ease;
 }
 </style>

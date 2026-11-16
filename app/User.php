@@ -4,15 +4,12 @@ namespace App;
 
 use App\Domains\Exams\Models\Exam;
 use Carbon\Carbon;
-use Cmgmyr\Messenger\Models\Thread;
-use Cmgmyr\Messenger\Traits\Messagable;
 use DateTimeInterface;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -49,7 +46,7 @@ use Laravolt\Avatar\Facade as Avatar;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Messagable, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $hidden = [
         'password',
@@ -62,13 +59,6 @@ class User extends Authenticatable
         'deleted_at'        => 'datetime',
         'email_verified_at' => 'datetime',
     ];
-
-    /*protected $dates = [
-        'updated_at',
-        'created_at',
-        'deleted_at',
-        'email_verified_at',
-    ];*/
 
     protected $fillable = [
         'username',
@@ -348,18 +338,13 @@ class User extends Authenticatable
     /**
      * current role, based on current_organization_id organization_role_users
      */
-    public function role(): ?Model
+    public function role(): ?Role
     {
         return once(function () {
             return $this->belongsToMany(Role::class, 'organization_role_users')
                 ->withPivot(['user_id', 'role_id', 'organization_id'])
                 ->where('organization_role_users.organization_id', $this->current_organization_id)->first();
         });
-    }
-
-    public function unreadMessagesCount(): int
-    {
-        return Thread::userUnreadMessagesCount($this->id);
     }
 
     /**
@@ -426,18 +411,15 @@ class User extends Authenticatable
         return ($this->medium_id !== null) ? '/media/' . $this->medium_id : Avatar::create($this->fullName())->toBase64();
     }
 
-    public function mayAccessUser(User $user, $context = 'organization'): bool
+    public function mayAccessUser(User $user): bool
     {
         if (is_admin()) {
             return true;
         }
 
-        switch ($context) {
-            case 'organization':
-                return $user->organizations()->pluck('organizations.id')->contains($this->current_organization_id);
-                // Todo: check for groups
-            default: return false;
-        }
+        return $this->organizations()->pluck('organizations.id')
+            ->intersect($user->organizations()->pluck('organizations.id'))
+            ->count() > 0;
     }
 
     public function exams(): BelongsToMany

@@ -1,9 +1,8 @@
 <?php
 
 return [
-    'previous' => '&laquo; Vorheriges',
-    'next' => 'Nächstes &raquo;',
-    'site_title' => 'Laravel + AdminLTE3',
+    'previous' => 'Vorheriges',
+    'next' => 'Nächstes',
     'userManagement' => [
         'title' => 'User Management',
         'title_singular' => 'User Management',

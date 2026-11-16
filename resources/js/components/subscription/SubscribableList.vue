@@ -3,7 +3,7 @@
         <h5 class="pt-3">
             Weiterführende Links
         </h5>
-        <ul class="products-list product-list-in-card pl-2 pr-2">
+        <ul class="products-list product-list-in-card ps-2 pe-2">
             <template
                 v-for="subscription in subscribers.subscriptions">
                 <li :id="'subscription_' + subscription.id"

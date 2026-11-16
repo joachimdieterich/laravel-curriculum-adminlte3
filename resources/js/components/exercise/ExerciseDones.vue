@@ -1,8 +1,8 @@
 <template >
-    <div class="w-100">
+    <div class="d-flex flex-wrap align-items-center w-100">
         <div class="d-flex justify-content-between w-100">
             <div style="border-right: 2px solid; width: 60px">
-                {{ dones.length }} / {{exercise.recommended_iterations}}
+                {{ dones.length }} / {{ exercise.recommended_iterations }}
             </div>
             <div v-for="done in dones"
                 class="px-2"
@@ -23,14 +23,13 @@
                     >
                         <input v-if="editor === 'done_' + done.id"
                             :id="'done_' + done.id"
-                            :ref="'done_' + done.id"
                             type="text"
                             v-model="form.iterations"
                             class="border-0 m-0"
                             style="background: transparent; width:30px; font-size: 1.1rem; font-weight: 400; border-bottom: 1px solid black !important;"
                             @keyup.enter="submit(done.id)"
                         />
-                        <div class="input-group-append ml-1">
+                        <div class="input-group-append ms-1">
                             <span
                                 class="input-group-text p-0 border-0 m-0"
                                 style="background: transparent !important;"
@@ -56,7 +55,6 @@
                     </span>
                     <input v-if="editor === 'done_new_' + exercise.id"
                         :id="'done_new_' + exercise.id"
-                        :ref="'done_new_' + exercise.id"
                         type="text"
                         v-model="form.iterations"
                         class="border-0 m-0"
@@ -66,8 +64,9 @@
                 </div>
             </div>
         </div>
-        <div style="width: 50px; justify-content: flex-start;">
-            <Sparkline :data="chartData(exercise)"></Sparkline>
+
+        <div v-if="dones.length > 1" style="width: 50px;">
+            <Sparkline :data="chartData(exercise)"/>
         </div>
     </div>
 </template>
@@ -76,21 +75,24 @@ import Form from "form-backend-validation";
 import Sparkline from "../statistic/Sparkline.vue";
 
 export default {
+    components: { Sparkline },
     props: {
         exercise: {
+            type: Object,
             default: null,
         },
-        done: {},
+        done: {
+            type: Object,
+            default: {},
+        },
     },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
             form: new Form({
                 id: null,
-                exercise_id: '',
+                exercise_id: null,
                 iterations: '',
-                user__id: '',
             }),
             editor: '',
             dones: [],
@@ -130,11 +132,9 @@ export default {
                 });
         },
         submit(id = null) {
-            let method = this.method.toLowerCase();
             this.form.exercise_id = this.exercise.id;
 
             if (id != null) {
-                method = 'patch'
                 this.form.id = id;
                 axios.patch('/exerciseDones/' + this.form.id, this.form)
                     .then(res => {
@@ -161,9 +161,6 @@ export default {
                 return exercise.dones.map(i => i.iterations);
             }
         }
-    },
-    components: {
-        Sparkline,
     },
 }
 </script>

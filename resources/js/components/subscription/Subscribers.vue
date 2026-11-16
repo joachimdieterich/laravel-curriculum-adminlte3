@@ -1,18 +1,17 @@
 <template>
     <ul v-if="subscriptions.length != 0"
-        class="products-list product-list-in-card pl-2 pr-2"
+        class="products-list product-list-in-card px-1 mt-3"
     >
         <li v-if="canEditCheckbox && subscriptions.length > 0"
             class="d-flex border-bottom"
         >
             <small class="flex-fill">Name</small>
-            <small>{{ canEditLabel }}</small>
+            <small :id="modelUrl + subscribing_model.split('\\')[1]">{{ canEditLabel }}</small>
         </li>
         <template v-for="subscription in subscriptions">
             <li
                 :id="'subscription_' + subscription.id"
                 :value="subscription.id"
-                style="clear: right;"
                 class="item d-flex align-items-center"
             >
                 <div class="flex-fill">
@@ -22,29 +21,29 @@
                     <span v-else>
                         {{ subscription.subscribable.title }}
                     </span>
+                    | <small>{{ diffForHumans(subscription.due_date) }}</small>
                 </div>
 
-                <a
-                    class="text-danger px-2 py-0 ml-auto mr-2 vuehover"
+                <button
+                    class="btn btn-icon text-danger ms-auto me-3"
                     @click="unsubscribe(subscription)"
                 >
                     <i class="fa fa-trash"></i>
-                </a>
+                </button>
 
                 <span v-if="canEditCheckbox"
-                    class="custom-control custom-switch custom-switch-on-green"
+                      class="form-check form-switch mb-0"
                 >
                     <input
                         :id="'subscription_input' + subscription.id"
-                        v-model="subscription.editable"
+                        class="form-check-input"
                         type="checkbox"
-                        class="custom-control-input pt-1"
+                        role="switch"
+                        :aria-labelledby="modelUrl + subscribing_model.split('\\')[1]"
+                        v-model="subscription.editable"
+                        switch
                         @click="setPermission(subscription.id, subscription.editable)"
                     />
-                    <label
-                        class="custom-control-label"
-                        :for="'subscription_input' + subscription.id"
-                    ></label>
                 </span>
             </li>
         </template>
@@ -59,7 +58,7 @@ export default {
         },
         subscriptions: {
             type: Object,
-            deafult: null,
+            default: null,
         },
         subscribing_model: {
             type: String,
@@ -77,20 +76,41 @@ export default {
     methods: {
         async unsubscribe(subscription) { // id of external reference and value in db
             try {
-                await axios.delete('/' + this.modelUrl + 'Subscriptions/' + subscription.id  ).data;
-            } catch(error) {
+                await axios.delete('/' + this.modelUrl + 'Subscriptions/' + subscription.id).data;
+            } catch (error) {
                 console.log(error);
             }
             this.$eventHub.emit('unsubscribe', subscription);
-            //$("#subscription_"+id).hide();
         },
         async setPermission(id, status) { // id of external reference and value in db
             try {
-                status = (await axios.patch('/' + this.modelUrl + 'Subscriptions/' + id, {'editable': !status } )).data.editable;
-            } catch(error) {
+                status = (await axios.patch('/' + this.modelUrl + 'Subscriptions/' + id, {'editable': !status})).data.editable;
+            } catch (error) {
                 console.log(error);
             }
         },
+        diffForHumans: function (date) {
+            if (date == null) {
+                return window.trans.global.valid;
+            }
+            return window.trans.global.valid_to + ' ' + moment(date).locale(window.navigator.language).fromNow();
+        }
     },
 }
 </script>
+<style>
+li.item .fa-trash {
+    opacity: 0%;
+    transition: opacity 0.15s ease-in-out;
+}
+
+li.item:hover .fa-trash {
+    opacity: 100%;
+}
+
+@media (max-width: 991px) {
+    li.item .fa-trash {
+        opacity: 100%;
+    }
+}
+</style>

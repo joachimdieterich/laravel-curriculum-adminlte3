@@ -18,70 +18,58 @@
                 modelName="Grade"
                 url="/grades"
             >
-                <template v-slot:icon>
-                    <i class="fas fa-layer-group"></i>
+                <template #icon>
+                    <i class="fa fa-layer-group"></i>
                 </template>
 
-                <template v-slot:dropdown
+                <template #dropdown
                     v-permission="'grade_edit, grade_delete'"
                 >
-                    <div
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
-                    >
+                    <div class="dropdown-menu dropdown-menu-end">
                         <button
                             v-permission="'grade_edit'"
-                            :name="'edit-grade-' + grade.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editGrade(grade)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editGrade(grade)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.grade.edit') }}
                         </button>
+
                         <hr class="my-1">
+
                         <button
                             v-permission="'grade_delete'"
-                            :id="'delete-grade-' + grade.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmItemDelete(grade)"
+                            class="dropdown-item text-danger"
+                            @click="confirmItemDelete(grade)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.grade.delete') }}
                         </button>
                     </div>
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="grade-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="grade-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="grade-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            ajax="/grades/list"
+            class="d-none"
+            @xhr="(e, settings, json) => grades = json.data"
+        />
 
         <Teleport to="body">
             <GradeModal/>
             <ConfirmModal
-                :showConfirm="this.showConfirm"
+                :showConfirm="showConfirm"
                 :title="trans('global.grade.delete')"
                 :description="trans('global.grade.delete_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
         </Teleport>
     </div>
@@ -91,63 +79,50 @@ import GradeModal from "../grade/GradeModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
-import {useGlobalStore} from "../../store/global";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 DataTable.use(DataTablesCore);
 
 export default {
-    setup() {
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-        }
+    components: {
+        ConfirmModal,
+        DataTable,
+        GradeModal,
+        IndexWidget,
     },
     data() {
         return {
             component_id: this.$.uid,
             grades: null,
-            search: '',
             showConfirm: false,
-            url: '/grades/list',
             currentGrade: {},
             columns: [
                 { title: 'id', data: 'id' },
-                { title: 'title', data: 'title', searchable: true},
+                { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             dt: null,
         }
     },
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('grade-added', (grade) => {
+        this.$eventHub.on('grade-added', grade => {
             this.grades.push(grade);
         });
 
-        this.$eventHub.on('grade-updated', (updatedGrade) => {
+        this.$eventHub.on('grade-updated', updatedGrade => {
             let grade = this.grades.find(g => g.id === updatedGrade.id);
-
             Object.assign(grade, updatedGrade);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         editGrade(grade) {
-            this.globalStore?.showModal('grade-modal', grade);
-        },
-        loaderEvent() {
-            this.dt = $('#grade-datatable').DataTable();
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.grades = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#grade-content').insertBefore('#grade-datatable-wrapper');
-            });
+            this.globalStore.showModal('grade-modal', grade);
         },
         confirmItemDelete(grade) {
             this.currentGrade = grade;
@@ -156,19 +131,16 @@ export default {
         destroy() {
             axios.delete('/grades/' + this.currentGrade.id)
                 .then(r => {
+                    this.showConfirm = false;
                     let index = this.grades.indexOf(this.currentGrade);
                     this.grades.splice(index, 1);
                 })
                 .catch(e => {
-                    console.log(e.response);
+                    console.log(e);
+                    this.showConfirm = false;
+                    this.toast.error(this.errorMessage(e));
                 });
         },
-    },
-    components: {
-        ConfirmModal,
-        DataTable,
-        GradeModal,
-        IndexWidget,
     },
 }
 </script>

@@ -3,13 +3,17 @@
     flex: 1 1 auto;
     flex-wrap: wrap;
     flex-direction: row;
-    gap: 10px;
+    gap: 0.5rem;
 
     .objective {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
         height: 200px;
         width: 200px;
+        padding: 0.5rem;
         border: 1px solid #d2d6de;
-        border-radius: 10px;
+        border-radius: 0.5rem;
 
         .add-objective {
             padding: 25px;
@@ -22,5 +26,10 @@
             }
             > div { font-size: 100px; }
         }
+    }
+    .collapse-objectives {
+        transition: transform 0.4s ease;
+
+        &:not(.collapsed) { transform: rotate3d(1, 0, 0, 180deg); }
     }
 }

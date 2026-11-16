@@ -12,9 +12,8 @@
         @click="show()"
     ></div>
 
-    <div
-        :id="'loading_' + component_id"
-        class="overlay text-center w-100"
+    <div v-if="loading"
+        class="overlay"
     >
         <i class="fa fa-spinner fa-pulse fa-fw"></i>
         <span class="sr-only">Loading...</span>
@@ -35,39 +34,30 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
+            loading: false,
         }
     },
     methods: {
         show() {
             window.open('/media/' + this.medium.id + '?content=true', '_blank');
         },
-        toggleLoadingIndicator() {
-            // initial state => visible
-            $("#loading_" + this.component_id).toggle();
-        },
     },
     mounted() {
-        this.toggleLoadingIndicator();
+        this.$eventHub.on('download', medium => {
+            if (this.medium.id !== medium.id) return;
 
-        this.$eventHub.on('download', (medium) => {
-            if (this.medium.id == medium.id) {
-                this.toggleLoadingIndicator();
-                axios.get('/media/' + this.medium.id + '?download=true')
-                    .then((response) => {
-                        window.open(response.data, '_blank');
-                        this.toggleLoadingIndicator();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        this.toggleLoadingIndicator();
-                    });
-            }
+            this.loading = true;
+            axios.get('/media/' + this.medium.id + '?download=true')
+                .then((response) => {
+                    window.open(response.data, '_blank');
+                    this.loading = false;
+                })
+                .catch((e) => {
+                    console.log(e);
+                    this.loading = false;
+                    this.toast.error(this.errorMessage(e));
+                });
         });
     },
 }
 </script>
-<style>
-.edusharing_rendering_content_wrapper > img {
-    width: 100% !important;
-}
-</style>

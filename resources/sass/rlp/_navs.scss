@@ -29,10 +29,6 @@
     border-bottom-left-radius: $nav-tabs-border-radius;
     border-top-right-radius: 0;
     margin-right: -$nav-tabs-border-width;
-
-    @include hover-focus {
-      border-color: $gray-200 transparent $gray-200 $gray-200;
-    }
   }
 
   .nav-link.active,
@@ -50,10 +46,6 @@
       border-top-left-radius: 0;
       border-top-right-radius: $nav-tabs-border-radius;
       margin-left: -$nav-tabs-border-width;
-
-      @include hover-focus {
-        border-color: $gray-200 $gray-200 $gray-200 transparent;
-      }
     }
 
     .nav-link.active,

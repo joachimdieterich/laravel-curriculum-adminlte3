@@ -13,7 +13,7 @@
                     role="tab"
                     @click="setFilter('all')"
                 >
-                    <i class="fas fa-clipboard-list pr-2"></i>
+                    <i class="fas fa-clipboard-list pe-2"></i>
                     {{ trans('global.all') }} {{ trans('global.plan.title') }}
                 </a>
             </li>
@@ -26,7 +26,7 @@
                     role="tab"
                     @click="setFilter('by_organization')"
                 >
-                    <i class="fas fa-university pr-2"></i>
+                    <i class="fas fa-university pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.organization.title_singular') }}
                 </a>
             </li>
@@ -42,7 +42,7 @@
                     role="tab"
                     @click="setFilter('owner')"
                 >
-                    <i class="fa fa-user pr-2"></i>
+                    <i class="fa fa-user pe-2"></i>
                     {{ trans('global.my') }} {{ trans('global.plan.title') }}
                 </a>
             </li>
@@ -55,7 +55,7 @@
                     role="tab"
                     @click="setFilter('shared_with_me')"
                 >
-                    <i class="fa fa-paper-plane pr-2"></i>
+                    <i class="fa fa-paper-plane pe-2"></i>
                     {{ trans('global.shared_with_me') }}
                 </a>
             </li>
@@ -71,7 +71,7 @@
                     role="tab"
                     @click="setFilter('shared_by_me')"
                 >
-                    <i class="fa fa-share-nodes  pr-2"></i>{{ trans('global.shared_by_me') }}
+                    <i class="fa fa-share-nodes  pe-2"></i>{{ trans('global.shared_by_me') }}
                 </a>
             </li>
         </ul>
@@ -89,12 +89,10 @@
                 :subscribe="subscribable"
                 :subscribable_id="subscribable_id"
                 :subscribable_type="subscribable_type"
-                :label="trans('global.plan.' + create_label_field)"
+                :label="trans('global.plan.' + createLabel)"
             >
-                <template v-slot:itemIcon>
-                    <i v-if="create_label_field == 'enrol'"
-                        class="fa fa-2x fa-link text-muted"
-                    ></i>
+                <template #itemIcon>
+                    <i v-if="subscribable" class="fa fa-2x fa-link text-muted"></i>
                 </template>
             </IndexWidget>
             <IndexWidget v-for="plan in plans"
@@ -104,121 +102,101 @@
                 url="/plans"
                 :showSubscribable="subscribable"
             >
-                <template v-slot:itemIcon>
+                <template #itemIcon>
                     <i class="fa fa-2x fa-clipboard-list"></i>
                 </template>
 
-                <template v-slot:dropdown>
+                <template #dropdown>
                     <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
+                        class="dropdown-menu dropdown-menu-end"
                     >
                         <button
                             v-permission="'plan_delete'"
-                            :id="'delete-plan-' + plan.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmDelete(plan)"
+                            class="dropdown-item text-danger"
+                            @click="confirmDelete(plan)"
                         >
-                            <i class="fa fa-unlink mr-2"></i>
+                            <i class="fa fa-unlink"></i>
                             {{ trans('global.plan.expel') }}
                         </button>
                     </div>
                     <div v-else
-                        class="dropdown-menu dropdown-menu-right"
-                        style="z-index: 1050;"
-                        x-placement="left-start"
+                        class="dropdown-menu dropdown-menu-end"
                     >
-                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                            v-permission="'plan_edit'"
-                            :name="'edit-plan-' + plan.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="editPlan(plan)"
+                        <button v-if="ownerOrAdmin(plan)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="editPlan(plan)"
                         >
-                            <i class="fa fa-pencil-alt mr-2"></i>
+                            <i class="fa fa-pencil-alt"></i>
                             {{ trans('global.plan.edit') }}
                         </button>
 
-                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                            :name="'plan-share_' + plan.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="sharePlan(plan)"
+                        <button v-if="ownerOrAdmin(plan)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="sharePlan(plan)"
                         >
-                            <i class="fa fa-share-alt mr-2"></i>
+                            <i class="fa fa-share-alt"></i>
                             {{ trans('global.plan.share') }}
                         </button>
 
                         <button v-if="plan.allow_copy"
-                            :name="'copy-plan-' + plan.id"
-                            class="dropdown-item text-secondary"
-                            @click.prevent="confirmCopy(plan)"
+                            type="button"
+                            class="dropdown-item"
+                            @click="confirmCopy(plan)"
                         >
-                            <i class="fa fa-copy mr-2"></i>
+                            <i class="fa fa-copy"></i>
                             {{ trans('global.plan.copy') }}
                         </button>
 
-                        <hr v-if="plan.owner_id == $userId || checkPermission('is_admin')"
-                            class="my-1"
-                        />
+                        <hr v-if="ownerOrAdmin(plan)" class="my-1"/>
 
-                        <button v-if="plan.owner_id == $userId || checkPermission('is_admin')"
+                        <button v-if="ownerOrAdmin(plan)"
                             v-permission="'plan_delete'"
-                            :id="'delete-plan-' + plan.id"
                             type="submit"
-                            class="dropdown-item py-1 text-red"
-                            @click.prevent="confirmDelete(plan)"
+                            class="dropdown-item text-danger"
+                            @click="confirmDelete(plan)"
                         >
-                            <i class="fa fa-trash mr-2"></i>
+                            <i class="fa fa-trash"></i>
                             {{ trans('global.plan.delete') }}
                         </button>
                     </div>
                 </template>
             </IndexWidget>
         </div>
-        <div
-            id="plan-datatable-wrapper"
-            class="dataTablesWrapper"
-        >
-            <DataTable
-                id="plan-datatable"
-                :columns="columns"
-                :options="options"
-                :ajax="url"
-                :search="search"
-                width="100%"
-                style="display: none;"
-            />
-        </div>
+
+        <DataTable
+            ref="datatable"
+            id="plan-datatable"
+            :columns="columns"
+            :options="$dtOptions"
+            :ajax="subscribable ? '/plans/list?group_id=' + subscribable_id : '/plans/list'"
+            class="d-none"
+            @xhr="(e, settings, json) => plans = json.data"
+        />
 
         <Teleport to="body">
             <PlanModal v-if="!subscribable"/>
             <MediumModal v-if="!subscribable"/>
             <SubscribeModal v-if="!subscribable"/>
-            <SubscribePlanModal v-if="subscribable"/>
+            <SubscribePlanModal v-if="subscribable" :group_id="subscribable_id"/>
             <ConfirmModal
                 :showConfirm="showConfirm"
-                :title="trans('global.plan.' + delete_label_field)"
-                :description="trans('global.plan.' + delete_label_field +'_helper')"
-                @close="() => {
-                    this.showConfirm = false;
-                }"
-                @confirm="() => {
-                    this.showConfirm = false;
-                    this.destroy();
-                }"
+                :title="trans('global.plan.' + deleteLabel)"
+                :description="trans('global.plan.' + deleteLabel +'_helper')"
+                @close="showConfirm = false"
+                @confirm="destroy()"
             />
             <ConfirmModal v-if="!subscribable"
                 :showConfirm="showCopy"
                 :title="trans('global.plan.copy')"
                 :description="trans('global.plan.copy_helper')"
                 css='primary'
-                @close="() => {
-                    this.showCopy = false;
-                }"
+                @close="showCopy = false"
                 @confirm="() => {
-                    this.showCopy = false;
-                    this.copy();
+                    showCopy = false;
+                    copy();
                 }"
             />
         </Teleport>
@@ -233,50 +211,43 @@ import IndexWidget from "../uiElements/IndexWidget.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 DataTable.use(DataTablesCore);
 
 export default {
+    components: {
+        PlanModal,
+        SubscribeModal,
+        SubscribePlanModal,
+        MediumModal,
+        ConfirmModal,
+        DataTable,
+        IndexWidget,
+    },
     props: {
         subscribable: {
             type: Boolean,
             default: false,
         },
-        create_label_field: {
+        subscribable_type: {
             type: String,
-            default: 'create'
+            default: null,
         },
-        delete_label_field: {
-            type: String,
-            default: 'delete'
+        subscribable_id: {
+            type: Number,
+            default: null,
         },
-        subscribable_type: '',
-        subscribable_id: '',
-    },
-    setup () {
-        const toast = useToast();
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-            toast,
-        }
     },
     data() {
         return {
             component_id: this.$.uid,
             plans: null,
-            search: '',
             showConfirm: false,
             showCopy: false,
-            url: this.subscribable ? '/plans/list?group_id=' + this.subscribable_id : '/plans/list',
-            errors: {},
             currentPlan: {},
             columns: [
                 { title: 'id', data: 'id' },
                 { title: 'title', data: 'title', searchable: true },
             ],
-            options : this.$dtOptions,
             filter: 'all',
             dt: null,
         }
@@ -284,53 +255,41 @@ export default {
     mounted() {
         this.globalStore['showSearchbar'] = true;
 
-        this.loaderEvent();
+        this.dt = this.$refs.datatable.dt;
 
-        this.$eventHub.on('plan-subscription-added', (planSubscription) => {
+        this.$eventHub.on('plan-subscription-added', planSubscription => {
             this.plans.push(planSubscription.plan);
         });
 
-        this.$eventHub.on('plan-added', (plan) => {
+        this.$eventHub.on('plan-added', plan => {
             this.plans.push(plan);
         });
 
-        this.$eventHub.on('plan-updated', (plan) => {
+        this.$eventHub.on('plan-updated', plan => {
             this.update(plan);
         });
 
-        this.$eventHub.on('filter', (filter) => {
-            this.dt.search(filter).draw();
+        this.$eventHub.on('filter', filter => {
+            this.dt.search(filter.searchString).draw();
         });
     },
     methods: {
         setFilter(filter) {
             this.filter = filter;
-            this.url = '/plans/list?filter=' + this.filter;
-            this.dt.ajax.url(this.url).load();
+            this.dt.ajax.url('/plans/list?filter=' + this.filter).load();
         },
         editPlan(plan) {
-            this.globalStore?.showModal('plan-modal', plan);
+            this.globalStore.showModal('plan-modal', plan);
         },
         sharePlan(plan) {
-            this.globalStore?.showModal(
-                'subscribe-modal',
-                {
-                    modelId: plan.id,
-                    modelUrl: 'plan' ,
-                    shareWithUsers: true,
-                    shareWithGroups: true,
-                    shareWithOrganizations: true,
-                    shareWithToken: false,
-                    canEditCheckbox: true,
-                });
-        },
-        loaderEvent() {
-            this.dt = $('#plan-datatable').DataTable();
-
-            this.dt.on('draw.dt', () => { // checks if the datatable-data changes, to update the curriculum-data
-                this.plans = this.dt.rows({page: 'current'}).data().toArray();
-
-                $('#plan-content').insertBefore('#plan-datatable-wrapper');
+            this.globalStore.showModal('subscribe-modal', {
+                modelId: plan.id,
+                modelUrl: 'plan' ,
+                shareWithUsers: true,
+                shareWithGroups: true,
+                shareWithOrganizations: true,
+                shareWithToken: false,
+                canEditCheckbox: true,
             });
         },
         confirmDelete(plan) {
@@ -350,42 +309,52 @@ export default {
         destroy() {
             if (this.subscribable) {
                 axios.post('/planSubscriptions/expel', {
-                    model_id : this.currentPlan.id,
+                    plan_id : this.currentPlan.id,
                     subscribable_type : this.subscribable_type,
                     subscribable_id : this.subscribable_id,
                 })
                     .then(response => {
+                        this.showConfirm = false;
                         let index = this.plans.indexOf(this.currentPlan);
                         this.plans.splice(index, 1);
-                        this.toast.success(response.data);
                     })
                     .catch(e => {
+                        console.log(e);
+                        this.showConfirm = false;
                         this.toast.error(trans('global.expel_error'));
                     });
             } else {
                 axios.delete('/plans/' + this.currentPlan.id)
                     .then(response => {
+                        this.showConfirm = false;
                         let index = this.plans.indexOf(this.currentPlan);
                         this.plans.splice(index, 1);
                     })
-                    .catch(err => {
-                        console.log(err.response);
+                    .catch(e => {
+                        console.log(e);
+                        this.showConfirm = false;
+                        this.toast.error(this.errorMessage(e));
                     });
             }
         },
         update(updatedPlan) {
             let plan = this.plans.find(plan => plan.id === updatedPlan.id);
             Object.assign(plan, updatedPlan);
-        }
+        },
+        ownerOrAdmin(plan) {
+            return plan.owner_id == this.$userId || this.isAdmin;
+        },
     },
-    components: {
-        PlanModal,
-        SubscribeModal,
-        SubscribePlanModal,
-        MediumModal,
-        ConfirmModal,
-        DataTable,
-        IndexWidget,
+    computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        },
+        createLabel() {
+            return this.subscribable ? 'enrol' : 'create';
+        },
+        deleteLabel() {
+            return this.subscribable ? 'expel' : 'delete';
+        },
     },
 }
 </script>

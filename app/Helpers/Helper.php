@@ -164,7 +164,7 @@ if (! function_exists('getEntriesForSelect2ByCollectionAlternative')) {
 
         $offset = ($page - 1) * $resultCount;
 
-        $term       = strtolower($input['term']); // str_contains is case sensitive
+        $term       = strtolower($input['term']); // str_contains is case-sensitive
         $allEntries = $collection->filter(function ($obj) use ($field, $term) {
             // if any match is true, return the entry
             return array_any(
@@ -248,9 +248,9 @@ if (! function_exists('getDataTableWithEntries')) {
      *
      * @param  Builder  $query  the model query to use, e.g. Kanban::select() or $user->kanbans() (without get()!)
      * @param  bool  $hasTags  does the model have tags?
-     * @param  bool  $global  include ressources that are globally available (e.g. for Curricula)
+     * @param  bool  $global  include resources that are globally available (e.g. for Curricula)
      */
-    function getDataTableWithEntries($query, $hasTags = false, $global = false): JsonResponse
+    function getDataTableWithEntries($query, bool $hasTags = false, bool $global = false): JsonResponse
     {
         $withOwned      = false;
         $withSubscribed = false;
@@ -355,7 +355,8 @@ if (! function_exists('getDataTableWithEntries')) {
                 }
             }
 
-            return DataTables::of($query)->make(true);
+            // return description as raw, in case it contains HTML
+            return DataTables::of($query)->rawColumns(['description'])->make(true);
         } catch (Throwable $th) {
             return response()->json([
                 'error'   => 'An error occurred while fetching the data.',

@@ -106,7 +106,7 @@ class moodle extends LmsPlugin
                 'wsfunction' => 'core_course_get_courses_by_field',
             ]
         );
-        //dump(json_decode($this->call($params)));
+
         $result = json_decode($this->call($params))->courses;
         return collect($result)->select(['id', 'fullname']);
 
@@ -196,10 +196,10 @@ class moodle extends LmsPlugin
         }
 
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($httpcode != 200) {
+        if ($httpcode === 200 && str_starts_with($body, '{"exception"')) {
+            LmsUserToken::where(['token' => $this->wsToken])->delete();
+            abort(400, 'global.error.invalid_lms_token');
         }
-
-        curl_close($ch);
 
         $this->headerArray = [];
 

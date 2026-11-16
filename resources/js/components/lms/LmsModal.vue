@@ -1,139 +1,101 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-            @mouseup.self="globalStore.closeModal($options.name)"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ trans('global.lms.title_singular') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary ml-auto mr-2"
-                        @click="token = false"
-                    >
-                        <i class="fa fa-user-lock"></i>
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
+    <Modal
+        model="lms"
+        modalName="lms-modal"
+        url="/lmsReferences"
+        title="global.lms.title_singular"
+        :form="form"
+        :allow-overflow="true"
+        :disable-save-button="!form.course_id"
+        :show-save-button="token || loading"
+        @opened="preProcessing()"
+    >
+        <template #general>
+            <Token v-if="!token && !loading"
+                @newToken="onNewToken"
+            />
+            <div v-else>
+                <Select2 v-if="organizations.length > 1"
+                    id="organization-select"
+                    :list="organizations"
+                    css="mb-3"
+                    model="organization"
+                    :selected="null"
+                    @selectedValue="id => {
+                        organization_id = id[0];
+                        lms_url = organizations.find(o => o.id == id[0]).lms_url;
+                        loadCourses();
+                    }"
+                
+                />
+                <Select2 v-if="courses.length"
+                    id="course-select"
+                    :list="courses"
+                    model="course"
+                    option_label="fullname"
+                    :selected="null"
+                    @selectedValue="id => {
+                        form.course_content_id = null;
+                        loadCourseContents(parseInt(id[0]));
+                    }"
+                />
 
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
+                <Select2 v-if="form.course_id && course_contents.length"
+                    id="course-contents"
+                    :list="course_contents"
+                    css="mt-3"
+                    :label="trans('global.course.content')"
+                    model="course"
+                    option_label="name"
+                    :selected="null"
+                    @selectedValue="id => {
+                        form.course_content_id = parseInt(id[0]);
+                        loadCourseItems(parseInt(id[0]));
+                    }"
+                />
+
+                <Select2 v-if="form.course_content_id && course_content_items.length"
+                    id="course-items"
+                    :list="course_content_items"
+                    css="mt-3"
+                    :label="trans('global.course.content_item')"
+                    model="course"
+                    option_label="name"
+                    :selected="null"
+                    @selectedValue="id => setItems(parseInt(id[0]))"
+                />
+
+                <div v-if="loading"
+                    class="overlay flex-column"
                 >
-                    <div class="card">
-                        <div class="card-body">
-                            <Token v-if="!token && !loading"
-                                @newToken="onNewToken"
-                            />
-                            <span v-if="token || loading">
-                                <div v-if="courses.length"
-                                    class="form-group"
-                                >
-                                    <Select2
-                                        id="course_select"
-                                        name="course_select"
-                                        :list="courses"
-                                        model="course"
-                                        option_id="id"
-                                        option_label="fullname"
-                                        :selected="null"
-                                        @selectedValue="(id) => {
-                                            this.form.course_content_id = null;
-                                            this.loadCourseContents(parseInt(id[0]));
-                                        }"
-                                    />
-                                </div>
-            
-                                <div v-if="form.course_id && course_contents.length"
-                                    class="form-group"
-                                >
-                                    <Select2
-                                        id="course_contents"
-                                        name="course_contents"
-                                        :list="course_contents"
-                                        model="course"
-                                        option_id="id"
-                                        option_label="name"
-                                        :selected="null"
-                                        @selectedValue="(id) => {
-                                            this.form.course_content_id = parseInt(id[0]);
-                                            this.loadCourseItems(parseInt(id[0]));
-                                        }"
-                                    />
-                                </div>
-            
-                                <div v-if="form.course_content_id && course_content_items.length"
-                                    class="form-group"
-                                >
-                                    <Select2
-                                        id="course_items"
-                                        name="course_items"
-                                        :list="course_content_items"
-                                        model="course"
-                                        option_id="id"
-                                        option_label="name"
-                                        :selected="null"
-                                        @selectedValue="(id) => {
-                                            this.setItems(parseInt(id[0]));
-                                        }"
-                                    />
-                                </div>
-            
-                                <div v-if="loading"
-                                    class="overlay flex-column"
-                                >
-                                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                                    <span>{{ trans('global.loading') }}</span>
-                                </div>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="grade-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="grade-save"
-                            class="btn btn-primary ml-3"
-                            :disabled="!form.course_id"
-                            @click="submit()"
-                        >
-                            {{ trans('global.save') }}
-                        </button>
-                    </span>
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <span>{{ trans('global.loading') }}</span>
                 </div>
             </div>
-        </div>
-    </Transition>
+        </template>
+
+        <template #footer-left>
+            <button v-if="organizations.length !== 0"
+                type="button"
+                class="btn btn-icon me-auto"
+                :title="trans('global.lms.token')"
+                @click="token = !token"
+            >
+                <i class="fa fa-user-lock"></i>
+            </button>
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Select2 from "../forms/Select2.vue";
-import {useGlobalStore} from "../../store/global";
 import Token from "./Token.vue";
-import {useToast} from "vue-toastification";
 
 export default {
     name: 'lms-modal',
     components: {
+        Modal,
         Token,
         Select2,
     },
@@ -143,20 +105,12 @@ export default {
             default: null,
         },
     },
-    setup() {
-        const toast = useToast();
-        const globalStore = useGlobalStore();
-        return {
-            globalStore,
-            toast
-        }
-    },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
             form: new Form({
                 id: null,
+                plugin: 'moodle',
                 referenceable_type: null,
                 referenceable_id: null,
                 course_id: null,
@@ -164,6 +118,8 @@ export default {
                 course_item: null,
                 sharing_level: 2,
             }),
+            organizations: [],
+            organization_id: null,
             token: true, // don't actually store the token itself, only if it can be fetched
             lms_url: '',
             courses: [],
@@ -174,33 +130,54 @@ export default {
         }
     },
     methods: {
+        preProcessing() {
+            if (this.courses.length === 0) {
+                this.loader();
+            }
+        },
         loader() {
-            this.course_contents = [];
+            this.course_contents      = [];
             this.course_content_items = [];
-            this.course_content_id = null;
-            this.course_item = null;
+            this.course_content_id    = null;
+            this.course_item          = null;
+
             axios.get('/lmsUserTokens')
                 .then(response => {
-                    this.token      = response.data.token;
-                    this.lms_url    = response.data.lms_url;
+                    this.organizations = response.data;
+                    // if more than one token is found, the user must select the organization first
+                    if (this.organizations.length === 1) {
+                        this.organization_id = this.organizations[0].id;
+                        this.lms_url         = this.organizations[0].lms_url;
+                        this.loadCourses();
+                    } else if (this.organizations.length === 0) {
+                        this.token = false;
+                    }
                 }).catch(e => {
                     console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         loadCourses() {
-            this.loading = true;
+            this.loading              = true;
             this.course_content_items = [];
-            this.course_item = null;
+            this.course_item          = null;
+
             axios.post('/lmsReferences/get', {
-                    plugin: 'moodle',
-                    ws_function: 'core_course_get_courses_by_field',
-                })
+                plugin: 'moodle',
+                organization_id: this.organization_id,
+                ws_function: 'core_course_get_courses_by_field',
+            })
                 .then(r => {
                     this.courses = r.data.entries;
                     this.loading = false;
                 }).catch(e => {
-                    this.loading = false;
                     console.log(e);
+                    this.loading = false;
+                    this.toast.error(this.errorMessage(e));
+                    // if the token is invalid, it will be deleted in the backend and a 400 error will be returned
+                    if (e.response.status === 400) {
+                        this.token = false;
+                    }
                 });
         },
         loadCourseContents(course_id) {
@@ -227,6 +204,7 @@ export default {
                     this.loading = false;
                 }).catch(e => {
                     console.log(e);
+                    this.toast.error(this.errorMessage(e));
                 });
         },
         loadCourseItems(id) {
@@ -247,50 +225,11 @@ export default {
                 url: this.course_content_items[index].url,
             };
         },
-        submit() {
-            axios.post('/lmsReferences', {
-                plugin: 'moodle',
-                course_id: this.form.course_id,
-                course_content_id: this.form.course_content_id,
-                course_item: this.form.course_item,
-                referenceable_type: this.form.referenceable_type,
-                referenceable_id: this.form.referenceable_id,
-                sharing_level: this.form.sharing_level,
-            })
-                .then(r => {
-                    this.globalStore.closeModal('lms-modal');
-                    this.$eventHub.emit('lms-added', r.data);
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
-        },
-        onNewToken() {
+        onNewToken(token) {
             this.token = true;
+            this.organization_id = token.organization_id;
             this.loadCourses();
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                const params = state.modals[this.$options.name].params;
-                this.form.reset();
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params);
-                    if (this.form.id != '') {
-                        this.method = 'patch';
-                    } else {
-                        this.method = 'post';
-                    }
-                }
-
-                if (this.courses.length === 0) {
-                    this.loader();
-                    this.loadCourses();
-                }
-            }
-        });
     },
 }
 </script>

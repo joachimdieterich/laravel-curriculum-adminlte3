@@ -39,9 +39,12 @@ class CurriculaApiController extends Controller
         }
         $timestamp = date('Y-m-d H:i:s', $timestamp);
 
+        // list of curricula that shouldn't be included in this export
+        $blacklist = json_decode(Config::where('key', 'curricula_export_blacklist')->first()?->value ?? '[]');
+
         LogController::set(get_class($this).'@'.__FUNCTION__);
         // might need to be broken down in chunks, since there's a lot of data
-        $curricula = Curriculum::select(
+        $curriculaQuery = Curriculum::select(
                 'curricula.id', 'curricula.title', 'curricula.description',
                 'grades.title as grade',
                 'subjects.title as subject',
@@ -52,6 +55,7 @@ class CurriculaApiController extends Controller
             ->join('organization_types', 'organization_types.id', '=', 'curricula.organization_type_id')
             ->join('terminal_objectives', 'terminal_objectives.curriculum_id', '=', 'curricula.id')
             ->join('enabling_objectives', 'enabling_objectives.terminal_objective_id', '=', 'terminal_objectives.id')
+            ->whereNotIn('curricula.id', $blacklist)
             ->where('type_id', 1)
             ->where(function($query) use ($timestamp) {
                 $query->whereDate('curricula.updated_at', '>=', $timestamp)
@@ -71,51 +75,72 @@ class CurriculaApiController extends Controller
                 },
             ])
             ->without('owner')
-            ->distinct()
-            ->get();
+            ->distinct();
 
-        $max = Config::where('key', 'api_description_length')->first()?->value ?: 75;
-        mb_substitute_character('none'); // remove non UTF-8 chars, instead of replacing them
+        $max = request()->has('no_truncate')
+            ? 0 // skips truncate-condition
+            : Config::where('key', 'api_description_length')->first()?->value ?? 75;
 
-        // strip each HTML-field of its tags
-        foreach ($curricula as $curriculum) {
-            // since these attributes are casted as 'CleanHTML' they will always be wrapped with a 'p'-tag
-            $curriculum->mergeCasts(['description' => 'string']);
-            $curriculum->description = strip_tags($curriculum->description);
-            $curriculum->makeHidden('tags', 'is_favourited', 'is_hidden');
+        return response()->stream(function () use ($curriculaQuery, $max) {
+            echo '[';
+            $first = true;
 
-            // terminal-objectives
-            foreach ($curriculum->terminalObjectives as $terminal) {
-                // same casting problem
-                $terminal->mergeCasts([
-                    'title' => 'string',
-                    'description' => 'string',
-                ]);
-                $terminal->title = strip_tags($terminal->title);
-                $terminal->description = strip_tags($terminal->description);
-                // truncate the description if it's too long and add ellipsis
-                if (strlen($terminal->description) > $max) {
-                    // non UTF-8 chars will only cause problems, if the text gets truncated
-                    $terminal->description = mb_convert_encoding(substr($terminal->description, 0, $max), 'UTF-8').'...';
-                }
+            $curriculaQuery->chunkById(20, function ($curricula) use (&$first, $max) {
+                mb_substitute_character('none'); // remove non UTF-8 chars, instead of replacing them
 
-                // enabling-objectives
-                foreach ($terminal->enablingObjectives as $enabling) {
-                    // same casting problem
-                    $enabling->mergeCasts([
-                        'title' => 'string',
-                        'description' => 'string',
-                    ]);
-                    $enabling->title = strip_tags($enabling->title);
-                    $enabling->description = strip_tags($enabling->description);
-                    if (strlen($enabling->description) > $max) {
-                        $enabling->description = mb_convert_encoding(substr($enabling->description, 0, $max), 'UTF-8').'...';
+                foreach ($curricula as $curriculum) {
+                    $curriculum->description = trim(strip_tags(
+                        // replace br-tags with newlines
+                        preg_replace('/<br\s*\/?>/i', "\n", $curriculum->description)
+                    ));
+                    $curriculum->makeHidden('tags', 'is_favourited', 'is_hidden');
+
+                    // terminal-objectives
+                    foreach ($curriculum->terminalObjectives as $terminal) {
+                        $terminal->title = trim(strip_tags(
+                            preg_replace('/<br\s*\/?>/i', "\n", $terminal->title)
+                        ));
+                        $terminal->description = trim(strip_tags(
+                            preg_replace('/<br\s*\/?>/i', "\n", $terminal->description)
+                        ));
+
+                        // truncate the description if it's too long and add ellipsis
+                        if ($max != 0 && strlen($terminal->description) > $max) {
+                            // non UTF-8 chars will only cause problems, if the text gets truncated
+                            $terminal->description = mb_convert_encoding(substr($terminal->description, 0, $max), 'UTF-8').'...';
+                        }
+
+                        // enabling-objectives
+                        foreach ($terminal->enablingObjectives as $enabling) {
+                            $enabling->title = trim(strip_tags(
+                                preg_replace('/<br\s*\/?>/i', "\n", $enabling->title)
+                            ));
+                            $enabling->description = trim(strip_tags(
+                                preg_replace('/<br\s*\/?>/i', "\n", $enabling->description)
+                            ));
+
+                            if ($max != 0 && strlen($enabling->description) > $max) {
+                                $enabling->description = mb_convert_encoding(substr($enabling->description, 0, $max), 'UTF-8').'...';
+                            }
+                        }
                     }
-                }
-            }
-        }
 
-        return response()->json($curricula);
+                    if (! $first) {
+                        echo ',';
+                    }
+
+                    echo $curriculum->toJson();
+                    $first = false;
+                    flush();
+                }
+            }, 'curricula.id', 'id');
+
+            echo ']';
+        }, 200, [
+            'Content-Type' => 'application/json',
+            'Cache-Control' => 'no-cache',
+            'X-Accel-Buffering' => 'no',
+        ]);
     }
 
     public function show(Curriculum $curriculum)

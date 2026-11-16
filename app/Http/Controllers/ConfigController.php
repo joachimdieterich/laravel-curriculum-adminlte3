@@ -16,7 +16,7 @@ class ConfigController extends Controller
      */
     public function index()
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+        abort_unless(is_admin(), 403);  //only superadmin
         $configs = Config::all();
 
         return view('configs.index')->with(compact('configs'));
@@ -24,17 +24,9 @@ class ConfigController extends Controller
 
     public function list()
     {
-        $users_current_role = auth()->user()->role()->id;
-        abort_unless($users_current_role == 1, 403);
-        $configs = Config::all();
+        abort_unless(is_admin(), 403);
 
-        return DataTables::of($configs)
-            ->addColumn('check', '')
-            ->setRowId('id')
-            ->setRowAttr([
-                'color' => 'primary',
-            ])
-            ->make(true);
+        return DataTables::of(Config::all())->make(true);
     }
 
     /**
@@ -55,22 +47,22 @@ class ConfigController extends Controller
      */
     public function store(Request $request)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+        abort_unless(is_admin(), 403);  //only superadmin
+
         $new_config = $this->validateRequest();
-        $config = Config::updateOrCreate([
-            'key' => $new_config['key'],
-            'referenceable_type' => $new_config['referenceable_type'],
-            'referenceable_id' => $new_config['referenceable_id'],
-            'data_type' => $new_config['data_type'],
-        ],
+        $config = Config::updateOrCreate(
+            [
+                'key'                   => $new_config['key'],
+                'referenceable_type'    => $new_config['referenceable_type'],
+                'referenceable_id'      => $new_config['referenceable_id'],
+                'data_type'             => $new_config['data_type'],
+            ],
             [
                 'value' => $new_config['value'],
             ]
         );
 
-        if (request()->wantsJson()) {
-            return $config;
-        }
+        return $config;
     }
 
     /**
@@ -81,7 +73,7 @@ class ConfigController extends Controller
      */
     public function show(Config $config)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+        abort_unless(is_admin(), 403);  //only superadmin
         return view('configs.show')
             ->with(compact('config'));
     }
@@ -105,13 +97,11 @@ class ConfigController extends Controller
      */
     public function update(Config $config)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+        abort_unless(is_admin(), 403);  //only superadmin
 
         $config->update($this->validateRequest());
 
-        if (request()->wantsJson()) {
-            return $config;
-        }
+        return $config;
     }
 
     /**
@@ -122,11 +112,9 @@ class ConfigController extends Controller
      */
     public function destroy(Config $config)
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
+        abort_unless(is_admin(), 403);  //only superadmin
 
-        if (request()->wantsJson()) {
-            return $config->delete();
-        }
+        return $config->delete();
     }
 
     /**
@@ -136,12 +124,9 @@ class ConfigController extends Controller
      */
     public function models()
     {
-        abort_unless(auth()->user()->role()->id == 1, 403);  //only superadmin
-        abort_unless(\Gate::allows('role_access'), 403);
-        $roles = Role::select([
-            'id',
-            'title',
-        ])->get();
+        abort_unless(is_admin(), 403);  //only superadmin
+
+        $roles = Role::get(['id', 'title']);
         $configs = Config::where('key', 'LIKE', '%_limiter')->get();
 
         return view('configs.models')
@@ -152,11 +137,11 @@ class ConfigController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'key' => 'sometimes|required',
-            'value' => 'sometimes',
-            'referenceable_type' => 'sometimes',
-            'referenceable_id' => 'sometimes',
-            'data_type' => 'sometimes',
+            'key'                   => 'sometimes|required',
+            'value'                 => 'sometimes',
+            'referenceable_type'    => 'sometimes',
+            'referenceable_id'      => 'sometimes',
+            'data_type'             => 'sometimes',
         ]);
     }
 }

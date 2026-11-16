@@ -1,174 +1,57 @@
 <template>
-    <Transition name="modal">
-        <div v-if="globalStore.modals[$options.name]?.show"
-            class="modal-mask"
-        >
-            <div class="modal-container">
-                <div class="modal-header">
-                    <span class="card-title">
-                        {{ method == 'post' ? trans('global.kanbanStatus.create') : trans('global.kanbanStatus.edit') }}
-                    </span>
-                    <button
-                        type="button"
-                        class="btn btn-icon text-secondary"
-                        :title="trans('global.close')"
-                        @click="globalStore?.closeModal($options.name)"
-                    >
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
+    <Modal
+        model="kanbanStatus"
+        modalName="kanban-status-modal"
+        url="/kanbanStatuses"
+        :form="form"
+        :require-title="true"
+        :show-display-section="true"
+        :allow-overflow="true"
+        :show-permission-section="hasPermissionsAccess"
+    >
+        <template #permissions>
+            <Switch
+                id="kanban-status-movable"
+                class="mb-2"
+                label="global.movable"
+                v-model="form.movable"
+            />
 
-                <div
-                    class="modal-body"
-                    style="overflow-y: visible;"
-                >
-                    <div class="card">
-                        <div class="card-body">
-                            <div>
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    class="form-control"
-                                    maxlength="191"
-                                    v-model.trim="form.title"
-                                    :placeholder="trans('global.kanbanItem.fields.title') + ' *'"
-                                    required
-                                />
-                                <p
-                                    v-if="form.errors.title"
-                                    class="help-block"
-                                    v-text="form.errors.title[0]"
-                                ></p>
-                            </div>
-                        </div>
-                    </div>
+            <Switch
+                id="kanban-status-editable"
+                class="mb-2"
+                label="global.editable"
+                v-model="form.editable"
+            />
 
-                    <div class="card">
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.display') }}</span>
-                        </div>
-                        <div class="card-body">
-                            <v-swatches
-                                class="d-flex"
-                                style="height: 42px;"
-                                :swatches="$swatches"
-                                row-length="5"
-                                v-model="form.color"
-                                show-fallback
-                                fallback-input-type="color"
-                            />
-                        </div>
-                    </div>
-
-                    <div v-if="hasPermissionsAccess"
-                        class="card"
-                    >
-                        <div
-                            class="card-header border-bottom"
-                            data-card-widget="collapse"
-                        >
-                            <span class="card-title">{{ trans('global.permissions') }}</span>
-                        </div>
-                        <div class="card-body">
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'movable_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.movable"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light"
-                                    :for="'movable_' + form.id"
-                                >
-                                    {{ trans('global.movable') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'editable_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.editable"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light"
-                                    :for="'editable_' + form.id"
-                                >
-                                    {{ trans('global.editable') }}
-                                </label>
-                            </span>
-                            <span class="custom-control custom-switch custom-switch-on-green">
-                                <input
-                                    :id="'visibility_' + form.id"
-                                    class="custom-control-input pt-1"
-                                    type="checkbox"
-                                    v-model="form.visibility"
-                                />
-                                <label
-                                    class="custom-control-label font-weight-light"
-                                    :for="'visibility_' + form.id"
-                                >
-                                    {{ trans('global.visible') }}
-                                </label>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <span class="pull-right">
-                        <button
-                            id="kanban-status-cancel"
-                            type="button"
-                            class="btn btn-default"
-                            @click="globalStore?.closeModal($options.name)"
-                        >
-                            {{ trans('global.cancel') }}
-                        </button>
-                        <button
-                            id="kanban-status-save"
-                            class="btn btn-primary ml-3"
-                            :disabled="!form.title || processing"
-                            @click="submit()"
-                        >
-                            <span v-if="processing"><i class="fa fa-spinner fa-pulse fa-fw"></i></span>
-                            <span v-else>{{ trans('global.save') }}</span>
-                        </button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </Transition>
+            <Switch
+                id="kanban-status-visibility"
+                label="global.visible"
+                v-model="form.visibility"
+            />
+        </template>
+    </Modal>
 </template>
 <script>
+import Modal from '../uiElements/Modal.vue';
+import Switch from '../forms/Switch.vue';
 import Form from 'form-backend-validation';
-import axios from "axios";
-import {useGlobalStore} from "../../store/global";
-import {useToast} from "vue-toastification";
 
 export default {
     name: 'kanban-status-modal',
-    props: {
-        kanban: Object,
+    components: {
+        Modal,
+        Switch,
     },
-    setup() {
-        const globalStore = useGlobalStore();
-        const toast = useToast();
-        return {
-            globalStore,
-            toast,
-        }
+    props: {
+        kanban: {
+            type: Object,
+            required: true,
+        },
     },
     data() {
         return {
             component_id: this.$.uid,
-            method: 'post',
-            processing: false,
             form: new Form({
                 id: '',
                 title: '',
@@ -184,62 +67,13 @@ export default {
             }),
         }
     },
-    methods: {
-        submit() {
-            this.form.locked = !this.form.movable;
-            this.processing = true;
-
-            if (this.method == 'patch') {
-                this.update();
-            } else {
-                this.add();
-            }
-        },
-        add() {
-            axios.post('/kanbanStatuses', this.form)
-                .then(r => {
-                    this.$eventHub.emit('kanban-status-created', r.data);
-                    this.globalStore?.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.toast.error(this.errorMessage(e));
-                    console.log(e);
-                });
-        },
-        update() {
-            axios.patch('/kanbanStatuses/' + this.form.id, this.form)
-                .then(r => {
-                    this.$eventHub.emit('kanban-status-updated', r.data);
-                    this.globalStore?.closeModal(this.$options.name);
-                })
-                .catch(e => {
-                    this.toast.error(this.errorMessage(e));
-                });
-        },
-    },
     computed: {
         hasPermissionsAccess() {
-            return this.method == 'post'
+            return !this.form.id
                 || this.form.owner_id == this.$userId
-                || this.$parent.kanban.owner_id == this.$userId
+                || this.kanban.owner_id == this.$userId
                 || this.checkPermission('is_admin');
         },
-    },
-    mounted() {
-        this.globalStore.registerModal(this.$options.name);
-        this.globalStore.$subscribe((mutation, state) => {
-            if (state.modals[this.$options.name].show) {
-                this.processing = false;
-                this.form.reset();
-
-                const params = state.modals[this.$options.name].params;
-                if (typeof (params) !== 'undefined') {
-                    this.form.populate(params.status);
-                    this.method = params.method;
-                    this.form.movable = !this.form.locked;
-                }
-            }
-        });
     },
 }
 </script>

@@ -126,7 +126,7 @@
         </div>
 
         <!-- Chat-->
-<!--        <div class="col-3 pl-0">
+<!--        <div class="col-3 ps-0">
                 <h6>Veranstaltungschat</h6>
                 <div class="direct-chat-messages px-0" style="height: 500px !important;">
                     <div class="direct-chat-msg"><div class="direct-chat-infos clearfix">

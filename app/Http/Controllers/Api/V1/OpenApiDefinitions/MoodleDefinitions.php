@@ -352,6 +352,12 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *                  @OA\Items(type="string")
  *              ),
  *              @OA\Property(
+ *                  property="trainers",
+ *                  description="array/array-like string (e.g. ''['common_name']'') of user common_names",
+ *                  type="array",
+ *                  @OA\Items(type="string")
+ *              ),
+ *              @OA\Property(
  *                  property="groups",
  *                  description="array/array-like string of group common_names | will create new groups if not existing",
  *                  type="array",
@@ -387,7 +393,7 @@ namespace App\Http\Controllers\Api\V1\OpenApiDefinitions;
  *          description="successful operation",
  *          @OA\Schema(type="integer"),
  *      ),
- *      @OA\Response(response=400, description="Bad request"),
+ *      @OA\Response(response=400, description="Missing required parameters | User with given common_name does not exist | Organization with given common_name does not exist"),
  * )
  * 
  * @OA\Post(

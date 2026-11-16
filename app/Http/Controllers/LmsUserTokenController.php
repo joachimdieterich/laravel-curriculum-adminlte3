@@ -15,19 +15,10 @@ class LmsUserTokenController extends Controller
      */
     public function index()
     {
-        $token = optional(LmsUserToken::where('user_id', auth()->user()->id)
-            ->where('organization_id', auth()->user()->current_organization_id)
-            ->get()
-            ->first())->token;
+        $tokens = LmsUserToken::select('organization_id')->where('user_id', auth()->user()->id)->get();
 
-        $lms_url = Organization::find(auth()->user()->current_organization_id)->lms_url;
-
-        if (request()->wantsJson()) {
-            return [
-                'lms_url' => $lms_url,
-                'token' => !is_null($token),
-            ];
-        }
+        return Organization::whereIn('id', $tokens->pluck('organization_id'))
+            ->get(['id', 'title', 'lms_url']);
     }
 
     /**
@@ -38,22 +29,18 @@ class LmsUserTokenController extends Controller
      */
     public function store(Request $request)
     {
-        //abort_unless(\Gate::allows('lms_user_token_create'), 403);
-
         $input = $this->validateRequest();
 
         $token = LmsUserToken::updateOrCreate(
             [
-                'organization_id' => auth()->user()->current_organization_id,
-                'user_id' => auth()->user()->id,
+                'organization_id' => $input['organization_id'],
+                'user_id'         => auth()->user()->id,
             ],
             [
                 'token' => $input['token'],
             ]);
 
-        if (request()->wantsJson()) {
-            return $token;
-        }
+        return $token;
     }
 
     /**
@@ -70,7 +57,8 @@ class LmsUserTokenController extends Controller
     protected function validateRequest()
     {
         return request()->validate([
-            'token' => 'required',
+            'token'           => 'required|string',
+            'organization_id' => 'required|exists:organizations,id',
         ]);
     }
 }

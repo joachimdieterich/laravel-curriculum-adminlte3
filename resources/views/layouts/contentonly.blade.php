@@ -17,7 +17,7 @@
             </ul>
 
             <!-- Right navbar links -->
-            <ul class="navbar-nav pl-2 mr-auto">
+            <ul class="navbar-nav ps-2 me-auto">
                 <searchbar></searchbar>
             </ul>
             @include('partials.navbar')
@@ -32,12 +32,7 @@
         >
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-6 pl-0">
-                        <h1> @yield('title')</h1>
-                    </div>
-                    <div class="d-flex align-items-center col-sm-6 px-0">
-                        @yield('breadcrumb')
-                    </div>
+                    <h1> @yield('title')</h1>
                 </div>
                 @yield('contributors')
             </div>

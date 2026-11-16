@@ -9,7 +9,7 @@
                 <div v-if="qrCode"
                     v-html="qrCode"
                 ></div>
-                <div class="info-box-content pr-0">
+                <div class="info-box-content pe-0">
                     <span
                         class="line-clamp line-clamp-3"
                         style="word-break: break-word;"

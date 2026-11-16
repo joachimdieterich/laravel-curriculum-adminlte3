@@ -9,7 +9,6 @@ use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\MassUpdateUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Imports\UsersImport;
 use App\Medium;
 use App\Organization;
 use App\OrganizationRoleUser;
@@ -20,7 +19,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
 
 class UsersController extends Controller
@@ -78,13 +76,18 @@ class UsersController extends Controller
             $request = request()->validate(
                 [
                     'group_id' => 'required',
+                    'filter'   => 'sometimes|string',
                 ]
             );
-            $users = Group::where('id',$request['group_id'])->first()->users();
+            $users = Group::where('id', $request['group_id'])->first()->users();
+
+            if (isset($request['filter']) && $request['filter'] === 'evaluator') {
+                $users->where('evaluator', true);
+            }
         }
         else
         {
-            $users = (auth()->user()->role()->id == 1)
+            $users = is_admin()
                 ? User::query()
                 : Organization::find(auth()->user()->current_organization_id)->users();
             $users->select('users.id', 'username', 'firstname', 'lastname', 'common_name', 'email');
@@ -237,14 +240,17 @@ class UsersController extends Controller
 
     public function setCurrentOrganization()
     {
-        abort_if(auth()->user()->id == 8 , 403); // only official guest user should not change current Organization
+        // only official guest user should not change current organization
+        abort_if(auth()->user()->id == config('app.guest_user_id') , 403);
 
-        User::where('id', auth()->user()->id)->update([
-            'current_period_id' => (request('current_period_id')) ? request('current_period_id') : 1,
+        $user_id = is_admin() ? request('user_id') : auth()->user()->id;
+
+        User::where('id', $user_id)->update([
+            'current_period_id' => request('current_period_id') ?? 1,
             'current_organization_id' => request('current_organization_id'),
         ]);
 
-        LogController::set('activeOrg', request('current_organization_id')); //set statistics
+        LogController::set('activeOrg', request('current_organization_id'));
     }
 
     public function setCurrentPeriod()
@@ -286,25 +292,6 @@ class UsersController extends Controller
         } else {
             return ($user->medium_id !== null) ? '/media/'.$user->medium_id : (new \Laravolt\Avatar\Avatar)->create($user->fullName())->toBase64();
         }
-    }
-
-    public function createImport()
-    {
-        abort_unless(\Gate::allows('user_create'), 403);
-
-        return view('users.import');
-    }
-
-    public function storeImport(Request $request)
-    {
-        abort_unless(\Gate::allows('user_create'), 403);
-
-        $import = $this->validateImportRequest($request);
-
-        $medium = Medium::find($import['medium_id']);
-        Excel::import(new UsersImport($request), storage_path('app'.$medium->path.$medium->medium_name));
-
-        return view('users.import');
     }
 
     public function dsgvoExport($id)
@@ -431,8 +418,6 @@ class UsersController extends Controller
         DB::table('medium_subscriptions')
             ->where('owner_id', $user->id)
             ->update(['owner_id' => $fallback_user->id]);
-
-        //Todo: harddelete messages Cmgmyr\Messenger
 
         $user->notifications()->delete();
 

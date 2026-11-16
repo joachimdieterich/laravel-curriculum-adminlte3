@@ -13,20 +13,18 @@ class SubscribeHelper
     const int MAX_RESULT = 10000;
 
     /**
-     * @return array
-     *
      * @throws TooManyResultsException
      */
     public static function usersForSubscription(): array
     {
         $input = request()->validate([
-            'search' => 'sometimes|string|max:255',
+            'search'      => 'sometimes|string|max:255',
             'no_students' => 'sometimes|bool',
         ]);
 
         $isAdmin = is_admin();
 
-        $organizations         = $isAdmin
+        $organizations = $isAdmin
             ? Organization::get(['organizations.id', 'organizations.title as groupLabel'])
             : auth()->user()->organizations()->get(['organizations.id', 'organizations.title as groupLabel']);
 
@@ -43,7 +41,7 @@ class SubscribeHelper
             : User::whereAttachedTo(auth()->user()->organizations);
 
         // only get users with teacher-role or higher
-        if (!$isAdmin && request()->has('no_students')) {                                 // skip this step for admins
+        if (! $isAdmin && request()->has('no_students')) {                                 // skip this step for admins
             $users = $users->whereNotIn('organization_role_users.role_id', [6, 7, 8, 9]); // student-, parent-, guest-, token-role
         }
 
@@ -54,11 +52,16 @@ class SubscribeHelper
                     foreach (['username', 'firstname', 'lastname'] as $f) {
                         $query->orWhere($f, 'LIKE', '%' . $searchTerm . '%');
                     }
+                    foreach (["CONCAT(firstname, ' ', lastname)", "CONCAT(lastname, ' ', firstname)"] as $f) {
+                        $query->orWhereRaw(
+                            $f . 'LIKE ?',
+                            ['%' . $searchTerm . '%']);
+                    }
                 });
         }
 
-        if($users->count() > self::MAX_RESULT) {
-            throw new TooManyResultsException();
+        if ($users->count() > self::MAX_RESULT) {
+            throw new TooManyResultsException;
         }
 
         $roleNames = Role::get([
@@ -78,13 +81,13 @@ class SubscribeHelper
                             'label' => $user->firstname . ' ' . $user->lastname,
                             'value' => [
                                 'user' => [
-                                    'id' => $user->id,
+                                    'id'        => $user->id,
                                     'firstname' => $user->firstname,
-                                    'lastname' => $user->lastname,
+                                    'lastname'  => $user->lastname,
                                 ],
-                                'roleId' => $roleId,
-                                'roleName' => trans('global.roles.' . $roleNames[$roleId]),
-                                'icon' => Avatar::create($user->fullName())->toBase64(),
+                                'roleId'        => $roleId,
+                                'roleName'      => trans('global.roles.' . $roleNames[$roleId]),
+                                'icon'          => Avatar::create($user->fullName())->toBase64(),
                                 'organizations' => $user->organizations->pluck('title')->toArray(),
                             ],
                         ];
@@ -99,7 +102,7 @@ class SubscribeHelper
         // filter empty organizations and remove index for better json encode
         $result = [];
         foreach ($organizationsWithUser as $organization) {
-            if (!empty($organization['groupOptions'])) {
+            if (! empty($organization['groupOptions'])) {
                 $result[] = $organization;
             }
         }

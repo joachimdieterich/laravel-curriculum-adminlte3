@@ -19,4 +19,4 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
 
-Schedule::command(DeleteStaleSubscriptions::class)->dailyAt('00:01');
+Schedule::command(DeleteStaleSubscriptions::class)->weeklyOn(1, '00:01');

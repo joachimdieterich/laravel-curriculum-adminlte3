@@ -83,10 +83,10 @@
                              v-html="event.BEZ_1_2"
                         ></div>
 
-                            <div class="col-2">
-                                <strong>Beschreibung</strong>
-                            </div>
-                            <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
+                        <div class="col-2">
+                            <strong>Beschreibung</strong>
+                        </div>
+                        <div class="col-10 pre-formatted" v-html="event.BEMERKUNG"></div>
 
                         <div class="col-2"><strong>Termine</strong></div>
                         <div class="col-10">
@@ -104,26 +104,26 @@
                             </div>
                         </div>
 
-                            <div class="col-2 pt-2"><strong>VA-Nummer</strong></div>
-                            <div class="col-10 pt-2" v-html="event.ARTIKEL_NR"></div>
+                        <div class="col-2 pt-2"><strong>VA-Nummer</strong></div>
+                        <div class="col-10 pt-2" v-html="event.ARTIKEL_NR"></div>
 
-                            <div class="col-12 mt-2">
-                                <a
-                                    :href="event.LINK_DETAIL"
-                                    class="btn btn-default"
-                                    target="_blank"
-                                >
-                                    <i class="fa fa-info"></i> Details/Anmeldung
-                                </a>
+                        <div class="col-12 mt-2">
+                            <a
+                                :href="event.LINK_DETAIL"
+                                class="btn btn-default"
+                                target="_blank"
+                            >
+                                <i class="fa fa-info"></i> Details/Anmeldung
+                            </a>
 
-                                <a
-                                    :href="event.LINK_DETAIL+'&print=1'"
-                                    class="btn btn-default"
-                                    target="_blank"
-                                    onclick="return !window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
-                                >
-                                    <i class="fa fa-print"></i> Drucken
-                                </a>
+                            <a
+                                :href="event.LINK_DETAIL+'&print=1'"
+                                class="btn btn-default"
+                                target="_blank"
+                                onclick="return !window.open(this.href, 'Drucken', 'width=800, scrollbars=1')"
+                            >
+                                <i class="fa fa-print"></i> Drucken
+                            </a>
 
                             <!--                        <a :href="event.LINK_ANMELDUNG"
                                                        class="btn btn-secondary"
@@ -261,6 +261,11 @@ export default {
 }
 </script>
 <style>
+.accordion-header {
+    padding: 1rem 1rem;
+    position: relative;
+}
+
 .pre-formatted {
     white-space: pre-wrap;
 }

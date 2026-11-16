@@ -846,7 +846,7 @@ export default {
     }
 
 }
-.tab-content {
+#tab-content-wrapper > .tab-content {
     width: 400px;
 
     & .tab-header {
@@ -856,7 +856,7 @@ export default {
 }
 
 @media (max-width: 768px) {
-    .tab-content {
+    #tab-content-wrapper > .tab-content {
         width: calc(100vw - 2rem - 50px);
     }
 }

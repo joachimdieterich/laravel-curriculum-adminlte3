@@ -325,7 +325,7 @@ class MoodleApiController extends Controller
         // set subscription-type based on whether groups were provided or not
         [$model, $subscribable_type] = $groups !== null
             ? [$groups, "App\Group"]
-            : [$users, "App\User"];
+            : [$users->merge($trainers), "App\User"];
 
         if (!empty($input['kanbans'])) {
             // create subscriptions for kanbans

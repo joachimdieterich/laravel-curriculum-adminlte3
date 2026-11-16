@@ -89,13 +89,21 @@ class CurriculaApiController extends Controller
                 mb_substitute_character('none'); // remove non UTF-8 chars, instead of replacing them
 
                 foreach ($curricula as $curriculum) {
-                    $curriculum->description = trim(strip_tags($curriculum->description));
+                    $curriculum->description = trim(strip_tags(
+                        // replace br-tags with newlines
+                        preg_replace('/<br\s*\/?>/i', "\n", $curriculum->description)
+                    ), '<br>');
                     $curriculum->makeHidden('tags', 'is_favourited', 'is_hidden');
 
                     // terminal-objectives
                     foreach ($curriculum->terminalObjectives as $terminal) {
-                        $terminal->title       = trim(strip_tags($terminal->title));
-                        $terminal->description = trim(strip_tags($terminal->description));
+                        $terminal->title = trim(strip_tags(
+                            preg_replace('/<br\s*\/?>/i', "\n", $terminal->title)
+                        ));
+                        $terminal->description = trim(strip_tags(
+                            preg_replace('/<br\s*\/?>/i', "\n", $terminal->description)
+                        ));
+
                         // truncate the description if it's too long and add ellipsis
                         if ($max != 0 && strlen($terminal->description) > $max) {
                             // non UTF-8 chars will only cause problems, if the text gets truncated
@@ -104,8 +112,13 @@ class CurriculaApiController extends Controller
 
                         // enabling-objectives
                         foreach ($terminal->enablingObjectives as $enabling) {
-                            $enabling->title       = trim(strip_tags($enabling->title));
-                            $enabling->description = trim(strip_tags($enabling->description));
+                            $enabling->title = trim(strip_tags(
+                                preg_replace('/<br\s*\/?>/i', "\n", $enabling->title)
+                            ));
+                            $enabling->description = trim(strip_tags(
+                                preg_replace('/<br\s*\/?>/i', "\n", $enabling->description)
+                            ));
+
                             if ($max != 0 && strlen($enabling->description) > $max) {
                                 $enabling->description = mb_convert_encoding(substr($enabling->description, 0, $max), 'UTF-8').'...';
                             }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Config;
 use App\Organization;
 use App\OrganizationRoleUser;
 use App\StatusDefinition;
@@ -29,8 +30,12 @@ class OrganizationsController extends Controller
                 );
             }
 
+            $blacklist = request()->has('subscribe')
+                ? json_decode(Config::where('key', 'organization_subscription_blacklist')->first()?->value ?? '[]')
+                : []; // ignore on non-subscription requests
+
             return getEntriesForSelect2ByCollection(
-                auth()->user()->organizations(),
+                auth()->user()->organizations()->whereNotIn('id', $blacklist),
                 'organizations.'
             );
         }

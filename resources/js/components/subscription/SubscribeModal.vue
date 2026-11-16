@@ -64,7 +64,7 @@
                     <Select2
                         id="organization_subscription_select"
                         name="organization_subscription_select"
-                        url="/organizations"
+                        url="/organizations?subscribe=true"
                         model="organization"
                         @selectedValue="id => subscribe('App\\Organization', id[0])"
                     />

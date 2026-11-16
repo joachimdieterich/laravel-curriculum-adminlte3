@@ -92,7 +92,7 @@ class CurriculaApiController extends Controller
                     $curriculum->description = trim(strip_tags(
                         // replace br-tags with newlines
                         preg_replace('/<br\s*\/?>/i', "\n", $curriculum->description)
-                    ), '<br>');
+                    ));
                     $curriculum->makeHidden('tags', 'is_favourited', 'is_hidden');
 
                     // terminal-objectives

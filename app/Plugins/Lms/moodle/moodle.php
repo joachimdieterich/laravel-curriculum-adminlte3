@@ -37,16 +37,16 @@ class moodle extends LmsPlugin
 
     public function __construct($service = 'moodle_mobile_app', $passport = '12345', $urlscheme = 'moodledownloader', $sso = true)
     {
-        $this->lmsUrl = Organization::find(auth()->user()->current_organization_id)->lms_url;
-        $this->wsPath = 'webservice/rest/server.php?';
+        $this->lmsUrl  = Organization::find(auth()->user()->current_organization_id)->lms_url;
+        $this->wsPath  = 'webservice/rest/server.php?';
         $this->wsToken = optional(
             LmsUserToken::where([
                 'organization_id' => auth()->user()->current_organization_id,
-                'user_id' => auth()->user()->id,
+                'user_id'         => auth()->user()->id,
             ])->get()->first()
         )->token;
         $this->queryParams = [
-            'wstoken' => $this->wsToken,
+            'wstoken'            => $this->wsToken,
             'moodlewsrestformat' => 'json',
         ];
     }
@@ -55,16 +55,16 @@ class moodle extends LmsPlugin
     {
         return LmsReference::firstOrCreate([
             'referenceable_type' => $query['referenceable_type'],
-            'referenceable_id' => $query['referenceable_id'],
-            'repository' => self::PLUGINNAME,
-            'value' => [
-                'course_id' => $query['course_id'],
+            'referenceable_id'   => $query['referenceable_id'],
+            'repository'         => self::PLUGINNAME,
+            'value'              => [
+                'course_id'         => $query['course_id'],
                 'course_content_id' => $query['course_content_id'],
-                'course_item' => $query['course_item'],
+                'course_item'       => $query['course_item'],
             ],
             'sharing_level_id' => isset($query['sharing_level_id']) ? $query['sharing_level_id'] : 4,
-            'visibility' => isset($query['visibility']) ? $query['visibility'] : 1,
-            'owner_id' => auth()->user()->id,
+            'visibility'       => isset($query['visibility']) ? $query['visibility'] : 1,
+            'owner_id'         => auth()->user()->id,
         ]);
     }
 
@@ -72,26 +72,26 @@ class moodle extends LmsPlugin
     {
         $userCanSee = auth()->user()->lmsReferences()->where([
             'referenceable_type' => $query['referenceable_type'],
-            'referenceable_id' => $query['referenceable_id'],
+            'referenceable_id'   => $query['referenceable_id'],
         ])->get();
 
         foreach (auth()->user()->currentGroups as $group) {
             $userCanSee = $userCanSee->merge($group->lmsReferences()->where([
                 'referenceable_type' => $query['referenceable_type'],
-                'referenceable_id' => $query['referenceable_id'],
+                'referenceable_id'   => $query['referenceable_id'],
             ])->get());
         }
 
         $organization = Organization::find(auth()->user()->current_organization_id)->lmsReferences()->where([
             'referenceable_type' => $query['referenceable_type'],
-            'referenceable_id' => $query['referenceable_id'],
+            'referenceable_id'   => $query['referenceable_id'],
         ])->get();
         $userCanSee = $userCanSee->merge($organization);
 
         $ownedByUser = LmsReference::where([
             'referenceable_type' => $query['referenceable_type'],
-            'referenceable_id' => $query['referenceable_id'],
-            'owner_id' => auth()->user()->id,
+            'referenceable_id'   => $query['referenceable_id'],
+            'owner_id'           => auth()->user()->id,
         ])->get();
         $userCanSee = $userCanSee->merge($ownedByUser);
 
@@ -108,6 +108,7 @@ class moodle extends LmsPlugin
         );
 
         $result = json_decode($this->call($params))->courses;
+
         return collect($result)->select(['id', 'fullname']);
 
     }
@@ -130,25 +131,27 @@ class moodle extends LmsPlugin
             $this->queryParams,
             [
                 'wsfunction' => 'core_course_get_contents',
-                'courseid' => format_select_input($params['course_id']),
+                'courseid'   => format_select_input($params['course_id']),
             ]
         );
 
         return json_decode($this->call($params));
     }
-    private function addTrailingSlash($str){
-        return rtrim($str,"/").'/';
+
+    private function addTrailingSlash($str)
+    {
+        return rtrim($str, '/') . '/';
     }
 
     private function call($params, $httpMethod = '', $additionalHeaders = [], $postFields = [])
     {
-        $url = $this->addTrailingSlash($this->lmsUrl) . $this->wsPath.http_build_query($params); //build url
+        $url = $this->addTrailingSlash($this->lmsUrl) . $this->wsPath . http_build_query($params); // build url
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  //timeout in seconds
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10); //timeout in seconds
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // timeout in seconds
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // timeout in seconds
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
@@ -187,16 +190,17 @@ class moodle extends LmsPlugin
 
         // Return headers seperatly from the Response Body
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $headers = substr($exec, 0, $header_size);
-        $body = substr($exec, $header_size);
+        $headers     = substr($exec, 0, $header_size);
+        $body        = substr($exec, $header_size);
 
         if ($exec === false) {
-            error_log($url.' ---> '.curl_error($ch).' ---> Error-Code:'.curl_errno($ch)); // for debugging
-            //throw new Exception ( curl_error ( $ch ) );
+            error_log($url . ' ---> ' . curl_error($ch) . ' ---> Error-Code:' . curl_errno($ch)); // for debugging
+            // throw new Exception ( curl_error ( $ch ) );
         }
 
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpcode === 200 && str_starts_with($body, '{"exception"')) {
+            error_log($body);
             LmsUserToken::where(['token' => $this->wsToken])->delete();
             abort(400, 'global.error.invalid_lms_token');
         }

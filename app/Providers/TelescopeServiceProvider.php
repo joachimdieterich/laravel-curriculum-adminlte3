@@ -29,7 +29,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         });
 
         Telescope::filter(function (IncomingEntry $entry) {
-            if ($entry->type === 'request') {
+            if ($entry->type === 'request') {    
+                // discard requests trying to fetch old assets
+                if (in_array('build', $entry->tags)) return false;
+
                 // don't filter requests that take too long to process (default 1000ms)
                 if (
                     $entry->content['duration'] >= config('telescope.duration_filter')

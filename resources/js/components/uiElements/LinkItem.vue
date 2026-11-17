@@ -1,16 +1,20 @@
 <template>
-    <div class="link-preview">
-        <div class="info-box bg-info">
+    <div class="link-item-wrapper">
+        <div class="info-box bg-info mb-0">
             <a
+                ref="link"
                 :href="href"
                 :target="target"
                 class="d-flex w-100"
             >
-                <div v-if="qrCode"
-                    v-html="qrCode"
-                ></div>
+                <img
+                    :src="'/qrCodes/?url=' + encodeURIComponent(this.href) + '&size=' + this.size"
+                    width="75"
+                    height="75"
+                />
                 <div class="info-box-content pe-0">
                     <span
+                        ref="text"
                         class="line-clamp line-clamp-3"
                         style="word-break: break-word;"
                     >
@@ -43,24 +47,8 @@ export default {
     },
     data() {
         return {
-            component_id: this.$.uid,
-            qrCode: null,
+            component_id: this.$.uid
         }
-    },
-    mounted() {
-        axios.get('/qrCodes/?url=' + encodeURIComponent(this.href) + '&size=' + this.size)
-            .then(r => {
-                this.qrCode = r.data.image;
-            })
-            .catch(e => {
-                console.log(e);
-            });
     },
 }
 </script>
-<style>
-.link-preview svg {
-    height: 75px;
-    width: 75px;
-}
-</style>

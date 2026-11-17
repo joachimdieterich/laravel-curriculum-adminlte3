@@ -10,19 +10,15 @@ class QRCodeController extends Controller
     {
         $new_qrCode = $this->validateRequest();
 
-        if (request()->wantsJson()) {
-            return (new QRCodeHelper())->generateQRCodeByString($new_qrCode['url'], $new_qrCode['size']);
-        }
+        return response((new QRCodeHelper())->generateQRCodeByString($new_qrCode['url'], $new_qrCode['size'])['image'])
+            ->header('Content-Type', 'image/svg+xml');
     }
 
     protected function validateRequest()
     {
         return request()->validate([
-            'url' => 'sometimes',
-            'title' => 'sometimes',
-            'description' => 'sometimes',
-            'size' => 'sometimes',
-
+            'url'  => 'required|string',
+            'size' => 'required|integer',
         ]);
     }
 }

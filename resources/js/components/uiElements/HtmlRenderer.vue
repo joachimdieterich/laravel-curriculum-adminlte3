@@ -1,20 +1,20 @@
 <template>
-    <template v-for="(part, index) in formattedParts"
-        :key="index"
-    >
-        <component v-if="part.component"
-            :is="part.component"
-            v-bind="part.props"
-        ></component>
-        <span v-else
-            v-html="part"
-        ></span>
+    <template v-for="(part, index) in formattedParts">
+        <LinkItem v-if="typeof part === 'object'"
+            :ref="'link-' + index"
+            class="d-none"
+            :href="part.href"
+            :text="part.text"
+            :target="part.target"
+        />
     </template>
+    <span v-html="renderedHtml"></span>
 </template>
 <script>
 import LinkItem from "./LinkItem.vue";
 
 export default {
+    components: { LinkItem },
     props: {
         htmlContent: {
             type: String,
@@ -24,41 +24,44 @@ export default {
     data() {
         return {
             componentId: this.$.uid,
+            renderedHtml: null,
         }
     },
+    mounted() {
+        // let the DOM update first
+        this.$nextTick(() => this.renderHTML());
+    },
     computed: {
-        formattedParts() {
-            let parts = [];
-            const regex = /(<a[^>]+href=["|'](.*?)["|'][^>]*>(.*)?<\/a>)?((?:.(?!<a))*.)?/gu;
+        formattedParts() {            
+            let parts = []; // parts consist of either strings (plain HTML) or objects (LinkItem props)
+            let remainingHtml = this.htmlContent;
+            // each match contains three parts: the full match, the href, and the text
+            const regex = /<a.+?href="(.*?)".*?>(.*?)<\/a>/g;
+            const matches = this.htmlContent.matchAll(regex);
 
-            let m;
-            while ((m = regex.exec(this.htmlContent)) !== null) {
-                // This is necessary to avoid infinite loops with zero-width matches
-                if (m.index === regex.lastIndex) {
-                    regex.lastIndex++;
+            for (let match of matches) {
+                let index = remainingHtml.indexOf(match[0]);
+                if (index > 0) {
+                    parts.push(remainingHtml.substring(0, index));
+                    remainingHtml = remainingHtml.substring(index + match[0].length);
                 }
-                let ma = [];
-                m.forEach((match, groupIndex) => {
-                    ma.push(match);
-                });
-                let matches = [];
-                matches.push(ma);
 
-                matches.forEach((match) => {
-                    if (typeof (match[2]) !== 'undefined') {
-                        const url = this.htmlToText(match[2]);
-                        if (this.isValidHttpUrl(url)) {
-                            const target = match[1].includes('target="_blank"') ? '_blank' : '_self';
-                            parts.push({
-                                component: 'LinkItem',
-                                props: { href: url, text: match[3], target: target }
-                            });
-                        }
-                    } else {
-                        parts.push( match[0]);
-                    }
+                if (typeof match[1] === 'undefined' || !this.isValidHttpUrl(match[1])) {
+                    parts.push(match[0]);
+                    continue;
+                }
+
+                parts.push({
+                    href: match[1],
+                    text: match[2],
+                    target: match[0].includes('target="_blank"') ? '_blank' : '_self'
                 });
             }
+
+            if (remainingHtml.length > 0) {
+                parts.push(remainingHtml);
+            }
+
             return parts;
         }
     },
@@ -74,9 +77,32 @@ export default {
 
             return url.protocol === "http:" || url.protocol === "https:";
         },
+        renderHTML() {
+            let tempHtml = '';
+
+            this.formattedParts.forEach((part, index) => {
+                if (typeof part === 'object') {
+                    const linkItem = this.$refs['link-' + index][0];
+                    if (linkItem) {
+                        tempHtml += linkItem.$el.innerHTML;
+                    } else {
+                        tempHtml += part;
+                    }
+                } else {
+                    tempHtml += part;
+                }
+            });
+            // only assign the completed HTML so it doesn't try to re-render for each part
+            this.renderedHtml = tempHtml;
+
+            // clean up
+            this.$el.parentElement.querySelectorAll('.link-item-wrapper').forEach(elem => elem.remove());
+        },
     },
-    components: {
-        LinkItem,
+    watch: {
+        formattedParts() {
+            this.$nextTick(() => this.renderHTML());
+        },
     },
 }
 </script>

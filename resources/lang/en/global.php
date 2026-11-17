@@ -354,6 +354,7 @@ return [
     'contact'                            => 'Contact',
     'firstname'                          => 'First name',
     'lastname'                           => 'Last name',
+    'fullname'                           => 'First and Last name',
     'phone'                              => 'Phone',
     'photo'                              => 'Photo',
     'statuses'                           => 'Statuses',

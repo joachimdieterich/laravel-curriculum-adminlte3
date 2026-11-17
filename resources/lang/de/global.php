@@ -365,6 +365,7 @@ return [
     'contact'                            => 'Kontakt',
     'firstname'                          => 'Vorname',
     'lastname'                           => 'Nachname',
+    'fullname'                           => 'Vor- und Nachname',
     'phone'                              => 'Telefon',
     'photo'                              => 'Foto',
     'statuses'                           => 'Status',

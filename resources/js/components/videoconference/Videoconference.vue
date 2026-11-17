@@ -48,16 +48,21 @@
                 <div class="d-flex flex-column flex-md-row">
                     <div class="col mb-2 mb-md-0">{{ videoconference.owner.firstname }} {{ videoconference.owner.lastname }} (Initiator)</div>
                     <div class="col input-group">
-                        <input
-                            type="text"
-                            id="videoconference-username"
-                            class="form-control"
-                            maxlength="191"
-                            v-model.trim="form.userName"
-                            :disabled="lockUserName"
-                            :placeholder="trans('global.videoconference.enter_name')"
-                            @keyup.enter="form.userName && startVideoconference()"
-                        />
+                        <div class="form-floating">
+                            <input
+                                type="text"
+                                id="videoconference-username"
+                                class="form-control"
+                                maxlength="191"
+                                v-model.trim="form.userName"
+                                :disabled="lockUserName"
+                                :placeholder="trans('global.videoconference.enter_name')"
+                                @keyup.enter="form.userName && startVideoconference()"
+                            />
+                            <label for="videoconference-username">
+                                {{ trans('global.fullname') }}
+                            </label>
+                        </div>
                         <button v-if="form.userName"
                             type="button"
                             class="btn"

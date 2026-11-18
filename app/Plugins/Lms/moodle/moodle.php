@@ -195,14 +195,15 @@ class moodle extends LmsPlugin
 
         if ($exec === false) {
             error_log($url . ' ---> ' . curl_error($ch) . ' ---> Error-Code:' . curl_errno($ch)); // for debugging
-            // throw new Exception ( curl_error ( $ch ) );
+            LmsUserToken::where(['token' => $this->wsToken])->delete();
+            abort(502, 'global.error.lms_system_not_available', ['error' => curl_error($ch)]);
         }
 
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($httpcode === 200 && str_starts_with($body, '{"exception"')) {
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($httpCode === 200 && str_starts_with($body, '{"exception"')) {
             error_log($body);
             LmsUserToken::where(['token' => $this->wsToken])->delete();
-            abort(400, 'global.error.invalid_lms_token');
+            abort(400, 'global.error.invalid_lms_token', ['error' => $body]);
         }
 
         $this->headerArray = [];

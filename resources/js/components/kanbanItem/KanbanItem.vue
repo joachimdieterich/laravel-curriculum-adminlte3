@@ -99,9 +99,9 @@
             >
                 <div style="overflow-x: auto;">
                     <div class="text-muted small px-3 py-2">
-                        <span v-if="item.replace_links">
-                            <HtmlRenderer :html-content="item.description.length > 0 ? item.description : '</br>'"/>
-                        </span>
+                        <HtmlRenderer v-if="item.replace_links"
+                            :html-content="item.description.length > 0 ? item.description : '</br>'"
+                        />
                         <span v-else v-html="item.description.length > 0 ? item.description : '</br>'"></span>
                     </div>
                 </div>

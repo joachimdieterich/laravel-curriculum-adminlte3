@@ -243,7 +243,9 @@ class UsersController extends Controller
         // only official guest user should not change current organization
         abort_if(auth()->user()->id == config('app.guest_user_id') , 403);
 
-        $user_id = is_admin() ? request('user_id') : auth()->user()->id;
+        $user_id = auth()->user()->id;
+
+        if (is_admin() && request('user_id') !== null) $user_id = request('user_id');
 
         User::where('id', $user_id)->update([
             'current_period_id' => request('current_period_id') ?? 1,

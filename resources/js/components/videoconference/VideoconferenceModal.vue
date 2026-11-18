@@ -374,7 +374,7 @@ export default {
                 lockSettingsDisablePublicChat: false,
                 lockSettingsDisableNote: false,
                 lockSettingsLockedLayout: false,
-                lockSettingsLockOnJoin: false,
+                lockSettingsLockOnJoin: true,
                 lockSettingsLockOnJoinConfigurable: false,
                 guestPolicy: 'ALWAYS_ACCEPT',
                 userName: '',

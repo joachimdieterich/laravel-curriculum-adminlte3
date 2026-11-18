@@ -244,7 +244,7 @@ return [
          *
          * var @bool
          */
-        'lockSettingsLockOnJoin'             => false,
+        'lockSettingsLockOnJoin'             => true,
 
         /**
          * Default lockSettingsLockOnJoinConfigurable=false.

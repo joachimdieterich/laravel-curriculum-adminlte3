@@ -15,10 +15,13 @@ class LmsUserTokenController extends Controller
      */
     public function index()
     {
-        $tokens = LmsUserToken::select('organization_id')->where('user_id', auth()->user()->id)->get();
+        // only need one valid token, since the moodle-endpoint returns courses from all user-connected instances
+        $organization_id = LmsUserToken::select('organization_id')
+            ->where('user_id', auth()->user()->id)
+            ->first()?->organization_id;
 
-        return Organization::whereIn('id', $tokens->pluck('organization_id'))
-            ->get(['id', 'title', 'lms_url']);
+        return Organization::select('id', 'lms_url')
+            ->find($organization_id);
     }
 
     /**

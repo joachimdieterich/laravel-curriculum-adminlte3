@@ -15,19 +15,6 @@
                 @newToken="onNewToken"
             />
             <div v-else>
-                <Select2 v-if="organizations.length > 1"
-                    id="organization-select"
-                    :list="organizations"
-                    css="mb-3"
-                    model="organization"
-                    :selected="null"
-                    @selectedValue="id => {
-                        organization_id = id[0];
-                        lms_url = organizations.find(o => o.id == id[0]).lms_url;
-                        loadCourses();
-                    }"
-                
-                />
                 <Select2 v-if="courses.length"
                     id="course-select"
                     :list="courses"
@@ -73,17 +60,6 @@
                 </div>
             </div>
         </template>
-
-        <template #footer-left>
-            <button v-if="organizations.length !== 0"
-                type="button"
-                class="btn btn-icon me-auto"
-                :title="trans('global.lms.token')"
-                @click="token = !token"
-            >
-                <i class="fa fa-user-lock"></i>
-            </button>
-        </template>
     </Modal>
 </template>
 <script>
@@ -118,7 +94,6 @@ export default {
                 course_item: null,
                 sharing_level: 2,
             }),
-            organizations: [],
             organization_id: null,
             token: true, // don't actually store the token itself, only if it can be fetched
             lms_url: '',
@@ -143,14 +118,12 @@ export default {
 
             axios.get('/lmsUserTokens')
                 .then(response => {
-                    this.organizations = response.data;
-                    // if more than one token is found, the user must select the organization first
-                    if (this.organizations.length === 1) {
-                        this.organization_id = this.organizations[0].id;
-                        this.lms_url         = this.organizations[0].lms_url;
-                        this.loadCourses();
-                    } else if (this.organizations.length === 0) {
+                    if (!response.data) { // no token found
                         this.token = false;
+                    } else {
+                        this.organization_id = response.data.id;
+                        this.lms_url         = response.data.lms_url;
+                        this.loadCourses();
                     }
                 }).catch(e => {
                     console.log(e);
@@ -191,6 +164,7 @@ export default {
 
             axios.post('/lmsReferences/get', {
                 plugin: 'moodle',
+                organization_id: this.organization_id,
                 ws_function: 'core_course_get_contents',
                 course_id: course_id,
             })
@@ -225,10 +199,9 @@ export default {
                 url: this.course_content_items[index].url,
             };
         },
-        onNewToken(token) {
+        onNewToken() {
             this.token = true;
-            this.organization_id = token.organization_id;
-            this.loadCourses();
+            this.loader();
         },
     },
 }

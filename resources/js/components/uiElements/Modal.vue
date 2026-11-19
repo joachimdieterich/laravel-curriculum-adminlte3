@@ -197,7 +197,7 @@
 <script>
 import Form from "form-backend-validation";
 import Select2 from "../forms/Select2.vue";
-import MediumForm from "../media/MediumForm.vue/index.js";
+import MediumForm from "../media/MediumForm.vue";
 import FontAwesomePicker from "./FontAwesomePicker.vue";
 
 export default {

@@ -3,14 +3,13 @@
         class="d-flex flex-column"
         :style="{ marginTop: subscribable ? null : '-1.5rem' }"
     >
-        <TabList
+        <TabList v-if="!subscribable"
             class="px-3"
-            model="curriculum"
+            model="videoconference"
             :tabs="[
                 { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
                 { icon: 'fa-video', label: ['global.all', 'global.videoconference.title'], filter: 'all' },
-                { icon: 'fa-university', label: ['global.my', 'global.organization.title_singular'], filter: 'by_organization' },
-                { icon: 'fa-user', label: ['global.my', 'global.videoconference.title'], filter: 'owner', permission: 'curriculum_create' },
+                { icon: 'fa-user', label: ['global.my', 'global.videoconference.title'], filter: 'owner', permission: 'videoconference_create' },
                 { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'videoconference_create' },
                 { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
                 { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },

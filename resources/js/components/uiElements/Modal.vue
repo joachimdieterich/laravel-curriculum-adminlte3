@@ -122,8 +122,13 @@
                                         :allow_fallback_on_create="true"
                                         :medium_id="form.medium_id"
                                         :multiple="allowMultipleMedia"
-                                        @add="medium => form.medium_id = medium.id ?? null"
-                                        @delete="form.medium_id = null"
+                                        @add="subscription => {
+                                            // if multiple = true, subscription returns as array
+                                            if (allowMultipleMedia) form.media_subscriptions.push(subscription[0])
+                                            else form.medium_id = subscription.id ?? null;
+
+                                        }"
+                                        @delete="form.medium_id = null; form.media_subscriptions = [];"
                                     />
                                     <FontAwesomePicker v-if="showIconPicker"
                                         :button-icon="form.css_icon"

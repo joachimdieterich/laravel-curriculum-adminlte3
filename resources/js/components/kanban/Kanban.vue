@@ -10,13 +10,13 @@
              :alt="kanban.medium?.title ?? kanban.medium?.medium_name ?? 'background image'"
         />
         <button v-if="!embeded"
-            class="btn d-print-none position-absolute"
-            :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
-            style="top: 0.25rem; left: 0.25rem; z-index: 10;"
-            type="button"
-            data-bs-toggle="tooltip"
-            :data-bs-title="trans('global.fullscreen')"
-            @click="toggleFullscreen"
+                class="btn d-print-none position-absolute"
+                :class="textColor === '#000' ? 'btn-icon' : 'btn-icon-alt'"
+                style="top: 0.25rem; left: 0.25rem; z-index: 10;"
+                type="button"
+                data-bs-toggle="tooltip"
+                :data-bs-title="trans('global.fullscreen')"
+                @click="toggleFullscreen"
         >
             <i class="fa fa-expand"></i>
         </button>
@@ -50,12 +50,12 @@
             >
                 <template #item="{ element: status, index }">
                     <span v-if="status.visibility || ownerOrAdmin || status.owner_id == $userId"
-                        :id="'status-' + status.id"
-                        :key="'drag_status_' + status.id"
-                        class="flex-column mh-100 collapse collapse-horizontal show"
-                        :class="(!status.visible ?? false) && 'd-none'"
-                        :style="{ opacity: !status.visibility ? '0.7' : '1' }"
-                        tabindex="-1"
+                          :id="'status-' + status.id"
+                          :key="'drag_status_' + status.id"
+                          class="flex-column mh-100 collapse collapse-horizontal show"
+                          :class="(!status.visible ?? false) && 'd-none'"
+                          :style="{ opacity: !status.visibility ? '0.7' : '1' }"
+                          tabindex="-1"
                     >
                         <KanbanStatus
                             :style="'width:' + itemWidth + 'px;'"
@@ -70,9 +70,9 @@
                             @show-with-search="data => status.visible = data.show"
                         />
                         <div v-if="editable"
-                            :id="'kanbanItemCreateButton_' + index"
-                            class="d-flex justify-content-center m-2"
-                            :style="'width:' + itemWidth + 'px;'"
+                             :id="'kanbanItemCreateButton_' + index"
+                             class="d-flex justify-content-center m-2"
+                             :style="'width:' + itemWidth + 'px;'"
                         >
                             <button
                                 type="button"
@@ -99,21 +99,21 @@
                                     <KanbanItem v-if="(item.visibility && visibleFromTo(item.visible_from, item.visible_until))
                                             || item.owner_id == $userId
                                             || ownerOrAdmin"
-                                        :key="item.id"
-                                        :editable="editable"
-                                        :favourable="favourable"
-                                        :commentable="kanban.commentable"
-                                        :only_edit_owned_items="kanban.only_edit_owned_items"
-                                        :collapse_items="kanban.collapse_items"
-                                        :allow_copy="kanban.allow_copy"
-                                        :ref="'kanbanItemId' + item.id"
-                                        :index="status.id + '_' + item.id"
-                                        :item="item"
-                                        :width="itemWidth"
-                                        :style="'width:' + itemWidth + 'px;'"
-                                        :kanban_owner_id="kanban.owner_id"
-                                        :websocket="websocket && kanban.auto_refresh"
-                                        filter=".ignore"
+                                                :key="item.id"
+                                                :editable="editable"
+                                                :favourable="favourable"
+                                                :commentable="kanban.commentable"
+                                                :only_edit_owned_items="kanban.only_edit_owned_items"
+                                                :collapse_items="kanban.collapse_items"
+                                                :allow_copy="kanban.allow_copy"
+                                                :ref="'kanbanItemId' + item.id"
+                                                :index="status.id + '_' + item.id"
+                                                :item="item"
+                                                :width="itemWidth"
+                                                :style="'width:' + itemWidth + 'px;'"
+                                                :kanban_owner_id="kanban.owner_id"
+                                                :websocket="websocket && kanban.auto_refresh"
+                                                filter=".ignore"
                                     />
                                 </span>
                             </template>
@@ -122,8 +122,8 @@
                 </template>
                 <template #footer>
                     <div v-if="editable"
-                        class="d-print-none"
-                        :style="'width:' + itemWidth + 'px;'"
+                         class="d-print-none"
+                         :style="'width:' + itemWidth + 'px;'"
                     >
                         <KanbanStatus/>
                     </div>
@@ -178,25 +178,25 @@
             <div class="d-flex align-items-center">
                 <small v-text="kanban.title"></small>
                 <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                    type="button"
-                    class="d-print-none btn btn-icon text-secondary mx-1"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="trans('global.kanban.edit')"
-                    @click="editKanban()"
+                        type="button"
+                        class="d-print-none btn btn-icon text-secondary mx-1"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.kanban.edit')"
+                        @click="editKanban()"
                 >
                     <i class="fa fa-pencil-alt"></i>
                 </button>
-    
+
                 <button v-if="kanban.owner_id == $userId || checkPermission('is_admin')"
-                    type="button"
-                    class="d-print-none btn btn-icon text-secondary mx-1"
-                    data-bs-toggle="tooltip"
-                    :data-bs-title="trans('global.share')"
-                    @click="share()"
+                        type="button"
+                        class="d-print-none btn btn-icon text-secondary mx-1"
+                        data-bs-toggle="tooltip"
+                        :data-bs-title="trans('global.share')"
+                        @click="share()"
                 >
                     <i class="fa fa-share-alt"></i>
                 </button>
-    
+
                 <a
                     :href="'/export_csv/' + kanban.id"
                     class="d-print-none btn btn-icon text-secondary mx-1"
@@ -206,7 +206,7 @@
                 >
                     <i class="fa fa-file-csv"></i>
                 </a>
-    
+
                 <a
                     :href="'/export_pdf/' + kanban.id"
                     class="d-print-none btn btn-icon text-secondary mx-1"
@@ -438,7 +438,7 @@ export default {
         },
         copyItem() {
             axios.get('/kanbanItems/' + this.copy_id + '/copy')
-                .then(response => this.$eventHub.emit('kanban-item-added-' + response.data.kanban_status_id, response.data));
+                .then(response => this.$eventHub.emit('kanbanItem-added-' + response.data.kanban_status_id, response.data));
         },
         showItemUndoNotification() {
             this.show_item_delete = false;
@@ -469,7 +469,7 @@ export default {
                 return;
             }
             axios.delete('/kanbanItems/' + item_id)
-                .then(() => this.$eventHub.emit('kanban-item-deleted-' + status_id, item_id));
+                .then(() => this.$eventHub.emit('kanbanItem-deleted', item_id));
         },
         undoDeletion(item_id) {
             this.stopDeletion = true;
@@ -563,7 +563,7 @@ export default {
         this.$eventHub.on('kanbanStatus-updated', status => {
             this.handleStatusUpdated(status);
         });
-        this.$eventHub.on('kanban-status-deleted', status_id => {
+        this.$eventHub.on('kanbanStatus-deleted', status_id => {
             this.handleStatusDeleted(status_id);
         });
 
@@ -653,7 +653,9 @@ export default {
     height: 0px !important;
     scroll-behavior: smooth;
 
-    & > :not(:first-child) .kanban-item { margin-top: 1rem; }
+    & > :not(:first-child) .kanban-item {
+        margin-top: 1rem;
+    }
 }
 
 .kanban-item {
@@ -710,8 +712,15 @@ export default {
         }
     }
 }
-.kanban-item, .kanban-status { box-shadow: var(--shadow-layout); }
-[id^="status"] { display: flex; }
+
+.kanban-item, .kanban-status {
+    box-shadow: var(--shadow-layout);
+}
+
+[id^="status"] {
+    display: flex;
+}
+
 div[id^="item"], span[id^="status"] {
     transition: height 0.5s ease-out, opacity 0.25s linear;
 

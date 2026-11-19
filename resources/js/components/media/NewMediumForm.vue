@@ -115,7 +115,7 @@ export default {
             ? { id: this.medium_id }
             : this.media_subscriptions[0]?.medium;
 
-        this.$eventHub.on('new-media-subscriptions', (data) => {
+        this.$eventHub.on('new-media-subscriptions', data => {
             if (data?.id !== this.component_id) return;
             // if the medium is getting replaced
             if (!this.multiple && this.previewMedium) {
@@ -134,7 +134,7 @@ export default {
         openMediumModal() {
             const type_fallback = this.subscribable_type + 'Create';
 
-            this.globalStore?.showModal('medium-modal', {
+            this.globalStore.showModal('medium-modal', {
                 subscribable_id: this.subscribable_id ?? this.$userId,
                 subscribable_type: this.subscribable_id ? this.subscribable_type : type_fallback,
                 subscribeSelected: this.multiple, // whether to create subscriptions for local media

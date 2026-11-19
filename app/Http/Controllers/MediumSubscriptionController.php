@@ -51,13 +51,13 @@ class MediumSubscriptionController extends Controller
         $input = $this->validateRequest();
 
         $subscribe = MediumSubscription::updateOrCreate([
-            'medium_id' => $input['medium_id'],
+            'medium_id'         => $input['medium_id'],
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_id'   => $input['subscribable_id'],
         ], [
             'sharing_level_id' => $input['sharing_level_id'] ?? 1,
-            'visibility' => $input['visibility'] ?? 1,
-            'owner_id' => auth()->user()->id,
+            'visibility'       => $input['visibility'] ?? 1,
+            'owner_id'         => auth()->user()->id,
         ]);
         $subscribe->save();
 
@@ -66,9 +66,9 @@ class MediumSubscriptionController extends Controller
         }
 
         return MediumSubscription::where([
-            'medium_id' => $input['medium_id'],
+            'medium_id'         => $input['medium_id'],
             'subscribable_type' => $input['subscribable_type'],
-            'subscribable_id' => $input['subscribable_id'],
+            'subscribable_id'   => $input['subscribable_id'],
         ])->with('medium')->first();
     }
 

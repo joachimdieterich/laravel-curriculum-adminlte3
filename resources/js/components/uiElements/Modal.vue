@@ -116,7 +116,7 @@
                                         show-fallback
                                         fallback-input-type="color"
                                     />
-                                    <NewMediumForm v-if="showMediumField"
+                                    <MediumForm v-if="showMediumField"
                                         :subscribable_id="form.id"
                                         :subscribable_type="'App\\' + model.charAt(0).toUpperCase() + model.slice(1)"
                                         :allow_fallback_on_create="true"
@@ -197,7 +197,7 @@
 <script>
 import Form from "form-backend-validation";
 import Select2 from "../forms/Select2.vue";
-import NewMediumForm from "../media/NewMediumForm.vue";
+import MediumForm from "../media/MediumForm.vue/index.js";
 import FontAwesomePicker from "./FontAwesomePicker.vue";
 
 export default {
@@ -206,7 +206,7 @@ export default {
     expose: ['add', 'update'],
     components: {
         Select2,
-        NewMediumForm,
+        MediumForm,
         FontAwesomePicker,
     },
     props: {

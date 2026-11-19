@@ -248,7 +248,7 @@
                                         fallback-input-type="color"
                                     />
 
-                                    <NewMediumForm
+                                    <MediumForm
                                         :subscribable_id="form.id"
                                         subscribable_type="App\Curriculum"
                                         :allow_fallback_on_create="true"
@@ -315,7 +315,7 @@
 import Modal from '../uiElements/Modal.vue';
 import Form from 'form-backend-validation';
 import Editor from '@tinymce/tinymce-vue';
-import NewMediumForm from '../media/NewMediumForm.vue';
+import MediumForm from '../media/MediumForm.vue';
 import Select2 from "../forms/Select2.vue";
 import TagMultiselect from "../tag/TagMultiselect.vue";
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -328,7 +328,7 @@ export default {
         Modal,
         TagMultiselect,
         Editor,
-        NewMediumForm,
+        MediumForm,
         Select2,
         VueDatePicker,
         Switch,

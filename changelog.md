@@ -2,10 +2,13 @@
 - changed 'lockSettingsLockOnJoin' in bbb-config to true
 - Modal: fixed multiple-media not working
 - KanbanItem: fixed item not appearing on create
+- HtmlRenderer: rebuild logic to fix content being cut off after first link
 - Videoconferences: removed 'by_organization'-filter
 - Videoconferences: hid TabList in Group-view
 - LmsModal: changed logic to only allow storing one valid token
 - MediaRenderer: added mime-type information to img-tag
+- Navigationbar: fixed admins not being able to set current_org
+- Telescope: stopped logging requests that failed fetching build-assets
 
 ## 2.1.0 (2026-11-16)
 - upgraded to bootstrap 5

@@ -1,4 +1,13 @@
-## 2.1.0 (2027-11-16)
+## 2.1.1 (2026-11-23)
+- changed 'lockSettingsLockOnJoin' in bbb-config to true
+- Modal: fixed multiple-media not working
+- KanbanItem: fixed item not appearing on create
+- Videoconferences: removed 'by_organization'-filter
+- Videoconferences: hid TabList in Group-view
+- LmsModal: changed logic to only allow storing one valid token
+- MediaRenderer: added mime-type information to img-tag
+
+## 2.1.0 (2026-11-16)
 - upgraded to bootstrap 5
 - removed/replaced most occurences of jQuery (only Select2 left)
 - replaced input-labels with floating-labels

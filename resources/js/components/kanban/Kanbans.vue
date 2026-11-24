@@ -6,13 +6,13 @@
                  class="px-3"
                  model="kanban"
                  :tabs="[
-                { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
-                { icon: 'fa-columns', label: ['global.all', 'global.kanban.title'], filter: 'all' },
-                { icon: 'fa-user', label: ['global.my', 'global.kanban.title'], filter: 'owner', permission: 'kanban_create' },
-                { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'kanban_create' },
-                { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
-                { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
-            ]"
+                     { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
+                     { icon: 'fa-columns', label: ['global.all', 'global.kanban.title'], filter: 'all' },
+                     { icon: 'fa-user', label: ['global.my', 'global.kanban.title'], filter: 'owner', permission: 'kanban_create' },
+                     { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'kanban_create' },
+                     { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
+                     { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
+                 ]"
                  @change-tab="setFilter($event.filter)"
         />
 

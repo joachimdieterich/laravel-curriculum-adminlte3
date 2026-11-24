@@ -5,7 +5,7 @@
         title="global.videoconference.enrol"
         :form="form"
         :allow-overflow="true"
-        :disable-save-button="!form.videoconference_id"
+        :disable-save-button="!form.model_id"
         :intercept-save="true"
         @save="submit()"
     >
@@ -14,7 +14,7 @@
                 id="videoconference-subscription"
                 url="/videoconferences"
                 model="videoconference"
-                @selectedValue="id => form.videoconference_id = id[0]"
+                @selectedValue="id => form.model_id = id[0]"
             />
         </template>
     </Modal>
@@ -40,14 +40,14 @@ export default {
         return {
             component_id: this.$.uid,
             form: new Form({
-                videoconference_id: null,
+                model_id: null,
             }),
         }
     },
     methods: {
         submit() {
             axios.post('/videoconferenceSubscriptions', {
-                videoconference_id: this.form.videoconference_id,
+                model_id: this.form.model_id,
                 subscribable_type: 'App\\Group',
                 subscribable_id: this.group_id,
             })

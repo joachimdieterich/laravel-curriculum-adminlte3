@@ -110,53 +110,18 @@
                         :class="logbook.css_icon"
                     ></i>
                 </template>
-
-                <template #dropdown>
-                    <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-end"
-                    >
-                        <button
-                            v-permission="'logbook_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(logbook)"
-                        >
-                            <i class="fa fa-unlink"></i>
-                            {{ trans('global.logbook.expel') }}
-                        </button>
-                    </div>
-                    <div v-else-if="ownerOrAdmin(logbook)"
-                        class="dropdown-menu dropdown-menu-end"
-                    >
-                        <button
-                            type="button"
-                            class="dropdown-item"
-                            @click="editLogbook(logbook)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.logbook.edit') }}
-                        </button>
-                        <button
-                            type="button"
-                            class="dropdown-item"
-                            @click="shareLogbook(logbook)"
-                        >
-                            <i class="fa fa-share-alt"></i>
-                            {{ trans('global.logbook.share') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'logbook_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(logbook)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.logbook.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="ownerOrAdmin(logbook) || (subscribable && isTeacher)"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.logbook.edit', callback: () => editLogbook(logbook) },
+                            { icon: 'fa-share-alt', label: 'global.logbook.share', callback: () => shareLogbook(logbook) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.logbook.delete', callback: () => confirmItemDelete(logbook), class: 'text-danger' },
+                            { icon: 'fa-unlink', label: 'global.logbook.expel', callback: () => confirmItemDelete(logbook), class: 'text-danger', subscribable: true },
+                        ]"
+                        :subscribable="subscribable"
+                        :color="logbook.color"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -188,6 +153,7 @@
 </template>
 <script>
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import LogbookModal from "./LogbookModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -205,6 +171,7 @@ export default {
         SubscribeLogbookModal,
         DataTable,
         IndexWidget,
+        DropdownButton,
         LogbookModal,
     },
     props: {
@@ -322,6 +289,9 @@ export default {
     },
     computed: {
         isAdmin() {
+            return this.checkPermission('is_admin');
+        },
+        isTeacher() {
             return this.checkPermission('is_admin');
         },
         createLabel() {

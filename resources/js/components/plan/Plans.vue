@@ -106,62 +106,19 @@
                     <i class="fa fa-2x fa-clipboard-list"></i>
                 </template>
 
-                <template #dropdown>
-                    <div v-if="subscribable"
-                        class="dropdown-menu dropdown-menu-end"
-                    >
-                        <button
-                            v-permission="'plan_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmDelete(plan)"
-                        >
-                            <i class="fa fa-unlink"></i>
-                            {{ trans('global.plan.expel') }}
-                        </button>
-                    </div>
-                    <div v-else
-                        class="dropdown-menu dropdown-menu-end"
-                    >
-                        <button v-if="ownerOrAdmin(plan)"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editPlan(plan)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.plan.edit') }}
-                        </button>
-
-                        <button v-if="ownerOrAdmin(plan)"
-                            type="button"
-                            class="dropdown-item"
-                            @click="sharePlan(plan)"
-                        >
-                            <i class="fa fa-share-alt"></i>
-                            {{ trans('global.plan.share') }}
-                        </button>
-
-                        <button v-if="plan.allow_copy"
-                            type="button"
-                            class="dropdown-item"
-                            @click="confirmCopy(plan)"
-                        >
-                            <i class="fa fa-copy"></i>
-                            {{ trans('global.plan.copy') }}
-                        </button>
-
-                        <hr v-if="ownerOrAdmin(plan)" class="my-1"/>
-
-                        <button v-if="ownerOrAdmin(plan)"
-                            v-permission="'plan_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmDelete(plan)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.plan.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="isTeacher"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.plan.edit', callback: () => editPlan(plan), condition: ownerOrAdmin(plan) },
+                            { icon: 'fa-share-alt', label: 'global.plan.share', callback: () => sharePlan(plan), condition: ownerOrAdmin(plan) },
+                            { icon: 'fa-copy', label: 'global.plan.copy', callback: () => confirmCopy(plan), condition: plan.allow_copy },
+                            { hr: true, condition: ownerOrAdmin(plan) },
+                            { icon: 'fa-trash', label: 'global.plan.delete', callback: () => confirmDelete(plan), condition: ownerOrAdmin(plan), permission: 'plan_delete', class: 'text-danger' },
+                            { icon: 'fa-unlink', label: 'global.plan.expel', callback: () => confirmDelete(plan), class: 'text-danger', subscribable: true },
+                        ]"
+                        :subscribable="subscribable"
+                        :color="plan.color"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -208,6 +165,7 @@ import SubscribeModal from "../subscription/SubscribeModal.vue";
 import SubscribePlanModal from "../plan/SubscribePlanModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -222,6 +180,7 @@ export default {
         ConfirmModal,
         DataTable,
         IndexWidget,
+        DropdownButton,
     },
     props: {
         subscribable: {
@@ -348,6 +307,9 @@ export default {
     computed: {
         isAdmin() {
             return this.checkPermission('is_admin');
+        },
+        isTeacher() {
+            return this.checkPermission('is_teacher');
         },
         createLabel() {
             return this.subscribable ? 'enrol' : 'create';

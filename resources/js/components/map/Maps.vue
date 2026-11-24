@@ -99,39 +99,16 @@
                     <i class="fa fa-map-location-dot"></i>
                 </template>
 
-                <template v-if="ownerOrAdmin(map)" #dropdown
-                    v-permission="'map_edit, map_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            type="button"
-                            class="dropdown-item"
-                            @click="editMap(map)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.map.edit') }}
-                        </button>
-
-                        <button
-                            type="button"
-                            class="dropdown-item"
-                            @click="shareMap(map)"
-                        >
-                            <i class="fa fa-share-alt"></i>
-                            {{ trans('global.map.share') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(map)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.map.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="ownerOrAdmin(map) && checkPermission('plan_delete')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.map.edit', callback: () => editMap(map) },
+                            { icon: 'fa-share-alt', label: 'global.map.share', callback: () => shareMap(map) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.map.delete', callback: () => confirmItemDelete(plan), class: 'text-danger' },
+                        ]"
+                        :color="map.color"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -168,6 +145,7 @@ import MapModal from "../map/MapModal.vue";
 import SubscribeModal from "../subscription/SubscribeModal.vue";
 import MediumModal from "../media/MediumModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -180,6 +158,7 @@ export default {
         DataTable,
         MapModal,
         IndexWidget,
+        DropdownButton,
         MediumModal,
     },
     data() {

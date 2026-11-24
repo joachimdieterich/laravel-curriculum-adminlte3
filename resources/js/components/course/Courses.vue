@@ -40,20 +40,13 @@
                     ></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'course_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'course_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(course)"
-                        >
-                            <i class="fa fa-unlink"></i>
-                            {{ trans('global.course.expel') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('course_delete')"
+                        :entries="[
+                            { icon: 'fa-unlink', label: 'global.course.expel', callback: () => confirmItemDelete(course), class: 'text-danger' },
+                        ]"
+                        :color="course.color"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -85,6 +78,7 @@
 </template>
 <script>
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import SubscribeCourseModal from "./SubscribeCourseModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -97,6 +91,7 @@ export default {
         SubscribeCourseModal,
         DataTable,
         IndexWidget,
+        DropdownButton,
     },
     props: {
         group: {

@@ -69,55 +69,27 @@
                     </span>
                 </template>
 
-                <template #dropdown>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button v-if="ownerOrAdmin(curriculum)"
-                            v-permission="'curriculum_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editCurriculum(curriculum)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.curriculum.edit') }}
-                        </button>
-
-                        <button
-                            v-permission="'tag_access'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="manageTags(curriculum)"
-                        >
-                            <i class="fa fa-tag"></i>
-                            {{ trans('global.tag.title') }}
-                        </button>
-
-                        <button v-if="ownerOrAdmin(curriculum)"
-                            type="button"
-                            class="dropdown-item"
-                            @click="shareCurriculum(curriculum)"
-                        >
-                            <i class="fa fa-share-alt"></i>
-                            {{ trans('global.curriculum.share') }}
-                        </button>
-                        <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
-                            url="/curricula/[id]/hide"
-                            :model="curriculum"
-                            :is-hidden="curriculum.is_hidden"
-                            @mark-status-changed="() => curriculum.splice(index, 1)"
-                        />
-
-                        <hr v-if="ownerOrAdmin(curriculum)" class="my-1">
-
-                        <button v-if="ownerOrAdmin(curriculum)"
-                            v-permission="'curriculum_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(curriculum)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.curriculum.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.curriculum.edit', callback: () => editCurriculum(curriculum), condition: ownerOrAdmin(curriculum), permission: 'curriculum_edit' },
+                            { icon: 'fa-tag', label: 'global.tag.title', callback: () => manageTags(curriculum), permission: 'tag_access' },
+                            { icon: 'fa-share-alt', label: 'global.curriculum.share', callback: () => shareCurriculum(curriculum), condition: ownerOrAdmin(curriculum) },
+                            { slot: 'hide' },
+                            { hr: true, condition: ownerOrAdmin(curriculum) },
+                            { icon: 'fa-trash', label: 'global.curriculum.delete', callback: () => confirmItemDelete(curriculum), condition: ownerOrAdmin(curriculum), permission: 'curriculum_delete', class: 'text-danger' },
+                        ]"
+                        :color="curriculum.color"
+                    >
+                        <template #hide>
+                            <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                                url="/curricula/[id]/hide"
+                                :model="curriculum"
+                                :is-hidden="curriculum.is_hidden"
+                                @mark-status-changed="curricula.splice(index, 1)"
+                            />
+                        </template>
+                    </DropdownButton>
                 </template>
             </IndexWidget>
         </div>
@@ -151,6 +123,7 @@
 </template>
 <script>
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -171,6 +144,7 @@ export default {
         Hide,
         Favourite,
         IndexWidget,
+        DropdownButton,
         MediumModal,
         DataTable,
         SubscribeModal,

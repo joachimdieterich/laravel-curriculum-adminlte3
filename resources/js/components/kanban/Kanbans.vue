@@ -48,80 +48,30 @@
                     <i class="fa fa-2x fa-columns"></i>
                 </template>
 
-                <template #dropdown>
-                    <div v-if="subscribable"
-                         class="dropdown-menu dropdown-menu-end"
+                <template #dropdown-alt>
+                    <DropdownButton v-if="!subscribable || isTeacher"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.kanban.edit', callback: () => editKanban(kanban), condition: ownerOrAdmin(kanban) },
+                            { icon: 'fa-tag', label: 'global.tag.title', callback: () => manageTags(kanban), permission: 'tag_access' },
+                            { icon: 'fa-share-alt', label: 'global.kanban.share', callback: () => shareKanban(kanban), condition: ownerOrAdmin(kanban) },
+                            { icon: 'fa-copy', label: 'global.kanban.copy', callback: () => confirmKanbanCopy(kanban), condition: ownerOrAdmin(kanban) || kanban.allow_copy },
+                            { slot: 'hide' },
+                            { hr: true, condition: ownerOrAdmin(kanban) },
+                            { icon: 'fa-trash', label: 'global.kanban.delete', callback: () => confirmItemDelete(kanban), condition: ownerOrAdmin(kanban), permission: 'kanban_delete', class: 'text-danger' },
+                            { icon: 'fa-unlink', label: 'global.kanban.expel', callback: () => confirmItemDelete(kanban), class: 'text-danger', subscribable: true },
+                        ]"
+                        :subscribable="subscribable"
+                        :color="kanban.color"
                     >
-                        <button
-                            v-permission="'kanban_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(kanban)"
-                        >
-                            <i class="fa fa-unlink"></i>
-                            {{ trans('global.kanban.expel') }}
-                        </button>
-                    </div>
-                    <div v-else
-                         class="dropdown-menu dropdown-menu-end"
-                    >
-                        <button v-if="ownerOrAdmin(kanban)"
-                                v-permission="'kanban_edit'"
-                                type="button"
-                                class="dropdown-item"
-                                @click="editKanban(kanban)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.kanban.edit') }}
-                        </button>
-
-                        <button
-                            v-permission="'tag_access'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="manageTags(kanban)"
-                        >
-                            <i class="fa fa-tag"></i>
-                            {{ trans('global.tag.title') }}
-                        </button>
-
-                        <button v-if="ownerOrAdmin(kanban)"
-                                type="button"
-                                class="dropdown-item"
-                                @click="shareKanban(kanban)"
-                        >
-                            <i class="fa fa-share-alt"></i>
-                            {{ trans('global.kanban.share') }}
-                        </button>
-
-                        <button v-if="ownerOrAdmin(kanban) || kanban.allow_copy"
-                                type="button"
-                                class="dropdown-item"
-                                @click="confirmKanbanCopy(kanban)"
-                        >
-                            <i class="fa fa-copy"></i>
-                            {{ trans('global.kanban.copy') }}
-                        </button>
-
-                        <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
-                              url="/kanbans/[id]/hide"
-                              :model="kanban"
-                              :is-hidden="kanban.is_hidden"
-                              @mark-status-changed="kanbans.splice(index, 1)"
-                        />
-
-                        <hr v-if="ownerOrAdmin(kanban)" class="my-1"/>
-
-                        <button v-if="ownerOrAdmin(kanban)"
-                                v-permission="'kanban_delete'"
-                                type="submit"
-                                class="dropdown-item text-danger"
-                                @click="confirmItemDelete(kanban)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.kanban.delete') }}
-                        </button>
-                    </div>
+                        <template #hide>
+                            <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                                url="/kanbans/[id]/hide"
+                                :model="kanban"
+                                :is-hidden="kanban.is_hidden"
+                                @mark-status-changed="kanbans.splice(index, 1)"
+                            />
+                        </template>
+                    </DropdownButton>
                 </template>
             </IndexWidget>
         </div>
@@ -165,6 +115,7 @@ import SubscribeKanbanModal from "../kanban/SubscribeKanbanModal.vue";
 import KanbanModal from "../kanban/KanbanModal.vue";
 import TabList from "../uiElements/TabList.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -188,6 +139,7 @@ export default {
         DataTable,
         KanbanModal,
         IndexWidget,
+        DropdownButton,
         TabList,
     },
     props: {
@@ -341,6 +293,9 @@ export default {
     computed: {
         isAdmin() {
             return this.checkPermission('is_admin');
+        },
+        isTeacher() {
+            return this.checkPermission('is_teacher');
         },
         createLabel() {
             return this.subscribable ? 'enrol' : 'create';

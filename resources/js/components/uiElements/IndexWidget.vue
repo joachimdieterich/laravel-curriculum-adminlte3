@@ -95,6 +95,7 @@
                     <i class="fa fa-ellipsis-v"></i>
                     <slot name="dropdown"></slot>
                 </button>
+                <slot name="dropdown-alt"></slot>
             </div>
         </a>
     </div>

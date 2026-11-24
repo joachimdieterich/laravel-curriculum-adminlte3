@@ -51,65 +51,26 @@
                     <i class="fa fa-2x fa-video"></i>
                 </template>
 
-                <template #dropdown>
-                    <div v-if="subscribable"
-                         class="dropdown-menu dropdown-menu-end"
-                         v-permission="'videoconference_edit, videoconference_delete'"
+                <template #dropdown-alt>
+                    <DropdownButton v-if="!subscribable || isTeacher"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.videoconference.edit', callback: () => editVideoconference(videoconference), condition: ownerOrAdmin(videoconference) },
+                            { icon: 'fa-share-alt', label: 'global.videoconference.share', callback: () => share(videoconference), condition: ownerOrAdmin(videoconference) },
+                            { slot: 'hide' },
+                            { hr: true, condition: ownerOrAdmin(videoconference) },
+                            { icon: 'fa-trash', label: 'global.videoconference.delete', callback: () => confirmItemDelete(videoconference), condition: ownerOrAdmin(videoconference), permission: 'videoconference_delete', class: 'text-danger' },
+                            { icon: 'fa-unlink', label: 'global.videoconference.expel', callback: () => confirmItemDelete(videoconference), class: 'text-danger', subscribable: true },
+                        ]"
                     >
-                        <button
-                            v-permission="'videoconference_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(videoconference)"
-                        >
-                            <i class="fa fa-link"></i>
-                            {{ trans('global.videoconference.expel') }}
-                        </button>
-                    </div>
-                    <div v-else
-                         class="dropdown-menu dropdown-menu-end"
-                    >
-                        <button
-                            v-if="ownerOrAdmin(videoconference)"
-                            v-permission="'videoconference_edit, videoconference_delete'"
-                            type="button"
-                            class="dropdown-item"
-                            @click.prevent="editVideoconference(videoconference)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.videoconference.edit') }}
-                        </button>
-                        <button
-                            v-if="ownerOrAdmin(videoconference)"
-                            v-permission="'videoconference_edit, videoconference_delete'"
-                            type="button"
-                            class="dropdown-item"
-                            @click.prevent="share(videoconference)"
-                        >
-                            <i class="fa fa-share-alt"></i>
-                            {{ trans('global.videoconference.share') }}
-                        </button>
-
-                        <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
-                              url="/videoconferences/[id]/hide"
-                              :model="videoconference"
-                              :is-hidden="videoconference.is_hidden"
-                              @mark-status-changed="() => videoconference.splice(index, 1)"
-                        />
-
-                        <hr v-if="ownerOrAdmin(videoconference)" v-permission="'videoconference_edit, videoconference_delete'" class="my-1">
-
-                        <button
-                            v-if="ownerOrAdmin(videoconference)"
-                            v-permission="'videoconference_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(videoconference)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.videoconference.delete') }}
-                        </button>
-                    </div>
+                        <template #hide>
+                            <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
+                                url="/videoconferences/[id]/hide"
+                                :model="videoconference"
+                                :is-hidden="videoconference.is_hidden"
+                                @mark-status-changed="videoconferences.splice(index, 1)"
+                            />
+                        </template>
+                    </DropdownButton>
                 </template>
             </IndexWidget>
         </div>
@@ -142,6 +103,7 @@
 <script>
 import VideoconferenceModal from "../videoconference/VideoconferenceModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import MediumModal from "../media/MediumModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -163,6 +125,7 @@ export default {
         DataTable,
         VideoconferenceModal,
         IndexWidget,
+        DropdownButton,
         SubscribeModal,
     },
     props: {
@@ -287,6 +250,9 @@ export default {
     computed: {
         isAdmin() {
             return this.checkPermission('is_admin');
+        },
+        isTeacher() {
+            return this.checkPermission('is_teacher');
         },
         createLabel() {
             return this.subscribable ? 'enrol' : 'create';

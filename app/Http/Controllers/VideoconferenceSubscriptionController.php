@@ -69,7 +69,7 @@ class VideoconferenceSubscriptionController extends Controller
         ]);
         $subscribe->save();
 
-        return $subscribe->with('videoconference:id,meetingName,bannerColor,owner_id')->find($subscribe->id);
+        return $subscribe->with('subscribable')->with('videoconference:id,meetingName,bannerColor,owner_id')->find($subscribe->id);
     }
 
     /**

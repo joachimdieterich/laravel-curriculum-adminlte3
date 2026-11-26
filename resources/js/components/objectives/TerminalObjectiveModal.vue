@@ -6,7 +6,7 @@
         :show-general-header="true"
         :show-display-section="true"
         :show-permission-section="true"
-        :disable-save-button="!form.title"
+        :disable-save-button="!form.title || !form.objective_type_id"
     >
         <template #general>
             <div class="mb-3">

@@ -181,8 +181,10 @@ return [
     'config'                                 => [
         'title'          => 'Configs',
         'title_singular' => 'Config',
-        'create'         => 'Create Config',
-        'edit'           => 'Edit Config',
+        'create'         => 'Create config',
+        'edit'           => 'Edit config',
+        'delete'         => 'Delete config',
+        'delete_helper'  => 'Should this config be deleted?',
         'fields'         => [
             'key'                       => 'Key',
             'key_helper'                => '',

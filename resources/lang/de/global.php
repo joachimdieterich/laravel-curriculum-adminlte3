@@ -192,6 +192,8 @@ return [
         'title_singular' => 'Einstellung',
         'create'         => 'Einstellung erstellen',
         'edit'           => 'Einstellung bearbeiten',
+        'delete'         => 'Einstellung löschen',
+        'delete_helper'  => 'Solle diese Einstellung gelöscht werden?',
         'fields'         => [
             'key'                       => 'Schüssel',
             'key_helper'                => '',

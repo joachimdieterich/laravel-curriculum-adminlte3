@@ -79,22 +79,6 @@
                         @mark-status-changed="newStatus => item.is_favourited = newStatus"
                     />
                 </slot>
-                <button v-if="(item.owner_id == $userId && !showSubscribable)
-                        || (item.allow_copy && (modelName != 'Plan' || checkPermission('is_teacher')))
-                        || (checkPermission('is_teacher') && (showSubscribable || modelName == 'Exam'))
-                        || checkPermission('is_admin')
-                        || hidable
-                    "
-                    class="btn"
-                    :class="buttonClass(item.color)"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    @click.stop
-                >
-                    <i class="fa fa-ellipsis-v"></i>
-                    <slot name="dropdown"></slot>
-                </button>
                 <slot name="dropdown-alt"></slot>
             </div>
         </a>

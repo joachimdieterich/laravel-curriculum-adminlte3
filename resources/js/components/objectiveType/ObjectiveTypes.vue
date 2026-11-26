@@ -22,32 +22,14 @@
                     <i class="fa fa-university"></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'objectivetype_edit, objectivetype_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'objectivetype_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editObjectiveType(objectiveType)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.objectiveType.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'objectivetype_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(objectiveType)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.objectiveType.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.objectiveType.edit', callback: () => editObjectiveType(objectiveType) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.objectiveType.delete', callback: () => confirmItemDelete(objectiveType), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -77,6 +59,7 @@
 <script>
 import ObjectiveTypeModal from "../objectiveType/ObjectiveTypeModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -88,6 +71,7 @@ export default {
         DataTable,
         ObjectiveTypeModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

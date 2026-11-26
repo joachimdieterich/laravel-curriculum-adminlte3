@@ -62,32 +62,14 @@
                         </p>
                     </template>
 
-                    <template #dropdown
-                        v-permission="'navigator_edit, navigator_delete'"
-                    >
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <button
-                                v-permission="'navigator_edit'"
-                                type="button"
-                                class="dropdown-item"
-                                @click="editNavigatorItem(navigatorItem)"
-                            >
-                                <i class="fa fa-pencil-alt"></i>
-                                {{ trans('global.navigatorView.edit') }}
-                            </button>
-
-                            <hr class="my-1">
-
-                            <button
-                                v-permission="'navigator_delete'"
-                                type="submit"
-                                class="dropdown-item text-danger"
-                                @click="confirmItemDelete(navigatorItem)"
-                            >
-                                <i class="fa fa-trash"></i>
-                                {{ trans('global.navigatorItem.delete') }}
-                            </button>
-                        </div>
+                    <template #dropdown-alt>
+                        <DropdownButton v-if="checkPermission('is_admin')"
+                            :entries="[
+                                { icon: 'fa-pencil-alt', label: 'global.navigatorView.edit', callback: () => editNavigatorItem(navigatorItem) },
+                                { hr: true },
+                                { icon: 'fa-trash', label: 'global.navigatorView.delete', callback: () => confirmItemDelete(navigatorItem), class: 'text-danger' },
+                            ]"
+                        />
                     </template>
                 </IndexWidget>
             </span>
@@ -157,6 +139,7 @@
 <script>
 import NavigatorItemModal from "../navigator/NavigatorItemModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -169,7 +152,8 @@ export default {
         ConfirmModal,
         DataTable,
         NavigatorItemModal,
-        IndexWidget
+        IndexWidget,
+        DropdownButton,
     },
     props: {
         navigator: {

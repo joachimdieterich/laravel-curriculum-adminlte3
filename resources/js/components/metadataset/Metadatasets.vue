@@ -23,20 +23,12 @@
                     <i class="fa fa-metadataset-location-dot pt-2"></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'metadataset_edit, metadataset_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'metadataset_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(metadataset)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.metadataset.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-trash', label: 'global.metadataset.delete', callback: () => confirmItemDelete(metadataset), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -66,6 +58,7 @@
 <script>
 import MetadatasetModal from "../metadataset/MetadatasetModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -77,6 +70,7 @@ export default {
         DataTable,
         MetadatasetModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

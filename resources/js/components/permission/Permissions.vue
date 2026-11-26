@@ -23,32 +23,14 @@
                     <i class="fa fa-unlock-alt"></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'permission_edit, permission_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'permission_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click.prevent="editPermission(permission)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.permission.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'permission_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(permission)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.permission.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.permission.edit', callback: () => editPermission(permission) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.permission.delete', callback: () => confirmItemDelete(permission), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -81,6 +63,7 @@
 <script>
 import PermissionModal from "../permission/PermissionModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -92,6 +75,7 @@ export default {
         DataTable,
         PermissionModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

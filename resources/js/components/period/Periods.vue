@@ -22,32 +22,14 @@
                     <i class="fa fa-history"></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'period_edit, period_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'period_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editPeriod(period)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.period.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'period_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(period)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.period.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.period.edit', callback: () => editPeriod(period) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.period.delete', callback: () => confirmItemDelete(period), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -77,6 +59,7 @@
 <script>
 import PeriodModal from "../period/PeriodModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -88,6 +71,7 @@ export default {
         DataTable,
         PeriodModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

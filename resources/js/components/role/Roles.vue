@@ -22,32 +22,14 @@
                     <i class="fa fa-user-tag"></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'role_edit, role_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'role_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editRole(role)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.role.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'role_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click.prevent="confirmItemDelete(role)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.role.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.role.edit', callback: () => editRole(role) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.role.delete', callback: () => confirmItemDelete(role), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -80,6 +62,7 @@
 <script>
 import RoleModal from "../role/RoleModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -91,6 +74,7 @@ export default {
         DataTable,
         RoleModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

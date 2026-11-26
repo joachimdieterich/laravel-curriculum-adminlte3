@@ -22,34 +22,17 @@
                 url="/configs"
             >
                 <template #icon>
-                    <i v-if="config.type_id === 1" class="fa fa-globe pt-2"></i>
-                    <i v-else-if="config.type_id === 2" class="fa fa-university pt-2"></i>
-                    <i v-else-if="config.type_id === 3" class="fa fa-users pt-2"></i>
-                    <i v-else class="fa fa-user pt-2"></i>
+                    <i class="fa fa-key"></i>
                 </template>
 
-                <template #dropdown v-if="checkPermission('is_admin')">
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            type="button"
-                            class="dropdown-item"
-                            @click="editConfig(config)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.config.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(config)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.config.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.config.edit', callback: () => editConfig(config) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.config.delete', callback: () => confirmItemDelete(config), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -94,6 +77,7 @@
 </template>
 <script>
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
@@ -103,6 +87,7 @@ DataTable.use(DataTablesCore);
 export default {
     components: {
         IndexWidget,
+        DropdownButton,
         DataTable,
         ConfirmModal,
         ConfigModal,

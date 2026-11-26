@@ -61,32 +61,14 @@
                     <i class="fa fa-layer-group"></i>
                 </template>
 
-                <template #dropdown
-                          v-permission="'group_edit, group_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'group_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editGroup(group)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.group.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'group_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(group)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.group.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.group.edit', callback: () => editGroup(group) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.group.delete', callback: () => confirmItemDelete(group), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
 
                 <template #badges>
@@ -132,6 +114,7 @@
 import GroupModal from "../group/GroupModal.vue";
 import Switch from "../forms/Switch.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -146,6 +129,7 @@ export default {
         DataTable,
         GroupModal,
         IndexWidget,
+        DropdownButton,
     },
     props: {
         organizations: null

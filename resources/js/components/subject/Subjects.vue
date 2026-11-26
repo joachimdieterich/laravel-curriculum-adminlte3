@@ -22,32 +22,14 @@
                     <i class="fa fa-swatchbook"></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'subject_edit, subject_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'subject_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editSubject(subject)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.subject.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'subject_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(subject)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.subject.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.subject.edit', callback: () => editSubject(subject) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.subject.delete', callback: () => confirmItemDelete(subject), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -77,6 +59,7 @@
 <script>
 import SubjectModal from "../subject/SubjectModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -88,6 +71,7 @@ export default {
         DataTable,
         SubjectModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

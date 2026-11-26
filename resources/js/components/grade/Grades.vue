@@ -21,33 +21,15 @@
                 <template #icon>
                     <i class="fa fa-layer-group"></i>
                 </template>
-
-                <template #dropdown
-                    v-permission="'grade_edit, grade_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'grade_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editGrade(grade)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.grade.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'grade_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(grade)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.grade.delete') }}
-                        </button>
-                    </div>
+                
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.grade.edit', callback: () => editGrade(grade) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.grade.delete', callback: () => confirmItemDelete(grade), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -77,6 +59,7 @@
 <script>
 import GradeModal from "../grade/GradeModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -88,6 +71,7 @@ export default {
         DataTable,
         GradeModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

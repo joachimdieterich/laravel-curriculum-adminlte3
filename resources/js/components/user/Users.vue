@@ -71,47 +71,16 @@
                         <i class="fa" :class="user.evaluator ? 'fa-user-check' : 'fa-user'"></i>
                     </template>
 
-                    <template #dropdown>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <div v-if="!subscribable"
-                                v-permission="'user_edit, user_delete'"
-                            >
-                                <button
-                                    v-permission="'user_edit'"
-                                    type="button"
-                                    class="dropdown-item"
-                                    @click="editUser(user)"
-                                >
-                                    <i class="fa fa-pencil-alt"></i>
-                                    {{ trans('global.user.edit') }}
-                                </button>
-
-                                <hr class="my-1"/>
-
-                                <button
-                                    v-permission="'user_delete'"
-                                    type="submit"
-                                    class="dropdown-item text-danger"
-                                    @click="confirmItemDelete(user)"
-                                >
-                                    <i class="fa fa-trash"></i>
-                                    {{ trans('global.user.delete') }}
-                                </button>
-                            </div>
-
-                            <div v-else
-                                v-permission="'group_enrolment'"
-                            >
-                                <button
-                                    type="submit"
-                                    class="dropdown-item text-danger"
-                                    @click="confirmItemDelete(user)"
-                                >
-                                    <i class="fa fa-unlink"></i>
-                                    {{ trans('global.user.expel') }}
-                                </button>
-                            </div>
-                        </div>
+                    <template #dropdown-alt>
+                        <DropdownButton v-if="(subscribable && checkPermission('group_enrolment')) || checkPermission('is_admin')"
+                            :entries="[
+                                { icon: 'fa-pencil-alt', label: 'global.user.edit', callback: () => editUser(user) },
+                                { hr: true },
+                                { icon: 'fa-trash', label: 'global.user.delete', callback: () => confirmItemDelete(user), class: 'text-danger' },
+                                { icon: 'fa-unlink', label: 'global.user.expel', callback: () => confirmItemDelete(user), class: 'text-danger', subscribable: true },
+                            ]"
+                            :subscribable="subscribable"
+                        />
                     </template>
 
                     <template #content>
@@ -171,6 +140,7 @@
 import SubscribeUserModal from "./SubscribeUserModal.vue";
 import UserModal from "../user/UserModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import 'datatables.net-select-bs5';
@@ -189,6 +159,7 @@ export default {
         DataTable,
         UserModal,
         IndexWidget,
+        DropdownButton,
         SubscribeUserModal,
         TabList,
         Switch,

@@ -22,32 +22,14 @@
                     <i class="fa fa-tag"></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'tag_edit, tag_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'tag_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editTag(tag)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.tag.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'tag_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(tag)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.tag.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.tag.edit', callback: () => editTag(tag) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.tag.delete', callback: () => confirmItemDelete(tag), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -76,6 +58,7 @@
 </template>
 <script>
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -90,6 +73,7 @@ export default {
         DataTable,
         TagModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

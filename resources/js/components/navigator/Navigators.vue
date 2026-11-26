@@ -23,30 +23,14 @@
                     <i class="fa fa-history"></i>
                 </template>
 
-                <template #dropdown
-                    v-permission="'navigator_edit, navigator_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            type="button"
-                            class="dropdown-item"
-                            @click="editNavigator(navigator)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.navigator.edit') }}
-                        </button>
-
-                        <hr class="my-1">
-
-                        <button
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(navigator)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.navigator.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_admin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.navigator.edit', callback: () => editNavigator(navigator) },
+                            { hr: true },
+                            { icon: 'fa-trash', label: 'global.navigator.delete', callback: () => confirmItemDelete(navigator), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -76,6 +60,7 @@
 <script>
 import NavigatorModal from "../navigator/NavigatorModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -87,6 +72,7 @@ export default {
         DataTable,
         NavigatorModal,
         IndexWidget,
+        DropdownButton,
     },
     data() {
         return {

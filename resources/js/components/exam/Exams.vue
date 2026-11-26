@@ -79,37 +79,17 @@
                     </div>
                 </template>
 
-                <template #dropdown>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            type="button"
-                            class="dropdown-item"
-                            @click="openExam(exam)"
-                        >
-                            <i class="fa fa-ranking-star"></i>
-                            <span>Zur &Uuml;bersicht</span>
-                        </button>
-                        <button v-if="exam.status !== 0"
-                            type="button"
-                            class="dropdown-item"
-                            @click="getReport(exam)"
-                        >
-                            <i class="fa fa-download"></i>
-                            {{ trans('global.exam.download_report') }}
-                        </button>
-
-                        <hr v-permission="'exam_delete'" class="my-1">
-
-                        <button
-                            v-permission="'exam_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(exam)"
-                        >
-                            <i class="fa fa-unlink"></i>{{ trans('global.expel') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton
+                        :entries="[
+                            { icon: 'fa-ranking-star', label: 'global.exam.to_overview', callback: () => openExam(exam) },
+                            { icon: 'fa-download', label: 'global.exam.download_report', callback: () => getReport(exam), condition: (checkPermission('is_teacher') && exam.status !== 0) },
+                            { hr: true, condition: checkPermission('exam_delete') },
+                            { icon: 'fa-unlink', label: 'global.expel', callback: () => confirmItemDelete(exam), condition: checkPermission('exam_delete'), class: 'text-danger' },
+                        ]"
+                    />
                 </template>
+
                 <template #content>
                     <span class="bg-white text-center p-1 overflow-auto nav-item-box">
                         <h1 class="h6 events-heading pt-1 hyphens nav-item-text">
@@ -157,6 +137,7 @@
 </template>
 <script>
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
@@ -169,6 +150,7 @@ export default {
         ConfirmModal,
         DataTable,
         IndexWidget,
+        DropdownButton,
     },
     props: {
         subscribable: {

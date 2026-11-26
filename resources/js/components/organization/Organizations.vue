@@ -21,32 +21,15 @@
                 <template #icon>
                     <i class="fa fa-university"></i>
                 </template>
-                <template #dropdown
-                    v-permission="'organization_edit, organization_delete'"
-                >
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <button
-                            v-permission="'organization_edit'"
-                            type="button"
-                            class="dropdown-item"
-                            @click="editOrganization(organization)"
-                        >
-                            <i class="fa fa-pencil-alt"></i>
-                            {{ trans('global.organization.edit') }}
-                        </button>
 
-                        <hr class="my-1">
-
-                        <button
-                            v-permission="'organization_delete'"
-                            type="submit"
-                            class="dropdown-item text-danger"
-                            @click="confirmItemDelete(organization)"
-                        >
-                            <i class="fa fa-trash"></i>
-                            {{ trans('global.organization.delete') }}
-                        </button>
-                    </div>
+                <template #dropdown-alt>
+                    <DropdownButton v-if="checkPermission('is_schooladmin')"
+                        :entries="[
+                            { icon: 'fa-pencil-alt', label: 'global.organization.edit', callback: () => editOrganization(organization) },
+                            { hr: true, condition: isAdmin },
+                            { icon: 'fa-trash', label: 'global.organization.delete', callback: () => confirmItemDelete(organization), condition: isAdmin, class: 'text-danger' },
+                        ]"
+                    />
                 </template>
             </IndexWidget>
         </div>
@@ -77,6 +60,7 @@
 import OrganizationModal from "../organization/OrganizationModal.vue";
 import ConfirmModal from "../uiElements/ConfirmModal.vue";
 import IndexWidget from "../uiElements/IndexWidget.vue";
+import DropdownButton from "../uiElements/DropdownButton.vue";
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net-bs5';
 DataTable.use(DataTablesCore);
@@ -86,6 +70,7 @@ export default {
         DataTable,
         OrganizationModal,
         IndexWidget,
+        DropdownButton,
         ConfirmModal,
     },
     data() {
@@ -140,6 +125,11 @@ export default {
                     this.toast.error(this.errorMessage(e));
                 });
         },
+    },
+    computed: {
+        isAdmin() {
+            return this.checkPermission('is_admin');
+        }
     },
 }
 </script>

@@ -19,27 +19,43 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         // Add Telescope tag status
         Telescope::tag(function (IncomingEntry $entry) {
             if ($entry->type === 'request') {
-                return [
+                $tags = [
                     $entry->content['response_status'],
                     preg_split("/[\/|?]/", $entry->content['uri'])[1] ?? null,
                 ];
+
+                if ($entry->content['controller_action']) {
+                    // Controller with method
+                    $tags[] = array_last(explode('\\', $entry->content['controller_action']));
+                }
+
+                if ($entry->content['duration'] >= config('telescope.duration_filter')) {
+                    $tags[] = 'exceeded_duration';
+                }
+
+                return $tags;
             }
 
             return [];
         });
 
         Telescope::filter(function (IncomingEntry $entry) {
-            if ($entry->type === 'request') {    
+            if ($entry->type === 'request') {
                 // discard requests trying to fetch old assets
-                if (in_array('build', $entry->tags)) return false;
-
-                // don't filter requests that take too long to process (default 1000ms)
-                if (
-                    $entry->content['duration'] >= config('telescope.duration_filter')
-                    && ! str_starts_with($entry->content['uri'], '/media')
-                ) {
-                    return true;
+                if (in_array('build', $entry->tags)) {
+                    return false;
                 }
+
+                // expired links are not interesting
+                if (in_array(410, $entry->tags)) {
+                    return false;
+                }
+
+                // only filter long (default 1000ms) requests if it's media (edusharing)
+                if (in_array('exceeded_duration', $entry->tags) && in_array('media', $entry->tags)) {
+                    return false;
+                }
+
                 // only show requests with a response status code greater than or equal to the configured status filter (default 200)
                 if ($entry->content['response_status'] >= config('telescope.status_filter')) {
                     return true;

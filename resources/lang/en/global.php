@@ -907,6 +907,7 @@ return [
         'expel_user'      => 'Disconnect user from exam',
         'login_key'       => 'Login key',
         'select_tests'    => 'Select tests',
+        'to_overview'     => 'To overview',
         'download_report' => 'Download report',
         'delete_helper'   => 'Should this exam and all its corresponding data be deleted?',
         'fields'          => [

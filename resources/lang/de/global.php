@@ -932,6 +932,7 @@ return [
         'expel_user'      => 'Aus Lernstandsanalyse ausschreiben.',
         'login_key'       => 'Anmeldeschlüssel',
         'select_tests'    => 'Testheft(e) auswählen',
+        'to_overview'     => 'Zur Übersicht',
         'download_report' => 'Bericht herunterladen',
         'delete_helper'   => 'Soll die Lernstandsanalyse sowie die dazugehörigen Daten gelöscht werden?',
         'fields'          => [

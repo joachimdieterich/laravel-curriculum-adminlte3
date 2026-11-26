@@ -537,6 +537,8 @@ return [
         'title_singular' => 'Grade',
         'create'         => 'Create grade',
         'edit'           => 'Edit grade',
+        'delete'         => 'Delete grade',
+        'delete_helper'  => 'Should this grade and all its associated data be deleted?',
         'fields'         => [
             'external_begin'        => 'Begin',
             'external_begin_helper' => '',

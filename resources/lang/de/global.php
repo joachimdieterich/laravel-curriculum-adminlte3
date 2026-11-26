@@ -552,6 +552,7 @@ return [
         'title_singular' => 'Klassen-/Lernstufe',
         'create'         => 'Klassen-/Lernstufe erstellen',
         'edit'           => 'Klassen-/Lernstufe bearbeiten',
+        'delete'         => 'Klassen-/Lernstufe löschen',
         'delete_helper'  => 'Soll die Klassen-/Lernstufe sowie die zugehörigen Daten gelöscht werden?',
         'fields'         => [
             'external_begin'        => 'Anfang',

@@ -4,7 +4,7 @@
         style="max-width: 100vw;"
     >
         <span v-if="showNavigators"
-            class="pe-2"
+              class="pe-2"
         >
             <button
                 class="btn btn-icon flex-shrink-0 text-secondary"
@@ -29,20 +29,20 @@
                 class="d-flex z-1"
             >
                 <span v-for="(tab, index) in tabs"
-                    class="flex-shrink-0"
+                      class="flex-shrink-0"
                 >
                     <button v-if="tab.permission === undefined || checkPermission(tab.permission)"
-                        :id="model + '-tab-' + index"
-                        class="btn btn-tab bg-transparent border-transparent shadow-none"
-                        :class="{ active: initialTab === index }"
-                        type="button"
-                        role="tab"
-                        data-bs-toggle="pill"
-                        :data-bs-target="model == 'subscribe' && ('#' + tab.filter + '_subscription')"
-                        :tabindex="initialTab === index ? '0' : '-1'"
-                        :aria-selected="initialTab === index"
-                        @click="changeTab(index)"
-                        @keydown.enter.space="changeTab(index)"
+                            :id="model + '-tab-' + index"
+                            class="btn btn-tab bg-transparent border-transparent shadow-none"
+                            :class="{ active: initialTab === index }"
+                            type="button"
+                            role="tab"
+                            data-bs-toggle="pill"
+                            :data-bs-target="model == 'subscribe' && ('#' + tab.filter + '_subscription')"
+                            :tabindex="initialTab === index ? '0' : '-1'"
+                            :aria-selected="initialTab === index"
+                            @click="changeTab(index)"
+                            @keydown.enter.space="changeTab(index)"
                     >
                         <i class="fa pe-2" :class="tab.icon"></i>
                         {{ getTranslatedText(tab.label) }}
@@ -52,7 +52,7 @@
         </div>
 
         <span v-if="showNavigators"
-            class="ps-2"
+              class="ps-2"
         >
             <button
                 class="btn btn-icon flex-shrink-0 text-secondary"
@@ -136,7 +136,7 @@ export default {
             }
 
             const distance = childLeftPos - tabListLeftPos;
-            this.$refs.tablist.scrollBy({ left: distance, behavior: 'smooth' });
+            this.$refs.tablist.scrollBy({left: distance, behavior: 'smooth'});
         },
         checkTabListWidth() {
             // if the total width of the tabs exceeds the available width, show the navigator-arrows
@@ -153,6 +153,11 @@ export default {
             }
 
             return trans.trim();
+        },
+    },
+    watch: {
+        initialTab: function (newTab) {
+            this.changeTab(newTab);
         },
     },
 }

@@ -6,14 +6,15 @@
                  class="px-3"
                  model="kanban"
                  :tabs="[
-                { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
-                { icon: 'fa-columns', label: ['global.all', 'global.kanban.title'], filter: 'all' },
-                { icon: 'fa-user', label: ['global.my', 'global.kanban.title'], filter: 'owner', permission: 'kanban_create' },
-                { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'kanban_create' },
-                { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
-                { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
-            ]"
+                    { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
+                    { icon: 'fa-columns', label: ['global.all', 'global.kanban.title'], filter: 'all' },
+                    { icon: 'fa-user', label: ['global.my', 'global.kanban.title'], filter: 'owner', permission: 'kanban_create' },
+                    { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'kanban_create' },
+                    { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
+                    { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
+                ]"
                  @change-tab="setFilter($event.filter)"
+                 :initial-tab="initialTab"
         />
 
         <div
@@ -43,6 +44,7 @@
                          url="/kanbans"
                          :showSubscribable="subscribable"
                          :hidable="true"
+                         @favour-status-changed="(newStatus) => newStatus === false && filter === 'favourite' && kanbans.splice(index, 1)"
             >
                 <template #itemIcon>
                     <i class="fa fa-2x fa-columns"></i>
@@ -212,6 +214,7 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
+            initialTab: 0,
             kanbans: null,
             showConfirm: false,
             showCopy: false,
@@ -278,6 +281,7 @@ export default {
         xhrEvent(e, settings, json) {
             // if user doesn't have any favourited objects, default to 'all'-tab
             if (!this.subscribable && json.draw === 1 && json.data.length === 0) {
+                this.initialTab = 1;
                 this.setFilter('all');
                 return;
             }

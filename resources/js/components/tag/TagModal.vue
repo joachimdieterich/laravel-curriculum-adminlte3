@@ -7,15 +7,18 @@
         @opened="preProcessing($event)"
     >
         <template #general>
-            <input
-                id="tag-name"
-                type="text"
-                class="form-control"
-                maxlength="191"
-                v-model="form.name"
-                placeholder="Name *"
-                required
-            />
+            <div class="form-floating">
+                <input
+                    id="tag-name"
+                    type="text"
+                    class="form-control"
+                    maxlength="191"
+                    v-model.trim="form.name"
+                    placeholder=""
+                    required
+                />
+                <label for="tag-name">Name *</label>
+            </div>
         </template>
     </Modal>
 </template>

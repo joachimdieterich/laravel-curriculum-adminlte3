@@ -360,9 +360,9 @@ if (! function_exists('getDataTableWithEntries')) {
 
                     // If tag filter was applied but the tag doesn't exist the result has to be empty
                     if ($negativeTagCollection->isEmpty()) {
-                        $query->withAllTags(new Tag(['id' => 0]));
+                        $query->withoutTags(new Tag(['id' => 0]));
                     } else {
-                        $query->withAllTags($negativeTagCollection);
+                        $query->withoutTags($negativeTagCollection);
                     }
                 }
             }

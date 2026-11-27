@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Logbook;
 use App\LogbookSubscription;
-use App\Helpers\QRCodeHelper;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LogbookSubscriptionController extends Controller
@@ -18,11 +18,9 @@ class LogbookSubscriptionController extends Controller
     {
         if (request()->wantsJson()) {
             return [
-                'subscriptions' => optional(
-                        optional(
-                            Logbook::find(request('logbook_id'))
-                        )->subscriptions()
-                    )->with('subscribable')
+                'subscriptions' => Logbook::find(request('logbook_id'))
+                    ?->subscriptions()
+                    ?->with('subscribable')
                     ->whereHasMorph('subscribable', '*', function ($q, $type) {
                         if ($type == 'App\\User') {
                             $q->whereNot('id', config('app.guest_user_id'));
@@ -41,7 +39,7 @@ class LogbookSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $logbook = Logbook::select('id')->find($input['logbook_id']);
+        $logbook = Logbook::select('id')->find($input['model_id']);
         abort_unless(\Gate::allows('logbook_create') && $logbook->isAccessible(), 403);
 
         $subscribe = LogbookSubscription::updateOrCreate([
@@ -54,7 +52,7 @@ class LogbookSubscriptionController extends Controller
         ]);
         $subscribe->save();
 
-        return $subscribe->with('logbook')->find($subscribe->id);
+        return $subscribe->with('logbook')->with('subscribable')->find($subscribe->id);
     }
 
     /**
@@ -119,6 +117,7 @@ class LogbookSubscriptionController extends Controller
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
             'logbook_id'        => 'sometimes|integer',
+            'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
         ]);
     }

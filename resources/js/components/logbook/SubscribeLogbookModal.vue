@@ -47,7 +47,7 @@ export default {
     methods: {
         submit() {
             axios.post('/logbookSubscriptions', {
-                logbook_id: this.form.logbook_id,
+                model_id: this.form.logbook_id,
                 subscribable_type: 'App\\Group',
                 subscribable_id: this.group_id,
             })

@@ -47,7 +47,7 @@ export default {
     methods: {
         submit() {
             axios.post('/planSubscriptions', {
-                plan_id: this.form.plan_id,
+                model_id: this.form.plan_id,
                 subscribable_type: 'App\\Group',
                 subscribable_id: this.group_id
             })

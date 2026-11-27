@@ -35,7 +35,7 @@ class PlanSubscriptionController extends Controller
     public function store(Request $request)
     {
         $input = $this->validateRequest();
-        $plan = Plan::select('id')->find($input['plan_id']);
+        $plan = Plan::select('id')->find($input['model_id']);
         abort_unless(\Gate::allows('plan_create') && $plan->isAccessible(), 403);
 
         $subscribe = PlanSubscription::updateOrCreate([
@@ -76,7 +76,7 @@ class PlanSubscriptionController extends Controller
             }
         }
 
-        return $subscribe->with('plan')->find($subscribe->id);
+        return $subscribe->with('plan')->with('subscribable')->find($subscribe->id);
     }
 
     /**
@@ -134,6 +134,7 @@ class PlanSubscriptionController extends Controller
             'subscribable_type' => 'sometimes|string',
             'subscribable_id'   => 'sometimes|integer',
             'plan_id'           => 'sometimes|integer',
+            'model_id'          => 'sometimes|integer',
             'editable'          => 'sometimes',
         ]);
     }

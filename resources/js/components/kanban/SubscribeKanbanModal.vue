@@ -50,6 +50,7 @@ export default {
                 model_id: this.form.model_id,
                 subscribable_type: 'App\\Group',
                 subscribable_id: this.group_id,
+                expire_date: null,
             })
             .then(response => {
                 this.$eventHub.emit('kanban-subscription-added', response.data);

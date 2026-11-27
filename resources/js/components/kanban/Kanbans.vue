@@ -14,6 +14,7 @@
                      { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
                  ]"
                  @change-tab="setFilter($event.filter)"
+                 :initial-tab="initialTab"
         />
 
         <div
@@ -43,6 +44,7 @@
                          url="/kanbans"
                          :showSubscribable="subscribable"
                          :hidable="true"
+                         @favour-status-changed="(newStatus) => newStatus === false && filter === 'favourite' && kanbans.splice(index, 1)"
             >
                 <template #itemIcon>
                     <i class="fa fa-2x fa-columns"></i>
@@ -164,6 +166,7 @@ export default {
     data() {
         return {
             component_id: this.$.uid,
+            initialTab: 0,
             kanbans: null,
             showConfirm: false,
             showCopy: false,
@@ -230,6 +233,7 @@ export default {
         xhrEvent(e, settings, json) {
             // if user doesn't have any favourited objects, default to 'all'-tab
             if (!this.subscribable && json.draw === 1 && json.data.length === 0) {
+                this.initialTab = 1;
                 this.setFilter('all');
                 return;
             }

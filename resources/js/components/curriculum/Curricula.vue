@@ -12,6 +12,7 @@
                 { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
             ]"
             @change-tab="setFilter($event.filter)"
+            :initial-tab="initialTab"
         />
 
         <div
@@ -20,20 +21,21 @@
         >
             <IndexWidget v-if="checkPermission('curriculum_create')
                     && (filter === 'all' || filter  === 'owner' || filter === 'favourite')"
-                key="curriculumCreate"
-                modelName="Curriculum"
-                url="/curricula"
-                :create=true
-                :label="trans('global.curriculum.create')"
+                         key="curriculumCreate"
+                         modelName="Curriculum"
+                         url="/curricula"
+                         :create=true
+                         :label="trans('global.curriculum.create')"
             />
 
             <IndexWidget v-for="(curriculum, index) in curricula"
-                :id="curriculum.id"
-                :key="'curriculumIndex' + curriculum.id"
-                :model="curriculum"
-                modelName="Curriculum"
-                url="/curricula"
-                :hidable="true"
+                         :id="curriculum.id"
+                         :key="'curriculumIndex' + curriculum.id"
+                         :model="curriculum"
+                         modelName="Curriculum"
+                         url="/curricula"
+                         :hidable="true"
+                         @favour-status-changed="(newStatus) => newStatus === false && filter === 'favourite' && curricula.splice(index, 1)"
             >
                 <template #icon>
                     <i v-if="curriculum.type_id === 1"
@@ -135,6 +137,7 @@ import Hide from "../tag/Hide.vue";
 import useTaggableDataTable from "../tag/useTaggableDataTable.js";
 import TabList from "../uiElements/TabList.vue";
 import TagComponentModal from "../tag/TagComponentModal.vue";
+
 DataTable.use(DataTablesCore);
 
 export default {
@@ -154,11 +157,12 @@ export default {
     setup() {
         const {selectedTags, selectedNegativeTags, dtOptions} = useTaggableDataTable();
 
-        return { selectedTags, selectedNegativeTags, dtOptions }
+        return {selectedTags, selectedNegativeTags, dtOptions}
     },
     data() {
         return {
             component_id: this.$.uid,
+            initialTab: 0,
             curricula: [],
             subscriptions: {},
             showConfirm: false,
@@ -202,6 +206,7 @@ export default {
         xhrEvent(e, settings, json) {
             // if user doesn't have any favourited objects, default to 'all'-tab
             if (json.draw === 1 && json.data.length === 0) {
+                this.initialTab = 1;
                 this.setFilter('all');
                 return;
             }
@@ -268,6 +273,7 @@ export default {
         border-bottom: 4px solid transparent;
         border-left: 3px solid transparent;
     }
+
     &::after {
         content: '';
         position: absolute;

@@ -41,7 +41,7 @@ class KanbanController extends Controller
         return view('kanbans.index');
     }
 
-    public function list(Request $request): JsonResponse
+    public function list(): JsonResponse
     {
         abort_unless(Gate::allows('kanban_access'), 403);
 

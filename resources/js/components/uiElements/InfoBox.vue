@@ -53,12 +53,6 @@
                         ></i>
                         <a :href="'/' + model + '/' + entry.id">
                             <span class="font-weight-bold">{{ entry.title }}</span>
-                            <br/>
-                            <span v-if="entry.grade"
-                                class="text-muted"
-                            >
-                                {{ entry.grade.title }}
-                            </span>
                         </a>
                     </slot>
                 </div>

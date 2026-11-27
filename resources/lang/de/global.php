@@ -844,7 +844,7 @@ return [
         'title_singular' => 'Kurs',
         'enrol'          => 'Curriculum verknüpfen',
         'expel_helper'   => 'Gruppe aus Curriculum ausschreiben',
-        'content'        => 'Kursbereich',
+        'content'        => 'Kursabschnitt',
         'content_item'   => 'Kursinhalt',
     ],
     'achievement' => [

@@ -64,7 +64,7 @@ class KanbanStatusController extends Controller
             'visible_until' => $input['visible_until'],
             'color'         => $input['color'],
             'owner_id'      => $kanbanStatus->owner_id, // owner should not be updated
-            'editors_ids'   => array_merge($kanbanStatus->editors_ids, [auth()->user()->id]),
+            'editors_ids'   => array_unique(array_merge($kanbanStatus->editors_ids, [auth()->user()->id])),
         ]);
 
         if (request()->wantsJson()) {

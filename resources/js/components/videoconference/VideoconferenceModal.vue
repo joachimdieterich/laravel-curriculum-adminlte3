@@ -127,7 +127,7 @@
                 id="videoconference-ask-moderator"
                 class="mb-2"
                 label="global.videoconference.ASK_MODERATOR"
-                v-model="form.askModerator"
+                v-model="askModerator"
             />
 
             <Switch

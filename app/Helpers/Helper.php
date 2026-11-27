@@ -344,14 +344,26 @@ if (! function_exists('getDataTableWithEntries')) {
 
                 // apply filter
                 if (! empty($tags)) {
-                    $tags = Tag::whereIn('id', $tags)->get();
-                    $query->withAllTags($tags);
+                    $tagCollection = Tag::whereIn('id', $tags)->get();
+
+                    // If tag filter was applied but the tag doesn't exist the result has to be empty
+                    if ($tagCollection->isEmpty()) {
+                        $query->withAllTags(new Tag(['id' => 0]));
+                    } else {
+                        $query->withAllTags($tagCollection);
+                    }
                 }
 
                 // apply negative-filter
                 if (! empty($negativeTags)) {
-                    $negativeTags = Tag::whereIn('id', $negativeTags)->get();
-                    $query->withoutTags($negativeTags);
+                    $negativeTagCollection = Tag::whereIn('id', $negativeTags)->get();
+
+                    // If tag filter was applied but the tag doesn't exist the result has to be empty
+                    if ($negativeTagCollection->isEmpty()) {
+                        $query->withAllTags(new Tag(['id' => 0]));
+                    } else {
+                        $query->withAllTags($negativeTagCollection);
+                    }
                 }
             }
 

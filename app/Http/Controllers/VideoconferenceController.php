@@ -93,7 +93,7 @@ class VideoconferenceController extends Controller
             $videoconference->detachTag(trans('global.tag.favourite.singular'));
         }
 
-        return response($videoconference);
+        return response()->json($request->input('mark'));
     }
 
     public function hideVideoconference(Videoconference $videoconference, HideModelRequest $request)

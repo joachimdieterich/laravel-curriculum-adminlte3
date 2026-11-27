@@ -9,8 +9,8 @@
         @keyup.enter="simulateClick()"
     >
         <a v-if="create || subscribe"
-            tabindex="0"
-            @click="openModal()"
+           tabindex="0"
+           @click="openModal()"
         >
             <div class="d-flex align-items-center justify-content-center">
                 <slot name="itemIcon">
@@ -24,11 +24,11 @@
             </span>
         </a>
         <a v-else
-            class="text-decoration-none"
-            :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected() ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
-            type="button"
-            tabindex="0"
-            @click="clickEvent(item)"
+           class="text-decoration-none"
+           :style="'color: ' + $textcolor(item.color) + ' !important; ' + (isSelected() ? 'filter: brightness(80%); width:100%; height:100%; position: absolute; top: 0; left: 0;' : '')"
+           type="button"
+           tabindex="0"
+           @click="clickEvent(item)"
         >
             <div v-if="item.medium_id">
                 <div
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div v-else
-                class="d-flex align-items-center justify-content-center"
+                 class="d-flex align-items-center justify-content-center"
             >
                 <slot name="itemIcon"/>
             </div>
@@ -49,7 +49,7 @@
                         {{ item[titleField] }}
                     </h1>
                     <p class="text-muted small">
-                        {{ htmlToText(item[descriptionField])}}
+                        {{ htmlToText(item[descriptionField]) }}
                     </p>
                     <slot name="badges"></slot>
                 </span>
@@ -72,11 +72,11 @@
             >
                 <slot name="additional-button">
                     <Favourite v-if="!showSubscribable && item.is_favourited !== undefined"
-                        :url="url + '/[id]/favour'"
-                        :model="item"
-                        :is-favourited="item.is_favourited"
-                        :classes="'btn ' + buttonClass(item.color)"
-                        @mark-status-changed="newStatus => item.is_favourited = newStatus"
+                               :url="url + '/[id]/favour'"
+                               :model="item"
+                               :is-favourited="item.is_favourited"
+                               :classes="'btn ' + buttonClass(item.color)"
+                               @mark-status-changed="(newStatus) => handleMarkStatusChanged(newStatus, item)"
                     />
                 </slot>
                 <slot name="dropdown-alt"></slot>
@@ -90,7 +90,7 @@ import {storeToRefs} from 'pinia';
 import {useDatatableStore} from "../../store/datatables";
 
 export default {
-    components: { Favourite },
+    components: {Favourite},
     props: {
         model: {
             type: Object,
@@ -155,9 +155,9 @@ export default {
     },
     setup() { //use database store
         const store = useDatatableStore();
-        const { getDatatable } = storeToRefs(store);
-        const { isSelected } = storeToRefs(store);
-        return { store }
+        const {getDatatable} = storeToRefs(store);
+        const {isSelected} = storeToRefs(store);
+        return {store}
     },
     data() {
         return {
@@ -175,6 +175,10 @@ export default {
         }
     },
     methods: {
+        handleMarkStatusChanged(newStatus, item) {
+            item.is_favourited = newStatus;
+            this.$emit('favour-status-changed', newStatus)
+        },
         simulateClick() {
             // "clicks" the current active items, that the user reached via tab
             document.activeElement.click();

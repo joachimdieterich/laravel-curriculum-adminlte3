@@ -80,27 +80,27 @@ class CurriculumController extends Controller
         $this->checkPermissions($input['type_id']);
 
         $curriculum = Curriculum::create([
-            'title'                 => $input['title'],
-            'description'           => $input['description'],
-            'author'                => $input['author'],
-            'publisher'             => $input['publisher'],
-            'city'                  => $input['city'],
-            'date'                  => $input['date'],
-            'color'                 => $input['color'],
-            'grade_id'              => format_select_input($input['grade_id']),
-            'subject_id'            => format_select_input($input['subject_id']),
-            'organization_type_id'  => format_select_input($input['organization_type_id']),
-            'type_id'               => format_select_input($input['type_id']),
-            'state_id'              => format_select_input($input['state_id']),
-            'country_id'            => format_select_input($input['country_id']),
-            'medium_id'             => $input['medium_id'] ?? null,
-            'variants'              => $this->formatVariantsField(
-                                            $input['variants'] ?? NULL,
-                                            $input['variant_default_title'] ?? NULL,
-                                            $input['variant_default_description'] ?? NULL
-                                        ),
-            'archived'              => $input['archived'] ?? false,
-            'owner_id'              => auth()->user()->id,
+            'title'                => $input['title'],
+            'description'          => $input['description'],
+            'author'               => $input['author'],
+            'publisher'            => $input['publisher'],
+            'city'                 => $input['city'],
+            'date'                 => $input['date'],
+            'color'                => $input['color'],
+            'grade_id'             => format_select_input($input['grade_id']),
+            'subject_id'           => format_select_input($input['subject_id']),
+            'organization_type_id' => format_select_input($input['organization_type_id']),
+            'type_id'              => format_select_input($input['type_id']),
+            'state_id'             => format_select_input($input['state_id']),
+            'country_id'           => format_select_input($input['country_id']),
+            'medium_id'            => $input['medium_id'] ?? null,
+            'variants'             => $this->formatVariantsField(
+                $input['variants'] ?? null,
+                $input['variant_default_title'] ?? null,
+                $input['variant_default_description'] ?? null
+            ),
+            'archived' => $input['archived'] ?? false,
+            'owner_id' => auth()->user()->id,
         ]);
         $curriculum->tags()->sync($request->input('tags'));
 
@@ -223,27 +223,27 @@ class CurriculumController extends Controller
         $input = $this->validateRequest();
 
         $curriculum->update([
-            'title'                 => $input['title'],
-            'description'           => $input['description'],
-            'author'                => $input['author'],
-            'publisher'             => $input['publisher'],
-            'city'                  => $input['city'],
-            'date'                  => $input['date'],
-            'color'                 => $input['color'],
-            'grade_id'              => format_select_input($input['grade_id']),
-            'subject_id'            => format_select_input($input['subject_id']),
-            'organization_type_id'  => format_select_input($input['organization_type_id']),
-            'type_id'               => format_select_input($input['type_id']),
-            'state_id'              => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
-            'country_id'            => format_select_input($input['country_id']),
-            'medium_id'             => $input['medium_id'],
-            'variants'              => $this->formatVariantsField(
-                                        $input['variants'] ?? null,
-                                        $input['variant_default_title'] ?? null,
-                                        $input['variant_default_description'] ?? null
-                                       ),
-            'archived'              => $input['archived'] ?? false,
-            'owner_id'              => $input['owner_id'] ?? auth()->user()->id,
+            'title'                => $input['title'],
+            'description'          => $input['description'],
+            'author'               => $input['author'],
+            'publisher'            => $input['publisher'],
+            'city'                 => $input['city'],
+            'date'                 => $input['date'],
+            'color'                => $input['color'],
+            'grade_id'             => format_select_input($input['grade_id']),
+            'subject_id'           => format_select_input($input['subject_id']),
+            'organization_type_id' => format_select_input($input['organization_type_id']),
+            'type_id'              => format_select_input($input['type_id']),
+            'state_id'             => isset($input['state_id']) ? format_select_input($input['state_id']) : null,
+            'country_id'           => format_select_input($input['country_id']),
+            'medium_id'            => $input['medium_id'],
+            'variants'             => $this->formatVariantsField(
+                $input['variants'] ?? null,
+                $input['variant_default_title'] ?? null,
+                $input['variant_default_description'] ?? null
+            ),
+            'archived' => $input['archived'] ?? false,
+            'owner_id' => $input['owner_id'] ?? auth()->user()->id,
         ]);
         $curriculum->tags()->sync($request->input('tags'));
 
@@ -353,7 +353,7 @@ class CurriculumController extends Controller
             $curriculum->detachTag(trans('global.tag.favourite.singular'));
         }
 
-        return response($curriculum);
+        return response()->json($request->input('mark'));
     }
 
     public function hideCurriculum(Curriculum $curriculum, HideModelRequest $request)

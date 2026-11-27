@@ -4,17 +4,18 @@
         :style="{ marginTop: subscribable ? null : '-1.5rem' }"
     >
         <TabList v-if="!subscribable"
-            class="px-3"
-            model="videoconference"
-            :tabs="[
-                { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
-                { icon: 'fa-video', label: ['global.all', 'global.videoconference.title'], filter: 'all' },
-                { icon: 'fa-user', label: ['global.my', 'global.videoconference.title'], filter: 'owner', permission: 'videoconference_create' },
-                { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'videoconference_create' },
-                { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
-                { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
-            ]"
-            @change-tab="setFilter($event.filter)"
+                 class="px-3"
+                 model="videoconference"
+                 :tabs="[
+                    { icon: 'fa-heart', label: 'global.tag.favourite.plural', filter: 'favourite' },
+                    { icon: 'fa-video', label: ['global.all', 'global.videoconference.title'], filter: 'all' },
+                    { icon: 'fa-user', label: ['global.my', 'global.videoconference.title'], filter: 'owner', permission: 'videoconference_create' },
+                    { icon: 'fa-paper-plane', label: 'global.shared_by_me', filter: 'shared_by_me', permission: 'videoconference_create' },
+                    { icon: 'fa-share-nodes', label: 'global.shared_with_me', filter: 'shared_with_me' },
+                    { icon: 'fa-eye-slash', label: 'global.tag.hidden.singular', filter: 'hidden' },
+                ]"
+                 @change-tab="setFilter($event.filter)"
+                 :initial-tab="initialTab"
         />
 
         <div
@@ -46,6 +47,7 @@
                          modelName="Videoconference"
                          url="/videoconferences"
                          :showSubscribable="subscribable"
+                         @favour-status-changed="(newStatus) => newStatus === false && filter === 'favourite' && videoconferences.splice(index, 1)"
             >
                 <template #itemIcon>
                     <i class="fa fa-2x fa-video"></i>
@@ -150,6 +152,7 @@ export default {
             videoconferences: null,
             showConfirm: false,
             currentVideoconference: {},
+            initialTab: 0,
             columns: [
                 {title: 'id', data: 'id'},
                 {title: 'meetingID', data: 'meetingID'},
@@ -187,6 +190,7 @@ export default {
         xhrEvent(_e, _settings, json) {
             // if user doesn't have any favourited objects, default to 'all'-tab
             if (!this.subscribable && json.draw === 1 && json.data.length === 0) {
+                this.initialTab = 1;
                 this.setFilter('all');
                 return;
             }

@@ -61,6 +61,8 @@
                             { icon: 'fa-trash', label: 'global.videoconference.delete', callback: () => confirmItemDelete(videoconference), condition: ownerOrAdmin(videoconference), permission: 'videoconference_delete', class: 'text-danger' },
                             { icon: 'fa-unlink', label: 'global.videoconference.expel', callback: () => confirmItemDelete(videoconference), class: 'text-danger', subscribable: true },
                         ]"
+                        :subscribable="subscribable"
+                        :color="videoconference.color"
                     >
                         <template #hide>
                             <Hide v-if="filter === 'shared_with_me' || filter === 'all' || filter === 'hidden'"
